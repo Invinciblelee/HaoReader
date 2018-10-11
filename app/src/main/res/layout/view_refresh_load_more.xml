@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_loadmore"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <com.victor.loading.rotate.RotateLoading
+        android:id="@+id/rl_loading"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:loading_color="#A0ABAE"
+        app:loading_width="2dp" />
+
+    <TextView
+        android:id="@+id/tv_loadmore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="正在加载..."
+        android:textColor="#A0ABAE"
+        android:textSize="14sp" />
+</LinearLayout>

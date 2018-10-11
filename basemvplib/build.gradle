@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode 2
+        versionName "1.1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    //support
+    api "com.android.support:appcompat-v7:$support_library_version"
+    //RxAndroid
+    api 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    api 'io.reactivex.rxjava2:rxjava:2.1.12'
+    //Rx_lifecycle
+    api 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
+    api 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.1'
+    // If you want to bind to Android-specific lifecycles
+    api 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+    // If you want pre-written Activities and Fragments you can subclass as providers
+    api 'com.trello.rxlifecycle2:rxlifecycle-navi:2.2.1'
+    // If you want to use Navi for providers
+    api 'com.trello.rxlifecycle2:rxlifecycle-kotlin:2.2.1'
+    // If you want to use Kotlin syntax
+    //Retrofit
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    api 'com.squareup.retrofit2:converter-scalars:2.4.0'
+    //RxBus
+    api('com.hwangjr.rxbus:rxbus:2.0.0') {
+        exclude group: 'com.jakewharton.timber', module: 'timber'
+    }
+    //J_SOUP
+    api 'org.jsoup:jsoup:1.10.2'
+}

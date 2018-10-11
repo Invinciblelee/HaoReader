@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="bg_list_divider" type="drawable">@drawable/bg_list_divider_day</item>
+
+</resources>

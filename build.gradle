@@ -1,0 +1,35 @@
+
+ext {
+    compile_sdk_version = 28
+    min_sdk_version = 21
+    target_sdk_version = 28
+    support_library_version = '28.0.0'
+}
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
+        classpath 'io.fabric.tools:gradle:1.25.4'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url 'https://maven.google.com/' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

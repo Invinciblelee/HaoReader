@@ -1,0 +1,55 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.activity.MainActivity">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp_new"
+        android:title="@string/action_search"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/action_library"
+        android:icon="@drawable/ic_track_changes_black_24dp"
+        android:title="@string/find_on_www"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_add_local"
+        android:icon="@drawable/ic_add_black_24dp_new"
+        android:title="@string/book_local"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_add_url"
+        android:icon="@drawable/ic_add_black_24dp_new"
+        android:title="@string/add_book_url"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_list_grid"
+        android:icon="@drawable/ic_view_quilt_black_24dp_new"
+        android:title="@string/action_list_grid"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_clearCaches"
+        android:icon="@drawable/ic_clear_all"
+        android:title="@string/clear_caches"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_clearBookshelf"
+        android:icon="@drawable/ic_clear_all"
+        android:title="@string/clear_bookshelf"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/action_refreshBookshelf"
+        android:icon="@drawable/ic_refresh_black_24dp_new"
+        android:title="@string/refresh_bookshelf"
+        app:showAsAction="never" />
+</menu>

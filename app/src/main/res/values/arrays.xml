@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="page_mode">
+        <item>覆盖</item>
+        <item>仿真</item>
+        <item>滑动</item>
+        <item>无动画</item>
+    </string-array>
+
+    <string-array name="convert_s">
+        <item>@string/jf_convert_o</item>
+        <item>@string/jf_convert_j</item>
+        <item>@string/jf_convert_f</item>
+    </string-array>
+
+    <string-array name="screen_time_out">
+        <item>默认</item>
+        <item>1分钟</item>
+        <item>2分钟</item>
+        <item>3分钟</item>
+        <item>常亮</item>
+    </string-array>
+
+    <integer-array name="screen_time_out_value">
+        <item>0</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>-1</item>
+    </integer-array>
+
+    <string-array name="bookshelf_px_title">
+        <item>@string/bookshelf_px_0</item>
+        <item>@string/bookshelf_px_1</item>
+        <item>@string/bookshelf_px_2</item>
+    </string-array>
+
+    <string-array name="bookshelf_px_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="read_type_title">
+        <item>@string/horizontal_page_turning</item>
+        <item>@string/vertical_scroll</item>
+    </string-array>
+
+    <string-array name="read_type_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+
+    <declare-styleable name="Battery">
+        <attr name="batteryOrientation">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+        <attr name="batteryColor" format="color"/>
+        <attr name="batteryPower" format="integer"/>
+    </declare-styleable>
+</resources>

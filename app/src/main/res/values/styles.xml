@@ -1,0 +1,71 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="CAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu</item>
+        <item name="android:listDivider">@drawable/bg_list_divider</item>
+        <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
+    </style>
+
+    <style name="CAppTheme.Activity" parent="CAppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="CAppTheme.Activity.Read" parent="CAppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="CAppTheme.Activity.BookDetail" parent="CAppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="CAppTheme.Activity.Translucent" parent="CAppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="colorControlNormal">@color/menu_color_default</item>
+        <item name="colorButtonNormal">@color/menu_color_default</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+    </style>
+
+    <style name="AppTheme.CardView" parent="CardView.Light">
+        <item name="cardBackgroundColor">@color/background</item>
+        <item name="android:layout_marginLeft">6dp</item>
+        <item name="android:layout_marginRight">6dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+
+    <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
+        <item name="overlapAnchor">false</item>
+        <!-- 弹出层背景颜色 -->
+        <item name="android:popupBackground">@color/background</item>
+    </style>
+
+    <style name="anim_pop_checkaddshelf">
+        <item name="android:windowEnterAnimation">@anim/anim_pop_checkaddshelf_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_pop_checkaddshelf_out</item>
+    </style>
+
+    <style name="anim_pop_windowlight">
+        <item name="android:windowEnterAnimation">@anim/anim_pop_windowlight_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_pop_windowlight_out</item>
+    </style>
+
+</resources>
