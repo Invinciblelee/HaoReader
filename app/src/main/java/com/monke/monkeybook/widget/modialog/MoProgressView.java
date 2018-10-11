@@ -2,8 +2,7 @@ package com.monke.monkeybook.widget.modialog;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.MarkdownUtils;
 import com.monke.monkeybook.utils.ReadAssets;
 import com.victor.loading.rotate.RotateLoading;
-import com.zzhoujay.markdown.MarkDown;
 
 
 /**
@@ -108,15 +107,7 @@ public class MoProgressView extends LinearLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.moprogress_dialog_markdown, this, true);
         TextView tvMarkdown = findViewById(R.id.tv_markdown);
 
-        tvMarkdown.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.background));
-        tvMarkdown.setTextColor(ContextCompat.getColor(getContext(), R.color.tv_text_default));
-        tvMarkdown.setMovementMethod(LinkMovementMethod.getInstance());
-
-        tvMarkdown.post(() -> {
-            Spanned spanned = MarkDown.fromMarkdown(ReadAssets.getText(context, assetFileName), null, tvMarkdown);
-            tvMarkdown.setText(spanned);
-        });
-
+        MarkdownUtils.setText(tvMarkdown, ReadAssets.getText(context, assetFileName));
     }
 
     @Override

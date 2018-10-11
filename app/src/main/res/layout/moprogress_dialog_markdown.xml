@@ -9,11 +9,15 @@
         android:layout_height="wrap_content"
         android:fillViewport="true"
         android:scrollbars="none">
+
         <TextView
             android:id="@+id/tv_markdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"/>
+            android:autoLink="all"
+            android:linksClickable="true"
+            android:padding="10dp"
+            android:textColor="@color/tv_text_default" />
 
     </ScrollView>
 
