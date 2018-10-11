@@ -40,7 +40,7 @@
     <color name="tv_btn_black">#343434</color>
     <color name="bg_library">#f1f1f1</color>
 
-    <color name="tv_chapter_color_selected">#4e4e4e</color>
+    <color name="tv_chapter_color_selected">#5e5e5e</color>
     <color name="tv_chapter_color_normal">#737373</color>
     
     <color name="bg_chapter">#ffffff</color>

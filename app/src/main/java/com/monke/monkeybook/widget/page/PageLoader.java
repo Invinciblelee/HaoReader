@@ -1065,7 +1065,6 @@ public abstract class PageLoader {
      * 翻阅上一页
      */
     public boolean prev() {
-        long start = System.currentTimeMillis();
         // 以下情况禁止翻页
         if (!canTurnPage()) {
             return false;
@@ -1107,7 +1106,6 @@ public abstract class PageLoader {
      * 翻到下一页
      */
     boolean next() {
-        long start = System.currentTimeMillis();
         // 以下情况禁止翻页
         if (!canTurnPage()) {
             return false;

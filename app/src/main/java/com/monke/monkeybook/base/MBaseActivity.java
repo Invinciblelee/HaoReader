@@ -41,8 +41,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
 
 
     private void initNavigationIconTint() {
-        ViewGroup viewGroup = getWindow().getDecorView().findViewById(android.R.id.content);
-        Toolbar toolbar = findToolbar(viewGroup);
+        Toolbar toolbar = findToolbar();
         if (toolbar != null) {
             Drawable icon = toolbar.getNavigationIcon();
             if (icon != null) {
@@ -52,7 +51,20 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-    private Toolbar findToolbar(ViewGroup viewGroup) {
+    private Toolbar findToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if(toolbar != null){
+            return toolbar;
+        }else {
+            ViewGroup viewGroup = getWindow().getDecorView().findViewById(android.R.id.content);
+            return findToolbar(viewGroup);
+        }
+    }
+
+    private Toolbar findToolbar(ViewGroup viewGroup){
+        if(viewGroup == null){
+            return null;
+        }
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View child = viewGroup.getChildAt(i);
             if (child instanceof Toolbar) {
