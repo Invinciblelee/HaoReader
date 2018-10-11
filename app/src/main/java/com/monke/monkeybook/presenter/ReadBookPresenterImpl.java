@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -72,6 +71,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
     private int open_from;
+    private boolean inBookShelf;
     private BookShelfBean bookShelf;
 
     private List<String> downloadingChapterList = new ArrayList<>();
@@ -84,22 +84,17 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     @Override
     public void initData(Activity activity) {
         Intent intent = activity.getIntent();
-        isRecreate = intent.getBooleanExtra("isRecreate", false);
-        if(isRecreate){
-            open_from = intent.getIntExtra("openFrom", open_from);
-            bookShelf = BookShelfDataHolder.getInstance().getBookShelf();
-            if(bookShelf == null){
-                mView.finish();
-            }else {
-                mView.startLoadingBook();
-            }
-        }else {
+        BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
+        if ((bookShelf = holder.getBookShelf()) != null) {
+            isRecreate = true;
+            open_from = holder.getOpenFrom();
+            inBookShelf = holder.isInBookShelf();
+            mView.startLoadingBook();
+        } else {
+            isRecreate = false;
             open_from = intent.getData() != null ? OPEN_FROM_OTHER : OPEN_FROM_APP;
             open_from = intent.getIntExtra("openFrom", open_from);
-
-            intent.putExtra("isRecreate", true);
-            intent.putExtra("openFrom", open_from);
-
+            inBookShelf = intent.getBooleanExtra("inBookShelf", true);
             if (open_from == OPEN_FROM_APP) {
                 if (bookShelf == null) {
                     String key = intent.getStringExtra("data_key");
@@ -109,14 +104,13 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 if (bookShelf == null) {
                     bookShelf = BookshelfHelp.getBookByUrl(mView.getNoteUrl());
                 }
-                if (bookShelf == null) {
-                    mView.finish();
-                    return;
-                } else {
+                if (bookShelf != null) {
+                    readBookControl.setLastNoteUrl(bookShelf.getNoteUrl());
                     mView.updateTitle(bookShelf.getBookInfoBean().getName());
+                    mView.postCheckBookInfo();
+                } else {
+                    mView.finish();
                 }
-                readBookControl.setLastNoteUrl(bookShelf.getNoteUrl());
-                mView.postCheckInShelf();
             } else {
                 mView.openBookFromOther();
             }
@@ -227,7 +221,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public void saveProgress() {
-        if (bookShelf != null) {
+        if (bookShelf != null && inBookShelf) {
             Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
                 bookShelf.setFinalDate(System.currentTimeMillis());
                 bookShelf.upDurChapterName();
@@ -275,10 +269,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 .subscribe(new SimpleObserver<LocBookShelfBean>() {
                     @Override
                     public void onNext(LocBookShelfBean locBookShelfBean) {
-                        if (locBookShelfBean.getNew())
-                            RxBus.get().post(RxBusTag.HAD_ADD_BOOK, locBookShelfBean);
                         bookShelf = locBookShelfBean.getBookShelfBean();
-                        checkInShelf();
+                        inBookShelf = !locBookShelfBean.getNew();
+                        mView.startLoadingBook();
                     }
 
                     @Override
@@ -404,8 +397,13 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     }
 
     @Override
-    public int getOpen_from() {
+    public int getOpenFrom() {
         return open_from;
+    }
+
+    @Override
+    public boolean inBookShelf() {
+        return inBookShelf;
     }
 
     @Override
@@ -414,12 +412,12 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     }
 
     @Override
-    public boolean isRecreate(){
+    public boolean isRecreate() {
         return isRecreate;
     }
 
     @Override
-    public void checkInShelf() {
+    public void checkBookInfo() {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             if (bookShelf.getBookInfoBean().getChapterList().isEmpty()) {
                 bookShelf.getBookInfoBean().setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
@@ -429,7 +427,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 bookShelf.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
             }
             bookShelf.setHasUpdate(false);
-            e.onNext(BookshelfHelp.isInBookShelf(bookShelf));
+            e.onNext(true);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
@@ -437,8 +435,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
-                        mView.setAdd(value);
-                        mView.setHpbReadProgressMax(0);
                         mView.startLoadingBook();
 
                         if (value) {
@@ -465,8 +461,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onNext(Boolean value) {
-                            mView.setAdd(true);
                             RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelf);
+                            inBookShelf = true;
                             if (addListener != null)
                                 addListener.addSuccess();
                         }
@@ -492,7 +488,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         @Override
                         public void onNext(Boolean aBoolean) {
                             RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                            mView.setAdd(aBoolean);
+                            inBookShelf = aBoolean;
                             mView.finish();
                         }
 

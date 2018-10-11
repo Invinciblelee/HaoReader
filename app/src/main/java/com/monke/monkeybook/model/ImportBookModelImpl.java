@@ -31,9 +31,7 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
     public Observable<LocBookShelfBean> importBook(final File file) {
         return Observable.create(e -> {
             //判断文件是否存在
-
             boolean isNew = false;
-
             BookShelfBean bookShelfBean;
             bookShelfBean = BookshelfHelp.getBookByUrl(file.getAbsolutePath());
             if (bookShelfBean == null) {
@@ -60,9 +58,6 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
                 bookShelfBean.getBookInfoBean().setCoverUrl("");
                 bookShelfBean.getBookInfoBean().setNoteUrl(file.getAbsolutePath());
                 bookShelfBean.getBookInfoBean().setTag(BookShelfBean.LOCAL_TAG);
-
-                DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().insertOrReplace(bookShelfBean.getBookInfoBean());
-                DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelfBean);
             }
             e.onNext(new LocBookShelfBean(isNew, bookShelfBean));
             e.onComplete();

@@ -19,6 +19,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -151,7 +152,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private Runnable upHpbNextPage;
 
     private String noteUrl;
-    private Boolean isAdd = false; //判断是否已经添加进书架
     private int aloudStatus;
     private int screenTimeOut;
     private int nextPageTime;
@@ -181,7 +181,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (savedInstanceState != null) {
             noteUrl = savedInstanceState.getString("noteUrl");
             aloudStatus = savedInstanceState.getInt("aloudStatus");
-            isAdd = savedInstanceState.getBoolean("isAdd");
         }
         readBookControl.setLineChange(System.currentTimeMillis());
         readBookControl.initPageConfiguration();
@@ -201,9 +200,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPresenter.getBookShelf() != null) {
             outState.putString("noteUrl", mPresenter.getBookShelf().getNoteUrl());
             outState.putInt("aloudStatus", aloudStatus);
-            outState.putBoolean("isAdd", isAdd);
 
-            BookShelfDataHolder.getInstance().setBookShelf(mPresenter.getBookShelf());
+            BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
+            holder.setBookShelf(mPresenter.getBookShelf());
+            holder.setInBookShelf(mPresenter.inBookShelf());
+            holder.setOpenFrom(mPresenter.getOpenFrom());
         }
     }
 
@@ -386,7 +387,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         mPresenter.initData(this);
 
-        if (mPresenter.getOpen_from() == OPEN_FROM_APP) {
+        if (mPresenter.getOpenFrom() == OPEN_FROM_APP) {
             mPageLoader = pageView.getPageLoader(this, mPresenter.getBookShelf());
         }
     }
@@ -608,11 +609,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             return;
         }
         moProgressHUD = new MoProgressHUD(this);
-    }
-
-    @Override
-    public void setHpbReadProgressMax(int count) {
-        hpbReadProgress.setMaxProgress(count);
     }
 
     /**
@@ -923,8 +919,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public void postCheckInShelf() {
-        getWindow().getDecorView().post(() -> mPresenter.checkInShelf());
+    public void postCheckBookInfo() {
+        getWindow().getDecorView().post(() -> mPresenter.checkBookInfo());
     }
 
     @Override
@@ -1201,7 +1197,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      * 检查是否加入书架
      */
     public boolean checkAddShelf() {
-        if (isAdd || mPresenter.getBookShelf() == null) {
+        if (mPresenter.inBookShelf() || mPresenter.getBookShelf() == null) {
             return true;
         } else {
             if (checkAddShelfPop == null) {
@@ -1333,16 +1329,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public Boolean getAdd() {
-        return isAdd;
-    }
-
-    @Override
-    public void setAdd(Boolean isAdd) {
-        this.isAdd = isAdd;
-    }
-
-    @Override
     public void finishContent(int chapter) {
         if (mPageLoader != null
                 && mPageLoader.getChapterPos() == chapter
@@ -1440,7 +1426,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPageLoader != null) {
             mPageLoader.updateBattery(BatteryUtil.getLevel(this));
         }
-        if (showCheckPermission && mPresenter.getOpen_from() == OPEN_FROM_OTHER && EasyPermissions.hasPermissions(this, MApplication.PerList)) {
+        if (showCheckPermission && mPresenter.getOpenFrom() == OPEN_FROM_OTHER && EasyPermissions.hasPermissions(this, MApplication.PerList)) {
             showCheckPermission = true;
             mPresenter.openBookFromOther(this);
         }
@@ -1488,6 +1474,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
+        BookShelfDataHolder.getInstance().cleanData();
         super.finish();
         overridePendingTransition(0, android.R.anim.fade_out);
     }

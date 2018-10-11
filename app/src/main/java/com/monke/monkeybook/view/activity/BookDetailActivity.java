@@ -318,6 +318,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             //进入阅读
             Intent intent = new Intent(BookDetailActivity.this, ReadBookActivity.class);
             intent.putExtra("openFrom", ReadBookPresenterImpl.OPEN_FROM_APP);
+            intent.putExtra("inBookShelf", mPresenter.getInBookShelf());
             String key = String.valueOf(System.currentTimeMillis());
             intent.putExtra("data_key", key);
 

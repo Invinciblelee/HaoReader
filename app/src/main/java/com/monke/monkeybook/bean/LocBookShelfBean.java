@@ -2,15 +2,15 @@
 package com.monke.monkeybook.bean;
 
 public class LocBookShelfBean {
-    private Boolean isNew;
+    private boolean isNew;
     private BookShelfBean bookShelfBean;
 
-    public LocBookShelfBean(Boolean isNew,BookShelfBean bookShelfBean){
+    public LocBookShelfBean(boolean isNew,BookShelfBean bookShelfBean){
         this.isNew = isNew;
         this.bookShelfBean = bookShelfBean;
     }
 
-    public Boolean getNew() {
+    public boolean getNew() {
         return isNew;
     }
 

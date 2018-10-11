@@ -19,24 +19,18 @@ public interface ReadBookContract {
          */
         String getNoteUrl();
 
-        Boolean getAdd();
-
-        void setAdd(Boolean isAdd);
-
         void finishContent(int chapter);
 
         void changeSourceFinish(boolean success);
 
         void chapterError(int chapter, int status);
 
-        void postCheckInShelf();
+        void postCheckBookInfo();
 
         /**
          * 开始加载
          */
         void startLoadingBook();
-
-        void setHpbReadProgressMax(int count);
 
         void initChapterList();
 
@@ -71,7 +65,9 @@ public interface ReadBookContract {
 
         boolean isRecreate();
 
-        int getOpen_from();
+        int getOpenFrom();
+
+        boolean inBookShelf();
 
         BookShelfBean getBookShelf();
 
@@ -87,7 +83,7 @@ public interface ReadBookContract {
 
         void initData(Activity activity);
 
-        void checkInShelf();
+        void checkBookInfo();
 
         void openBookFromOther(Activity activity);
 

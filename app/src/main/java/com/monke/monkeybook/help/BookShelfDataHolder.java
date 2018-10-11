@@ -4,6 +4,8 @@ import com.monke.monkeybook.bean.BookShelfBean;
 
 public class BookShelfDataHolder {
 
+    private int openFrom;
+    private boolean inBookShelf;
     private BookShelfBean bookShelf;
 
     private volatile static BookShelfDataHolder mInstance;
@@ -32,4 +34,23 @@ public class BookShelfDataHolder {
         return this.bookShelf;
     }
 
+    public int getOpenFrom() {
+        return openFrom;
+    }
+
+    public void setOpenFrom(int openFrom) {
+        this.openFrom = openFrom;
+    }
+
+    public boolean isInBookShelf() {
+        return inBookShelf;
+    }
+
+    public void setInBookShelf(boolean inBookShelf) {
+        this.inBookShelf = inBookShelf;
+    }
+
+    public void cleanData(){
+        this.bookShelf = null;
+    }
 }
