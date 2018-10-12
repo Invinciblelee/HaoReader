@@ -973,9 +973,9 @@ public class FastScroller extends LinearLayout {
 
         @ColorInt int bubbleColor = Color.rgb(130,166,245);
 
-        @ColorInt int handleColor = Color.rgb(115, 115, 115);
+        @ColorInt int handleColor = Color.rgb(130, 166, 245);
 
-        @ColorInt int trackColor = Color.LTGRAY;
+        @ColorInt int trackColor = Color.DKGRAY;
 
         @ColorInt int textColor = Color.WHITE;
 

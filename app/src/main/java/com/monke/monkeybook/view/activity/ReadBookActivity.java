@@ -17,6 +17,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -319,14 +321,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             }
             mHandler.postDelayed(upHpbNextPage, upHpbInterval);
             fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop);
-            fabAutoPage.getDrawable().mutate();
-            fabAutoPage.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+            DrawableCompat.setTint(fabAutoPage.getDrawable(), getResources().getColor(R.color.menu_color_default));
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page_stop));
         } else {
             hpbNextPageProgress.setVisibility(View.INVISIBLE);
             fabAutoPage.setImageResource(R.drawable.ic_auto_page);
-            fabAutoPage.getDrawable().mutate();
-            fabAutoPage.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+            DrawableCompat.setTint(fabAutoPage.getDrawable(), getResources().getColor(R.color.menu_color_default));
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page));
         }
     }
@@ -366,15 +366,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         setSupportActionBar(toolbar);
         setupActionBar();
         appBar.setPadding(0, ImmersionBar.getStatusBarHeight(this), 0, 0);
-        //图标眷色
-        ivCList.getDrawable().mutate();
-        ivCList.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
-        ivAdjust.getDrawable().mutate();
-        ivAdjust.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
-        ivInterface.getDrawable().mutate();
-        ivInterface.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
-        ivSetting.getDrawable().mutate();
-        ivSetting.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         if (isNightTheme()) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime_24dp);
         } else {
@@ -812,13 +803,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //朗读定时
-        fabReadAloudTimer.getDrawable().mutate();
-        fabReadAloudTimer.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         fabReadAloudTimer.setOnClickListener(view -> ReadAloudService.setTimer(this));
 
         //朗读
-        fabReadAloud.getDrawable().mutate();
-        fabReadAloud.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         fabReadAloud.setOnClickListener(view -> onMediaButton());
         //长按停止朗读
         fabReadAloud.setOnLongClickListener(view -> {
@@ -832,8 +819,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //自动翻页
-        fabAutoPage.getDrawable().mutate();
-        fabAutoPage.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         fabAutoPage.setOnClickListener(view -> {
             if (ReadAloudService.running) {
                 Toast.makeText(this, "朗读正在运行,不能自动翻页", Toast.LENGTH_SHORT).show();
@@ -849,8 +834,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //替换
-        fabReplaceRule.getDrawable().mutate();
-        fabReplaceRule.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         fabReplaceRule.setOnClickListener(view -> {
             popMenuOut();
             ReplaceRuleActivity.startThis(this);
@@ -861,8 +844,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //夜间模式
-        fabNightTheme.getDrawable().mutate();
-        fabNightTheme.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         fabNightTheme.setOnClickListener(view -> {
             popMenuOut();
             new Handler().postDelayed(() -> setNightTheme(!isNightTheme()), 200L);
@@ -925,6 +906,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void startLoadingBook() {
+        hpbReadProgress.setMaxProgress(0);
         initPageView();
     }
 
@@ -1164,8 +1146,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 fabReadAloud.setImageResource(R.drawable.ic_read_aloud);
                 llReadAloudTimer.setVisibility(View.INVISIBLE);
         }
-        fabReadAloud.getDrawable().mutate();
-        fabReadAloud.getDrawable().setColorFilter(getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+        DrawableCompat.setTint(fabReadAloud.getDrawable(), getResources().getColor(R.color.menu_color_default));
     }
 
     @Override

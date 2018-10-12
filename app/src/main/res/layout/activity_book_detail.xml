@@ -207,7 +207,7 @@
                             android:layout_height="24dp"
                             android:src="@drawable/ic_addbook"
                             android:tintMode="src_atop"
-                            android:tint="@color/tv_text_button_pre" />
+                            android:tint="@color/colorAccent" />
 
                         <TextView
                             android:id="@+id/tv_shelf_zg"
@@ -265,7 +265,7 @@
                             android:layout_height="24dp"
                             android:src="@drawable/ic_addbook"
                             android:tintMode="src_atop"
-                            android:tint="@color/tv_text_button_pre" />
+                            android:tint="@color/colorAccent" />
 
                         <TextView
                             android:id="@+id/tv_shelf_yf"

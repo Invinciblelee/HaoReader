@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -34,7 +33,7 @@ import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.adapter.SearchHistoryAdapter;
-import com.monke.monkeybook.widget.SearchViewCompat;
+import com.monke.monkeybook.widget.ViewCompat;
 import com.monke.monkeybook.widget.flowlayout.TagFlowLayout;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -235,7 +234,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     }
 
     private void initSearchView() {
-        SearchViewCompat.useCustomIcon(searchView, getString(R.string.searchBook));
+        ViewCompat.useCustomIconForSearchView(searchView, getString(R.string.searchBook));
         mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.onActionViewExpanded();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

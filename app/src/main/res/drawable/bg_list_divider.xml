@@ -3,5 +3,5 @@
 
     <size android:width="0.5dp" android:height="0.5dp"/>
 
-    <solid android:color="#cacaca"/>
+    <solid android:color="@color/bg_divider_line"/>
 </shape>

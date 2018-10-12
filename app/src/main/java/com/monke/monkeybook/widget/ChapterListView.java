@@ -1,14 +1,12 @@
 package com.monke.monkeybook.widget;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.os.Build;
+import android.graphics.Rect;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +18,6 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -34,7 +31,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChapterListView extends FrameLayout {
+public class ChapterListView extends ScrimInsetsFrameLayout {
     @BindView(R.id.rv_list)
     RecyclerView rvList;
     @BindView(R.id.toolbar_tab)
@@ -62,13 +59,6 @@ public class ChapterListView extends FrameLayout {
 
     public ChapterListView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
-        init();
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ChapterListView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         mContext = context;
         init();
     }
@@ -154,7 +144,7 @@ public class ChapterListView extends FrameLayout {
 
     private void initView() {
         ButterKnife.bind(this);
-        setPadding(0, ImmersionBar.getStatusBarHeight((Activity) mContext), 0, 0);
+        applyWindowInsets(new Rect(0, ImmersionBar.getStatusBarHeight((Activity) mContext), 0, 0));
         rvList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvList.setItemAnimator(null);
         toolbarTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -190,7 +180,7 @@ public class ChapterListView extends FrameLayout {
         toolbar.inflateMenu(R.menu.menu_search_view);
         MenuItem search = toolbar.getMenu().findItem(R.id.action_search_bar);
         searchView = (SearchView) search.getActionView();
-        SearchViewCompat.useCustomIcon(searchView, getResources().getString(R.string.search));
+        ViewCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.search));
         searchView.setMaxWidth(getResources().getDisplayMetrics().widthPixels);
         searchView.onActionViewCollapsed();
         searchView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;

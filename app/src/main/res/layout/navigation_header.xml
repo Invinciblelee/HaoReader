@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/na_top"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="115dp"
+    android:gravity="bottom"
     android:orientation="vertical">
 
     <ImageView
@@ -10,6 +11,7 @@
         android:layout_height="60dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:tint="@color/colorAccent"
         android:src="@drawable/icon_read_book"
         android:contentDescription="@string/app_name" />
 
@@ -22,12 +24,12 @@
         android:layout_marginBottom="10dp"
         android:singleLine="true"
         android:text="@string/read_summary"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/menu_color_default"
         android:textSize="14sp" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:background="?android:attr/listDivider"/>
 
 </LinearLayout>

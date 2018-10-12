@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -30,7 +32,6 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,17 +42,19 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
-import com.monke.monkeybook.model.BookSourceManage;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
 import com.monke.monkeybook.widget.BookShelfSearchView;
+import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
+import com.monke.monkeybook.widget.ViewCompat;
 import com.monke.monkeybook.widget.modialog.MoProgressHUD;
 
 import java.util.List;
@@ -68,20 +71,22 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private static final int REQUEST_BOOKSHELF_PX = 14;
     private static final int REQUEST_CODE_SIGN_IN = 15;
 
+    @BindView(R.id.layout_container)
+    ScrimInsetsFrameLayout container;
     @BindView(R.id.drawer)
     DrawerLayout drawer;
     @BindView(R.id.navigation_view)
-    NavigationView navigationView;
+    NavigationView drawerLeft;
+    @BindView(R.id.appBar)
+    AppBarLayout appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
     @BindView(R.id.main_view)
     LinearLayout mainView;
-    @BindView(R.id.ll_content)
-    RelativeLayout llContent;
     @BindView(R.id.bookshelf_search_view)
-    BookShelfSearchView bookSearchView;
+    BookShelfSearchView drawerRight;
 
     private TextView tvUser;
     private Switch swNightTheme;
@@ -140,7 +145,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     private List<BookShelfBean> getBookshelfList() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
-            return bookSearchView.getBooks();
+            return drawerRight.getBooks();
         }
         if (viewIsList) {
             return bookShelfListAdapter.getBooks();
@@ -165,7 +170,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         setupActionBar();
         initDrawer();
         upGroup(group);
-        moProgressHUD = new MoProgressHUD(this);
+
+        container.setOnInsetsCallback(insets -> {
+            appBar.setPadding(0, insets.top, 0, 0);
+            drawerLeft.getHeaderView(0).setPadding(0, insets.top, 0, 0);
+            drawerRight.applyWindowInsets(insets);
+        });
 
         if (viewIsList) {
             bookShelfListAdapter = new BookShelfListAdapter(this);
@@ -176,6 +186,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             rvBookshelf.setAdapter(bookShelfGridAdapter);
             rvBookshelf.setLayoutManager(new GridLayoutManager(this, 3));
         }
+
+        moProgressHUD = new MoProgressHUD(this);
     }
 
     @Override
@@ -208,14 +220,14 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             itemTouchHelpCallback.setOnItemTouchCallbackListener(bookShelfGridAdapter.getItemTouchCallbackListener());
         }
 
-        bookSearchView.setupItemClickListener(getAdapterListener());
+        drawerRight.setupItemClickListener(getAdapterListener());
     }
 
     private OnItemClickListenerTwo getAdapterListener() {
         return new OnItemClickListenerTwo() {
             @Override
             public void onClick(View view, int index) {
-                KeyboardUtil.hideKeyboard(bookSearchView.getSearchAutoComplete(false));
+                KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 BookShelfBean bookShelfBean = getBookshelfList().get(index);
                 if (!mPresenter.checkLocalBookExist(bookShelfBean)) {
                     new AlertDialog.Builder(MainActivity.this)
@@ -242,7 +254,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
             @Override
             public void onLongClick(View view, int index) {
-                KeyboardUtil.hideKeyboard(bookSearchView.getSearchAutoComplete(false));
+                KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 BookShelfBean bookShelf = getBookshelfList().get(index);
                 if (bookShelf.getGroup() == 2) {
                     new AlertDialog.Builder(MainActivity.this)
@@ -362,7 +374,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         mDrawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
-                if (drawerView == bookSearchView) {
+                if (drawerView == drawerRight) {
                     return;
                 }
                 super.onDrawerClosed(drawerView);
@@ -370,7 +382,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                if (drawerView == bookSearchView) {
+                if (drawerView == drawerRight) {
                     if (slideOffset > 0) {
                         KeyboardUtil.hideKeyboard(getCurrentFocus());
                     }
@@ -382,8 +394,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                if (drawerView == bookSearchView) {
-                    KeyboardUtil.showKeyboard(bookSearchView.getSearchAutoComplete(true));
+                if (drawerView == drawerRight) {
+                    KeyboardUtil.showKeyboard(drawerRight.getSearchAutoComplete(true));
                     return;
                 }
                 super.onDrawerOpened(drawerView);
@@ -410,26 +422,27 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         switch (group) {
             case 1:
-                navigationView.setCheckedItem(R.id.action_group_yf);
+                drawerLeft.setCheckedItem(R.id.action_group_yf);
                 break;
             case 0:
-                navigationView.setCheckedItem(R.id.action_group_zg);
+                drawerLeft.setCheckedItem(R.id.action_group_zg);
                 break;
             default:
-                navigationView.setCheckedItem(R.id.action_group_bd);
+                drawerLeft.setCheckedItem(R.id.action_group_bd);
                 break;
         }
     }
 
     //侧边栏按钮
     private void setUpNavigationView() {
+        ViewCompat.setNavigationMenuLineStyle(drawerLeft, getResources().getColor(R.color.bg_divider_line), getResources().getDimensionPixelSize(R.dimen.line_height));
         @SuppressLint("InflateParams") View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header, null);
-        navigationView.addHeaderView(headerView);
+        drawerLeft.addHeaderView(headerView);
         tvUser = headerView.findViewById(R.id.tv_user);
         ColorStateList colorStateList = getResources().getColorStateList(R.color.navigation_color);
-        navigationView.setItemTextColor(colorStateList);
-        navigationView.setItemIconTintList(colorStateList);
-        Menu drawerMenu = navigationView.getMenu();
+        drawerLeft.setItemTextColor(colorStateList);
+        drawerLeft.setItemIconTintList(colorStateList);
+        Menu drawerMenu = drawerLeft.getMenu();
         swNightTheme = drawerMenu.findItem(R.id.action_night_theme).getActionView().findViewById(R.id.sw_night_theme);
         swNightTheme.setChecked(isNightTheme());
         swNightTheme.setOnCheckedChangeListener((compoundButton, b) -> {
@@ -437,7 +450,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 setNightTheme(b);
             }
         });
-        navigationView.setNavigationItemSelectedListener(menuItem -> {
+        drawerLeft.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_group_zg:
                     new Handler().postDelayed(() -> upGroup(0), 200L);
@@ -546,20 +559,20 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         return preferences.getBoolean(getString(R.string.pk_auto_refresh), false) && !isRecreate;
     }
 
-    private boolean isDayNightChanged(){
+    private boolean isDayNightChanged() {
         return isActNightTheme != isNightTheme();
     }
 
-    private void startLayoutAnimationIfNeed(){
+    private void startLayoutAnimationIfNeed() {
         if (getNeedAnim()) {
-            if(rvBookshelf.getLayoutAnimation() == null) {
+            if (rvBookshelf.getLayoutAnimation() == null) {
                 LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.anim_bookshelf_layout);
                 rvBookshelf.setLayoutAnimation(animation);
-            }else {
+            } else {
                 rvBookshelf.startLayoutAnimation();
             }
-        }else {
-            if(rvBookshelf.getLayoutAnimation() != null) {
+        } else {
+            if (rvBookshelf.getLayoutAnimation() != null) {
                 rvBookshelf.setLayoutAnimation(null);
             }
         }
@@ -597,8 +610,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void updateBook(BookShelfBean bookShelfBean, boolean sort) {
-        bookSearchView.updateBook(bookShelfBean);
-        if(isDayNightChanged() || bookShelfBean.getGroup() != this.group){
+        drawerRight.updateBook(bookShelfBean);
+        if (isDayNightChanged() || bookShelfBean.getGroup() != this.group) {
             return;
         }
         if (viewIsList) {
@@ -610,8 +623,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void addToBookShelf(BookShelfBean bookShelfBean) {
-        bookSearchView.addToBookShelfIfNeed(bookShelfBean);
-        if(isDayNightChanged() || bookShelfBean.getGroup() != this.group){
+        drawerRight.addToBookShelfIfNeed(bookShelfBean);
+        if (isDayNightChanged() || bookShelfBean.getGroup() != this.group) {
             return;
         }
         if (viewIsList) {
@@ -623,10 +636,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void removeFromBookShelf(BookShelfBean bookShelfBean) {
-        if(isDayNightChanged()){
+        if (isDayNightChanged()) {
             return;
         }
-        bookSearchView.removeFromBookShelfIfNeed(bookShelfBean);
+        drawerRight.removeFromBookShelfIfNeed(bookShelfBean);
         if (viewIsList) {
             bookShelfListAdapter.removeBook(bookShelfBean);
         } else {
@@ -636,7 +649,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void sortBookShelf() {
-        if(isDayNightChanged()){
+        if (isDayNightChanged()) {
             return;
         }
         if (viewIsList) {

@@ -10,8 +10,10 @@
     tools:showIn="@layout/activity_main">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
         tools:ignore="UnusedAttribute">
 
@@ -19,7 +21,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             android:transitionName="sharedView"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 

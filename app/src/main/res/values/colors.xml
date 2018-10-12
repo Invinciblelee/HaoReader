@@ -23,13 +23,13 @@
     <color name="light_translucent">#23000000</color>
     <color name="common_gray">#EEEEEE</color>
 
-
     <color name="background">#f4f4f4</color>
+    <color name="card_background">#f6f6f6</color>
     <color name="transparent">#00000000</color>
 
-    <color name="colorPrimary">#f4f4f4</color>
-    <color name="colorPrimaryDark">#949494</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#efefef</color>
+    <color name="colorPrimaryDark">#efefef</color>
+    <color name="colorAccent">#199589</color>
 
     <color name="btn_bg_press">#c4c4c4</color>
     <color name="btn_bg_press_2">#949494</color>
@@ -42,18 +42,17 @@
 
     <color name="tv_chapter_color_selected">#5e5e5e</color>
     <color name="tv_chapter_color_normal">#737373</color>
-    
-    <color name="bg_chapter">#ffffff</color>
 
     <color name="tv_text_default">#1e1e1e</color>
 
     <color name="menu_color_default">#383838</color>
 
+    <color name="progress_read_color">#737373</color>
 
     <color name="tv_text_button_nor">#ffffff</color>
-    <color name="tv_text_button_pre">#7891A5</color>
-    <color name="tv_text_button_disable">#7891A5</color>
-    <color name="tv_text_button_deep_pre">#587A8A</color>
+    <color name="tv_text_button_pre">#199589</color>
+    <color name="tv_text_button_disable">#dddddd</color>
+    <color name="tv_text_button_deep_pre">#147369</color>
 
     <!-- 自定义header背景色 -->
     <color name="bg_head">#FF0F4AAA</color>
@@ -62,8 +61,8 @@
     <!-- 白色背景 -->
     <color name="bg_white">#FFFFFFFF</color>
     <!-- 分格线背景色 -->
-    <color name="bg_divider_line">#FFCACACA</color>
+    <color name="bg_divider_line">#ffcecece</color>
     <!--statusBarBackground-->
-    <color name="status_bar_bag">#64000000</color>
-
+    <color name="status_bar_bag">#33000000</color>
+    <color name="navigation_bar_bag">#949494</color>
 </resources>

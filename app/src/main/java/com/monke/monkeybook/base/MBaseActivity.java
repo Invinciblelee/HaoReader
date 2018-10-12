@@ -4,13 +4,15 @@ package com.monke.monkeybook.base;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,33 +38,34 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
         mImmersionBar = ImmersionBar.with(this);
         initImmersionBar();
-        initNavigationIconTint();
+        initToolbarColors();
     }
 
 
-    private void initNavigationIconTint() {
+    private void initToolbarColors() {
         Toolbar toolbar = findToolbar();
         if (toolbar != null) {
+            int color = getResources().getColor(R.color.menu_color_default);
+            toolbar.setTitleTextColor(color);
             Drawable icon = toolbar.getNavigationIcon();
             if (icon != null) {
-                icon.mutate();
-                icon.setColorFilter(getResources().getColor(R.color.menu_color_default), PorterDuff.Mode.SRC_ATOP);
+                DrawableCompat.setTint(icon, color);
             }
         }
     }
 
     private Toolbar findToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        if(toolbar != null){
+        if (toolbar != null) {
             return toolbar;
-        }else {
+        } else {
             ViewGroup viewGroup = getWindow().getDecorView().findViewById(android.R.id.content);
             return findToolbar(viewGroup);
         }
     }
 
-    private Toolbar findToolbar(ViewGroup viewGroup){
-        if(viewGroup == null){
+    private Toolbar findToolbar(ViewGroup viewGroup) {
+        if (viewGroup == null) {
             return null;
         }
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
@@ -124,14 +127,16 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        for (int i = 0; i < menu.size(); i++) {
-            Drawable drawable = menu.getItem(i).getIcon();
-            if (drawable != null) {
-                drawable.mutate();
-                drawable.setColorFilter(getResources().getColor(R.color.menu_color_default), PorterDuff.Mode.SRC_ATOP);
+        if (menu != null) {
+            for (int i = 0; i< menu.size(); i++) {
+                MenuItem item = menu.getItem(i);
+                Drawable drawable = item.getIcon();
+                if (drawable != null) {
+                    DrawableCompat.setTint(drawable, getResources().getColor(R.color.menu_color_default));
+                }
             }
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**
@@ -150,7 +155,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
                 mImmersionBar.statusBarDarkFont(false);
             }
 
-            mImmersionBar.navigationBarColor(R.color.colorPrimaryDark);
+            mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
             mImmersionBar.init();
         } catch (Exception e) {
             e.printStackTrace();

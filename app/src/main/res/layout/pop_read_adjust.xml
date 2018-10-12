@@ -74,10 +74,10 @@
                 android:layout_marginStart="30dp"
                 app:bgdrawable="@color/btn_bg_press"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor_read"
+                app:cursordrawable="@drawable/shape_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/btn_bg_press_2"
+                app:fontdrawable="@color/progress_read_color"
                 app:maxprogress="255"
                 app:progresswidth="2dp" />
 
@@ -145,10 +145,10 @@
                 android:layout_marginStart="30dp"
                 app:bgdrawable="@color/btn_bg_press"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor_read"
+                app:cursordrawable="@drawable/shape_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/btn_bg_press_2"
+                app:fontdrawable="@color/progress_read_color"
                 app:maxprogress="20"
                 app:progresswidth="2dp" />
 
@@ -205,10 +205,10 @@
                 android:layout_marginStart="30dp"
                 app:bgdrawable="@color/btn_bg_press"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor_read"
+                app:cursordrawable="@drawable/shape_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/btn_bg_press_2"
+                app:fontdrawable="@color/progress_read_color"
                 app:maxprogress="180"
                 app:progresswidth="2dp" />
 

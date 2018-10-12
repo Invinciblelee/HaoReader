@@ -1,10 +1,8 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.adapter;
 
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,6 +103,11 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ThisViewHolder holder, final int position) {
+        if (holder.getLayoutPosition() == getItemCount() - 1) {
+            holder.line.setVisibility(View.GONE);
+        } else {
+            holder.line.setVisibility(View.VISIBLE);
+        }
         if (tabPosition == 0) {
             ChapterListBean chapterListBean = isSearch ? chapterListBeans.get(position) : bookShelfBean.getChapter(position);
             holder.tvName.setText(FormatWebText.trim(chapterListBean.getDurChapterName()));
@@ -115,22 +118,22 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
                 holder.tvName.setSelected(false);
                 holder.tvName.getPaint().setFakeBoldText(false);
             }
-            holder.flContent.setOnClickListener(v -> {
+            holder.tvName.setOnClickListener(v -> {
                 setIndex(position);
                 itemClickListener.itemClick(chapterListBean.getDurChapterIndex(), 0, tabPosition);
             });
             if (chapterListBean.getDurChapterIndex() == index) {
-                holder.flContent.setBackgroundResource(R.color.btn_bg_press);
+                holder.tvName.setBackgroundResource(R.color.btn_bg_press);
             } else {
-                holder.flContent.setBackgroundResource(R.color.transparent);
+                holder.tvName.setBackgroundResource(R.color.transparent);
             }
         } else {
             BookmarkBean bookmarkBean = isSearch ? bookmarkBeans.get(position) : bookShelfBean.getBookInfoBean().getBookmarkList().get(position);
             holder.tvName.setText(bookmarkBean.getContent());
-            holder.flContent.setOnClickListener(v -> {
+            holder.tvName.setOnClickListener(v -> {
                 itemClickListener.itemClick(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex(), tabPosition);
             });
-            holder.flContent.setOnLongClickListener(view -> {
+            holder.tvName.setOnLongClickListener(view -> {
                 itemClickListener.itemLongClick(bookmarkBean, tabPosition);
                 return true;
             });
@@ -169,11 +172,13 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     class ThisViewHolder extends RecyclerView.ViewHolder {
         private FrameLayout flContent;
         private TextView tvName;
+        private View line;
 
         ThisViewHolder(View itemView) {
             super(itemView);
             flContent = itemView.findViewById(R.id.fl_content);
             tvName = itemView.findViewById(R.id.tv_name);
+            line = itemView.findViewById(R.id.v_line);
         }
     }
 }

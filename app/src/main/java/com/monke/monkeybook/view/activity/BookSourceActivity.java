@@ -32,7 +32,7 @@ import com.monke.monkeybook.model.BookSourceManage;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
-import com.monke.monkeybook.widget.SearchViewCompat;
+import com.monke.monkeybook.widget.ViewCompat;
 import com.monke.monkeybook.widget.modialog.MoProgressHUD;
 
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     private void initSearchView() {
-        SearchViewCompat.useCustomIcon(searchView, getResources().getString(R.string.search_book_source));
+        ViewCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.search_book_source));
         mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.onActionViewExpanded();
         searchView.clearFocus();
@@ -167,7 +167,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     public void upSearchView(int size) {
-        searchView.setQueryHint(getString(R.string.search_book_source_num, size));
+        ViewCompat.setQueryHintForSearchView(searchView, getString(R.string.search_book_source_num, size));
     }
 
     @Override

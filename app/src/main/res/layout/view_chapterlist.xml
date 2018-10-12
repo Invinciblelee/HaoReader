@@ -28,14 +28,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:background="@color/background"
                 android:fillViewport="false"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 app:layout_scrollFlags="scroll"
                 app:tabIndicatorColor="@color/colorAccent"
                 app:tabIndicatorHeight="2.0dp"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/colorAccent"
-                app:tabTextColor="@color/tv_text_default">
+                app:tabTextColor="@color/menu_color_default">
 
                 <android.support.design.widget.TabItem
                     android:layout_width="match_parent"
@@ -55,13 +56,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
         <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:handleColor="@color/colorPrimaryDark"
+            app:handleColor="@color/tv_text_button_pre"
+            app:bubbleColor="@color/tv_text_button_deep_pre"
             app:trackColor="@color/bg_divider_line" />
 
     </RelativeLayout>

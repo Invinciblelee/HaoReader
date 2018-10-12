@@ -3,7 +3,9 @@ package com.monke.monkeybook.widget;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +38,8 @@ import io.reactivex.schedulers.Schedulers;
 public class BookShelfSearchView extends LinearLayout {
     @BindView(R.id.recycler_view)
     RecyclerView rvList;
+    @BindView(R.id.appBar)
+    AppBarLayout appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     SearchView searchView;
@@ -63,6 +67,10 @@ public class BookShelfSearchView extends LinearLayout {
         }
     }
 
+    public void applyWindowInsets(Rect insets) {
+        appBar.setPadding(0, insets.top, 0, 0);
+    }
+
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_search_bookshelf, this, true);
         ButterKnife.bind(this);
@@ -72,7 +80,7 @@ public class BookShelfSearchView extends LinearLayout {
         toolbar.inflateMenu(R.menu.menu_search_view);
         MenuItem search = toolbar.getMenu().findItem(R.id.action_search_bar);
         searchView = (SearchView) search.getActionView();
-        SearchViewCompat.useCustomIcon(searchView, getResources().getString(R.string.searchShelfBook));
+        ViewCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.searchShelfBook));
         searchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.setMaxWidth(getResources().getDisplayMetrics().widthPixels);
         searchView.onActionViewExpanded();
