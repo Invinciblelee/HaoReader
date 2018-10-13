@@ -28,7 +28,7 @@ import com.monke.monkeybook.model.ReplaceRuleManage;
 import com.monke.monkeybook.presenter.ReplaceRulePresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
-import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     @BindView(R.id.recycler_view)
     RecyclerView recyclerViewBookSource;
 
-    private MoProgressHUD moProgressHUD;
+    private MoDialogHUD moDialogHUD;
     private ReplaceRuleAdapter adapter;
     private boolean selectAll = true;
 
@@ -87,7 +87,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
         this.setSupportActionBar(toolbar);
         setupActionBar();
         initRecyclerView();
-        moProgressHUD = new MoProgressHUD(this);
+        moDialogHUD = new MoDialogHUD(this);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     }
 
     public void editReplaceRule(ReplaceRuleBean replaceRuleBean) {
-        moProgressHUD.showPutReplaceRule(replaceRuleBean, ruleBean -> {
+        moDialogHUD.showPutReplaceRule(replaceRuleBean, ruleBean -> {
             Observable.create((ObservableOnSubscribe<List<ReplaceRuleBean>>) e -> {
                 ReplaceRuleManage.saveData(ruleBean);
                 e.onNext(ReplaceRuleManage.getAll());
@@ -189,7 +189,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
                 break;
             case R.id.action_import_onLine:
                 String cacheUrl = ACache.get(this).getAsString("replaceUrl");
-                moProgressHUD.showInputBox("输入替换规则网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_replace_url) : cacheUrl,
+                moDialogHUD.showInputBox("输入替换规则网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_replace_url) : cacheUrl,
                         inputText -> {
                             ACache.get(this).put("replaceUrl", inputText);
                             mPresenter.importDataS(inputText);
@@ -225,7 +225,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Boolean mo = moProgressHUD.onKeyDown(keyCode, event);
+        Boolean mo = moDialogHUD.onKeyDown(keyCode, event);
         if (mo) {
             return true;
         } else {

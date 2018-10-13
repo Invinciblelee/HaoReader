@@ -7,9 +7,9 @@
     <color name="colorPrimaryDark">#363636</color>
     <color name="colorAccent">#199589</color>
 
-    <color name="btn_bg_press">#545454</color>
+    <color name="btn_bg_press">#4e4e4e</color>
     <color name="btn_bg_press_2">#363636</color>
-    <color name="btn_bg_press_tp">#884e4e4e</color>
+    <color name="btn_bg_press_tp">#88000000</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#565656</color>
@@ -19,15 +19,16 @@
     <color name="tv_chapter_color_selected">#b7b7b7</color>
     <color name="tv_chapter_color_normal">#969696</color>
 
-    <color name="progress_read_color">#737373</color>
+    <color name="progress_back_color">#424242</color>
+    <color name="progress_color">#737373</color>
 
     <color name="tv_text_default">#b7b7b7</color>
     <color name="menu_color_default">#b7b7b7</color>
 
-    <color name="tv_text_button_nor">#363636</color>
+    <color name="tv_text_button_nor">#3e3e3e</color>
     <color name="tv_text_button_disable">#aaaaaa</color>
 
     <!-- 分格线背景色 -->
     <color name="bg_divider_line">#ff5e5e5e</color>
-    <color name="navigation_bar_bag">#363636</color>
+    <color name="navigation_bar_bag">#2e2e2e</color>
 </resources>

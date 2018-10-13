@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -18,16 +17,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -52,14 +48,14 @@ import com.monke.monkeybook.service.ReadAloudService;
 import com.monke.monkeybook.utils.BatteryUtil;
 import com.monke.monkeybook.utils.SystemUtil;
 import com.monke.monkeybook.utils.barUtil.BarHide;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
 import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
 import com.monke.monkeybook.widget.ChapterListView;
+import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.modialog.EditBookmarkView;
-import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.page.PageLoader;
 import com.monke.monkeybook.widget.page.PageView;
 import com.monke.mprogressbar.MHorProgressBar;
@@ -85,6 +81,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @BindView(R.id.fl_content)
     FrameLayout flContent;
+    @BindView(R.id.controls_frame)
+    ScrimInsetsFrameLayout controlsView;
     @BindView(R.id.ll_menu_bottom)
     LinearLayout llMenuBottom;
     @BindView(R.id.tv_pre)
@@ -123,6 +121,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     LinearLayout llMenuTop;
     @BindView(R.id.appBar)
     AppBarLayout appBar;
+    @BindView(R.id.llNavigationBar)
+    View navigationBar;
     @BindView(R.id.fabReadAloud)
     FloatingActionButton fabReadAloud;
     @BindView(R.id.fab_read_aloud_timer)
@@ -137,10 +137,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     FloatingActionButton fabAutoPage;
     @BindView(R.id.hpb_next_page_progress)
     MHorProgressBar hpbNextPageProgress;
-    @BindView(R.id.clp_chapterList_viewStub)
-    ViewStub chapterListViewStub;
-
-    private ChapterListView chapterListView;
+    @BindView(R.id.clp_chapterList)
+    ChapterListView chapterListView;
 
     private Animation menuTopIn;
     private Animation menuTopOut;
@@ -148,10 +146,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private Animation menuBottomOut;
     private ActionBar actionBar;
     private PageLoader mPageLoader;
-
-    private Handler mHandler;
-    private Runnable keepScreenRunnable;
-    private Runnable upHpbNextPage;
 
     private String noteUrl;
     private int aloudStatus;
@@ -164,7 +158,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private ReadAdjustPop readAdjustPop;
     private ReadInterfacePop readInterfacePop;
     private MoreSettingPop moreSettingPop;
-    private MoProgressHUD moProgressHUD;
+    private MoDialogHUD moDialogHUD;
     private ThisBatInfoReceiver batInfoReceiver;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
 
@@ -172,6 +166,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private boolean autoPage = false;
 
     private boolean isFirstIn = true;
+
+    private boolean menuWillShow = false;
+
+    private Handler mHandler;
+    private Runnable keepScreenRunnable;
+    private Runnable upHpbNextPage;
 
     @Override
     protected ReadBookContract.Presenter initInjector() {
@@ -239,12 +239,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 mImmersionBar.statusBarDarkFont(false);
             }
             if (isMenuShowing()) {
-                mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+                mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {
                 if (readBookControl.getHideStatusBar()) {
-                    mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
+                    mImmersionBar.hideBar(BarHide.FLAG_HIDE_STATUS_BAR);
                 } else {
-                    mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+                    mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
                 }
             }
         } else if (isChapterListShowing()) {
@@ -254,7 +254,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 mImmersionBar.statusBarDarkFont(false);
             }
 
-            mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+            mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
         } else {
             if (!isImmersionBarEnabled()) {
                 mImmersionBar.statusBarDarkFont(false);
@@ -275,7 +275,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mImmersionBar.init();
     }
 
-    public void keepScreenOn(boolean keepScreenOn) {
+
+    private void keepScreenOn(boolean keepScreenOn) {
         if (keepScreenOn) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
@@ -365,11 +366,14 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setupActionBar();
-        appBar.setPadding(0, ImmersionBar.getStatusBarHeight(this), 0, 0);
         if (isNightTheme()) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime_24dp);
         } else {
             fabNightTheme.setImageResource(R.drawable.ic_brightness);
+        }
+
+        if (!readBookControl.getLightIsFollowSys()) {
+            ReadAdjustPop.setScreenBrightness(this, readBookControl.getScreenLight(ReadAdjustPop.getScreenBrightness(this)));
         }
 
         pageView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -389,7 +393,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      * @return
      */
     private boolean isMenuShowing() {
-        return llMenuTop.getVisibility() == View.VISIBLE && llMenuBottom.getVisibility() == View.VISIBLE;
+        return controlsView.getVisibility() == View.VISIBLE;
     }
 
     private boolean isPopShowing() {
@@ -405,15 +409,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     private boolean isChapterListShowing() {
         return chapterListView != null && chapterListView.isShowing();
-    }
-
-    /**
-     * 隐藏目录
-     *
-     * @return
-     */
-    private boolean dismissChapterList() {
-        return chapterListView != null && chapterListView.dismissChapterList();
     }
 
     /**
@@ -458,8 +453,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    llMenuTop.setVisibility(View.INVISIBLE);
-                    initImmersionBar();
+                    controlsView.setVisibility(View.INVISIBLE);
+                    if (!menuWillShow) {
+                        initImmersionBar();
+                    }
+                    menuWillShow = false;
                 }
 
                 @Override
@@ -479,7 +477,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    llMenuBottom.setVisibility(View.INVISIBLE);
+                    controlsView.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
@@ -596,10 +594,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      * 弹窗
      */
     private void ensureProgressHUD() {
-        if (moProgressHUD != null) {
+        if (moDialogHUD != null) {
             return;
         }
-        moProgressHUD = new MoProgressHUD(this);
+        moDialogHUD = new MoDialogHUD(this);
     }
 
     /**
@@ -707,16 +705,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             @Override
             public boolean onTouch() {
                 screenOffTimerStart();
-                if (isMenuShowing()) {
-                    popMenuOut();
-                    return false;
-                }
                 return true;
             }
 
             @Override
             public void center() {
-                toggleMenu();
+                popMenuIn();
             }
 
         });
@@ -728,11 +722,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     @Override
     public void initChapterList() {
-        if (chapterListView == null) {
-            chapterListViewStub.inflate();
-            chapterListView = findViewById(R.id.clp_chapterList);
-        }
-
         chapterListView.setOnChangeListener(new ChapterListView.OnChangeListener() {
             @Override
             public void animIn() {
@@ -759,6 +748,18 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     protected void bindEvent() {
+        //菜单
+        controlsView.setOnClickListener(v -> popMenuOut());
+
+        //动态设置状态栏，导航栏
+        controlsView.setOnInsetsCallback(insets -> {
+            appBar.setPadding(0, insets.top, 0, 0);
+            navigationBar.setPadding(0, 0, 0, insets.bottom);
+            if (chapterListView != null) {
+                chapterListView.applyWindowInsets(insets);
+            }
+        });
+
         //阅读进度
         hpbReadProgress.setProgressListener(new OnProgressListener() {
             @Override
@@ -869,6 +870,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         //目录
         llCatalog.setOnClickListener(view -> {
+            menuWillShow = true;
             popMenuOut();
             if (chapterListView != null) {
                 new Handler().postDelayed(() -> chapterListView.show(mPresenter.getBookShelf().getDurChapter()), 200L);
@@ -877,23 +879,35 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         //亮度
         llLight.setOnClickListener(view -> {
+            menuWillShow = true;
             ensureReadAdjustPop();
             popMenuOut();
-            new Handler().postDelayed(() -> readAdjustPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0), 200L);
+            new Handler().postDelayed(() -> {
+                readAdjustPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                initImmersionBar();
+            }, 200L);
         });
 
         //界面
         llFont.setOnClickListener(view -> {
+            menuWillShow = true;
             ensureReadInterfacePop();
             popMenuOut();
-            new Handler().postDelayed(() -> readInterfacePop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0), 200L);
+            new Handler().postDelayed(() -> {
+                readInterfacePop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                initImmersionBar();
+            }, 200L);
         });
 
         //设置
         llSetting.setOnClickListener(view -> {
+            menuWillShow = true;
             ensureMoreSettingPop();
             popMenuOut();
-            new Handler().postDelayed(() -> moreSettingPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0), 200L);
+            new Handler().postDelayed(() -> {
+                moreSettingPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                initImmersionBar();
+            }, 200L);
         });
 
         tvReadAloudTimer.setOnClickListener(null);
@@ -954,7 +968,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 popMenuOut();
                 if (mPageLoader != null) {
                     ensureProgressHUD();
-                    moProgressHUD.showText(mPageLoader.getContent(mPageLoader.getPagePos()));
+                    moDialogHUD.showText(mPageLoader.getContent(mPageLoader.getPagePos()));
                 }
                 break;
             case R.id.disable_book_source:
@@ -1002,7 +1016,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             }
 
             ensureProgressHUD();
-            moProgressHUD.showBookmark(bookmarkBean, isAdd, new EditBookmarkView.OnBookmarkClick() {
+            moDialogHUD.showBookmark(bookmarkBean, isAdd, new EditBookmarkView.OnBookmarkClick() {
                 @Override
                 public void saveBookmark(BookmarkBean bookmarkBean) {
                     mPresenter.saveBookmark(bookmarkBean);
@@ -1033,7 +1047,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         popMenuOut();
         if (mPresenter.getBookShelf() != null) {
             ensureProgressHUD();
-            moProgressHUD.showChangeSource(this, mPresenter.getBookShelf(), searchBookBean -> {
+            moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(), searchBookBean -> {
                 if (!Objects.equals(searchBookBean.getNoteUrl(), mPresenter.getBookShelf().getNoteUrl())) {
                     mPageLoader.setStatus(PageLoader.STATUS_HY);
                     mPresenter.changeBookSource(searchBookBean);
@@ -1062,10 +1076,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             int endIndex = mPresenter.getBookShelf().getChapterListSize() - 1;
 
             ensureProgressHUD();
-            moProgressHUD.showDownloadList(mPresenter.getBookShelf().getDurChapter(), endIndex,
+            moDialogHUD.showDownloadList(mPresenter.getBookShelf().getDurChapter(), endIndex,
                     mPresenter.getBookShelf().getChapterListSize(),
                     (start, end) -> {
-                        moProgressHUD.dismiss();
+                        moDialogHUD.dismiss();
                         mPresenter.addDownload(start, end);
                     });
         }
@@ -1074,34 +1088,23 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     /**
      * 隐藏菜单
      */
-    private boolean popMenuOut() {
+    private void popMenuOut() {
         if (isMenuShowing()) {
             ensureMenuOutAnim();
             llMenuTop.startAnimation(menuTopOut);
             llMenuBottom.startAnimation(menuBottomOut);
-            return true;
         }
-        return false;
     }
 
     /**
      * 显示菜单
      */
-    private boolean popMenuIn() {
+    private void popMenuIn() {
         if (!isMenuShowing()) {
             ensureMenuInAnim();
-            llMenuTop.setVisibility(View.VISIBLE);
-            llMenuBottom.setVisibility(View.VISIBLE);
+            controlsView.setVisibility(View.VISIBLE);
             llMenuTop.startAnimation(menuTopIn);
             llMenuBottom.startAnimation(menuBottomIn);
-            return true;
-        }
-        return false;
-    }
-
-    private void toggleMenu() {
-        if (!popMenuIn()) {
-            popMenuOut();
         }
     }
 
@@ -1221,14 +1224,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         ensureProgressHUD();
-        Boolean mo = moProgressHUD.onKeyDown(keyCode, event);
+        Boolean mo = moDialogHUD.onKeyDown(keyCode, event);
         if (mo) {
             return true;
         } else {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (popMenuOut()) {
+                if (isMenuShowing()) {
+                    popMenuOut();
                     return true;
-                } else if (dismissChapterList()) {
+                } else if (chapterListView.dismissChapterList()) {
                     return true;
                 } else if (ReadAloudService.running && aloudStatus == PLAY) {
                     ReadAloudService.pause(this);
@@ -1239,7 +1243,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_MENU) {
-                toggleMenu();
+                if (isMenuShowing()) {
+                    popMenuOut();
+                } else {
+                    popMenuIn();
+                }
                 return true;
             } else if (!isMenuShowing() && !isChapterListShowing()) {
                 if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {

@@ -653,4 +653,19 @@ public class ReadBookControl {
         editor.apply();
     }
 
+
+    public void saveLight(int light, boolean isFollowSys) {
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putInt("light", light);
+        editor.putBoolean("isfollowsys", isFollowSys);
+        editor.apply();
+    }
+
+    public int getScreenLight(int defaultVal) {
+        return readPreference.getInt("light", defaultVal);
+    }
+
+    public boolean getLightIsFollowSys() {
+        return readPreference.getBoolean("isfollowsys", true);
+    }
 }

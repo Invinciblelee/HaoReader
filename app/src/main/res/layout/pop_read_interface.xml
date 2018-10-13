@@ -15,7 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/colorPrimary"
         android:orientation="vertical">
 
         <LinearLayout
@@ -74,10 +74,7 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.8dp"
-            android:background="@color/btn_bg_press" />
+        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -131,10 +128,7 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.8dp"
-            android:background="@color/btn_bg_press" />
+        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -208,15 +202,11 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.8dp"
-            android:background="@color/btn_bg_press" />
+        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background"
             android:orientation="vertical"
             android:padding="5dp">
 

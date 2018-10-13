@@ -1,8 +1,6 @@
 package com.monke.monkeybook.widget.modialog;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +16,20 @@ import com.victor.loading.rotate.RotateLoading;
 /**
  * 对话框
  */
-public class MoProgressView extends LinearLayout {
+public class MoDialogView extends LinearLayout {
     private Context context;
 
     private OnDismissListener dismissListener;
 
-    public MoProgressView(Context context) {
+    public MoDialogView(Context context) {
         this(context, null);
     }
 
-    public MoProgressView(Context context, AttributeSet attrs) {
+    public MoDialogView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MoProgressView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MoDialogView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         setOrientation(VERTICAL);

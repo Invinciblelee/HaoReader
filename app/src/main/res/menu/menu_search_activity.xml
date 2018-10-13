@@ -15,7 +15,6 @@
         android:title="@string/stop"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
-
     <item
         android:id="@+id/action_my716"
         android:checkable="true"

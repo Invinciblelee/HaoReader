@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -48,14 +47,13 @@ import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
-import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.ViewCompat;
-import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.List;
 
@@ -95,7 +93,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private BookShelfListAdapter bookShelfListAdapter;
     private boolean viewIsList;
     private ActionBarDrawerToggle mDrawerToggle;
-    private MoProgressHUD moProgressHUD;
+    private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
     private String bookPx;
     private boolean isRecreate;
@@ -187,7 +185,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             rvBookshelf.setLayoutManager(new GridLayoutManager(this, 3));
         }
 
-        moProgressHUD = new MoProgressHUD(this);
+        moDialogHUD = new MoDialogHUD(this);
     }
 
     @Override
@@ -324,7 +322,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 }
                 break;
             case R.id.action_add_url:
-                moProgressHUD.showInputBox("添加书籍网址", null, inputText -> mPresenter.addBookUrl(inputText));
+                moDialogHUD.showInputBox("添加书籍网址", null, inputText -> mPresenter.addBookUrl(inputText));
                 break;
             case R.id.action_list_grid:
                 editor.putBoolean("bookshelfIsList", !viewIsList);
@@ -500,13 +498,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     //备份
     private void backup() {
         if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.backup_confirmation)
-                    .setMessage(R.string.backup_message)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.backupData())
-                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                    })
-                    .show();
+            moDialogHUD.showTwoButton(getString(R.string.backup_message),
+                    getString(R.string.ok),
+                    v -> mPresenter.backupData(),
+                    getString(R.string.cancel),
+                    v -> moDialogHUD.dismiss());
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.backup_permission),
                     BACKUP_RESULT, MApplication.PerList);
@@ -521,13 +517,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     //恢复
     private void restore() {
         if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.restore_confirmation)
-                    .setMessage(R.string.restore_message)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.restoreData())
-                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                    })
-                    .show();
+            moDialogHUD.showTwoButton(getString(R.string.restore_message),
+                    getString(R.string.ok),
+                    v -> mPresenter.restoreData(),
+                    getString(R.string.cancel),
+                    v -> moDialogHUD.dismiss());
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.restore_permission),
                     RESTORE_RESULT, MApplication.PerList);
@@ -551,7 +545,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             editor.putInt("versionCode", MApplication.getVersionCode());
             editor.apply();
             //更新日志
-            moProgressHUD.showAssetMarkdown("updateLog.md");
+            moDialogHUD.showAssetMarkdown("updateLog.md");
         }
     }
 
@@ -661,7 +655,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void dismissHUD() {
-        moProgressHUD.dismiss();
+        moDialogHUD.dismiss();
     }
 
     @Override
@@ -671,12 +665,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void showLoading(String msg) {
-        moProgressHUD.showLoading(msg);
+        moDialogHUD.showLoading(msg);
     }
 
     @Override
     public void onRestore(String msg) {
-        moProgressHUD.showLoading(msg);
+        moDialogHUD.showLoading(msg);
     }
 
     @Override
@@ -702,7 +696,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Boolean mo = moProgressHUD.onKeyDown(keyCode, event);
+        Boolean mo = moDialogHUD.onKeyDown(keyCode, event);
         if (mo) {
             return true;
         } else {

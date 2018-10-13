@@ -17,7 +17,6 @@ public class ScrimInsetsFrameLayout extends FrameLayout {
 
     private Rect mInsets;
     private Rect mTempRect = new Rect();
-    private int paddingTopDefault;
 
     private OnInsetsCallback mOnInsetsCallback;
 
@@ -126,11 +125,7 @@ public class ScrimInsetsFrameLayout extends FrameLayout {
             return;
         }
 
-        int top = insets.top;
-        if (this.paddingTopDefault != top) {
-            this.paddingTopDefault = top;
-            setPadding(0, this.paddingTopDefault, 0, this.getPaddingBottom());
-        }
+        setPadding(0, insets.top, 0, insets.bottom);
     }
 
 

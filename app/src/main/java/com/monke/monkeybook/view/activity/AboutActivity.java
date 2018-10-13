@@ -20,7 +20,7 @@ import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
-import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,7 +82,7 @@ public class AboutActivity extends MBaseActivity {
     @BindView(R.id.vw_home_page)
     CardView vwHomePage;
 
-    private MoProgressHUD moProgressHUD;
+    private MoDialogHUD moDialogHUD;
     private String qq = "701903217 788025059";
 
     public static void startThis(Context context) {
@@ -107,7 +107,7 @@ public class AboutActivity extends MBaseActivity {
 
     @Override
     protected void initData() {
-        moProgressHUD = new MoProgressHUD(this);
+        moDialogHUD = new MoDialogHUD(this);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class AboutActivity extends MBaseActivity {
                 Toast.makeText(this, R.string.copy_complete, Toast.LENGTH_SHORT).show();
             }
         });
-        vwUpdateLog.setOnClickListener(view -> moProgressHUD.showAssetMarkdown("updateLog.md"));
+        vwUpdateLog.setOnClickListener(view -> moDialogHUD.showAssetMarkdown("updateLog.md"));
     }
 
     @Override
@@ -197,7 +197,7 @@ public class AboutActivity extends MBaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Boolean mo = moProgressHUD.onKeyDown(keyCode, event);
+        Boolean mo = moDialogHUD.onKeyDown(keyCode, event);
         return mo || super.onKeyDown(keyCode, event);
     }
 }

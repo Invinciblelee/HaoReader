@@ -12,290 +12,150 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@color/background">
+        android:layout_height="256dp"
+        android:background="@color/colorPrimary">
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:divider="?android:attr/listDivider"
+            app:showDividers="middle">
 
             <LinearLayout
+                android:id="@+id/llScreenTimeOut"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/keep_light"
+                    android:textColor="@color/tv_text_default" />
+
+                <TextView
+                    android:id="@+id/tv_screen_time_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/keep_light"
+                    android:textColor="@color/tv_text_default" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/llJFConvert"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/jf_convert"
+                    android:textColor="@color/tv_text_default" />
+
+                <TextView
+                    android:id="@+id/tvJFConvert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/jf_convert"
+                    android:textColor="@color/tv_text_default" />
+
+            </LinearLayout>
+
+
+            <Switch
+                android:id="@+id/sb_hideStatusBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/ps_hide_status_bar"
+                android:textColor="@color/tv_text_default" />
 
-                <LinearLayout
-                    android:id="@+id/llScreenTimeOut"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@color/background"
-                    android:orientation="horizontal"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:text="@string/keep_light"
-                        android:textColor="@color/tv_text_default" />
-
-                    <TextView
-                        android:id="@+id/tv_screen_time_out"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/keep_light"
-                        android:textColor="@color/tv_text_default" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <Switch
+                android:id="@+id/sbImmersionBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/immersion_status_bar"
+                android:textColor="@color/tv_text_default" />
 
-                <LinearLayout
-                    android:id="@+id/llJFConvert"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@color/background"
-                    android:orientation="horizontal"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:text="@string/jf_convert"
-                        android:textColor="@color/tv_text_default" />
-
-                    <TextView
-                        android:id="@+id/tvJFConvert"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/jf_convert"
-                        android:textColor="@color/tv_text_default" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_hideStatusBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/background"
-                android:orientation="vertical">
-
-                <Switch
-                    android:id="@+id/sb_hideStatusBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/ps_hide_status_bar"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llImmersionBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/background"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <Switch
-                    android:id="@+id/sbImmersionBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/immersion_status_bar"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <Switch
+                android:id="@+id/sb_show_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/showTitle"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sb_show_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/showTitle"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <Switch
+                android:id="@+id/sw_volume_next_page"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/volume_open_page"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sw_volume_next_page"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/volume_open_page"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_read_aloud_key"
+            <Switch
+                android:id="@+id/sw_read_aloud_key"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/aloud_volume_page"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sw_read_aloud_key"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/aloud_volume_page"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <Switch
+                android:id="@+id/sb_click"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/click_open_page"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sb_click"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/click_open_page"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <Switch
+                android:id="@+id/sb_click_all_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/click_all_next_page"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sb_click_all_next"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/click_all_next_page"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <Switch
+                android:id="@+id/sb_showLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:orientation="vertical">
+                android:padding="15dp"
+                android:text="@string/showLine"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sb_showLine"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/showLine"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_showTimeBattery"
+            <Switch
+                android:id="@+id/sb_showTimeBattery"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/background"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="@string/showTimeBattery"
+                android:textColor="@color/tv_text_default" />
 
-                <Switch
-                    android:id="@+id/sb_showTimeBattery"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/tv_text_default"
-                    android:text="@string/showTimeBattery"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/btn_bg_press" />
-
-            </LinearLayout>
-
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
 
     </ScrollView>
 

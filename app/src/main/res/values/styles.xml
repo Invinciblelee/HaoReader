@@ -9,6 +9,7 @@
         <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text.style</item>
         <item name="android:listDivider">@drawable/bg_list_divider</item>
         <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
+        <item name="alertDialogTheme">@style/CAppTheme.AlertDialog</item>
     </style>
 
     <style name="CAppTheme.Activity" parent="CAppTheme">
@@ -36,6 +37,12 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="CAppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:background">@color/card_background</item>
+        <item name="android:textColorPrimary">@color/tv_text_default</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" >
         <item name="colorControlNormal">@color/menu_color_default</item>
         <item name="colorButtonNormal">@color/menu_color_default</item>
@@ -56,8 +63,8 @@
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
         <item name="overlapAnchor">false</item>
-        <!-- 弹出层背景颜色 -->
-        <item name="android:colorBackground">@color/background</item>
+        <!--背景-->
+        <item name="android:popupBackground">@drawable/bg_popup_background</item>
     </style>
 
     <style name="Overflow.Menu.Text.style" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
@@ -74,4 +81,9 @@
         <item name="android:windowExitAnimation">@anim/anim_pop_windowlight_out</item>
     </style>
 
+    <style name="Style.Line" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/line_height</item>
+        <item name="android:background">@drawable/bg_list_divider</item>
+    </style>
 </resources>

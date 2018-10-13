@@ -2,14 +2,11 @@
 package com.monke.monkeybook.view.popupwindow;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -18,7 +15,6 @@ import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 
 import butterknife.BindView;
@@ -37,30 +33,18 @@ public class MoreSettingPop extends PopupWindow {
     Switch sbShowTimeBattery;
     @BindView(R.id.sb_hideStatusBar)
     Switch sbHideStatusBar;
-    @BindView(R.id.ll_hideStatusBar)
-    LinearLayout llHideStatusBar;
-    @BindView(R.id.ll_showTimeBattery)
-    LinearLayout llShowTimeBattery;
     @BindView(R.id.sb_showLine)
     Switch sbShowLine;
     @BindView(R.id.sbImmersionBar)
     Switch sbImmersionBar;
-    @BindView(R.id.llImmersionBar)
-    LinearLayout llImmersionBar;
-    @BindView(R.id.llScreenTimeOut)
-    LinearLayout llScreenTimeOut;
     @BindView(R.id.tv_screen_time_out)
     TextView tvScreenTimeOut;
     @BindView(R.id.tvJFConvert)
     TextView tvJFConvert;
-    @BindView(R.id.llJFConvert)
-    LinearLayout llJFConvert;
     @BindView(R.id.sw_volume_next_page)
     Switch swVolumeNextPage;
     @BindView(R.id.sw_read_aloud_key)
     Switch swReadAloudKey;
-    @BindView(R.id.ll_read_aloud_key)
-    LinearLayout llReadAloudKey;
 
     private ReadBookActivity activity;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
@@ -150,7 +134,7 @@ public class MoreSettingPop extends PopupWindow {
                 changeProListener.refresh();
             }
         });
-        llScreenTimeOut.setOnClickListener(view -> {
+        tvScreenTimeOut.setOnClickListener(view -> {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(activity.getString(R.string.keep_light))
                     .setSingleChoiceItems(activity.getResources().getStringArray(R.array.screen_time_out), readBookControl.getScreenTimeOut(), (dialogInterface, i) -> {
@@ -162,7 +146,7 @@ public class MoreSettingPop extends PopupWindow {
                     .create();
             dialog.show();
         });
-        llJFConvert.setOnClickListener(view -> {
+        tvJFConvert.setOnClickListener(view -> {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(activity.getString(R.string.jf_convert))
                     .setSingleChoiceItems(activity.getResources().getStringArray(R.array.convert_s), readBookControl.getTextConvert(), (dialogInterface, i) -> {
@@ -193,14 +177,14 @@ public class MoreSettingPop extends PopupWindow {
 
     private void upView() {
         if (readBookControl.getHideStatusBar()) {
-            llShowTimeBattery.setVisibility(View.VISIBLE);
+            sbShowTimeBattery.setVisibility(View.VISIBLE);
         } else {
-            llShowTimeBattery.setVisibility(View.GONE);
+            sbShowTimeBattery.setVisibility(View.GONE);
         }
         if (readBookControl.getCanKeyTurn()) {
-            llReadAloudKey.setVisibility(View.VISIBLE);
+            swReadAloudKey.setVisibility(View.VISIBLE);
         } else {
-            llReadAloudKey.setVisibility(View.GONE);
+            swReadAloudKey.setVisibility(View.GONE);
         }
     }
 

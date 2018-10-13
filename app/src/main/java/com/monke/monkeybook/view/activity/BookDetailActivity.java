@@ -27,7 +27,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
-import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.victor.loading.rotate.RotateLoading;
 
 import butterknife.BindView;
@@ -77,7 +77,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     private Animation animHideLoading;
     private Animation animShowInfo;
-    private MoProgressHUD moProgressHUD;
+    private MoDialogHUD moDialogHUD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +122,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     protected void bindView() {
         ButterKnife.bind(this);
         //弹窗
-        moProgressHUD = new MoProgressHUD(this);
+        moDialogHUD = new MoDialogHUD(this);
 
         tvIntro.setMovementMethod(ScrollingMovementMethod.getInstance());
         initView();
@@ -375,7 +375,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             Toast.makeText(this, "网络不可用，无法换源!", Toast.LENGTH_SHORT).show();
             return;
         }
-        moProgressHUD.showChangeSource(this, mPresenter.getBookShelf(),
+        moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(),
                 searchBookBean -> {
                     tvOrigin.setText(getString(R.string.origin_format, searchBookBean.getOrigin()));
                     showLoading(true);

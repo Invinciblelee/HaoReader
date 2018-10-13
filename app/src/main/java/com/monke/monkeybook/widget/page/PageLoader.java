@@ -60,7 +60,7 @@ public abstract class PageLoader {
     private static final int DEFAULT_LINE_SIZE = 1;
     //电池
     private static final int BATTERY_FRAME_WIDTH = 18;
-    private static final int BATTERY_FRAME_HEIGHT = 9;
+    private static final int BATTERY_FRAME_HEIGHT = 8;
     private static final int BATTERY_POLAR_WIDTH = 2;
     private static final int BATTERY_POLAR_HEIGHT = 4;
 

@@ -1,9 +1,7 @@
 package com.monke.monkeybook.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +21,6 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.ChapterListBean;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
 
 import java.util.Objects;
@@ -144,7 +141,6 @@ public class ChapterListView extends ScrimInsetsFrameLayout {
 
     private void initView() {
         ButterKnife.bind(this);
-        applyWindowInsets(new Rect(0, ImmersionBar.getStatusBarHeight((Activity) mContext), 0, 0));
         rvList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvList.setItemAnimator(null);
         toolbarTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

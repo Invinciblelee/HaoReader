@@ -21,6 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:transitionName="sharedView"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <android.support.v7.widget.SearchView
@@ -28,6 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionSearch"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 app:defaultQueryHint="@string/search"
                 tools:ignore="UnusedAttribute" />
 

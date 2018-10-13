@@ -33,7 +33,7 @@ import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.widget.ViewCompat;
-import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     private MenuItem groupItem;
     private SubMenu groupMenu;
     private BookSourceAdapter adapter;
-    private MoProgressHUD moProgressHUD;
+    private MoDialogHUD moDialogHUD;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private boolean isSearch;
 
@@ -112,7 +112,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         setupActionBar();
         initSearchView();
         initRecyclerView();
-        moProgressHUD = new MoProgressHUD(this);
+        moDialogHUD = new MoDialogHUD(this);
     }
 
     private void initSearchView() {
@@ -167,7 +167,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     public void upSearchView(int size) {
-        ViewCompat.setQueryHintForSearchView(searchView, getString(R.string.search_book_source_num, size));
+        ViewCompat.setQueryHintForSearchView(mSearchAutoComplete, getString(R.string.search_book_source_num, size));
     }
 
     @Override
@@ -250,7 +250,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 break;
             case R.id.action_import_book_source_onLine:
                 String cacheUrl = ACache.get(this).getAsString("sourceUrl");
-                moProgressHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl,
+                moDialogHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl,
                         inputText -> {
                             ACache.get(this).put("sourceUrl", inputText);
                             mPresenter.importBookSource(inputText);

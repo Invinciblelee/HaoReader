@@ -21,14 +21,13 @@ import com.monke.monkeybook.bean.ReplaceRuleBean;
 /**
  * 对话框
  */
-public class MoProgressHUD {
+public class MoDialogHUD {
     private Boolean isFinishing = false;
 
     private Context context;
     private ViewGroup decorView;//activity的根View
     private ViewGroup rootView;// mSharedView 的 根View
-    private MoProgressView mSharedView;
-
+    private MoDialogView mSharedView;
 
     private Animation inAnim;
     private Animation outAnim;
@@ -51,7 +50,7 @@ public class MoProgressHUD {
         }
     };
 
-    public MoProgressHUD(Context context) {
+    public MoDialogHUD(Context context) {
         this.context = context;
         initViews();
         initCenter();
@@ -79,8 +78,8 @@ public class MoProgressHUD {
     }
 
     private void initCenter() {
-        mSharedView.setGravity(Gravity.CENTER);
         if (mSharedView != null) {
+            mSharedView.setGravity(Gravity.CENTER);
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mSharedView.getLayoutParams();
             if (layoutParams != null) {
                 layoutParams.setMargins(0, 0, 0, 0);
@@ -91,10 +90,11 @@ public class MoProgressHUD {
     }
 
     private void initBottom() {
-        mSharedView.setGravity(Gravity.BOTTOM);
         if (mSharedView != null) {
+            mSharedView.setGravity(Gravity.BOTTOM);
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mSharedView.getLayoutParams();
             if (layoutParams != null) {
+                layoutParams.gravity = Gravity.BOTTOM;
                 layoutParams.setMargins(0, 0, 0, 0);
                 mSharedView.setLayoutParams(layoutParams);
             }
@@ -103,8 +103,8 @@ public class MoProgressHUD {
     }
 
     private void initMarRightTop() {
-        mSharedView.setGravity(Gravity.RIGHT | Gravity.TOP);
         if (mSharedView != null) {
+            mSharedView.setGravity(Gravity.TOP);
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mSharedView.getLayoutParams();
             if (layoutParams != null) {
                 layoutParams.setMargins(0, 0, 0, 0);
@@ -124,7 +124,7 @@ public class MoProgressHUD {
         rootView.setClickable(true);
         rootView.setBackgroundColor(context.getResources().getColor(R.color.btn_bg_press_tp));
 
-        mSharedView = new MoProgressView(context);
+        mSharedView = new MoDialogView(context);
 
     }
 
@@ -144,6 +144,7 @@ public class MoProgressHUD {
         decorView.addView(rootView);
         if (mSharedView.getParent() != null)
             ((ViewGroup) mSharedView.getParent()).removeView(mSharedView);
+
         rootView.addView(mSharedView);
 
         isFinishing = false;
@@ -221,7 +222,7 @@ public class MoProgressHUD {
         initCenter();
         initAnimation();
         canBack = true;
-        rootView.setOnClickListener(null);
+        rootView.setOnClickListener(v -> dismiss());
         mSharedView.showInfo(msg, v -> dismiss());
         if (!isShowing()) {
             onAttached();
@@ -236,7 +237,7 @@ public class MoProgressHUD {
         initCenter();
         initAnimation();
         canBack = true;
-        rootView.setOnClickListener(null);
+        rootView.setOnClickListener(v -> dismiss());
         mSharedView.showInfo(msg, btnText, listener);
         if (!isShowing()) {
             onAttached();
@@ -247,11 +248,11 @@ public class MoProgressHUD {
     /**
      * 两个不同等级的按钮
      */
-    public void showTwoButton(String msg, String b_f, View.OnClickListener c_f, String b_s, View.OnClickListener c_s) {
+    public void showTwoButton(String msg, String b_s, View.OnClickListener c_s, String b_f, View.OnClickListener c_f) {
         initCenter();
         initAnimation();
         canBack = true;
-        rootView.setOnClickListener(null);
+        rootView.setOnClickListener(v -> dismiss());
         mSharedView.showTwoButton(msg, b_f, c_f, b_s, c_s);
         if (!isShowing()) {
             onAttached();

@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.monke.monkeybook.R;
@@ -18,7 +17,6 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
 
     private Rect mInsets;
     private Rect mTempRect = new Rect();
-    private int paddingTopDefault;
 
     private OnInsetsCallback mOnInsetsCallback;
 
@@ -50,7 +48,7 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
         setWillNotDraw(true);
         ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
             if (!mConsumeInsets) {
-                if(mOnInsetsCallback != null){
+                if (mOnInsetsCallback != null) {
                     mOnInsetsCallback.onInsetsChanged(new Rect(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom()));
                 }
                 return insets.consumeSystemWindowInsets();
@@ -119,24 +117,20 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
     }
 
     protected void onInsetsChanged(Rect insets) {
-        if(mOnInsetsCallback != null){
+        if (mOnInsetsCallback != null) {
             mOnInsetsCallback.onInsetsChanged(insets);
         }
 
-        if(!mConsumeInsets){
+        if (!mConsumeInsets) {
             return;
         }
 
-        int top = insets.top;
-        if (this.paddingTopDefault != top) {
-            this.paddingTopDefault = top;
-            setPadding(0, this.paddingTopDefault, 0, this.getPaddingBottom());
-        }
+        setPadding(0, insets.top, 0, insets.bottom);
     }
 
 
-    public void applyWindowInsets(Rect insets){
-        if(insets == null) return;
+    public void applyWindowInsets(Rect insets) {
+        if (insets == null) return;
         if (null == ScrimInsetsRelativeLayout.this.mInsets) {
             ScrimInsetsRelativeLayout.this.mInsets = new Rect();
         }
