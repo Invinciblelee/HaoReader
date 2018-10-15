@@ -213,7 +213,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getBookSourceName() {
-        return TextUtils.isEmpty(bookSourceName) ? bookSourceName : bookSourceName.contains("⪢") ? bookSourceName : ("⪢" + bookSourceName);
+        return bookSourceName;
     }
 
     public void setBookSourceName(String bookSourceName) {

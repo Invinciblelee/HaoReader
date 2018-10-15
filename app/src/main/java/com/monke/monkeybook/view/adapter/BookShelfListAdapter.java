@@ -71,10 +71,10 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
             for (int i = 0, size = books.size(); i < size; i++) {
                 if (Objects.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
                     books.set(i, bookShelf);
-                    if(sort) {
+                    if (sort) {
                         BookshelfHelp.order(books, bookshelfPx);
                         notifyDataSetChanged();
-                    }else {
+                    } else {
                         notifyItemChanged(i);
                     }
                     return true;
@@ -84,19 +84,19 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
         return false;
     }
 
-    public void addBook(BookShelfBean bookShelf){
-        if(books == null){
+    public void addBook(BookShelfBean bookShelf) {
+        if (books == null) {
             books = new ArrayList<>();
         }
-        if(bookShelf != null && !updateBook(bookShelf, true)){
+        if (bookShelf != null && !updateBook(bookShelf, true)) {
             books.add(bookShelf);
             BookshelfHelp.order(books, bookshelfPx);
             notifyDataSetChanged();
         }
     }
 
-    public void removeBook(BookShelfBean bookShelf){
-        if(bookShelf == null|| books == null || books.isEmpty()){
+    public void removeBook(BookShelfBean bookShelf) {
+        if (bookShelf == null || books == null || books.isEmpty()) {
             return;
         }
 
@@ -107,15 +107,15 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
                 break;
             }
         }
-        if(index >= 0){
+        if (index >= 0) {
             books.remove(index);
             notifyItemRemoved(index);
         }
 
     }
 
-    public void sort(){
-        if(books != null) {
+    public void sort() {
+        if (books != null) {
             BookshelfHelp.order(books, bookshelfPx);
             notifyDataSetChanged();
         }
@@ -171,6 +171,7 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
         } else {
             holder.ivHasNew.setVisibility(View.INVISIBLE);
         }
+
         //进度条
         holder.mpbDurProgress.setVisibility(View.VISIBLE);
         holder.mpbDurProgress.setMaxProgress(item.getChapterListSize());
@@ -178,10 +179,10 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
 
         holder.mpbDurProgress.setSpeed(speed <= 0 ? 1 : speed);
 
-        if(animationIndex < holder.getLayoutPosition()) {
+        if (animationIndex < holder.getLayoutPosition()) {
             holder.mpbDurProgress.setDurProgressWithAnim(item.getDurChapter() + 1);
             animationIndex = holder.getLayoutPosition();
-        }else {
+        } else {
             holder.mpbDurProgress.setDurProgress(item.getDurChapter() + 1);
         }
 
@@ -190,7 +191,7 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
                 itemClickListener.onClick(v, holder.getLayoutPosition());
         });
 
-        if(Objects.equals(bookshelfPx, "2")){
+        if (Objects.equals(bookshelfPx, "2")) {
             holder.ivCover.setClickable(true);
             holder.ivCover.setOnLongClickListener(v -> {
                 if (itemClickListener != null) {
@@ -213,6 +214,7 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
             new Thread(() -> DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplace(item)).start();
         }
         if (item.isLoading()) {
+            holder.ivHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
             holder.rotateLoading.start();
         } else {
@@ -227,7 +229,6 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
 
     public synchronized void replaceAll(List<BookShelfBean> newDataS, String bookshelfPx) {
         this.bookshelfPx = bookshelfPx;
-        this.animationIndex = -1;
         if (null != newDataS && newDataS.size() > 0) {
             BookshelfHelp.order(newDataS, bookshelfPx);
             books = newDataS;

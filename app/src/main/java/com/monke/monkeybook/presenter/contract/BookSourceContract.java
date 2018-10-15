@@ -36,6 +36,10 @@ public interface BookSourceContract {
         Snackbar getSnackBar(String msg, int length);
 
         void showSnackBar(String msg, int length);
+
+        void showLoading(String msg);
+
+        void dismissHUD();
     }
 
 }

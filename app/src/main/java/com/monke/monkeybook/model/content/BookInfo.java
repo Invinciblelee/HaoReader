@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;

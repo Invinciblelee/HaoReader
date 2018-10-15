@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,7 +21,6 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
-import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.ArrayList;
@@ -39,7 +37,6 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
     private OnItemClickListenerTwo itemClickListener;
     private String bookshelfPx;
     private Activity activity;
-    private boolean move = true;
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override
@@ -58,7 +55,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
                 end = srcPosition;
             }
             notifyItemRangeChanged(start, end - start + 1);
-            return move;
+            return true;
         }
     };
 
@@ -168,21 +165,13 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
                 itemClickListener.onClick(v, holder.getLayoutPosition());
         });
 
-        if(Objects.equals(bookshelfPx, "2")){
+        if (Objects.equals(bookshelfPx, "2")) {
             holder.tvName.setClickable(true);
             holder.tvName.setOnLongClickListener(v -> {
                 if (itemClickListener != null) {
                     itemClickListener.onLongClick(v, holder.getLayoutPosition());
                 }
                 return true;
-            });
-            holder.tvName.setOnTouchListener(new View.OnTouchListener() {
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    move = event.getAction() != MotionEvent.ACTION_DOWN;
-                    return false;
-                }
             });
         }
 
@@ -200,6 +189,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         }
 
         if (item.isLoading()) {
+            holder.ivHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
             holder.rotateLoading.start();
         } else {

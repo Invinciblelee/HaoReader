@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/AppTheme.CardView"
     android:foreground="?attr/selectableItemBackground"
     tools:ignore="RtlHardcoded,RtlSymmetry">
 
@@ -29,10 +29,10 @@
                 android:id="@+id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="2dp"
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@string/app_name"
@@ -55,14 +55,24 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:layout_marginBottom="3dp"
                         android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/book_source"
+                            android:paddingTop="1dp"
+                            android:src="@drawable/ic_source_black_24dp"
+                            android:tint="@color/tv_text_default" />
 
                         <TextView
                             android:id="@+id/tv_origin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:layout_marginStart="3dp"
                             android:ellipsize="end"
                             android:lines="1"
                             android:text="来源"
@@ -94,10 +104,10 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginRight="5dp"
                             android:background="@drawable/shape_round_rect"
-                            android:paddingBottom="0.4dp"
                             android:paddingLeft="2dp"
-                            android:paddingRight="2dp"
                             android:paddingTop="0.4dp"
+                            android:paddingRight="2dp"
+                            android:paddingBottom="0.4dp"
                             android:text="连载"
                             android:textColor="#ffffff"
                             android:textSize="12sp" />
@@ -110,10 +120,10 @@
                             android:layout_marginRight="5dp"
                             android:background="@drawable/shape_round_rect"
                             android:lines="1"
-                            android:paddingBottom="0.4dp"
                             android:paddingLeft="2dp"
-                            android:paddingRight="2dp"
                             android:paddingTop="0.4dp"
+                            android:paddingRight="2dp"
+                            android:paddingBottom="0.4dp"
                             android:text="现代都市"
                             android:textColor="#ffffff"
                             android:textSize="12sp" />
@@ -125,10 +135,10 @@
                             android:layout_gravity="center_vertical"
                             android:background="@drawable/shape_round_rect"
                             android:lines="1"
-                            android:paddingBottom="0.4dp"
                             android:paddingLeft="2dp"
-                            android:paddingRight="2dp"
                             android:paddingTop="0.4dp"
+                            android:paddingRight="2dp"
+                            android:paddingBottom="0.4dp"
                             android:text="1.2万字"
                             android:textColor="#ffffff"
                             android:textSize="12sp" />

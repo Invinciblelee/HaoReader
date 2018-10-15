@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -100,7 +98,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvLasted.setText("");
         if (item.getOrigin() != null && item.getOrigin().length() > 0) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
-            myViewHolder.tvOrigin.setText(activity.getString(R.string.origin_format, item.getOrigin()));
+            myViewHolder.tvOrigin.setText(item.getOrigin());
         } else {
             myViewHolder.tvOrigin.setVisibility(View.GONE);
         }
@@ -156,17 +154,17 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             if (searchBooks.size() == 0) {
                 searchBooks.addAll(newDataS);
                 Collections.sort(searchBooks, (o1, o2) -> {
-                    if(TextUtils.equals(keyWord, o1.getName())
-                            || TextUtils.equals(keyWord, o1.getAuthor())){
+                    if (TextUtils.equals(keyWord, o1.getName())
+                            || TextUtils.equals(keyWord, o1.getAuthor())) {
                         return -1;
-                    }else if(TextUtils.equals(keyWord, o2.getName())
-                            || TextUtils.equals(keyWord, o2.getAuthor())){
+                    } else if (TextUtils.equals(keyWord, o2.getName())
+                            || TextUtils.equals(keyWord, o2.getAuthor())) {
                         return 1;
-                    }else if(o1.getName().contains(keyWord) || o1.getAuthor().contains(keyWord)){
+                    } else if (o1.getName().contains(keyWord) || o1.getAuthor().contains(keyWord)) {
                         return -1;
-                    }else if(o2.getName().contains(keyWord) || o2.getAuthor().contains(keyWord)){
+                    } else if (o2.getName().contains(keyWord) || o2.getAuthor().contains(keyWord)) {
                         return 1;
-                    }else {
+                    } else {
                         return 0;
                     }
                 });
@@ -180,7 +178,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                         if (TextUtils.equals(temp.getName(), searchBook.getName())
                                 && TextUtils.equals(temp.getAuthor(), searchBook.getAuthor())) {
                             hasSame = true;
-                            searchBook.addOrigin(temp.getTag());
+                            searchBook.addOriginUrl(temp.getTag());
                             notifyItemChanged(i);
                             break;
                         }

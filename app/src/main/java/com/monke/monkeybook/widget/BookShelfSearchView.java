@@ -80,7 +80,7 @@ public class BookShelfSearchView extends LinearLayout {
         toolbar.inflateMenu(R.menu.menu_search_view);
         MenuItem search = toolbar.getMenu().findItem(R.id.action_search_bar);
         searchView = (SearchView) search.getActionView();
-        ViewCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.searchShelfBook));
+        AppCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.searchShelfBook));
         searchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.setMaxWidth(getResources().getDisplayMetrics().widthPixels);
         searchView.onActionViewExpanded();
@@ -149,7 +149,7 @@ public class BookShelfSearchView extends LinearLayout {
         }
     }
 
-    public void updateBook(BookShelfBean bookShelfBean) {
+    public void updateBookIfNeed(BookShelfBean bookShelfBean) {
         if (bookShelfBean != null && adapter.getItemCount() != 0) {
             adapter.updateBook(bookShelfBean, false);
         }

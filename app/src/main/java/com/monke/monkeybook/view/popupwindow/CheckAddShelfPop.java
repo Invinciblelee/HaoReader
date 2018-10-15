@@ -10,6 +10,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.ScreenUtils;
 
 public class CheckAddShelfPop extends PopupWindow {
     private Context mContext;
@@ -25,7 +26,7 @@ public class CheckAddShelfPop extends PopupWindow {
     private String bookName;
 
     public CheckAddShelfPop(Context context, @NonNull String bookName, @NonNull OnItemClickListener itemClick) {
-        super(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        super(ScreenUtils.dpToPx(300f), ViewGroup.LayoutParams.WRAP_CONTENT);
         mContext = context;
         this.bookName = bookName;
         this.itemClick = itemClick;

@@ -23,6 +23,7 @@
     <color name="light_translucent">#23000000</color>
     <color name="common_gray">#EEEEEE</color>
 
+    <color name="background_alpha">#84f4f4f4</color>
     <color name="background">#f4f4f4</color>
     <color name="card_background">#f8f8f8</color>
     <color name="transparent">#00000000</color>

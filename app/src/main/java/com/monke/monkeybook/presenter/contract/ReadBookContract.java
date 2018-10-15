@@ -5,11 +5,14 @@ import android.content.SharedPreferences;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
+import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
+
+import java.util.List;
 
 public interface ReadBookContract {
     interface View extends IView {
@@ -38,7 +41,11 @@ public interface ReadBookContract {
 
         void openBookFromOther();
 
-        void chapterChange(ChapterListBean chapterListBean);
+        void chapterChange(int chapterIndex);
+
+        void chapterListChange(BookShelfBean bookShelfBean);
+
+        void chapterListUpdateFinish();
 
         void onMediaButton();
 
@@ -55,8 +62,6 @@ public interface ReadBookContract {
         void speakIndex(int index);
 
         void refresh(boolean recreate);
-
-        SharedPreferences getPreferences();
 
         void finish();
     }
@@ -96,5 +101,7 @@ public interface ReadBookContract {
         void delBookmark(BookmarkBean bookmarkBean);
 
         void disableDurBookSource();
+
+        void updateChapterList();
     }
 }

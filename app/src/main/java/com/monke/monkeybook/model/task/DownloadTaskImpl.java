@@ -1,5 +1,6 @@
 package com.monke.monkeybook.model.task;
 
+import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -8,6 +9,7 @@ import com.monke.monkeybook.bean.DownloadChapterBean;
 import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.impl.IDownloadTask;
 
@@ -211,6 +213,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                         BookshelfHelp.saveChapterInfo(BookshelfHelp.getCachePathName(data),
                                 BookshelfHelp.getCacheFileName(data.getDurChapterIndex(), data.getDurChapterName()),
                                 bookContentBean.getDurChapterContent());
+                        RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean.getDurChapterUrl());
                     }
                     e.onNext(removeFromDownloadList(data));
                 }))

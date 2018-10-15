@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -33,24 +34,28 @@ public class AnalyzeElement {
      */
     public static Elements getElements(Element temp, String rule) {
         Elements elements = new Elements();
-        if (temp == null || isEmpty(rule)) {
-            return elements;
-        }
-        boolean isAnd;
-        String[] ruleStrS;
-        if (rule.contains("&")) {
-            isAnd = true;
-            ruleStrS = rule.split("&");
-        } else {
-            isAnd = false;
-            ruleStrS = rule.split("\\|");
-        }
-        for (String ruleStr : ruleStrS) {
-            Elements tempS = getElementsSingle(temp, ruleStr);
-            elements.addAll(tempS);
-            if (elements.size() > 0 && !isAnd) {
-                break;
+        try {
+            if (temp == null || isEmpty(rule)) {
+                return elements;
             }
+            boolean isAnd;
+            String[] ruleStrS;
+            if (rule.contains("&")) {
+                isAnd = true;
+                ruleStrS = rule.split("&");
+            } else {
+                isAnd = false;
+                ruleStrS = rule.split("\\|");
+            }
+            for (String ruleStr : ruleStrS) {
+                Elements tempS = getElementsSingle(temp, ruleStr);
+                elements.addAll(tempS);
+                if (elements.size() > 0 && !isAnd) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return elements;
     }
@@ -210,8 +215,8 @@ public class AnalyzeElement {
      * 根据最后一个规则获取内容
      */
     private List<String> getResultLast(Elements elements, String lastRule) {
+        List<String> textS = new ArrayList<>();
         try {
-            List<String> textS = new ArrayList<>();
             switch (lastRule) {
                 case "text":
                     for (Element element : elements) {
@@ -244,11 +249,10 @@ public class AnalyzeElement {
                     String absURL = NetworkUtil.getAbsoluteURL(baseURL, elements.get(0).attr(lastRule));
                     textS.add(absURL);
             }
-            return textS;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return textS;
     }
 
 }

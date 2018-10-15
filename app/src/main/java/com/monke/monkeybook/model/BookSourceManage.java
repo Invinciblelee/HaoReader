@@ -10,6 +10,7 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -78,9 +79,8 @@ public class BookSourceManage extends BaseModelImpl {
         if (bookSourceBean.getBookSourceUrl().endsWith("/")) {
             bookSourceBean.setBookSourceUrl(bookSourceBean.getBookSourceUrl().substring(0, bookSourceBean.getBookSourceUrl().lastIndexOf("/")));
         }
-        if (!bookSourceBean.getBookSourceName().startsWith("⪢")) {
-            bookSourceBean.setBookSourceName("⪢" + bookSourceBean.getBookSourceName());
-        }
+
+        bookSourceBean.setBookSourceName(StringUtils.clearString(bookSourceBean.getBookSourceName()));
 
         BookSourceBean temp = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl())).unique();
@@ -118,7 +118,7 @@ public class BookSourceManage extends BaseModelImpl {
             try {
                 List<BookSourceBean> bookSourceBeans = new Gson().fromJson(json, new TypeToken<List<BookSourceBean>>() {
                 }.getType());
-                int index = 1;
+                int index = 0;
                 for (BookSourceBean bookSourceBean : bookSourceBeans) {
                     if (Objects.equals(bookSourceBean.getBookSourceGroup(), "删除")) {
                         DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
@@ -127,9 +127,8 @@ public class BookSourceManage extends BaseModelImpl {
                     } else {
                         try {
                             new URL(bookSourceBean.getBookSourceUrl());
-                            bookSourceBean.setSerialNumber(index);
+                            bookSourceBean.setSerialNumber(++index);
                             addBookSource(bookSourceBean);
-                            index++;
                         } catch (Exception exception) {
                             DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                                     .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl()))
@@ -138,7 +137,7 @@ public class BookSourceManage extends BaseModelImpl {
                     }
                 }
                 refreshBookSource();
-                e.onNext(true);
+                e.onNext(index > 0);
             } catch (Exception e1) {
                 e1.printStackTrace();
                 e.onNext(false);

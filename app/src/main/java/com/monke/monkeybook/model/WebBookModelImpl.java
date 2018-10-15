@@ -147,8 +147,9 @@ public class WebBookModelImpl implements IWebBookModel {
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                 bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
             }
+            bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
             bookShelfBean.setChapterListSize(chapterList.size());
-            bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize() - 1));
+            bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize()-1));
             bookShelfBean.getBookInfoBean().setChapterList(chapterList);
             bookShelfBean.upDurChapterName();
             bookShelfBean.upLastChapterName();
@@ -165,7 +166,6 @@ public class WebBookModelImpl implements IWebBookModel {
                 if (chapterListBean != null) {
                     bookContentBean.setNoteUrl(chapterListBean.getNoteUrl());
                     DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().update(chapterListBean);
-                    RxBus.get().post(RxBusTag.CHAPTER_CHANGE, chapterListBean);
                 }
             }
             e.onNext(bookContentBean);

@@ -4,6 +4,7 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -37,7 +38,7 @@ public class SearchBookBean implements Parcelable {
     private int originNum = 1;
 
     @Transient
-    private List<String> origins;
+    private List<String> originUrls;
 
     public SearchBookBean() {
 
@@ -79,7 +80,7 @@ public class SearchBookBean implements Parcelable {
         byte tmpIsCurrentSource = in.readByte();
         isCurrentSource = tmpIsCurrentSource == 0 ? null : tmpIsCurrentSource == 1;
         originNum = in.readInt();
-        origins = in.createStringArrayList();
+        originUrls = in.createStringArrayList();
     }
 
     @Override
@@ -99,7 +100,7 @@ public class SearchBookBean implements Parcelable {
         dest.writeString(state);
         dest.writeByte((byte) (isCurrentSource == null ? 0 : isCurrentSource ? 1 : 2));
         dest.writeInt(originNum);
-        dest.writeStringList(origins);
+        dest.writeStringList(originUrls);
     }
 
     @Override
@@ -189,30 +190,30 @@ public class SearchBookBean implements Parcelable {
 
     public void setTag(String tag) {
         this.tag = tag;
+        addOriginUrl(tag);
     }
 
     public String getOrigin() {
-        return TextUtils.isEmpty(origin) ? origin : origin.contains("⪢") ? origin : ("⪢" + origin);
+        return origin;
     }
 
     public void setOrigin(String origin) {
         this.origin = origin;
-        addOrigin(origin);
     }
 
-    public void addOrigin(String origin) {
-        if (this.origins == null) {
-            this.origins = new ArrayList<>();
+    public void addOriginUrl(String origin) {
+        if (this.originUrls == null) {
+            this.originUrls = new ArrayList<>();
         }
 
-        if (!this.origins.contains(origin)) {
-            this.origins.add(origin);
+        if (!this.originUrls.contains(origin)) {
+            this.originUrls.add(origin);
         }
-        originNum = this.origins.size();
+        originNum = this.originUrls.size();
     }
 
-    public List<String> getOrigins() {
-        return this.origins == null ? new ArrayList<String>() : this.origins;
+    public List<String> getOriginUrls() {
+        return this.originUrls == null ? new ArrayList<String>() : this.originUrls;
     }
 
     public Boolean getCurrentSource() {

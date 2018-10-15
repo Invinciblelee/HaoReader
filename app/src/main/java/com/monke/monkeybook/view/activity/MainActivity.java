@@ -52,7 +52,7 @@ import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
-import com.monke.monkeybook.widget.ViewCompat;
+import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.List;
@@ -227,7 +227,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onClick(View view, int index) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 BookShelfBean bookShelfBean = getBookshelfList().get(index);
-                if (!mPresenter.checkLocalBookExist(bookShelfBean)) {
+                if (!mPresenter.checkLocalBookExists(bookShelfBean)) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle(R.string.delete_bookshelf)
                             .setMessage(R.string.delete_bookshelf_not_exist_s)
@@ -275,6 +275,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                     startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }
+
         };
     }
 
@@ -342,7 +343,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                         .show();
                 break;
             case R.id.action_refreshBookshelf:
-                mPresenter.queryBookShelf(NetworkUtil.isNetworkAvailable(), group);
+                mPresenter.queryBookShelf(NetworkUtil.isNetworkAvailable(), false, group);
                 if (!NetworkUtil.isNetworkAvailable()) {
                     Toast.makeText(MainActivity.this, "无网络，请打开网络后再试。", Toast.LENGTH_SHORT).show();
                 }
@@ -415,7 +416,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         if (this.group != group) {
             this.group = group;
 
-            mPresenter.queryBookShelf(false, group);
+            mPresenter.queryBookShelf(false, true, group);
         }
 
         switch (group) {
@@ -433,7 +434,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     //侧边栏按钮
     private void setUpNavigationView() {
-        ViewCompat.setNavigationMenuLineStyle(drawerLeft, getResources().getColor(R.color.bg_divider_line), getResources().getDimensionPixelSize(R.dimen.line_height));
+        AppCompat.setNavigationViewLineStyle(drawerLeft, getResources().getColor(R.color.bg_divider_line), getResources().getDimensionPixelSize(R.dimen.line_height));
         @SuppressLint("InflateParams") View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header, null);
         drawerLeft.addHeaderView(headerView);
         tvUser = headerView.findViewById(R.id.tv_user);
@@ -557,7 +558,36 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         return isActNightTheme != isNightTheme();
     }
 
-    private void startLayoutAnimationIfNeed() {
+    @Override
+    protected void firstRequest() {
+        if (NetworkUtil.isNetworkAvailable()) {
+            mPresenter.queryBookShelf(haveRefresh(), true, group);
+        } else {
+            mPresenter.queryBookShelf(false, true, group);
+            if (haveRefresh()) {
+                Toast.makeText(MainActivity.this, "无网络，自动刷新失败！", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        getWindow().getDecorView().post(this::versionUpRun);
+    }
+
+    @Override
+    public void refreshBookShelf(int group, List<BookShelfBean> bookShelfBeanList) {
+        if (group != this.group) {
+            mPresenter.queryBookShelf(false, true, this.group);
+            return;
+        }
+
+        if (viewIsList) {
+            bookShelfListAdapter.replaceAll(bookShelfBeanList, bookPx);
+        } else {
+            bookShelfGridAdapter.replaceAll(bookShelfBeanList, bookPx);
+        }
+    }
+
+    @Override
+    public void startLayoutAnimation() {
         if (getNeedAnim()) {
             if (rvBookshelf.getLayoutAnimation() == null) {
                 LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.anim_bookshelf_layout);
@@ -573,38 +603,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
-    protected void firstRequest() {
-        if (NetworkUtil.isNetworkAvailable()) {
-            mPresenter.queryBookShelf(haveRefresh(), group);
-        } else {
-            mPresenter.queryBookShelf(false, group);
-            if (haveRefresh()) {
-                Toast.makeText(MainActivity.this, "无网络，自动刷新失败！", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        getWindow().getDecorView().post(this::versionUpRun);
-    }
-
-    @Override
-    public void refreshBookShelf(int group, List<BookShelfBean> bookShelfBeanList) {
-        if (group != this.group) {
-            mPresenter.queryBookShelf(false, this.group);
-            return;
-        }
-
-        startLayoutAnimationIfNeed();
-
-        if (viewIsList) {
-            bookShelfListAdapter.replaceAll(bookShelfBeanList, bookPx);
-        } else {
-            bookShelfGridAdapter.replaceAll(bookShelfBeanList, bookPx);
-        }
-    }
-
-    @Override
     public void updateBook(BookShelfBean bookShelfBean, boolean sort) {
-        drawerRight.updateBook(bookShelfBean);
+        drawerRight.updateBookIfNeed(bookShelfBean);
         if (isDayNightChanged() || bookShelfBean.getGroup() != this.group) {
             return;
         }

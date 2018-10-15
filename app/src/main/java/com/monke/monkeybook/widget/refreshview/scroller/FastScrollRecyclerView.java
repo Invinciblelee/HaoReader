@@ -11,7 +11,6 @@ import com.monke.monkeybook.R;
 
 
 @SuppressWarnings("unused")
-
 public class FastScrollRecyclerView extends RecyclerView {
 
 

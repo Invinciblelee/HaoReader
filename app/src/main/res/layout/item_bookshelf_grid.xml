@@ -23,27 +23,30 @@
             android:transitionName="img_cover"
             tools:ignore="UnusedAttribute" />
 
+
         <FrameLayout
             android:id="@+id/fl_has_new"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:layout_gravity="top|end">
+            android:layout_marginTop="3dp"
+            android:layout_gravity="end">
 
             <ImageView
                 android:id="@+id/iv_has_new"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:padding="6dp"
                 android:src="@drawable/ic_circle_red_24dp"
                 android:visibility="invisible" />
 
             <com.victor.loading.rotate.RotateLoading
                 android:id="@+id/rl_loading"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
                 android:layout_gravity="center"
                 android:visibility="invisible"
-                app:loading_color="@color/white"
+                app:loading_color="@color/colorAccent"
                 app:loading_width="2dp" />
 
         </FrameLayout>

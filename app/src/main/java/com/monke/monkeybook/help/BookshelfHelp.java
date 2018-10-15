@@ -1,9 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
@@ -23,11 +19,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Created by GKF on 2018/1/18.
@@ -211,8 +204,8 @@ public class BookshelfHelp {
         return count > 0;
     }
 
-    public static boolean isInBookShelf(String bookUrl){
-        if(bookUrl == null){
+    public static boolean isInBookShelf(String bookUrl) {
+        if (bookUrl == null) {
             return false;
         }
 

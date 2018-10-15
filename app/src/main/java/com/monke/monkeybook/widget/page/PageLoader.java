@@ -52,15 +52,15 @@ public abstract class PageLoader {
     public static final int STATUS_CATEGORY_EMPTY = 8;  // 获取到的目录为空
     public static final int STATUS_HY = 9;              // 换源
     // 默认的显示参数配置
-    private static final int CONTENT_MARGIN_HEIGHT = 8;
-    private static final int DEFAULT_MARGIN_HEIGHT = 25;
-    public static final int DEFAULT_MARGIN_WIDTH = 15;
+    private static final int EXTRA_TOP_BOTTOM_MARGIN = 5;
+    private static final int DEFAULT_MARGIN_HEIGHT = 20;
+    public static final int DEFAULT_MARGIN_WIDTH = 16;
     private static final int DEFAULT_TIP_SIZE = 12;
     private static final int EXTRA_TITLE_SIZE = 1;
     private static final int DEFAULT_LINE_SIZE = 1;
     //电池
     private static final int BATTERY_FRAME_WIDTH = 18;
-    private static final int BATTERY_FRAME_HEIGHT = 8;
+    private static final int BATTERY_FRAME_HEIGHT = 9;
     private static final int BATTERY_POLAR_WIDTH = 2;
     private static final int BATTERY_POLAR_HEIGHT = 4;
 
@@ -121,7 +121,6 @@ public abstract class PageLoader {
     private int mMarginBottom;
     private int mMarginLeft;
     private int mMarginRight;
-    private int mContentMarginHeight;
     private int mOffsetHeight;
     private int mOffsetWidth;
     private int mLineHeight;
@@ -223,13 +222,6 @@ public abstract class PageLoader {
         // 获取配置参数
         mPageMode = mSettingManager.getPageMode(mSettingManager.getPageMode());
         // 初始化参数
-        mMarginTop = mSettingManager.getHideStatusBar()
-                ? ScreenUtils.dpToPx(mSettingManager.getPaddingTop() + DEFAULT_MARGIN_HEIGHT)
-                : ScreenUtils.dpToPx(mSettingManager.getPaddingTop());
-        mMarginBottom = ScreenUtils.dpToPx(mSettingManager.getPaddingBottom() + DEFAULT_MARGIN_HEIGHT + CONTENT_MARGIN_HEIGHT);
-        mMarginLeft = ScreenUtils.dpToPx(mSettingManager.getPaddingLeft());
-        mMarginRight = ScreenUtils.dpToPx(mSettingManager.getPaddingRight());
-        mContentMarginHeight = ScreenUtils.dpToPx(CONTENT_MARGIN_HEIGHT);
         mOffsetHeight = ScreenUtils.dpToPx(DEFAULT_MARGIN_HEIGHT);
         mOffsetWidth = ScreenUtils.dpToPx(DEFAULT_MARGIN_WIDTH);
         mLineHeight = ScreenUtils.dpToPx(DEFAULT_LINE_SIZE);
@@ -238,6 +230,12 @@ public abstract class PageLoader {
         mBatteryFrameWidth = ScreenUtils.dpToPx(BATTERY_FRAME_WIDTH);
         mBatteryPolarHeight = ScreenUtils.dpToPx(BATTERY_POLAR_HEIGHT);
         mBatteryPolarWidth = ScreenUtils.dpToPx(BATTERY_POLAR_WIDTH);
+        mMarginTop = mSettingManager.getHideStatusBar()
+                ? ScreenUtils.dpToPx(mSettingManager.getPaddingTop() + DEFAULT_MARGIN_HEIGHT + EXTRA_TOP_BOTTOM_MARGIN)
+                : ScreenUtils.dpToPx(mSettingManager.getPaddingTop() + EXTRA_TOP_BOTTOM_MARGIN);
+        mMarginBottom = ScreenUtils.dpToPx(mSettingManager.getPaddingBottom() + DEFAULT_MARGIN_HEIGHT + EXTRA_TOP_BOTTOM_MARGIN);
+        mMarginLeft = ScreenUtils.dpToPx(mSettingManager.getPaddingLeft());
+        mMarginRight = ScreenUtils.dpToPx(mSettingManager.getPaddingRight());
         // 配置文字有关的参数
         setUpTextParams();
     }
@@ -253,8 +251,8 @@ public abstract class PageLoader {
         mTextInterval = (int) (mTextSize / 2 * mSettingManager.getLineMultiplier());
         mTitleInterval = (int) (mTitleSize / 2 * mSettingManager.getLineMultiplier());
         // 段落间距(大小为字体的高度)
-        mTextPara = (int) (mTextSize / 2 * mSettingManager.getLineMultiplier() * mSettingManager.getParagraphSize());
-        mTitlePara = (int) (mTitleSize / 2 * mSettingManager.getLineMultiplier() * mSettingManager.getParagraphSize());
+        mTextPara = (int) (mTextSize / 2 * mSettingManager.getParagraphSize());
+        mTitlePara = (int) (mTitleSize / 2 * mSettingManager.getParagraphSize());
     }
 
     public void initPaint() {
@@ -275,7 +273,6 @@ public abstract class PageLoader {
         mTipPaint.setColor(mTextColor);
         mTipPaint.setTextAlign(Paint.Align.LEFT); // 绘制的起始点
         mTipPaint.setTextSize(ScreenUtils.spToPx(DEFAULT_TIP_SIZE)); // Tip默认的字体大小
-        mTipPaint.setTypeface(Typeface.create(typeface, Typeface.NORMAL));
         mTipPaint.setAntiAlias(true);
         mTipPaint.setSubpixelText(true);
 
@@ -344,12 +341,24 @@ public abstract class PageLoader {
      * 换源结束
      */
     public void changeSourceFinish(BookShelfBean bookShelfBean) {
+        if (bookShelfBean == null) {
+            return;
+        }
         mCollBook = bookShelfBean;
         mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
         if (!isChapterListPrepare) {
             isChapterListPrepare = true;
         }
         skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
+    }
+
+    public void updateChapterList(List<ChapterListBean> chapterListBeans) {
+        if (chapterListBeans == null || chapterListBeans.isEmpty()) {
+            return;
+        }
+
+        mCollBook.getBookInfoBean().setChapterList(chapterListBeans);
+        mCollBook.setChapterListSize(chapterListBeans.size());
     }
 
     /**
@@ -363,7 +372,7 @@ public abstract class PageLoader {
 
         // 载入上一章。
         if (parsePrevChapter()) {
-            mCurPage = getCurPage(goPagePos);
+            mCurPage = getCurPage(0);
         } else {
             mCurPage = new TxtPage();
         }
@@ -383,7 +392,7 @@ public abstract class PageLoader {
 
         //判断是否达到章节的终止点
         if (parseNextChapter()) {
-            mCurPage = getCurPage(goPagePos);
+            mCurPage = getCurPage(0);
         } else {
             mCurPage = new TxtPage();
         }
@@ -411,7 +420,7 @@ public abstract class PageLoader {
         mStatus.clear();
 
         // 打开指定章节
-        openChapter(goPagePos);
+        openChapter(pagePos);
     }
 
     /**
@@ -556,9 +565,9 @@ public abstract class PageLoader {
      */
     public void upMargin() {
         mMarginTop = mSettingManager.getHideStatusBar()
-                ? ScreenUtils.dpToPx(mSettingManager.getPaddingTop() + DEFAULT_MARGIN_HEIGHT)
-                : ScreenUtils.dpToPx(mSettingManager.getPaddingTop());
-        mMarginBottom = ScreenUtils.dpToPx(mSettingManager.getPaddingBottom() + DEFAULT_MARGIN_HEIGHT);
+                ? ScreenUtils.dpToPx(mSettingManager.getPaddingTop() + DEFAULT_MARGIN_HEIGHT + EXTRA_TOP_BOTTOM_MARGIN)
+                : ScreenUtils.dpToPx(mSettingManager.getPaddingTop() + EXTRA_TOP_BOTTOM_MARGIN);
+        mMarginBottom = ScreenUtils.dpToPx(mSettingManager.getPaddingBottom() + DEFAULT_MARGIN_HEIGHT + EXTRA_TOP_BOTTOM_MARGIN);
         mMarginLeft = ScreenUtils.dpToPx(mSettingManager.getPaddingLeft());
         mMarginRight = ScreenUtils.dpToPx(mSettingManager.getPaddingRight());
 
@@ -678,7 +687,8 @@ public abstract class PageLoader {
         return !isChapterListPrepare
                 || getChapterPageStatus() == STATUS_CATEGORY_EMPTY
                 || getChapterPageStatus() == STATUS_PARING
-                || getChapterPageStatus() == STATUS_PARSE_ERROR;
+                || getChapterPageStatus() == STATUS_PARSE_ERROR
+                || getChapterPageStatus() == STATUS_HY;
     }
 
     /**
@@ -864,15 +874,20 @@ public abstract class PageLoader {
                     if (mSettingManager.getShowTimeBattery()) {
                         canvas.drawText(percent, (mDisplayWidth - mTipPaint.measureText(percent)) / 2, tipBottom, mTipPaint);
                     } else {
-                        float y = mDisplayHeight - fontMetrics.bottom - tipMarginHeight;
                         float x = mDisplayWidth - mOffsetWidth - mTipPaint.measureText(percent) - ScreenUtils.dpToPx(4);
-                        canvas.drawText(percent, x, y, mTipPaint);
+                        canvas.drawText(percent, x, tipBottom, mTipPaint);
                     }
                 }
                 if (mSettingManager.getShowLine()) {
-                    //绘制分隔线
+                    //绘制顶部分隔线
                     tipBottom = mOffsetHeight + mLineHeight;
                     canvas.drawRect(mOffsetWidth, tipBottom, mDisplayWidth - mOffsetWidth, mOffsetHeight, mTextPaint);
+
+                    if (getChapterPageStatus() == STATUS_FINISH) {
+                        //绘制底部分隔线
+                        tipBottom = mDisplayHeight - mOffsetHeight;
+                        canvas.drawRect(mOffsetWidth, tipBottom, mDisplayWidth - mOffsetWidth, tipBottom + mLineHeight, mTextPaint);
+                    }
                 }
             }
         }
@@ -880,13 +895,13 @@ public abstract class PageLoader {
 
         if (getChapterPageStatus() == STATUS_FINISH && mSettingManager.getHideStatusBar() && mSettingManager.getShowTimeBattery()) {
             //绘制电池
-            int visibleBottom = mDisplayHeight - (mOffsetHeight - mBatteryFrameHeight) / 2;
-            int visibleRight = mDisplayWidth - mOffsetWidth;
+            float visibleBottom = mDisplayHeight - (mOffsetHeight - mBatteryFrameHeight) / 2 - 0.5f;
+            float visibleRight = mDisplayWidth - mOffsetWidth;
 
             //电极的制作
-            int polarLeft = visibleRight - mBatteryPolarWidth;
-            int polarTop = visibleBottom - (mBatteryFrameHeight + mBatteryPolarHeight) / 2;
-            Rect polar = new Rect(polarLeft, polarTop, visibleRight,
+            float polarLeft = visibleRight - mBatteryPolarWidth;
+            float polarTop = visibleBottom - (mBatteryFrameHeight + mBatteryPolarHeight) / 2;
+            RectF polar = new RectF(polarLeft, polarTop, visibleRight,
                     polarTop + mBatteryPolarHeight);
 
             mBatteryPaint.setColor(mTextColor);
@@ -894,9 +909,9 @@ public abstract class PageLoader {
             canvas.drawRect(polar, mBatteryPaint);
 
             //外框的制作
-            int outFrameLeft = polarLeft - mBatteryFrameWidth;
-            int outFrameTop = visibleBottom - mBatteryFrameHeight;
-            Rect outFrame = new Rect(outFrameLeft, outFrameTop, polarLeft, visibleBottom);
+            float outFrameLeft = polarLeft - mBatteryFrameWidth;
+            float outFrameTop = visibleBottom - mBatteryFrameHeight;
+            RectF outFrame = new RectF(outFrameLeft, outFrameTop, polarLeft, visibleBottom);
 
             mBatteryPaint.setStyle(Paint.Style.STROKE);
             mBatteryPaint.setStrokeWidth(DEFAULT_LINE_SIZE);
@@ -954,8 +969,9 @@ public abstract class PageLoader {
                 return;
             }
 
-            float top = mSettingManager.getHideStatusBar() ? mMarginTop + mContentMarginHeight - mTextPaint.getFontMetrics().top
-                    : mPageView.getStatusBarHeight() + mMarginTop + mContentMarginHeight - mTextPaint.getFontMetrics().top;
+            Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+            float top = mSettingManager.getHideStatusBar() ? mMarginTop - fontMetrics.top
+                    : mPageView.getStatusBarHeight() + mMarginTop - mTextPaint.getFontMetrics().top;
 
             String str;
 
@@ -1021,7 +1037,6 @@ public abstract class PageLoader {
             canvas.drawText(c, x, top, paint);
             x += cw + d;
         }
-
     }
 
     /**
@@ -1172,6 +1187,7 @@ public abstract class PageLoader {
             chapterChangeCallback();
         } else {
             dealLoadPageList(prevChapter);
+            goPagePos = 999;
         }
         //预加载上一页
         preLoadPrevChapter();
@@ -1422,7 +1438,7 @@ public abstract class PageLoader {
         List<TxtPage> pages = new ArrayList<>();
         //使用流的方式加载
         List<String> lines = new ArrayList<>();
-        int rHeight = mVisibleHeight - mContentMarginHeight * 2;
+        int rHeight = mVisibleHeight;
         int titleLinesCount = 0;
         try {
             boolean showTitle = true; // 是否展示标题
@@ -1464,7 +1480,7 @@ public abstract class PageLoader {
                         pages.add(page);
                         // 重置Lines
                         lines.clear();
-                        rHeight = mVisibleHeight - mContentMarginHeight * 2;
+                        rHeight = mVisibleHeight;
                         titleLinesCount = 0;
                         continue;
                     }

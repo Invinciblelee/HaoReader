@@ -4,12 +4,9 @@ package com.monke.monkeybook.base;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +17,7 @@ import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.barUtil.ImmersionBar;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.lang.reflect.Method;
 
@@ -47,10 +45,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (toolbar != null) {
             int color = getResources().getColor(R.color.menu_color_default);
             toolbar.setTitleTextColor(color);
-            Drawable icon = toolbar.getNavigationIcon();
-            if (icon != null) {
-                DrawableCompat.setTint(icon, color);
-            }
+            AppCompat.setToolbarNavIconTint(toolbar, color);
         }
     }
 
@@ -130,10 +125,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (menu != null) {
             for (int i = 0; i< menu.size(); i++) {
                 MenuItem item = menu.getItem(i);
-                Drawable drawable = item.getIcon();
-                if (drawable != null) {
-                    DrawableCompat.setTint(drawable, getResources().getColor(R.color.menu_color_default));
-                }
+                AppCompat.setTint(item, getResources().getColor(R.color.menu_color_default));
             }
         }
         return super.onCreateOptionsMenu(menu);

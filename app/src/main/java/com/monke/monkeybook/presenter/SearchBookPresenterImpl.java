@@ -2,6 +2,8 @@ package com.monke.monkeybook.presenter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -55,13 +57,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
             @Override
             public boolean checkExists(SearchBookBean searchBook) {
-                List<SearchBookBean> searchBooks = mView.getSearchBookAdapter().getSearchBooks();
-                for (SearchBookBean temp : searchBooks) {
-                    if (searchBook.getOrigins().contains(temp.getTag())) {
-                        return true;
-                    }
-                }
-                return false;
+                return false;//这里不用检查
             }
 
             @Override

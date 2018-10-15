@@ -39,11 +39,24 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         this.itemClickListener = itemClickListener;
     }
 
-    public void upChapterList(ChapterListBean chapterListBean) {
-        if (bookShelfBean.getChapterListSize() > chapterListBean.getDurChapterIndex()) {
+    public void upChapter(int index) {
+        if (bookShelfBean.getChapterListSize() > index) {
             if (tabPosition == 0 && !isSearch) {
-                notifyItemChanged(chapterListBean.getDurChapterIndex());
+                notifyItemChanged(index);
             }
+        }
+    }
+
+    public void upChapterList(List<ChapterListBean> chapterList) {
+        if(chapterList == null || chapterList.isEmpty()){
+            return;
+        }
+
+        chapterListBeans.clear();
+        chapterListBeans.addAll(chapterList);
+
+        if (tabPosition == 0 && !isSearch) {
+            notifyDataSetChanged();
         }
     }
 

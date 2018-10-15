@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -151,7 +152,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
             if (mPresenter.getBookShelf().getBookInfoBean().getOrigin() != null && mPresenter.getBookShelf().getBookInfoBean().getOrigin().length() > 0) {
                 tvOrigin.setVisibility(View.VISIBLE);
-                tvOrigin.setText(getString(R.string.origin_format, mPresenter.getBookShelf().getBookInfoBean().getOrigin()));
+                tvOrigin.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
             } else {
                 tvOrigin.setVisibility(View.INVISIBLE);
             }
@@ -187,7 +188,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             progressBar.start();
             llLoading.setOnClickListener(null);
         } else {
-            if(llLoading.getVisibility() == View.GONE){
+            if (llLoading.getVisibility() == View.GONE) {
                 return;
             }
             llLoading.startAnimation(animHideLoading);
@@ -242,7 +243,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             author = mPresenter.getBookShelf().getBookInfoBean().getAuthor();
             if (mPresenter.getBookShelf().getBookInfoBean().getOrigin() != null && mPresenter.getBookShelf().getBookInfoBean().getOrigin().length() > 0) {
                 tvOrigin.setVisibility(View.VISIBLE);
-                tvOrigin.setText(getString(R.string.origin_format, mPresenter.getBookShelf().getBookInfoBean().getOrigin()));
+                tvOrigin.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
             } else {
                 tvOrigin.setVisibility(View.INVISIBLE);
             }
@@ -254,7 +255,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             author = mPresenter.getSearchBook().getAuthor();
             if (mPresenter.getSearchBook().getOrigin() != null && mPresenter.getSearchBook().getOrigin().length() > 0) {
                 tvOrigin.setVisibility(View.VISIBLE);
-                tvOrigin.setText(getString(R.string.origin_format, mPresenter.getSearchBook().getOrigin()));
+                tvOrigin.setText(mPresenter.getSearchBook().getOrigin());
             } else {
                 tvOrigin.setVisibility(View.INVISIBLE);
             }
@@ -291,10 +292,10 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         iflContent.setOnClickListener(v -> finish());
 
         llShelfZg.setOnClickListener(v -> {
-            if(mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 0){
+            if (mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 0) {
                 mPresenter.removeFromBookShelf();
                 changeGroup(-1);
-            }else {
+            } else {
                 mPresenter.getBookShelf().setGroup(0);
                 mPresenter.addToBookShelf();
                 changeGroup(0);
@@ -302,10 +303,10 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         });
 
         llShelfYf.setOnClickListener(v -> {
-            if(mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 1){
+            if (mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 1) {
                 mPresenter.removeFromBookShelf();
                 changeGroup(-1);
-            }else {
+            } else {
                 mPresenter.getBookShelf().setGroup(1);
                 mPresenter.addToBookShelf();
                 changeGroup(1);
@@ -377,7 +378,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         }
         moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(),
                 searchBookBean -> {
-                    tvOrigin.setText(getString(R.string.origin_format, searchBookBean.getOrigin()));
+                    tvOrigin.setText(searchBookBean.getOrigin());
                     showLoading(true);
                     if (mPresenter.getInBookShelf()) {
                         mPresenter.changeBookSource(searchBookBean);
@@ -386,6 +387,11 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                         mPresenter.getBookShelfInfo();
                     }
                 });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
     @Override

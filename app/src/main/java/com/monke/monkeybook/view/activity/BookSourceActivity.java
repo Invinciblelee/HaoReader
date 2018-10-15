@@ -32,7 +32,7 @@ import com.monke.monkeybook.model.BookSourceManage;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
-import com.monke.monkeybook.widget.ViewCompat;
+import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     private void initSearchView() {
-        ViewCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.search_book_source));
+        AppCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.search_book_source));
         mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.onActionViewExpanded();
         searchView.clearFocus();
@@ -167,7 +167,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     public void upSearchView(int size) {
-        ViewCompat.setQueryHintForSearchView(mSearchAutoComplete, getString(R.string.search_book_source_num, size));
+        AppCompat.setQueryHintForSearchText(mSearchAutoComplete, getString(R.string.search_book_source_num, size));
     }
 
     @Override
@@ -208,6 +208,16 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @Override
     public void showSnackBar(String msg, int length) {
         Snackbar.make(llContent, msg, length).show();
+    }
+
+    @Override
+    public void showLoading(String msg) {
+        moDialogHUD.showLoading(msg);
+    }
+
+    @Override
+    public void dismissHUD() {
+        moDialogHUD.dismiss();
     }
 
     //设置ToolBar

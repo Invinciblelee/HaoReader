@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.content;
 
+import android.util.Log;
+
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;

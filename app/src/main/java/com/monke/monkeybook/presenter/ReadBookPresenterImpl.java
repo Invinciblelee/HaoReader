@@ -24,7 +24,6 @@ import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.BookmarkBean;
-import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
@@ -48,6 +47,7 @@ import com.trello.rxlifecycle2.android.ActivityEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -157,6 +157,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                                 BookshelfHelp.saveChapterInfo(BookshelfHelp.getCachePathName(bookShelf.getBookInfoBean()),
                                         BookshelfHelp.getCacheFileName(chapterIndex, bookShelf.getChapter(chapterIndex).getDurChapterName()),
                                         bookContentBean.getDurChapterContent());
+                                mView.chapterChange(bookContentBean.getDurChapterIndex());
                             }
 
                             if (bookContentBean.getRight()) {
@@ -204,6 +205,41 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         }
     }
 
+    @Override
+    public void updateChapterList() {
+        if (bookShelf != null) {
+            int chapterListSize = bookShelf.getChapterListSize();
+            WebBookModelImpl.getInstance().getChapterList(bookShelf)
+                    .subscribeOn(Schedulers.io())
+                    .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> Observable.create(e -> {
+                        bookShelfBean.setHasUpdate(false);
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                        e.onNext(bookShelf);
+                    }))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
+                    .subscribe(new SimpleObserver<BookShelfBean>() {
+
+                        @Override
+                        public void onNext(BookShelfBean bookShelfBean) {
+                            int newCount = bookShelfBean.getChapterListSize() - chapterListSize;
+                            if(newCount>0){
+                                mView.toast(String.format(Locale.getDefault(), "更新成功, 新增%d章", newCount));
+                            }else {
+                                mView.toast("更新成功，没有新增章节");
+                            }
+                            mView.chapterListChange(bookShelfBean);
+                            RxBus.get().post(RxBusTag.UPDATE_BOOK_PROGRESS, bookShelf);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            mView.chapterListUpdateFinish();
+                        }
+                    });
+        }
+    }
+
     /**
      * 编辑下载列表
      */
@@ -226,7 +262,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 bookShelf.setFinalDate(System.currentTimeMillis());
                 bookShelf.upDurChapterName();
                 bookShelf.upLastChapterName();
-                BookshelfHelp.saveBookToShelf(bookShelf);
+                DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelf);
                 e.onNext(bookShelf);
                 e.onComplete();
             }).subscribeOn(Schedulers.io())
@@ -521,9 +557,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     /////////////////////RxBus////////////////////////
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CHAPTER_CHANGE)})
-    public void chapterChange(ChapterListBean chapterListBean) {
-        if (bookShelf != null && bookShelf.getNoteUrl().equals(chapterListBean.getNoteUrl())) {
-            mView.chapterChange(chapterListBean);
+    public void chapterChange(BookContentBean bookContentBean) {
+        if (bookShelf != null && bookShelf.getNoteUrl().equals(bookContentBean.getNoteUrl())) {
+            mView.chapterChange(bookContentBean.getDurChapterIndex());
         }
     }
 

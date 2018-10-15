@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -16,7 +15,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -52,6 +50,7 @@ import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
 import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
+import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.ChapterListView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.modialog.EditBookmarkView;
@@ -322,14 +321,13 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             }
             mHandler.postDelayed(upHpbNextPage, upHpbInterval);
             fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop);
-            DrawableCompat.setTint(fabAutoPage.getDrawable(), getResources().getColor(R.color.menu_color_default));
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page_stop));
         } else {
             hpbNextPageProgress.setVisibility(View.INVISIBLE);
             fabAutoPage.setImageResource(R.drawable.ic_auto_page);
-            DrawableCompat.setTint(fabAutoPage.getDrawable(), getResources().getColor(R.color.menu_color_default));
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page));
         }
+        AppCompat.setTint(fabAutoPage, getResources().getColor(R.color.menu_color_default));
     }
 
     private void upHpbNextPage() {
@@ -733,6 +731,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 initImmersionBar();
             }
         });
+        chapterListView.setOnUpdateListener(() -> mPresenter.updateChapterList());
         chapterListView.setData(mPresenter.getBookShelf(), new ChapterListView.OnItemClickListener() {
             @Override
             public void itemClick(int index, int page, int tabPosition) {
@@ -1149,7 +1148,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 fabReadAloud.setImageResource(R.drawable.ic_read_aloud);
                 llReadAloudTimer.setVisibility(View.INVISIBLE);
         }
-        DrawableCompat.setTint(fabReadAloud.getDrawable(), getResources().getColor(R.color.menu_color_default));
+        AppCompat.setTint(fabReadAloud, getResources().getColor(R.color.menu_color_default));
     }
 
     @Override
@@ -1347,10 +1346,21 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      * 更新目录
      */
     @Override
-    public void chapterChange(ChapterListBean chapterListBean) {
-        if (chapterListView != null && chapterListView.hasData()) {
-            chapterListView.upChapterList(chapterListBean);
+    public void chapterChange(int chapterIndex) {
+        if (chapterListView.hasData()) {
+            chapterListView.upChapter(chapterIndex);
         }
+    }
+
+    @Override
+    public void chapterListChange(BookShelfBean bookShelfBean) {
+        chapterListView.upChapterList(bookShelfBean);
+    }
+
+    @Override
+    public void chapterListUpdateFinish() {
+        toast("更新失败");
+        chapterListView.updateFinish();
     }
 
     /**
@@ -1468,11 +1478,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         overridePendingTransition(0, android.R.anim.fade_out);
     }
 
-
-    @Override
-    public SharedPreferences getPreferences() {
-        return preferences;
-    }
 
     @Override
     public void changeSourceFinish(boolean success) {

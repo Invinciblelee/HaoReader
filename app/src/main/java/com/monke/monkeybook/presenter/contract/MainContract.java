@@ -16,9 +16,11 @@ public interface MainContract {
 
         /**
          * 刷新书架书籍小说信息 更新UI
-         * @param bookShelfBeanList 书架
+         *
          */
         void refreshBookShelf(int group, List<BookShelfBean> bookShelfBeanList);
+
+        void startLayoutAnimation();
 
         void updateBook(BookShelfBean bookShelfBean, boolean sort);
 
@@ -35,6 +37,7 @@ public interface MainContract {
 
         /**
          * 刷新错误
+         *
          * @param error 错误
          */
         void refreshError(String error);
@@ -59,13 +62,13 @@ public interface MainContract {
     }
 
     interface Presenter extends IPresenter {
-        void queryBookShelf(Boolean needRefresh, int group);
+        void queryBookShelf(boolean needRefresh, boolean needAnim, int group);
 
         void backupData();
 
         void restoreData();
 
-        boolean checkLocalBookExist(BookShelfBean bookShelf);
+        boolean checkLocalBookExists(BookShelfBean bookShelf);
 
         void addBookUrl(String bookUrl);
 

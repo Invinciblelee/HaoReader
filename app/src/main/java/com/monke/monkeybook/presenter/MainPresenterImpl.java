@@ -51,7 +51,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     private CompositeDisposable refreshingDisps = new CompositeDisposable();
 
     @Override
-    public boolean checkLocalBookExist(BookShelfBean bookShelf) {
+    public boolean checkLocalBookExists(BookShelfBean bookShelf) {
         if (bookShelf == null) {
             return false;
         }
@@ -65,7 +65,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     }
 
     @Override
-    public void queryBookShelf(final Boolean needRefresh, final int group) {
+    public void queryBookShelf(boolean needRefresh, boolean needAnim, int group) {
         this.group = group;
         if (needRefresh) {
             errBooks.clear();
@@ -84,6 +84,9 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                         if (null != value) {
                             bookShelfBeans = value;
                             mView.refreshBookShelf(group, bookShelfBeans);
+                            if (needAnim) {
+                                mView.startLayoutAnimation();
+                            }
                             if (needRefresh) {
                                 startRefreshBook();
                             }
@@ -101,6 +104,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     @Override
     public void backupData() {
         DataBackup.getInstance().run();
+        mView.dismissHUD();
     }
 
     @Override
@@ -121,7 +125,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(Boolean value) {
                         if (value) {
                             mView.restoreSuccess();
-                            queryBookShelf(true, group);
+                            queryBookShelf(true, true, group);
                             Toast.makeText(mView.getContext(), R.string.restore_success, Toast.LENGTH_LONG).show();
                         } else {
                             mView.dismissHUD();
@@ -188,7 +192,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
-                        queryBookShelf(false, group);
+                        queryBookShelf(false, false, group);
                     }
 
                     @Override
@@ -344,6 +348,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
      */
     private Observable<BookShelfBean> saveBookToShelfO(BookShelfBean bookShelfBean) {
         return Observable.create(e -> {
+            bookShelfBean.setLoading(false);
             BookshelfHelp.saveBookToShelf(bookShelfBean);
             e.onNext(bookShelfBean);
             e.onComplete();
@@ -371,8 +376,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
-            tags = { @Tag(RxBusTag.HAD_REMOVE_BOOK)})
-    public void removeFromBookShelf(BookShelfBean bookShelfBean){
+            tags = {@Tag(RxBusTag.HAD_REMOVE_BOOK)})
+    public void removeFromBookShelf(BookShelfBean bookShelfBean) {
         mView.removeFromBookShelf(bookShelfBean);
     }
 

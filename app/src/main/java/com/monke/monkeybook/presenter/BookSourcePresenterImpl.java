@@ -92,7 +92,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void delData(List<BookSourceBean> bookSourceBeans) {
-        mView.showSnackBar("正在删除选中书源", Snackbar.LENGTH_INDEFINITE);
+        mView.showLoading("正在删除选中书源...");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             for (BookSourceBean sourceBean : bookSourceBeans) {
                 DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().delete(sourceBean);
@@ -104,12 +104,14 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
+                        mView.dismissHUD();
                         mView.showSnackBar("删除成功", Snackbar.LENGTH_SHORT);
                         mView.refreshBookSource();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        mView.dismissHUD();
                         mView.showSnackBar("删除失败", Snackbar.LENGTH_SHORT);
                     }
                 });
@@ -146,7 +148,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             json = DocumentHelper.readString(file);
         }
         if (!isEmpty(json)) {
-            mView.showSnackBar("正在导入书源", Snackbar.LENGTH_INDEFINITE);
+            mView.showLoading("正在导入书源...");
             BookSourceManage.importBookSourceO(json)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -166,7 +168,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             mView.showSnackBar("URL格式不对", Snackbar.LENGTH_SHORT);
             return;
         }
-        mView.showSnackBar("正在导入书源", Snackbar.LENGTH_INDEFINITE);
+        mView.showLoading("正在导入书源...");
         BookSourceManage.importSourceFromWww(url)
                 .subscribe(getImportObserver());
     }
@@ -175,6 +177,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         return new SimpleObserver<Boolean>() {
             @Override
             public void onNext(Boolean aBoolean) {
+                mView.dismissHUD();
                 if (aBoolean) {
                     mView.refreshBookSource();
                     mView.showSnackBar("书源导入成功", Snackbar.LENGTH_SHORT);
@@ -185,6 +188,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
             @Override
             public void onError(Throwable e) {
+                mView.dismissHUD();
                 mView.showSnackBar(e.getMessage(), Snackbar.LENGTH_SHORT);
             }
         };
