@@ -26,7 +26,7 @@ public class FormatWebText {
         }
 
         return trim(str.replace("&nbsp;", "")
-                .replaceAll("[\\u3000| ]+", "")
+                .replaceAll("[\\u3000 ]+", "")
                 .replaceAll("\\s", " ")
                 .replaceAll(":", "：")
                 .replaceAll("\\(", "【")
@@ -41,7 +41,7 @@ public class FormatWebText {
         }
 
         return trim(str.replace("&nbsp;", "")
-                .replaceAll("[：|:|(|)|（|）|\\u3000| ]+", "")
+                .replaceAll("[：:()【】\\[\\]（）\\u3000 ]+", "")
                 .replaceAll("\\s", " ")
                 .replaceAll("作.*?者", ""));
     }

@@ -322,15 +322,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             intent.putExtra("inBookShelf", mPresenter.getInBookShelf());
             String key = String.valueOf(System.currentTimeMillis());
             intent.putExtra("data_key", key);
-
-            try {
-                BitIntentDataManager.getInstance().putData(key, mPresenter.getBookShelf().clone());
-            } catch (CloneNotSupportedException e) {
-                BitIntentDataManager.getInstance().putData(key, mPresenter.getBookShelf());
-                e.printStackTrace();
-            }
+            BitIntentDataManager.getInstance().putData(key, mPresenter.getBookShelf().copy());
             startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
-
             finish();
         });
 

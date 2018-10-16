@@ -430,6 +430,12 @@
 
     </com.monke.monkeybook.widget.ScrimInsetsFrameLayout>
 
+    <ViewStub
+        android:id="@+id/clp_chapterList_stub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/view_chapterlist_layout" />
+
     <com.monke.mprogressbar.MHorProgressBar
         android:id="@+id/hpb_next_page_progress"
         android:layout_width="match_parent"
@@ -439,10 +445,4 @@
         app:cantouch="false"
         app:fontdrawable="@color/colorAccent" />
 
-    <com.monke.monkeybook.widget.ChapterListView
-        android:id="@+id/clp_chapterList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        app:appInsetForeground="@color/colorPrimary" />
 </FrameLayout>

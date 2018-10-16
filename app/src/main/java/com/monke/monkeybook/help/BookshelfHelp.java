@@ -1,13 +1,16 @@
 package com.monke.monkeybook.help;
 
+import android.util.Log;
+
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.ChapterListBean;
-import com.monke.monkeybook.bean.DownloadChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookInfoBeanDao;
 import com.monke.monkeybook.dao.BookShelfBeanDao;
+import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.BookmarkBeanDao;
 import com.monke.monkeybook.dao.ChapterListBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
@@ -29,7 +32,7 @@ import java.util.Locale;
 
 public class BookshelfHelp {
 
-    public static String getCachePathName(DownloadChapterBean chapter) {
+    public static String getCachePathName(ChapterListBean chapter) {
         return formatFileName(chapter.getBookName() + "-" + chapter.getTag());
     }
 
@@ -66,18 +69,20 @@ public class BookshelfHelp {
     /**
      * 存储章节
      */
-    public static void saveChapterInfo(String folderName, String fileName, String content) {
+    public static boolean saveChapterInfo(String folderName, String fileName, String content) {
         if (content == null) {
-            return;
+            return false;
         }
         File file = getBookFile(folderName, formatFileName(fileName));
         //获取流并存储
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(content);
             writer.flush();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     /**
@@ -152,8 +157,8 @@ public class BookshelfHelp {
             BookInfoBean bookInfoBean = DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().queryBuilder()
                     .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookShelfBean.getNoteUrl())).unique();
             if (bookInfoBean != null) {
-                bookInfoBean.setChapterList(getChapterList(bookInfoBean.getNoteUrl()));
-                bookInfoBean.setBookmarkList(getBookmarkList(bookInfoBean.getName()));
+                bookShelfBean.setChapterList(getChapterList(bookInfoBean.getNoteUrl()));
+                bookShelfBean.setBookmarkList(getBookmarkList(bookInfoBean.getName()));
                 bookShelfBean.setBookInfoBean(bookInfoBean);
                 return bookShelfBean;
             }
@@ -170,8 +175,8 @@ public class BookshelfHelp {
                     .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookInfoBean.getNoteUrl())).build().unique();
 
             if (bookShelfBean != null) {
-                bookInfoBean.setChapterList(getChapterList(bookInfoBean.getNoteUrl()));
-                bookInfoBean.setBookmarkList(getBookmarkList(bookInfoBean.getName()));
+                bookShelfBean.setChapterList(getChapterList(bookInfoBean.getNoteUrl()));
+                bookShelfBean.setBookmarkList(getBookmarkList(bookInfoBean.getName()));
                 bookShelfBean.setBookInfoBean(bookInfoBean);
                 return bookShelfBean;
             }
@@ -194,16 +199,6 @@ public class BookshelfHelp {
         }
     }
 
-    public static boolean isInBookShelf(BookShelfBean bookShelf) {
-        if (bookShelf == null) {
-            return false;
-        }
-        long count = DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().queryBuilder()
-                .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookShelf.getNoteUrl()))
-                .count();
-        return count > 0;
-    }
-
     public static boolean isInBookShelf(String bookUrl) {
         if (bookUrl == null) {
             return false;
@@ -213,6 +208,13 @@ public class BookshelfHelp {
                 .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookUrl))
                 .count();
         return count > 0;
+    }
+
+    public static BookSourceBean getBookSourceByTag(String tag) {
+        if (tag == null)
+            return null;
+        return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
     }
 
     public static BookShelfBean getBookFromSearchBook(SearchBookBean searchBookBean) {

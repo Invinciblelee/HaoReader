@@ -3,6 +3,8 @@ package com.monke.monkeybook.model.impl;
 
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.BookSourceBean;
+import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public interface IWebBookModel {
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(final String durChapterUrl, final int durChapterIndex, String tag);
+    Observable<BookContentBean> getBookContent(final ChapterListBean chapter);
 
     /**
      * 其他站点资源整合搜索

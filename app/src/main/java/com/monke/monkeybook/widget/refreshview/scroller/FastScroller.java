@@ -22,10 +22,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -195,7 +197,6 @@ public class FastScroller extends LinearLayout {
 
 
     @Override
-
     public void setLayoutParams(@NonNull ViewGroup.LayoutParams params) {
 
         params.width = LayoutParams.WRAP_CONTENT;
@@ -298,9 +299,6 @@ public class FastScroller extends LinearLayout {
 
         }
 
-
-        updateViewHeights();
-
     }
 
 
@@ -320,21 +318,13 @@ public class FastScroller extends LinearLayout {
 
             mRecyclerView.addOnScrollListener(mScrollListener);
 
-            post(new Runnable() {
-
-
-                @Override
-
-                public void run() {
-
-                    // set initial positions for bubble and handle
-
-                    setViewPositions(getScrollProportion(mRecyclerView));
-
-                }
-
-            });
-
+           getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+               @Override
+               public void onGlobalLayout() {
+                   getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                   setViewPositions(getScrollProportion(mRecyclerView));
+               }
+           });
         }
 
     }
@@ -534,7 +524,6 @@ public class FastScroller extends LinearLayout {
 
 
     @Override
-
     public void setEnabled(boolean enabled) {
 
         super.setEnabled(enabled);
@@ -545,9 +534,7 @@ public class FastScroller extends LinearLayout {
 
 
     @Override
-
     @SuppressLint("ClickableViewAccessibility")
-
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction()) {
@@ -755,23 +742,6 @@ public class FastScroller extends LinearLayout {
         mHandleView.setY(handleY);
 
     }
-
-
-    private void updateViewHeights() {
-
-        int measureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-
-
-        mBubbleView.measure(measureSpec, measureSpec);
-
-        mBubbleHeight = mBubbleView.getMeasuredHeight();
-
-        mHandleView.measure(measureSpec, measureSpec);
-
-        mHandleHeight = mHandleView.getMeasuredHeight();
-
-    }
-
 
     private boolean isLayoutReversed(@NonNull final RecyclerView.LayoutManager layoutManager) {
 

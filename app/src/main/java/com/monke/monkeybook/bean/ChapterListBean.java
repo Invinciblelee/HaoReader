@@ -10,6 +10,7 @@ import com.monke.monkeybook.dao.ChapterListBeanDao;
 import com.monke.monkeybook.dao.DaoSession;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.utils.StringUtils;
 
 import org.greenrobot.greendao.DaoException;
@@ -29,7 +30,7 @@ import java.util.regex.Pattern;
  * 章节列表
  */
 @Entity
-public class ChapterListBean implements Parcelable, Cloneable {
+public class ChapterListBean implements Parcelable {
 
     private String noteUrl; //对应BookInfoBean noteUrl;
 
@@ -42,8 +43,8 @@ public class ChapterListBean implements Parcelable, Cloneable {
     private Long start;
     //章节内容在文章中的终止位置(本地)
     private Long end;
-    @Transient
-    private static Pattern chapterNamePattern = Pattern.compile("^(第([\\d零〇一二两三四五六七八九十百千万０-９\\s]+)[章节篇回集])[、，。　：:.\\s]*");
+    private String bookName;
+
 
     protected ChapterListBean(Parcel in) {
         noteUrl = in.readString();
@@ -53,11 +54,12 @@ public class ChapterListBean implements Parcelable, Cloneable {
         tag = in.readString();
         start = in.readLong();
         end = in.readLong();
+        bookName = in.readString();
     }
 
-    @Generated(hash = 1889877706)
+    @Generated(hash = 634102195)
     public ChapterListBean(String noteUrl, Integer durChapterIndex, String durChapterUrl, String durChapterName, String tag,
-                           Long start, Long end) {
+            Long start, Long end, String bookName) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
@@ -65,6 +67,7 @@ public class ChapterListBean implements Parcelable, Cloneable {
         this.tag = tag;
         this.start = start;
         this.end = end;
+        this.bookName = bookName;
     }
 
     @Generated(hash = 1096893365)
@@ -80,6 +83,7 @@ public class ChapterListBean implements Parcelable, Cloneable {
         dest.writeString(tag);
         dest.writeLong(start);
         dest.writeLong(end);
+        dest.writeString(bookName);
     }
 
     @Override
@@ -100,13 +104,16 @@ public class ChapterListBean implements Parcelable, Cloneable {
         }
     };
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        ChapterListBean chapterListBean = (ChapterListBean) super.clone();
+    protected ChapterListBean copy() {
+        ChapterListBean chapterListBean = new ChapterListBean();
         chapterListBean.noteUrl = noteUrl;
+        chapterListBean.durChapterIndex = durChapterIndex;
         chapterListBean.durChapterUrl = durChapterUrl;
         chapterListBean.durChapterName = durChapterName;
         chapterListBean.tag = tag;
+        chapterListBean.start = start;
+        chapterListBean.end = end;
+        chapterListBean.bookName = bookName;
         return chapterListBean;
     }
 
@@ -137,34 +144,7 @@ public class ChapterListBean implements Parcelable, Cloneable {
     }
 
     public void setDurChapterName(String durChapterName) {
-        if (durChapterName != null) {
-            durChapterName = durChapterName.trim();
-            Matcher matcher = chapterNamePattern.matcher(durChapterName);
-            if (matcher.find()) {
-                int num = StringUtils.stringToInt(matcher.group(2));
-                this.durChapterName = num > 0 ? matcher.replaceFirst("第" + num + "章 ") : matcher.replaceFirst("$1 ");
-                return;
-            }
-        }
-        this.durChapterName = durChapterName;
-    }
-
-    public String getPureChapterName() {
-        return durChapterName == null ? ""
-                : StringUtils.fullToHalf(durChapterName).replaceAll("\\s", "")
-                .replaceAll("^第.*?章|[(\\[][^()\\[\\]]{2,}[)\\]]$", "")
-                .replaceAll("[^\\w\\u4E00-\\u9FEF〇\\u3400-\\u4DBF\\u20000-\\u2A6DF\\u2A700-\\u2EBEF]", "");
-        // 所有非字母数字中日韩文字 CJK区+扩展A-F区
-    }
-
-    public int getChapterNum() {
-        if (durChapterName != null) {
-            Matcher matcher = chapterNamePattern.matcher(durChapterName);
-            if (matcher.find()) {
-                return StringUtils.stringToInt(matcher.group(2));
-            }
-        }
-        return -1;
+        this.durChapterName = ChapterHelp.getFormatChapterName(durChapterName);
     }
 
     public String getDurChapterUrl() {
@@ -209,5 +189,13 @@ public class ChapterListBean implements Parcelable, Cloneable {
 
     public void setDurChapterIndex(Integer durChapterIndex) {
         this.durChapterIndex = durChapterIndex;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
     }
 }

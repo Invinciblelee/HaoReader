@@ -35,15 +35,13 @@ public interface ReadBookContract {
          */
         void startLoadingBook();
 
-        void initChapterList();
-
         void showMenu();
 
         void openBookFromOther();
 
         void chapterChange(int chapterIndex);
 
-        void chapterListChange(BookShelfBean bookShelfBean);
+        void chapterListChanged();
 
         void chapterListUpdateFinish();
 

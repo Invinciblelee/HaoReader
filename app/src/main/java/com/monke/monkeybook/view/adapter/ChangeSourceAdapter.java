@@ -13,6 +13,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
@@ -35,11 +36,13 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
 
     public synchronized void addSourceAdapter(SearchBookBean value) {
         searchBookBeans.add(value);
+        Collections.sort(searchBookBeans);
         notifyDataSetChanged();
     }
 
     public synchronized void addAllSourceAdapter(List<SearchBookBean> value) {
         searchBookBeans.addAll(value);
+        Collections.sort(searchBookBeans);
         notifyDataSetChanged();
     }
 

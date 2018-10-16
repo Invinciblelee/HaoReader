@@ -112,6 +112,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         setupActionBar();
         initSearchView();
         initRecyclerView();
+        mPresenter.initData();
         moDialogHUD = new MoDialogHUD(this);
     }
 
@@ -139,7 +140,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BookSourceAdapter(this);
         recyclerView.setAdapter(adapter);
-        adapter.resetDataS(BookSourceManage.getAllBookSource());
         MyItemTouchHelpCallback itemTouchHelpCallback = new MyItemTouchHelpCallback();
         itemTouchHelpCallback.setOnItemTouchCallbackListener(adapter.getItemTouchCallbackListener());
         itemTouchHelpCallback.setDragEnable(true);
@@ -168,6 +168,11 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     public void upSearchView(int size) {
         AppCompat.setQueryHintForSearchText(mSearchAutoComplete, getString(R.string.search_book_source_num, size));
+    }
+
+    @Override
+    public void resetData(List<BookSourceBean> bookSourceBeans) {
+        adapter.resetDataS(bookSourceBeans);
     }
 
     @Override
@@ -267,7 +272,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                         });
                 break;
             case R.id.action_del_select:
-                if(adapter.getSelectDataList().size() > 0) {
+                if (adapter.getSelectDataList().size() > 0) {
                     mPresenter.delData(adapter.getSelectDataList());
                 }
                 break;

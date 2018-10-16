@@ -241,11 +241,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                     intent.putExtra("inBookShelf", true);
                     String key = String.valueOf(System.currentTimeMillis());
                     intent.putExtra("data_key", key);
-                    try {
-                        BitIntentDataManager.getInstance().putData(key, bookShelfBean.clone());
-                    } catch (CloneNotSupportedException e) {
-                        BitIntentDataManager.getInstance().putData(key, bookShelfBean);
-                    }
+                    BitIntentDataManager.getInstance().putData(key, bookShelfBean.copy());
                     startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }
@@ -267,11 +263,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                     intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_BOOKSHELF);
                     String key = String.valueOf(System.currentTimeMillis());
                     intent.putExtra("data_key", key);
-                    try {
-                        BitIntentDataManager.getInstance().putData(key, bookShelf.clone());
-                    } catch (CloneNotSupportedException e) {
-                        BitIntentDataManager.getInstance().putData(key, bookShelf);
-                    }
+                    BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
                     startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }

@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,7 +41,7 @@ public class BookSourceManage extends BaseModelImpl {
         if (selectedBookSource == null) {
             selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                     .where(BookSourceBeanDao.Properties.Enable.eq(true))
-                    .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                    .orderDesc(BookSourceBeanDao.Properties.Weight)
                     .list();
         }
         return selectedBookSource;
@@ -49,7 +50,7 @@ public class BookSourceManage extends BaseModelImpl {
     public static List<BookSourceBean> getAllBookSource() {
         if (allBookSource == null) {
             allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                    .orderDesc(BookSourceBeanDao.Properties.Weight)
                     .list();
             upGroupList();
         }
@@ -58,11 +59,11 @@ public class BookSourceManage extends BaseModelImpl {
 
     public static void refreshBookSource() {
         allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                .orderDesc(BookSourceBeanDao.Properties.Weight)
                 .list();
         selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.Enable.eq(true))
-                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                .orderDesc(BookSourceBeanDao.Properties.Weight)
                 .list();
         upGroupList();
     }

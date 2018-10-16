@@ -4,8 +4,8 @@ import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
-import com.monke.monkeybook.bean.DownloadChapterBean;
 import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
@@ -31,7 +31,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     private boolean isDownloading = false;
 
     private DownloadBookBean downloadBook;
-    private List<DownloadChapterBean> downloadChapters;
+    private List<ChapterListBean> downloadChapters;
 
     private boolean isLocked = false;
 
@@ -49,16 +49,9 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             if (book != null) {
                 if (!book.isChapterListEmpty()) {
                     for (int i = downloadBook.getStart(); i <= downloadBook.getEnd(); i++) {
-                        if (!book.getChapter(i).getHasCache(book.getBookInfoBean())) {
-                            DownloadChapterBean item = new DownloadChapterBean();
-                            item.setNoteUrl(book.getNoteUrl());
-                            item.setDurChapterIndex(book.getChapter(i).getDurChapterIndex());
-                            item.setDurChapterName(book.getChapter(i).getDurChapterName());
-                            item.setDurChapterUrl(book.getChapter(i).getDurChapterUrl());
-                            item.setTag(book.getTag());
-                            item.setBookName(book.getBookInfoBean().getName());
-                            item.setCoverUrl(book.getBookInfoBean().getCoverUrl());
-                            downloadChapters.add(item);
+                        ChapterListBean chapter = book.getChapter(i);
+                        if (!chapter.getHasCache(book.getBookInfoBean())) {
+                           downloadChapters.add(chapter);
                         }
                     }
                 }
@@ -86,6 +79,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
                     @Override
                     public void onError(Throwable e) {
+                        downloadBook.setValid(false);
                         onDownloadError(downloadBook);
                     }
                 });
@@ -147,9 +141,9 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
         if (!isLocked) {
             getDownloadingChapter()
-                    .subscribe(new SimpleObserver<DownloadChapterBean>() {
+                    .subscribe(new SimpleObserver<ChapterListBean>() {
                         @Override
-                        public void onNext(DownloadChapterBean chapterBean) {
+                        public void onNext(ChapterListBean chapterBean) {
                             if (chapterBean != null) {
                                 downloading(chapterBean, scheduler);
                             } else {
@@ -165,11 +159,11 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
         }
     }
 
-    private Observable<DownloadChapterBean> getDownloadingChapter() {
+    private Observable<ChapterListBean> getDownloadingChapter() {
         return Observable.create(emitter -> {
-            DownloadChapterBean next = null;
-            List<DownloadChapterBean> temp = new ArrayList<>(downloadChapters);
-            for (DownloadChapterBean data : temp) {
+            ChapterListBean next = null;
+            List<ChapterListBean> temp = new ArrayList<>(downloadChapters);
+            for (ChapterListBean data : temp) {
                 boolean cached = BookshelfHelp.isChapterCached(
                         BookshelfHelp.getCachePathName(data),
                         BookshelfHelp.getCacheFileName(data.getDurChapterIndex(), data.getDurChapterName()));
@@ -184,12 +178,12 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
         });
     }
 
-    private void downloading(DownloadChapterBean data, Scheduler scheduler) {
-        whenProgress(data);
+    private void downloading(ChapterListBean chapter, Scheduler scheduler) {
+        whenProgress(chapter);
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             e.onNext(!BookshelfHelp.isChapterCached(
-                    BookshelfHelp.getCachePathName(data),
-                    BookshelfHelp.getCacheFileName(data.getDurChapterIndex(), data.getDurChapterName())
+                    BookshelfHelp.getCachePathName(chapter),
+                    BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName())
             ));
             e.onComplete();
         }).subscribeOn(scheduler)
@@ -198,7 +192,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                             bookContentBean.setRight(false);
                             if (result) {
                                 return WebBookModelImpl.getInstance()
-                                        .getBookContent(data.getDurChapterUrl(), data.getDurChapterIndex(), data.getTag())
+                                        .getBookContent(chapter)
                                         .onErrorReturnItem(bookContentBean);
                             } else {
                                 return Observable.create(e -> {
@@ -210,12 +204,9 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                 )
                 .flatMap(bookContentBean -> Observable.create((ObservableOnSubscribe<Boolean>) e -> {
                     if (bookContentBean.getRight()) {
-                        BookshelfHelp.saveChapterInfo(BookshelfHelp.getCachePathName(data),
-                                BookshelfHelp.getCacheFileName(data.getDurChapterIndex(), data.getDurChapterName()),
-                                bookContentBean.getDurChapterContent());
                         RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean.getDurChapterUrl());
                     }
-                    e.onNext(removeFromDownloadList(data));
+                    e.onNext(removeFromDownloadList(chapter));
                 }))
                 .onErrorReturnItem(false)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -233,19 +224,15 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
                     @Override
                     public void onError(Throwable e) {
-                        removeFromDownloadList(data);
+                        removeFromDownloadList(chapter);
 
                         whenError(scheduler);
                     }
                 });
     }
 
-    private synchronized boolean removeFromDownloadList(DownloadChapterBean chapterBean) {
+    private synchronized boolean removeFromDownloadList(ChapterListBean chapterBean) {
         return downloadChapters.remove(chapterBean);
-    }
-
-    private synchronized boolean checkInDownloadList(DownloadChapterBean chapterBean) {
-        return downloadChapters.contains(chapterBean);
     }
 
     private void whenNext(Scheduler scheduler) {
@@ -277,7 +264,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
         }
     }
 
-    private void whenProgress(DownloadChapterBean chapterBean) {
+    private void whenProgress(ChapterListBean chapterBean) {
         if (!isDownloading) {
             return;
         }

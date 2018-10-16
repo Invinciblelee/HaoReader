@@ -58,7 +58,7 @@ public class NetPageLoader extends PageLoader {
                     .subscribe(new SimpleObserver<BookShelfBean>() {
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            if (!isChapterListPrepare || getChapterPageStatus() == STATUS_HY) {
+                            if (!isChapterListPrepare || getCurPageStatus() == STATUS_HY) {
                                 isChapterListPrepare = true;
 
                                 // 加载并显示当前章节
@@ -73,7 +73,7 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onError(Throwable e) {
-                            if (!isChapterListPrepare || getChapterPageStatus() == STATUS_HY) {
+                            if (!isChapterListPrepare || getCurPageStatus() == STATUS_HY) {
                                 setStatus(STATUS_CATEGORY_EMPTY);
                             }
                         }

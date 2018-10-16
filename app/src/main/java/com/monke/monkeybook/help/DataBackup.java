@@ -72,7 +72,7 @@ public class DataBackup {
         List<BookShelfBean> bookShelfList = BookshelfHelp.getAllBook();
         if (bookShelfList != null && bookShelfList.size() > 0) {
             for (BookShelfBean bookshelf : bookShelfList) {
-                bookshelf.getBookInfoBean().setChapterList(null);
+                bookshelf.setChapterList(null);
             }
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()

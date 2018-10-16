@@ -8,7 +8,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class BookmarkBean implements Parcelable,Cloneable{
+public class BookmarkBean implements Parcelable{
 
     @Id
     private Long id = System.currentTimeMillis();
@@ -74,9 +74,8 @@ public class BookmarkBean implements Parcelable,Cloneable{
         parcel.writeString(content);
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        BookmarkBean bookmarkBean = (BookmarkBean) super.clone();
+    protected BookmarkBean copy() {
+        BookmarkBean bookmarkBean = new BookmarkBean();
         bookmarkBean.id = id;
         bookmarkBean.noteUrl = noteUrl;
         bookmarkBean.bookName = bookName;
@@ -84,7 +83,6 @@ public class BookmarkBean implements Parcelable,Cloneable{
         bookmarkBean.chapterName = chapterName;
         bookmarkBean.pageIndex = pageIndex;
         bookmarkBean.content = content;
-
         return bookmarkBean;
     }
 

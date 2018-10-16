@@ -11,14 +11,13 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * 书本信息
  */
 @Entity
-public class BookInfoBean implements Parcelable, Cloneable {
+public class BookInfoBean implements Parcelable {
 
     private String name; //小说名
     private String tag;
@@ -41,33 +40,6 @@ public class BookInfoBean implements Parcelable, Cloneable {
 
     }
 
-    @Transient
-    public static final Creator<BookInfoBean> CREATOR = new Creator<BookInfoBean>() {
-        @Override
-        public BookInfoBean createFromParcel(Parcel in) {
-            return new BookInfoBean(in);
-        }
-
-        @Override
-        public BookInfoBean[] newArray(int size) {
-            return new BookInfoBean[size];
-        }
-    };
-
-    protected BookInfoBean(Parcel in) {
-        name = in.readString();
-        tag = in.readString();
-        noteUrl = in.readString();
-        chapterUrl = in.readString();
-        chapterList = in.createTypedArrayList(ChapterListBean.CREATOR);
-        finalRefreshData = in.readLong();
-        coverUrl = in.readString();
-        author = in.readString();
-        introduce = in.readString();
-        origin = in.readString();
-        charset = in.readString();
-        bookmarkList = in.createTypedArrayList(BookmarkBean.CREATOR);
-    }
 
     @Generated(hash = 1022173528)
     public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl,
@@ -85,18 +57,34 @@ public class BookInfoBean implements Parcelable, Cloneable {
         this.charset = charset;
     }
 
+    protected BookInfoBean(Parcel in) {
+        name = in.readString();
+        tag = in.readString();
+        noteUrl = in.readString();
+        chapterUrl = in.readString();
+        finalRefreshData = in.readLong();
+        coverUrl = in.readString();
+        author = in.readString();
+        introduce = in.readString();
+        origin = in.readString();
+        charset = in.readString();
+        chapterList = in.createTypedArrayList(ChapterListBean.CREATOR);
+        bookmarkList = in.createTypedArrayList(BookmarkBean.CREATOR);
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(tag);
         dest.writeString(noteUrl);
         dest.writeString(chapterUrl);
-        dest.writeTypedList(chapterList);
         dest.writeLong(finalRefreshData);
         dest.writeString(coverUrl);
         dest.writeString(author);
         dest.writeString(introduce);
         dest.writeString(origin);
+        dest.writeString(charset);
+        dest.writeTypedList(chapterList);
         dest.writeTypedList(bookmarkList);
     }
 
@@ -104,6 +92,18 @@ public class BookInfoBean implements Parcelable, Cloneable {
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<BookInfoBean> CREATOR = new Creator<BookInfoBean>() {
+        @Override
+        public BookInfoBean createFromParcel(Parcel in) {
+            return new BookInfoBean(in);
+        }
+
+        @Override
+        public BookInfoBean[] newArray(int size) {
+            return new BookInfoBean[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -145,7 +145,7 @@ public class BookInfoBean implements Parcelable, Cloneable {
         }
     }
 
-    public void setChapterList(List<ChapterListBean> chapterlist) {
+    void setChapterList(List<ChapterListBean> chapterlist) {
         this.chapterList = chapterlist;
     }
 
@@ -204,13 +204,12 @@ public class BookInfoBean implements Parcelable, Cloneable {
         return bookmarkList;
     }
 
-    public void setBookmarkList(List<BookmarkBean> bookmarkList) {
+    void setBookmarkList(List<BookmarkBean> bookmarkList) {
         this.bookmarkList = bookmarkList;
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        BookInfoBean bookInfoBean = (BookInfoBean) super.clone();
+    BookInfoBean copy() {
+        BookInfoBean bookInfoBean = new BookInfoBean();
         bookInfoBean.name = name;
         bookInfoBean.tag = tag;
         bookInfoBean.noteUrl = noteUrl;
@@ -223,14 +222,14 @@ public class BookInfoBean implements Parcelable, Cloneable {
         if (chapterList != null) {
             List<ChapterListBean> newListC = new ArrayList<>();
             for (ChapterListBean aChapterList : chapterList) {
-                newListC.add((ChapterListBean) aChapterList.clone());
+                newListC.add(aChapterList.copy());
             }
             bookInfoBean.setChapterList(newListC);
         }
         if (bookmarkList != null) {
             List<BookmarkBean> newListM = new ArrayList<>();
             for (BookmarkBean aBookmarkList : bookmarkList) {
-                newListM.add((BookmarkBean) aBookmarkList.clone());
+                newListM.add(aBookmarkList.copy());
             }
             bookInfoBean.setBookmarkList(newListM);
         }

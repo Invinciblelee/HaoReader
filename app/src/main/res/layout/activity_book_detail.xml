@@ -5,7 +5,7 @@
     android:id="@+id/ifl_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#77000000"
+    android:background="#00000000"
     android:clickable="true"
     android:fitsSystemWindows="true"
     android:focusable="true"
@@ -16,9 +16,11 @@
         android:layout_height="480dp"
         android:layout_gravity="center"
         android:layout_margin="40dp"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="3dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="#70000000">
+        app:cardBackgroundColor="@color/card_background">
 
         <ImageView
             android:id="@+id/iv_blur_cover"
@@ -184,7 +186,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/background"
+                android:background="@color/card_background"
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingLeft="10dp"

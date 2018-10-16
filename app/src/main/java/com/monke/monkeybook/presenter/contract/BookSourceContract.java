@@ -21,12 +21,13 @@ public interface BookSourceContract {
 
         void delData(List<BookSourceBean> bookSourceBeans);
 
+        void initData();
+
         void importBookSource(Uri uri);
 
         void importBookSource(String url);
 
         void checkBookSource();
-
     }
 
     interface View extends IView {
@@ -34,6 +35,8 @@ public interface BookSourceContract {
         void refreshBookSource();
 
         Snackbar getSnackBar(String msg, int length);
+
+        void resetData(List<BookSourceBean> bookSourceBeans);
 
         void showSnackBar(String msg, int length);
 

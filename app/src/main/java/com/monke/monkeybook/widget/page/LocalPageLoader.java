@@ -74,8 +74,8 @@ public class LocalPageLoader extends PageLoader {
 
     public LocalPageLoader(PageView pageView, BookShelfBean collBook) {
         super(pageView, collBook);
-        if(mCollBook.getChapterListSize() == 0) {
-            setChapterPageStatus(STATUS_PARING);
+        if (mCollBook.getChapterListSize() == 0) {
+            setCurPageStatus(STATUS_PARING);
         }
     }
 
@@ -271,11 +271,12 @@ public class LocalPageLoader extends PageLoader {
 
     /**
      * 从序章找作者名称
+     *
      * @param firstChapter
      */
-    private void setupAuthorName(String firstChapter){
+    private void setupAuthorName(String firstChapter) {
         String author = mCollBook.getBookInfoBean().getAuthor();
-        if(TextUtils.isEmpty(author) || TextUtils.equals(author, "未知")) {
+        if (TextUtils.isEmpty(author) || TextUtils.equals(author, "未知")) {
             Pattern pattern = Pattern.compile(AUTHOR_PATTERN);
             Matcher m = pattern.matcher(firstChapter);
             if (m.find()) {
@@ -344,7 +345,7 @@ public class LocalPageLoader extends PageLoader {
 
     @Override
     public void refreshChapterList() {
-        if(mCollBook == null) return;
+        if (mCollBook == null) return;
 
         // 对于文件是否存在，或者为空的判断，不作处理。 ==> 在文件打开前处理过了。
         mBookFile = new File(mCollBook.getNoteUrl());
@@ -375,9 +376,9 @@ public class LocalPageLoader extends PageLoader {
             Observable.create((ObservableOnSubscribe<Boolean>) e -> {
                 loadChapters();
                 boolean success = !mChapterList.isEmpty();
-                if(success){
+                if (success) {
                     e.onNext(true);
-                }else{
+                } else {
                     e.onError(new IllegalAccessException("book sub-chapter failed!"));
                 }
                 e.onComplete();
@@ -401,8 +402,7 @@ public class LocalPageLoader extends PageLoader {
                             mChapterDisp = null;
                             isChapterListPrepare = value;
 
-                            mCollBook.getBookInfoBean().setChapterList(mChapterList);
-                            mCollBook.setChapterListSize(mChapterList.size());
+                            mCollBook.setChapterList(mChapterList);
 
                             // 加载并显示当前章节
                             skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());

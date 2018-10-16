@@ -23,9 +23,11 @@ import com.monke.monkeybook.service.CheckSourceService;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -47,7 +49,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
             BookSourceManage.refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
@@ -61,9 +63,32 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(bookSourceBeans);
             BookSourceManage.refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    @Override
+    public void initData() {
+        Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
+            e.onNext(BookSourceManage.getAllBookSource());
+            e.onComplete();
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<List<BookSourceBean>>() {
+                    @Override
+                    public void onNext(List<BookSourceBean> bookSourceBeans) {
+                        if(bookSourceBeans != null){
+                            Collections.sort(bookSourceBeans);
+                        }
+                        mView.resetData(bookSourceBeans);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
     }
 
     @Override
@@ -72,7 +97,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().delete(bookSourceBean);
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -92,14 +117,14 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void delData(List<BookSourceBean> bookSourceBeans) {
-        mView.showLoading("正在删除选中书源...");
+        mView.showLoading("正在删除选中书源");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             for (BookSourceBean sourceBean : bookSourceBeans) {
                 DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().delete(sourceBean);
             }
             BookSourceManage.refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -122,7 +147,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             BookSourceManage.addBookSource(bookSourceBean);
             BookSourceManage.refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -148,7 +173,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             json = DocumentHelper.readString(file);
         }
         if (!isEmpty(json)) {
-            mView.showLoading("正在导入书源...");
+            mView.showLoading("正在导入书源");
             BookSourceManage.importBookSourceO(json)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -168,7 +193,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             mView.showSnackBar("URL格式不对", Snackbar.LENGTH_SHORT);
             return;
         }
-        mView.showLoading("正在导入书源...");
+        mView.showLoading("正在导入书源");
         BookSourceManage.importSourceFromWww(url)
                 .subscribe(getImportObserver());
     }

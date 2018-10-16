@@ -26,6 +26,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
+import com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -35,7 +36,7 @@ import butterknife.ButterKnife;
 
 public class ChapterListView extends ScrimInsetsFrameLayout {
     @BindView(R.id.rv_list)
-    RecyclerView rvList;
+    FastScrollRecyclerView rvList;
     @BindView(R.id.toolbar_tab)
     TabLayout toolbarTab;
     @BindView(R.id.toolbar)
@@ -220,7 +221,7 @@ public class ChapterListView extends ScrimInsetsFrameLayout {
         updateCurrentInfo(durChapter, bookShelfBean.getChapterListSize());
         if (toolbarTab.getSelectedTabPosition() == 0) {
             chapterListAdapter.setIndex(durChapter);
-            ((LinearLayoutManager) Objects.requireNonNull(rvList.getLayoutManager())).scrollToPositionWithOffset(durChapter, 0);
+            scrollToPosition(durChapter);
         } else {
             chapterListAdapter.notifyDataSetChanged();
         }
@@ -273,8 +274,8 @@ public class ChapterListView extends ScrimInsetsFrameLayout {
         if(chapterListAdapter != null && bookShelfBean != null){
             this.bookShelfBean = bookShelfBean;
             updateCurrentInfo(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize());
-            chapterListAdapter.upChapterList(bookShelfBean.getChapterList());
-            ((LinearLayoutManager) Objects.requireNonNull(rvList.getLayoutManager())).scrollToPositionWithOffset(bookShelfBean.getDurChapter(), 0);
+            chapterListAdapter.upChapterList(bookShelfBean);
+            scrollToPosition(bookShelfBean.getDurChapter());
         }
     }
 
@@ -303,6 +304,13 @@ public class ChapterListView extends ScrimInsetsFrameLayout {
         updateView.setEnabled(true);
         if(animUp != null) {
             animUp.cancel();
+        }
+    }
+
+    private void scrollToPosition(int position){
+        RecyclerView.LayoutManager layoutManager = rvList.getLayoutManager();
+        if(layoutManager instanceof LinearLayoutManager){
+            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position, 0);
         }
     }
 

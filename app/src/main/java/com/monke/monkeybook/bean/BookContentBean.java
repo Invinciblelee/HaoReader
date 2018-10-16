@@ -17,6 +17,8 @@ public class BookContentBean implements Parcelable{
 
     private int durChapterIndex;   //当前章节  （包括番外）
 
+    private String durChapterName;
+
     private String durChapterContent; //当前章节内容
 
     private String tag;   //来源  某个网站/本地

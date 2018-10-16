@@ -26,7 +26,7 @@
     <color name="tv_text_default">#b7b7b7</color>
     <color name="menu_color_default">#b7b7b7</color>
 
-    <color name="tv_text_button_nor">#3e3e3e</color>
+    <color name="tv_text_button_nor">#424242</color>
     <color name="tv_text_button_disable">#aaaaaa</color>
 
     <!-- 分格线背景色 -->

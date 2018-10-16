@@ -3,6 +3,7 @@ package com.monke.monkeybook.view.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,13 +48,12 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         }
     }
 
-    public void upChapterList(List<ChapterListBean> chapterList) {
-        if(chapterList == null || chapterList.isEmpty()){
+    public void upChapterList(BookShelfBean bookShelfBean) {
+        if(bookShelfBean == null){
             return;
         }
 
-        chapterListBeans.clear();
-        chapterListBeans.addAll(chapterList);
+        this.bookShelfBean = bookShelfBean;
 
         if (tabPosition == 0 && !isSearch) {
             notifyDataSetChanged();
@@ -140,7 +140,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
                 holder.tvName.setBackgroundResource(R.color.transparent);
             }
         } else {
-            BookmarkBean bookmarkBean = isSearch ? bookmarkBeans.get(position) : bookShelfBean.getBookInfoBean().getBookmarkList().get(position);
+            BookmarkBean bookmarkBean = isSearch ? bookmarkBeans.get(position) : bookShelfBean.getBookmark(position);
             holder.tvName.setText(bookmarkBean.getContent());
             holder.tvName.setOnClickListener(v -> {
                 itemClickListener.itemClick(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex(), tabPosition);

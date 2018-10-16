@@ -4,8 +4,11 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
+import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
+import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
@@ -18,6 +21,8 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 public class SearchTaskImpl implements ISearchTask {
 
@@ -101,9 +106,24 @@ public class SearchTaskImpl implements ISearchTask {
     private synchronized void toSearch(String query, Scheduler scheduler) {
         SearchEngine searchEngine = getNextSearchEngine();
         if (listener.checkSearchEngine(searchEngine)) {
+            long start = System.currentTimeMillis();
             WebBookModelImpl.getInstance()
                     .searchOtherBook(query, searchEngine.getPage(), searchEngine.getTag())
+                    .map(searchBookBeans -> {
+                        for (SearchBookBean searchBook : searchBookBeans) {
+                            int searchTime = (int) ((System.currentTimeMillis() - start) / 1000);
+                            searchBook.setSearchTime(searchTime);
+                        }
+                        return searchBookBeans;
+                    })
                     .subscribeOn(scheduler)
+                    .doOnError(throwable -> {
+                        BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchEngine.getTag());
+                        if(sourceBean != null){
+                            sourceBean.increaseWeight(-450);
+                            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+                        }
+                    })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<List<SearchBookBean>>() {
                         @Override
@@ -153,6 +173,7 @@ public class SearchTaskImpl implements ISearchTask {
         if (isComplete) {
             return;
         }
+
         searchEngine.setEnabled(false);
         if (!hasSuccess() && listener.getShowingItemCount() == 0 && getNextSearchEngine() == null) {
             stopSearch();

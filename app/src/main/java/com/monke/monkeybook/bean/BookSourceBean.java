@@ -2,7 +2,6 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -19,7 +18,7 @@ import static android.text.TextUtils.isEmpty;
  * 书源信息
  */
 @Entity
-public class BookSourceBean implements Parcelable, Cloneable {
+public class BookSourceBean implements Parcelable, Cloneable, Comparable<BookSourceBean> {
     @Id
     private String bookSourceUrl;
     private String bookSourceName;
@@ -27,6 +26,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String checkUrl;
     @OrderBy
     private int serialNumber;
+    @OrderBy
+    private int weight = 0;
     private boolean enable;
     private String ruleFindUrl;
     private String ruleSearchUrl;
@@ -70,6 +71,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         bookSourceGroup = in.readString();
         checkUrl = in.readString();
         serialNumber = in.readInt();
+        weight = in.readInt();
         enable = in.readByte() != 0;
 
         ruleFindUrl = in.readString();
@@ -95,18 +97,18 @@ public class BookSourceBean implements Parcelable, Cloneable {
         httpUserAgent = in.readString();
     }
 
-    @Generated(hash = 2055894182)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String checkUrl, int serialNumber,
+    @Generated(hash = 1575328468)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String checkUrl, int serialNumber, int weight,
                           boolean enable, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor,
                           String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName,
-                          String ruleBookAuthor, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce,
-                          String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent,
-                          String httpUserAgent) {
+                          String ruleBookAuthor, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList,
+                          String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
         this.checkUrl = checkUrl;
         this.serialNumber = serialNumber;
+        this.weight = weight;
         this.enable = enable;
         this.ruleFindUrl = ruleFindUrl;
         this.ruleSearchUrl = ruleSearchUrl;
@@ -146,6 +148,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         parcel.writeString(bookSourceGroup);
         parcel.writeString(checkUrl);
         parcel.writeInt(serialNumber);
+        parcel.writeInt(weight);
         parcel.writeByte((byte) (enable ? 1 : 0));
 
         parcel.writeString(ruleFindUrl);
@@ -208,8 +211,13 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public BookSourceBean clone() {
+        try {
+            return (BookSourceBean) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return this;
     }
 
     public String getBookSourceName() {
@@ -426,5 +434,27 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setRuleContentUrlNext(String ruleContentUrlNext) {
         this.ruleContentUrlNext = ruleContentUrlNext;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    // 换源时选择的源权重+500
+    public void increaseWeightBySelection() {
+        this.weight += 500;
+    }
+
+    public void increaseWeight(int increase) {
+        this.weight += increase;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    @Override
+    public int compareTo(BookSourceBean o) {
+        return Integer.compare(o.weight, this.weight);
     }
 }

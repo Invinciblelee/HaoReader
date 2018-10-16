@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,12 +117,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             Intent intent = new Intent(activity, SourceEditActivity.class);
             String key = String.valueOf(System.currentTimeMillis());
             intent.putExtra("data_key", key);
-            try {
-                BitIntentDataManager.getInstance().putData(key, item.clone());
-            } catch (CloneNotSupportedException e) {
-                BitIntentDataManager.getInstance().putData(key, item);
-                e.printStackTrace();
-            }
+            BitIntentDataManager.getInstance().putData(key, item.clone());
             activity.startActivityForResult(intent, BookSourceActivity.EDIT_SOURCE);
         });
         holder.delView.getDrawable().mutate();

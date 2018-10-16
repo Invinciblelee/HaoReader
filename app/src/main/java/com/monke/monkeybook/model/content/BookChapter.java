@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
 
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterListBean;
@@ -47,7 +48,9 @@ public class BookChapter {
                 dx = true;
                 ruleChapterList = ruleChapterList.substring(1);
             }
-            WebChapterBean<List<ChapterListBean>> webChapterBean = analyzeChapterList(s, bookShelfBean.getBookInfoBean().getChapterUrl(), ruleChapterList);
+
+            BookInfoBean bookInfo =  bookShelfBean.getBookInfoBean();
+            WebChapterBean<List<ChapterListBean>> webChapterBean = analyzeChapterList(s,bookInfo.getName(), bookInfo.getChapterUrl(), ruleChapterList);
             List<ChapterListBean> chapterList = webChapterBean.getData();
 
             while (!TextUtils.isEmpty(webChapterBean.getNextUrl())) {
@@ -61,7 +64,7 @@ public class BookChapter {
                         e.onError(exception);
                     }
                 }
-                webChapterBean = analyzeChapterList(response, webChapterBean.getNextUrl(), ruleChapterList);
+                webChapterBean = analyzeChapterList(response, bookInfo.getName(), webChapterBean.getNextUrl(), ruleChapterList);
                 chapterList.addAll(webChapterBean.getData());
             }
             if (dx) {
@@ -72,7 +75,7 @@ public class BookChapter {
         });
     }
 
-    private WebChapterBean<List<ChapterListBean>> analyzeChapterList(String s, String chapterUrl, String ruleChapterList) {
+    private WebChapterBean<List<ChapterListBean>> analyzeChapterList(String s, String bookName, String chapterUrl, String ruleChapterList) {
         List<ChapterListBean> chapterBeans = new ArrayList<>();
         String nextUrl = "";
         Document doc = Jsoup.parse(s);
@@ -89,6 +92,7 @@ public class BookChapter {
         for (Element element : elements) {
             analyzeElement = new AnalyzeElement(element, chapterUrl);
             ChapterListBean temp = new ChapterListBean();
+            temp.setBookName(bookName);
             temp.setDurChapterUrl(analyzeElement.getResult(bookSourceBean.getRuleContentUrl()));   //id
             temp.setDurChapterName(analyzeElement.getResult(bookSourceBean.getRuleChapterName()));
             temp.setTag(tag);

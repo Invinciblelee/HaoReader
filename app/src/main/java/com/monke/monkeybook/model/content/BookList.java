@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.util.Log;
-
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.FormatWebText;

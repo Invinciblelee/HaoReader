@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:ellipsize="end"
-                    android:maxEms="12"
+                    android:maxEms="16"
                     android:singleLine="true"
                     android:textColor="@color/tv_text_default"
                     android:textSize="12sp" />

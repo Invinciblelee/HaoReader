@@ -1,14 +1,13 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.model;
 
-import com.hwangjr.rxbus.RxBus;
+import android.util.Log;
+
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.dao.ChapterListBeanDao;
-import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.content.DefaultModelImpl;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
@@ -22,11 +21,11 @@ import io.reactivex.Observable;
 
 public class WebBookModelImpl implements IWebBookModel {
 
-    private WebBookModelImpl(){
+    private WebBookModelImpl() {
 
     }
 
-    private static class Holder{
+    private static class Holder {
         private static final WebBookModelImpl SINGLETON = new WebBookModelImpl();
     }
 
@@ -35,6 +34,7 @@ public class WebBookModelImpl implements IWebBookModel {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * 网络请求并解析书籍信息
      * return BookShelfBean
@@ -62,7 +62,7 @@ public class WebBookModelImpl implements IWebBookModel {
             return bookModel.getChapterList(bookShelfBean)
                     .flatMap((chapterList) -> getChapterList(bookShelfBean, chapterList));
         } else {
-            return Observable.error(new Throwable(bookShelfBean.getBookInfoBean().getName()+"没有书源"));
+            return Observable.error(new Throwable(bookShelfBean.getBookInfoBean().getName() + "没有书源"));
         }
     }
 
@@ -72,11 +72,11 @@ public class WebBookModelImpl implements IWebBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(String durChapterUrl, int durChapterIndex, String tag) {
-        IStationBookModel bookModel = getBookSourceModel(tag);
+    public Observable<BookContentBean> getBookContent(ChapterListBean chapter) {
+        IStationBookModel bookModel = getBookSourceModel(chapter.getTag());
         if (bookModel != null) {
-            return bookModel.getBookContent(durChapterUrl, durChapterIndex)
-                    .flatMap((this::upChapterList));
+            return bookModel.getBookContent(chapter.getDurChapterUrl(), chapter.getDurChapterIndex())
+                    .flatMap(bookContentBean -> saveChapterInfo(chapter, bookContentBean));
         } else
             return Observable.create(e -> {
                 e.onNext(new BookContentBean());
@@ -134,6 +134,7 @@ public class WebBookModelImpl implements IWebBookModel {
             boolean findDurChapter = false;
             for (int i = 0, size = chapterList.size(); i < size; i++) {
                 ChapterListBean chapter = chapterList.get(i);
+                chapter.setBookName(bookShelfBean.getBookInfoBean().getName());
                 chapter.setDurChapterIndex(i);
                 chapter.setTag(bookShelfBean.getTag());
                 chapter.setNoteUrl(bookShelfBean.getNoteUrl());
@@ -144,13 +145,15 @@ public class WebBookModelImpl implements IWebBookModel {
             }
             if (bookShelfBean.getChapterListSize() < chapterList.size()) {
                 bookShelfBean.setHasUpdate(true);
+                bookShelfBean.setNewChapters(chapterList.size() - bookShelfBean.getChapterListSize());
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                 bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
+            }else {
+                bookShelfBean.setNewChapters(0);
             }
             bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-            bookShelfBean.setChapterListSize(chapterList.size());
-            bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize()-1));
-            bookShelfBean.getBookInfoBean().setChapterList(chapterList);
+            bookShelfBean.setChapterList(chapterList);
+            bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize() - 1));
             bookShelfBean.upDurChapterName();
             bookShelfBean.upLastChapterName();
             e.onNext(bookShelfBean);
@@ -158,17 +161,19 @@ public class WebBookModelImpl implements IWebBookModel {
         });
     }
 
-    private Observable<BookContentBean> upChapterList(BookContentBean bookContentBean) {
+    private Observable<BookContentBean> saveChapterInfo(ChapterListBean chapter, BookContentBean bookContentBean) {
         return Observable.create(e -> {
             if (bookContentBean.getRight()) {
-                ChapterListBean chapterListBean = DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().queryBuilder()
-                        .where(ChapterListBeanDao.Properties.DurChapterUrl.eq(bookContentBean.getDurChapterUrl())).unique();
-                if (chapterListBean != null) {
-                    bookContentBean.setNoteUrl(chapterListBean.getNoteUrl());
-                    DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().update(chapterListBean);
+                bookContentBean.setNoteUrl(chapter.getNoteUrl());
+                if (BookshelfHelp.saveChapterInfo(BookshelfHelp.getCachePathName(chapter),
+                        BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName()),
+                        bookContentBean.getDurChapterContent())) {
+                    e.onNext(bookContentBean);
+                    e.onComplete();
+                    return;
                 }
             }
-            e.onNext(bookContentBean);
+            e.onError(new Throwable("保存章节出错"));
             e.onComplete();
         });
     }

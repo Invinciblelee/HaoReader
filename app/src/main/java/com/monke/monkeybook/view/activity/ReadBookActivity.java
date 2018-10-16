@@ -7,7 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -61,6 +62,7 @@ import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -136,8 +138,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     FloatingActionButton fabAutoPage;
     @BindView(R.id.hpb_next_page_progress)
     MHorProgressBar hpbNextPageProgress;
-    @BindView(R.id.clp_chapterList)
+    @BindView(R.id.clp_chapterList_stub)
+    ViewStub chapterListViewStub;
+
     ChapterListView chapterListView;
+
+    private Rect windowInsets;
 
     private Animation menuTopIn;
     private Animation menuTopOut;
@@ -217,11 +223,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        pageView.invalidate();
-    }
 
     /**
      * 状态栏
@@ -408,6 +409,48 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private boolean isChapterListShowing() {
         return chapterListView != null && chapterListView.isShowing();
     }
+
+
+    /**
+     * 初始化目录列表
+     */
+    public void ensureChapterList() {
+        if (chapterListView != null) {
+            return;
+        }
+
+        chapterListViewStub.inflate();
+        chapterListView = findViewById(R.id.clp_chapterList);
+        if (windowInsets != null) {
+            chapterListView.applyWindowInsets(windowInsets);
+        }
+
+        chapterListView.setOnChangeListener(new ChapterListView.OnChangeListener() {
+            @Override
+            public void animIn() {
+                initImmersionBar();
+            }
+
+            @Override
+            public void animOut() {
+                initImmersionBar();
+            }
+        });
+        chapterListView.setOnUpdateListener(() -> mPresenter.updateChapterList());
+
+        chapterListView.setData(mPresenter.getBookShelf(), new ChapterListView.OnItemClickListener() {
+            @Override
+            public void itemClick(int index, int page, int tabPosition) {
+                mPageLoader.skipToChapter(index, page);
+            }
+
+            @Override
+            public void itemLongClick(BookmarkBean bookmarkBean, int tabPosition) {
+                showBookmark(bookmarkBean);
+            }
+        });
+    }
+
 
     /**
      * 显示菜单
@@ -645,10 +688,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     @Override
                     public void onCategoryFinish(List<ChapterListBean> chapters) {
                         updateTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
-                        mPresenter.getBookShelf().getBookInfoBean().setChapterList(chapters);
-                        mPresenter.getBookShelf().setChapterListSize(chapters.size());
+                        mPresenter.getBookShelf().setChapterList(chapters);
                         mPresenter.getBookShelf().upLastChapterName();
-                        initChapterList();
                     }
 
                     @Override
@@ -715,36 +756,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mPageLoader.refreshChapterList();
     }
 
-    /**
-     * 初始化目录列表
-     */
-    @Override
-    public void initChapterList() {
-        chapterListView.setOnChangeListener(new ChapterListView.OnChangeListener() {
-            @Override
-            public void animIn() {
-                initImmersionBar();
-            }
-
-            @Override
-            public void animOut() {
-                initImmersionBar();
-            }
-        });
-        chapterListView.setOnUpdateListener(() -> mPresenter.updateChapterList());
-        chapterListView.setData(mPresenter.getBookShelf(), new ChapterListView.OnItemClickListener() {
-            @Override
-            public void itemClick(int index, int page, int tabPosition) {
-                mPageLoader.skipToChapter(index, page);
-            }
-
-            @Override
-            public void itemLongClick(BookmarkBean bookmarkBean, int tabPosition) {
-                showBookmark(bookmarkBean);
-            }
-        });
-    }
-
     @Override
     protected void bindEvent() {
         //菜单
@@ -756,6 +767,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             navigationBar.setPadding(0, 0, 0, insets.bottom);
             if (chapterListView != null) {
                 chapterListView.applyWindowInsets(insets);
+            } else {
+                windowInsets = insets;
             }
         });
 
@@ -871,6 +884,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         llCatalog.setOnClickListener(view -> {
             menuWillShow = true;
             popMenuOut();
+            ensureChapterList();
             if (chapterListView != null) {
                 new Handler().postDelayed(() -> chapterListView.show(mPresenter.getBookShelf().getDurChapter()), 200L);
             }
@@ -1064,6 +1078,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             return;
         }
 
+        if (!mPresenter.inBookShelf()) {
+            toast("请先将书籍加入书架");
+            return;
+        }
+
         if (!mPageLoader.isChapterListPrepare()) {
             toast("书籍目录获取失败，无法下载");
             return;
@@ -1231,7 +1250,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 if (isMenuShowing()) {
                     popMenuOut();
                     return true;
-                } else if (chapterListView.dismissChapterList()) {
+                } else if (chapterListView != null && chapterListView.dismissChapterList()) {
                     return true;
                 } else if (ReadAloudService.running && aloudStatus == PLAY) {
                     ReadAloudService.pause(this);
@@ -1320,7 +1339,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     public void finishContent(int chapter) {
         if (mPageLoader != null
                 && mPageLoader.getChapterPos() == chapter
-                && mPageLoader.getChapterPageStatus() != PageLoader.STATUS_FINISH) {
+                && mPageLoader.getCurPageStatus() != PageLoader.STATUS_FINISH) {
             mPageLoader.openChapter(chapter);
         }
     }
@@ -1352,15 +1371,27 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
     }
 
+    /**
+     * 更新目录列表
+     */
     @Override
-    public void chapterListChange(BookShelfBean bookShelfBean) {
-        chapterListView.upChapterList(bookShelfBean);
+    public void chapterListChanged() {
+        int newChapters = mPresenter.getBookShelf().getNewChapters();
+        if (newChapters > 0) {
+            toast(String.format(Locale.getDefault(), "更新成功, 新增%d章", newChapters));
+        } else {
+            toast("更新成功，没有新增章节");
+        }
+        chapterListView.upChapterList(mPresenter.getBookShelf());
+        mPageLoader.updateChapterList(mPresenter.getBookShelf());
     }
 
     @Override
     public void chapterListUpdateFinish() {
         toast("更新失败");
-        chapterListView.updateFinish();
+        if (chapterListView != null) {
+            chapterListView.updateFinish();
+        }
     }
 
     /**
@@ -1484,8 +1515,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPageLoader != null) {
             if (success) {
                 mPageLoader.changeSourceFinish(mPresenter.getBookShelf());
+                if (chapterListView != null) {
+                    chapterListView.upChapterList(mPresenter.getBookShelf());
+                }
             } else {
-                mPageLoader.setStatus(PageLoader.STATUS_FINISH);
+                if (mPageLoader.isChapterListPrepare()) {
+                    mPageLoader.setStatus(PageLoader.STATUS_FINISH);
+                } else {
+                    mPageLoader.setStatus(PageLoader.STATUS_UNKNOWN_ERROR);
+                }
             }
         }
     }

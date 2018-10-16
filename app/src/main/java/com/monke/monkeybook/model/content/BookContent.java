@@ -74,7 +74,6 @@ public class BookContent {
             Document doc = Jsoup.parse(s);
             AnalyzeElement analyzeElement = new AnalyzeElement(doc, chapterUrl);
             webContentBean.content = analyzeElement.getResult(ruleBookContent);
-            webContentBean.isRight = true;
             if (!TextUtils.isEmpty(bookSourceBean.getRuleContentUrlNext())) {
                 webContentBean.nextUrl = analyzeElement.getResult(bookSourceBean.getRuleContentUrlNext());
             }
@@ -82,7 +81,6 @@ public class BookContent {
             ex.printStackTrace();
             ErrorAnalyContentManager.getInstance().writeNewErrorUrl(chapterUrl);
             webContentBean.content = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + ex.getMessage();
-            webContentBean.isRight = false;
         }
         return webContentBean;
     }
@@ -93,7 +91,6 @@ public class BookContent {
 
     private class WebContentBean {
         private String content;
-        private boolean isRight;
         private String nextUrl;
 
         private WebContentBean() {

@@ -204,7 +204,6 @@ public class FastScrollRecyclerView extends RecyclerView {
 
     }
 
-
     @Override
 
     protected void onAttachedToWindow() {
@@ -224,7 +223,6 @@ public class FastScrollRecyclerView extends RecyclerView {
             viewGroup.addView(mFastScroller);
 
             mFastScroller.setLayoutParams(viewGroup);
-
         }
 
     }

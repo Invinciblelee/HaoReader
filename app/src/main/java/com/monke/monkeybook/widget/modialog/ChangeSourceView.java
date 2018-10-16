@@ -14,10 +14,13 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.help.ACache;
+import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -63,10 +66,7 @@ public class ChangeSourceView {
         bindView();
         adapter = new ChangeSourceAdapter(context, false);
         rvSource.setRefreshRecyclerViewAdapter(adapter, new LinearLayoutManager(context));
-        adapter.setOnItemClickListener((view, index) -> {
-            moDialogHUD.dismiss();
-            onClickSource.changeSource(adapter.getSearchBookBeans().get(index));
-        });
+        adapter.setOnItemClickListener((view, index) -> selectSource(adapter.getSearchBookBeans().get(index)));
         View viewRefreshError = LayoutInflater.from(context).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
             //刷新失败 ，重试
@@ -135,6 +135,32 @@ public class ChangeSourceView {
         getSearchBookInDb();
     }
 
+    private void selectSource(SearchBookBean searchBook) {
+        Observable.create((ObservableOnSubscribe<SearchBookBean>) e -> {
+            BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchBook.getTag());
+            if (sourceBean != null) {
+                sourceBean.increaseWeightBySelection();
+                DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+            }
+            e.onNext(searchBook);
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<SearchBookBean>() {
+                    @Override
+                    public void onNext(SearchBookBean searchBookBean) {
+                        moDialogHUD.dismiss();
+                        onClickSource.changeSource(searchBookBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        moDialogHUD.dismiss();
+                        onClickSource.changeSource(searchBook);
+                    }
+                });
+
+    }
+
     private void getSearchBookInDb() {
         Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
             List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().queryBuilder()
@@ -180,18 +206,52 @@ public class ChangeSourceView {
 
     private synchronized void addSearchBook(List<SearchBookBean> value) {
         if (value.size() > 0) {
-            for (SearchBookBean searchBookBean : value) {
-                if (test(searchBookBean, book)) {
-                    if (TextUtils.equals(searchBookBean.getTag(), book.getTag())) {
-                        searchBookBean.setIsCurrentSource(true);
-                    } else {
-                        searchBookBean.setIsCurrentSource(false);
+            Observable.create((ObservableOnSubscribe<SearchBookBean>) e -> {
+                for (SearchBookBean searchBookBean : value) {
+                    if (test(searchBookBean, book)) {
+                        if (TextUtils.equals(searchBookBean.getTag(), book.getTag())) {
+                            searchBookBean.setIsCurrentSource(true);
+                        } else {
+                            searchBookBean.setIsCurrentSource(false);
+                        }
+
+                        boolean saveBookSource = false;
+                        BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchBookBean.getTag());
+                        if (bookSourceBean != null && searchBookBean.getSearchTime() < 60) {
+                            bookSourceBean.increaseWeight(100 / (10 + searchBookBean.getSearchTime()));
+                            saveBookSource = true;
+                        }
+                        if (book.getChapterList().size() > 0 && bookSourceBean != null) {
+                            int lastChapter = ChapterHelp.guessChapterNum(searchBookBean.getLastChapter());
+                            if (lastChapter > book.getChapterList().size()) {
+                                bookSourceBean.increaseWeight(100);
+                                saveBookSource = true;
+                            }
+                        }
+
+                        if (saveBookSource) {
+                            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
+                        }
+
+                        DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplace(searchBookBean);
+                        e.onNext(searchBookBean);
+                        break;
                     }
-                    DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplace(searchBookBean);
-                    adapter.addSourceAdapter(searchBookBean);
-                    break;
                 }
-            }
+                e.onComplete();
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SimpleObserver<SearchBookBean>() {
+                        @Override
+                        public void onNext(SearchBookBean searchBookBean) {
+                            adapter.addSourceAdapter(searchBookBean);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+                    });
         }
     }
 

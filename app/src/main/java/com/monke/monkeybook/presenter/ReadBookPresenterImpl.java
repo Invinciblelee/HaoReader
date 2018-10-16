@@ -47,7 +47,6 @@ import com.trello.rxlifecycle2.android.ActivityEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -132,7 +131,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 e.onComplete();
             })
                     .subscribeOn(Schedulers.io())
-                    .flatMap(index -> WebBookModelImpl.getInstance().getBookContent(bookShelf.getChapter(index).getDurChapterUrl(), index, bookShelf.getTag()))
+                    .flatMap(index -> WebBookModelImpl.getInstance().getBookContent(bookShelf.getChapter(chapterIndex)))
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<BookContentBean>() {
@@ -149,22 +148,11 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                             }, 30 * 1000);
                         }
 
-                        @SuppressLint("DefaultLocale")
                         @Override
                         public void onNext(BookContentBean bookContentBean) {
                             DownloadingList(REMOVE, bookContentBean.getDurChapterUrl());
-                            if (bookContentBean.getRight()) {
-                                BookshelfHelp.saveChapterInfo(BookshelfHelp.getCachePathName(bookShelf.getBookInfoBean()),
-                                        BookshelfHelp.getCacheFileName(chapterIndex, bookShelf.getChapter(chapterIndex).getDurChapterName()),
-                                        bookContentBean.getDurChapterContent());
-                                mView.chapterChange(bookContentBean.getDurChapterIndex());
-                            }
-
-                            if (bookContentBean.getRight()) {
-                                mView.finishContent(chapterIndex);
-                            } else {
-                                mView.chapterError(chapterIndex, PageLoader.STATUS_EMPTY);
-                            }
+                            mView.finishContent(chapterIndex);
+                            mView.chapterChange(bookContentBean.getDurChapterIndex());
                         }
 
                         @Override
@@ -208,13 +196,19 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     @Override
     public void updateChapterList() {
         if (bookShelf != null) {
-            int chapterListSize = bookShelf.getChapterListSize();
-            WebBookModelImpl.getInstance().getChapterList(bookShelf)
+            BookShelfBean bookShelfBean = bookShelf.copy();
+            WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
                     .subscribeOn(Schedulers.io())
-                    .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> Observable.create(e -> {
-                        bookShelfBean.setHasUpdate(false);
-                        BookshelfHelp.saveBookToShelf(bookShelfBean);
-                        e.onNext(bookShelf);
+                    .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) book -> Observable.create(e -> {
+                        if(book.getChapterListSize() == 0
+                                || book.getDurChapter() != bookShelf.getDurChapter()
+                                || !TextUtils.equals(book.getChapter(0).getDurChapterName(), bookShelf.getChapter(0).getDurChapterName())){
+                            e.onNext(null);
+                        }else {
+                            book.setHasUpdate(false);
+                            BookshelfHelp.saveBookToShelf(book);
+                            e.onNext(book);
+                        }
                     }))
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
@@ -222,14 +216,13 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            int newCount = bookShelfBean.getChapterListSize() - chapterListSize;
-                            if(newCount>0){
-                                mView.toast(String.format(Locale.getDefault(), "更新成功, 新增%d章", newCount));
+                            if(bookShelfBean == null){
+                                mView.chapterListUpdateFinish();
                             }else {
-                                mView.toast("更新成功，没有新增章节");
+                                bookShelf = bookShelfBean;
+                                mView.chapterListChanged();
+                                RxBus.get().post(RxBusTag.UPDATE_BOOK_PROGRESS, bookShelf);
                             }
-                            mView.chapterListChange(bookShelfBean);
-                            RxBus.get().post(RxBusTag.UPDATE_BOOK_PROGRESS, bookShelf);
                         }
 
                         @Override
@@ -362,7 +355,13 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
                         bookShelfBean.setHasUpdate(false);
-                        saveChangedBook(bookShelfBean);
+
+                        if (inBookShelf) {
+                            saveChangedBook(bookShelfBean);
+                        } else {
+                            bookShelf = bookShelfBean;
+                            mView.changeSourceFinish(true);
+                        }
                     }
 
                     @Override
@@ -377,7 +376,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void saveBookmark(BookmarkBean bookmarkBean) {
         Observable.create((ObservableOnSubscribe<BookmarkBean>) e -> {
             BookshelfHelp.saveBookmark(bookmarkBean);
-            bookShelf.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(bookmarkBean.getBookName()));
+            bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookmarkBean.getBookName()));
             e.onNext(bookmarkBean);
             e.onComplete();
         })
@@ -390,7 +389,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void delBookmark(BookmarkBean bookmarkBean) {
         Observable.create((ObservableOnSubscribe<BookmarkBean>) e -> {
             BookshelfHelp.delBookmark(bookmarkBean);
-            bookShelf.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(bookmarkBean.getBookName()));
+            bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookmarkBean.getBookName()));
             e.onNext(bookmarkBean);
             e.onComplete();
         })
@@ -455,12 +454,11 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     @Override
     public void checkBookInfo() {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            if (bookShelf.getBookInfoBean().getChapterList().isEmpty()) {
-                bookShelf.getBookInfoBean().setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
-                bookShelf.setChapterListSize(bookShelf.getChapterListSize());
+            if (bookShelf.isChapterListEmpty()) {
+                bookShelf.setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
             }
-            if (bookShelf.getBookInfoBean().getBookmarkList().isEmpty()) {
-                bookShelf.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
+            if (bookShelf.isBookmarkListEmpty()) {
+                bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
             }
             bookShelf.setHasUpdate(false);
             e.onNext(true);
