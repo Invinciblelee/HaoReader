@@ -184,6 +184,7 @@
     <string name="loading">加载中…</string>
     <string name="group_zg">追更书籍</string>
     <string name="group_yf">养肥书籍</string>
+    <string name="group_sc">收藏书籍</string>
     <string name="group_bd">本地书籍</string>
     <string name="bookmark">书签</string>
     <string name="bookmark_add">添加书签</string>
@@ -191,7 +192,6 @@
     <string name="load_over_time">加载超时</string>
     <string name="qq_group">QQ讨论群:%s</string>
     <string name="copy_complete">已拷贝</string>
-    <string name="delete_bookshelf">删除书籍</string>
     <string name="delete_bookshelf_s">是否确认将这本书移出书架？</string>
     <string name="delete_bookshelf_not_exist_s">此书籍文件已被删除，是否将这本书移出书架？</string>
     <string name="clear_caches">清除缓存</string>
@@ -254,4 +254,8 @@
     <string name="search_page_count">当前结果页数 %s</string>
     <string name="submit">提交</string>
     <string name="update">更新</string>
+    <string name="update_off">禁用\n更新</string>
+    <string name="update_on">启用\n更新</string>
+    <string name="add_collection">加入\n收藏</string>
+    <string name="remove_collection">取消\n收藏</string>
 </resources>

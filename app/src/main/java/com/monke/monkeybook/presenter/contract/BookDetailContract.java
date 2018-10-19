@@ -23,11 +23,13 @@ public interface BookDetailContract {
 
         void getBookShelfInfo();
 
-        void addToBookShelf();
+        void addToBookShelf(int group);
 
         void removeFromBookShelf();
 
         void changeBookSource(SearchBookBean searchBookBean);
+
+        void switchUpdate(boolean off);
     }
 
     interface View extends IView {
@@ -35,6 +37,10 @@ public interface BookDetailContract {
          * 更新书籍详情UI
          */
         void updateView();
+
+        void changeUpdateSwitch(boolean off);
+
+        void changeGroup(int group);
 
         /**
          * 数据获取失败

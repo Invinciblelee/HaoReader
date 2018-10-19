@@ -1,47 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:fitsSystemWindows="true"
-    app:appInsetForeground="@color/colorPrimary"
-    android:orientation="vertical">
+    app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.design.widget.AppBarLayout
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
-        tools:ignore="UnusedAttribute">
+        android:transitionName="sharedView"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:transitionName="sharedView"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:imeOptions="actionSearch"
+            app:defaultQueryHint="@string/search"
+            tools:ignore="UnusedAttribute" />
 
-            <android.support.v7.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionSearch"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                app:defaultQueryHint="@string/search"
-                tools:ignore="UnusedAttribute" />
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
+    </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
         <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
             android:id="@+id/rfRv_search_books"
@@ -136,4 +128,7 @@
             app:layout_anchorGravity="right|bottom" />
     </RelativeLayout>
 
-</com.monke.monkeybook.widget.ScrimInsetsLinearLayout>
+    <View style="@style/Style.Shadow.Top"
+        android:layout_below="@id/toolbar"/>
+
+</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

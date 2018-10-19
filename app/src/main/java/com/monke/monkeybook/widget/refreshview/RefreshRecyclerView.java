@@ -57,6 +57,8 @@ public class RefreshRecyclerView extends FrameLayout {
         View view = LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler_view, this, false);
         ButterKnife.bind(this, view);
 
+        recyclerView.setOverScrollMode(OVER_SCROLL_NEVER);
+
         @SuppressLint("CustomViewStyleable")
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RefreshProgressBar);
         rpb.setSpeed(a.getDimensionPixelSize(R.styleable.RefreshProgressBar_speed, rpb.getSpeed()));

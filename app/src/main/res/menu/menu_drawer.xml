@@ -15,9 +15,15 @@
             android:title="@string/group_yf" />
 
         <item
+            android:id="@+id/action_group_sc"
+            android:icon="@drawable/ic_bookshelf"
+            android:title="@string/group_sc" />
+
+        <item
             android:id="@+id/action_group_bd"
             android:icon="@drawable/ic_bookshelf"
             android:title="@string/group_bd" />
+
     </group>
 
     <group android:id="@+id/drawer_menu_book_source">

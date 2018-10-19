@@ -81,6 +81,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
         ClipData clipData = ClipData.newPlainText(null, mView.getBookSourceStr());
         if (clipboard != null) {
             clipboard.setPrimaryClip(clipData);
+            mView.showSnackBar("拷贝成功", Snackbar.LENGTH_SHORT);
         }
     }
 

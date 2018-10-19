@@ -23,7 +23,6 @@
     <color name="light_translucent">#23000000</color>
     <color name="common_gray">#EEEEEE</color>
 
-    <color name="background_alpha">#84f4f4f4</color>
     <color name="background">#f4f4f4</color>
     <color name="card_background">#f8f8f8</color>
     <color name="transparent">#00000000</color>
@@ -51,10 +50,10 @@
     <color name="progress_back_color">#c4c4c4</color>
     <color name="progress_color">#737373</color>
 
-    <color name="tv_text_button_nor">#f4f4f4</color>
+    <color name="tv_text_button_nor">#f2f2f2</color>
     <color name="tv_text_button_pre">#199589</color>
     <color name="tv_text_button_disable">#dddddd</color>
-    <color name="tv_text_button_deep_pre">#147369</color>
+    <color name="tv_text_button_deep_pre">#005950</color>
 
     <!-- 自定义header背景色 -->
     <color name="bg_head">#FF0F4AAA</color>
@@ -63,8 +62,8 @@
     <!-- 白色背景 -->
     <color name="bg_white">#FFFFFFFF</color>
     <!-- 分格线背景色 -->
-    <color name="bg_divider_line">#ffcecece</color>
+    <color name="bg_divider_line">#ffdedede</color>
     <!--statusBarBackground-->
     <color name="status_bar_bag">#33000000</color>
-    <color name="navigation_bar_bag">#949494</color>
+    <color name="navigation_bar_bag">#a4a4a4</color>
 </resources>

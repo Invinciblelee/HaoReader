@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.Reader;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -22,6 +23,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class NetPageLoader extends PageLoader {
+
+    private Disposable changeSourceDisp;
 
     public NetPageLoader(PageView pageView, BookShelfBean collBook) {
         super(pageView, collBook);
@@ -34,16 +37,17 @@ public class NetPageLoader extends PageLoader {
         if (mCollBook.getChapterList().size() > 0) {
             isChapterListPrepare = true;
 
-            // 如果章节未打开
-            if (!isChapterOpen()) {
-                // 打开章节
-                skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
-            }
+            // 打开章节
+            skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
+
             // 目录加载完成，执行回调操作。
             if (mPageChangeListener != null) {
                 mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
             }
         } else {
+            if (changeSourceDisp != null) {
+                changeSourceDisp.dispose();
+            }
             WebBookModelImpl.getInstance().getChapterList(mCollBook)
                     .subscribeOn(Schedulers.io())
                     .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
@@ -56,26 +60,28 @@ public class NetPageLoader extends PageLoader {
                     })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<BookShelfBean>() {
+
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            changeSourceDisp = d;
+                        }
+
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            if (!isChapterListPrepare || getCurPageStatus() == STATUS_HY) {
-                                isChapterListPrepare = true;
+                            isChapterListPrepare = true;
 
-                                // 加载并显示当前章节
-                                skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
+                            // 加载并显示当前章节
+                            skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
 
-                                // 提示目录加载完成
-                                if (mPageChangeListener != null) {
-                                    mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
-                                }
+                            // 提示目录加载完成
+                            if (mPageChangeListener != null) {
+                                mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            if (!isChapterListPrepare || getCurPageStatus() == STATUS_HY) {
-                                setStatus(STATUS_CATEGORY_EMPTY);
-                            }
+                            setStatus(STATUS_CATEGORY_EMPTY);
                         }
                     });
         }
@@ -122,7 +128,7 @@ public class NetPageLoader extends PageLoader {
     boolean parseNextChapter() {
         boolean isRight = super.parseNextChapter();
         if (mPageChangeListener != null) {
-            for (int i = mCurChapterPos + 1; i < mCurChapterPos + 6; i++) {
+            for (int i = mCurChapterPos + 1; i < mCurChapterPos + 5; i++) {
                 if (i < mCollBook.getChapterListSize() && shouldRequestChapter(i)) {
                     mPageChangeListener.requestChapter(i);
                 }

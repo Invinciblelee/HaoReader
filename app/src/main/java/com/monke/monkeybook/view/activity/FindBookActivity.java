@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
@@ -28,8 +27,6 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
     @BindView(R.id.expandable_list)
     ExpandableListView expandableList;
     @BindView(R.id.tv_empty)
@@ -58,16 +55,20 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     }
 
     private void initExpandableList() {
-        adapter = new FindKindAdapter(this);
+        adapter = new FindKindAdapter();
         expandableList.setAdapter(adapter);
         tvEmpty.setText(R.string.find_empty);
         expandableList.setEmptyView(tvEmpty);
         //  设置分组项的点击监听事件
         expandableList.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             // 请务必返回 false，否则分组不会展开
-            expandOnlyOne(groupPosition);
-            expandableList.expandGroup(groupPosition);
-            expandableList.post(() -> expandableList.setSelectedGroup(groupPosition));
+            if(!expandableList.isGroupExpanded(groupPosition)) {
+                expandOnlyOne(groupPosition);
+                expandableList.expandGroup(groupPosition);
+                expandableList.post(() -> expandableList.setSelectedGroup(groupPosition));
+            }else {
+                expandableList.collapseGroup(groupPosition);
+            }
             return true;
         });
 

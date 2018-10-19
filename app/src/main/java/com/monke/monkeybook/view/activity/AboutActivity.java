@@ -12,7 +12,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +52,6 @@ public class AboutActivity extends MBaseActivity {
     TextView tvDisclaimer;
     @BindView(R.id.vw_disclaimer)
     CardView vwDisclaimer;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
     @BindView(R.id.tv_mail)
     TextView tvMail;
     @BindView(R.id.vw_mail)

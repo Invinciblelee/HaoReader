@@ -121,7 +121,7 @@ public class ChangeSourceView {
             public int getItemCount() {
                 return adapter.getICount();
             }
-        }, !Objects.equals(ACache.get(activity).getAsString("useMy716"), "False"));
+        }, !TextUtils.equals(ACache.get(activity).getAsString("useMy716"), "False"));
 
         moDialogView.setOnDismissListener(() -> searchBookModel.shutdownSearch());
     }

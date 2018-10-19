@@ -50,6 +50,7 @@ public class BookInfo {
                 bookInfoBean.setName(analyzeElement.getResult(bookSourceBean.getRuleBookName()));
             }
             if (isEmpty(bookInfoBean.getAuthor())) {
+                Log.e("TAG", analyzeElement.getResult(bookSourceBean.getRuleBookAuthor()));
                 bookInfoBean.setAuthor(FormatWebText.getAuthor(analyzeElement.getResult(bookSourceBean.getRuleBookAuthor())));
             }
             bookInfoBean.setIntroduce(analyzeElement.getResult(bookSourceBean.getRuleIntroduce()));

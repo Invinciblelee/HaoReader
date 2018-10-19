@@ -723,8 +723,14 @@ public class FastScroller extends LinearLayout {
     private void setViewPositions(float y) {
 
         mBubbleHeight = mBubbleView.getHeight();
+        if(mBubbleHeight == 0){
+            mBubbleHeight = getResources().getDimensionPixelSize(R.dimen.fastscroll_bubble_size);
+        }
 
         mHandleHeight = mHandleView.getHeight();
+        if(mHandleHeight == 0){
+            mHandleHeight = getResources().getDimensionPixelSize(R.dimen.fastscroll_handle_height);
+        }
 
 
         int bubbleY = getValueInRange(0, mViewHeight - mBubbleHeight - mHandleHeight / 2, (int) (y - mBubbleHeight));

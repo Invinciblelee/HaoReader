@@ -204,7 +204,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                 )
                 .flatMap(bookContentBean -> Observable.create((ObservableOnSubscribe<Boolean>) e -> {
                     if (bookContentBean.getRight()) {
-                        RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean.getDurChapterUrl());
+                        RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean);
                     }
                     e.onNext(removeFromDownloadList(chapter));
                 }))

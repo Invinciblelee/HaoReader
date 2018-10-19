@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_content"
+    android:id="@+id/rl_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -14,26 +14,32 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:transitionName="sharedView"
-        app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <ExpandableListView
-        android:id="@+id/expandable_list"
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            app:defaultQueryHint="搜索" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:overScrollMode="never" />
+        android:layout_below="@id/toolbar">
 
-    <TextView
-        android:id="@+id/tv_empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:gravity="center"
-        android:textSize="20sp" />
+        <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            app:bubbleColor="@color/tv_text_button_deep_pre"
+            app:handleColor="@color/tv_text_button_pre"
+            app:trackColor="@color/bg_divider_line" />
+
+    </RelativeLayout>
 
     <View
         style="@style/Style.Shadow.Top"

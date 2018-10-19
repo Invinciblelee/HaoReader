@@ -16,7 +16,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
@@ -55,8 +55,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
+    @BindView(R.id.rl_content)
+    RelativeLayout rlContent;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.searchView)
@@ -86,7 +86,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     protected void onCreateActivity() {
-        setContentView(R.layout.activity_recycler_serach_vew);
+        setContentView(R.layout.activity_book_source);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     public Snackbar getSnackBar(String msg, int length) {
-        return Snackbar.make(llContent, msg, length);
+        return Snackbar.make(rlContent, msg, length);
     }
 
     public void delBookSource(BookSourceBean bookSource) {
@@ -212,7 +212,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     public void showSnackBar(String msg, int length) {
-        Snackbar.make(llContent, msg, length).show();
+        Snackbar.make(rlContent, msg, length).show();
     }
 
     @Override

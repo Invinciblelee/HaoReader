@@ -2167,8 +2167,7 @@ public class ImmersionBar {
                 layoutParams.setMargins(TagFlowLayout.dip2px(activity, 20), 0, TagFlowLayout.dip2px(activity, 20), heightDifference);//设置rlContent的marginBottom的值为软键盘占有的高度即可
                 view.setLayoutParams(layoutParams);
                 view.requestLayout();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         });
     }

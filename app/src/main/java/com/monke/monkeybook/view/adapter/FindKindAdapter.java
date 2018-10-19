@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FindKindGroupBean;
-import com.monke.monkeybook.view.activity.FindBookActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +19,8 @@ import java.util.List;
 
 public class FindKindAdapter extends BaseExpandableListAdapter {
     private List<FindKindGroupBean> dataList;
-    private FindBookActivity activity;
-    private OnGroupExpandedListener mOnGroupExpandedListener;
 
-    public FindKindAdapter(FindBookActivity activity) {
-        this.activity = activity;
+    public FindKindAdapter() {
         dataList = new ArrayList<>();
     }
 
@@ -35,10 +31,6 @@ public class FindKindAdapter extends BaseExpandableListAdapter {
 
     public List<FindKindGroupBean> getDataList() {
         return dataList;
-    }
-
-    public void setOnGroupExpandedListener(OnGroupExpandedListener onGroupExpandedListener) {
-        mOnGroupExpandedListener = onGroupExpandedListener;
     }
 
     @Override
@@ -112,23 +104,8 @@ public class FindKindAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public void onGroupExpanded(int groupPosition) {
-        if (mOnGroupExpandedListener != null) {
-            mOnGroupExpandedListener.onGroupExpanded(groupPosition);
-        }
-    }
-
-    @Override
     public void onGroupCollapsed(int groupPosition) {
 
-    }
-
-    public interface OnGroupExpandedListener {
-        /**
-         * 分组展开
-         * @param groupPosition 分组的位置
-         */
-        void onGroupExpanded(int groupPosition);
     }
 
     private static class GroupViewHolder {

@@ -1,6 +1,9 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -45,6 +48,12 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     ImageView ivBlurCover;
     @BindView(R.id.iv_cover)
     ImageView ivCover;
+    @BindView(R.id.fl_update_switch)
+    View switchView;
+    @BindView(R.id.tv_update_switch)
+    TextView tvUpdateSw;
+    @BindView(R.id.tv_collect_switch)
+    TextView tvCollectSw;
     @BindView(R.id.tv_name)
     TextView tvName;
     @BindView(R.id.tv_author)
@@ -173,7 +182,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                                 .dontAnimate()
                                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
                                 .placeholder(R.drawable.img_cover_gs))
-                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(30, 5)))
+                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 2)))
                         .into(ivBlurCover);
             }
         }
@@ -186,26 +195,58 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             tvLoadingMsg.setText(R.string.data_loading);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.start();
-            llLoading.setOnClickListener(null);
         } else {
             if (llLoading.getVisibility() == View.GONE) {
                 return;
             }
             llLoading.startAnimation(animHideLoading);
-            llLoading.setOnClickListener(null);
+        }
+        llLoading.setOnClickListener(null);
+        llLoading.setEnabled(false);
+    }
+
+    private void showUpdateSwitchView(boolean show) {
+        if (show) {
+            switchView.setVisibility(View.VISIBLE);
+            ObjectAnimator.ofFloat(switchView, "alpha", 0.0F, 1.0F).start();
+        } else {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(switchView, "alpha", 1.0F, 0.0F);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    switchView.setVisibility(View.GONE);
+                }
+            });
+            animator.start();
         }
     }
 
-    private void changeGroup(int group) {
+    public void changeGroup(int group) {
         if (group == 0) {
+            tvCollectSw.setText(R.string.add_collection);
             tvShelfZg.setText(R.string.remove_from_bookshelf_zg);
             tvShelfYf.setText(R.string.add_from_bookshelf_yf);
         } else if (group == 1) {
+            tvCollectSw.setText(R.string.add_collection);
             tvShelfZg.setText(R.string.add_from_bookshelf_zg);
             tvShelfYf.setText(R.string.remove_from_bookshelf_yf);
-        } else {
+        } else if (group == 2) {
+            tvCollectSw.setText(R.string.remove_collection);
             tvShelfZg.setText(R.string.add_from_bookshelf_zg);
             tvShelfYf.setText(R.string.add_from_bookshelf_yf);
+        } else {
+            tvCollectSw.setText(R.string.add_collection);
+            tvShelfZg.setText(R.string.add_from_bookshelf_zg);
+            tvShelfYf.setText(R.string.add_from_bookshelf_yf);
+        }
+    }
+
+    @Override
+    public void changeUpdateSwitch(boolean off) {
+        if (off) {
+            tvUpdateSw.setText(R.string.update_on);
+        } else {
+            tvUpdateSw.setText(R.string.update_off);
         }
     }
 
@@ -215,6 +256,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         tvLoadingMsg.setText("加载失败,点击重试");
         progressBar.setVisibility(View.GONE);
         progressBar.stop();
+        llLoading.setEnabled(true);
         llLoading.setOnClickListener(v -> {
             showLoading(true);
             mPresenter.getBookShelfInfo();
@@ -247,6 +289,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 tvOrigin.setVisibility(View.INVISIBLE);
             }
+            changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
+
             updateView();
         } else {
             if (mPresenter.getSearchBook() == null) return;
@@ -280,7 +324,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                             .dontAnimate()
                             .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
                             .placeholder(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(30, 5)))
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 2)))
                     .into(ivBlurCover);
         }
         tvName.setText(name);
@@ -294,22 +338,16 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         llShelfZg.setOnClickListener(v -> {
             if (mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 0) {
                 mPresenter.removeFromBookShelf();
-                changeGroup(-1);
             } else {
-                mPresenter.getBookShelf().setGroup(0);
-                mPresenter.addToBookShelf();
-                changeGroup(0);
+                mPresenter.addToBookShelf(0);
             }
         });
 
         llShelfYf.setOnClickListener(v -> {
             if (mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 1) {
                 mPresenter.removeFromBookShelf();
-                changeGroup(-1);
             } else {
-                mPresenter.getBookShelf().setGroup(1);
-                mPresenter.addToBookShelf();
-                changeGroup(1);
+                mPresenter.addToBookShelf(1);
             }
         });
 
@@ -342,6 +380,23 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         ivCover.setOnClickListener(view -> {
             if (mPresenter.getOpenFrom() == FROM_BOOKSHELF) {
                 BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl());
+            }
+        });
+
+        ivCover.setOnLongClickListener(v -> {
+            showUpdateSwitchView(true);
+            return true;
+        });
+
+        switchView.setOnClickListener(v -> showUpdateSwitchView(false));
+
+        tvUpdateSw.setOnClickListener(v -> mPresenter.switchUpdate(!mPresenter.getBookShelf().getUpdateOff()));
+
+        tvCollectSw.setOnClickListener(v -> {
+            if (mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 2) {
+                mPresenter.removeFromBookShelf();
+            } else {
+                mPresenter.addToBookShelf(2);
             }
         });
 

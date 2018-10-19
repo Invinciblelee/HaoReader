@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -203,7 +204,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         if(book.getChapterListSize() == 0
                                 || book.getDurChapter() != bookShelf.getDurChapter()
                                 || !TextUtils.equals(book.getChapter(0).getDurChapterName(), bookShelf.getChapter(0).getDurChapterName())){
-                            e.onNext(null);
+                            e.onNext(new BookShelfBean());
                         }else {
                             book.setHasUpdate(false);
                             BookshelfHelp.saveBookToShelf(book);
@@ -216,7 +217,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            if(bookShelfBean == null){
+                            if(bookShelfBean.getTag() == null){
                                 mView.chapterListUpdateFinish();
                             }else {
                                 bookShelf = bookShelfBean;
@@ -366,7 +367,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.toast("书源更换失败");
                         mView.changeSourceFinish(false);
                     }
                 });

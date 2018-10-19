@@ -22,9 +22,9 @@ import com.monke.monkeybook.widget.AppCompat;
 import java.lang.reflect.Method;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
-    public SharedPreferences preferences;
     protected ImmersionBar mImmersionBar;
-    protected boolean isActNightTheme;
+    public SharedPreferences preferences;
+    public boolean isActNightTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,18 +157,18 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     /**
      * @return 是否沉浸
      */
-    protected boolean isImmersionBarEnabled() {
+    public boolean isImmersionBarEnabled() {
         return preferences.getBoolean("immersionStatusBar", false);
     }
 
     /**
      * @return 是否夜间模式
      */
-    protected boolean isNightTheme() {
+    public boolean isNightTheme() {
         return preferences.getBoolean("nightTheme", false);
     }
 
-    protected void setNightTheme(boolean isNightTheme) {
+    public void setNightTheme(boolean isNightTheme) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("nightTheme", isNightTheme);
         editor.apply();

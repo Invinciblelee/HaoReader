@@ -51,6 +51,7 @@ public abstract class PageLoader {
     public static final int STATUS_PARSE_ERROR = 7;     // 本地文件解析错误(暂未被使用)
     public static final int STATUS_CATEGORY_EMPTY = 8;  // 获取到的目录为空
     public static final int STATUS_HY = 9;              // 换源
+    public static final int STATUS_HY_ERROR = 10;       // 换源失败
     // 默认的显示参数配置
     private static final int EXTRA_TOP_BOTTOM_MARGIN = 5;
     private static final int DEFAULT_MARGIN_HEIGHT = 20;
@@ -164,52 +165,6 @@ public abstract class PageLoader {
         initPaint();
         // 初始化PageView
         initPageView();
-    }
-
-    public int getPageStatus(int chapter) {
-        return mStatus.get(chapter);
-    }
-
-    public int getCurPageStatus() {
-        return mStatus.get(mCurChapterPos, STATUS_LOADING);
-    }
-
-    void setPageStatus(int chapter, int status) {
-        mStatus.put(chapter, status);
-    }
-
-    void setCurPageStatus(int status) {
-        mStatus.put(mCurChapterPos, status);
-    }
-
-    private String getTipByStatus(int status) {
-        String tip = "";
-        switch (status) {
-            case STATUS_LOADING:
-                tip = isChapterListPrepare ? "正在拼命加载中..." : "正在准备目录...";
-                break;
-            case STATUS_UNKNOWN_ERROR:
-                tip = String.format("加载失败\n%s", "出现未知错误");
-                break;
-            case STATUS_NETWORK_ERROR:
-                tip = String.format("加载失败\n%s", "网络连接不可用");
-                break;
-            case STATUS_EMPTY:
-                tip = "章节内容为空";
-                break;
-            case STATUS_PARING:
-                tip = "正在排版请等待...";
-                break;
-            case STATUS_PARSE_ERROR:
-                tip = "文件解析错误";
-                break;
-            case STATUS_CATEGORY_EMPTY:
-                tip = "目录列表为空";
-                break;
-            case STATUS_HY:
-                tip = "正在换源请等待...";
-        }
-        return tip;
     }
 
     private void initData() {
@@ -559,6 +514,40 @@ public abstract class PageLoader {
     }
 
     /**
+     * 屏幕大小变化处理
+     */
+    void prepareDisplay(int w, int h) {
+        // 获取PageView的宽高
+        mDisplayWidth = w;
+        mDisplayHeight = h;
+
+        // 获取内容显示位置的大小
+        mVisibleWidth = mDisplayWidth - mMarginLeft - mMarginRight;
+        mVisibleHeight = mSettingManager.getHideStatusBar()
+                ? mDisplayHeight - mMarginTop - mMarginBottom
+                : mDisplayHeight - mMarginTop - mMarginBottom - mPageView.getStatusBarHeight();
+
+        // 重置 PageMode
+        mPageView.setPageMode(mPageMode);
+
+        if (!isChapterOpen) {
+            // 展示加载界面
+            mPageView.drawCurPage(isChapterListPrepare);
+            // 如果在 display 之前调用过 openChapter 肯定是无法打开的。
+            // 所以需要通过 display 再重新调用一次。
+            if (!isFirstOpen) {
+                // 打开书籍
+                openChapter(mCollBook.getDurChapterPage());
+            }
+        } else {
+            reloadCurPageData();
+
+            mPageView.drawCurPage();
+        }
+    }
+
+
+    /**
      * 设置页面切换监听
      */
     public void setOnPageChangeListener(OnPageChangeListener listener) {
@@ -570,13 +559,6 @@ public abstract class PageLoader {
         }
     }
 
-
-    /**
-     * 获取书籍信息
-     */
-    public BookShelfBean getCollBook() {
-        return mCollBook;
-    }
 
     public int getChapterPos() {
         return mCurChapterPos;
@@ -669,6 +651,55 @@ public abstract class PageLoader {
         mPageView.drawCurPage();
     }
 
+    private String getTipByStatus(int status) {
+        String tip = "";
+        switch (status) {
+            case STATUS_LOADING:
+                tip = isChapterListPrepare ? "正在拼命加载中..." : "正在准备目录...";
+                break;
+            case STATUS_UNKNOWN_ERROR:
+                tip = String.format("加载失败\n%s", "出现未知错误");
+                break;
+            case STATUS_NETWORK_ERROR:
+                tip = String.format("加载失败\n%s", "网络连接不可用");
+                break;
+            case STATUS_HY_ERROR:
+                tip = String.format("换源失败\n%s", "请重新选择书源");
+                break;
+            case STATUS_PARSE_ERROR:
+                tip = String.format("排版失败\n%s", "文件解析错误");
+                break;
+            case STATUS_EMPTY:
+                tip = "章节内容为空";
+                break;
+            case STATUS_PARING:
+                tip = "正在排版请等待...";
+                break;
+            case STATUS_CATEGORY_EMPTY:
+                tip = "目录列表为空";
+                break;
+            case STATUS_HY:
+                tip = "正在换源请等待...";
+        }
+        return tip;
+    }
+    
+    public int getPageStatus(int chapter) {
+        return mStatus.get(chapter);
+    }
+
+    public int getCurPageStatus() {
+        return mStatus.get(mCurChapterPos, STATUS_LOADING);
+    }
+
+    void setPageStatus(int chapter, int status) {
+        mStatus.put(chapter, status);
+    }
+
+    void setCurPageStatus(int status) {
+        mStatus.put(mCurChapterPos, status);
+    }
+
     /**
      * 更新状态
      */
@@ -722,16 +753,12 @@ public abstract class PageLoader {
         return isClose;
     }
 
-    public boolean isChapterOpen() {
-        return isChapterOpen;
+    public boolean hasCurChapterData() {
+        return getPageSize() != 0;
     }
 
     public boolean isChapterListPrepare() {
         return isChapterListPrepare;
-    }
-
-    public int getPageSize() {
-        return mCurPageList == null ? 0 : mCurPageList.size();
     }
 
     /**
@@ -822,21 +849,19 @@ public abstract class PageLoader {
                 float tipBottom = mDisplayHeight - tipMarginHeight - fontMetrics.bottom;
                 float tipLeft;
                 if (getCurPageStatus() != STATUS_FINISH) {
-                    if (isChapterListPrepare) {
-                        //绘制标题
-                        percent = mCollBook.getChapter(mCurChapterPos).getDurChapterName();
-                        percent = ChapterContentHelp.replaceContent(mCollBook, percent);
-                        percent = TextUtils.ellipsize(percent, mTipPaint, mDisplayWidth - mOffsetWidth * 2,
-                                TextUtils.TruncateAt.END).toString();
-                        canvas.drawText(percent, mOffsetWidth, tipBottom, mTipPaint);
-                    }
+                    //绘制标题
+                    percent = mCollBook.getChapter(mCurChapterPos).getDurChapterName();
+                    percent = ChapterContentHelp.replaceContent(mCollBook, percent);
+                    percent = TextUtils.ellipsize(percent, mTipPaint, mDisplayWidth - mOffsetWidth * 2,
+                            TextUtils.TruncateAt.END).toString();
+                    canvas.drawText(percent, mOffsetWidth, tipBottom, mTipPaint);
                 } else {
                     //绘制总进度
-                    percent = BookshelfHelp.getReadProgress(mCurChapterPos, mCollBook.getChapterListSize(), mCurPage.position, mCurPageList.size());
+                    percent = BookshelfHelp.getReadProgress(mCurChapterPos, mCollBook.getChapterListSize(), getPagePos(), getPageSize());
                     tipLeft = mDisplayWidth - mOffsetWidth - mTipPaint.measureText(percent);
                     canvas.drawText(percent, tipLeft, tipBottom, mTipPaint);
                     //绘制页码
-                    percent = String.format("%d/%d", mCurPage.position + 1, mCurPageList.size());
+                    percent = String.format("%d/%d", getPageSize() == 0 ? 0 : getPagePos() + 1, getPageSize());
                     tipLeft = tipLeft - mOffsetWidth - mTipPaint.measureText(percent);
                     canvas.drawText(percent, tipLeft, tipBottom, mTipPaint);
                     //绘制标题
@@ -853,14 +878,12 @@ public abstract class PageLoader {
             } else {
                 float tipBottom = tipMarginHeight - fontMetrics.top;
                 if (getCurPageStatus() != STATUS_FINISH) {
-                    if (isChapterListPrepare) {
-                        //绘制标题
-                        percent = mCollBook.getChapter(mCurChapterPos).getDurChapterName();
-                        percent = ChapterContentHelp.replaceContent(mCollBook, percent);
-                        percent = TextUtils.ellipsize(percent, mTipPaint, mDisplayWidth - mOffsetWidth * 2,
-                                TextUtils.TruncateAt.END).toString();
-                        canvas.drawText(percent, mOffsetWidth, tipBottom, mTipPaint);
-                    }
+                    //绘制标题
+                    percent = mCollBook.getChapter(mCurChapterPos).getDurChapterName();
+                    percent = ChapterContentHelp.replaceContent(mCollBook, percent);
+                    percent = TextUtils.ellipsize(percent, mTipPaint, mDisplayWidth - mOffsetWidth * 2,
+                            TextUtils.TruncateAt.END).toString();
+                    canvas.drawText(percent, mOffsetWidth, tipBottom, mTipPaint);
                 } else {
                     //绘制标题
                     percent = mCollBook.getChapter(mCurChapterPos).getDurChapterName();
@@ -870,10 +893,10 @@ public abstract class PageLoader {
                     canvas.drawText(percent, mOffsetWidth, tipBottom, mTipPaint);
                     //绘制页码
                     tipBottom = mDisplayHeight - fontMetrics.bottom - tipMarginHeight;
-                    percent = String.format("%d/%d", mCurPage.position + 1, mCurPageList.size());
+                    percent = String.format("%d/%d", getPageSize() == 0 ? 0 : getPagePos() + 1, getPageSize());
                     canvas.drawText(percent, mOffsetWidth, tipBottom, mTipPaint);
                     //绘制总进度
-                    percent = BookshelfHelp.getReadProgress(mCurChapterPos, mCollBook.getChapterListSize(), mCurPage.position, mCurPageList.size());
+                    percent = BookshelfHelp.getReadProgress(mCurChapterPos, mCollBook.getChapterListSize(), getPagePos(), getPageSize());
                     if (mSettingManager.getShowTimeBattery()) {
                         canvas.drawText(percent, (mDisplayWidth - mTipPaint.measureText(percent)) / 2, tipBottom, mTipPaint);
                     } else {
@@ -1047,42 +1070,9 @@ public abstract class PageLoader {
     }
 
     /**
-     * 屏幕大小变化处理
-     */
-    public void prepareDisplay(int w, int h) {
-        // 获取PageView的宽高
-        mDisplayWidth = w;
-        mDisplayHeight = h;
-
-        // 获取内容显示位置的大小
-        mVisibleWidth = mDisplayWidth - mMarginLeft - mMarginRight;
-        mVisibleHeight = mSettingManager.getHideStatusBar()
-                ? mDisplayHeight - mMarginTop - mMarginBottom
-                : mDisplayHeight - mMarginTop - mMarginBottom - mPageView.getStatusBarHeight();
-
-        // 重置 PageMode
-        mPageView.setPageMode(mPageMode);
-
-        if (!isChapterOpen) {
-            // 展示加载界面
-            mPageView.drawCurPage(isChapterListPrepare);
-            // 如果在 display 之前调用过 openChapter 肯定是无法打开的。
-            // 所以需要通过 display 再重新调用一次。
-            if (!isFirstOpen) {
-                // 打开书籍
-                openChapter(mCollBook.getDurChapterPage());
-            }
-        } else {
-            reloadCurPageData();
-
-            mPageView.drawCurPage();
-        }
-    }
-
-    /**
      * 翻阅上一页
      */
-    public boolean prev() {
+    boolean prev() {
         // 以下情况禁止翻页
         if (!canTurnPage()) {
             return false;
@@ -1147,7 +1137,7 @@ public abstract class PageLoader {
 
         mCancelPage = mCurPage;
         // 解析下一章数据
-        if (parseNextChapter() && mCurPageList != null && mCurPageList.size() > 0) {
+        if (parseNextChapter() && getPageSize() > 0) {
             mCurPage = mCurPageList.get(0);
         } else {
             mCurPage = new TxtPage();
@@ -1241,7 +1231,7 @@ public abstract class PageLoader {
         return mCurPageList != null;
     }
 
-    void dealLoadPageList(int chapterPos) {
+    private void dealLoadPageList(int chapterPos) {
         try {
             mCurPageList = loadPageList(chapterPos);
             if (mCurPageList != null) {
@@ -1269,7 +1259,7 @@ public abstract class PageLoader {
     private void chapterChangeCallback() {
         if (mPageChangeListener != null) {
             mPageChangeListener.onChapterChange(mCurChapterPos);
-            mPageChangeListener.onPageCountChange(mCurPageList != null ? mCurPageList.size() : 0);
+            mPageChangeListener.onPageCountChange(getPageSize());
         }
     }
 
@@ -1557,7 +1547,7 @@ public abstract class PageLoader {
      * 获取初始显示的页面
      */
     private TxtPage getCurPage(int pos) {
-        if (!checkListEmpty(mCurPageList)) {
+        if (getPageSize() != 0) {
             pos = Math.max(pos, 0);
             pos = Math.min(pos, mCurPageList.size() - 1);
             return mCurPageList.get(pos);
@@ -1570,7 +1560,7 @@ public abstract class PageLoader {
      */
     private TxtPage getPrevPage() {
         int pos = getPagePos() - 1;
-        if (!checkListEmpty(mCurPageList) && pos >= 0) {
+        if (getPageSize() != 0 && pos >= 0) {
             return mCurPageList.get(pos);
         }
         return null;
@@ -1581,7 +1571,7 @@ public abstract class PageLoader {
      */
     private TxtPage getNextPage() {
         int pos = getPagePos() + 1;
-        if (!checkListEmpty(mCurPageList) && pos < mCurPageList.size()) {
+        if (getPageSize() != 0 && pos < mCurPageList.size()) {
             return mCurPageList.get(pos);
         }
         return null;
@@ -1591,7 +1581,7 @@ public abstract class PageLoader {
      * 获取上一个章节的最后一页
      */
     private TxtPage getPrevLastPage() {
-        if (!checkListEmpty(mCurPageList)) {
+        if (getPageSize() != 0) {
             int pos = mCurPageList.size() - 1;
             return mCurPageList.get(pos);
         }
@@ -1599,22 +1589,21 @@ public abstract class PageLoader {
     }
 
     /**
+     * 获取当前章节页数
+     */
+    private int getPageSize() {
+        return mCurPageList == null ? 0 : mCurPageList.size();
+    }
+
+    /**
      * 根据当前状态，决定是否能够翻页
      */
     private boolean canTurnPage() {
-
         if (!isChapterListPrepare) {
             return false;
         }
 
-        if (getCurPageStatus() == STATUS_PARSE_ERROR || getCurPageStatus() == STATUS_PARING) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkListEmpty(List list) {
-        return list == null || list.isEmpty();
+        return getCurPageStatus() != STATUS_PARSE_ERROR && getCurPageStatus() != STATUS_PARING;
     }
 
     /*****************************************interface*****************************************/

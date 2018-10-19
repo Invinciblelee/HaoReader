@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -41,8 +40,6 @@ public class DonateActivity extends MBaseActivity {
     CardView vwZfbRwm;
     @BindView(R.id.vw_wx_rwm)
     CardView vwWxRwm;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
     @BindView(R.id.vw_qq_rwm)
     CardView vwQqRwm;
     @BindView(R.id.vw_zfb_hb_kl)

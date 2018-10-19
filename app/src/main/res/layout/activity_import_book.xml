@@ -8,10 +8,11 @@
     android:fitsSystemWindows="true"
     app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -67,19 +68,16 @@
                 tools:ignore="RtlHardcoded" />
         </LinearLayout>
 
-    </android.support.design.widget.AppBarLayout>
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_below="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_above="@id/file_system_bottom_bar" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@drawable/bg_shadow_bottom"
+    <View style="@style/Style.Shadow.Bottom"
         android:layout_above="@id/file_system_bottom_bar"/>
 
     <!--文件点击按钮-->
@@ -87,6 +85,7 @@
         android:id="@+id/file_system_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:background="@color/background"
         android:layout_alignParentBottom="true">
 
         <CheckBox
@@ -121,4 +120,7 @@
             android:text="删除"
             android:textColor="@color/selector_btn_file_delete" />
     </RelativeLayout>
+
+    <View style="@style/Style.Shadow.Top"
+        android:layout_below="@id/appBar"/>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

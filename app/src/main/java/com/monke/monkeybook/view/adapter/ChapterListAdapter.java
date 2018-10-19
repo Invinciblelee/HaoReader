@@ -43,7 +43,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     public void upChapter(int index) {
         if (bookShelfBean.getChapterListSize() > index) {
             if (tabPosition == 0 && !isSearch) {
-                notifyItemChanged(index);
+                notifyItemChanged(index, index);
             }
         }
     }
@@ -115,12 +115,22 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ThisViewHolder holder, final int position) {
+
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ThisViewHolder holder, int position, @NonNull List<Object> payloads) {
         if (holder.getLayoutPosition() == getItemCount() - 1) {
             holder.line.setVisibility(View.GONE);
         } else {
             holder.line.setVisibility(View.VISIBLE);
         }
         if (tabPosition == 0) {
+            if(payloads.size() > 0){
+                holder.tvName.setSelected(true);
+                holder.tvName.getPaint().setFakeBoldText(true);
+                return;
+            }
             ChapterListBean chapterListBean = isSearch ? chapterListBeans.get(position) : bookShelfBean.getChapter(position);
             holder.tvName.setText(FormatWebText.trim(chapterListBean.getDurChapterName()));
             if (Objects.equals(bookShelfBean.getTag(), BookShelfBean.LOCAL_TAG) || chapterListBean.getHasCache(bookShelfBean.getBookInfoBean())) {
@@ -150,7 +160,6 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
                 return true;
             });
         }
-
     }
 
     @Override

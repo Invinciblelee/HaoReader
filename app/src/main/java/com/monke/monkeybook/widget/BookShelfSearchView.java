@@ -2,7 +2,6 @@ package com.monke.monkeybook.widget;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -74,11 +73,9 @@ public class BookShelfSearchView extends LinearLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_search_bookshelf, this, true);
         ButterKnife.bind(this);
-        assert toolbar.getNavigationIcon() != null;
-        toolbar.getNavigationIcon().mutate();
-        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.menu_color_default), PorterDuff.Mode.SRC_ATOP);
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
         toolbar.inflateMenu(R.menu.menu_search_view);
-        MenuItem search = toolbar.getMenu().findItem(R.id.action_search_bar);
+        MenuItem search = toolbar.getMenu().findItem(R.id.action_search);
         searchView = (SearchView) search.getActionView();
         AppCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.searchShelfBook));
         searchAutoComplete = searchView.findViewById(R.id.search_src_text);
@@ -155,7 +152,7 @@ public class BookShelfSearchView extends LinearLayout {
         }
     }
 
-    public void setupItemClickListener(OnItemClickListenerTwo itemClickListenerTwo) {
+    public void setOnItemClickListener(OnItemClickListenerTwo itemClickListenerTwo) {
         adapter.setItemClickListener(itemClickListenerTwo);
     }
 

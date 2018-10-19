@@ -15,7 +15,7 @@ import android.view.ViewConfiguration;
 public abstract class HorizonPageAnim extends PageAnimation {
 
     //动画速度
-    protected static final int animationSpeed = 200;
+    protected static final int animationSpeed = 300;
 
     protected Bitmap mCurBitmap;
     protected Bitmap mNextBitmap;

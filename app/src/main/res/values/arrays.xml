@@ -51,13 +51,9 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="tab_main">
+        <item>书架</item>
+        <item>发现</item>
+    </string-array>
 
-    <declare-styleable name="Battery">
-        <attr name="batteryOrientation">
-            <enum name="horizontal" value="0"/>
-            <enum name="vertical" value="1"/>
-        </attr>
-        <attr name="batteryColor" format="color"/>
-        <attr name="batteryPower" format="integer"/>
-    </declare-styleable>
 </resources>

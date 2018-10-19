@@ -68,7 +68,6 @@ public class FileCategoryFragment extends BaseFileFragment {
     private void setUpAdapter() {
         mAdapter = new FileSystemAdapter();
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext())));
         mRvContent.setAdapter(mAdapter);
     }
 

@@ -39,6 +39,7 @@ public class BookShelfBean implements Parcelable {
     private String lastChapterName;
     private Integer chapterListSize = 0;
     private String customCoverPath;
+    private Boolean updateOff = false; //禁止更新
 
     @Transient
     private BookInfoBean bookInfoBean = new BookInfoBean();
@@ -47,40 +48,12 @@ public class BookShelfBean implements Parcelable {
 
     }
 
-    @Transient
-    public static final Creator<BookShelfBean> CREATOR = new Creator<BookShelfBean>() {
-        @Override
-        public BookShelfBean createFromParcel(Parcel in) {
-            return new BookShelfBean(in);
-        }
 
-        @Override
-        public BookShelfBean[] newArray(int size) {
-            return new BookShelfBean[size];
-        }
-    };
-
-    protected BookShelfBean(Parcel in) {
-        noteUrl = in.readString();
-        durChapter = in.readInt();
-        durChapterPage = in.readInt();
-        finalDate = in.readLong();
-        tag = in.readString();
-        bookInfoBean = in.readParcelable(BookInfoBean.class.getClassLoader());
-        serialNumber = in.readInt();
-        finalRefreshData = in.readLong();
-        group = in.readInt();
-        durChapterName = in.readString();
-        lastChapterName = in.readString();
-        chapterListSize = in.readInt();
-        customCoverPath = in.readString();
-    }
-
-    @Generated(hash = 229342711)
+    @Generated(hash = 121009933)
     public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate,
-                         Boolean hasUpdate, Integer newChapters, String tag, Integer serialNumber,
-                         Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
-                         Integer chapterListSize, String customCoverPath) {
+                         Boolean hasUpdate, Integer newChapters, String tag, Integer serialNumber, Long finalRefreshData,
+                         Integer group, String durChapterName, String lastChapterName, Integer chapterListSize,
+                         String customCoverPath, Boolean updateOff) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
@@ -95,29 +68,143 @@ public class BookShelfBean implements Parcelable {
         this.lastChapterName = lastChapterName;
         this.chapterListSize = chapterListSize;
         this.customCoverPath = customCoverPath;
+        this.updateOff = updateOff;
+    }
+
+
+    protected BookShelfBean(Parcel in) {
+        errorMsg = in.readString();
+        isLoading = in.readByte() != 0;
+        noteUrl = in.readString();
+        if (in.readByte() == 0) {
+            durChapter = null;
+        } else {
+            durChapter = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            durChapterPage = null;
+        } else {
+            durChapterPage = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            finalDate = null;
+        } else {
+            finalDate = in.readLong();
+        }
+        byte tmpHasUpdate = in.readByte();
+        hasUpdate = tmpHasUpdate == 0 ? null : tmpHasUpdate == 1;
+        if (in.readByte() == 0) {
+            newChapters = null;
+        } else {
+            newChapters = in.readInt();
+        }
+        tag = in.readString();
+        if (in.readByte() == 0) {
+            serialNumber = null;
+        } else {
+            serialNumber = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            finalRefreshData = null;
+        } else {
+            finalRefreshData = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            group = null;
+        } else {
+            group = in.readInt();
+        }
+        durChapterName = in.readString();
+        lastChapterName = in.readString();
+        if (in.readByte() == 0) {
+            chapterListSize = null;
+        } else {
+            chapterListSize = in.readInt();
+        }
+        customCoverPath = in.readString();
+        byte tmpUpdateOff = in.readByte();
+        updateOff = tmpUpdateOff == 0 ? null : tmpUpdateOff == 1;
+        bookInfoBean = in.readParcelable(BookInfoBean.class.getClassLoader());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(errorMsg);
+        dest.writeByte((byte) (isLoading ? 1 : 0));
         dest.writeString(noteUrl);
-        dest.writeInt(group);
-        dest.writeInt(durChapter);
-        dest.writeInt(durChapterPage);
-        dest.writeLong(finalDate);
+        if (durChapter == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(durChapter);
+        }
+        if (durChapterPage == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(durChapterPage);
+        }
+        if (finalDate == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(finalDate);
+        }
+        dest.writeByte((byte) (hasUpdate == null ? 0 : hasUpdate ? 1 : 2));
+        if (newChapters == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(newChapters);
+        }
         dest.writeString(tag);
-        dest.writeParcelable(bookInfoBean, flags);
-        dest.writeInt(serialNumber);
-        dest.writeLong(finalRefreshData);
+        if (serialNumber == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(serialNumber);
+        }
+        if (finalRefreshData == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(finalRefreshData);
+        }
+        if (group == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(group);
+        }
         dest.writeString(durChapterName);
         dest.writeString(lastChapterName);
-        dest.writeInt(chapterListSize);
+        if (chapterListSize == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(chapterListSize);
+        }
         dest.writeString(customCoverPath);
+        dest.writeByte((byte) (updateOff == null ? 0 : updateOff ? 1 : 2));
+        dest.writeParcelable(bookInfoBean, flags);
     }
 
     @Override
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<BookShelfBean> CREATOR = new Creator<BookShelfBean>() {
+        @Override
+        public BookShelfBean createFromParcel(Parcel in) {
+            return new BookShelfBean(in);
+        }
+
+        @Override
+        public BookShelfBean[] newArray(int size) {
+            return new BookShelfBean[size];
+        }
+    };
 
     public BookShelfBean copy() {
         BookShelfBean bookShelfBean = new BookShelfBean();
@@ -135,6 +222,7 @@ public class BookShelfBean implements Parcelable {
         bookShelfBean.lastChapterName = lastChapterName;
         bookShelfBean.chapterListSize = chapterListSize;
         bookShelfBean.customCoverPath = customCoverPath;
+        bookShelfBean.updateOff = updateOff;
         bookShelfBean.bookInfoBean = bookInfoBean.copy();
         return bookShelfBean;
     }
@@ -200,7 +288,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public boolean getHasUpdate() {
-        return hasUpdate;
+        return hasUpdate == null ? false : hasUpdate;
     }
 
     public int getNewChapters() {
@@ -343,5 +431,13 @@ public class BookShelfBean implements Parcelable {
 
     public void setChapterListSize(Integer chapterListSize) {
         this.chapterListSize = chapterListSize;
+    }
+
+    public boolean getUpdateOff() {
+        return updateOff == null ? false : updateOff;
+    }
+
+    public void setUpdateOff(Boolean updateOff) {
+        this.updateOff = updateOff;
     }
 }

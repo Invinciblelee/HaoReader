@@ -1,12 +1,10 @@
 package com.monke.monkeybook.view.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
@@ -24,8 +22,6 @@ import butterknife.ButterKnife;
 public class SettingActivity extends MBaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
 
     public static void startThis(Activity context, int requestCode) {
         context.startActivityForResult(new Intent(context, SettingActivity.class), requestCode);

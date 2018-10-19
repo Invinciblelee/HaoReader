@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.monke.monkeybook">
@@ -46,6 +45,7 @@
         <activity
             android:name=".view.activity.ReadBookActivity"
             android:configChanges="locale|keyboardHidden"
+            android:windowSoftInputMode="adjustNothing|stateHidden"
             android:launchMode="singleTask"
             android:theme="@style/CAppTheme.Activity.Read">
             <intent-filter tools:ignore="AppLinkUrlError">

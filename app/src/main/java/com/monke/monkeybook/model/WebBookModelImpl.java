@@ -1,8 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.model;
 
-import android.util.Log;
-
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
@@ -148,7 +146,7 @@ public class WebBookModelImpl implements IWebBookModel {
                 bookShelfBean.setNewChapters(chapterList.size() - bookShelfBean.getChapterListSize());
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                 bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
-            }else {
+            } else {
                 bookShelfBean.setNewChapters(0);
             }
             bookShelfBean.setFinalRefreshData(System.currentTimeMillis());

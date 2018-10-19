@@ -271,8 +271,6 @@ public class LocalPageLoader extends PageLoader {
 
     /**
      * 从序章找作者名称
-     *
-     * @param firstChapter
      */
     private void setupAuthorName(String firstChapter) {
         String author = mCollBook.getBookInfoBean().getAuthor();

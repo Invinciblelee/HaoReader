@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
@@ -39,8 +40,6 @@ public class DownloadActivity extends MBaseActivity {
     Toolbar toolbar;
     @BindView(R.id.recycler_view)
     FastScrollRecyclerView recyclerView;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
 
     private DownloadAdapter adapter;
 

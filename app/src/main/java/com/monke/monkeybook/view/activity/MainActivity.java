@@ -67,7 +67,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private static final int RESTORE_RESULT = 12;
     private static final int FILE_SELECT_RESULT = 13;
     private static final int REQUEST_BOOKSHELF_PX = 14;
-    private static final int REQUEST_CODE_SIGN_IN = 15;
 
     @BindView(R.id.layout_container)
     ScrimInsetsFrameLayout container;
@@ -76,23 +75,19 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @BindView(R.id.navigation_view)
     NavigationView drawerLeft;
     @BindView(R.id.appBar)
-    AppBarLayout appBar;
+    View appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
-    @BindView(R.id.main_view)
-    LinearLayout mainView;
     @BindView(R.id.bookshelf_search_view)
     BookShelfSearchView drawerRight;
 
-    private TextView tvUser;
     private Switch swNightTheme;
     private int group = -1;
     private BookShelfGridAdapter bookShelfGridAdapter;
     private BookShelfListAdapter bookShelfListAdapter;
     private boolean viewIsList;
-    private ActionBarDrawerToggle mDrawerToggle;
     private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
     private String bookPx;
@@ -192,7 +187,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // 这个必须要，没有的话进去的默认是个箭头。。正常应该是三横杠的
-        mDrawerToggle.syncState();
         if (swNightTheme != null) {
             swNightTheme.setChecked(isNightTheme());
         }
@@ -218,7 +212,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             itemTouchHelpCallback.setOnItemTouchCallbackListener(bookShelfGridAdapter.getItemTouchCallbackListener());
         }
 
-        drawerRight.setupItemClickListener(getAdapterListener());
+        drawerRight.setOnItemClickListener(getAdapterListener());
     }
 
     private OnItemClickListenerTwo getAdapterListener() {
@@ -228,13 +222,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 BookShelfBean bookShelfBean = getBookshelfList().get(index);
                 if (!mPresenter.checkLocalBookExists(bookShelfBean)) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle(R.string.delete_bookshelf)
-                            .setMessage(R.string.delete_bookshelf_not_exist_s)
-                            .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.removeFromBookSelf(bookShelfBean))
-                            .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                            })
-                            .show();
+                    moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
+                            getString(R.string.ok),
+                            v -> mPresenter.removeFromBookSelf(bookShelfBean),
+                            getString(R.string.cancel),
+                            v -> moDialogHUD.dismiss());
                 } else {
                     Intent intent = new Intent(MainActivity.this, ReadBookActivity.class);
                     intent.putExtra("openFrom", ReadBookPresenterImpl.OPEN_FROM_APP);
@@ -250,14 +242,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onLongClick(View view, int index) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 BookShelfBean bookShelf = getBookshelfList().get(index);
-                if (bookShelf.getGroup() == 2) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle(R.string.delete_bookshelf)
-                            .setMessage(R.string.delete_bookshelf_s)
-                            .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.removeFromBookSelf(bookShelf))
-                            .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                            })
-                            .show();
+                if (bookShelf.getGroup() == 3) {
+                    moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_s),
+                            getString(R.string.ok),
+                            v -> mPresenter.removeFromBookSelf(bookShelf),
+                            getString(R.string.cancel),
+                            v -> moDialogHUD.dismiss());
                 } else {
                     Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
                     intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_BOOKSHELF);
@@ -358,11 +348,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
     }
 
     //初始化侧边栏
     private void initDrawer() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerClosed(View drawerView) {
                 if (drawerView == drawerRight) {
@@ -391,17 +383,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 }
                 super.onDrawerOpened(drawerView);
             }
-        };
-        mDrawerToggle.syncState();
-        drawer.addDrawerListener(mDrawerToggle);
+        });
 
         setUpNavigationView();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void upGroup(int group) {
@@ -411,17 +395,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             mPresenter.queryBookShelf(false, true, group);
         }
 
-        switch (group) {
-            case 1:
-                drawerLeft.setCheckedItem(R.id.action_group_yf);
-                break;
-            case 0:
-                drawerLeft.setCheckedItem(R.id.action_group_zg);
-                break;
-            default:
-                drawerLeft.setCheckedItem(R.id.action_group_bd);
-                break;
-        }
+        drawerLeft.getMenu().getItem(group).setChecked(true);
     }
 
     //侧边栏按钮
@@ -429,10 +403,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         AppCompat.setNavigationViewLineStyle(drawerLeft, getResources().getColor(R.color.bg_divider_line), getResources().getDimensionPixelSize(R.dimen.line_height));
         @SuppressLint("InflateParams") View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header, null);
         drawerLeft.addHeaderView(headerView);
-        tvUser = headerView.findViewById(R.id.tv_user);
-        ColorStateList colorStateList = getResources().getColorStateList(R.color.navigation_color);
-        drawerLeft.setItemTextColor(colorStateList);
-        drawerLeft.setItemIconTintList(colorStateList);
         Menu drawerMenu = drawerLeft.getMenu();
         swNightTheme = drawerMenu.findItem(R.id.action_night_theme).getActionView().findViewById(R.id.sw_night_theme);
         swNightTheme.setChecked(isNightTheme());
@@ -449,8 +419,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 case R.id.action_group_yf:
                     new Handler().postDelayed(() -> upGroup(1), 200L);
                     break;
-                case R.id.action_group_bd:
+                case R.id.action_group_sc:
                     new Handler().postDelayed(() -> upGroup(2), 200L);
+                    break;
+                case R.id.action_group_bd:
+                    new Handler().postDelayed(() -> upGroup(3), 200L);
                     break;
                 case R.id.action_download:
                     new Handler().postDelayed(() -> DownloadActivity.startThis(this), 200L);

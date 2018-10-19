@@ -168,11 +168,14 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     }
 
     public String getAuthor() {
-        return TextUtils.isEmpty(author) ? "未知" : author;
+        return author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
+        if (TextUtils.isEmpty(this.author)) {
+            this.author = "未知";
+        }
     }
 
     public long getWords() {

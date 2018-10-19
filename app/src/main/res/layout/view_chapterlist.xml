@@ -1,87 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:transitionName="sharedView"
-        tools:ignore="UnusedAttribute">
+        app:contentInsetStartWithNavigation="0dp"
+        app:navigationContentDescription="@string/back"
+        app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.TabLayout
+            android:id="@+id/toolbar_tab"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:contentInsetStartWithNavigation="0dp"
-            app:navigationContentDescription="@string/back"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:fillViewport="false"
+            app:layout_scrollFlags="scroll"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorHeight="2.0dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextColor="@color/menu_color_default">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/toolbar_tab"
+            <android.support.design.widget.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:fillViewport="false"
-                app:layout_scrollFlags="scroll"
-                app:tabIndicatorColor="@color/colorAccent"
-                app:tabIndicatorHeight="2.0dp"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/colorAccent"
-                app:tabTextColor="@color/menu_color_default">
+                android:text="@string/table_of_contents" />
 
-                <android.support.design.widget.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/table_of_contents" />
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/bookmark" />
 
-                <android.support.design.widget.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/bookmark" />
+        </android.support.design.widget.TabLayout>
 
-            </android.support.design.widget.TabLayout>
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
+    </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background">
+        android:background="@color/background"
+        android:descendantFocusability="blocksDescendants">
 
         <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_height="match_parent"
             android:layout_above="@id/ll_chapter_info"
+            android:layout_alignParentTop="true"
+            android:overScrollMode="never"
             app:bubbleColor="@color/tv_text_button_deep_pre"
             app:handleColor="@color/tv_text_button_pre"
             app:trackColor="@color/bg_divider_line" />
 
+        <View style="@style/Style.Shadow.Top"
+            android:layout_alignTop="@id/rv_list" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="@drawable/bg_shadow_bottom"
-            android:layout_above="@id/ll_chapter_info"/>
+            android:id="@+id/v_line"
+            style="@style/Style.Shadow.Bottom"
+            android:layout_above="@id/ll_chapter_info" />
 
         <LinearLayout
             android:id="@+id/ll_chapter_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/background"
+            android:background="@color/colorPrimary"
             android:orientation="horizontal"
             android:paddingStart="15dp"
             android:paddingEnd="10dp">
@@ -120,8 +116,8 @@
                 android:id="@+id/ll_chapter_list_update"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:gravity="center"
+                android:orientation="horizontal"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp">
 

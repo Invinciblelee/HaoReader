@@ -24,7 +24,7 @@ public class BookInfoBean implements Parcelable {
     @Id
     private String noteUrl;  //如果是来源网站   则小说根地址 /如果是本地  则是小说本地MD5
     private String chapterUrl;  //章节目录地址
-    private long finalRefreshData;  //章节最后更新时间
+    private Long finalRefreshData = System.currentTimeMillis();  //章节最后更新时间
     private String coverUrl; //小说封面
     private String author;//作者
     private String introduce; //简介
@@ -41,10 +41,10 @@ public class BookInfoBean implements Parcelable {
     }
 
 
-    @Generated(hash = 1022173528)
+    @Generated(hash = 928796558)
     public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl,
-                        long finalRefreshData, String coverUrl, String author, String introduce,
-                        String origin, String charset) {
+            Long finalRefreshData, String coverUrl, String author, String introduce, String origin,
+            String charset) {
         this.name = name;
         this.tag = tag;
         this.noteUrl = noteUrl;
@@ -57,12 +57,17 @@ public class BookInfoBean implements Parcelable {
         this.charset = charset;
     }
 
+
     protected BookInfoBean(Parcel in) {
         name = in.readString();
         tag = in.readString();
         noteUrl = in.readString();
         chapterUrl = in.readString();
-        finalRefreshData = in.readLong();
+        if (in.readByte() == 0) {
+            finalRefreshData = null;
+        } else {
+            finalRefreshData = in.readLong();
+        }
         coverUrl = in.readString();
         author = in.readString();
         introduce = in.readString();
@@ -78,7 +83,12 @@ public class BookInfoBean implements Parcelable {
         dest.writeString(tag);
         dest.writeString(noteUrl);
         dest.writeString(chapterUrl);
-        dest.writeLong(finalRefreshData);
+        if (finalRefreshData == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(finalRefreshData);
+        }
         dest.writeString(coverUrl);
         dest.writeString(author);
         dest.writeString(introduce);
@@ -153,7 +163,7 @@ public class BookInfoBean implements Parcelable {
         return finalRefreshData;
     }
 
-    public void setFinalRefreshData(long finalRefreshData) {
+    public void setFinalRefreshData(Long finalRefreshData) {
         this.finalRefreshData = finalRefreshData;
     }
 
@@ -166,11 +176,14 @@ public class BookInfoBean implements Parcelable {
     }
 
     public String getAuthor() {
-        return TextUtils.isEmpty(author) ? "未知" : author;
+        return author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
+        if (TextUtils.isEmpty(this.author)) {
+            this.author = "未知";
+        }
     }
 
     public String getIntroduce() {

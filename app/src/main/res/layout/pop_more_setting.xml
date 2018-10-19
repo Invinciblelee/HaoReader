@@ -6,9 +6,7 @@
     android:orientation="vertical">
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@drawable/bg_shadow_bottom" />
+        style="@style/Style.Shadow.Bottom" />
 
     <ScrollView
         android:layout_width="match_parent"

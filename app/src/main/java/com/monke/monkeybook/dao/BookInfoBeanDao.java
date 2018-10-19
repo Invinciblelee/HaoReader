@@ -28,7 +28,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         public final static Property Tag = new Property(1, String.class, "tag", false, "TAG");
         public final static Property NoteUrl = new Property(2, String.class, "noteUrl", true, "NOTE_URL");
         public final static Property ChapterUrl = new Property(3, String.class, "chapterUrl", false, "CHAPTER_URL");
-        public final static Property FinalRefreshData = new Property(4, long.class, "finalRefreshData", false, "FINAL_REFRESH_DATA");
+        public final static Property FinalRefreshData = new Property(4, Long.class, "finalRefreshData", false, "FINAL_REFRESH_DATA");
         public final static Property CoverUrl = new Property(5, String.class, "coverUrl", false, "COVER_URL");
         public final static Property Author = new Property(6, String.class, "author", false, "AUTHOR");
         public final static Property Introduce = new Property(7, String.class, "introduce", false, "INTRODUCE");
@@ -53,7 +53,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
                 "\"TAG\" TEXT," + // 1: tag
                 "\"NOTE_URL\" TEXT PRIMARY KEY NOT NULL ," + // 2: noteUrl
                 "\"CHAPTER_URL\" TEXT," + // 3: chapterUrl
-                "\"FINAL_REFRESH_DATA\" INTEGER NOT NULL ," + // 4: finalRefreshData
+                "\"FINAL_REFRESH_DATA\" INTEGER," + // 4: finalRefreshData
                 "\"COVER_URL\" TEXT," + // 5: coverUrl
                 "\"AUTHOR\" TEXT," + // 6: author
                 "\"INTRODUCE\" TEXT," + // 7: introduce
@@ -90,7 +90,11 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         if (chapterUrl != null) {
             stmt.bindString(4, chapterUrl);
         }
-        stmt.bindLong(5, entity.getFinalRefreshData());
+ 
+        Long finalRefreshData = entity.getFinalRefreshData();
+        if (finalRefreshData != null) {
+            stmt.bindLong(5, finalRefreshData);
+        }
  
         String coverUrl = entity.getCoverUrl();
         if (coverUrl != null) {
@@ -141,7 +145,11 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         if (chapterUrl != null) {
             stmt.bindString(4, chapterUrl);
         }
-        stmt.bindLong(5, entity.getFinalRefreshData());
+ 
+        Long finalRefreshData = entity.getFinalRefreshData();
+        if (finalRefreshData != null) {
+            stmt.bindLong(5, finalRefreshData);
+        }
  
         String coverUrl = entity.getCoverUrl();
         if (coverUrl != null) {
@@ -181,7 +189,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // tag
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // noteUrl
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // chapterUrl
-            cursor.getLong(offset + 4), // finalRefreshData
+            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // finalRefreshData
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // coverUrl
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // author
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // introduce
@@ -197,7 +205,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         entity.setTag(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setNoteUrl(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setChapterUrl(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setFinalRefreshData(cursor.getLong(offset + 4));
+        entity.setFinalRefreshData(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
         entity.setCoverUrl(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setAuthor(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setIntroduce(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));

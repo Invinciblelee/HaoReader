@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_content"
+    android:id="@+id/rl_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -10,26 +9,21 @@
     android:orientation="vertical"
     app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.design.widget.AppBarLayout
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:transitionName="sharedView"
-        tools:ignore="UnusedAttribute">
+        app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -338,5 +332,6 @@
         </LinearLayout>
     </ScrollView>
 
-
-</com.monke.monkeybook.widget.ScrimInsetsLinearLayout>
+    <View style="@style/Style.Shadow.Top"
+        android:layout_below="@id/toolbar"/>
+</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

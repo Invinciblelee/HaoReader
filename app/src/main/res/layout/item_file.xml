@@ -33,8 +33,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/file_tv_name"
@@ -58,8 +58,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="15dp"
                 android:background="@drawable/selector_tv_first_button"
-                android:paddingEnd="5dp"
                 android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:text="TXT"
                 android:textColor="@color/white"
                 tools:ignore="HardcodedText,RtlHardcoded" />
@@ -69,8 +69,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="15dp"
-                tools:text="324kb"
-                tools:ignore="RtlHardcoded" />
+                tools:ignore="RtlHardcoded"
+                tools:text="324kb" />
 
             <TextView
                 android:id="@+id/file_tv_date"

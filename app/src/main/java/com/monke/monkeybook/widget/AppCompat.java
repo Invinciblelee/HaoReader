@@ -34,7 +34,7 @@ public class AppCompat {
 
     }
 
-    public static void useCustomIconForSearchView(SearchView searchView, String hint) {
+    public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchIcon, boolean showBg) {
         AppCompatImageView close = searchView.findViewById(R.id.search_close_btn);
         close.setImageResource(R.drawable.ic_close_black_24dp);
         setTint(close, searchView.getResources().getColor(R.color.menu_color_default));
@@ -47,13 +47,22 @@ public class AppCompat {
         SearchView.SearchAutoComplete searchText = searchView.findViewById(R.id.search_src_text);
 
         LinearLayout plate = searchView.findViewById(R.id.search_plate);
-        Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
-        setTint(bag, createSearchPlateBagState(searchView.getResources().getColor(R.color.colorAccent),
-                searchText.getCurrentHintTextColor()));
-        android.support.v4.view.ViewCompat.setBackground(plate, bag);
+        if(showBg) {
+            Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
+            setTint(bag, createSearchPlateBagState(searchView.getResources().getColor(R.color.colorAccent),
+                    searchText.getCurrentHintTextColor()));
+            android.support.v4.view.ViewCompat.setBackground(plate, bag);
+        }else {
+            android.support.v4.view.ViewCompat.setBackground(plate, null);
+        }
 
-        setQueryHintForSearchText(searchText, hint);
+        setQueryHintForSearchText(searchText, hint, showSearchIcon);
     }
+
+    public static void useCustomIconForSearchView(SearchView searchView, String hint) {
+        useCustomIconForSearchView(searchView, hint, true, true);
+    }
+
 
     private static ColorStateList createSearchPlateBagState(int activeColor, int normalColor) {
         int[] colors = new int[]{activeColor, activeColor, activeColor, normalColor, normalColor};
@@ -67,15 +76,24 @@ public class AppCompat {
     }
 
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete textView, String hintText) {
+        setQueryHintForSearchText(textView, hintText, true);
+    }
+
+
+    public static void setQueryHintForSearchText(SearchView.SearchAutoComplete textView, String hintText, boolean showIcon) {
         textView.setTextColor(textView.getResources().getColor(R.color.tv_text_default));
-        final int textSize = (int) (textView.getTextSize() * 1.25);
-        Drawable mSearchHintIcon = textView.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
-        mSearchHintIcon.setBounds(0, 0, textSize, textSize);
-        setTint(mSearchHintIcon, textView.getCurrentTextColor());
-        final SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
-        ssb.setSpan(new ImageSpan(mSearchHintIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.append(hintText);
-        textView.setHint(ssb);
+        if(showIcon) {
+            final int textSize = (int) (textView.getTextSize() * 1.25);
+            Drawable mSearchHintIcon = textView.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
+            mSearchHintIcon.setBounds(0, 0, textSize, textSize);
+            setTint(mSearchHintIcon, textView.getCurrentTextColor());
+            final SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
+            ssb.setSpan(new ImageSpan(mSearchHintIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.append(hintText);
+            textView.setHint(ssb);
+        }else {
+            textView.setHint(hintText);
+        }
     }
 
     public static void setNavigationViewLineStyle(NavigationView navigationView, @ColorInt final int color, final int height) {

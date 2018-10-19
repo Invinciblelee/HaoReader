@@ -116,6 +116,10 @@ public class ScrimInsetsFrameLayout extends FrameLayout {
         }
     }
 
+    public Rect getWindowInsets(){
+        return mInsets;
+    }
+
     protected void onInsetsChanged(Rect insets) {
         if(mOnInsetsCallback != null){
             mOnInsetsCallback.onInsetsChanged(insets);

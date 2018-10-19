@@ -14,10 +14,9 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -52,8 +51,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
+    @BindView(R.id.rl_content)
+    RelativeLayout rlContent;
     @BindView(R.id.tie_book_source_url)
     TextInputEditText tieBookSourceUrl;
     @BindView(R.id.til_book_source_url)
@@ -403,7 +402,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @Override
     public void showSnackBar(String msg, int length) {
-        Snackbar.make(llContent, msg, length).show();
+        Snackbar.make(rlContent, msg, length).show();
     }
 
     //菜单

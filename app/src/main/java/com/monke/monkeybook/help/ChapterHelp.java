@@ -13,7 +13,7 @@ public class ChapterHelp {
     private static Pattern chapterNamePattern = Pattern.compile("^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节篇回集])[、，。　：:.\\s]*");
 
     public static int guessChapterNum(String name) {
-        if (TextUtils.isEmpty(name) || name.matches("第.*?卷.*?第.*[章节回]"))
+        if (TextUtils.isEmpty(name) || name.matches("第.*?卷.*?第.*[章节回]*"))
             return -1;
         Matcher matcher = chapterNamePattern.matcher(name);
         if (matcher.find()) {

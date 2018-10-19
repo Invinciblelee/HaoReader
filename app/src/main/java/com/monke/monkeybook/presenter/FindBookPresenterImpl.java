@@ -1,10 +1,12 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.presenter;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.FindKindBean;
@@ -22,6 +24,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.View> implements FindBookContract.Presenter {
     private final List<FindKindGroupBean> group = new ArrayList<>();
+
+    @Override
+    public void attachView(@NonNull IView iView) {
+        super.attachView(iView);
+        RxBus.get().register(this);
+    }
 
     @Override
     public void detachView() {
@@ -70,5 +78,4 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     }
                 });
     }
-
 }

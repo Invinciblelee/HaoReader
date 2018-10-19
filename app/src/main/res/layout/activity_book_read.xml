@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fl_content"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <!--阅读页面-->
     <com.monke.monkeybook.widget.page.PageView
@@ -64,10 +63,7 @@
 
             </android.support.design.widget.AppBarLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:background="@drawable/bg_shadow_top" />
+            <View style="@style/Style.Shadow.Top" />
         </LinearLayout>
 
         <LinearLayout
@@ -196,10 +192,7 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:background="@drawable/bg_shadow_bottom" />
+            <View style="@style/Style.Shadow.Bottom" />
             <!--底部设置栏-->
             <LinearLayout
                 android:id="@+id/llNavigationBar"
@@ -430,12 +423,6 @@
 
     </com.monke.monkeybook.widget.ScrimInsetsFrameLayout>
 
-    <ViewStub
-        android:id="@+id/clp_chapterList_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout="@layout/view_chapterlist_layout" />
-
     <com.monke.mprogressbar.MHorProgressBar
         android:id="@+id/hpb_next_page_progress"
         android:layout_width="match_parent"
@@ -445,4 +432,11 @@
         app:cantouch="false"
         app:fontdrawable="@color/colorAccent" />
 
-</FrameLayout>
+    <com.monke.monkeybook.widget.ChapterListView
+        android:id="@+id/clp_chapterList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/background"
+        app:appInsetForeground="@color/colorPrimary" />
+</android.support.v4.widget.DrawerLayout>

@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:fitsSystemWindows="true"
-    app:appInsetForeground="@color/colorPrimary"
-    android:orientation="vertical">
+    app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:theme="@style/AppTheme.AppBarOverlay"
-        tools:ignore="UnusedAttribute">
+        android:transitionName="sharedView"
+        app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:transitionName="sharedView"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
+        android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
             android:id="@+id/rfRv_search_books"
@@ -39,10 +33,8 @@
             app:second_max_progress="80dp"
             app:speed="2dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_gravity="top"
-            android:background="@drawable/bg_shadow_top" />
     </FrameLayout>
-</com.monke.monkeybook.widget.ScrimInsetsLinearLayout>
+
+    <View style="@style/Style.Shadow.Top"
+        android:layout_below="@id/toolbar"/>
+</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

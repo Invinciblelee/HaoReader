@@ -3,6 +3,7 @@ package com.monke.monkeybook.presenter;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -135,7 +136,6 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         mView.dismissHUD();
                         Toast.makeText(mView.getContext(), R.string.restore_fail, Toast.LENGTH_LONG).show();
                     }
@@ -145,13 +145,15 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     @Override
     public void addBookUrl(String bookUrl) {
         if (TextUtils.isEmpty(bookUrl.trim())) return;
+        mView.showLoading("正在添加书籍");
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
-            URL url = new URL(bookUrl);
             BookInfoBean temp = DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().queryBuilder()
-                    .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookUrl)).limit(1).build().unique();
+                    .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookUrl)).build().unique();
             if (temp != null) {
-                e.onNext(null);
+                //onNext不能为null
+                e.onNext(new BookShelfBean());
             } else {
+                URL url = new URL(bookUrl);
                 BookShelfBean bookShelfBean = new BookShelfBean();
                 bookShelfBean.setTag(String.format("%s://%s", url.getProtocol(), url.getHost()));
                 bookShelfBean.setNoteUrl(url.toString());
@@ -167,16 +169,18 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
-                        if (bookShelfBean != null) {
+                        if (bookShelfBean.getTag() != null) {
                             getBook(bookShelfBean);
                         } else {
+                            mView.dismissHUD();
                             Toast.makeText(mView.getContext(), "已在书架中", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(mView.getContext(), "网址格式不对", Toast.LENGTH_SHORT).show();
+                        mView.dismissHUD();
+                        Toast.makeText(mView.getContext(), "网址格式错误", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -258,13 +262,14 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     private void getBook(BookShelfBean bookShelfBean) {
         WebBookModelImpl.getInstance()
                 .getBookInfo(bookShelfBean)
+                .subscribeOn(Schedulers.io())
                 .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
                 .flatMap(this::saveBookToShelfO)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean value) {
+                        mView.dismissHUD();
                         if (value.getBookInfoBean().getChapterUrl() == null) {
                             Toast.makeText(mView.getContext(), "添加书籍失败", Toast.LENGTH_SHORT).show();
                         } else {
@@ -276,7 +281,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(mView.getContext(), "添加书籍失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        mView.dismissHUD();
+                        Toast.makeText(mView.getContext(), "添加书籍失败", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -301,39 +307,43 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
         refreshIndex++;
         if (refreshIndex < bookShelfBeans.size()) {
             BookShelfBean bookShelfBean = bookShelfBeans.get(refreshIndex);
-            bookShelfBean.setLoading(true);
-            mView.updateBook(bookShelfBean, false);
-            WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
-                    .flatMap(this::saveBookToShelfO)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
-                    .subscribe(new SimpleObserver<BookShelfBean>() {
+            if(bookShelfBean.getUpdateOff()){
+                refreshBookshelf();
+            }else {
+                bookShelfBean.setLoading(true);
+                mView.updateBook(bookShelfBean, false);
+                WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
+                        .flatMap(this::saveBookToShelfO)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
+                        .subscribe(new SimpleObserver<BookShelfBean>() {
 
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            refreshingDisps.add(d);
-                        }
-
-                        @Override
-                        public void onNext(BookShelfBean value) {
-                            if (value.getErrorMsg() != null) {
-                                Toast.makeText(mView.getContext(), value.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                                value.setErrorMsg(null);
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                refreshingDisps.add(d);
                             }
-                            bookShelfBean.setLoading(false);
-                            mView.updateBook(bookShelfBean, false);
-                            refreshBookshelf();
-                        }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            errBooks.add(bookShelfBean.getBookInfoBean().getName());
-                            bookShelfBean.setLoading(false);
-                            mView.updateBook(bookShelfBean, false);
-                            refreshBookshelf();
-                        }
-                    });
+                            @Override
+                            public void onNext(BookShelfBean value) {
+                                if (value.getErrorMsg() != null) {
+                                    Toast.makeText(mView.getContext(), value.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                    value.setErrorMsg(null);
+                                }
+                                bookShelfBean.setLoading(false);
+                                mView.updateBook(bookShelfBean, false);
+                                refreshBookshelf();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                errBooks.add(bookShelfBean.getBookInfoBean().getName());
+                                bookShelfBean.setLoading(false);
+                                mView.updateBook(bookShelfBean, false);
+                                refreshBookshelf();
+                            }
+                        });
+            }
         } else if (refreshIndex >= bookShelfBeans.size() + threadsNum - 1) {
             if (errBooks.size() > 0) {
                 Toast.makeText(mView.getContext(), TextUtils.join("、", errBooks) + " 更新失败！", Toast.LENGTH_SHORT).show();

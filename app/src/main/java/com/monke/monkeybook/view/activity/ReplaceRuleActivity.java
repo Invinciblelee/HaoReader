@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
@@ -53,8 +53,8 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
+    @BindView(R.id.rl_content)
+    RelativeLayout rlContent;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerViewBookSource;
 
@@ -258,12 +258,12 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @Override
     public Snackbar getSnackBar(String msg, int length) {
-        return Snackbar.make(llContent, msg, length);
+        return Snackbar.make(rlContent, msg, length);
     }
 
     @Override
     public void showSnackBar(String msg, int length) {
-        Snackbar.make(llContent, msg, length).show();
+        Snackbar.make(rlContent, msg, length).show();
     }
 
     @Override
