@@ -55,8 +55,7 @@ public class NetPageLoader extends PageLoader {
                         // 存储章节到数据库
                         mCollBook.setHasUpdate(false);
                         mCollBook.setFinalRefreshData(System.currentTimeMillis());
-                        DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().insertOrReplaceInTx(mCollBook.getChapterList());
-                        DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplaceInTx(mCollBook);
+                        BookshelfHelp.saveBookToShelf(mCollBook);
                     })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<BookShelfBean>() {

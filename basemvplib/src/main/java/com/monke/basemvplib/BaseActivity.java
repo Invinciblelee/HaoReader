@@ -106,12 +106,12 @@ public abstract class BaseActivity<T extends IPresenter> extends RxAppCompatActi
     ////////////////////////////////启动Activity转场动画/////////////////////////////////////////////
 
     public void startActivityForResultByAnim(Intent intent, int requestCode, int animIn, int animExit) {
-        startActivityForResult(intent, requestCode);
+        super.startActivityForResult(intent, requestCode);
         overridePendingTransition(animIn, animExit);
     }
 
     public void startActivityByAnim(Intent intent, int animIn, int animExit) {
-        startActivity(intent);
+        super.startActivity(intent);
         overridePendingTransition(animIn, animExit);
     }
 

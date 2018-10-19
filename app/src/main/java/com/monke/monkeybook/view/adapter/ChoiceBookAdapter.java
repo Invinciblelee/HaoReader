@@ -53,12 +53,15 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             Glide.with(activity)
                     .load(searchBooks.get(position).getCoverUrl())
                     .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .fitCenter().dontAnimate()
                             .placeholder(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
-        myViewHolder.tvName.setText(String.format("%s(%s)", searchBooks.get(position).getName(), searchBooks.get(position).getAuthor()));
+        if(TextUtils.isEmpty(searchBooks.get(position).getAuthor())){
+            myViewHolder.tvName.setText(searchBooks.get(position).getName());
+        }else {
+            myViewHolder.tvName.setText(String.format("%s(%s)", searchBooks.get(position).getName(), searchBooks.get(position).getAuthor()));
+        }
         String state = searchBooks.get(position).getState();
         if (state == null || state.length() == 0) {
             myViewHolder.tvState.setVisibility(View.GONE);

@@ -168,14 +168,11 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     }
 
     public String getAuthor() {
-        return author;
+        return author == null ? "" : author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
-        if (TextUtils.isEmpty(this.author)) {
-            this.author = "未知";
-        }
     }
 
     public long getWords() {
@@ -204,7 +201,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     }
 
     public int getLastChapterNum() {
-        if(this.lastChapterNum == 0) {
+        if (this.lastChapterNum == 0) {
             this.lastChapterNum = ChapterHelp.guessChapterNum(lastChapter);
         }
         return lastChapterNum;
@@ -330,11 +327,11 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
             return -1;
         } else if (o.getIsCurrentSource()) {
             return 1;
-        } else if(TextUtils.equals(this.getTag(), My716.TAG)){
+        } else if (TextUtils.equals(this.getTag(), My716.TAG)) {
             return -1;
-        }else if(TextUtils.equals(o.getTag(), My716.TAG)){
+        } else if (TextUtils.equals(o.getTag(), My716.TAG)) {
             return 1;
-        }else if ((result = Integer.compare(o.getLastChapterNum(), this.getLastChapterNum())) != 0) {
+        } else if ((result = Integer.compare(o.getLastChapterNum(), this.getLastChapterNum())) != 0) {
             return result;
         } else if ((result = Long.compare(this.getAddTime(), o.getAddTime())) != 0) {
             return result;

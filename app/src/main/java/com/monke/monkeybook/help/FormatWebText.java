@@ -26,13 +26,12 @@ public class FormatWebText {
         }
 
         return trim(str.replace("&nbsp;", "")
+                .replace(":", "：")
+                .replace(",", "，")
                 .replaceAll("[\\u3000 ]+", "")
                 .replaceAll("\\s", " ")
-                .replaceAll(":", "：")
-                .replaceAll("\\(", "【")
-                .replaceAll("\\)", "】")
-                .replaceAll("（", "【")
-                .replaceAll("）", "】"));
+                .replaceAll("[?？!！。~]", "")
+                .replaceAll("([(（].*[）)])", ""));
     }
 
     public static String getAuthor(String str) {

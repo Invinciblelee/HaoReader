@@ -140,6 +140,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
                                 RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelf);
+                                Toast.makeText(MApplication.getInstance(), group == 0 ? "已加入追更" : group == 1 ? "已加入养肥" : "已加入收藏", Toast.LENGTH_SHORT).show();
                                 mView.updateView();
                             } else {
                                 Toast.makeText(MApplication.getInstance(), group == 0 ? "加入追更失败" : group == 1 ? "加入养肥失败" : "加入收藏失败", Toast.LENGTH_SHORT).show();
@@ -171,6 +172,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                         public void onNext(Boolean value) {
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
+                                Toast.makeText(MApplication.getInstance(), group == 0 ? "已移出追更" : group == 1 ? "已移出养肥" : "已取消收藏", Toast.LENGTH_SHORT).show();
                                 mView.updateView();
                             } else {
                                 Toast.makeText(MApplication.getInstance(), group == 0 ? "移出追更失败" : group == 1 ? "移出养肥失败" : "取消收藏失败", Toast.LENGTH_SHORT).show();

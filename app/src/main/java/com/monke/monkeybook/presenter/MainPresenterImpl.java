@@ -248,11 +248,12 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                             } else {
                                 Toast.makeText(MApplication.getInstance(), "移出书架失败!", Toast.LENGTH_SHORT).show();
                             }
+                            mView.dismissHUD();
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            e.printStackTrace();
+                            mView.dismissHUD();
                             Toast.makeText(MApplication.getInstance(), "移出书架失败!", Toast.LENGTH_SHORT).show();
                         }
                     });

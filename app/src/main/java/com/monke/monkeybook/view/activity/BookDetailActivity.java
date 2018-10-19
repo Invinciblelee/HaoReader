@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
@@ -52,8 +53,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     View switchView;
     @BindView(R.id.tv_update_switch)
     TextView tvUpdateSw;
-    @BindView(R.id.tv_collect_switch)
-    TextView tvCollectSw;
+    @BindView(R.id.fab_collection)
+    FloatingActionButton fabCollection;
     @BindView(R.id.tv_name)
     TextView tvName;
     @BindView(R.id.tv_author)
@@ -80,10 +81,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     RotateLoading progressBar;
     @BindView(R.id.tv_loading_msg)
     TextView tvLoadingMsg;
-    @BindView(R.id.iv_refresh)
-    ImageView ivRefresh;
-    @BindView(R.id.tv_change_origin)
-    TextView tvChangeOrigin;
+    @BindView(R.id.iv_change_origin)
+    ImageView ivChangeOrigin;
 
     private Animation animHideLoading;
     private Animation animShowInfo;
@@ -147,10 +146,12 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             boolean inShelf = mPresenter.getInBookShelf();
             if (inShelf) {
                 changeGroup(group);
-                tvChapter.setText(getString(R.string.read_dur_progress, mPresenter.getBookShelf().getDurChapterName()));
+                String durChapterName = mPresenter.getBookShelf().getDurChapterName();
+                tvChapter.setText(getString(R.string.read_dur_progress, TextUtils.isEmpty(durChapterName) ? getString(R.string.text_placeholder) : durChapterName));
             } else {
                 changeGroup(-1);
-                tvChapter.setText(getString(R.string.book_search_last, mPresenter.getBookShelf().getLastChapterName()));
+                String lastChapterName = mPresenter.getBookShelf().getLastChapterName();
+                tvChapter.setText(getString(R.string.book_search_last, TextUtils.isEmpty(lastChapterName) ? getString(R.string.text_placeholder) : lastChapterName));
             }
             if (mPresenter.getBookShelf().getBookInfoBean().getIntroduce() != null) {
                 tvIntro.setText(mPresenter.getBookShelf().getBookInfoBean().getIntroduce());
@@ -174,15 +175,15 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 }
 
                 Glide.with(this).load(coverImage)
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
+                        .apply(new RequestOptions().dontAnimate().centerCrop()
                                 .placeholder(R.drawable.img_cover_default)).into(ivCover);
 
                 Glide.with(this).load(coverImage)
                         .apply(new RequestOptions()
                                 .dontAnimate()
-                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
+                                .centerCrop()
                                 .placeholder(R.drawable.img_cover_gs))
-                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 2)))
+                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(30, 1)))
                         .into(ivBlurCover);
             }
         }
@@ -223,19 +224,23 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     public void changeGroup(int group) {
         if (group == 0) {
-            tvCollectSw.setText(R.string.add_collection);
+            fabCollection.setContentDescription(getString(R.string.add_collection));
+            fabCollection.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             tvShelfZg.setText(R.string.remove_from_bookshelf_zg);
             tvShelfYf.setText(R.string.add_from_bookshelf_yf);
         } else if (group == 1) {
-            tvCollectSw.setText(R.string.add_collection);
+            fabCollection.setContentDescription(getString(R.string.add_collection));
+            fabCollection.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             tvShelfZg.setText(R.string.add_from_bookshelf_zg);
             tvShelfYf.setText(R.string.remove_from_bookshelf_yf);
         } else if (group == 2) {
-            tvCollectSw.setText(R.string.remove_collection);
+            fabCollection.setContentDescription(getString(R.string.remove_collection));
+            fabCollection.setImageResource(R.drawable.ic_favorite_black_24dp);
             tvShelfZg.setText(R.string.add_from_bookshelf_zg);
             tvShelfYf.setText(R.string.add_from_bookshelf_yf);
         } else {
-            tvCollectSw.setText(R.string.add_collection);
+            fabCollection.setContentDescription(getString(R.string.add_collection));
+            fabCollection.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             tvShelfZg.setText(R.string.add_from_bookshelf_zg);
             tvShelfYf.setText(R.string.add_from_bookshelf_yf);
         }
@@ -316,15 +321,15 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
 
             Glide.with(this).load(coverImage)
-                    .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
+                    .apply(new RequestOptions().dontAnimate().centerCrop()
                             .placeholder(R.drawable.img_cover_default)).into(ivCover);
 
             Glide.with(this).load(coverImage)
                     .apply(new RequestOptions()
                             .dontAnimate()
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
+                            .centerCrop()
                             .placeholder(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 2)))
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(30, 1)))
                     .into(ivBlurCover);
         }
         tvName.setText(name);
@@ -351,7 +356,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
         });
 
-        tvChangeOrigin.setOnClickListener(view -> changeSource());
+        ivChangeOrigin.setOnClickListener(view -> changeSource());
 
         llRead.setOnClickListener(v -> {
             //进入阅读
@@ -363,18 +368,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             BitIntentDataManager.getInstance().putData(key, mPresenter.getBookShelf().copy());
             startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
-        });
-
-        ivRefresh.setOnClickListener(view -> {
-            AnimationSet animationSet = new AnimationSet(true);
-            RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF, 0.5f);
-            rotateAnimation.setDuration(1000);
-            animationSet.addAnimation(rotateAnimation);
-            ivRefresh.startAnimation(animationSet);
-            showLoading(true);
-            mPresenter.getBookShelfInfo();
         });
 
         ivCover.setOnClickListener(view -> {
@@ -392,7 +385,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
         tvUpdateSw.setOnClickListener(v -> mPresenter.switchUpdate(!mPresenter.getBookShelf().getUpdateOff()));
 
-        tvCollectSw.setOnClickListener(v -> {
+        fabCollection.setOnClickListener(v -> {
             if (mPresenter.getInBookShelf() && mPresenter.getBookShelf().getGroup() == 2) {
                 mPresenter.removeFromBookShelf();
             } else {
@@ -442,9 +435,4 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, android.R.anim.fade_out);
-    }
 }

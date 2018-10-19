@@ -57,9 +57,4 @@ public class WelcomeActivity extends MBaseActivity {
 
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, android.R.anim.fade_out);
-    }
 }

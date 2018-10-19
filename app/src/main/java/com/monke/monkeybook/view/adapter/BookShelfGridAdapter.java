@@ -142,12 +142,12 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         if (!activity.isFinishing()) {
             if (TextUtils.isEmpty(item.getCustomCoverPath())) {
                 Glide.with(activity).load(item.getBookInfoBean().getCoverUrl())
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .apply(new RequestOptions().dontAnimate()
                                 .centerCrop().placeholder(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else if (item.getCustomCoverPath().startsWith("http")) {
                 Glide.with(activity).load(item.getCustomCoverPath())
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .apply(new RequestOptions().dontAnimate()
                                 .centerCrop().placeholder(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else {

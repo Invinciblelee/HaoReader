@@ -28,12 +28,12 @@
             android:scaleType="centerCrop"
             tools:ignore="ContentDescription" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/ll_base_info"
                 android:layout_width="match_parent"
                 android:layout_height="136dp"
                 android:orientation="horizontal">
@@ -60,41 +60,19 @@
                         android:background="#78000000"
                         android:visibility="gone">
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_update_switch"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
                             android:layout_gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_collect_switch"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
-                                android:layout_marginBottom="10dp"
-                                android:background="@drawable/bg_update_forbidden"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:gravity="center"
-                                android:text="@string/add_collection"
-                                android:textColor="@color/white"
-                                android:textSize="10sp"
-                                tools:ignore="SmallSp" />
-
-                            <TextView
-                                android:id="@+id/tv_update_switch"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
-                                android:background="@drawable/bg_update_forbidden"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:gravity="center"
-                                android:text="@string/update_off"
-                                android:textColor="@color/white"
-                                android:textSize="10sp"
-                                tools:ignore="SmallSp" />
-
-
-                        </LinearLayout>
+                            android:background="@drawable/bg_update_forbidden"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/update_off"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            tools:ignore="SmallSp" />
 
                     </FrameLayout>
                 </android.support.v7.widget.CardView>
@@ -115,10 +93,9 @@
 
                         <me.grantland.widget.AutofitTextView
                             android:id="@+id/tv_name"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginRight="6dp"
-                            android:layout_weight="1"
                             android:gravity="center|start"
                             android:singleLine="true"
                             android:text="@string/tv_book_name"
@@ -126,13 +103,6 @@
                             android:textSize="16sp"
                             app:minTextSize="14sp"
                             tools:ignore="RtlHardcoded" />
-
-                        <ImageView
-                            android:id="@+id/iv_refresh"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:contentDescription="@string/refresh"
-                            android:src="@drawable/ic_refresh_white_24dp" />
 
                     </LinearLayout>
 
@@ -195,16 +165,15 @@
                             android:textSize="14sp"
                             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
-                        <TextView
-                            android:id="@+id/tv_change_origin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/selector_tv_first_button"
-                            android:paddingStart="6dp"
-                            android:paddingEnd="6dp"
-                            android:text="@string/change_origin"
-                            android:textColor="#ffffff"
-                            android:textSize="14sp" />
+                        <ImageView
+                            android:id="@+id/iv_change_origin"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="@string/change_origin"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="6dp"
+                            android:src="@drawable/ic_exchange"
+                            android:tint="@color/color_change_source" />
 
                     </LinearLayout>
 
@@ -224,10 +193,13 @@
             </LinearLayout>
 
             <FrameLayout
+                android:id="@+id/ll_content"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@color/card_background">
+                android:layout_height="wrap_content"
+                android:layout_above="@id/fl_bottom"
+                android:layout_below="@id/ll_base_info"
+                android:background="@color/card_background"
+                android:clipChildren="false">
 
                 <TextView
                     android:id="@+id/tv_intro"
@@ -235,10 +207,7 @@
                     android:layout_height="match_parent"
                     android:clickable="true"
                     android:focusable="true"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="5dp"
+                    android:padding="10dp"
                     android:scrollbarStyle="outsideInset"
                     android:scrollbars="vertical"
                     android:text="@string/book_intro"
@@ -246,10 +215,24 @@
                     android:textSize="15sp" />
             </FrameLayout>
 
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_collection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/ll_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="-14dp"
+                android:contentDescription="@string/add_collection"
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:tint="@color/white"
+                app:fabCustomSize="38dp" />
 
             <FrameLayout
+                android:id="@+id/fl_bottom"
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -375,7 +358,7 @@
                         android:textSize="16sp" />
                 </LinearLayout>
             </FrameLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 
 </FrameLayout>

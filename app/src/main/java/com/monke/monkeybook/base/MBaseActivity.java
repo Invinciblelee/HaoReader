@@ -2,6 +2,7 @@
 package com.monke.monkeybook.base;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -123,7 +124,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (menu != null) {
-            for (int i = 0; i< menu.size(); i++) {
+            for (int i = 0; i < menu.size(); i++) {
                 MenuItem item = menu.getItem(i);
                 AppCompat.setTint(item, getResources().getColor(R.color.menu_color_default));
             }
@@ -200,4 +201,21 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(R.anim.anim_bottom_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        overridePendingTransition(R.anim.anim_bottom_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, android.R.anim.fade_out);
+    }
 }

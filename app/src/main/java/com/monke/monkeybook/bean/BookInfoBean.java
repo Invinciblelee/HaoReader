@@ -43,8 +43,8 @@ public class BookInfoBean implements Parcelable {
 
     @Generated(hash = 928796558)
     public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl,
-            Long finalRefreshData, String coverUrl, String author, String introduce, String origin,
-            String charset) {
+                        Long finalRefreshData, String coverUrl, String author, String introduce, String origin,
+                        String charset) {
         this.name = name;
         this.tag = tag;
         this.noteUrl = noteUrl;
@@ -176,14 +176,11 @@ public class BookInfoBean implements Parcelable {
     }
 
     public String getAuthor() {
-        return author;
+        return author == null ? "" : author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
-        if (TextUtils.isEmpty(this.author)) {
-            this.author = "未知";
-        }
     }
 
     public String getIntroduce() {

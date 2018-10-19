@@ -2,7 +2,6 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
@@ -134,7 +132,7 @@ public class BookInfoActivity extends MBaseActivity {
                     tieCoverUrl.setText(book.getCustomCoverPath());
                 }
             }
-            initCover();
+            initCover(getTextString(tieCoverUrl));
         }
     }
 
@@ -157,28 +155,24 @@ public class BookInfoActivity extends MBaseActivity {
         tvChangeCover.setOnClickListener(view ->
                 moDialogHUD.showChangeSource(this, book, searchBookBean -> {
                     tieCoverUrl.setText(searchBookBean.getCoverUrl());
-                    book.setCustomCoverPath(tieCoverUrl.getText().toString());
-                    initCover();
+                    book.setCustomCoverPath(getTextString(tieCoverUrl));
+                    initCover(book.getCustomCoverPath());
                 }));
         tvRefreshCover.setOnClickListener(view -> {
-            book.setCustomCoverPath(tieCoverUrl.getText().toString());
-            initCover();
+            book.setCustomCoverPath(getTextString(tieCoverUrl));
+            initCover(book.getCustomCoverPath());
         });
     }
 
-    private void initCover() {
-        if (!this.isFinishing() && book != null) {
-            if (TextUtils.isEmpty(book.getCustomCoverPath())) {
-                Glide.with(this).load(book.getBookInfoBean().getCoverUrl())
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
-                                .placeholder(R.drawable.img_cover_default)).into(ivCover);
-            } else if (book.getCustomCoverPath().startsWith("http")) {
-                Glide.with(this).load(book.getCustomCoverPath())
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
-                                .placeholder(R.drawable.img_cover_default)).into(ivCover);
-            } else {
-                ivCover.setImageBitmap(BitmapFactory.decodeFile(book.getCustomCoverPath()));
-            }
+    private String getTextString(TextInputEditText editText) {
+        return editText.getText() == null ? null : editText.getText().toString();
+    }
+
+    private void initCover(String url) {
+        if (!this.isFinishing()) {
+            Glide.with(this).load(url)
+                    .apply(new RequestOptions().dontAnimate().centerCrop()
+                            .placeholder(R.drawable.img_cover_default)).into(ivCover);
         }
     }
 
@@ -214,11 +208,10 @@ public class BookInfoActivity extends MBaseActivity {
     }
 
     private void saveInfo() {
-        book.getBookInfoBean().setName(tieBookName.getText().toString());
-        book.getBookInfoBean().setAuthor(tieBookAuthor.getText().toString());
-        book.getBookInfoBean().setIntroduce(tieBookJj.getText().toString());
-        book.setCustomCoverPath(tieCoverUrl.getText().toString());
-        initCover();
+        book.getBookInfoBean().setName(getTextString(tieBookName));
+        book.getBookInfoBean().setAuthor(getTextString(tieBookAuthor));
+        book.getBookInfoBean().setIntroduce(getTextString(tieBookJj));
+        book.setCustomCoverPath(getTextString(tieCoverUrl));
         BookshelfHelp.saveBookToShelf(book);
         RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, book);
         finish();
@@ -242,8 +235,8 @@ public class BookInfoActivity extends MBaseActivity {
             case ResultSelectCover:
                 if (resultCode == RESULT_OK && null != data) {
                     tieCoverUrl.setText(FileUtil.getPath(this, data.getData()));
-                    book.setCustomCoverPath(tieCoverUrl.getText().toString());
-                    initCover();
+                    book.setCustomCoverPath(getTextString(tieCoverUrl));
+                    initCover(book.getCustomCoverPath());
                 }
                 break;
         }

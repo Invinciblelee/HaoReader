@@ -59,11 +59,15 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             Glide.with(activity)
                     .load(item.getCoverUrl())
                     .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
+                            .centerCrop()
                             .dontAnimate().placeholder(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
-        myViewHolder.tvName.setText(String.format("%s(%s)", item.getName(), item.getAuthor()));
+        if (TextUtils.isEmpty(item.getAuthor())) {
+            myViewHolder.tvName.setText(item.getName());
+        } else {
+            myViewHolder.tvName.setText(String.format("%s(%s)", item.getName(), item.getAuthor()));
+        }
         String state = item.getState();
         if (state == null || state.length() == 0) {
             myViewHolder.tvState.setVisibility(View.GONE);

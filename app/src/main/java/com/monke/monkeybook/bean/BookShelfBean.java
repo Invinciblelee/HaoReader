@@ -371,7 +371,7 @@ public class BookShelfBean implements Parcelable {
                 durChapterName = getChapterList().get(getChapterListSize() - 1).getDurChapterName();
             }
         } else {
-            durChapterName = "未知";
+            durChapterName = "";
         }
     }
 
@@ -387,7 +387,7 @@ public class BookShelfBean implements Parcelable {
         if (getChapterListSize() > 0) {
             lastChapterName = getChapterList().get(getChapterListSize() - 1).getDurChapterName();
         } else {
-            lastChapterName = "未知";
+            lastChapterName = "";
         }
     }
 

@@ -258,4 +258,5 @@
     <string name="update_on">启用\n更新</string>
     <string name="add_collection">加入\n收藏</string>
     <string name="remove_collection">取消\n收藏</string>
+    <string name="text_placeholder">――</string>
 </resources>

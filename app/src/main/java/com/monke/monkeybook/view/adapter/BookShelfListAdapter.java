@@ -139,31 +139,33 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
         if (!activity.isFinishing()) {
             if (TextUtils.isEmpty(item.getCustomCoverPath())) {
                 Glide.with(activity).load(item.getBookInfoBean().getCoverUrl())
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .apply(new RequestOptions().dontAnimate()
                                 .centerCrop().placeholder(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else if (item.getCustomCoverPath().startsWith("http")) {
                 Glide.with(activity).load(item.getCustomCoverPath())
-                        .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .apply(new RequestOptions().dontAnimate()
                                 .centerCrop().placeholder(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else {
                 holder.ivCover.setImageBitmap(BitmapFactory.decodeFile(item.getCustomCoverPath()));
             }
         }
-        holder.tvName.setText(String.format("%s(%s)", item.getBookInfoBean().getName(), item.getBookInfoBean().getAuthor()));
+        if (TextUtils.isEmpty(item.getBookInfoBean().getAuthor())) {
+            holder.tvName.setText(item.getBookInfoBean().getName());
+        } else {
+            holder.tvName.setText(String.format("%s(%s)", item.getBookInfoBean().getName(), item.getBookInfoBean().getAuthor()));
+        }
         String durChapterName = item.getDurChapterName();
         if (TextUtils.isEmpty(durChapterName)) {
-            holder.tvRead.setVisibility(View.INVISIBLE);
+            holder.tvRead.setText(holder.tvRead.getContext().getString(R.string.read_dur_progress, activity.getString(R.string.text_placeholder)));
         } else {
-            holder.tvRead.setVisibility(View.VISIBLE);
             holder.tvRead.setText(holder.tvRead.getContext().getString(R.string.read_dur_progress, FormatWebText.trim(durChapterName)));
         }
         String lastChapterName = item.getLastChapterName();
         if (TextUtils.isEmpty(lastChapterName)) {
-            holder.tvLast.setVisibility(View.INVISIBLE);
+            holder.tvLast.setText(holder.tvLast.getContext().getString(R.string.book_search_last, activity.getString(R.string.text_placeholder)));
         } else {
-            holder.tvLast.setVisibility(View.VISIBLE);
             holder.tvLast.setText(holder.tvLast.getContext().getString(R.string.book_search_last, FormatWebText.trim(lastChapterName)));
         }
         if (item.getHasUpdate()) {

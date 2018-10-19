@@ -274,7 +274,7 @@ public class LocalPageLoader extends PageLoader {
      */
     private void setupAuthorName(String firstChapter) {
         String author = mCollBook.getBookInfoBean().getAuthor();
-        if (TextUtils.isEmpty(author) || TextUtils.equals(author, "未知")) {
+        if (TextUtils.isEmpty(author)) {
             Pattern pattern = Pattern.compile(AUTHOR_PATTERN);
             Matcher m = pattern.matcher(firstChapter);
             if (m.find()) {
@@ -384,8 +384,7 @@ public class LocalPageLoader extends PageLoader {
                     .doOnComplete(() -> {
                         // 存储章节到数据库
                         mCollBook.setFinalRefreshData(mBookFile.lastModified());
-                        DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().insertOrReplaceInTx(mChapterList);
-                        DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplaceInTx(mCollBook);
+                        BookshelfHelp.saveBookToShelf(mCollBook);
                     })
                     .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .observeOn(AndroidSchedulers.mainThread())

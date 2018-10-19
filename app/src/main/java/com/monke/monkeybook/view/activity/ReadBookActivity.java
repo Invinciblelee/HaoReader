@@ -1492,7 +1492,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
         BookShelfDataHolder.getInstance().cleanData();
         super.finish();
-        overridePendingTransition(0, android.R.anim.fade_out);
     }
 
 
