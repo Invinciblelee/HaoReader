@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
@@ -237,10 +238,13 @@ public abstract class PageLoader {
             return;
         }
 
-        if (status == STATUS_CATEGORY_EMPTY) {
+        if (!isChapterListPrepare) {
+            setStatus(STATUS_LOADING);
             refreshChapterList();
             return;
         }
+
+        setStatus(STATUS_LOADING);
 
         BookshelfHelp.delChapter(BookshelfHelp.getCachePathName(mCollBook.getBookInfoBean()),
                 BookshelfHelp.getCacheFileName(mCurChapterPos, mCollBook.getChapter(mCurChapterPos).getDurChapterName()));
@@ -533,6 +537,8 @@ public abstract class PageLoader {
 
             // 重新获取指定页面
             mCurPage = mCurPageList.get(mCurPage.position);
+
+            mPageChangeListener.onPageChange(mCurChapterPos, mCurPage.position, mCurPageList.size());
         }
     }
 
@@ -1449,8 +1455,6 @@ public abstract class PageLoader {
 
         /**
          * 作用：章节页码数量改变之后的回调。==> 字体大小的调整，或者是否关闭虚拟按钮功能都会改变页面的数量。
-         *
-         * @param count:页面的数量
          */
         void onPageCountChange(int count);
 

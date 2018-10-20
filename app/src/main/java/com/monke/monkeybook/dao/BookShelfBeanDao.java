@@ -27,19 +27,18 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
         public final static Property NoteUrl = new Property(0, String.class, "noteUrl", true, "NOTE_URL");
         public final static Property DurChapter = new Property(1, Integer.class, "durChapter", false, "DUR_CHAPTER");
         public final static Property DurChapterPage = new Property(2, Integer.class, "durChapterPage", false, "DUR_CHAPTER_PAGE");
-        public final static Property DurChapterPageSize = new Property(3, Integer.class, "durChapterPageSize", false, "DUR_CHAPTER_PAGE_SIZE");
-        public final static Property FinalDate = new Property(4, Long.class, "finalDate", false, "FINAL_DATE");
-        public final static Property HasUpdate = new Property(5, Boolean.class, "hasUpdate", false, "HAS_UPDATE");
-        public final static Property NewChapters = new Property(6, Integer.class, "newChapters", false, "NEW_CHAPTERS");
-        public final static Property Tag = new Property(7, String.class, "tag", false, "TAG");
-        public final static Property SerialNumber = new Property(8, Integer.class, "serialNumber", false, "SERIAL_NUMBER");
-        public final static Property FinalRefreshData = new Property(9, Long.class, "finalRefreshData", false, "FINAL_REFRESH_DATA");
-        public final static Property Group = new Property(10, Integer.class, "group", false, "GROUP");
-        public final static Property DurChapterName = new Property(11, String.class, "durChapterName", false, "DUR_CHAPTER_NAME");
-        public final static Property LastChapterName = new Property(12, String.class, "lastChapterName", false, "LAST_CHAPTER_NAME");
-        public final static Property ChapterListSize = new Property(13, Integer.class, "chapterListSize", false, "CHAPTER_LIST_SIZE");
-        public final static Property CustomCoverPath = new Property(14, String.class, "customCoverPath", false, "CUSTOM_COVER_PATH");
-        public final static Property UpdateOff = new Property(15, Boolean.class, "updateOff", false, "UPDATE_OFF");
+        public final static Property FinalDate = new Property(3, Long.class, "finalDate", false, "FINAL_DATE");
+        public final static Property HasUpdate = new Property(4, Boolean.class, "hasUpdate", false, "HAS_UPDATE");
+        public final static Property NewChapters = new Property(5, Integer.class, "newChapters", false, "NEW_CHAPTERS");
+        public final static Property Tag = new Property(6, String.class, "tag", false, "TAG");
+        public final static Property SerialNumber = new Property(7, Integer.class, "serialNumber", false, "SERIAL_NUMBER");
+        public final static Property FinalRefreshData = new Property(8, Long.class, "finalRefreshData", false, "FINAL_REFRESH_DATA");
+        public final static Property Group = new Property(9, Integer.class, "group", false, "GROUP");
+        public final static Property DurChapterName = new Property(10, String.class, "durChapterName", false, "DUR_CHAPTER_NAME");
+        public final static Property LastChapterName = new Property(11, String.class, "lastChapterName", false, "LAST_CHAPTER_NAME");
+        public final static Property ChapterListSize = new Property(12, Integer.class, "chapterListSize", false, "CHAPTER_LIST_SIZE");
+        public final static Property CustomCoverPath = new Property(13, String.class, "customCoverPath", false, "CUSTOM_COVER_PATH");
+        public final static Property UpdateOff = new Property(14, Boolean.class, "updateOff", false, "UPDATE_OFF");
     }
 
 
@@ -58,19 +57,18 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
                 "\"NOTE_URL\" TEXT PRIMARY KEY NOT NULL ," + // 0: noteUrl
                 "\"DUR_CHAPTER\" INTEGER," + // 1: durChapter
                 "\"DUR_CHAPTER_PAGE\" INTEGER," + // 2: durChapterPage
-                "\"DUR_CHAPTER_PAGE_SIZE\" INTEGER," + // 3: durChapterPageSize
-                "\"FINAL_DATE\" INTEGER," + // 4: finalDate
-                "\"HAS_UPDATE\" INTEGER," + // 5: hasUpdate
-                "\"NEW_CHAPTERS\" INTEGER," + // 6: newChapters
-                "\"TAG\" TEXT," + // 7: tag
-                "\"SERIAL_NUMBER\" INTEGER," + // 8: serialNumber
-                "\"FINAL_REFRESH_DATA\" INTEGER," + // 9: finalRefreshData
-                "\"GROUP\" INTEGER," + // 10: group
-                "\"DUR_CHAPTER_NAME\" TEXT," + // 11: durChapterName
-                "\"LAST_CHAPTER_NAME\" TEXT," + // 12: lastChapterName
-                "\"CHAPTER_LIST_SIZE\" INTEGER," + // 13: chapterListSize
-                "\"CUSTOM_COVER_PATH\" TEXT," + // 14: customCoverPath
-                "\"UPDATE_OFF\" INTEGER);"); // 15: updateOff
+                "\"FINAL_DATE\" INTEGER," + // 3: finalDate
+                "\"HAS_UPDATE\" INTEGER," + // 4: hasUpdate
+                "\"NEW_CHAPTERS\" INTEGER," + // 5: newChapters
+                "\"TAG\" TEXT," + // 6: tag
+                "\"SERIAL_NUMBER\" INTEGER," + // 7: serialNumber
+                "\"FINAL_REFRESH_DATA\" INTEGER," + // 8: finalRefreshData
+                "\"GROUP\" INTEGER," + // 9: group
+                "\"DUR_CHAPTER_NAME\" TEXT," + // 10: durChapterName
+                "\"LAST_CHAPTER_NAME\" TEXT," + // 11: lastChapterName
+                "\"CHAPTER_LIST_SIZE\" INTEGER," + // 12: chapterListSize
+                "\"CUSTOM_COVER_PATH\" TEXT," + // 13: customCoverPath
+                "\"UPDATE_OFF\" INTEGER);"); // 14: updateOff
     }
 
     /** Drops the underlying database table. */
@@ -98,69 +96,64 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
             stmt.bindLong(3, durChapterPage);
         }
  
-        Integer durChapterPageSize = entity.getDurChapterPageSize();
-        if (durChapterPageSize != null) {
-            stmt.bindLong(4, durChapterPageSize);
-        }
- 
         Long finalDate = entity.getFinalDate();
         if (finalDate != null) {
-            stmt.bindLong(5, finalDate);
+            stmt.bindLong(4, finalDate);
         }
  
         Boolean hasUpdate = entity.getHasUpdate();
         if (hasUpdate != null) {
-            stmt.bindLong(6, hasUpdate ? 1L: 0L);
+            stmt.bindLong(5, hasUpdate ? 1L: 0L);
         }
  
         Integer newChapters = entity.getNewChapters();
         if (newChapters != null) {
-            stmt.bindLong(7, newChapters);
+            stmt.bindLong(6, newChapters);
         }
  
         String tag = entity.getTag();
         if (tag != null) {
-            stmt.bindString(8, tag);
+            stmt.bindString(7, tag);
         }
  
         Integer serialNumber = entity.getSerialNumber();
         if (serialNumber != null) {
-            stmt.bindLong(9, serialNumber);
+            stmt.bindLong(8, serialNumber);
         }
  
         Long finalRefreshData = entity.getFinalRefreshData();
         if (finalRefreshData != null) {
-            stmt.bindLong(10, finalRefreshData);
+            stmt.bindLong(9, finalRefreshData);
         }
  
         Integer group = entity.getGroup();
         if (group != null) {
-            stmt.bindLong(11, group);
+            stmt.bindLong(10, group);
         }
  
         String durChapterName = entity.getDurChapterName();
         if (durChapterName != null) {
-            stmt.bindString(12, durChapterName);
+            stmt.bindString(11, durChapterName);
         }
  
         String lastChapterName = entity.getLastChapterName();
         if (lastChapterName != null) {
-            stmt.bindString(13, lastChapterName);
+            stmt.bindString(12, lastChapterName);
         }
  
         Integer chapterListSize = entity.getChapterListSize();
         if (chapterListSize != null) {
-            stmt.bindLong(14, chapterListSize);
+            stmt.bindLong(13, chapterListSize);
         }
  
         String customCoverPath = entity.getCustomCoverPath();
         if (customCoverPath != null) {
-            stmt.bindString(15, customCoverPath);
+            stmt.bindString(14, customCoverPath);
         }
  
         Boolean updateOff = entity.getUpdateOff();
         if (updateOff != null) {
-            stmt.bindLong(16, updateOff ? 1L: 0L);
+            stmt.bindLong(15, updateOff ? 1L: 0L);
         }
     }
 
@@ -183,69 +176,64 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
             stmt.bindLong(3, durChapterPage);
         }
  
-        Integer durChapterPageSize = entity.getDurChapterPageSize();
-        if (durChapterPageSize != null) {
-            stmt.bindLong(4, durChapterPageSize);
-        }
- 
         Long finalDate = entity.getFinalDate();
         if (finalDate != null) {
-            stmt.bindLong(5, finalDate);
+            stmt.bindLong(4, finalDate);
         }
  
         Boolean hasUpdate = entity.getHasUpdate();
         if (hasUpdate != null) {
-            stmt.bindLong(6, hasUpdate ? 1L: 0L);
+            stmt.bindLong(5, hasUpdate ? 1L: 0L);
         }
  
         Integer newChapters = entity.getNewChapters();
         if (newChapters != null) {
-            stmt.bindLong(7, newChapters);
+            stmt.bindLong(6, newChapters);
         }
  
         String tag = entity.getTag();
         if (tag != null) {
-            stmt.bindString(8, tag);
+            stmt.bindString(7, tag);
         }
  
         Integer serialNumber = entity.getSerialNumber();
         if (serialNumber != null) {
-            stmt.bindLong(9, serialNumber);
+            stmt.bindLong(8, serialNumber);
         }
  
         Long finalRefreshData = entity.getFinalRefreshData();
         if (finalRefreshData != null) {
-            stmt.bindLong(10, finalRefreshData);
+            stmt.bindLong(9, finalRefreshData);
         }
  
         Integer group = entity.getGroup();
         if (group != null) {
-            stmt.bindLong(11, group);
+            stmt.bindLong(10, group);
         }
  
         String durChapterName = entity.getDurChapterName();
         if (durChapterName != null) {
-            stmt.bindString(12, durChapterName);
+            stmt.bindString(11, durChapterName);
         }
  
         String lastChapterName = entity.getLastChapterName();
         if (lastChapterName != null) {
-            stmt.bindString(13, lastChapterName);
+            stmt.bindString(12, lastChapterName);
         }
  
         Integer chapterListSize = entity.getChapterListSize();
         if (chapterListSize != null) {
-            stmt.bindLong(14, chapterListSize);
+            stmt.bindLong(13, chapterListSize);
         }
  
         String customCoverPath = entity.getCustomCoverPath();
         if (customCoverPath != null) {
-            stmt.bindString(15, customCoverPath);
+            stmt.bindString(14, customCoverPath);
         }
  
         Boolean updateOff = entity.getUpdateOff();
         if (updateOff != null) {
-            stmt.bindLong(16, updateOff ? 1L: 0L);
+            stmt.bindLong(15, updateOff ? 1L: 0L);
         }
     }
 
@@ -260,19 +248,18 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // noteUrl
             cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // durChapter
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // durChapterPage
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // durChapterPageSize
-            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // finalDate
-            cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // hasUpdate
-            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // newChapters
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // tag
-            cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8), // serialNumber
-            cursor.isNull(offset + 9) ? null : cursor.getLong(offset + 9), // finalRefreshData
-            cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10), // group
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // durChapterName
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // lastChapterName
-            cursor.isNull(offset + 13) ? null : cursor.getInt(offset + 13), // chapterListSize
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // customCoverPath
-            cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0 // updateOff
+            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // finalDate
+            cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0, // hasUpdate
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // newChapters
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // tag
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // serialNumber
+            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8), // finalRefreshData
+            cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9), // group
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // durChapterName
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // lastChapterName
+            cursor.isNull(offset + 12) ? null : cursor.getInt(offset + 12), // chapterListSize
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // customCoverPath
+            cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0 // updateOff
         );
         return entity;
     }
@@ -282,19 +269,18 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
         entity.setNoteUrl(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setDurChapter(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
         entity.setDurChapterPage(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
-        entity.setDurChapterPageSize(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
-        entity.setFinalDate(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
-        entity.setHasUpdate(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
-        entity.setNewChapters(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
-        entity.setTag(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setSerialNumber(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));
-        entity.setFinalRefreshData(cursor.isNull(offset + 9) ? null : cursor.getLong(offset + 9));
-        entity.setGroup(cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10));
-        entity.setDurChapterName(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setLastChapterName(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setChapterListSize(cursor.isNull(offset + 13) ? null : cursor.getInt(offset + 13));
-        entity.setCustomCoverPath(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setUpdateOff(cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0);
+        entity.setFinalDate(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
+        entity.setHasUpdate(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
+        entity.setNewChapters(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setTag(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSerialNumber(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setFinalRefreshData(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
+        entity.setGroup(cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9));
+        entity.setDurChapterName(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setLastChapterName(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setChapterListSize(cursor.isNull(offset + 12) ? null : cursor.getInt(offset + 12));
+        entity.setCustomCoverPath(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setUpdateOff(cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0);
      }
     
     @Override

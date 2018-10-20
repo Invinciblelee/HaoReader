@@ -29,7 +29,6 @@ public class BookShelfBean implements Parcelable {
     private String noteUrl; //对应BookInfoBean noteUrl;
     private Integer durChapter = 0;   //当前章节 （包括番外）
     private Integer durChapterPage = 0;  // 当前章节位置   用页码
-    private Integer durChapterPageSize = 0;// 当前章节页数
     private Long finalDate = System.currentTimeMillis();  //最后阅读时间
     private Boolean hasUpdate = false;  //是否有更新
     private Integer newChapters = 0;  //更新章节数
@@ -51,15 +50,13 @@ public class BookShelfBean implements Parcelable {
     }
 
 
-    @Generated(hash = 1464741301)
-    public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Integer durChapterPageSize,
-                         Long finalDate, Boolean hasUpdate, Integer newChapters, String tag, Integer serialNumber, Long finalRefreshData,
-                         Integer group, String durChapterName, String lastChapterName, Integer chapterListSize, String customCoverPath,
-                         Boolean updateOff) {
+    @Generated(hash = 121009933)
+    public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate, Boolean hasUpdate, Integer newChapters,
+            String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
+            Integer chapterListSize, String customCoverPath, Boolean updateOff) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
-        this.durChapterPageSize = durChapterPageSize;
         this.finalDate = finalDate;
         this.hasUpdate = hasUpdate;
         this.newChapters = newChapters;
@@ -88,11 +85,6 @@ public class BookShelfBean implements Parcelable {
             durChapterPage = null;
         } else {
             durChapterPage = in.readInt();
-        }
-        if (in.readByte() == 0) {
-            durChapterPageSize = null;
-        } else {
-            durChapterPageSize = in.readInt();
         }
         if (in.readByte() == 0) {
             finalDate = null;
@@ -151,12 +143,6 @@ public class BookShelfBean implements Parcelable {
         } else {
             dest.writeByte((byte) 1);
             dest.writeInt(durChapterPage);
-        }
-        if (durChapterPageSize == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(durChapterPageSize);
         }
         if (finalDate == null) {
             dest.writeByte((byte) 0);
@@ -225,7 +211,6 @@ public class BookShelfBean implements Parcelable {
         bookShelfBean.noteUrl = noteUrl;
         bookShelfBean.durChapter = durChapter;
         bookShelfBean.durChapterPage = durChapterPage;
-        bookShelfBean.durChapterPageSize = durChapterPageSize;
         bookShelfBean.finalDate = finalDate;
         bookShelfBean.hasUpdate = hasUpdate;
         bookShelfBean.newChapters = newChapters;
@@ -344,14 +329,6 @@ public class BookShelfBean implements Parcelable {
 
     public void setDurChapterPage(int durChapterPage) {
         this.durChapterPage = durChapterPage;
-    }
-
-    public int getDurChapterPageSize() {
-        return durChapterPageSize == null ? 0 : durChapterPageSize;
-    }
-
-    public void setDurChapterPageSize(Integer durChapterPageSize) {
-        this.durChapterPageSize = durChapterPageSize;
     }
 
     public void setFinalDate(Long finalDate) {

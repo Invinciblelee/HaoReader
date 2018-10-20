@@ -6,6 +6,7 @@ import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.utils.NetworkUtil;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.io.BufferedReader;
@@ -81,7 +82,11 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onError(Throwable e) {
-                            setStatus(STATUS_CATEGORY_EMPTY);
+                            if(NetworkUtil.isNetworkAvailable()) {
+                                setStatus(STATUS_CATEGORY_EMPTY);
+                            }else {
+                                setStatus(STATUS_NETWORK_ERROR);
+                            }
                         }
                     });
         }

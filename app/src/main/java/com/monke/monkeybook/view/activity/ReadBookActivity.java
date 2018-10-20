@@ -19,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -377,7 +378,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void showHideView() {
-        if (mPresenter.getBookShelf() == null || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
+        if (mPresenter.getBookShelf() == null
+                || mPresenter.getBookShelf().isChapterListEmpty()
+                || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
             atvDivider.setVisibility(View.GONE);
             atvUrl.setVisibility(View.GONE);
         } else {
@@ -391,12 +394,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void prepareDisplay(boolean check) {
         mPageLoader = pageView.getPageLoader(this, mPresenter.getBookShelf());
-
-        if(mPresenter.getBookShelf().getChapterListSize() == 0){
-            readStatusBar.setVisibility(View.INVISIBLE);
-        }else {
-            readStatusBar.updateOnPageChanged(mPresenter.getBookShelf());
-        }
 
         if (check) {
             getWindow().getDecorView().post(() -> mPresenter.checkBookInfo());
@@ -714,11 +711,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     public void onPageChange(int chapterIndex, int pageIndex, int pageSize) {
                         mPresenter.getBookShelf().setDurChapter(chapterIndex);
                         mPresenter.getBookShelf().setDurChapterPage(pageIndex);
-                        mPresenter.getBookShelf().setDurChapterPageSize(pageSize);
                         mPresenter.getBookShelf().upDurChapterName();
                         mPresenter.saveProgress();
 
-                        readStatusBar.updateOnPageChanged(mPresenter.getBookShelf());
+                        readStatusBar.updateOnPageChanged(mPresenter.getBookShelf(), pageSize);
 
                         hpbReadProgress.post(
                                 () -> hpbReadProgress.setDurProgress(pageIndex)

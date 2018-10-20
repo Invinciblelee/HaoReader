@@ -1,18 +1,16 @@
 package com.monke.monkeybook.widget;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -41,8 +39,6 @@ public class ReadBottomStatusBar extends FrameLayout {
     ProgressBar batteryProgress;
     @BindView(R.id.tv_time)
     TextView tvTime;
-    @BindView(R.id.ll_title)
-    LinearLayout titleView;
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.tv_page_index)
@@ -63,6 +59,7 @@ public class ReadBottomStatusBar extends FrameLayout {
 
     public ReadBottomStatusBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -117,18 +114,11 @@ public class ReadBottomStatusBar extends FrameLayout {
         if (showTimeBattery) {
             tvTime.setVisibility(VISIBLE);
             batteryProgress.setVisibility(VISIBLE);
-            if (batteryTimeView.indexOfChild(tvPageIndex) >= 0) {
-                batteryTimeView.removeView(tvPageIndex);
-                titleView.addView(tvPageIndex);
-            }
+            tvPageIndex.setVisibility(GONE);
         } else {
             tvTime.setVisibility(GONE);
             batteryProgress.setVisibility(GONE);
-
-            if (batteryTimeView.indexOfChild(tvPageIndex) < 0) {
-                titleView.removeView(tvPageIndex);
-                batteryTimeView.addView(tvPageIndex);
-            }
+            tvPageIndex.setVisibility(VISIBLE);
         }
         updateTime();
         updateBattery(batteryLevel);
@@ -151,7 +141,7 @@ public class ReadBottomStatusBar extends FrameLayout {
     }
 
     public void updateTitle(String durChapterName) {
-        if (durChapterName == null) {
+        if (TextUtils.isEmpty(durChapterName)) {
             return;
         }
 
@@ -165,7 +155,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         this.pageSize = pageSize;
 
         if (pageSize > 0) {
-            tvPageIndex.setText(String.format(Locale.getDefault(), showTimeBattery ? "【%d/%d】" : "%d/%d", durPage, pageSize));
+            tvPageIndex.setText(String.format(Locale.getDefault(), "%d/%d", durPage, pageSize));
         } else {
             tvPageIndex.setText(null);
         }
@@ -175,9 +165,9 @@ public class ReadBottomStatusBar extends FrameLayout {
         this.durChapter = durChapter;
         this.chapterSize = chapterSize;
 
-        if(chapterSize > 0) {
+        if (chapterSize > 0) {
             tvChapterIndex.setText(String.format(Locale.getDefault(), "%d/%d章", durChapter, chapterSize));
-        }else {
+        } else {
             tvChapterIndex.setText(null);
         }
     }
@@ -205,17 +195,37 @@ public class ReadBottomStatusBar extends FrameLayout {
         updateTextColor(readConfig.getTextColor());
     }
 
-    public void updateOnPageChanged(BookShelfBean bookShelfBean) {
+    public void updateOnPageChanged(BookShelfBean bookShelfBean, int durPageSize) {
         if (bookShelfBean == null) {
             return;
         }
 
-        if(getVisibility() != VISIBLE){
+        if (showTimeBattery) {
+            updateTitle(formatTitle(bookShelfBean.getDurChapterName(), bookShelfBean.getDurChapterPage() + 1, durPageSize));
+        } else {
+            updateTitle(bookShelfBean.getDurChapterName());
+            updatePageIndex(bookShelfBean.getDurChapterPage() + 1, durPageSize);
+        }
+        updateChapterIndex(bookShelfBean.getDurChapter() + 1, bookShelfBean.getChapterListSize());
+
+        if (getVisibility() != VISIBLE) {
             setVisibility(VISIBLE);
         }
+    }
 
-        updateTitle(bookShelfBean.getDurChapterName());
-        updateChapterIndex(bookShelfBean.getDurChapter() + 1, bookShelfBean.getChapterListSize());
-        updatePageIndex(bookShelfBean.getDurChapterPage() + 1, bookShelfBean.getDurChapterPageSize());
+    private String formatTitle(String titleStr, int durPage, int durPageSize) {
+        if (TextUtils.isEmpty(titleStr)) {
+            return "";
+        }
+        StringBuilder title = new StringBuilder();
+        if (titleStr.length() > 12) {
+            title.append(titleStr.subSequence(0, 12)).append("…");
+        } else {
+            title.append(titleStr);
+        }
+        if (durPageSize > 0) {
+            title.append(String.format(Locale.getDefault(), "【%d/%d】", durPage, durPageSize));
+        }
+        return title.toString();
     }
 }
