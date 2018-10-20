@@ -196,7 +196,7 @@ public class ReadBottomStatusBar extends FrameLayout {
     }
 
     public void updateOnPageChanged(BookShelfBean bookShelfBean, int durPageSize) {
-        if (bookShelfBean == null) {
+        if (bookShelfBean == null || durPageSize == 0) {
             return;
         }
 

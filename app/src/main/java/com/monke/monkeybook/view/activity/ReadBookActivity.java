@@ -698,6 +698,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         mPresenter.getBookShelf().upDurChapterName();
                         mPresenter.getBookShelf().upLastChapterName();
                         initChapterList();
+                        showHideView();
                     }
 
                     @Override
