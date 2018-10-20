@@ -1,18 +1,13 @@
 package com.monke.monkeybook.presenter.contract;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
-import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
-
-import java.util.List;
 
 public interface ReadBookContract {
     interface View extends IView {
@@ -28,16 +23,14 @@ public interface ReadBookContract {
 
         void chapterError(int chapter, int status);
 
-        void postCheckBookInfo();
+        void showHideView();
+
+        void prepareDisplay(boolean check);
 
         /**
          * 开始加载
          */
         void startLoadingBook();
-
-        void showMenu();
-
-        void openBookFromOther();
 
         void chapterChange(int chapterIndex);
 
@@ -50,6 +43,7 @@ public interface ReadBookContract {
         void toast(String msg);
 
         void updateTitle(String title);
+
         /**
          * 更新朗读状态
          */
@@ -68,7 +62,7 @@ public interface ReadBookContract {
 
         boolean isRecreate();
 
-        int getOpenFrom();
+        boolean isOpenFromUri();
 
         boolean inBookShelf();
 
@@ -84,11 +78,9 @@ public interface ReadBookContract {
 
         void removeFromShelf();
 
-        void initData(Activity activity);
+        void prepare(Activity activity);
 
         void checkBookInfo();
-
-        void openBookFromOther(Activity activity);
 
         void addDownload(int start, int end);
 

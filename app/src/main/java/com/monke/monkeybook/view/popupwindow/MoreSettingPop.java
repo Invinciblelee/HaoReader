@@ -27,14 +27,10 @@ public class MoreSettingPop extends PopupWindow {
     Switch sbClickAllNext;
     @BindView(R.id.sb_click)
     Switch sbClick;
-    @BindView(R.id.sb_show_title)
-    Switch sbShowTitle;
     @BindView(R.id.sb_showTimeBattery)
     Switch sbShowTimeBattery;
     @BindView(R.id.sb_hideStatusBar)
     Switch sbHideStatusBar;
-    @BindView(R.id.sb_showLine)
-    Switch sbShowLine;
     @BindView(R.id.sbImmersionBar)
     Switch sbImmersionBar;
     @BindView(R.id.tv_screen_time_out)
@@ -105,35 +101,21 @@ public class MoreSettingPop extends PopupWindow {
             }
         });
 
-        sbShowTitle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setShowTitle(isChecked);
-                readBookControl.setLineChange(System.currentTimeMillis());
-                changeProListener.refresh();
-            }
-        });
         sbShowTimeBattery.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonView.isPressed()) {
                 readBookControl.setShowTimeBattery(isChecked);
-                readBookControl.setLineChange(System.currentTimeMillis());
                 changeProListener.refresh();
             }
         });
-        sbShowLine.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setShowLine(isChecked);
-                readBookControl.setLineChange(System.currentTimeMillis());
-                changeProListener.refresh();
-            }
-        });
+
         sbImmersionBar.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonView.isPressed()) {
                 readBookControl.setImmersionStatusBar(isChecked);
-                readBookControl.setLineChange(System.currentTimeMillis());
                 RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
                 changeProListener.refresh();
             }
         });
+
         tvScreenTimeOut.setOnClickListener(view -> {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(activity.getString(R.string.keep_light))
@@ -168,9 +150,7 @@ public class MoreSettingPop extends PopupWindow {
         sbHideStatusBar.setChecked(readBookControl.getHideStatusBar());
         sbClick.setChecked(readBookControl.getCanClickTurn());
         sbClickAllNext.setChecked(readBookControl.getClickAllNext());
-        sbShowTitle.setChecked(readBookControl.getShowTitle());
         sbShowTimeBattery.setChecked(readBookControl.getShowTimeBattery());
-        sbShowLine.setChecked(readBookControl.getShowLine());
         sbImmersionBar.setChecked(readBookControl.getImmersionStatusBar());
         upView();
     }

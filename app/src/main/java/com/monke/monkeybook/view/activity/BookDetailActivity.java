@@ -183,7 +183,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                                 .dontAnimate()
                                 .centerCrop()
                                 .placeholder(R.drawable.img_cover_gs))
-                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(30, 1)))
+                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
                         .into(ivBlurCover);
             }
         }
@@ -329,7 +329,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                             .dontAnimate()
                             .centerCrop()
                             .placeholder(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(30, 1)))
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
                     .into(ivBlurCover);
         }
         tvName.setText(name);
@@ -361,7 +361,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         llRead.setOnClickListener(v -> {
             //进入阅读
             Intent intent = new Intent(BookDetailActivity.this, ReadBookActivity.class);
-            intent.putExtra("openFrom", ReadBookPresenterImpl.OPEN_FROM_APP);
             intent.putExtra("inBookShelf", mPresenter.getInBookShelf());
             String key = String.valueOf(System.currentTimeMillis());
             intent.putExtra("data_key", key);

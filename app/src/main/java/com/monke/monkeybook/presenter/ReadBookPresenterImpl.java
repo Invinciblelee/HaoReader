@@ -4,11 +4,8 @@ package com.monke.monkeybook.presenter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -18,7 +15,6 @@ import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.BitIntentDataManager;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -26,7 +22,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
-import com.monke.monkeybook.bean.LocBookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
@@ -35,17 +30,14 @@ import com.monke.monkeybook.help.BookShelfDataHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.ImportBookModelImpl;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.source.My716;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
-import com.monke.monkeybook.utils.FileUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.widget.page.PageLoader;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -61,8 +53,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
-    public final static int OPEN_FROM_OTHER = 0;
-    public final static int OPEN_FROM_APP = 1;
     private final int ADD = 1;
     private final int REMOVE = 2;
     private final int CHECK = 3;
@@ -70,8 +60,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     private boolean isRecreate;
 
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
-    private int open_from;
     private boolean inBookShelf;
+    private boolean openFromUri;
     private BookShelfBean bookShelf;
 
     private List<String> downloadingChapterList = new ArrayList<>();
@@ -82,40 +72,39 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     }
 
     @Override
-    public void initData(Activity activity) {
+    public void prepare(Activity activity) {
         Intent intent = activity.getIntent();
-        BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
-        if ((bookShelf = holder.getBookShelf()) != null) {
-            isRecreate = true;
-            open_from = holder.getOpenFrom();
-            inBookShelf = holder.isInBookShelf();
-            mView.startLoadingBook();
-        } else {
-            isRecreate = false;
-            open_from = intent.getData() != null ? OPEN_FROM_OTHER : OPEN_FROM_APP;
-            open_from = intent.getIntExtra("openFrom", open_from);
-            inBookShelf = intent.getBooleanExtra("inBookShelf", true);
-            if (open_from == OPEN_FROM_APP) {
-                if (bookShelf == null) {
-                    String key = intent.getStringExtra("data_key");
-                    bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
-                    BitIntentDataManager.getInstance().cleanData(key);
-                }
-                if (bookShelf == null) {
-                    bookShelf = BookshelfHelp.getBookByUrl(mView.getNoteUrl());
-                }
-                if (bookShelf != null) {
-                    readBookControl.setLastNoteUrl(bookShelf.getNoteUrl());
-                    mView.updateTitle(bookShelf.getBookInfoBean().getName());
-                    mView.postCheckBookInfo();
-                } else {
-                    mView.finish();
-                }
+        openFromUri = intent.getBooleanExtra("openFromUri", false);
+        isRecreate = intent.getBooleanExtra("isRecreate", false);
+        intent.putExtra("isRecreate", true);
+        if (isRecreate && !openFromUri) {
+            BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
+            bookShelf = holder.getBookShelf();
+            if (bookShelf != null) {
+                inBookShelf = holder.isInBookShelf();
+                mView.prepareDisplay(false);
             } else {
-                mView.openBookFromOther();
+                mView.finish();
+            }
+        } else {
+            inBookShelf = intent.getBooleanExtra("inBookShelf", true);
+            if (bookShelf == null) {
+                String key = intent.getStringExtra("data_key");
+                bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+                BitIntentDataManager.getInstance().cleanData(key);
+            }
+            if (bookShelf == null) {
+                bookShelf = BookshelfHelp.getBookByUrl(mView.getNoteUrl());
+            }
+            if (bookShelf != null) {
+                readBookControl.setLastNoteUrl(bookShelf.getNoteUrl());
+                mView.updateTitle(bookShelf.getBookInfoBean().getName());
+                mView.prepareDisplay(true);
+            } else {
+                mView.finish();
             }
         }
-        mView.showMenu();
+        mView.showHideView();
     }
 
     @SuppressLint("DefaultLocale")
@@ -186,7 +175,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     if (TextUtils.isEmpty(bookSource.getBookSourceGroup()))
                         bookSource.setBookSourceGroup("禁用");
                     mView.toast("已禁用" + bookSource.getBookSourceName());
-                    DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSource);
+                    BookshelfHelp.saveBookSource(bookSource);
                     break;
             }
         } catch (Exception e) {
@@ -201,11 +190,11 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
                     .subscribeOn(Schedulers.io())
                     .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) book -> Observable.create(e -> {
-                        if(book.getChapterListSize() == 0
+                        if (book.getChapterListSize() == 0
                                 || book.getDurChapter() != bookShelf.getDurChapter()
-                                || !TextUtils.equals(book.getChapter(0).getDurChapterName(), bookShelf.getChapter(0).getDurChapterName())){
+                                || !TextUtils.equals(book.getChapter(0).getDurChapterName(), bookShelf.getChapter(0).getDurChapterName())) {
                             e.onNext(new BookShelfBean());
-                        }else {
+                        } else {
                             book.setHasUpdate(false);
                             BookshelfHelp.saveBookToShelf(book);
                             e.onNext(book);
@@ -217,9 +206,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            if(bookShelfBean.getTag() == null){
+                            if (bookShelfBean.getTag() == null) {
                                 mView.chapterListUpdateFinish();
-                            }else {
+                            } else {
                                 bookShelf = bookShelfBean;
                                 mView.chapterListChanged();
                                 RxBus.get().post(RxBusTag.UPDATE_BOOK_PROGRESS, bookShelf);
@@ -280,36 +269,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             return mView.getContext().getString(R.string.no_chapter);
         } else
             return bookShelf.getChapter(chapterIndex).getDurChapterName();
-    }
-
-    /**
-     * APP外部打开
-     */
-    @Override
-    public void openBookFromOther(Activity activity) {
-        Uri uri = activity.getIntent().getData();
-        Observable.create((ObservableOnSubscribe<String>) e -> {
-            e.onNext(FileUtil.getFilePathFromUri(activity, uri));
-            e.onComplete();
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(File::new)
-                .flatMap((Function<File, ObservableSource<LocBookShelfBean>>) file -> ImportBookModelImpl.getInstance().importBook(file))
-                .subscribe(new SimpleObserver<LocBookShelfBean>() {
-                    @Override
-                    public void onNext(LocBookShelfBean locBookShelfBean) {
-                        bookShelf = locBookShelfBean.getBookShelfBean();
-                        inBookShelf = !locBookShelfBean.getNew();
-                        mView.startLoadingBook();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Toast.makeText(MApplication.getInstance(), "文本打开失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     /**
@@ -431,9 +390,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 });
     }
 
-    @Override
-    public int getOpenFrom() {
-        return open_from;
+    public boolean isOpenFromUri() {
+        return openFromUri;
     }
 
     @Override
@@ -456,6 +414,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             if (bookShelf.isChapterListEmpty()) {
                 bookShelf.setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
+                bookShelf.upChapterListSize();
             }
             if (bookShelf.isBookmarkListEmpty()) {
                 bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
@@ -503,7 +462,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                         @Override
                         public void onError(Throwable e) {
-
                         }
                     });
         }

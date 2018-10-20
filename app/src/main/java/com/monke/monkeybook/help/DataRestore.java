@@ -3,9 +3,6 @@ package com.monke.monkeybook.help;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -22,8 +19,6 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by GKF on 2018/1/30.
@@ -110,7 +105,7 @@ public class DataRestore {
         if (json != null) {
             List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
             }.getType());
-            ReplaceRuleManage.addDataS(replaceRuleBeans);
+            ReplaceRuleManage.saveDataS(replaceRuleBeans);
         }
     }
 }

@@ -118,26 +118,24 @@ public class ReadInterfacePop extends PopupWindow {
                 });
 
         nbLineSize.setTitle(activity.getString(R.string.line_size))
-                .setNumberType(NumberButton.FLOAT)
-                .setMinNumber(0.5f)
-                .setMaxNumber(2f)
-                .setStepNumber(0.1f)
-                .setFormat("0.0")
-                .setNumber(readBookControl.getLineMultiplier())
+                .setNumberType(NumberButton.INT)
+                .setMinNumber(0)
+                .setMaxNumber(30)
+                .setStepNumber(1)
+                .setNumber(readBookControl.getLineSpacing())
                 .setOnChangedListener(number -> {
-                    readBookControl.setLineMultiplier(number);
+                    readBookControl.setLineSpacing((int) number);
                     changeProListener.upTextSize();
                 });
 
         nbParagraphSize.setTitle(activity.getString(R.string.paragraph_size))
-                .setNumberType(NumberButton.FLOAT)
-                .setMinNumber(1f)
-                .setMaxNumber(3f)
-                .setStepNumber(0.1f)
-                .setFormat("0.0")
-                .setNumber(readBookControl.getParagraphSize())
+                .setNumberType(NumberButton.INT)
+                .setMinNumber(0)
+                .setMaxNumber(30)
+                .setStepNumber(1)
+                .setNumber(readBookControl.getParagraphSpacing())
                 .setOnChangedListener(number -> {
-                    readBookControl.setParagraphSize(number);
+                    readBookControl.setParagraphSpacing((int) number);
                     changeProListener.upTextSize();
                 });
 

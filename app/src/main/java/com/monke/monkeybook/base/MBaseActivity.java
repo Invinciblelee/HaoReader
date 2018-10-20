@@ -216,6 +216,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, android.R.anim.fade_out);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

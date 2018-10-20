@@ -3,14 +3,12 @@ package com.monke.monkeybook.presenter;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.provider.DocumentFile;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.base.observer.SimpleObserver;
-import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.DocumentHelper;
 import com.monke.monkeybook.model.ReplaceRuleManage;
@@ -47,7 +45,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                 i++;
                 replaceRuleBean.setSerialNumber(i + 1);
             }
-            ReplaceRuleManage.addDataS(replaceRuleBeans);
+            ReplaceRuleManage.saveDataS(replaceRuleBeans);
             e.onNext(ReplaceRuleManage.getAll());
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -135,7 +133,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             try {
                 List<ReplaceRuleBean> dataS = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
                 }.getType());
-                ReplaceRuleManage.addDataS(dataS);
+                ReplaceRuleManage.saveDataS(dataS);
                 mView.refresh();
                 mView.showSnackBar("规则导入成功", Snackbar.LENGTH_SHORT);
             } catch (Exception e) {

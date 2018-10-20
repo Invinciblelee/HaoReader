@@ -33,6 +33,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -46,14 +52,8 @@
             android:name=".view.activity.ReadBookActivity"
             android:configChanges="locale|keyboardHidden"
             android:windowSoftInputMode="adjustNothing|stateHidden"
-            android:launchMode="singleTask"
-            android:theme="@style/CAppTheme.Activity.Read">
-            <intent-filter tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTop"
+            android:theme="@style/CAppTheme.Activity.Read"/>
 
         <activity
             android:name=".view.activity.QRCodeScanActivity"

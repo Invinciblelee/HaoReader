@@ -35,7 +35,6 @@ public class PageView extends View {
 
     private int mViewWidth = 0; // 当前View的宽
     private int mViewHeight = 0; // 当前View的高
-    private int statusBarHeight = 0; //状态栏高度
 
     private int mStartX = 0;
     private int mStartY = 0;
@@ -123,10 +122,6 @@ public class PageView extends View {
 
     public ReadBookActivity getActivity() {
         return activity;
-    }
-
-    public int getStatusBarHeight() {
-        return statusBarHeight;
     }
 
     public Bitmap getNextBitmap() {
@@ -366,7 +361,6 @@ public class PageView extends View {
      */
     public PageLoader getPageLoader(ReadBookActivity activity, BookShelfBean collBook) {
         this.activity = activity;
-        this.statusBarHeight = ImmersionBar.getStatusBarHeight(activity);
         // 判是否已经存在
         if (mPageLoader != null) {
             return mPageLoader;

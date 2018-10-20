@@ -158,6 +158,7 @@ public class BookshelfHelp {
                     .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookShelfBean.getNoteUrl())).unique();
             if (bookInfoBean != null) {
                 bookShelfBean.setChapterList(getChapterList(bookInfoBean.getNoteUrl()));
+                bookShelfBean.upChapterListSize();
                 bookShelfBean.setBookmarkList(getBookmarkList(bookInfoBean.getName()));
                 bookShelfBean.setBookInfoBean(bookInfoBean);
                 return bookShelfBean;
@@ -176,6 +177,7 @@ public class BookshelfHelp {
 
             if (bookShelfBean != null) {
                 bookShelfBean.setChapterList(getChapterList(bookInfoBean.getNoteUrl()));
+                bookShelfBean.upChapterListSize();
                 bookShelfBean.setBookmarkList(getBookmarkList(bookInfoBean.getName()));
                 bookShelfBean.setBookInfoBean(bookInfoBean);
                 return bookShelfBean;
@@ -215,6 +217,12 @@ public class BookshelfHelp {
             return null;
         return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
+    }
+
+    public static void saveBookSource(BookSourceBean sourceBean){
+        if(sourceBean != null){
+            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+        }
     }
 
     public static BookShelfBean getBookFromSearchBook(SearchBookBean searchBookBean) {

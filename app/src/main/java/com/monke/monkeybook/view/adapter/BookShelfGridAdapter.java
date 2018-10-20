@@ -20,6 +20,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
+import com.monke.monkeybook.view.activity.MainActivity;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
 import com.victor.loading.rotate.RotateLoading;
 
@@ -56,6 +57,11 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             }
             notifyItemRangeChanged(start, end - start + 1);
             return true;
+        }
+
+        @Override
+        public void onRelease() {
+            ((MainActivity) activity).saveData();
         }
     };
 
@@ -183,9 +189,6 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
                 }
                 return true;
             });
-        } else if (item.getSerialNumber() != index) {
-            item.setSerialNumber(index);
-            new Thread(() -> DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplace(item)).start();
         }
 
         if (item.isLoading()) {

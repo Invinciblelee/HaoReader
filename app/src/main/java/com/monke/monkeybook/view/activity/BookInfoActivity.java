@@ -155,13 +155,9 @@ public class BookInfoActivity extends MBaseActivity {
         tvChangeCover.setOnClickListener(view ->
                 moDialogHUD.showChangeSource(this, book, searchBookBean -> {
                     tieCoverUrl.setText(searchBookBean.getCoverUrl());
-                    book.setCustomCoverPath(getTextString(tieCoverUrl));
-                    initCover(book.getCustomCoverPath());
+                    initCover(getTextString(tieCoverUrl));
                 }));
-        tvRefreshCover.setOnClickListener(view -> {
-            book.setCustomCoverPath(getTextString(tieCoverUrl));
-            initCover(book.getCustomCoverPath());
-        });
+        tvRefreshCover.setOnClickListener(view -> initCover(getTextString(tieCoverUrl)));
     }
 
     private String getTextString(TextInputEditText editText) {
@@ -235,8 +231,7 @@ public class BookInfoActivity extends MBaseActivity {
             case ResultSelectCover:
                 if (resultCode == RESULT_OK && null != data) {
                     tieCoverUrl.setText(FileUtil.getPath(this, data.getData()));
-                    book.setCustomCoverPath(getTextString(tieCoverUrl));
-                    initCover(book.getCustomCoverPath());
+                    initCover(getTextString(tieCoverUrl));
                 }
                 break;
         }

@@ -383,6 +383,7 @@ public class LocalPageLoader extends PageLoader {
             }).subscribeOn(Schedulers.io())
                     .doOnComplete(() -> {
                         // 存储章节到数据库
+                        mCollBook.setHasUpdate(false);
                         mCollBook.setFinalRefreshData(mBookFile.lastModified());
                         BookshelfHelp.saveBookToShelf(mCollBook);
                     })
@@ -400,6 +401,7 @@ public class LocalPageLoader extends PageLoader {
                             isChapterListPrepare = value;
 
                             mCollBook.setChapterList(mChapterList);
+                            mCollBook.upChapterListSize();
 
                             // 加载并显示当前章节
                             skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());

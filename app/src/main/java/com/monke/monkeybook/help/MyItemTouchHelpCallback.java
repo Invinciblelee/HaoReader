@@ -150,6 +150,9 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
+        if(onItemTouchCallbackListener != null){
+            onItemTouchCallbackListener.onRelease();
+        }
     }
 
     public interface OnItemTouchCallbackListener {
@@ -168,5 +171,10 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
          * @return 开发者处理了操作应该返回true，开发者没有处理就返回false
          */
         boolean onMove(int srcPosition, int targetPosition);
+
+        /**
+         * 松开手指
+         */
+        void onRelease();
     }
 }

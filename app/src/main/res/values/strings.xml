@@ -166,7 +166,6 @@
     <string name="searchBook">搜索书名、作者</string>
     <string name="searchShelfBook">搜索全部书架</string>
     <string name="clear">清除</string>
-    <string name="showTitle">正文显示标题</string>
     <string name="refresh_default">书源同步</string>
     <string name="no_last_chapter">无最新章节信息</string>
     <string name="showTimeBattery">显示时间和电量</string>

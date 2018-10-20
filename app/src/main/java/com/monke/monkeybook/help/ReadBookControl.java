@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.utils.BitmapUtil;
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.monke.monkeybook.widget.page.PageLoader.DEFAULT_MARGIN_WIDTH;
 
 public class ReadBookControl {
     private static final int DEFAULT_BG = 1;
@@ -32,8 +29,8 @@ public class ReadBookControl {
     private int textColor;
     private boolean bgIsColor;
     private int bgColor;
-    private float lineMultiplier;
-    private float paragraphSize;
+    private int lineSpacing;
+    private int paragraphSpacing;
     private int pageMode;
     private String bgPath;
     private Bitmap bgBitmap;
@@ -49,10 +46,7 @@ public class ReadBookControl {
     private Boolean readAloudCanKeyTurn;
     private int clickSensitivity;
     private Boolean clickAllNext;
-    private Boolean showTitle;
     private Boolean showTimeBattery;
-    private Boolean showLine;
-    private long lineChange;
     private String lastNoteUrl;
     private Boolean darkStatusIcon;
     private int screenTimeOut;
@@ -80,12 +74,12 @@ public class ReadBookControl {
         initTextDrawable();
         readPreference = MApplication.getInstance().getSharedPreferences("CONFIG", 0);
         this.hideStatusBar = readPreference.getBoolean("hide_status_bar", false);
-        this.textSize = readPreference.getInt("textSize", 20);
+        this.textSize = readPreference.getInt("textSize", 16);
         this.canClickTurn = readPreference.getBoolean("canClickTurn", true);
         this.canKeyTurn = readPreference.getBoolean("canKeyTurn", true);
         this.readAloudCanKeyTurn = readPreference.getBoolean("readAloudCanKeyTurn", true);
-        this.lineMultiplier = readPreference.getFloat("lineMultiplier", 1.0F);
-        this.paragraphSize = readPreference.getFloat("paragraphSize", 1.0F);
+        this.lineSpacing = readPreference.getInt("lineSpacing", 7);
+        this.paragraphSpacing = readPreference.getInt("paragraphSpacing",7);
         this.clickSensitivity = readPreference.getInt("clickSensitivity", 50) > 100
                 ? 50 : readPreference.getInt("clickSensitivity", 50);
         this.clickAllNext = readPreference.getBoolean("clickAllNext", false);
@@ -94,15 +88,12 @@ public class ReadBookControl {
         this.textBold = readPreference.getBoolean("textBold", false);
         this.speechRate = readPreference.getInt("speechRate", 10);
         this.speechRateFollowSys = readPreference.getBoolean("speechRateFollowSys", true);
-        this.showTitle = readPreference.getBoolean("showTitle", true);
         this.showTimeBattery = readPreference.getBoolean("showTimeBattery", true);
-        this.showLine = readPreference.getBoolean("showLine", true);
-        this.lineChange = readPreference.getLong("lineChange", System.currentTimeMillis());
         this.lastNoteUrl = readPreference.getString("lastNoteUrl", "");
         this.screenTimeOut = readPreference.getInt("screenTimeOut", 0);
-        this.paddingLeft = readPreference.getInt("paddingLeft", DEFAULT_MARGIN_WIDTH);
-        this.paddingTop = readPreference.getInt("paddingTop", 0);
-        this.paddingRight = readPreference.getInt("paddingRight", DEFAULT_MARGIN_WIDTH);
+        this.paddingLeft = readPreference.getInt("paddingLeft", 24);
+        this.paddingTop = readPreference.getInt("paddingTop", 16);
+        this.paddingRight = readPreference.getInt("paddingRight", 24);
         this.paddingBottom = readPreference.getInt("paddingBottom", 0);
         this.pageMode = readPreference.getInt("pageMode", 0);
 
@@ -239,7 +230,7 @@ public class ReadBookControl {
         }
     }
 
-    public Drawable getBgDrawable(Context context){
+    public Drawable getBgDrawable(Context context) {
         return getBgDrawable(textDrawableIndex, context);
     }
 
@@ -437,25 +428,25 @@ public class ReadBookControl {
         editor.apply();
     }
 
-    public float getLineMultiplier() {
-        return lineMultiplier;
+    public float getLineSpacing() {
+        return lineSpacing;
     }
 
-    public void setLineMultiplier(float lineMultiplier) {
-        this.lineMultiplier = lineMultiplier;
+    public void setLineSpacing(int lineSpacing) {
+        this.lineSpacing = lineSpacing;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putFloat("lineMultiplier", lineMultiplier);
+        editor.putInt("lineSpacing", lineSpacing);
         editor.apply();
     }
 
-    public float getParagraphSize() {
-        return paragraphSize;
+    public float getParagraphSpacing() {
+        return paragraphSpacing;
     }
 
-    public void setParagraphSize(float paragraphSize) {
-        this.paragraphSize = paragraphSize;
+    public void setParagraphSpacing(int paragraphSpacing) {
+        this.paragraphSpacing = paragraphSpacing;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putFloat("paragraphSize", paragraphSize);
+        editor.putInt("paragraphSpacing", paragraphSpacing);
         editor.apply();
     }
 
@@ -503,17 +494,6 @@ public class ReadBookControl {
         editor.apply();
     }
 
-    public Boolean getShowTitle() {
-        return showTitle;
-    }
-
-    public void setShowTitle(Boolean showTitle) {
-        this.showTitle = showTitle;
-        SharedPreferences.Editor editor = readPreference.edit();
-        editor.putBoolean("showTitle", showTitle);
-        editor.apply();
-    }
-
     public Boolean getShowTimeBattery() {
         return showTimeBattery;
     }
@@ -533,28 +513,6 @@ public class ReadBookControl {
         this.hideStatusBar = hideStatusBar;
         SharedPreferences.Editor editor = readPreference.edit();
         editor.putBoolean("hide_status_bar", hideStatusBar);
-        editor.apply();
-    }
-
-    public Boolean getShowLine() {
-        return showLine;
-    }
-
-    public void setShowLine(Boolean showLine) {
-        this.showLine = showLine;
-        SharedPreferences.Editor editor = readPreference.edit();
-        editor.putBoolean("showLine", showLine);
-        editor.apply();
-    }
-
-    public long getLineChange() {
-        return lineChange;
-    }
-
-    public void setLineChange(long lineChange) {
-        this.lineChange = lineChange;
-        SharedPreferences.Editor editor = readPreference.edit();
-        editor.putLong("lineChange", lineChange);
         editor.apply();
     }
 

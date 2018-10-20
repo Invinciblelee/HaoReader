@@ -60,7 +60,7 @@ public class ReplaceRuleManage extends BaseModelImpl {
         refreshDataS();
     }
 
-    public static void addDataS(List<ReplaceRuleBean> replaceRuleBeans) {
+    public static void saveDataS(List<ReplaceRuleBean> replaceRuleBeans) {
         if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
             DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().insertOrReplaceInTx(replaceRuleBeans);
             refreshDataS();
@@ -84,7 +84,6 @@ public class ReplaceRuleManage extends BaseModelImpl {
                 .getReplaceRuleBeanDao().queryBuilder()
                 .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                 .list();
-        ReadBookControl.getInstance().setLineChange(System.currentTimeMillis());
     }
 
     public static Observable<Boolean> importReplaceRuleFromWww(URL url) {
@@ -101,7 +100,7 @@ public class ReplaceRuleManage extends BaseModelImpl {
             try {
                 List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
                 }.getType());
-                addDataS(replaceRuleBeans);
+                saveDataS(replaceRuleBeans);
                 e.onNext(true);
             } catch (Exception e1) {
                 e1.printStackTrace();

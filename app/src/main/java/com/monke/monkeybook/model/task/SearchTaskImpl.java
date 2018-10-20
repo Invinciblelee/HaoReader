@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -16,13 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class SearchTaskImpl implements ISearchTask {
 
@@ -56,7 +56,7 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     @Override
-    public void startSearch(String query, Scheduler scheduler) {
+    public void startSearchDelay(String query, Scheduler scheduler, long delay) {
         if (searchEngines == null || TextUtils.isEmpty(query) || !listener.checkSameTask(getId())) {
             return;
         }
@@ -67,7 +67,18 @@ public class SearchTaskImpl implements ISearchTask {
             disposables = new CompositeDisposable();
         }
 
-        toSearch(query, scheduler);
+        if(delay != 0){
+            Scheduler.Worker worker = scheduler.createWorker();
+            worker.schedule(() -> toSearch(query, scheduler), delay, TimeUnit.MILLISECONDS);
+        }else {
+            toSearch(query, scheduler);
+        }
+
+    }
+
+    @Override
+    public void startSearch(String query, Scheduler scheduler) {
+        startSearchDelay(query, scheduler, 0);
     }
 
     @Override
@@ -109,19 +120,20 @@ public class SearchTaskImpl implements ISearchTask {
             long start = System.currentTimeMillis();
             WebBookModelImpl.getInstance()
                     .searchOtherBook(query, searchEngine.getPage(), searchEngine.getTag())
-                    .map(searchBookBeans -> {
-                        for (SearchBookBean searchBook : searchBookBeans) {
-                            int searchTime = (int) ((System.currentTimeMillis() - start) / 1000);
-                            searchBook.setSearchTime(searchTime);
-                        }
-                        return searchBookBeans;
-                    })
                     .subscribeOn(scheduler)
+                    .doOnComplete(() -> {
+                        int searchTime = (int) (System.currentTimeMillis() - start);
+                        BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchEngine.getTag());
+                        if (bookSourceBean != null && searchTime < 10000) {
+                            bookSourceBean.increaseWeight(10000 / (1000 + searchTime));
+                            BookshelfHelp.saveBookSource(bookSourceBean);
+                        }
+                    })
                     .doOnError(throwable -> {
                         BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchEngine.getTag());
-                        if(sourceBean != null){
-                            sourceBean.increaseWeight(-450);
-                            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+                        if (sourceBean != null) {
+                            sourceBean.increaseWeight(-100);
+                            BookshelfHelp.saveBookSource(sourceBean);
                         }
                     })
                     .observeOn(AndroidSchedulers.mainThread())

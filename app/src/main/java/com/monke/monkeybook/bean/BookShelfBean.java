@@ -3,6 +3,7 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -28,6 +29,7 @@ public class BookShelfBean implements Parcelable {
     private String noteUrl; //对应BookInfoBean noteUrl;
     private Integer durChapter = 0;   //当前章节 （包括番外）
     private Integer durChapterPage = 0;  // 当前章节位置   用页码
+    private Integer durChapterPageSize = 0;// 当前章节页数
     private Long finalDate = System.currentTimeMillis();  //最后阅读时间
     private Boolean hasUpdate = false;  //是否有更新
     private Integer newChapters = 0;  //更新章节数
@@ -49,14 +51,15 @@ public class BookShelfBean implements Parcelable {
     }
 
 
-    @Generated(hash = 121009933)
-    public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate,
-                         Boolean hasUpdate, Integer newChapters, String tag, Integer serialNumber, Long finalRefreshData,
-                         Integer group, String durChapterName, String lastChapterName, Integer chapterListSize,
-                         String customCoverPath, Boolean updateOff) {
+    @Generated(hash = 1464741301)
+    public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Integer durChapterPageSize,
+                         Long finalDate, Boolean hasUpdate, Integer newChapters, String tag, Integer serialNumber, Long finalRefreshData,
+                         Integer group, String durChapterName, String lastChapterName, Integer chapterListSize, String customCoverPath,
+                         Boolean updateOff) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
+        this.durChapterPageSize = durChapterPageSize;
         this.finalDate = finalDate;
         this.hasUpdate = hasUpdate;
         this.newChapters = newChapters;
@@ -85,6 +88,11 @@ public class BookShelfBean implements Parcelable {
             durChapterPage = null;
         } else {
             durChapterPage = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            durChapterPageSize = null;
+        } else {
+            durChapterPageSize = in.readInt();
         }
         if (in.readByte() == 0) {
             finalDate = null;
@@ -143,6 +151,12 @@ public class BookShelfBean implements Parcelable {
         } else {
             dest.writeByte((byte) 1);
             dest.writeInt(durChapterPage);
+        }
+        if (durChapterPageSize == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(durChapterPageSize);
         }
         if (finalDate == null) {
             dest.writeByte((byte) 0);
@@ -211,6 +225,7 @@ public class BookShelfBean implements Parcelable {
         bookShelfBean.noteUrl = noteUrl;
         bookShelfBean.durChapter = durChapter;
         bookShelfBean.durChapterPage = durChapterPage;
+        bookShelfBean.durChapterPageSize = durChapterPageSize;
         bookShelfBean.finalDate = finalDate;
         bookShelfBean.hasUpdate = hasUpdate;
         bookShelfBean.newChapters = newChapters;
@@ -236,7 +251,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public int getDurChapter() {
-        return durChapter < 0 ? 0 : durChapter;
+        return (durChapter == null || durChapter < 0) ? 0 : durChapter;
     }
 
     public ChapterListBean getChapter(int index) {
@@ -264,7 +279,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public int getDurChapterPage() {
-        return durChapterPage < 0 ? 0 : durChapterPage;
+        return (durChapterPage == null || durChapterPage < 0) ? 0 : durChapterPage;
     }
 
     public long getFinalDate() {
@@ -323,12 +338,20 @@ public class BookShelfBean implements Parcelable {
         return this.group == null ? 0 : this.group;
     }
 
-    public void setDurChapter(Integer durChapter) {
+    public void setDurChapter(int durChapter) {
         this.durChapter = durChapter;
     }
 
-    public void setDurChapterPage(Integer durChapterPage) {
+    public void setDurChapterPage(int durChapterPage) {
         this.durChapterPage = durChapterPage;
+    }
+
+    public int getDurChapterPageSize() {
+        return durChapterPageSize == null ? 0 : durChapterPageSize;
+    }
+
+    public void setDurChapterPageSize(Integer durChapterPageSize) {
+        this.durChapterPageSize = durChapterPageSize;
     }
 
     public void setFinalDate(Long finalDate) {
@@ -392,12 +415,15 @@ public class BookShelfBean implements Parcelable {
     }
 
     public int getChapterListSize() {
-        return chapterListSize;
+        return chapterListSize == null ? 0 : chapterListSize;
     }
 
     public void setChapterList(List<ChapterListBean> chapterList) {
         this.bookInfoBean.setChapterList(chapterList);
-        this.chapterListSize = this.bookInfoBean.getChapterList().size();
+    }
+
+    public void upChapterListSize(){
+        setChapterListSize(getChapterList().size());
     }
 
     public List<ChapterListBean> getChapterList() {
@@ -406,7 +432,6 @@ public class BookShelfBean implements Parcelable {
 
     public void setBookmarkList(List<BookmarkBean> markList) {
         this.bookInfoBean.setBookmarkList(markList);
-        this.chapterListSize = this.bookInfoBean.getChapterList().size();
     }
 
     public List<BookmarkBean> getBookmarkList() {
@@ -439,5 +464,15 @@ public class BookShelfBean implements Parcelable {
 
     public void setUpdateOff(Boolean updateOff) {
         this.updateOff = updateOff;
+    }
+
+
+    public void setDurChapter(Integer durChapter) {
+        this.durChapter = durChapter;
+    }
+
+
+    public void setDurChapterPage(Integer durChapterPage) {
+        this.durChapterPage = durChapterPage;
     }
 }

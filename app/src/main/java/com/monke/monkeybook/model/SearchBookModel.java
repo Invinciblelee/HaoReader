@@ -118,7 +118,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             for (int i = 0; i < Math.min(length, threadsNum); i++) {
                 int end = (i + 1) * seek;
                 ISearchTask searchTask = new SearchTaskImpl(id, new ArrayList<>(searchEngineS.subList(i * seek, end > length ? length : end)), this);
-                searchTask.startSearch(query, scheduler);
+                searchTask.startSearchDelay(query, scheduler, i * 50);
                 searchTasks.add(searchTask);
             }
         } else {

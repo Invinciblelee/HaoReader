@@ -34,8 +34,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     @Transient
     private int weight;
     @Transient
-    private int searchTime;
-    @Transient
     private int lastChapterNum;
     @Transient
     private long words;
@@ -90,7 +88,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
             addTime = in.readLong();
         }
         weight = in.readInt();
-        searchTime = in.readInt();
         words = in.readLong();
         state = in.readString();
         isCurrentSource = in.readByte() != 0;
@@ -118,7 +115,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
             dest.writeLong(addTime);
         }
         dest.writeInt(weight);
-        dest.writeInt(searchTime);
         dest.writeLong(words);
         dest.writeString(state);
         dest.writeByte((byte) (isCurrentSource ? 1 : 0));
@@ -302,14 +298,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
 
     public void setWeight(int weight) {
         this.weight = weight;
-    }
-
-    public int getSearchTime() {
-        return searchTime;
-    }
-
-    public void setSearchTime(int searchTime) {
-        this.searchTime = searchTime;
     }
 
     public Long getAddTime() {

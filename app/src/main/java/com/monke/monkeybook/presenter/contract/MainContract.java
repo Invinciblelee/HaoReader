@@ -64,6 +64,8 @@ public interface MainContract {
     interface Presenter extends IPresenter {
         void queryBookShelf(boolean needRefresh, boolean needAnim, int group);
 
+        void saveData(List<BookShelfBean> bookShelfBeans);
+
         void backupData();
 
         void restoreData();

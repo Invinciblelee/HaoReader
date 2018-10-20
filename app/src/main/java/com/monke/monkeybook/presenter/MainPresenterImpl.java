@@ -3,7 +3,6 @@ package com.monke.monkeybook.presenter;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -18,12 +17,14 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.dao.BookInfoBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.DataBackup;
 import com.monke.monkeybook.help.DataRestore;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.ReplaceRuleManage;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -100,6 +101,27 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                         mView.refreshError(NetworkUtil.getErrorTip(NetworkUtil.ERROR_CODE_ANALY));
                     }
                 });
+    }
+
+    @Override
+    public void saveData(List<BookShelfBean> bookShelfBeans) {
+        Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            List<BookShelfBean> temp = new ArrayList<>();
+            for (int i =0, size = bookShelfBeans.size(); i< size; i++) {
+                BookShelfBean shelfBean = bookShelfBeans.get(i);
+                if(shelfBean.getSerialNumber() != i){
+                    shelfBean.setSerialNumber(i);
+                    temp.add(shelfBean);
+                }
+            }
+            if(!temp.isEmpty()){
+                DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplaceInTx(temp);
+            }
+            e.onNext(true);
+            e.onComplete();
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     @Override

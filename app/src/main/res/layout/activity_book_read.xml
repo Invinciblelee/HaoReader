@@ -7,11 +7,18 @@
     android:layout_height="match_parent">
 
     <!--阅读页面-->
-    <com.monke.monkeybook.widget.page.PageView
-        android:id="@+id/pageView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:visibility="invisible" />
+        android:layout_height="match_parent">
+        <com.monke.monkeybook.widget.page.PageView
+            android:id="@+id/pageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:visibility="invisible" />
+
+        <include layout="@layout/view_read_bottom_statusbar"/>
+
+    </FrameLayout>
 
     <com.monke.monkeybook.widget.ScrimInsetsFrameLayout
         android:id="@+id/controls_frame"

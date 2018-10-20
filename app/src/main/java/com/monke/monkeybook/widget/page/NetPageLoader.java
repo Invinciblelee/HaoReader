@@ -58,6 +58,7 @@ public class NetPageLoader extends PageLoader {
                         BookshelfHelp.saveBookToShelf(mCollBook);
                     })
                     .observeOn(AndroidSchedulers.mainThread())
+                    .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<BookShelfBean>() {
 
                         @Override

@@ -13,6 +13,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.view.activity.ReplaceRuleActivity;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +39,12 @@ public class ReplaceRuleAdapter extends RecyclerView.Adapter<ReplaceRuleAdapter.
             notifyItemMoved(srcPosition, targetPosition);
             notifyItemChanged(srcPosition);
             notifyItemChanged(targetPosition);
-            activity.saveDataS();
             return true;
+        }
+
+        @Override
+        public void onRelease() {
+            activity.saveDataS();
         }
     };
 
@@ -80,11 +85,9 @@ public class ReplaceRuleAdapter extends RecyclerView.Adapter<ReplaceRuleAdapter.
             activity.upDateSelectAll();
             activity.saveDataS();
         });
-        holder.editView.getDrawable().mutate();
-        holder.editView.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+        AppCompat.setTint(holder.editView, activity.getResources().getColor(R.color.tv_text_default));
         holder.editView.setOnClickListener(view -> activity.editReplaceRule(item));
-        holder.delView.getDrawable().mutate();
-        holder.delView.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+        AppCompat.setTint(holder.delView, activity.getResources().getColor(R.color.tv_text_default));
         holder.delView.setOnClickListener(view -> {
             activity.delData(item);
             dataList.remove(holder.getLayoutPosition());

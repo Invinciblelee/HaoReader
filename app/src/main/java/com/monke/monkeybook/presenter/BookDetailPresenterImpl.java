@@ -131,7 +131,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 inBookShelf = true;
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.newThread())
+            }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<Boolean>() {
@@ -164,7 +164,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 inBookShelf = false;
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.newThread())
+            }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<Boolean>() {
@@ -196,7 +196,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     BookshelfHelp.saveBookToShelf(bookShelf);
                     e.onNext(true);
                     e.onComplete();
-                }).subscribeOn(Schedulers.newThread())
+                }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<Boolean>() {
                             @Override
@@ -262,7 +262,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
             e.onNext(bookShelfBean);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 

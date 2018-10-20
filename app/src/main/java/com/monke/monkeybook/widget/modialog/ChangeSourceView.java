@@ -140,7 +140,7 @@ public class ChangeSourceView {
             BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchBook.getTag());
             if (sourceBean != null) {
                 sourceBean.increaseWeightBySelection();
-                DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+                BookshelfHelp.saveBookSource(sourceBean);
             }
             e.onNext(searchBook);
         }).subscribeOn(Schedulers.newThread())
@@ -215,22 +215,13 @@ public class ChangeSourceView {
                             searchBookBean.setIsCurrentSource(false);
                         }
 
-                        boolean saveBookSource = false;
                         BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchBookBean.getTag());
-                        if (bookSourceBean != null && searchBookBean.getSearchTime() < 60) {
-                            bookSourceBean.increaseWeight(100 / (10 + searchBookBean.getSearchTime()));
-                            saveBookSource = true;
-                        }
                         if (book.getChapterList().size() > 0 && bookSourceBean != null) {
                             int lastChapter = ChapterHelp.guessChapterNum(searchBookBean.getLastChapter());
                             if (lastChapter > book.getChapterList().size()) {
                                 bookSourceBean.increaseWeight(100);
-                                saveBookSource = true;
+                                BookshelfHelp.saveBookSource(bookSourceBean);
                             }
-                        }
-
-                        if (saveBookSource) {
-                            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
                         }
 
                         DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplace(searchBookBean);

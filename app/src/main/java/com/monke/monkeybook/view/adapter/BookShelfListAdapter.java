@@ -21,6 +21,7 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
+import com.monke.monkeybook.view.activity.MainActivity;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
@@ -54,6 +55,11 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
             notifyItemChanged(srcPosition);
             notifyItemChanged(targetPosition);
             return true;
+        }
+
+        @Override
+        public void onRelease() {
+            ((MainActivity) activity).saveData();
         }
     };
 
@@ -211,10 +217,8 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
                 }
                 return true;
             });
-        } else if (item.getSerialNumber() != index) {
-            item.setSerialNumber(index);
-            new Thread(() -> DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplace(item)).start();
         }
+        
         if (item.isLoading()) {
             holder.ivHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);

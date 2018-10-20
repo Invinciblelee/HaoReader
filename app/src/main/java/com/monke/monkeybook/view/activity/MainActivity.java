@@ -4,18 +4,14 @@ package com.monke.monkeybook.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,9 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.monke.monkeybook.BitIntentDataManager;
@@ -43,16 +37,15 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
-import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
+import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
-import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.List;
@@ -229,7 +222,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                             v -> moDialogHUD.dismiss());
                 } else {
                     Intent intent = new Intent(MainActivity.this, ReadBookActivity.class);
-                    intent.putExtra("openFrom", ReadBookPresenterImpl.OPEN_FROM_APP);
                     intent.putExtra("inBookShelf", true);
                     String key = String.valueOf(System.currentTimeMillis());
                     intent.putExtra("data_key", key);
@@ -261,6 +253,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         };
     }
 
+    public void saveData() {
+        if (viewIsList) {
+            mPresenter.saveData(bookShelfListAdapter.getBooks());
+        } else {
+            mPresenter.saveData(bookShelfGridAdapter.getBooks());
+        }
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
