@@ -54,7 +54,8 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
                     .load(searchBooks.get(position).getCoverUrl())
                     .apply(new RequestOptions()
                             .fitCenter().dontAnimate()
-                            .placeholder(R.drawable.img_cover_default))
+                            .placeholder(R.drawable.img_cover_default)
+                            .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
         if(TextUtils.isEmpty(searchBooks.get(position).getAuthor())){

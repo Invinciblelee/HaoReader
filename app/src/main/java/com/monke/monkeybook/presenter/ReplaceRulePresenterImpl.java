@@ -11,7 +11,7 @@ import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.DocumentHelper;
-import com.monke.monkeybook.model.ReplaceRuleManage;
+import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 
 import java.io.File;
@@ -45,8 +45,8 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                 i++;
                 replaceRuleBean.setSerialNumber(i + 1);
             }
-            ReplaceRuleManage.saveDataS(replaceRuleBeans);
-            e.onNext(ReplaceRuleManage.getAll());
+            ReplaceRuleManager.getInstance().saveDataS(replaceRuleBeans);
+            e.onNext(ReplaceRuleManager.getInstance().getAll());
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -56,8 +56,8 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
     @Override
     public void delData(ReplaceRuleBean replaceRuleBean) {
         Observable.create((ObservableOnSubscribe<List<ReplaceRuleBean>>) e -> {
-            ReplaceRuleManage.delData(replaceRuleBean);
-            e.onNext(ReplaceRuleManage.getAll());
+            ReplaceRuleManager.getInstance().delData(replaceRuleBean);
+            e.onNext(ReplaceRuleManager.getInstance().getAll());
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,7 +81,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
     public void delData(List<ReplaceRuleBean> replaceRuleBeans) {
         mView.showSnackBar("正在删除选中规则", Snackbar.LENGTH_SHORT);
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            ReplaceRuleManage.delDataS(replaceRuleBeans);
+            ReplaceRuleManager.getInstance().delDataS(replaceRuleBeans);
             e.onNext(true);
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -101,8 +101,8 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
 
     private void restoreData(ReplaceRuleBean replaceRuleBean) {
         Observable.create((ObservableOnSubscribe<List<ReplaceRuleBean>>) e -> {
-            ReplaceRuleManage.saveData(replaceRuleBean);
-            e.onNext(ReplaceRuleManage.getAll());
+            ReplaceRuleManager.getInstance().saveData(replaceRuleBean);
+            e.onNext(ReplaceRuleManager.getInstance().getAll());
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -133,7 +133,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             try {
                 List<ReplaceRuleBean> dataS = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
                 }.getType());
-                ReplaceRuleManage.saveDataS(dataS);
+                ReplaceRuleManager.getInstance().saveDataS(dataS);
                 mView.refresh();
                 mView.showSnackBar("规则导入成功", Snackbar.LENGTH_SHORT);
             } catch (Exception e) {
@@ -154,14 +154,14 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             mView.showSnackBar("URL格式不对", Snackbar.LENGTH_SHORT);
             return;
         }
-        ReplaceRuleManage.importReplaceRuleFromWww(url)
+        ReplaceRuleManager.getInstance().importReplaceRuleFromWww(url)
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
                             mView.refresh();
                             mView.showSnackBar("规则导入成功", Snackbar.LENGTH_SHORT);
-                        } else  {
+                        } else {
                             mView.showSnackBar("规则导入失败", Snackbar.LENGTH_SHORT);
                         }
                     }

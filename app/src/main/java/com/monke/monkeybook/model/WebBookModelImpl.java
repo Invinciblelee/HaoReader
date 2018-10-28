@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 
 public class WebBookModelImpl implements IWebBookModel {
 
@@ -70,10 +71,10 @@ public class WebBookModelImpl implements IWebBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(ChapterListBean chapter) {
+    public Observable<BookContentBean> getBookContent(Scheduler scheduler, ChapterListBean chapter) {
         IStationBookModel bookModel = getBookSourceModel(chapter.getTag());
         if (bookModel != null) {
-            return bookModel.getBookContent(chapter.getDurChapterUrl(), chapter.getDurChapterIndex())
+            return bookModel.getBookContent(scheduler, chapter.getDurChapterUrl(), chapter.getDurChapterIndex())
                     .flatMap(bookContentBean -> saveChapterInfo(chapter, bookContentBean));
         } else
             return Observable.create(e -> {
@@ -123,7 +124,7 @@ public class WebBookModelImpl implements IWebBookModel {
             case My716.TAG:
                 return My716.getInstance();
             default:
-                return DefaultModelImpl.getInstance(tag);
+                return DefaultModelImpl.newInstance(tag);
         }
     }
 

@@ -149,10 +149,9 @@ public class BookInfoBean implements Parcelable {
 
     public List<ChapterListBean> getChapterList() {
         if (chapterList == null) {
-            return new ArrayList<>();
-        } else {
-            return chapterList;
+            chapterList = new ArrayList<>();
         }
+        return chapterList;
     }
 
     void setChapterList(List<ChapterListBean> chapterlist) {
@@ -209,7 +208,7 @@ public class BookInfoBean implements Parcelable {
 
     public List<BookmarkBean> getBookmarkList() {
         if (bookmarkList == null) {
-            return new ArrayList<>();
+            bookmarkList = new ArrayList<>();
         }
         return bookmarkList;
     }

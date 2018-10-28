@@ -60,7 +60,8 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                     .load(item.getCoverUrl())
                     .apply(new RequestOptions()
                             .centerCrop()
-                            .dontAnimate().placeholder(R.drawable.img_cover_default))
+                            .dontAnimate().placeholder(R.drawable.img_cover_default)
+                            .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
         if (TextUtils.isEmpty(item.getAuthor())) {

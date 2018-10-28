@@ -15,8 +15,6 @@ public interface ISearchTask {
 
     SearchEngine getNextSearchEngine();
 
-    void startSearchDelay(String query, Scheduler scheduler, long delay);
-
     void startSearch(String query, Scheduler scheduler);
 
     void stopSearch();

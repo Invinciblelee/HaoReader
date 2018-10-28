@@ -22,6 +22,7 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.view.activity.MainActivity;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
+import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
     private OnItemClickListenerTwo itemClickListener;
     private String bookshelfPx;
     private Activity activity;
+
+    private int animationIndex = -1;
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override
@@ -149,12 +152,14 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             if (TextUtils.isEmpty(item.getCustomCoverPath())) {
                 Glide.with(activity).load(item.getBookInfoBean().getCoverUrl())
                         .apply(new RequestOptions().dontAnimate()
-                                .centerCrop().placeholder(R.drawable.img_cover_default))
+                                .centerCrop().placeholder(R.drawable.img_cover_default)
+                                .error(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else if (item.getCustomCoverPath().startsWith("http")) {
                 Glide.with(activity).load(item.getCustomCoverPath())
                         .apply(new RequestOptions().dontAnimate()
-                                .centerCrop().placeholder(R.drawable.img_cover_default))
+                                .centerCrop().placeholder(R.drawable.img_cover_default)
+                                .error(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else {
                 holder.ivCover.setImageBitmap(BitmapFactory.decodeFile(item.getCustomCoverPath()));
@@ -191,6 +196,20 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             });
         }
 
+        //进度条
+        holder.mpbDurProgress.setVisibility(View.VISIBLE);
+        holder.mpbDurProgress.setMaxProgress(item.getChapterListSize());
+        float speed = item.getChapterListSize() * 1.0f / 60;
+
+        holder.mpbDurProgress.setSpeed(speed <= 0 ? 1 : speed);
+
+        if (animationIndex < holder.getLayoutPosition()) {
+            holder.mpbDurProgress.setDurProgressWithAnim(item.getDurChapter() + 1);
+            animationIndex = holder.getLayoutPosition();
+        } else {
+            holder.mpbDurProgress.setDurProgress(item.getDurChapter() + 1);
+        }
+
         if (item.isLoading()) {
             holder.ivHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
@@ -224,6 +243,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         ImageView ivCover;
         ImageView ivHasNew;
         AutofitTextView tvName;
+        MHorProgressBar mpbDurProgress;
         RotateLoading rotateLoading;
         View content;
 
@@ -232,6 +252,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             ivCover = itemView.findViewById(R.id.iv_cover);
             ivHasNew = itemView.findViewById(R.id.iv_has_new);
             tvName = itemView.findViewById(R.id.tv_name);
+            mpbDurProgress = itemView.findViewById(R.id.mpb_durProgress);
             rotateLoading = itemView.findViewById(R.id.rl_loading);
             content = itemView.findViewById(R.id.content_card);
         }

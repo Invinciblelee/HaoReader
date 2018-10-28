@@ -82,6 +82,7 @@ public class FileHolder extends ViewHolderImpl<File> {
         mTvName.setText(file.getName());
         mTvSize.setText(FileHelp.getFileSize(file.length()));
         mTvDate.setText(StringUtils.dateConvert(file.lastModified(), Constant.FORMAT_FILE_DATE));
+        mTvTag.setText(FileHelp.getFileSuffix(file).substring(1).toUpperCase());
     }
 
     public void setFolder(File folder) {

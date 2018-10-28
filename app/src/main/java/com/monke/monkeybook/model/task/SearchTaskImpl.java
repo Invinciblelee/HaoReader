@@ -56,7 +56,7 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     @Override
-    public void startSearchDelay(String query, Scheduler scheduler, long delay) {
+    public void startSearch(String query, Scheduler scheduler) {
         if (searchEngines == null || TextUtils.isEmpty(query) || !listener.checkSameTask(getId())) {
             return;
         }
@@ -67,18 +67,7 @@ public class SearchTaskImpl implements ISearchTask {
             disposables = new CompositeDisposable();
         }
 
-        if(delay != 0){
-            Scheduler.Worker worker = scheduler.createWorker();
-            worker.schedule(() -> toSearch(query, scheduler), delay, TimeUnit.MILLISECONDS);
-        }else {
-            toSearch(query, scheduler);
-        }
-
-    }
-
-    @Override
-    public void startSearch(String query, Scheduler scheduler) {
-        startSearchDelay(query, scheduler, 0);
+        toSearch(query, scheduler);
     }
 
     @Override
@@ -186,7 +175,7 @@ public class SearchTaskImpl implements ISearchTask {
             return;
         }
 
-        searchEngine.setEnabled(false);
+        searchEngine.setHasMore(false);
         if (!hasSuccess() && listener.getShowingItemCount() == 0 && getNextSearchEngine() == null) {
             stopSearch();
             listener.onSearchError();

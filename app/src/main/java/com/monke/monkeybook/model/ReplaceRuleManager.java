@@ -22,11 +22,23 @@ import io.reactivex.schedulers.Schedulers;
  * 替换规则管理
  */
 
-public class ReplaceRuleManage extends BaseModelImpl {
-    private static List<ReplaceRuleBean> replaceRuleBeansEnabled;
-    private static List<ReplaceRuleBean> replaceRuleBeansAll;
+public class ReplaceRuleManager extends BaseModelImpl {
+    private List<ReplaceRuleBean> replaceRuleBeansEnabled;
+    private List<ReplaceRuleBean> replaceRuleBeansAll;
 
-    public static List<ReplaceRuleBean> getEnabled() {
+    private ReplaceRuleManager(){
+
+    }
+
+    private static class InstanceHolder {
+        private static final ReplaceRuleManager SINGLETON = new ReplaceRuleManager();
+    }
+
+    public static ReplaceRuleManager getInstance() {
+        return InstanceHolder.SINGLETON;
+    }
+
+    public List<ReplaceRuleBean> getEnabled() {
         if (replaceRuleBeansEnabled == null) {
             replaceRuleBeansEnabled = DbHelper.getInstance().getmDaoSession()
                     .getReplaceRuleBeanDao().queryBuilder()
@@ -37,7 +49,7 @@ public class ReplaceRuleManage extends BaseModelImpl {
         return replaceRuleBeansEnabled;
     }
 
-    public static List<ReplaceRuleBean> getAll() {
+    public List<ReplaceRuleBean> getAll() {
         if (replaceRuleBeansAll == null) {
             replaceRuleBeansAll = DbHelper.getInstance().getmDaoSession()
                     .getReplaceRuleBeanDao().queryBuilder()
@@ -47,7 +59,7 @@ public class ReplaceRuleManage extends BaseModelImpl {
         return replaceRuleBeansAll;
     }
 
-    public static void saveData(ReplaceRuleBean replaceRuleBean) {
+    public void saveData(ReplaceRuleBean replaceRuleBean) {
         if (replaceRuleBean.getSerialNumber() == 0) {
             replaceRuleBean.setSerialNumber(replaceRuleBeansAll.size() + 1);
         }
@@ -55,26 +67,26 @@ public class ReplaceRuleManage extends BaseModelImpl {
         refreshDataS();
     }
 
-    public static void delData(ReplaceRuleBean replaceRuleBean) {
+    public void delData(ReplaceRuleBean replaceRuleBean) {
         DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
         refreshDataS();
     }
 
-    public static void saveDataS(List<ReplaceRuleBean> replaceRuleBeans) {
+    public void saveDataS(List<ReplaceRuleBean> replaceRuleBeans) {
         if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
             DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().insertOrReplaceInTx(replaceRuleBeans);
             refreshDataS();
         }
     }
 
-    public static void delDataS(List<ReplaceRuleBean> replaceRuleBeans) {
+    public void delDataS(List<ReplaceRuleBean> replaceRuleBeans) {
         for (ReplaceRuleBean replaceRuleBean : replaceRuleBeans) {
             DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
         }
         refreshDataS();
     }
 
-    private static void refreshDataS() {
+    private void refreshDataS() {
         replaceRuleBeansEnabled = DbHelper.getInstance().getmDaoSession()
                 .getReplaceRuleBeanDao().queryBuilder()
                 .where(ReplaceRuleBeanDao.Properties.Enable.eq(true))
@@ -86,16 +98,15 @@ public class ReplaceRuleManage extends BaseModelImpl {
                 .list();
     }
 
-    public static Observable<Boolean> importReplaceRuleFromWww(URL url) {
-        return getRetrofitString(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8")
-                .create(IHttpGetApi.class)
+    public Observable<Boolean> importReplaceRuleFromWww(URL url) {
+        return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
                 .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
                 .flatMap(rsp -> importReplaceRuleO(rsp.body()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private static Observable<Boolean> importReplaceRuleO(String json) {
+    private Observable<Boolean> importReplaceRuleO(String json) {
         return Observable.create(e -> {
             try {
                 List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {

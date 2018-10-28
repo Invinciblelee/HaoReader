@@ -16,6 +16,10 @@ public interface ImportBookContract {
 
     interface View extends IView {
 
+        void showLoading(String msg);
+
+        void dismissHUD();
+
         /**
          * 添加成功
          */

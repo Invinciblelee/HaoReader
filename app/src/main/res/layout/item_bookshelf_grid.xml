@@ -6,8 +6,7 @@
     style="@style/AppTheme.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp"
+    android:layout_margin="@dimen/card_item_margin"
     android:foreground="?attr/selectableItemBackground">
 
     <FrameLayout
@@ -19,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:layout_marginBottom="2dp"
             android:src="@drawable/img_cover_default"
             android:transitionName="img_cover"
             tools:ignore="UnusedAttribute" />
@@ -73,6 +73,16 @@
 
         </LinearLayout>
 
+        <com.monke.mprogressbar.MHorProgressBar
+            android:id="@+id/mpb_durProgress"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:visibility="invisible"
+            android:layout_gravity="bottom"
+            app:bgdrawable="@color/btn_bg_press"
+            app:cantouch="false"
+            app:fontdrawable="@color/colorAccent"
+            tools:ignore="RtlHardcoded" />
 
     </FrameLayout>
 </android.support.v7.widget.CardView>

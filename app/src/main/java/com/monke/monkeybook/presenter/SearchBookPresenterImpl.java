@@ -1,6 +1,9 @@
 package com.monke.monkeybook.presenter;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -77,6 +80,25 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         };
         //搜索引擎初始化
         searchBookModel = new SearchBookModel(context, onSearchListener, useMy716);
+    }
+
+    @Override
+    public void fromIntentSearch(Activity activity) {
+        Intent intent = activity.getIntent();
+        String keyWord = null;
+        if (intent != null) {
+            keyWord = intent.getStringExtra("searchKey");
+            if (keyWord == null && intent.getClipData() != null && intent.getClipData().getItemCount() > 0) {
+                ClipData.Item item = intent.getClipData().getItemAt(0);
+                keyWord = item.getText().toString();
+            }
+        }
+        if (keyWord != null) {
+            if(keyWord.length() > 12){
+                keyWord = keyWord.substring(0, 12);
+            }
+        }
+        mView.searchBook(keyWord);
     }
 
     @Override

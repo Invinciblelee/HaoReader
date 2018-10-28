@@ -33,8 +33,12 @@ public class MoreSettingPop extends PopupWindow {
     Switch sbHideStatusBar;
     @BindView(R.id.sbImmersionBar)
     Switch sbImmersionBar;
+    @BindView(R.id.llScreenTimeOut)
+    View llScreenTimeOut;
     @BindView(R.id.tv_screen_time_out)
     TextView tvScreenTimeOut;
+    @BindView(R.id.llJFConvert)
+    View llJFConvert;
     @BindView(R.id.tvJFConvert)
     TextView tvJFConvert;
     @BindView(R.id.sw_volume_next_page)
@@ -116,7 +120,7 @@ public class MoreSettingPop extends PopupWindow {
             }
         });
 
-        tvScreenTimeOut.setOnClickListener(view -> {
+        llScreenTimeOut.setOnClickListener(view -> {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(activity.getString(R.string.keep_light))
                     .setSingleChoiceItems(activity.getResources().getStringArray(R.array.screen_time_out), readBookControl.getScreenTimeOut(), (dialogInterface, i) -> {
@@ -128,7 +132,7 @@ public class MoreSettingPop extends PopupWindow {
                     .create();
             dialog.show();
         });
-        tvJFConvert.setOnClickListener(view -> {
+        llJFConvert.setOnClickListener(view -> {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(activity.getString(R.string.jf_convert))
                     .setSingleChoiceItems(activity.getResources().getStringArray(R.array.convert_s), readBookControl.getTextConvert(), (dialogInterface, i) -> {

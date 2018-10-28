@@ -70,7 +70,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         bookShelf = BookshelfHelp.getBookFromSearchBook(searchBookBean);
     }
 
-    public Boolean getInBookShelf() {
+    public Boolean inBookShelf() {
         return bookShelf != null && inBookShelf;
     }
 
@@ -94,7 +94,11 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 bookShelfBean = BookshelfHelp.getBookByUrl(bookShelf.getNoteUrl());
             } else {//来自搜索页面
                 bookShelfBean = BookshelfHelp.getBookByName(searchBook.getName(), searchBook.getAuthor());
+                if(bookShelfBean != null && bookShelfBean.getTag().equals(BookShelfBean.LOCAL_TAG)){
+                    bookShelfBean = null;
+                }
             }
+
             if (bookShelfBean != null) {
                 inBookShelf = true;
                 bookShelf = bookShelfBean;
@@ -105,6 +109,13 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 .subscribeOn(Schedulers.io())
                 .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getBookInfo(bookShelfBean))
                 .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean))
+                .flatMap(bookShelfBean -> {
+                    if(inBookShelf && bookShelfBean.getHasUpdate()){
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                        RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, bookShelfBean);
+                    }
+                    return Observable.just(bookShelfBean);
+                })
                 .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
@@ -123,10 +134,9 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     }
 
     @Override
-    public void addToBookShelf(int group) {
+    public void addToBookShelf() {
         if (bookShelf != null) {
             Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-                bookShelf.setGroup(group);
                 BookshelfHelp.saveBookToShelf(bookShelf);
                 inBookShelf = true;
                 e.onNext(true);
@@ -140,16 +150,15 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
                                 RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelf);
-                                Toast.makeText(MApplication.getInstance(), group == 0 ? "已加入追更" : group == 1 ? "已加入养肥" : "已加入收藏", Toast.LENGTH_SHORT).show();
                                 mView.updateView();
                             } else {
-                                Toast.makeText(MApplication.getInstance(), group == 0 ? "加入追更失败" : group == 1 ? "加入养肥失败" : "加入收藏失败", Toast.LENGTH_SHORT).show();
+                                mView.toast("放入书架失败");
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(MApplication.getInstance(), group == 0 ? "加入追更失败" : group == 1 ? "加入养肥失败" : "加入收藏失败", Toast.LENGTH_SHORT).show();
+                            mView.toast("放入书架失败");
                         }
                     });
         }
@@ -158,7 +167,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     @Override
     public void removeFromBookShelf() {
         if (bookShelf != null) {
-            int group = bookShelf.getGroup();
             Observable.create((ObservableOnSubscribe<Boolean>) e -> {
                 BookshelfHelp.removeFromBookShelf(bookShelf);
                 inBookShelf = false;
@@ -172,16 +180,15 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                         public void onNext(Boolean value) {
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                                Toast.makeText(MApplication.getInstance(), group == 0 ? "已移出追更" : group == 1 ? "已移出养肥" : "已取消收藏", Toast.LENGTH_SHORT).show();
                                 mView.updateView();
                             } else {
-                                Toast.makeText(MApplication.getInstance(), group == 0 ? "移出追更失败" : group == 1 ? "移出养肥失败" : "取消收藏失败", Toast.LENGTH_SHORT).show();
+                                mView.toast("移出书架失败");
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(MApplication.getInstance(), group == 0 ? "移出追更失败" : group == 1 ? "移出养肥失败" : "取消收藏失败", Toast.LENGTH_SHORT).show();
+                            mView.toast("移出书架失败");
                         }
                     });
         }
@@ -299,8 +306,24 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
-            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO)})
+            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO), @Tag(RxBusTag.UPDATE_BOOK_PROGRESS)})
     public void updateBookInfo(BookShelfBean bookShelfBean) {
+        bookShelf = bookShelfBean;
+        mView.updateView();
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.HAD_ADD_BOOK)})
+    public void addBookShelf(BookShelfBean bookShelfBean) {
+        inBookShelf = true;
+        bookShelf = bookShelfBean;
+        mView.updateView();
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.HAD_REMOVE_BOOK)})
+    public void removeBookShelf(BookShelfBean bookShelfBean) {
+        inBookShelf = false;
         bookShelf = bookShelfBean;
         mView.updateView();
     }

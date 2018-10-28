@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,16 +27,24 @@ import io.reactivex.schedulers.Schedulers;
  * 所有书源
  */
 
-public class BookSourceManage extends BaseModelImpl {
-    private static List<BookSourceBean> selectedBookSource;
-    private static List<BookSourceBean> allBookSource;
-    public static List<String> groupList = new ArrayList<>();
+public class BookSourceManager extends BaseModelImpl {
+    private List<BookSourceBean> selectedBookSource;
+    private List<BookSourceBean> allBookSource;
+    private List<String> groupList = new ArrayList<>();
 
-    public static BookSourceManage getInstance() {
-        return new BookSourceManage();
+    private BookSourceManager(){
+
     }
 
-    public static List<BookSourceBean> getSelectedBookSource() {
+    private static class InstanceHolder {
+        private static final BookSourceManager SINGLETON = new BookSourceManager();
+    }
+
+    public static BookSourceManager getInstance() {
+        return InstanceHolder.SINGLETON;
+    }
+
+    public List<BookSourceBean> getSelectedBookSource() {
         if (selectedBookSource == null) {
             selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                     .where(BookSourceBeanDao.Properties.Enable.eq(true))
@@ -47,7 +54,7 @@ public class BookSourceManage extends BaseModelImpl {
         return selectedBookSource;
     }
 
-    public static List<BookSourceBean> getAllBookSource() {
+    public List<BookSourceBean> getAllBookSource() {
         if (allBookSource == null) {
             allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                     .orderDesc(BookSourceBeanDao.Properties.Weight)
@@ -57,7 +64,11 @@ public class BookSourceManage extends BaseModelImpl {
         return allBookSource;
     }
 
-    public static void refreshBookSource() {
+    public List<String> getGroupList() {
+        return groupList;
+    }
+
+    public void refreshBookSource() {
         allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                 .orderDesc(BookSourceBeanDao.Properties.Weight)
                 .list();
@@ -68,7 +79,7 @@ public class BookSourceManage extends BaseModelImpl {
         upGroupList();
     }
 
-    public static void addBookSource(List<BookSourceBean> bookSourceBeans) {
+    public void addBookSource(List<BookSourceBean> bookSourceBeans) {
         refreshBookSource();
         for (BookSourceBean bookSourceBean : bookSourceBeans) {
             addBookSource(bookSourceBean);
@@ -76,7 +87,7 @@ public class BookSourceManage extends BaseModelImpl {
         refreshBookSource();
     }
 
-    public static void addBookSource(BookSourceBean bookSourceBean) {
+    public void addBookSource(BookSourceBean bookSourceBean) {
         if (bookSourceBean.getBookSourceUrl().endsWith("/")) {
             bookSourceBean.setBookSourceUrl(bookSourceBean.getBookSourceUrl().substring(0, bookSourceBean.getBookSourceUrl().lastIndexOf("/")));
         }
@@ -95,7 +106,7 @@ public class BookSourceManage extends BaseModelImpl {
         DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
     }
 
-    private synchronized static void upGroupList() {
+    private synchronized void upGroupList() {
         groupList.clear();
         for (BookSourceBean bookSourceBean : allBookSource) {
             if (!TextUtils.isEmpty(bookSourceBean.getBookSourceGroup()) && !groupList.contains(bookSourceBean.getBookSourceGroup())) {
@@ -105,16 +116,15 @@ public class BookSourceManage extends BaseModelImpl {
         Collections.sort(groupList);
     }
 
-    public static Observable<Boolean> importSourceFromWww(URL url) {
-        return getRetrofitString(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8")
-                .create(IHttpGetApi.class)
+    public Observable<Boolean> importSourceFromWww(URL url) {
+        return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
                 .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
                 .flatMap(rsp -> importBookSourceO(rsp.body()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<Boolean> importBookSourceO(String json) {
+    public Observable<Boolean> importBookSourceO(String json) {
         return Observable.create(e -> {
             try {
                 List<BookSourceBean> bookSourceBeans = new Gson().fromJson(json, new TypeToken<List<BookSourceBean>>() {

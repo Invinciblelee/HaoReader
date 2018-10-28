@@ -11,7 +11,7 @@ import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
-import com.monke.monkeybook.model.BookSourceManage;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     @Override
     public void initData() {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            for (BookSourceBean sourceBean : BookSourceManage.getAllBookSource()) {
+            for (BookSourceBean sourceBean : BookSourceManager.getInstance().getAllBookSource()) {
                 if (!TextUtils.isEmpty(sourceBean.getRuleFindUrl())) {
                     String kindA[] = sourceBean.getRuleFindUrl().split("&&");
                     List<FindKindBean> children = new ArrayList<>();

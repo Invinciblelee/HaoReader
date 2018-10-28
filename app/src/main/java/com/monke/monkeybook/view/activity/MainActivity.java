@@ -40,6 +40,7 @@ import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
@@ -123,7 +124,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         viewIsList = preferences.getBoolean("bookshelfIsList", true);
         bookPx = preferences.getString(getString(R.string.pk_bookshelf_px), "0");
         if (group == -1) {
-            group = preferences.getInt("shelf_group", 0);
+            group = preferences.getInt("shelfGroup", 0);
         }
         isRecreate = getIntent().getBooleanExtra("isRecreate", false);
         getIntent().putExtra("isRecreate", true);
@@ -164,6 +165,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
 
         if (viewIsList) {
+            int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
+            rvBookshelf.setPadding(0, padding, 0, padding);
             bookShelfListAdapter = new BookShelfListAdapter(this);
             rvBookshelf.setAdapter(bookShelfListAdapter);
             rvBookshelf.setLayoutManager(new LinearLayoutManager(this));
@@ -213,20 +216,15 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             @Override
             public void onClick(View view, int index) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
-                BookShelfBean bookShelfBean = getBookshelfList().get(index);
-                if (!mPresenter.checkLocalBookExists(bookShelfBean)) {
+                BookShelfBean bookShelf = getBookshelfList().get(index);
+                if (!mPresenter.checkLocalBookExists(bookShelf)) {
                     moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
                             getString(R.string.ok),
-                            v -> mPresenter.removeFromBookSelf(bookShelfBean),
+                            v -> mPresenter.removeFromBookSelf(bookShelf),
                             getString(R.string.cancel),
                             v -> moDialogHUD.dismiss());
                 } else {
-                    Intent intent = new Intent(MainActivity.this, ReadBookActivity.class);
-                    intent.putExtra("inBookShelf", true);
-                    String key = String.valueOf(System.currentTimeMillis());
-                    intent.putExtra("data_key", key);
-                    BitIntentDataManager.getInstance().putData(key, bookShelfBean.copy());
-                    startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+                    ReadBookActivity.startThis(MainActivity.this, bookShelf.copy(), true);
                 }
             }
 
@@ -234,19 +232,14 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onLongClick(View view, int index) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 BookShelfBean bookShelf = getBookshelfList().get(index);
-                if (bookShelf.getGroup() == 3) {
-                    moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_s),
+                if (!mPresenter.checkLocalBookExists(bookShelf)) {
+                    moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
                             getString(R.string.ok),
                             v -> mPresenter.removeFromBookSelf(bookShelf),
                             getString(R.string.cancel),
                             v -> moDialogHUD.dismiss());
                 } else {
-                    Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
-                    intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_BOOKSHELF);
-                    String key = String.valueOf(System.currentTimeMillis());
-                    intent.putExtra("data_key", key);
-                    BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
-                    startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+                    BookDetailActivity.startThis(MainActivity.this, bookShelf);
                 }
             }
 
@@ -312,16 +305,18 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 recreate();
                 break;
             case R.id.action_clearCaches:
-                mPresenter.clearCaches();
+                moDialogHUD.showTwoButton(getString(R.string.clean_caches_s),
+                        getString(R.string.ok),
+                        v -> mPresenter.clearCaches(),
+                        getString(R.string.cancel),
+                        v -> moDialogHUD.dismiss());
                 break;
             case R.id.action_clearBookshelf:
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.clear_bookshelf)
-                        .setMessage(R.string.clear_bookshelf_s)
-                        .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.clearBookshelf())
-                        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                        })
-                        .show();
+                moDialogHUD.showTwoButton(getString(R.string.clear_bookshelf_s),
+                        getString(R.string.ok),
+                        v -> mPresenter.clearBookshelf(),
+                        getString(R.string.cancel),
+                        v -> moDialogHUD.dismiss());
                 break;
             case R.id.action_refreshBookshelf:
                 mPresenter.queryBookShelf(NetworkUtil.isNetworkAvailable(), false, group);
@@ -392,6 +387,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             this.group = group;
 
             mPresenter.queryBookShelf(false, true, group);
+
+            preferences.edit().putInt("shelfGroup", group).apply();
         }
 
         drawerLeft.getMenu().getItem(group).setChecked(true);
@@ -500,7 +497,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @AfterPermissionGranted(FILE_SELECT_RESULT)
     private void fileSelectResult() {
-        startActivityByAnim(new Intent(MainActivity.this, ImportBookActivity.class), 0, 0);
+        startActivity(new Intent(MainActivity.this, ImportBookActivity.class));
     }
 
     private void versionUpRun() {
@@ -680,14 +677,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     public void recreate() {
         super.recreate();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (preferences != null) {
-            preferences.edit().putInt("shelf_group", group).apply();
-        }
-        super.onDestroy();
     }
 
     public void exit() {

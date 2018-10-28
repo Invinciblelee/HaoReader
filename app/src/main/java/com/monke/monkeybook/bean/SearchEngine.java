@@ -7,12 +7,10 @@ public class SearchEngine {
     private String tag;
     private boolean hasMore;
     private int page;
-    private boolean enabled;
 
     public SearchEngine(String tag) {
         this.tag = tag;
         hasMore = true;
-        enabled = true;
         page = 1;
     }
 
@@ -42,14 +40,6 @@ public class SearchEngine {
 
     public void pageAdd(){
         this.page += 1;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override

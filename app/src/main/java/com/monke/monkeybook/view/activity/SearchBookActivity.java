@@ -2,10 +2,12 @@
 package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -115,6 +118,9 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
         tflSearchHistory.setAdapter(searchHistoryAdapter);
 
+        int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
+        rfRvSearchBooks.getRecyclerView().setClipToPadding(false);
+        rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
         rfRvSearchBooks.getRecyclerView().setHasFixedSize(true);
         rfRvSearchBooks.getRecyclerView().setItemAnimator(null);
         rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
@@ -129,10 +135,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 viewRefreshError);
 
         searchBookAdapter.setItemClickListener((animView, position, searchBookBean) -> {
-            Intent intent = new Intent(SearchBookActivity.this, BookDetailActivity.class);
-            intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_SEARCH);
-            intent.putExtra("data", searchBookBean);
-            startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+            BookDetailActivity.startThis(SearchBookActivity.this, searchBookBean);
         });
 
         fabScrollTop.setOnClickListener(view -> {
@@ -288,7 +291,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         rfRvSearchBooks.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if(dy > 0 && !stopAutoScroll){
+                if (dy > 0 && !stopAutoScroll) {
                     stopAutoScroll = true;
                 }
                 if (!recyclerView.canScrollVertically(-1)) {
@@ -330,8 +333,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void firstRequest() {
         super.firstRequest();
-        Intent intent = this.getIntent();
-        searchBook(intent.getStringExtra("searchKey"));
+        mPresenter.fromIntentSearch(this);
     }
 
     @Override

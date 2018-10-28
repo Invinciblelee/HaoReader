@@ -48,11 +48,11 @@ public abstract class PageAnimation {
     protected float mLastX;
     protected float mLastY;
 
-    public PageAnimation(int w, int h, View view, OnPageChangeListener listener){
-        this(w, h, 0, 0, 0, view,listener);
+    public PageAnimation(int w, int h, View view, OnPageChangeListener listener) {
+        this(w, h, 0, 0, 0, view, listener);
     }
 
-    public PageAnimation(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener){
+    public PageAnimation(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener) {
         mScreenWidth = w;
         mScreenHeight = h;
 
@@ -73,7 +73,7 @@ public abstract class PageAnimation {
         return mScroller;
     }
 
-    public void setStartPoint(float x, float y){
+    public void setStartPoint(float x, float y) {
         mStartX = x;
         mStartY = y;
 
@@ -81,7 +81,7 @@ public abstract class PageAnimation {
         mLastY = mStartY;
     }
 
-    public void setTouchPoint(float x,float y){
+    public void setTouchPoint(float x, float y) {
         mLastX = mTouchX;
         mLastY = mTouchY;
 
@@ -89,7 +89,7 @@ public abstract class PageAnimation {
         mTouchY = y;
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return isRunning;
     }
 
@@ -110,15 +110,15 @@ public abstract class PageAnimation {
         mView.postInvalidate();
     }
 
-    public void setDirection(Direction direction){
-        mDirection = direction;
-    }
-
-    public Direction getDirection(){
+    public Direction getDirection() {
         return mDirection;
     }
 
-    public void clear(){
+    public void setDirection(Direction direction) {
+        mDirection = direction;
+    }
+
+    public void clear() {
         mView = null;
     }
 
@@ -151,10 +151,10 @@ public abstract class PageAnimation {
     /**
      * 获取内容显示版面
      */
-    public abstract Bitmap getNextBitmap();
+    public abstract Bitmap getContentBitmap();
 
     public enum Direction {
-        NONE(true),NEXT(true), PRE(true), UP(false), DOWN(false);
+        NONE(true), NEXT(true), PRE(true), UP(false), DOWN(false);
 
         public final boolean isHorizontal;
 
@@ -165,8 +165,9 @@ public abstract class PageAnimation {
 
     public interface OnPageChangeListener {
         boolean hasPrev();
+
         boolean hasNext();
+
         void pageCancel();
     }
-
 }

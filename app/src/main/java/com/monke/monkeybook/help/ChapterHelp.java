@@ -10,25 +10,42 @@ import java.util.regex.Pattern;
 
 public class ChapterHelp {
 
-    private static Pattern chapterNamePattern = Pattern.compile("^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节篇回集])[、，。　：:.\\s]*");
+    private static String[] CHAPTER_PATTERNS = new String[]{
+            "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节篇回集])[、，。　：:.\\s]*",
+            "^([\\(（\\[【]*([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[】\\]）\\)]*)[、，。　：:.\\s]*"
+    };
 
     public static int guessChapterNum(String name) {
-        if (TextUtils.isEmpty(name) || name.matches("第.*?卷.*?第.*[章节回]*"))
+        String SPECIAL_PATTERN = "第.*?卷.*?第.*[章节回].*?";
+        if (TextUtils.isEmpty(name) || name.matches(SPECIAL_PATTERN)) {
             return -1;
-        Matcher matcher = chapterNamePattern.matcher(name);
-        if (matcher.find()) {
-            return StringUtils.stringToInt(matcher.group(2));
+        }
+        for (String str : CHAPTER_PATTERNS) {
+            Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(name);
+            if (matcher.find()) {
+                return StringUtils.stringToInt(matcher.group(2));
+            }
         }
         return -1;
     }
 
     public static String getFormatChapterName(String chapterName) {
-        if(chapterName == null) return "";
-        Matcher matcher = chapterNamePattern.matcher(chapterName);
-        if (matcher.find()) {
-            int num = StringUtils.stringToInt(matcher.group(2));
-            chapterName = num > 0 ? matcher.replaceFirst("第" + num + "章 ") : matcher.replaceFirst("$1 ");
-            return chapterName;
+        if (TextUtils.isEmpty(chapterName)) {
+            return "";
+        }
+        for (String str : CHAPTER_PATTERNS) {
+            Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(chapterName);
+            if (matcher.find()) {
+                String SIMPLE_CHAPTER_PATTERN = "^第.*\\d+.*[章节篇回集]";//eg. 第20-24章
+                if(matcher.group(0).matches(SIMPLE_CHAPTER_PATTERN)){
+                    return matcher.replaceFirst("$1 ");
+                }
+                int num = StringUtils.stringToInt(matcher.group(2));
+                chapterName = num > 0 ? matcher.replaceFirst("第" + num + "章 ") : matcher.replaceFirst("$1 ");
+                return chapterName;
+            }
         }
         return chapterName;
     }

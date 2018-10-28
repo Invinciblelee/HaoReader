@@ -140,7 +140,7 @@ public class ChapterListBean implements Parcelable {
     }
 
     public String getDurChapterName() {
-        return this.durChapterName;
+        return durChapterName;
     }
 
     public void setDurChapterName(String durChapterName) {

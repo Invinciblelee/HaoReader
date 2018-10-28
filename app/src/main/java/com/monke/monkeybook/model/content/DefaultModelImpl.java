@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.util.Log;
-
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -24,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -42,12 +42,11 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
             URL url = new URL(tag);
             name = url.getHost();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             name = tag;
         }
     }
 
-    public static DefaultModelImpl getInstance(String tag) {
+    public static DefaultModelImpl newInstance(String tag) {
         return new DefaultModelImpl(tag);
     }
 
@@ -89,22 +88,19 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
                 });
             }
             if (url.contains("@")) {
-                return getRetrofitString(analyzeSearchUrl.getSearchUrl())
-                        .create(IHttpPostApi.class)
+                return createService(analyzeSearchUrl.getSearchUrl(), IHttpPostApi.class)
                         .searchBook(analyzeSearchUrl.getSearchPath(),
                                 analyzeSearchUrl.getQueryMap(),
                                 headerMap)
                         .flatMap(bookList::analyzeSearchBook);
             } else if (url.contains("?")) {
-                return getRetrofitString(analyzeSearchUrl.getSearchUrl())
-                        .create(IHttpGetApi.class)
+                return createService(analyzeSearchUrl.getSearchUrl(), IHttpGetApi.class)
                         .searchBook(analyzeSearchUrl.getSearchPath(),
                                 analyzeSearchUrl.getQueryMap(),
                                 headerMap)
                         .flatMap(bookList::analyzeSearchBook);
             } else {
-                return getRetrofitString(analyzeSearchUrl.getSearchUrl())
-                        .create(IHttpGetApi.class)
+                return createService(analyzeSearchUrl.getSearchUrl(), IHttpGetApi.class)
                         .getWebContent(analyzeSearchUrl.getSearchPath(),
                                 headerMap)
                         .flatMap(bookList::analyzeSearchBook);
@@ -139,22 +135,19 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
                 });
             }
             if (bookSourceBean.getRuleSearchUrl().contains("@")) {
-                return getRetrofitString(analyzeSearchUrl.getSearchUrl())
-                        .create(IHttpPostApi.class)
+                return createService(analyzeSearchUrl.getSearchUrl(), IHttpPostApi.class)
                         .searchBook(analyzeSearchUrl.getSearchPath(),
                                 analyzeSearchUrl.getQueryMap(),
                                 headerMap)
                         .flatMap(bookList::analyzeSearchBook);
             } else if (bookSourceBean.getRuleSearchUrl().contains("?")) {
-                return getRetrofitString(analyzeSearchUrl.getSearchUrl())
-                        .create(IHttpGetApi.class)
+                return createService(analyzeSearchUrl.getSearchUrl(), IHttpGetApi.class)
                         .searchBook(analyzeSearchUrl.getSearchPath(),
                                 analyzeSearchUrl.getQueryMap(),
                                 headerMap)
                         .flatMap(bookList::analyzeSearchBook);
             } else {
-                return getRetrofitString(analyzeSearchUrl.getSearchUrl())
-                        .create(IHttpGetApi.class)
+                return createService(analyzeSearchUrl.getSearchUrl(), IHttpGetApi.class)
                         .getWebContent(analyzeSearchUrl.getSearchPath(),
                                 headerMap)
                         .flatMap(bookList::analyzeSearchBook);
@@ -177,8 +170,7 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
             return Observable.error(new Throwable(String.format("无法找到源%s", tag)));
         }
         BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
-        return getRetrofitString(tag)
-                .create(IHttpGetApi.class)
+        return createService(tag, IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getNoteUrl(), headerMap)
                 .flatMap(response -> bookInfo.analyzeBookInfo(response.body(), bookShelfBean));
     }
@@ -195,8 +187,7 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
             });
         }
         BookChapter bookChapter = new BookChapter(tag, bookSourceBean);
-        return getRetrofitString(tag)
-                .create(IHttpGetApi.class)
+        return createService(tag, IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getBookInfoBean().getChapterUrl(), headerMap)
                 .flatMap(response -> bookChapter.analyzeChapterList(response.body(), bookShelfBean));
     }
@@ -205,7 +196,7 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
      * 获取正文
      */
     @Override
-    public Observable<BookContentBean> getBookContent(final String durChapterUrl, final int durChapterIndex) {
+    public Observable<BookContentBean> getBookContent(final Scheduler scheduler, final String durChapterUrl, final int durChapterIndex) {
         if (!initBookSourceBean()) {
             return Observable.create(emitter -> {
                 emitter.onNext(new BookContentBean());
@@ -215,11 +206,13 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
         BookContent bookContent = new BookContent(tag, bookSourceBean);
         if (bookContent.isAJAX()) {
             return getAjaxHtml(MApplication.getInstance(), durChapterUrl, AnalyzeHeaders.getUserAgent(bookSourceBean.getHttpUserAgent()))
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(scheduler)
                     .flatMap(response -> bookContent.analyzeBookContent(response, durChapterUrl, durChapterIndex));
         } else {
-            return getRetrofitString(tag)
-                    .create(IHttpGetApi.class)
+            return createService(tag, IHttpGetApi.class)
                     .getWebContent(durChapterUrl, headerMap)
+                    .subscribeOn(scheduler)
                     .flatMap(response -> bookContent.analyzeBookContent(response.body(), durChapterUrl, durChapterIndex));
         }
     }

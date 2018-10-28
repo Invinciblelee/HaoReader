@@ -6,6 +6,11 @@
     <dimen name="line_height">0.8dp</dimen>
     <dimen name="shadow_height">10dp</dimen>
 
+    <dimen name="card_margin">6dp</dimen>
+
+    <dimen name="half_card_item_margin">4dp</dimen>
+    <dimen name="card_item_margin">8dp</dimen>
+
     <dimen name="fastscroll_bubble_radius">44dp</dimen>
     <dimen name="fastscroll_bubble_size">88dp</dimen>
     <dimen name="fastscroll_bubble_textsize">48sp</dimen>

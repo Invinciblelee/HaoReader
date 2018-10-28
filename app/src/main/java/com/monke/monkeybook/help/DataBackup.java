@@ -15,8 +15,8 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.model.BookSourceManage;
-import com.monke.monkeybook.model.ReplaceRuleManage;
+import com.monke.monkeybook.model.BookSourceManager;
+import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class DataBackup {
     }
 
     private void backupBookSource(String file) {
-        List<BookSourceBean> bookSourceList = BookSourceManage.getAllBookSource();
+        List<BookSourceBean> bookSourceList = BookSourceManager.getInstance().getAllBookSource();
         if (bookSourceList != null && bookSourceList.size() > 0) {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
@@ -113,7 +113,7 @@ public class DataBackup {
     }
 
     private void backupReplaceRule(String file) {
-        List<ReplaceRuleBean> replaceRuleBeans = ReplaceRuleManage.getAll();
+        List<ReplaceRuleBean> replaceRuleBeans = ReplaceRuleManager.getInstance().getAll();
         if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()

@@ -7,22 +7,22 @@
             android:id="@+id/action_group_zg"
             android:checked="true"
             android:icon="@drawable/ic_bookshelf"
-            android:title="@string/group_zg" />
+            android:title="@string/item_group_zg" />
 
         <item
             android:id="@+id/action_group_yf"
             android:icon="@drawable/ic_bookshelf"
-            android:title="@string/group_yf" />
+            android:title="@string/item_group_yf" />
 
         <item
             android:id="@+id/action_group_sc"
             android:icon="@drawable/ic_bookshelf"
-            android:title="@string/group_sc" />
+            android:title="@string/item_group_wj" />
 
         <item
             android:id="@+id/action_group_bd"
             android:icon="@drawable/ic_bookshelf"
-            android:title="@string/group_bd" />
+            android:title="@string/item_group_bd" />
 
     </group>
 

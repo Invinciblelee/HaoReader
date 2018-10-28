@@ -32,7 +32,7 @@
     <color name="colorAccent">#199589</color>
 
     <color name="btn_bg_press">#dddddd</color>
-    <color name="btn_bg_press_2">#c4c4c4</color>
+    <color name="btn_bg_press_2">#cccccc</color>
     <color name="btn_bg_press_tp">#88000000</color>
 
     <color name="tv_btn_normal_black">#737373</color>
@@ -44,13 +44,14 @@
     <color name="tv_chapter_color_normal">#737373</color>
 
     <color name="tv_text_default">#1e1e1e</color>
+    <color name="tv_text_book_detail">#dfdfdf</color>
 
     <color name="menu_color_default">#383838</color>
 
     <color name="progress_back_color">#c4c4c4</color>
     <color name="progress_color">#737373</color>
 
-    <color name="tv_text_button_nor">#f2f2f2</color>
+    <color name="tv_text_button_nor">#f4f4f4</color>
     <color name="tv_text_button_pre">#199589</color>
     <color name="tv_text_button_disable">#dddddd</color>
     <color name="tv_text_button_deep_pre">#007367</color>

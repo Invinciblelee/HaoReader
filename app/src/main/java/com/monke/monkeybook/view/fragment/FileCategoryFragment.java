@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -213,8 +214,10 @@ public class FileCategoryFragment extends BaseFileFragment {
             }
 
             //文件内容为空,或者不以txt为开头
+            String fileSuffix = FileHelp.getFileSuffix(pathname);
             return pathname.isDirectory() ||
-                    (pathname.length() != 0 && pathname.getName().endsWith(FileHelp.SUFFIX_TXT));
+                    fileSuffix.equalsIgnoreCase(FileHelp.SUFFIX_TXT)
+                    || fileSuffix.equalsIgnoreCase(FileHelp.SUFFIX_EPUB);
         }
     }
 }

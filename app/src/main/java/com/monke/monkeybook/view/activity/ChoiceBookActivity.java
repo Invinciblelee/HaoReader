@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.monke.monkeybook.R;
@@ -69,6 +68,9 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
         setupActionBar();
 
         rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
+        int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
+        rfRvSearchBooks.getRecyclerView().setClipToPadding(false);
+        rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
 
         View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
@@ -113,10 +115,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
 
             @Override
             public void clickItem(View animView, int position, SearchBookBean searchBookBean) {
-                Intent intent = new Intent(ChoiceBookActivity.this, BookDetailActivity.class);
-                intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_SEARCH);
-                intent.putExtra("data", searchBookBean);
-                startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+                BookDetailActivity.startThis(ChoiceBookActivity.this, searchBookBean);
             }
         });
 

@@ -35,6 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
+            android:clipToPadding="false"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             app:bubbleColor="@color/tv_text_button_deep_pre"
             app:handleColor="@color/tv_text_button_pre"
             app:trackColor="@color/bg_divider_line" />

@@ -9,6 +9,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 
 public interface IStationBookModel {
 
@@ -25,17 +26,17 @@ public interface IStationBookModel {
     /**
      * 网络请求并解析书籍信息
      */
-    Observable<BookShelfBean> getBookInfo(final BookShelfBean bookShelfBean);
+    Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean);
 
     /**
      * 网络解析图书目录
      */
-    Observable<List<ChapterListBean>> getChapterList(final BookShelfBean bookShelfBean);
+    Observable<List<ChapterListBean>> getChapterList(BookShelfBean bookShelfBean);
 
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(final String durChapterUrl, final int durChapterIndex);
+    Observable<BookContentBean> getBookContent(Scheduler scheduler, String durChapterUrl, int durChapterIndex);
 
 
 }

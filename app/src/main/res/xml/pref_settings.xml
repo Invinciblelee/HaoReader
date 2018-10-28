@@ -53,6 +53,6 @@
         android:key="@string/pk_threads_num"
         android:summary="@string/threads_num"
         android:title="@string/update_search_threads_num"
-        app:MaxValue="8"
+        app:MaxValue="10"
         app:MinValue="1" />
 </PreferenceScreen>

@@ -1,6 +1,8 @@
 package com.monke.monkeybook.help;
 
 import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.utils.IOUtils;
@@ -92,6 +94,20 @@ public class FileHelp {
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
         return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static String getFileSuffix(String filePath) {
+        File file = new File(filePath);
+        return getFileSuffix(file);
+    }
+
+    public static String getFileSuffix(File file) {
+        if (file == null || !file.exists() || file.isDirectory()) {
+            return "";
+        }
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf(".");
+        return dotIndex > 0 ? fileName.substring(dotIndex) : "";
     }
 
     /**

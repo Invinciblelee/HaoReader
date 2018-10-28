@@ -10,22 +10,23 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 
 public interface IWebBookModel {
     /**
      * 网络请求并解析书籍信息
      */
-    Observable<BookShelfBean> getBookInfo(final BookShelfBean bookShelfBean);
+    Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean);
 
     /**
      * 网络解析图书目录
      */
-    Observable<BookShelfBean> getChapterList(final BookShelfBean bookShelfBean);
+    Observable<BookShelfBean> getChapterList(BookShelfBean bookShelfBean);
 
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(final ChapterListBean chapter);
+    Observable<BookContentBean> getBookContent(Scheduler scheduler, ChapterListBean chapter);
 
     /**
      * 其他站点资源整合搜索

@@ -24,7 +24,7 @@ import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.ReplaceRuleManage;
+import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.presenter.ReplaceRulePresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
@@ -99,7 +99,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
         recyclerViewBookSource.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ReplaceRuleAdapter(this);
         recyclerViewBookSource.setAdapter(adapter);
-        adapter.resetDataS(ReplaceRuleManage.getAll());
+        adapter.resetDataS(ReplaceRuleManager.getInstance().getAll());
         MyItemTouchHelpCallback itemTouchHelpCallback = new MyItemTouchHelpCallback();
         itemTouchHelpCallback.setOnItemTouchCallbackListener(adapter.getItemTouchCallbackListener());
         itemTouchHelpCallback.setDragEnable(true);
@@ -111,8 +111,8 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     public void editReplaceRule(ReplaceRuleBean replaceRuleBean) {
         moDialogHUD.showPutReplaceRule(replaceRuleBean, ruleBean -> {
             Observable.create((ObservableOnSubscribe<List<ReplaceRuleBean>>) e -> {
-                ReplaceRuleManage.saveData(ruleBean);
-                e.onNext(ReplaceRuleManage.getAll());
+                ReplaceRuleManager.getInstance().saveData(ruleBean);
+                e.onNext(ReplaceRuleManager.getInstance().getAll());
                 e.onComplete();
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -146,7 +146,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
         }
         adapter.notifyDataSetChanged();
         selectAll = !selectAll;
-        ReplaceRuleManage.saveDataS(adapter.getDataList());
+        ReplaceRuleManager.getInstance().saveDataS(adapter.getDataList());
     }
 
     public void delData(ReplaceRuleBean replaceRuleBean) {
@@ -253,7 +253,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @Override
     public void refresh() {
-        adapter.resetDataS(ReplaceRuleManage.getAll());
+        adapter.resetDataS(ReplaceRuleManager.getInstance().getAll());
     }
 
     @Override

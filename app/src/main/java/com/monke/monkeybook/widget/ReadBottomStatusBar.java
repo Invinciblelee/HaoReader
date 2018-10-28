@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -104,8 +105,7 @@ public class ReadBottomStatusBar extends FrameLayout {
 
         updateTime();
         setShowTimeBattery(showTimeBattery);
-        updateTitle(durChapterName);
-        updatePageIndex(durPage, pageSize);
+        updatePageIndex(durChapterName, durPage, pageSize);
         updateChapterIndex(durChapter, chapterSize);
     }
 
@@ -115,14 +115,17 @@ public class ReadBottomStatusBar extends FrameLayout {
             tvTime.setVisibility(VISIBLE);
             batteryProgress.setVisibility(VISIBLE);
             tvPageIndex.setVisibility(GONE);
+            tvTitle.setVisibility(VISIBLE);
+
+            updateTime();
+            updateBattery(batteryLevel);
+            updatePageIndex(durChapterName, durPage, pageSize);
         } else {
             tvTime.setVisibility(GONE);
             batteryProgress.setVisibility(GONE);
             tvPageIndex.setVisibility(VISIBLE);
+            tvTitle.setVisibility(GONE);
         }
-        updateTime();
-        updateBattery(batteryLevel);
-        updatePageIndex(durPage, pageSize);
     }
 
     public void updateTime() {
@@ -140,36 +143,24 @@ public class ReadBottomStatusBar extends FrameLayout {
         }
     }
 
-    public void updateTitle(String durChapterName) {
-        if (TextUtils.isEmpty(durChapterName)) {
-            return;
-        }
 
+    public void updatePageIndex(String durChapterName, int durPage, int durPageSize) {
         this.durChapterName = durChapterName;
-
-        tvTitle.setText(durChapterName);
-    }
-
-    public void updatePageIndex(int durPage, int pageSize) {
         this.durPage = durPage;
-        this.pageSize = pageSize;
+        this.pageSize = durPageSize;
 
-        if (pageSize > 0) {
-            tvPageIndex.setText(String.format(Locale.getDefault(), "%d/%d", durPage, pageSize));
-        } else {
-            tvPageIndex.setText(null);
+        if (showTimeBattery) {
+            tvTitle.setText(formatTitle(durChapterName, durPage, durPageSize));
+        }else {
+            tvPageIndex.setText(formatTitle(durChapterName, durPage, durPageSize));
         }
     }
 
-    public void updateChapterIndex(int durChapter, int chapterSize) {
+    public void updateChapterIndex(int durChapter, int durChapterSize) {
         this.durChapter = durChapter;
-        this.chapterSize = chapterSize;
+        this.chapterSize = durChapterSize;
 
-        if (chapterSize > 0) {
-            tvChapterIndex.setText(String.format(Locale.getDefault(), "%d/%d章", durChapter, chapterSize));
-        } else {
-            tvChapterIndex.setText(null);
-        }
+        tvChapterIndex.setText(String.format(Locale.getDefault(), "%d/%d章", durChapter, durChapterSize));
     }
 
     public void updateTextColor(int color) {
@@ -196,16 +187,11 @@ public class ReadBottomStatusBar extends FrameLayout {
     }
 
     public void updateOnPageChanged(BookShelfBean bookShelfBean, int durPageSize) {
-        if (bookShelfBean == null || durPageSize == 0) {
+        if (bookShelfBean == null) {
             return;
         }
 
-        if (showTimeBattery) {
-            updateTitle(formatTitle(bookShelfBean.getDurChapterName(), bookShelfBean.getDurChapterPage() + 1, durPageSize));
-        } else {
-            updateTitle(bookShelfBean.getDurChapterName());
-            updatePageIndex(bookShelfBean.getDurChapterPage() + 1, durPageSize);
-        }
+        updatePageIndex(bookShelfBean.getDurChapterName(), bookShelfBean.getDurChapterPage() + 1, durPageSize);
         updateChapterIndex(bookShelfBean.getDurChapter() + 1, bookShelfBean.getChapterListSize());
 
         if (getVisibility() != VISIBLE) {
@@ -223,9 +209,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         } else {
             title.append(titleStr);
         }
-        if (durPageSize > 0) {
-            title.append(String.format(Locale.getDefault(), "【%d/%d】", durPage, durPageSize));
-        }
+        title.append(String.format(Locale.getDefault(), "【%d/%d】", durPageSize == 0 ? 1 : durPage, durPageSize == 0 ? 1 : durPageSize));
         return title.toString();
     }
 }

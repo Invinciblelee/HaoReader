@@ -146,12 +146,14 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
             if (TextUtils.isEmpty(item.getCustomCoverPath())) {
                 Glide.with(activity).load(item.getBookInfoBean().getCoverUrl())
                         .apply(new RequestOptions().dontAnimate()
-                                .centerCrop().placeholder(R.drawable.img_cover_default))
+                                .centerCrop().placeholder(R.drawable.img_cover_default)
+                                .error(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else if (item.getCustomCoverPath().startsWith("http")) {
                 Glide.with(activity).load(item.getCustomCoverPath())
                         .apply(new RequestOptions().dontAnimate()
-                                .centerCrop().placeholder(R.drawable.img_cover_default))
+                                .centerCrop().placeholder(R.drawable.img_cover_default)
+                                .error(R.drawable.img_cover_default))
                         .into(holder.ivCover);
             } else {
                 holder.ivCover.setImageBitmap(BitmapFactory.decodeFile(item.getCustomCoverPath()));
@@ -218,7 +220,7 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
                 return true;
             });
         }
-        
+
         if (item.isLoading()) {
             holder.ivHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);

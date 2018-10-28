@@ -44,7 +44,7 @@ public class DownloadService extends Service {
 
     public static boolean isRunning = false;
 
-    private ExecutorService executorService;
+    private ExecutorService executor;
     private Scheduler scheduler;
     private int threadsNum;
 
@@ -66,15 +66,15 @@ public class DownloadService extends Service {
 
         SharedPreferences preferences = getSharedPreferences("CONFIG", 0);
         threadsNum = preferences.getInt(this.getString(R.string.pk_threads_num), 4);
-        executorService = Executors.newFixedThreadPool(threadsNum);
-        scheduler = Schedulers.from(executorService);
+        executor = Executors.newFixedThreadPool(threadsNum);
+        scheduler = Schedulers.from(executor);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        executorService.shutdown();
+        executor.shutdown();
         managerCompat.cancelAll();
     }
 

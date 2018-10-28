@@ -28,7 +28,7 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.BookSourceManage;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
@@ -187,7 +187,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                     .list();
             adapter.resetDataS(sourceBeanList);
         } else {
-            adapter.resetDataS(BookSourceManage.getAllBookSource());
+            adapter.resetDataS(BookSourceManager.getInstance().getAllBookSource());
         }
         supportInvalidateOptionsMenu();
     }
@@ -295,11 +295,11 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     public void upGroupMenu() {
         if (groupMenu == null) return;
         groupMenu.removeGroup(R.id.source_group);
-        if (BookSourceManage.groupList.size() == 0) {
+        if (BookSourceManager.getInstance().getGroupList().size() == 0) {
             groupItem.setVisible(false);
         } else {
             groupItem.setVisible(true);
-            for (String groupName : new ArrayList<>(BookSourceManage.groupList)) {
+            for (String groupName : new ArrayList<>(BookSourceManager.getInstance().getGroupList())) {
                 groupMenu.add(R.id.source_group, Menu.NONE, Menu.NONE, groupName);
             }
         }

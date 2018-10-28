@@ -11,7 +11,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
-import com.monke.monkeybook.model.content.DefaultModelImpl;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
@@ -23,15 +22,23 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.Scheduler;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class My716 extends BaseModelImpl implements IStationBookModel {
     public static final String TAG = "My716";
 
+    private My716() {
+
+    }
+
+    private static class InstanceHolder {
+        private static final My716 SINGLETON = new My716();
+    }
+
     public static My716 getInstance() {
-        return new My716();
+        return InstanceHolder.SINGLETON;
     }
 
     /**
@@ -55,8 +62,7 @@ public class My716 extends BaseModelImpl implements IStationBookModel {
     public Observable<List<SearchBookBean>> searchBook(String content, int page) {
         Map<String, String> queryMap = new HashMap<>();
         queryMap.put("query", content);
-        return getRetrofitString("http://api.zhuishushenqi.com")
-                .create(IHttpGetApi.class)
+        return createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
                 .searchBook("http://api.zhuishushenqi.com/book/fuzzy-search",
                         queryMap,
                         AnalyzeHeaders.getMap(null))
@@ -84,8 +90,8 @@ public class My716 extends BaseModelImpl implements IStationBookModel {
                     searchBookBean.setCoverUrl("http://statics.zhuishushenqi.com" + book.get("cover").getAsString());
                     searchBookBean.setIntroduce(book.get("shortIntro").getAsString());
 
-                    Call<String> call = DefaultModelImpl.getRetrofitString("http://api.zhuishushenqi.com")
-                            .create(IHttpGetApi.class).getWebContentCall(searchBookBean.getNoteUrl(), AnalyzeHeaders.getMap(null));
+                    Call<String> call = createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
+                            .getWebContentCall(searchBookBean.getNoteUrl(), AnalyzeHeaders.getMap(null));
                     String s = "";
                     try {
                         s = call.execute().body();
@@ -121,8 +127,7 @@ public class My716 extends BaseModelImpl implements IStationBookModel {
      */
     @Override
     public Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean) {
-        return getRetrofitString("http://api.zhuishushenqi.com")
-                .create(IHttpGetApi.class)
+        return createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getNoteUrl(), AnalyzeHeaders.getMap(null))
                 .flatMap(response -> analyzeBookInfo(response.body(), bookShelfBean));
     }
@@ -160,8 +165,7 @@ public class My716 extends BaseModelImpl implements IStationBookModel {
      */
     @Override
     public Observable<List<ChapterListBean>> getChapterList(BookShelfBean bookShelfBean) {
-        return getRetrofitString("http://api.zhuishushenqi.com")
-                .create(IHttpGetApi.class)
+        return createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getBookInfoBean().getChapterUrl(), AnalyzeHeaders.getMap(null))
                 .flatMap(response -> analyzeChapterList(response.body(), bookShelfBean));
     }
@@ -194,10 +198,10 @@ public class My716 extends BaseModelImpl implements IStationBookModel {
      * @param durChapterIndex
      */
     @Override
-    public Observable<BookContentBean> getBookContent(String durChapterUrl, int durChapterIndex) {
-        return getRetrofitString("http://chapterup.zhuishushenqi.com")
-                .create(IHttpGetApi.class)
+    public Observable<BookContentBean> getBookContent(Scheduler scheduler, String durChapterUrl, int durChapterIndex) {
+        return createService("http://chapterup.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(durChapterUrl, AnalyzeHeaders.getMap(null))
+                .subscribeOn(scheduler)
                 .flatMap(response -> analyzeBookContent(response.body(), durChapterUrl, durChapterIndex));
     }
 

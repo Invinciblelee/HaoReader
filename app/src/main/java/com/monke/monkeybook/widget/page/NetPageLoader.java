@@ -3,7 +3,6 @@ package com.monke.monkeybook.widget.page;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -25,10 +24,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class NetPageLoader extends PageLoader {
 
-    private Disposable changeSourceDisp;
+    private Disposable mChapterDisp;
 
     public NetPageLoader(PageView pageView, BookShelfBean collBook) {
         super(pageView, collBook);
+    }
+
+    @Override
+    public void closeBook() {
+        super.closeBook();
+        if (mChapterDisp != null) {
+            mChapterDisp.dispose();
+            mChapterDisp = null;
+        }
     }
 
     @Override
@@ -46,17 +54,18 @@ public class NetPageLoader extends PageLoader {
                 mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
             }
         } else {
-            if (changeSourceDisp != null) {
-                changeSourceDisp.dispose();
+            if (mChapterDisp != null) {
+                mChapterDisp.dispose();
             }
             WebBookModelImpl.getInstance().getChapterList(mCollBook)
-                    .subscribeOn(Schedulers.io())
-                    .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
-                    .doOnComplete(() -> {
+                    .subscribeOn(Schedulers.single())
+                    .doOnNext(bookShelfBean -> {
                         // 存储章节到数据库
-                        mCollBook.setHasUpdate(false);
-                        mCollBook.setFinalRefreshData(System.currentTimeMillis());
-                        BookshelfHelp.saveBookToShelf(mCollBook);
+                        bookShelfBean.setHasUpdate(false);
+                        bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
+                        if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+                            BookshelfHelp.saveBookToShelf(bookShelfBean);
+                        }
                     })
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
@@ -64,7 +73,7 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onSubscribe(Disposable d) {
-                            changeSourceDisp = d;
+                            mChapterDisp = d;
                         }
 
                         @Override
@@ -72,20 +81,20 @@ public class NetPageLoader extends PageLoader {
                             isChapterListPrepare = true;
 
                             // 加载并显示当前章节
-                            skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
+                            skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
 
                             // 提示目录加载完成
                             if (mPageChangeListener != null) {
-                                mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
+                                mPageChangeListener.onCategoryFinish(bookShelfBean.getChapterList());
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            if(NetworkUtil.isNetworkAvailable()) {
-                                setStatus(STATUS_CATEGORY_EMPTY);
-                            }else {
-                                setStatus(STATUS_NETWORK_ERROR);
+                            if (NetworkUtil.isNetworkAvailable()) {
+                                changePageStatus(STATUS_CATEGORY_EMPTY);
+                            } else {
+                                changePageStatus(STATUS_NETWORK_ERROR);
                             }
                         }
                     });

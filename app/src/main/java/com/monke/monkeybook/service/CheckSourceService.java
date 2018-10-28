@@ -10,14 +10,15 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hwangjr.rxbus.RxBus;
-import com.monke.basemvplib.BaseModelImpl;
+import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.model.BookSourceManage;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
@@ -30,6 +31,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observer;
 import io.reactivex.Scheduler;
@@ -61,7 +63,7 @@ public class CheckSourceService extends Service {
         executorService = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executorService);
         compositeDisposable = new CompositeDisposable();
-        bookSourceBeanList = BookSourceManage.getAllBookSource();
+        bookSourceBeanList = BookSourceManager.getInstance().getAllBookSource();
         updateNotification(0);
         startCheck();
     }
@@ -195,26 +197,28 @@ public class CheckSourceService extends Service {
                     WebBookModelImpl.getInstance().getBookInfo(bookShelfBean)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
+                            .timeout(30, TimeUnit.SECONDS)
                             .subscribe(getObserver());
                 } catch (Exception exception) {
                     sourceBean.setBookSourceGroup("失效");
-                    BookSourceManage.addBookSource(sourceBean);
-                    BookSourceManage.refreshBookSource();
+                    BookSourceManager.getInstance().addBookSource(sourceBean);
+                    BookSourceManager.getInstance().refreshBookSource();
                     nextCheck();
                 }
             } else {
                 try {
                     new URL(sourceBean.getBookSourceUrl());
-                    BaseModelImpl.getRetrofitString(sourceBean.getBookSourceUrl())
-                            .create(IHttpGetApi.class)
+                    OkHttpHelper.getInstance()
+                            .createService(sourceBean.getBookSourceUrl(), IHttpGetApi.class)
                             .getWebContent(sourceBean.getBookSourceUrl(), AnalyzeHeaders.getMap(null))
                             .subscribeOn(scheduler)
                             .observeOn(AndroidSchedulers.mainThread())
+                            .timeout(30, TimeUnit.SECONDS)
                             .subscribe(getObserver());
                 } catch (Exception e) {
                     sourceBean.setBookSourceGroup("失效");
-                    BookSourceManage.addBookSource(sourceBean);
-                    BookSourceManage.refreshBookSource();
+                    BookSourceManager.getInstance().addBookSource(sourceBean);
+                    BookSourceManager.getInstance().refreshBookSource();
                     nextCheck();
                 }
             }
@@ -225,25 +229,14 @@ public class CheckSourceService extends Service {
                 @Override
                 public void onSubscribe(Disposable d) {
                     compositeDisposable.add(d);
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            if (!d.isDisposed()) {
-                                d.dispose();
-                                nextCheck();
-                                checkSource = null;
-                            }
-                        }
-                    }, 30 * 1000);
                 }
 
                 @Override
                 public void onNext(Object value) {
                     if (Objects.equals(sourceBean.getBookSourceGroup(), "失效")) {
                         sourceBean.setBookSourceGroup("");
-                        BookSourceManage.addBookSource(sourceBean);
-                        BookSourceManage.refreshBookSource();
+                        BookSourceManager.getInstance().addBookSource(sourceBean);
+                        BookSourceManager.getInstance().refreshBookSource();
                     }
                     nextCheck();
                 }
@@ -252,8 +245,8 @@ public class CheckSourceService extends Service {
                 public void onError(Throwable e) {
                     sourceBean.setBookSourceGroup("失效");
                     sourceBean.setSerialNumber(10000 + checkIndex);
-                    BookSourceManage.addBookSource(sourceBean);
-                    BookSourceManage.refreshBookSource();
+                    BookSourceManager.getInstance().addBookSource(sourceBean);
+                    BookSourceManager.getInstance().refreshBookSource();
                     nextCheck();
                 }
 

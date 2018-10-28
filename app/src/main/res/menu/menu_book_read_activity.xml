@@ -27,6 +27,12 @@
             android:icon="@drawable/ic_cancel"
             android:title="@string/disable_book_source"
             app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_clean_cache"
+            android:icon="@drawable/ic_clear_all"
+            android:title="@string/clean_caches"
+            app:showAsAction="never"/>
     </group>
 
     <group android:id="@+id/menuShow">

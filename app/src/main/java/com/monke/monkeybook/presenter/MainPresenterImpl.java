@@ -17,14 +17,12 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.dao.BookInfoBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.DataBackup;
 import com.monke.monkeybook.help.DataRestore;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.ReplaceRuleManage;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -209,6 +207,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public void clearBookshelf() {
+        mView.showLoading("正在清空书架");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             BookshelfHelp.clearBookshelf();
             e.onNext(true);
@@ -219,11 +218,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     @Override
                     public void onNext(Boolean value) {
                         queryBookShelf(false, false, group);
+                        mView.dismissHUD();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(mView.getContext(), "书架清空失败", Toast.LENGTH_SHORT).show();
+                        mView.dismissHUD();
                     }
                 });
     }
@@ -232,7 +233,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     public void clearCaches() {
         mView.showLoading("正在清除缓存");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            BookshelfHelp.clearCaches();
+            BookshelfHelp.cleanCaches();
             e.onNext(true);
             e.onComplete();
         }).subscribeOn(Schedulers.io())

@@ -15,6 +15,7 @@ import com.monke.monkeybook.model.impl.IDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -47,11 +48,11 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             BookShelfBean book = DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().queryBuilder()
                     .where(BookShelfBeanDao.Properties.NoteUrl.eq(downloadBook.getNoteUrl())).build().unique();
             if (book != null) {
-                if (!book.isChapterListEmpty()) {
+                if (!book.realChapterListEmpty()) {
                     for (int i = downloadBook.getStart(); i <= downloadBook.getEnd(); i++) {
                         ChapterListBean chapter = book.getChapter(i);
                         if (!chapter.getHasCache(book.getBookInfoBean())) {
-                           downloadChapters.add(chapter);
+                            downloadChapters.add(chapter);
                         }
                     }
                 }
@@ -186,13 +187,13 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                     BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName())
             ));
             e.onComplete();
-        }).subscribeOn(scheduler)
+        })
                 .flatMap(result -> {
                             BookContentBean bookContentBean = new BookContentBean();
                             bookContentBean.setRight(false);
                             if (result) {
                                 return WebBookModelImpl.getInstance()
-                                        .getBookContent(chapter)
+                                        .getBookContent(scheduler, chapter)
                                         .onErrorReturnItem(bookContentBean);
                             } else {
                                 return Observable.create(e -> {
@@ -209,6 +210,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                     e.onNext(removeFromDownloadList(chapter));
                 }))
                 .onErrorReturnItem(false)
+                .timeout(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
 

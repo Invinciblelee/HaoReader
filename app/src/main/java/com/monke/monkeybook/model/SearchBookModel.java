@@ -3,6 +3,7 @@ package com.monke.monkeybook.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
@@ -62,7 +63,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (useMy716 && Objects.equals(ACache.get(MApplication.getInstance()).getAsString("getZfbHb"), "True")) {
             searchEngineS.add(new SearchEngine(My716.TAG));
         }
-        for (BookSourceBean bookSourceBean : BookSourceManage.getSelectedBookSource()) {
+        for (BookSourceBean bookSourceBean : BookSourceManager.getInstance().getSelectedBookSource()) {
             searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
         }
         searchEngineChanged = false;
@@ -74,7 +75,6 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         } else {
             for (SearchEngine searchEngine : searchEngineS) {
                 searchEngine.setPage(1);
-                searchEngine.setEnabled(true);
                 searchEngine.setHasMore(true);
             }
         }
@@ -117,9 +117,13 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             int seek = length % threadsNum == 0 ? length / threadsNum : (length / threadsNum + 1);
             for (int i = 0; i < Math.min(length, threadsNum); i++) {
                 int end = (i + 1) * seek;
-                ISearchTask searchTask = new SearchTaskImpl(id, new ArrayList<>(searchEngineS.subList(i * seek, end > length ? length : end)), this);
-                searchTask.startSearchDelay(query, scheduler, i * 50);
+                List<SearchEngine> engines = searchEngineS.subList(i * seek, end >= length ? length : end);
+                ISearchTask searchTask = new SearchTaskImpl(id, new ArrayList<>(engines), this);
+                searchTask.startSearch(query, scheduler);
                 searchTasks.add(searchTask);
+                if(end >= length){
+                    break;
+                }
             }
         } else {
             for (ISearchTask searchTask : searchTasks) {
@@ -154,7 +158,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     @Override
     public boolean checkSearchEngine(SearchEngine engine) {
-        return engine != null && engine.isEnabled() && engine.getHasMore() && engine.getPage() <= searchPageCount;
+        return engine != null && engine.getHasMore() && engine.getPage() <= searchPageCount;
     }
 
     @Override

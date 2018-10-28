@@ -53,14 +53,12 @@ public class ChangeSourceView {
     private ChangeSourceAdapter adapter;
     private SearchBookModel searchBookModel;
     private BookInfoBean book;
-    private BaseActivity activity;
 
     public static ChangeSourceView getInstance(BaseActivity activity, MoDialogView moDialogView) {
         return new ChangeSourceView(activity, moDialogView);
     }
 
     private ChangeSourceView(BaseActivity activity, MoDialogView moDialogView) {
-        this.activity = activity;
         this.moDialogView = moDialogView;
         this.context = moDialogView.getContext();
         bindView();

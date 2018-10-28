@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_card"
-    style="@style/AppTheme.CardView"
+    style="@style/AppTheme.CardView.Item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground">
@@ -98,7 +98,7 @@
         <com.monke.mprogressbar.MHorProgressBar
             android:id="@+id/mpb_durProgress"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
             android:layout_below="@+id/tv_last"
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="12dp"

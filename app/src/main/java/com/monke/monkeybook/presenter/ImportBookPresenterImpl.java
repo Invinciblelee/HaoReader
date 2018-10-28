@@ -25,6 +25,7 @@ public class ImportBookPresenterImpl extends BasePresenterImpl<ImportBookContrac
 
     @Override
     public void importBooks(List<File> books){
+        mView.showLoading("正在导入书籍");
         Observable.fromIterable(books)
                 .subscribeOn(Schedulers.io())
                 .flatMap(file -> ImportBookModelImpl.getInstance().importBook(file))

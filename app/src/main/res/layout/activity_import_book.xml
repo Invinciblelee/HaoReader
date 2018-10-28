@@ -85,7 +85,7 @@
         android:id="@+id/file_system_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:background="@color/background"
+        android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true">
 
         <CheckBox

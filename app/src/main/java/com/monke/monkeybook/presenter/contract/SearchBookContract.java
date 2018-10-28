@@ -1,5 +1,6 @@
 package com.monke.monkeybook.presenter.contract;
 
+import android.app.Activity;
 import android.widget.EditText;
 
 import com.monke.basemvplib.impl.IPresenter;
@@ -12,6 +13,8 @@ import java.util.List;
 
 public interface SearchBookContract {
     interface Presenter extends IPresenter {
+
+        void fromIntentSearch(Activity activity);
 
         void insertSearchHistory();
 

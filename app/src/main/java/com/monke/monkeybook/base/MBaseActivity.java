@@ -2,11 +2,13 @@
 package com.monke.monkeybook.base;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -204,18 +206,42 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
-        overridePendingTransition(R.anim.anim_bottom_in, android.R.anim.fade_out);
+        overridePendingTransition(R.anim.anim_bottom_in, R.anim.anim_fade_out);
     }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         super.startActivityForResult(intent, requestCode);
-        overridePendingTransition(R.anim.anim_bottom_in, android.R.anim.fade_out);
+        overridePendingTransition(R.anim.anim_bottom_in, R.anim.anim_fade_out);
+    }
+
+    public void startActivityForResultByAnim(Intent intent, int requestCode, int animIn, int animExit) {
+        super.startActivityForResult(intent, requestCode);
+        overridePendingTransition(animIn, animExit);
+    }
+
+    public void startActivityByAnim(Intent intent, int animIn, int animExit) {
+        super.startActivity(intent);
+        overridePendingTransition(animIn, animExit);
+    }
+
+    public void startActivityByAnim(Intent intent, @NonNull View view, @NonNull String transitionName, int animIn, int animExit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, view, transitionName);
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivityByAnim(intent, animIn, animExit);
+        }
     }
 
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
+    }
+
+    public void finishByAnim(int animIn, int animOut) {
+        super.finish();
+        overridePendingTransition(animIn, animOut);
     }
 }

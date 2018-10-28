@@ -27,12 +27,7 @@ class SSLSocketClient {
     }
 
     static X509TrustManager createTrustAllManager() {
-        try {
-            return new TrustAllManager();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return new TrustAllManager();
     }
 
     //获取HostnameVerifier

@@ -60,6 +60,7 @@
                 android:background="@drawable/selector_tv_first_button"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
+                android:gravity="center"
                 android:text="TXT"
                 android:textColor="@color/white"
                 tools:ignore="HardcodedText,RtlHardcoded" />

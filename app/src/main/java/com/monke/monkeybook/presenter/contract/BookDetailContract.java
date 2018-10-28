@@ -17,13 +17,13 @@ public interface BookDetailContract {
 
         BookShelfBean getBookShelf();
 
-        Boolean getInBookShelf();
+        Boolean inBookShelf();
 
         void initBookFormSearch(SearchBookBean searchBookBean);
 
         void getBookShelfInfo();
 
-        void addToBookShelf(int group);
+        void addToBookShelf();
 
         void removeFromBookShelf();
 
@@ -40,12 +40,12 @@ public interface BookDetailContract {
 
         void changeUpdateSwitch(boolean off);
 
-        void changeGroup(int group);
-
         /**
          * 数据获取失败
          */
         void getBookShelfError();
+
+        void toast(String msg);
 
         void finish();
     }

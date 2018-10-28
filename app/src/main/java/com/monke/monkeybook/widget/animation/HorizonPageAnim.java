@@ -13,10 +13,9 @@ import android.view.ViewConfiguration;
  */
 
 public abstract class HorizonPageAnim extends PageAnimation {
-
     //动画速度
-    protected static final int animationSpeed = 300;
-
+    protected static final int animationSpeed = 200;
+    protected Bitmap mPreBitmap;
     protected Bitmap mCurBitmap;
     protected Bitmap mNextBitmap;
     //是否取消翻页
@@ -36,6 +35,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
     public HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
         //创建图片
+        mPreBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
     }
@@ -55,6 +55,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
         //获取点击位置
         int x = (int) event.getX();
         int y = (int) event.getY();
@@ -82,7 +83,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 abortAnim();
                 break;
             case MotionEvent.ACTION_MOVE:
-                final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
                 //判断是否移动了
                 if (!isMove) {
                     isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
@@ -93,24 +93,38 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     if (mMoveX == 0 && mMoveY == 0) {
                         //判断翻得是上一页还是下一页
                         if (x - mStartX > 0) {
-                            if (prePage()) return true;
+                            //上一页的参数配置
+                            isNext = false;
+                            boolean hasPrev = mListener.hasPrev();
+                            setDirection(Direction.PRE);
+                            //如果上一页不存在
+                            if (!hasPrev) {
+                                noNext = true;
+                                return true;
+                            }
                         } else {
-                            if (nextPage()) return true;
+                            //进行下一页的配置
+                            isNext = true;
+                            //判断是否下一页存在
+                            boolean hasNext = mListener.hasNext();
+                            //如果存在设置动画方向
+                            setDirection(Direction.NEXT);
+
+                            //如果不存在表示没有下一页了
+                            if (!hasNext) {
+                                noNext = true;
+                                return true;
+                            }
                         }
                     } else {
                         //判断是否取消翻页
-                        //判断是否取消翻页
-                        if (isNext){
-                            isCancel = x - mMoveX > 0;
-                        }else{
-                            isCancel = x - mMoveX < 0;
-                        }
+                        isCancel = isNext ? x - mMoveX > 0 : x - mMoveX < 0;
                     }
 
                     mMoveX = x;
                     mMoveY = y;
                     isRunning = true;
-                    mView.postInvalidate();
+                    mView.invalidate();
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -132,6 +146,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             return true;
                         }
                     }
+                } else {
+                    isCancel = Math.abs(mLastX - mStartX) < slop * 3 || isCancel;
                 }
 
                 // 是否取消翻页
@@ -142,6 +158,16 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 // 开启翻页效果
                 if (!noNext) {
                     startAnim();
+                    mView.invalidate();
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                isCancel = true;
+                mListener.pageCancel();
+                // 开启翻页效果
+                if (!noNext) {
+                    startAnim();
+                    mView.invalidate();
                 }
                 break;
         }
@@ -191,36 +217,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
     }
 
     @Override
-    public Bitmap getNextBitmap() {
+    public Bitmap getContentBitmap() {
         return mNextBitmap;
-    }
-
-    private boolean prePage() {
-        //上一页的参数配置
-        isNext = false;
-        boolean hasPrev = mListener.hasPrev();
-        setDirection(Direction.PRE);
-        //如果上一页不存在
-        if (!hasPrev) {
-            noNext = true;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean nextPage() {
-        //进行下一页的配置
-        isNext = true;
-        //判断是否下一页存在
-        boolean hasNext = mListener.hasNext();
-        //如果存在设置动画方向
-        setDirection(Direction.NEXT);
-
-        //如果不存在表示没有下一页了
-        if (!hasNext) {
-            noNext = true;
-            return true;
-        }
-        return false;
     }
 }

@@ -17,7 +17,9 @@ public interface ReadBookContract {
          */
         String getNoteUrl();
 
-        void finishContent(int chapter);
+        int getCurChapterPos();
+
+        void finishContent();
 
         void changeSourceFinish(boolean success);
 
@@ -27,16 +29,14 @@ public interface ReadBookContract {
 
         void prepareDisplay(boolean check);
 
+        void showLoading(String msg);
+
+        void dismissHUD();
+
         /**
          * 开始加载
          */
         void startLoadingBook();
-
-        void chapterChange(int chapterIndex);
-
-        void chapterListChanged();
-
-        void chapterListUpdateFinish();
 
         void onMediaButton();
 
@@ -74,7 +74,7 @@ public interface ReadBookContract {
 
         String getChapterTitle(int chapterIndex);
 
-        void addToShelf(final ReadBookPresenterImpl.OnAddListener addListner);
+        void addToShelf(final ReadBookPresenterImpl.OnAddListener addListener);
 
         void removeFromShelf();
 
@@ -92,6 +92,6 @@ public interface ReadBookContract {
 
         void disableDurBookSource();
 
-        void updateChapterList();
+        void cleanCache();
     }
 }

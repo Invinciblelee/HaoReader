@@ -100,6 +100,9 @@ android {
         sourceCompatibility 1.8
     }
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 configurations.all {
@@ -183,6 +186,11 @@ dependencies {
     //简繁转换
     implementation 'com.luhuiguo:chinese-utils:1.0'
 
+    implementation('nl.siegmann.epublib:epublib-core:3.1') {
+        exclude group: 'org.slf4j'
+        exclude group: 'xmlpull'
+    }
+    implementation 'org.slf4j:slf4j-android:1.7.25'
 }
 
 greendao {

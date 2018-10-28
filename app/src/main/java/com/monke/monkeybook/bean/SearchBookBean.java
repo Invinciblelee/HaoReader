@@ -188,12 +188,11 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     }
 
     public String getLastChapter() {
-        return lastChapter == null ? "" : lastChapter;
+        return lastChapter;
     }
 
     public void setLastChapter(String lastChapter) {
-        this.lastChapter = lastChapter;
-        this.lastChapterNum = ChapterHelp.guessChapterNum(lastChapter);
+        this.lastChapter = ChapterHelp.getFormatChapterName(lastChapter);
     }
 
     public int getLastChapterNum() {

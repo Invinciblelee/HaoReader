@@ -167,7 +167,6 @@ public class AnalyzeElement {
             }
             StringBuilder content = new StringBuilder();
             for (String text : textS) {
-                text = FormatWebText.getContent(text);
                 if (textS.size() > 1) {
                     if (text.length() > 0) {
                         if (content.length() > 0) {
@@ -220,8 +219,10 @@ public class AnalyzeElement {
             switch (lastRule) {
                 case "text":
                     for (Element element : elements) {
-                        String text = element.text();
-                        textS.add(text);
+                        String text = FormatWebText.getContent(element.text());
+                        if (!TextUtils.isEmpty(text)) {
+                            textS.add(text);
+                        }
                     }
                     break;
                 case "textNodes":

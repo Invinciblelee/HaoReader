@@ -20,6 +20,7 @@ import com.monke.monkeybook.presenter.ImportBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ImportBookContract;
 import com.monke.monkeybook.view.fragment.BaseFileFragment;
 import com.monke.monkeybook.view.fragment.FileCategoryFragment;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.io.File;
 import java.util.List;
@@ -48,6 +49,8 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
     TextView tvSd;
     @BindView(R.id.file_category_tv_path)
     public TextView mTvPath;
+
+    private MoDialogHUD moDialogHUD;
 
     private FileCategoryFragment mCategoryFragment;
 
@@ -264,6 +267,21 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
     }
 
     @Override
+    public void showLoading(String msg) {
+        if(moDialogHUD == null){
+            moDialogHUD = new MoDialogHUD(this);
+        }
+        moDialogHUD.showLoading(msg);
+    }
+
+    @Override
+    public void dismissHUD() {
+        if(moDialogHUD != null){
+            moDialogHUD.dismiss();
+        }
+    }
+
+    @Override
     public void addSuccess() {
         //设置HashMap为false
         mCategoryFragment.setCheckedAll(false);
@@ -271,10 +289,12 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
         changeMenuStatus();
         //改变是否可以全选
         changeCheckedAllStatus();
+        dismissHUD();
     }
 
     @Override
     public void addError(String msg) {
+        dismissHUD();
         Snackbar.make(toolbar, msg, Snackbar.LENGTH_SHORT).show();
     }
 }

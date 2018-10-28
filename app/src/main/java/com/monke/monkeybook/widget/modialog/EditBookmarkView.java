@@ -49,9 +49,11 @@ public class EditBookmarkView {
         if (isAdd) {
             llEdit.setVisibility(View.GONE);
             tvOk.setVisibility(View.VISIBLE);
+            tvChapterName.setEnabled(false);
         } else {
             llEdit.setVisibility(View.VISIBLE);
             tvOk.setVisibility(View.GONE);
+            tvChapterName.setEnabled(true);
         }
 
         tvChapterName.setText(bookmarkBean.getChapterName());

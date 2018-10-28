@@ -7,14 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.ReadBookControl;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.widget.animation.CoverPageAnim;
 import com.monke.monkeybook.widget.animation.HorizonPageAnim;
@@ -73,6 +71,8 @@ public class PageView extends View {
     //内容加载器
     private PageLoader mPageLoader;
 
+    private Snackbar mSnackbar;
+
     public PageView(Context context) {
         this(context, null);
     }
@@ -124,9 +124,9 @@ public class PageView extends View {
         return activity;
     }
 
-    public Bitmap getNextBitmap() {
+    public Bitmap getContentBitmap() {
         if (mPageAnim == null) return null;
-        return mPageAnim.getNextBitmap();
+        return mPageAnim.getContentBitmap();
     }
 
     public Bitmap getBgBitmap() {
@@ -211,12 +211,19 @@ public class PageView extends View {
                 if (mTouchListener != null) {
                     canTouch = mTouchListener.onTouch();
                 }
+                if (!mPageLoader.isPageFrozen()) {
+                    mPageAnim.onTouchEvent(event);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 final int slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
                 // 判断是否大于最小滑动值。
                 if (!isMove) {
                     isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
+                }
+
+                if (!mPageLoader.isPageFrozen() && isMove) {
+                    mPageAnim.onTouchEvent(event);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -239,9 +246,12 @@ public class PageView extends View {
                         return true;
                     }
                 }
+                if (!mPageLoader.isPageFrozen()) {
+                    mPageAnim.onTouchEvent(event);
+                }
                 break;
         }
-        return mPageLoader.isPageFrozen() || mPageAnim.onTouchEvent(event);
+        return true;
     }
 
     /**
@@ -251,7 +261,14 @@ public class PageView extends View {
         if (mPageLoader.prev()) {
             return true;
         } else {
-            Snackbar.make(this, "没有上一页", Snackbar.LENGTH_SHORT).show();
+            if (mSnackbar == null) {
+                mSnackbar = Snackbar.make(this, "", Snackbar.LENGTH_SHORT);
+            }
+
+            if (!mSnackbar.isShown()) {
+                mSnackbar.setText("没有上一页");
+                mSnackbar.show();
+            }
             return false;
         }
     }
@@ -263,7 +280,14 @@ public class PageView extends View {
         if (mPageLoader.next()) {
             return true;
         } else {
-            Snackbar.make(this, "没有下一页", Snackbar.LENGTH_SHORT).show();
+            if (mSnackbar == null) {
+                mSnackbar = Snackbar.make(this, "", Snackbar.LENGTH_SHORT);
+            }
+
+            if (!mSnackbar.isShown()) {
+                mSnackbar.setText("没有下一页");
+                mSnackbar.show();
+            }
             return false;
         }
     }
@@ -322,7 +346,7 @@ public class PageView extends View {
         if (mPageAnim instanceof HorizonPageAnim) {
             ((HorizonPageAnim) mPageAnim).changePage();
         }
-        mPageLoader.drawPage(getNextBitmap());
+        mPageLoader.drawPage(getContentBitmap());
     }
 
     /**
@@ -340,7 +364,7 @@ public class PageView extends View {
     public void drawCurPage(boolean isPreview) {
         if (!isLayoutPrepared) return;
         if (mPageLoader != null) {
-            mPageLoader.drawPage(getNextBitmap(), isPreview);
+            mPageLoader.drawPage(getContentBitmap(), isPreview);
         }
     }
 
@@ -365,12 +389,9 @@ public class PageView extends View {
         if (mPageLoader != null) {
             return mPageLoader;
         }
-        // 根据书籍类型，获取具体的加载器
-        if (Objects.equals(collBook.getTag(), BookShelfBean.LOCAL_TAG)) {
-            mPageLoader = new LocalPageLoader(this, collBook);
-        } else {
-            mPageLoader = new NetPageLoader(this, collBook);
-        }
+
+        mPageLoader = PageLoaderFactory.createPageLoader(this, collBook);
+
         // 判断是否 PageView 已经初始化完成
         if (mViewWidth != 0 || mViewHeight != 0) {
             // 初始化 PageLoader 的屏幕大小

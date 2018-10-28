@@ -3,7 +3,6 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -52,8 +51,8 @@ public class BookShelfBean implements Parcelable {
 
     @Generated(hash = 121009933)
     public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate, Boolean hasUpdate, Integer newChapters,
-            String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
-            Integer chapterListSize, String customCoverPath, Boolean updateOff) {
+                         String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
+                         Integer chapterListSize, String customCoverPath, Boolean updateOff) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
@@ -240,7 +239,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public ChapterListBean getChapter(int index) {
-        if (isChapterListEmpty() || index < 0) {
+        if (realChapterListEmpty() || index < 0) {
             ChapterListBean chapterListBean = new ChapterListBean();
             chapterListBean.setDurChapterName("暂无");
             chapterListBean.setDurChapterUrl("暂无");
@@ -254,7 +253,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public BookmarkBean getBookmark(int index) {
-        if (isBookmarkListEmpty() || index < 0) {
+        if (realBookmarkListEmpty() || index < 0) {
             return null;
         } else if (index < getBookmarkList().size()) {
             return getBookmarkList().get(index);
@@ -399,8 +398,8 @@ public class BookShelfBean implements Parcelable {
         this.bookInfoBean.setChapterList(chapterList);
     }
 
-    public void upChapterListSize(){
-        setChapterListSize(getChapterList().size());
+    public void upChapterListSize() {
+        chapterListSize = getChapterList().size();
     }
 
     public List<ChapterListBean> getChapterList() {
@@ -415,12 +414,16 @@ public class BookShelfBean implements Parcelable {
         return this.bookInfoBean.getBookmarkList();
     }
 
-    public boolean isChapterListEmpty() {
-        return getChapterList() == null || getChapterList().isEmpty();
+    public int getBookmarkListSize() {
+        return getBookmarkList().size();
     }
 
-    public boolean isBookmarkListEmpty() {
-        return getBookmarkList() == null || getBookmarkList().isEmpty();
+    public boolean realChapterListEmpty() {
+        return getChapterList().isEmpty();
+    }
+
+    public boolean realBookmarkListEmpty() {
+        return getBookmarkList().isEmpty();
     }
 
     public String getCustomCoverPath() {

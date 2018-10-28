@@ -28,7 +28,10 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             android:overScrollMode="never"
+            android:paddingTop="@dimen/half_card_item_margin"
+            android:paddingBottom="@dimen/half_card_item_margin"
             app:bubbleColor="@color/tv_text_button_deep_pre"
             app:handleColor="@color/tv_text_button_pre"
             app:trackColor="@color/bg_divider_line" />

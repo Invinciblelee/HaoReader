@@ -1,7 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.util.Log;
-
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -190,6 +188,10 @@ public class BookshelfHelp {
         DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().deleteByKey(bookShelfBean.getNoteUrl());
         DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().deleteByKey(bookShelfBean.getBookInfoBean().getNoteUrl());
         DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().deleteInTx(bookShelfBean.getChapterList());
+        cleanBookCache(bookShelfBean);
+    }
+
+    public static void cleanBookCache(BookShelfBean bookShelfBean){
         FileHelp.deleteFile(Constant.BOOK_CACHE_PATH + getCachePathName(bookShelfBean.getBookInfoBean()));
     }
 
@@ -219,8 +221,8 @@ public class BookshelfHelp {
                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
     }
 
-    public static void saveBookSource(BookSourceBean sourceBean){
-        if(sourceBean != null){
+    public static void saveBookSource(BookSourceBean sourceBean) {
+        if (sourceBean != null) {
             DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
         }
     }
@@ -327,10 +329,10 @@ public class BookshelfHelp {
         DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().deleteAll();
         DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().deleteAll();
         DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().deleteAll();
-        clearCaches();
+        cleanCaches();
     }
 
-    public static void clearCaches() {
+    public static void cleanCaches() {
         FileHelp.deleteFile(Constant.BOOK_CACHE_PATH);
         FileHelp.getFolder(Constant.BOOK_CACHE_PATH);
     }

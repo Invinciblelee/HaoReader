@@ -32,6 +32,8 @@ public class MoDialogHUD {
     private Animation inAnim;
     private Animation outAnim;
 
+    private MoDialogView.OnDismissListener onDismissListener;
+
     private Boolean canBack = false;
     private Animation.AnimationListener outAnimListener = new Animation.AnimationListener() {
         @Override
@@ -172,6 +174,9 @@ public class MoDialogHUD {
             new Handler().post(() -> {
                 rootView.removeView(mSharedView);
                 decorView.removeView(rootView);
+                if (onDismissListener != null) {
+                    onDismissListener.onDismiss();
+                }
             });
         }
         isFinishing = false;
@@ -370,4 +375,7 @@ public class MoDialogHUD {
         mSharedView.getChildAt(0).startAnimation(inAnim);
     }
 
+    public void setOnDimissListener(MoDialogView.OnDismissListener dimissListener) {
+        this.onDismissListener = dimissListener;
+    }
 }

@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
 
+import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -49,13 +50,17 @@ public class BookChapter {
                 ruleChapterList = ruleChapterList.substring(1);
             }
 
-            BookInfoBean bookInfo =  bookShelfBean.getBookInfoBean();
-            WebChapterBean<List<ChapterListBean>> webChapterBean = analyzeChapterList(s,bookInfo.getName(), bookInfo.getChapterUrl(), ruleChapterList);
-            List<ChapterListBean> chapterList = webChapterBean.getData();
+            BookInfoBean bookInfo = bookShelfBean.getBookInfoBean();
+            WebChapterBean<List<ChapterListBean>> webChapterBean = analyzeChapterList(s, bookInfo.getName(), bookInfo.getChapterUrl(), ruleChapterList);
+            List<ChapterListBean> chapterList = webChapterBean.chapters;
 
-            while (!TextUtils.isEmpty(webChapterBean.getNextUrl())) {
-                Call<String> call = DefaultModelImpl.getRetrofitString(bookSourceBean.getBookSourceUrl())
-                        .create(IHttpGetApi.class).getWebContentCall(webChapterBean.getNextUrl(), AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
+            List<String> nextUrls = new ArrayList<>();
+            while (!TextUtils.isEmpty(webChapterBean.nextUrl)) {
+                if(nextUrls.contains(webChapterBean.nextUrl)){
+                    break;
+                }
+                Call<String> call = OkHttpHelper.getInstance().createService(bookSourceBean.getBookSourceUrl(), IHttpGetApi.class)
+                        .getWebContentCall(webChapterBean.nextUrl, AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
                 String response = "";
                 try {
                     response = call.execute().body();
@@ -64,8 +69,9 @@ public class BookChapter {
                         e.onError(exception);
                     }
                 }
-                webChapterBean = analyzeChapterList(response, bookInfo.getName(), webChapterBean.getNextUrl(), ruleChapterList);
-                chapterList.addAll(webChapterBean.getData());
+                webChapterBean = analyzeChapterList(response, bookInfo.getName(), webChapterBean.nextUrl, ruleChapterList);
+                chapterList.addAll(webChapterBean.chapters);
+                nextUrls.add(webChapterBean.nextUrl);
             }
             if (dx) {
                 Collections.reverse(chapterList);
@@ -76,16 +82,13 @@ public class BookChapter {
     }
 
     private WebChapterBean<List<ChapterListBean>> analyzeChapterList(String s, String bookName, String chapterUrl, String ruleChapterList) {
+        WebChapterBean<List<ChapterListBean>> webChapterBean = new WebChapterBean<>();
         List<ChapterListBean> chapterBeans = new ArrayList<>();
-        String nextUrl = "";
         Document doc = Jsoup.parse(s);
         AnalyzeElement analyzeElement;
         if (!TextUtils.isEmpty(bookSourceBean.getRuleChapterUrlNext())) {
             analyzeElement = new AnalyzeElement(doc, chapterUrl);
-            nextUrl = analyzeElement.getResult(bookSourceBean.getRuleChapterUrlNext());
-            if (Objects.equals(nextUrl, chapterUrl)) {
-                nextUrl = "";
-            }
+            webChapterBean.nextUrl = analyzeElement.getResult(bookSourceBean.getRuleChapterUrlNext());
         }
         Elements elements = AnalyzeElement.getElements(doc, ruleChapterList);
         int chapterIndex = 0;
@@ -104,25 +107,16 @@ public class BookChapter {
                 chapterIndex++;
             }
         }
-        return new WebChapterBean<>(chapterBeans, nextUrl);
+        webChapterBean.chapters = chapterBeans;
+        return webChapterBean;
     }
 
-    private class WebChapterBean<T> {
-        private T data;
+    private static class WebChapterBean<T> {
+        private T chapters;
 
         private String nextUrl;
 
-        private WebChapterBean(T data,String nextUrl){
-            this.data = data;
-            this.nextUrl = nextUrl;
-        }
-
-        private T getData() {
-            return data;
-        }
-
-        private String getNextUrl() {
-            return nextUrl;
+        private WebChapterBean() {
         }
 
     }

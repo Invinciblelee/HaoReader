@@ -1,7 +1,9 @@
 package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.model.ErrorAnalyContentManager;
@@ -11,6 +13,9 @@ import com.monke.monkeybook.model.impl.IHttpGetApi;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -46,9 +51,13 @@ public class BookContent {
             WebContentBean webContentBean = analyzeBookContent(s, durChapterUrl);
             bookContentBean.setDurChapterContent(webContentBean.content);
 
+            List<String> nextUrls = new ArrayList<>();
             while (!TextUtils.isEmpty(webContentBean.nextUrl)) {
-                Call<String> call = DefaultModelImpl.getRetrofitString(bookSourceBean.getBookSourceUrl())
-                        .create(IHttpGetApi.class).getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
+                if(nextUrls.contains(webContentBean.nextUrl)){//防止重复死循环
+                    break;
+                }
+                Call<String> call = OkHttpHelper.getInstance().createService(bookSourceBean.getBookSourceUrl(), IHttpGetApi.class)
+                        .getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
                 String response = "";
                 try {
                     response = call.execute().body();
@@ -61,8 +70,8 @@ public class BookContent {
                 if (!TextUtils.isEmpty(webContentBean.content)) {
                     bookContentBean.setDurChapterContent(bookContentBean.getDurChapterContent() + "\n" + webContentBean.content);
                 }
+                nextUrls.add(webContentBean.nextUrl);
             }
-
             e.onNext(bookContentBean);
             e.onComplete();
         });
@@ -89,7 +98,7 @@ public class BookContent {
         return isAJAX;
     }
 
-    private class WebContentBean {
+    private static class WebContentBean {
         private String content;
         private String nextUrl;
 

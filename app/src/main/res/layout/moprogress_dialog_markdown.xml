@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:autoLink="all"
             android:linksClickable="true"
+            android:lineSpacingMultiplier="1.2"
             android:padding="10dp"
             android:textColor="@color/tv_text_default" />
 

@@ -22,12 +22,16 @@ import com.monke.monkeybook.view.activity.DownloadActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
 public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyViewHolder> {
     private DownloadActivity activity;
     private final List<DownloadBookBean> dataS;
+
+    private HashSet<Integer> downloading;
+
 
     private final Object mLock = new Object();
 
@@ -116,9 +120,14 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
                 .load(item.getCoverUrl())
                 .apply(new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
-                        .dontAnimate().placeholder(R.drawable.img_cover_default))
+                        .dontAnimate().placeholder(R.drawable.img_cover_default)
+                        .error(R.drawable.img_cover_default))
                 .into(holder.ivCover);
-        holder.tvName.setText(String.format(Locale.getDefault(), "%s(等待下载)", item.getName()));
+        if(item.getSuccessCount() > 0) {
+            holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
+        }else {
+            holder.tvName.setText(String.format(Locale.getDefault(), "%s(等待下载)", item.getName()));
+        }
         holder.tvDownload.setText(activity.getString(R.string.un_download, item.getDownloadCount() - item.getSuccessCount()));
         holder.ivDel.setOnClickListener(view ->DownloadService.removeDownload(activity, item.getNoteUrl()));
     }

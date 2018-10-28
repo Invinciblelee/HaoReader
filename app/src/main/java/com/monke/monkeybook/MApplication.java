@@ -54,12 +54,10 @@ public class MApplication extends Application {
             createChannelIdReadAloud();
         }
 
-        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                throwable.printStackTrace();
-            }
-        });
+        RxJavaPlugins.setErrorHandler(Throwable::printStackTrace);
+        if(DEBUG) {
+            CrashHandler.getInstance().init(this);
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
