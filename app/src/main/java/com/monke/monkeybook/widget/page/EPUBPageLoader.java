@@ -39,6 +39,9 @@ import nl.siegmann.epublib.service.MediatypeService;
 
 /**
  * 初步实现epub阅读
+ *
+ * 问题：1.加载速度慢
+ *      2.无法加载图片
  */
 public class EPUBPageLoader extends PageLoader {
 
