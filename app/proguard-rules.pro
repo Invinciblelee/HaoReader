@@ -51,7 +51,6 @@
 # 这个过滤器是谷歌推荐的算法，一般不做更改
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 
-
 #############################################
 #
 # Android开发中一些需要保留的公共部分
@@ -154,6 +153,8 @@
 #    public static int d(...);
 #    public static int e(...);
 #}
+
+-keep public class javax.**
 
 ### greenDAO 3
 -keep class org.greenrobot.greendao.**{ *; }

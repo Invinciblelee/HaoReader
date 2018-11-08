@@ -2,7 +2,6 @@ package com.monke.monkeybook.widget.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -14,12 +13,9 @@ import android.view.ViewConfiguration;
 
 public abstract class HorizonPageAnim extends PageAnimation {
     //动画速度
-    protected static final int animationSpeed = 200;
-    protected Bitmap mPreBitmap;
-    protected Bitmap mCurBitmap;
-    protected Bitmap mNextBitmap;
-    //是否取消翻页
-    protected boolean isCancel = false;
+    static final int animationSpeed = 300;
+    Bitmap mCurBitmap;
+    Bitmap mNextBitmap;
 
     //可以使用 mLast代替
     private int mMoveX = 0;
@@ -32,10 +28,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
-    public HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
+    HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
         //创建图片
-        mPreBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
     }
@@ -48,8 +43,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
         mCurBitmap = mNextBitmap;
         mNextBitmap = bitmap;
     }
-
-    public abstract void drawStatic(Canvas canvas);
 
     public abstract void drawMove(Canvas canvas);
 
@@ -79,13 +72,13 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 isCancel = false;
                 //设置起始位置的触摸点
                 setStartPoint(x, y);
-                //如果存在动画则取消动画
+                //取消动画
                 abortAnim();
                 break;
             case MotionEvent.ACTION_MOVE:
                 //判断是否移动了
                 if (!isMove) {
-                    isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
+                    isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartX - y) > slop;
                 }
 
                 if (isMove) {
@@ -96,7 +89,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             //上一页的参数配置
                             isNext = false;
                             boolean hasPrev = mListener.hasPrev();
-                            setDirection(Direction.PRE);
+                            setDirection(Direction.PREV);
                             //如果上一页不存在
                             if (!hasPrev) {
                                 noNext = true;
@@ -141,7 +134,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                         }
                     } else {
                         boolean hasPrev = mListener.hasPrev();
-                        setDirection(Direction.PRE);
+                        setDirection(Direction.PREV);
                         if (!hasPrev) {
                             return true;
                         }
@@ -158,16 +151,15 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 // 开启翻页效果
                 if (!noNext) {
                     startAnim();
-                    mView.invalidate();
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 isCancel = true;
                 mListener.pageCancel();
+
                 // 开启翻页效果
                 if (!noNext) {
                     startAnim();
-                    mView.invalidate();
                 }
                 break;
         }
@@ -181,8 +173,10 @@ public abstract class HorizonPageAnim extends PageAnimation {
         } else {
             if (isCancel) {
                 mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
+                canvas.drawBitmap(mCurBitmap, 0, 0, null);
+            } else {
+                canvas.drawBitmap(mNextBitmap, 0, 0, null);
             }
-            drawStatic(canvas);
         }
     }
 

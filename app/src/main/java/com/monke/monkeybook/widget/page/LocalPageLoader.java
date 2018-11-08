@@ -1,6 +1,7 @@
 package com.monke.monkeybook.widget.page;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.basemvplib.CharsetDetector;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -31,6 +32,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.monke.monkeybook.help.FileHelp.BLANK;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PARING;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PARSE_ERROR;
 
 /**
  * Created by newbiechen on 17-7-1.
@@ -38,7 +42,7 @@ import static com.monke.monkeybook.help.FileHelp.BLANK;
  * 1. 异常处理没有做好
  */
 
-public class TXTPageLoader extends PageLoader {
+public class LocalPageLoader extends PageLoader {
     //默认从文件中获取数据的长度
     private final static int BUFFER_SIZE = 512 * 1024;
     //没有标题的时候，每个章节的最大长度
@@ -64,10 +68,10 @@ public class TXTPageLoader extends PageLoader {
 
     private Disposable mChapterDisp = null;
 
-    public TXTPageLoader(PageView pageView, BookShelfBean collBook) {
+    LocalPageLoader(PageView pageView, BookShelfBean collBook) {
         super(pageView, collBook);
-        if (mCollBook.getChapterListSize() == 0) {
-            setCurPageStatus(STATUS_PARING);
+        if (getCollBook().getChapterListSize() == 0) {
+            setCurrentStatus(STATUS_PARING, false);
         }
     }
 
@@ -79,9 +83,7 @@ public class TXTPageLoader extends PageLoader {
      * @throws IOException
      */
     private List<ChapterListBean> loadChapters() throws IOException {
-        List<ChapterListBean> chapterList = new ArrayList<>();
-
-        List<TxtChapter> chapters = new ArrayList<>();
+        List<SubChapter> chapters = new ArrayList<>();
         //获取文件流
         RandomAccessFile bookStream = new RandomAccessFile(mBookFile, "r");
         //寻找匹配文章标题的正则表达式，判断是否存在章节名
@@ -89,7 +91,7 @@ public class TXTPageLoader extends PageLoader {
         //加载章节
         byte[] buffer = new byte[BUFFER_SIZE];
         //获取到的块起始点，在文件中的位置
-        long curOffset = 0;
+        int curOffset = 0;
         //block的个数
         int blockPos = 0;
         //读取的长度
@@ -121,7 +123,7 @@ public class TXTPageLoader extends PageLoader {
 
                         if (curOffset == 0 && chapters.isEmpty()) { //如果当前对整个文件的偏移位置为0的话，那么就是序章
                             //创建序章
-                            TxtChapter preChapter = new TxtChapter();
+                            SubChapter preChapter = new SubChapter();
                             preChapter.title = "序章";
                             preChapter.start = 0;
                             preChapter.end = chapterContent.getBytes(mCharset).length; //获取String的byte值,作为最终值
@@ -134,13 +136,13 @@ public class TXTPageLoader extends PageLoader {
                             }
 
                             //创建当前章节
-                            TxtChapter curChapter = new TxtChapter();
+                            SubChapter curChapter = new SubChapter();
                             curChapter.title = matcher.group();
                             curChapter.start = preChapter.end;
                             chapters.add(curChapter);
                         } else {  //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
-                            TxtChapter lastChapter = chapters.get(chapters.size() - 1);
+                            SubChapter lastChapter = chapters.get(chapters.size() - 1);
                             //将当前段落添加上一章去
                             lastChapter.end += chapterContent.getBytes(mCharset).length;
 
@@ -150,7 +152,7 @@ public class TXTPageLoader extends PageLoader {
                             }
 
                             //创建当前章节
-                            TxtChapter curChapter = new TxtChapter();
+                            SubChapter curChapter = new SubChapter();
                             curChapter.title = matcher.group();
                             curChapter.start = lastChapter.end;
                             chapters.add(curChapter);
@@ -163,7 +165,7 @@ public class TXTPageLoader extends PageLoader {
                             seekPos += chapterContent.length();
 
                             //获取上一章节
-                            TxtChapter lastChapter = chapters.get(chapters.size() - 1);
+                            SubChapter lastChapter = chapters.get(chapters.size() - 1);
                             lastChapter.end = lastChapter.start + chapterContent.getBytes(mCharset).length;
 
                             //如果章节内容太小，则移除
@@ -172,14 +174,14 @@ public class TXTPageLoader extends PageLoader {
                             }
 
                             //创建当前章节
-                            TxtChapter curChapter = new TxtChapter();
+                            SubChapter curChapter = new SubChapter();
                             curChapter.title = matcher.group();
                             curChapter.start = lastChapter.end;
                             chapters.add(curChapter);
                         }
                         //如果章节不存在则创建章节
                         else {
-                            TxtChapter curChapter = new TxtChapter();
+                            SubChapter curChapter = new SubChapter();
                             curChapter.title = matcher.group();
                             curChapter.start = 0;
                             chapters.add(curChapter);
@@ -209,7 +211,7 @@ public class TXTPageLoader extends PageLoader {
                                 break;
                             }
                         }
-                        TxtChapter chapter = new TxtChapter();
+                        SubChapter chapter = new SubChapter();
                         chapter.title = "第" + blockPos + "章" + "(" + chapterPos + ")";
                         chapter.start = curOffset + chapterOffset + 1;
                         chapter.end = curOffset + end;
@@ -219,7 +221,7 @@ public class TXTPageLoader extends PageLoader {
                         //设置偏移的位置
                         chapterOffset = end;
                     } else {
-                        TxtChapter chapter = new TxtChapter();
+                        SubChapter chapter = new SubChapter();
                         chapter.title = "第" + blockPos + "章" + "(" + chapterPos + ")";
                         chapter.start = curOffset + chapterOffset + 1;
                         chapter.end = curOffset + length;
@@ -234,7 +236,7 @@ public class TXTPageLoader extends PageLoader {
 
             if (hasChapter) {
                 //设置上一章的结尾
-                TxtChapter lastChapter = chapters.get(chapters.size() - 1);
+                SubChapter lastChapter = chapters.get(chapters.size() - 1);
                 lastChapter.end = curOffset;
             }
 
@@ -245,11 +247,12 @@ public class TXTPageLoader extends PageLoader {
             }
         }
 
+        List<ChapterListBean> chapterList = new ArrayList<>();
         for (int i = 0, size = chapters.size(); i < size; i++) {
-            TxtChapter chapter = chapters.get(i);
+            SubChapter chapter = chapters.get(i);
             ChapterListBean bean = new ChapterListBean();
             bean.setDurChapterIndex(i);
-            bean.setNoteUrl(mCollBook.getNoteUrl());
+            bean.setNoteUrl(getCollBook().getNoteUrl());
             bean.setDurChapterUrl(MD5Utils.strToMd5By16(mBookFile.getAbsolutePath() + i + chapter.title));
             bean.setDurChapterName(chapter.title);
             bean.setStart(chapter.start);
@@ -268,12 +271,12 @@ public class TXTPageLoader extends PageLoader {
      * 从序章找作者名称
      */
     private void setupAuthorName(String firstChapter) {
-        String author = mCollBook.getBookInfoBean().getAuthor();
+        String author = getCollBook().getBookInfoBean().getAuthor();
         if (TextUtils.isEmpty(author)) {
             Pattern pattern = Pattern.compile(AUTHOR_PATTERN);
             Matcher m = pattern.matcher(firstChapter);
             if (m.find()) {
-                mCollBook.getBookInfoBean().setAuthor(FormatWebText.getAuthor(m.group()));
+                getCollBook().getBookInfoBean().setAuthor(FormatWebText.getAuthor(m.group()));
             }
         }
     }
@@ -286,7 +289,7 @@ public class TXTPageLoader extends PageLoader {
         try {
             bookStream = new RandomAccessFile(mBookFile, "r");
             bookStream.seek(chapter.getStart());
-            int extent = (int) (chapter.getEnd() - chapter.getStart());
+            int extent = chapter.getEnd() - chapter.getStart();
             byte[] content = new byte[extent];
             bookStream.read(content, 0, extent);
             return content;
@@ -338,45 +341,37 @@ public class TXTPageLoader extends PageLoader {
 
     @Override
     public void refreshChapterList() {
-        if (mCollBook == null) return;
-
         // 对于文件是否存在，或者为空的判断，不作处理。 ==> 在文件打开前处理过了。
-        mBookFile = new File(mCollBook.getNoteUrl());
+        mBookFile = new File(getCollBook().getNoteUrl());
         //获取文件编码
-        String charsetName = mCollBook.getBookInfoBean().getCharset();
+        String charsetName = getCollBook().getBookInfoBean().getCharset();
         if (TextUtils.isEmpty(charsetName)) {
             charsetName = CharsetDetector.detectCharset(mBookFile);
             mCharset = Charset.forName(charsetName);
-            mCollBook.getBookInfoBean().setCharset(charsetName);
+            getCollBook().getBookInfoBean().setCharset(charsetName);
         } else {
             mCharset = Charset.forName(charsetName);
         }
         // 判断文件是否已经加载过，并具有缓存
-        if (!mCollBook.getHasUpdate() && !mCollBook.realChapterListEmpty()) {
-            isChapterListPrepare = true;
+        if (!getCollBook().getHasUpdate() && !getCollBook().realChapterListEmpty()) {
+            setChapterListPrepared();
 
             // 加载并显示当前章节
-            skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
+            skipToChapter(getCollBook().getDurChapter(), getCollBook().getDurChapterPage());
 
             //提示目录加载完成
-            if (mPageChangeListener != null) {
-                mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
-            }
+            dispatchCategoryFinishEvent(getCollBook().getChapterList());
         } else {
             // 通过RxJava异步处理分章事件
             Observable.create((ObservableOnSubscribe<List<ChapterListBean>>) e -> {
                 List<ChapterListBean> chapterList = loadChapters();
-                if (!chapterList.isEmpty()) {
-                    e.onNext(chapterList);
-                } else {
-                    e.onError(new IllegalAccessException("book sub-chapter failed!"));
-                }
+                e.onNext(chapterList);
                 e.onComplete();
             }).subscribeOn(Schedulers.single())
                     .flatMap(chapterList -> {
-                        mCollBook.setChapterList(chapterList);
-                        mCollBook.upChapterListSize();
-                        return Observable.just(mCollBook);
+                        getCollBook().setChapterList(chapterList);
+                        getCollBook().upChapterListSize();
+                        return Observable.just(getCollBook());
                     })
                     .doOnNext(bookShelfBean -> {
                         // 存储章节到数据库
@@ -386,7 +381,7 @@ public class TXTPageLoader extends PageLoader {
                             BookshelfHelp.saveBookToShelf(bookShelfBean);
                         }
                     })
-                    .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                    .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<BookShelfBean>() {
                         @Override
@@ -396,20 +391,22 @@ public class TXTPageLoader extends PageLoader {
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            isChapterListPrepare = true;
+                            if(bookShelfBean.realChapterListEmpty()){
+                                setCurrentStatus(STATUS_CATEGORY_EMPTY);
+                            }else {
+                                setChapterListPrepared();
 
-                            // 加载并显示当前章节
-                            skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
+                                // 加载并显示当前章节
+                                skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
 
-                            // 提示目录加载完成
-                            if (mPageChangeListener != null) {
-                                mPageChangeListener.onCategoryFinish(bookShelfBean.getChapterList());
+                                // 提示目录加载完成
+                                dispatchCategoryFinishEvent(bookShelfBean.getChapterList());
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            changePageStatus(STATUS_PARSE_ERROR);
+                            setCurrentStatus(STATUS_PARSE_ERROR);
                         }
                     });
         }
@@ -425,8 +422,13 @@ public class TXTPageLoader extends PageLoader {
 
     @Override
     protected boolean hasChapterData(ChapterListBean chapter) {
-        return chapter.getStart() != null && chapter.getEnd() != null;
+        return true;
     }
 
 
+    private class SubChapter {
+        String title;
+        int start;
+        int end;
+    }
 }

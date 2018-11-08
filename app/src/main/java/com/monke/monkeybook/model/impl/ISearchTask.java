@@ -21,8 +21,6 @@ public interface ISearchTask {
 
     boolean isComplete();
 
-    boolean hasSuccess();
-
     interface OnSearchingListener {
         boolean checkSameTask(int id);
 

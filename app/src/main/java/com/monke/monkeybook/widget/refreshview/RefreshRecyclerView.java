@@ -7,11 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 
@@ -153,10 +155,13 @@ public class RefreshRecyclerView extends FrameLayout {
 
         if (isAll) {
             if (noDataView != null) {
-                if (((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getICount() == 0)
-                    noDataView.setVisibility(VISIBLE);
-                else
-                    noDataView.setVisibility(GONE);
+                recyclerView.post(() -> {
+                    if (((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getICount() == 0) {
+                        noDataView.setVisibility(VISIBLE);
+                    }else {
+                        noDataView.setVisibility(GONE);
+                    }
+                });
             }
             if (refreshErrorView != null) {
                 refreshErrorView.setVisibility(GONE);

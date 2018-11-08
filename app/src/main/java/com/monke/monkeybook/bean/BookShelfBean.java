@@ -20,9 +20,9 @@ public class BookShelfBean implements Parcelable {
     @Transient
     public static final String LOCAL_TAG = "loc_book";
     @Transient
-    private String errorMsg;
-    @Transient
     private boolean isLoading;
+    @Transient
+    private boolean isQueuing = true;
 
     @Id
     private String noteUrl; //对应BookInfoBean noteUrl;
@@ -45,7 +45,6 @@ public class BookShelfBean implements Parcelable {
     private BookInfoBean bookInfoBean = new BookInfoBean();
 
     public BookShelfBean() {
-
     }
 
 
@@ -72,8 +71,8 @@ public class BookShelfBean implements Parcelable {
 
 
     protected BookShelfBean(Parcel in) {
-        errorMsg = in.readString();
         isLoading = in.readByte() != 0;
+        isQueuing = in.readByte() != 0;
         noteUrl = in.readString();
         if (in.readByte() == 0) {
             durChapter = null;
@@ -128,8 +127,8 @@ public class BookShelfBean implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(errorMsg);
         dest.writeByte((byte) (isLoading ? 1 : 0));
+        dest.writeByte((byte) (isQueuing ? 1 : 0));
         dest.writeString(noteUrl);
         if (durChapter == null) {
             dest.writeByte((byte) 0);
@@ -294,14 +293,6 @@ public class BookShelfBean implements Parcelable {
         return newChapters;
     }
 
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
-    }
-
     public int getSerialNumber() {
         return this.serialNumber;
     }
@@ -316,6 +307,14 @@ public class BookShelfBean implements Parcelable {
 
     public void setLoading(boolean loading) {
         isLoading = loading;
+    }
+
+    public boolean isQueuing() {
+        return isQueuing;
+    }
+
+    public void setQueuing(boolean queuing) {
+        this.isQueuing = queuing;
     }
 
     public int getGroup() {
@@ -363,6 +362,9 @@ public class BookShelfBean implements Parcelable {
     }
 
     public void upDurChapterName() {
+        if(realChapterListEmpty()){
+            return;
+        }
         if (getChapterListSize() > 0) {
             if (durChapter < getChapterListSize()) {
                 durChapterName = getChapterList().get(durChapter).getDurChapterName();
@@ -383,6 +385,10 @@ public class BookShelfBean implements Parcelable {
     }
 
     public void upLastChapterName() {
+        if(realChapterListEmpty()){
+            return;
+        }
+
         if (getChapterListSize() > 0) {
             lastChapterName = getChapterList().get(getChapterListSize() - 1).getDurChapterName();
         } else {

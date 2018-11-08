@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.activity;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -25,7 +23,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +50,9 @@ import com.monke.monkeybook.widget.ReadBottomStatusBar;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.modialog.EditBookmarkView;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
+import com.monke.monkeybook.widget.page.OnPageChangeListener;
 import com.monke.monkeybook.widget.page.PageLoader;
+import com.monke.monkeybook.widget.page.PageStatus;
 import com.monke.monkeybook.widget.page.PageView;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
@@ -64,15 +63,16 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.text.TextUtils.isEmpty;
 import static com.monke.monkeybook.service.ReadAloudService.NEXT;
 import static com.monke.monkeybook.service.ReadAloudService.PAUSE;
 import static com.monke.monkeybook.service.ReadAloudService.PLAY;
 import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
 
-public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> implements ReadBookContract.View, PageLoader.OnPageChangeListener {
+public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> implements ReadBookContract.View, OnPageChangeListener {
 
     private static final int CHAPTER_SKIP_RESULT = 11;
+
+    private static final int HPB_UPDATE_INTERVAL = 100;
 
     @BindView(R.id.fl_content)
     FrameLayout flContent;
@@ -86,26 +86,18 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     TextView tvNext;
     @BindView(R.id.hpb_read_progress)
     MHorProgressBar hpbReadProgress;
-    @BindView(R.id.ll_catalog)
-    LinearLayout llCatalog;
-    @BindView(R.id.ll_light)
-    LinearLayout llLight;
-    @BindView(R.id.ll_font)
-    LinearLayout llFont;
-    @BindView(R.id.ll_setting)
-    LinearLayout llSetting;
+    @BindView(R.id.btn_catalog)
+    TextView btnCatalog;
+    @BindView(R.id.btn_light)
+    TextView btnLight;
+    @BindView(R.id.btn_font)
+    TextView btnFont;
+    @BindView(R.id.btn_setting)
+    TextView btnSetting;
     @BindView(R.id.tv_read_aloud_timer)
     TextView tvReadAloudTimer;
     @BindView(R.id.ll_read_aloud_timer)
     LinearLayout llReadAloudTimer;
-    @BindView(R.id.ivCList)
-    ImageView ivCList;
-    @BindView(R.id.ivAdjust)
-    ImageView ivAdjust;
-    @BindView(R.id.ivInterface)
-    ImageView ivInterface;
-    @BindView(R.id.ivSetting)
-    ImageView ivSetting;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.atv_divider)
@@ -115,8 +107,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @BindView(R.id.ll_menu_top)
     LinearLayout llMenuTop;
     @BindView(R.id.appBar)
-    AppBarLayout appBar;
-    @BindView(R.id.llNavigationBar)
+    View appBar;
+    @BindView(R.id.rlNavigationBar)
     View navigationBar;
     @BindView(R.id.fabReadAloud)
     FloatingActionButton fabReadAloud;
@@ -142,11 +134,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private ActionBar actionBar;
     private PageLoader mPageLoader;
 
-    private String noteUrl;
     private int aloudStatus;
     private int screenTimeOut;
     private int nextPageTime;
-    private int upHpbInterval = 100;
 
     private CheckAddShelfPop checkAddShelfPop;
     private ReadAdjustPop readAdjustPop;
@@ -157,9 +147,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
 
     private boolean autoPage = false;
-
-    private boolean isFirstIn = true;
-
     private boolean isOrWillShow = false;
 
     private Handler mHandler;
@@ -172,8 +159,19 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
-        activity.startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.startActivity(intent);
     }
+
+    public static void startThisFromUri(MBaseActivity activity, BookShelfBean bookShelf, boolean inBookShelf) {
+        Intent intent = new Intent(activity, ReadBookActivity.class);
+        intent.putExtra("fromUri", true);
+        intent.putExtra("inBookShelf", inBookShelf);
+        String key = String.valueOf(System.currentTimeMillis());
+        intent.putExtra("data_key", key);
+        BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
+        activity.startActivity(intent);
+    }
+
 
     @Override
     protected ReadBookContract.Presenter initInjector() {
@@ -183,7 +181,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            noteUrl = savedInstanceState.getString("noteUrl");
             aloudStatus = savedInstanceState.getInt("aloudStatus");
         }
         readBookControl.initPageConfiguration();
@@ -198,10 +195,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
+    protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        mPresenter.handleIntent(intent);
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mPresenter.getBookShelf() != null) {
-            outState.putString("noteUrl", mPresenter.getBookShelf().getNoteUrl());
             outState.putInt("aloudStatus", aloudStatus);
 
             BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
@@ -306,7 +308,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             if (upHpbNextPage == null) {
                 upHpbNextPage = this::upHpbNextPage;
             }
-            mHandler.postDelayed(upHpbNextPage, upHpbInterval);
+            mHandler.postDelayed(upHpbNextPage, HPB_UPDATE_INTERVAL);
             fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop);
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page_stop));
         } else {
@@ -318,9 +320,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     private void upHpbNextPage() {
-        nextPageTime = nextPageTime - upHpbInterval;
+        nextPageTime = nextPageTime - HPB_UPDATE_INTERVAL;
         hpbNextPageProgress.setDurProgress(nextPageTime);
-        mHandler.postDelayed(upHpbNextPage, upHpbInterval);
+        mHandler.postDelayed(upHpbNextPage, HPB_UPDATE_INTERVAL);
         if (nextPageTime <= 0) {
             nextPage();
             nextPageTime = readBookControl.getClickSensitivity() * 1000;
@@ -352,6 +354,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         setSupportActionBar(toolbar);
         setupActionBar();
 
+        int menuColor = getResources().getColor(R.color.menu_color_default);
+        AppCompat.setTint(btnCatalog, menuColor);
+        AppCompat.setTint(btnLight, menuColor);
+        AppCompat.setTint(btnFont, menuColor);
+        AppCompat.setTint(btnSetting, menuColor);
+
         if (isNightTheme()) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime_24dp);
         } else {
@@ -365,7 +373,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         flContent.setBackground(readBookControl.getBgDrawable(this));
         readStatusBar.refreshUI(readBookControl);
 
-        mPresenter.prepare(this);
+        mPresenter.handleIntent(getIntent());
     }
 
     @Override
@@ -674,13 +682,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public void requestChapter(int chapterIndex) {
-        if (isNetworkAvailable()) {
-            mPresenter.loadContent(chapterIndex);
-        }
-    }
-
-    @Override
     public void onCategoryFinish(List<ChapterListBean> chapters) {
         updateTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
         mPresenter.getBookShelf().setChapterList(chapters);
@@ -710,10 +711,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         //继续朗读
         if ((ReadAloudService.running) && pageIndex >= 0) {
-            if (mPageLoader.getContent(pageIndex) != null) {
-                ReadAloudService.play(ReadBookActivity.this,
-                        false,
-                        mPageLoader.getContent(pageIndex),
+            String content = mPageLoader.getContent(pageIndex);
+            if (content != null) {
+                ReadAloudService.play(ReadBookActivity.this, false, content,
                         mPresenter.getBookShelf().getBookInfoBean().getName(),
                         mPresenter.getChapterTitle(chapterIndex)
                 );
@@ -728,16 +728,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             return;
         }
         autoPage();
-    }
-
-    @Override
-    public void onPageDrawFinish() {
-        if (isFirstIn && !mPresenter.isRecreate()) {
-            isFirstIn = false;
-            ObjectAnimator animator = ObjectAnimator.ofFloat(pageView, "alpha", 0.4F, 1.0F);
-            animator.setDuration(300L);
-            animator.start();
-        }
     }
 
     @Override
@@ -787,7 +777,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         atvUrl.setOnClickListener(view -> {
             try {
                 String url = atvUrl.getText().toString();
-                Intent intent = new Intent(Intent.ACTION_VIEW);
+                android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
             } catch (Exception e) {
@@ -863,7 +853,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //目录
-        llCatalog.setOnClickListener(view -> {
+        btnCatalog.setOnClickListener(view -> {
             isOrWillShow = true;
             popMenuOut();
             if (mPresenter.getBookShelf() != null && !mPresenter.getBookShelf().realChapterListEmpty()) {
@@ -872,7 +862,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //亮度
-        llLight.setOnClickListener(view -> {
+        btnLight.setOnClickListener(view -> {
             isOrWillShow = true;
             popMenuOut();
             ensureReadAdjustPop();
@@ -883,7 +873,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //界面
-        llFont.setOnClickListener(view -> {
+        btnFont.setOnClickListener(view -> {
             isOrWillShow = true;
             popMenuOut();
             ensureReadInterfacePop();
@@ -894,7 +884,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //设置
-        llSetting.setOnClickListener(view -> {
+        btnSetting.setOnClickListener(view -> {
             isOrWillShow = true;
             popMenuOut();
             ensureMoreSettingPop();
@@ -971,7 +961,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 popMenuOut();
                 if (mPageLoader != null) {
                     ensureProgressHUD();
-                    moDialogHUD.showText(mPageLoader.getContent(mPageLoader.getPagePos()));
+                    moDialogHUD.showText(mPageLoader.getCurrentContent());
                 }
                 break;
             case R.id.disable_book_source:
@@ -1000,7 +990,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
         popMenuOut();
         if (mPageLoader != null) {
-            mPageLoader.refreshDurChapter();
+            new Handler().postDelayed(() -> mPageLoader.refreshDurChapter(), 200L);
         }
     }
 
@@ -1047,7 +1037,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     private void changeSource() {
         if (!isNetworkAvailable()) {
-            toast("网络不可用，无法换源!");
+            toast("网络不可用，无法换源");
             return;
         }
         popMenuOut();
@@ -1055,7 +1045,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             ensureProgressHUD();
             moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(), searchBookBean -> {
                 if (!Objects.equals(searchBookBean.getNoteUrl(), mPresenter.getBookShelf().getNoteUrl())) {
-                    mPageLoader.changePageStatus(PageLoader.STATUS_HY);
+                    mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
                     mPresenter.changeBookSource(searchBookBean);
                 }
             });
@@ -1287,33 +1277,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         return super.onKeyUp(keyCode, event);
     }
 
-    @Override
-    public String getNoteUrl() {
-        if (isEmpty(noteUrl)) {
-            noteUrl = readBookControl.getLastNoteUrl();
-        }
-        return noteUrl;
-    }
-
-    @Override
-    public int getCurChapterPos() {
-        return mPageLoader.getChapterPos();
-    }
-
-    @Override
-    public void finishContent() {
-        if (mPageLoader.getCurPageStatus() != PageLoader.STATUS_FINISH) {
-            mPageLoader.openChapter(mPresenter.getBookShelf().getDurChapterPage());
-        }
-    }
-
-    @Override
-    public void chapterError(int chapter, int status) {
-        if (mPageLoader != null) {
-            mPageLoader.changePageStatus(chapter, status);
-        }
-    }
-
     /**
      * 朗读按钮
      */
@@ -1334,16 +1297,16 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             default:
                 popMenuOut();
                 if (mPresenter.getBookShelf() != null && mPageLoader != null) {
-                    ReadAloudService.play(this, true, mPageLoader.getContent(mPageLoader.getPagePos()),
+                    ReadAloudService.play(this, true, mPageLoader.getCurrentContent(),
                             mPresenter.getBookShelf().getBookInfoBean().getName(),
-                            mPresenter.getChapterTitle(mPageLoader.getChapterPos())
+                            mPresenter.getChapterTitle(mPageLoader.getChapterPosition())
                     );
                 }
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHAPTER_SKIP_RESULT && resultCode == RESULT_OK) {
             int what = data.getIntExtra("what", -1);
@@ -1407,12 +1370,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (!checkAddShelf()) {
             return;
         }
-        if (!mPresenter.isOpenFromUri() && !AppActivityManager.getInstance().isExist(MainActivity.class)) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        }
         BookShelfDataHolder.getInstance().cleanData();
-        super.finish();
+        if (!AppActivityManager.getInstance().isExist(MainActivity.class)
+                && !AppActivityManager.getInstance().isExist(SearchBookActivity.class)) {
+            android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
+            startActivityByAnim(intent,  android.R.anim.fade_in, android.R.anim.fade_out);
+            super.finishNoAnim();
+        }else {
+            super.finish();
+        }
     }
 
 
@@ -1422,11 +1388,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             if (success) {
                 mPageLoader.changeSourceFinish(mPresenter.getBookShelf());
             } else {
-                if (mPageLoader.hasCurChapterData()) {
+                if (mPageLoader.hasCurrentChapter()) {
                     toast("换源失败，请选择其他书源");
-                    mPageLoader.changePageStatus(PageLoader.STATUS_FINISH);
+                    mPageLoader.setCurrentStatus(PageStatus.STATUS_FINISH);
                 } else {
-                    mPageLoader.changePageStatus(PageLoader.STATUS_HY_ERROR);
+                    mPageLoader.setCurrentStatus(PageStatus.STATUS_HY_ERROR);
                 }
             }
         }
@@ -1438,11 +1404,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     class ThisBatInfoReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            if (readBookControl.getHideStatusBar() && readStatusBar != null) {
-                if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
+        public void onReceive(Context context, android.content.Intent intent) {
+            if (readStatusBar != null) {
+                if (android.content.Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
                     readStatusBar.updateTime();
-                } else if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+                } else if (android.content.Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
                     int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     readStatusBar.updateBattery(level);
                 }
@@ -1451,8 +1417,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         public void registerReceiverBatInfo() {
             IntentFilter filter = new IntentFilter();
-            filter.addAction(Intent.ACTION_TIME_TICK);
-            filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+            filter.addAction(android.content.Intent.ACTION_TIME_TICK);
+            filter.addAction(android.content.Intent.ACTION_BATTERY_CHANGED);
             registerReceiver(batInfoReceiver, filter);
         }
 

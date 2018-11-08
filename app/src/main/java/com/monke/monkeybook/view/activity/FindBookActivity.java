@@ -2,6 +2,7 @@
 package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -17,6 +18,7 @@ import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.view.adapter.FindKindAdapter;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.util.List;
 
@@ -59,6 +61,10 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         expandableList.setAdapter(adapter);
         tvEmpty.setText(R.string.find_empty);
         expandableList.setEmptyView(tvEmpty);
+
+        Drawable indicator = getResources().getDrawable(R.drawable.ic_group_expander);
+        AppCompat.setTint(indicator, getResources().getColor(R.color.tv_text_default));
+        expandableList.setGroupIndicator(indicator);
         //  设置分组项的点击监听事件
         expandableList.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             // 请务必返回 false，否则分组不会展开
@@ -80,8 +86,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
             intent.putExtra("url", kindBean.getKindUrl());
             intent.putExtra("title", kindBean.getKindName());
             intent.putExtra("tag", kindBean.getTag());
-            startActivityByAnim(intent, v, "sharedView", android.R.anim.fade_in, android.R.anim.fade_out);
-
+            startActivityByAnim(intent, v, "sharedView");
             return true;
         });
 
@@ -101,7 +106,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     }
 
     private boolean autoExpandGroup() {
-        return preferences.getBoolean(getString(R.string.pk_find_expand_group), false);
+        return getPreferences().getBoolean(getString(R.string.pk_find_expand_group), false);
     }
 
     //设置ToolBar
@@ -127,8 +132,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         switch (id) {
             case R.id.action_search:
                 //点击搜索
-                startActivityByAnim(new Intent(this, SearchBookActivity.class),
-                        toolbar, "to_search", android.R.anim.fade_in, android.R.anim.fade_out);
+                startActivityByAnim(new Intent(this, SearchBookActivity.class), toolbar, "to_search");
                 return true;
             case android.R.id.home:
                 finish();

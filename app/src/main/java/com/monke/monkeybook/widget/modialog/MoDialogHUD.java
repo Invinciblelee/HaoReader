@@ -127,7 +127,7 @@ public class MoDialogHUD {
         rootView.setBackgroundColor(context.getResources().getColor(R.color.btn_bg_press_tp));
 
         mSharedView = new MoDialogView(context);
-
+        mSharedView.onAttach(this);
     }
 
     private Animation getInAnimation() {
@@ -165,7 +165,7 @@ public class MoDialogHUD {
         }
     }
 
-    public Boolean isShow() {
+    public boolean isShown() {
         return (mSharedView != null && mSharedView.getParent() != null);
     }
 
@@ -303,7 +303,7 @@ public class MoDialogHUD {
         initAnimation();
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
-        DownLoadView.getInstance(mSharedView)
+        DownLoadView.newInstance(mSharedView)
                 .showDownloadList(startIndex, endIndex, all, clickDownload, v -> dismiss());
         if (!isShowing()) {
             onAttached();
@@ -319,8 +319,8 @@ public class MoDialogHUD {
         initAnimation();
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
-        ChangeSourceView.getInstance(activity, mSharedView)
-                .showChangeSource(bookShelf, clickSource, this);
+        ChangeSourceView.newInstance(activity, mSharedView)
+                .showChangeSource(bookShelf, clickSource);
         if (!isShowing()) {
             onAttached();
         }
@@ -335,8 +335,8 @@ public class MoDialogHUD {
         initAnimation();
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
-        InputView.getInstance(mSharedView)
-                .showInputView(onInputOk, this, title, defaultValue);
+        InputView.newInstance(mSharedView)
+                .showInputView(onInputOk, title, defaultValue);
         if (!isShowing()) {
             onAttached();
         }
@@ -351,8 +351,8 @@ public class MoDialogHUD {
         initAnimation();
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
-        EditReplaceRuleView.getInstance(mSharedView)
-                .showEditReplaceRule(replaceRuleBean, onSaveReplaceRule, this);
+        EditReplaceRuleView.newInstance(mSharedView)
+                .showEditReplaceRule(replaceRuleBean, onSaveReplaceRule);
         if (!isShowing()) {
             onAttached();
         }
@@ -367,8 +367,8 @@ public class MoDialogHUD {
         initAnimation();
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
-        EditBookmarkView.getInstance(mSharedView)
-                .showBookmark(bookmarkBean, isAdd, bookmarkClick, this);
+        EditBookmarkView.newInstance(mSharedView)
+                .showBookmark(bookmarkBean, isAdd, bookmarkClick);
         if (!isShowing()) {
             onAttached();
         }

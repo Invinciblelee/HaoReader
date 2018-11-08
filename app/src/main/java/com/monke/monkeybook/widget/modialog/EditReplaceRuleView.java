@@ -22,13 +22,12 @@ public class EditReplaceRuleView {
     private TextInputEditText tieReplaceTo;
     private TextInputEditText tieUseTo;
 
-    private MoDialogHUD moDialogHUD;
     private MoDialogView moDialogView;
     private OnSaveReplaceRule saveReplaceRule;
     private Context context;
     private ReplaceRuleBean replaceRuleBean;
 
-    public static EditReplaceRuleView getInstance(MoDialogView moDialogView) {
+    public static EditReplaceRuleView newInstance(MoDialogView moDialogView) {
         return new EditReplaceRuleView(moDialogView);
     }
 
@@ -38,8 +37,7 @@ public class EditReplaceRuleView {
         bindView();
     }
 
-    void showEditReplaceRule(ReplaceRuleBean replaceRuleBean, final OnSaveReplaceRule saveReplaceRule, MoDialogHUD moDialogHUD) {
-        this.moDialogHUD = moDialogHUD;
+    void showEditReplaceRule(ReplaceRuleBean replaceRuleBean, final OnSaveReplaceRule saveReplaceRule) {
         this.saveReplaceRule = saveReplaceRule;
 
         if (replaceRuleBean != null) {
@@ -81,7 +79,7 @@ public class EditReplaceRuleView {
             replaceRuleBean.setReplacement(tieReplaceTo.getText().toString());
             replaceRuleBean.setUseTo(tieUseTo.getText().toString());
             saveReplaceRule.saveReplaceRule(replaceRuleBean);
-            moDialogHUD.dismiss();
+            moDialogView.getMoDialogHUD().dismiss();
         });
         ImmersionBar.resetBoxPosition((Activity) context, moDialogView, R.id.cv_root);
     }

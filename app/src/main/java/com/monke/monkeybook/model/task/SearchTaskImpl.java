@@ -1,12 +1,12 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.impl.ISearchTask;
@@ -15,20 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SearchTaskImpl implements ISearchTask {
 
     private int id;
     private CompositeDisposable disposables;
-    private int successCount;
 
     private boolean isComplete;
 
@@ -94,11 +90,6 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     @Override
-    public boolean hasSuccess() {
-        return successCount > 0;
-    }
-
-    @Override
     public boolean isComplete() {
         return isComplete;
     }
@@ -134,7 +125,6 @@ public class SearchTaskImpl implements ISearchTask {
 
                         @Override
                         public void onNext(List<SearchBookBean> searchBookBeans) {
-                            successCount += 1;
                             boolean hasMore = true;
                             if (!isComplete && listener.checkSameTask(getId())) {
                                 searchBookBeans = removeDuplicate(searchBookBeans);
@@ -145,19 +135,15 @@ public class SearchTaskImpl implements ISearchTask {
                                 } else {
                                     hasMore = false;
                                 }
-                                whenNext(searchEngine, hasMore, query, scheduler);
                             }
+                            whenNext(searchEngine, hasMore, query, scheduler);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            e.printStackTrace();
                             whenError(searchEngine, query, scheduler);
                         }
                     });
-        } else {
-            stopSearch();
-            listener.onSearchComplete();
         }
     }
 
@@ -165,9 +151,15 @@ public class SearchTaskImpl implements ISearchTask {
         if (isComplete) {
             return;
         }
+
         searchEngine.pageAdd();
         searchEngine.setHasMore(hasMore);
-        toSearch(query, scheduler);
+        if (!listener.checkSearchEngine(getNextSearchEngine())) {
+            stopSearch();
+            listener.onSearchComplete();
+        } else {
+            toSearch(query, scheduler);
+        }
     }
 
     private void whenError(SearchEngine searchEngine, String query, Scheduler scheduler) {
@@ -175,12 +167,16 @@ public class SearchTaskImpl implements ISearchTask {
             return;
         }
 
+        searchEngine.pageAdd();
         searchEngine.setHasMore(false);
-        if (!hasSuccess() && listener.getShowingItemCount() == 0 && getNextSearchEngine() == null) {
+        if (!listener.checkSearchEngine(getNextSearchEngine())) {
             stopSearch();
-            listener.onSearchError();
+            if(listener.getShowingItemCount() == 0) {
+                listener.onSearchError();
+            }else {
+                listener.onSearchComplete();
+            }
         } else {
-            searchEngine.pageAdd();
             toSearch(query, scheduler);
         }
     }

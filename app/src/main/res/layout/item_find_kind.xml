@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:singleLine="true"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textColor="@color/tv_text_default"/>
 
 </LinearLayout>

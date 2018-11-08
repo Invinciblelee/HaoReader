@@ -120,7 +120,7 @@ public class ReadInterfacePop extends PopupWindow {
         nbLineSize.setTitle(activity.getString(R.string.line_size))
                 .setNumberType(NumberButton.INT)
                 .setMinNumber(0)
-                .setMaxNumber(30)
+                .setMaxNumber(50)
                 .setStepNumber(1)
                 .setNumber(readBookControl.getLineSpacing())
                 .setOnChangedListener(number -> {
@@ -131,7 +131,7 @@ public class ReadInterfacePop extends PopupWindow {
         nbParagraphSize.setTitle(activity.getString(R.string.paragraph_size))
                 .setNumberType(NumberButton.INT)
                 .setMinNumber(0)
-                .setMaxNumber(30)
+                .setMaxNumber(50)
                 .setStepNumber(1)
                 .setNumber(readBookControl.getParagraphSpacing())
                 .setOnChangedListener(number -> {

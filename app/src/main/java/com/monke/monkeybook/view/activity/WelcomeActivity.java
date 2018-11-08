@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -35,32 +34,16 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     }
 
     @Override
-    public void onNormalCreate() {
-        // 避免从桌面启动程序后，会重新实例化入口类的activity
-        if (!isTaskRoot()) {
-            final Intent intent = getIntent();
-            final String intentAction = intent.getAction();
-            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && intentAction != null && intentAction.equals(Intent.ACTION_MAIN)) {
-                finish();
-                return;
-            }
+    public void onStartNormal(long startDelay) {
+        if (startDelay <= 0) {
+            startMainActivity();
+        } else {
+            new Handler().postDelayed(this::startMainActivity, startDelay);
         }
-        setContentView(R.layout.activity_welcome);
-
-        getWindow().getDecorView().postDelayed(() -> {
-            if (preferences.getBoolean(getString(R.string.pk_default_read), false)) {
-                startActivity(new Intent(this, ReadBookActivity.class));
-            } else {
-                startActivity(new Intent(this, MainActivity.class));
-            }
-            finish();
-        }, 1000L);
     }
 
     @Override
-    public void onFromOtherCreate() {
-        setContentView(R.layout.activity_welcome);
-
+    public void onStartFromUri() {
         openBookFromUri();
     }
 
@@ -91,22 +74,35 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     }
 
     @Override
-    public void startReadBook(BookShelfBean shelfBean, boolean inShelf, long delay) {
-        if (delay <= 0) {
-            startReadBookActivity(shelfBean, inShelf);
+    public void startReadBookAct(BookShelfBean shelfBean, boolean inShelf, boolean fromUri, long startDelay) {
+        if (startDelay <= 0) {
+            startReadBookActivity(shelfBean, inShelf, fromUri);
         } else {
-            new Handler().postDelayed(() -> startReadBookActivity(shelfBean, inShelf), delay);
+            new Handler().postDelayed(() -> startReadBookActivity(shelfBean, inShelf, fromUri), startDelay);
         }
     }
 
-    private void startReadBookActivity(BookShelfBean shelfBean, boolean inShelf) {
-        Intent intent = new Intent(WelcomeActivity.this, ReadBookActivity.class);
-        intent.putExtra("openFromUri", true);
-        intent.putExtra("inBookShelf", inShelf);
-        String key = String.valueOf(System.currentTimeMillis());
-        intent.putExtra("data_key", key);
-        BitIntentDataManager.getInstance().putData(key, shelfBean);
-        startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+    private void startReadBookActivity(BookShelfBean shelfBean, boolean inShelf, boolean fromUri) {
+        if (fromUri) {
+            ReadBookActivity.startThisFromUri(this, shelfBean, inShelf);
+        } else {
+            ReadBookActivity.startThis(this, shelfBean, inShelf);
+        }
         finish();
+    }
+
+    private void startMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivityByAnim(intent, 0, 0);
+    }
+
+    @Override
+    public void finish() {
+        super.finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

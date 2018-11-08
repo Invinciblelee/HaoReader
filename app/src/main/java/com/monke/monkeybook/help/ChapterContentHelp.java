@@ -14,8 +14,8 @@ public class ChapterContentHelp {
     /**
      * 转繁体
      */
-    public static String toTraditional(ReadBookControl readBookControl, String content) {
-        switch (readBookControl.getTextConvert()) {
+    private static String toTraditional(int convert, String content) {
+        switch (convert) {
             case 0:
                 break;
             case 1:
@@ -68,7 +68,7 @@ public class ChapterContentHelp {
                 }
             }
         }
-        return content;
+        return toTraditional(ReadBookControl.getInstance().getTextConvert(), content);
     }
 
     private static boolean isUseTo(BookShelfBean mBook, String useTo) {

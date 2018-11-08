@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
+            android:textColor="@color/tv_text_default"
             android:text="@string/bookmark"
             android:textSize="20sp" />
 
@@ -27,14 +28,15 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:padding="10dp"
-            android:text="@string/bookmark" />
+            android:text="@string/bookmark"
+            android:textColor="@color/tv_text_default"/>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/content"
-            android:padding="10dp">
+            android:padding="7dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/tie_content"

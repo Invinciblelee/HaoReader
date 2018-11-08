@@ -19,12 +19,11 @@ public class InputView {
     private EditText etInput;
     private TextView tvOk;
 
-    private MoDialogHUD moDialogHUD;
     private MoDialogView moDialogView;
     private OnInputOk onInputOk;
     private Context context;
 
-    public static InputView getInstance(MoDialogView moDialogView) {
+    public static InputView newInstance(MoDialogView moDialogView) {
         return new InputView(moDialogView);
     }
 
@@ -34,12 +33,11 @@ public class InputView {
         bindView();
         tvOk.setOnClickListener(view -> {
             onInputOk.setInputText(etInput.getText().toString());
-            moDialogHUD.dismiss();
+            this.moDialogView.getMoDialogHUD().dismiss();
         });
     }
 
-    void showInputView(final OnInputOk onInputOk, MoDialogHUD moDialogHUD, String title, String defaultValue) {
-        this.moDialogHUD = moDialogHUD;
+    void showInputView(final OnInputOk onInputOk, String title, String defaultValue) {
         this.onInputOk = onInputOk;
         tvTitle.setText(title);
         if (defaultValue != null) {

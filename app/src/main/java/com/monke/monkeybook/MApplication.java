@@ -2,7 +2,6 @@
 package com.monke.monkeybook;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,11 +10,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class MApplication extends Application {
+
     public final static boolean DEBUG = BuildConfig.DEBUG;
     public final static String channelIdDownload = "channel_download";
     public final static String channelIdReadAloud = "channel_read_aloud";
@@ -55,7 +53,7 @@ public class MApplication extends Application {
         }
 
         RxJavaPlugins.setErrorHandler(Throwable::printStackTrace);
-        if(DEBUG) {
+        if (DEBUG) {
             CrashHandler.getInstance().init(this);
         }
     }

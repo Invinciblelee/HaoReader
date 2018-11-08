@@ -31,17 +31,18 @@
             android:focusable="true"
             android:orientation="vertical">
 
-            <android.support.design.widget.AppBarLayout
+            <LinearLayout
                 android:id="@+id/appBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:theme="@style/AppTheme.AppBarOverlay">
+                android:orientation="vertical">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
+                    android:theme="@style/AppTheme.AppBarOverlay"
                     app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
 
@@ -56,13 +57,14 @@
                     android:layout_height="25dp"
                     android:background="@color/colorPrimary"
                     android:gravity="center_vertical"
+                    android:includeFontPadding="false"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:singleLine="true"
                     android:textColor="@color/menu_color_default"
                     android:visibility="gone" />
 
-            </android.support.design.widget.AppBarLayout>
+            </LinearLayout>
 
             <View style="@style/Style.Shadow.Top" />
         </LinearLayout>
@@ -137,7 +139,7 @@
                     app:fabSize="mini"
                     app:pressedTranslationZ="2dp" />
 
-                <View
+                <Space
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -155,7 +157,7 @@
                     app:fabSize="mini"
                     app:pressedTranslationZ="2dp" />
 
-                <View
+                <Space
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -173,7 +175,7 @@
                     app:fabSize="mini"
                     app:pressedTranslationZ="2dp" />
 
-                <View
+                <Space
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -195,230 +197,165 @@
 
             <View style="@style/Style.Shadow.Bottom" />
             <!--底部设置栏-->
-            <LinearLayout
-                android:id="@+id/llNavigationBar"
+            <RelativeLayout
+                android:id="@+id/rlNavigationBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:orientation="vertical">
+                android:background="@color/colorPrimary">
                 <!--章节设置-->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_pre"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginBottom="5dp"
-                    android:orientation="horizontal">
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:enabled="false"
+                    android:focusable="true"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/previous_chapter"
+                    android:textColor="@color/menu_color_default"
+                    android:textSize="14sp" />
 
-                    <TextView
-                        android:id="@+id/tv_pre"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/bg_ib_pre_round"
-                        android:clickable="true"
-                        android:enabled="false"
-                        android:focusable="true"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:text="@string/previous_chapter"
-                        android:textColor="@color/menu_color_default"
-                        android:textSize="14sp" />
+                <com.monke.mprogressbar.MHorProgressBar
+                    android:id="@+id/hpb_read_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_toEndOf="@id/tv_pre"
+                    android:layout_toStartOf="@id/tv_next"
+                    android:layout_alignTop="@id/tv_pre"
+                    android:layout_alignBottom="@id/tv_pre"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    app:bgdrawable="@color/progress_back_color"
+                    app:cantouch="true"
+                    app:cursordrawable="@drawable/shape_progress_cursor"
+                    app:cursordrawable_height="13dp"
+                    app:cursordrawable_width="13dp"
+                    app:fontdrawable="@color/progress_color"
+                    app:progresswidth="2dp" />
 
-                    <com.monke.mprogressbar.MHorProgressBar
-                        android:id="@+id/hpb_read_progress"
-                        android:layout_width="0dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        app:bgdrawable="@color/progress_back_color"
-                        app:cantouch="true"
-                        app:cursordrawable="@drawable/shape_progress_cursor"
-                        app:cursordrawable_height="13dp"
-                        app:cursordrawable_width="13dp"
-                        app:fontdrawable="@color/progress_color"
-                        app:progresswidth="2dp" />
-
-                    <TextView
-                        android:id="@+id/tv_next"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/bg_ib_pre_round"
-                        android:clickable="true"
-                        android:enabled="false"
-                        android:focusable="true"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:text="@string/next_chapter"
-                        android:textColor="@color/menu_color_default"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/bg_ib_pre_round"
+                    android:clickable="true"
+                    android:enabled="false"
+                    android:focusable="true"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/next_chapter"
+                    android:textColor="@color/menu_color_default"
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_below="@id/hpb_read_progress"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 
-                    <View
+                    <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
 
-                    <!--目录按钮-->
-                    <LinearLayout
-                        android:id="@+id/ll_catalog"
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/btn_catalog"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@drawable/bg_ib_pre_round"
+                        android:layout_marginTop="3dp"
+                        android:drawablePadding="1dp"
                         android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_ib_pre_round"
                         android:contentDescription="@string/table_of_contents"
-                        android:focusable="true"
-                        android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:drawableTop="@drawable/ic_list_black_24dp_new_read"
+                        android:gravity="center_horizontal"
+                        android:text="@string/table_of_contents"
+                        android:textColor="@color/menu_color_default"
+                        android:textSize="12sp" />
 
-                        <ImageView
-                            android:id="@+id/ivCList"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:contentDescription="@string/table_of_contents"
-                            android:src="@drawable/ic_list_black_24dp_new_read"
-                            android:tint="@color/menu_color_default"
-                            android:tintMode="src_atop"
-                            tools:ignore="NestedWeights" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="3dp"
-                            android:text="@string/table_of_contents"
-                            android:textColor="@color/menu_color_default"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <View
+                    <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2" />
-                    <!--调节按钮-->
-                    <LinearLayout
-                        android:id="@+id/ll_light"
+
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/btn_light"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@drawable/bg_ib_pre_round"
+                        android:layout_marginTop="3dp"
+                        android:drawablePadding="1dp"
                         android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_ib_pre_round"
                         android:contentDescription="@string/adjust"
-                        android:focusable="true"
-                        android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:drawableTop="@drawable/ic_tune_black_24dp_new"
+                        android:gravity="center_horizontal"
+                        android:text="@string/adjust"
+                        android:textColor="@color/menu_color_default"
+                        android:textSize="12sp" />
 
-                        <ImageView
-                            android:id="@+id/ivAdjust"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:contentDescription="@string/adjust"
-                            android:src="@drawable/ic_tune_black_24dp_new"
-                            android:tint="@color/menu_color_default"
-                            android:tintMode="src_atop"
-                            tools:ignore="NestedWeights" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="3dp"
-                            android:text="@string/adjust"
-                            android:textColor="@color/menu_color_default"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <View
+                    <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2" />
-                    <!--界面按钮-->
-                    <LinearLayout
-                        android:id="@+id/ll_font"
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/btn_font"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@drawable/bg_ib_pre_round"
+                        android:layout_marginTop="3dp"
+                        android:drawablePadding="1dp"
                         android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_ib_pre_round"
                         android:contentDescription="@string/interface_setting"
-                        android:focusable="true"
-                        android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:drawableTop="@drawable/ic_font_black_24dp_new"
+                        android:gravity="center_horizontal"
+                        android:text="@string/interface_setting"
+                        android:textColor="@color/menu_color_default"
+                        android:textSize="12sp" />
 
-                        <ImageView
-                            android:id="@+id/ivInterface"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:contentDescription="@string/interface_setting"
-                            android:src="@drawable/ic_font_black_24dp_new"
-                            android:tint="@color/menu_color_default"
-                            android:tintMode="src_atop"
-                            tools:ignore="NestedWeights" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="3dp"
-                            android:text="@string/interface_setting"
-                            android:textColor="@color/menu_color_default"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <View
+                    <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2" />
-                    <!--设置按钮-->
-                    <LinearLayout
-                        android:id="@+id/ll_setting"
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/btn_setting"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@drawable/bg_ib_pre_round"
+                        android:layout_marginTop="3dp"
+                        android:drawablePadding="1dp"
                         android:clickable="true"
-                        android:contentDescription="@string/setting"
                         android:focusable="true"
-                        android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:background="@drawable/bg_ib_pre_round"
+                        android:contentDescription="@string/setting"
+                        android:drawableTop="@drawable/ic_setting_hollow_black_24dp_new"
+                        android:gravity="center_horizontal"
+                        android:text="@string/setting"
+                        android:textColor="@color/menu_color_default"
+                        android:textSize="12sp" />
 
-                        <ImageView
-                            android:id="@+id/ivSetting"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:contentDescription="@string/setting"
-                            android:src="@drawable/ic_setting_hollow_black_24dp_new"
-                            android:tint="@color/menu_color_default"
-                            android:tintMode="src_atop"
-                            tools:ignore="NestedWeights" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="3dp"
-                            android:text="@string/setting"
-                            android:textColor="@color/menu_color_default"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <View
+                    <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 
@@ -429,7 +366,7 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:visibility="invisible"
-        app:bgdrawable="@color/btn_bg_press"
+        app:bgdrawable="@color/transparent"
         app:cantouch="false"
         app:fontdrawable="@color/colorAccent" />
 

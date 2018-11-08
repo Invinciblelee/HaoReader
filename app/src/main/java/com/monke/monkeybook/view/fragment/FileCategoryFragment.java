@@ -216,8 +216,7 @@ public class FileCategoryFragment extends BaseFileFragment {
             //文件内容为空,或者不以txt为开头
             String fileSuffix = FileHelp.getFileSuffix(pathname);
             return pathname.isDirectory() ||
-                    fileSuffix.equalsIgnoreCase(FileHelp.SUFFIX_TXT)
-                    || fileSuffix.equalsIgnoreCase(FileHelp.SUFFIX_EPUB);
+                    fileSuffix.equalsIgnoreCase(FileHelp.SUFFIX_TXT);
         }
     }
 }

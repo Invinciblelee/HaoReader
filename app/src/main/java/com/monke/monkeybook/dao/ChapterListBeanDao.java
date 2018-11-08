@@ -25,13 +25,14 @@ public class ChapterListBeanDao extends AbstractDao<ChapterListBean, String> {
      */
     public static class Properties {
         public final static Property NoteUrl = new Property(0, String.class, "noteUrl", false, "NOTE_URL");
-        public final static Property DurChapterIndex = new Property(1, Integer.class, "durChapterIndex", false, "DUR_CHAPTER_INDEX");
-        public final static Property DurChapterUrl = new Property(2, String.class, "durChapterUrl", true, "DUR_CHAPTER_URL");
-        public final static Property DurChapterName = new Property(3, String.class, "durChapterName", false, "DUR_CHAPTER_NAME");
-        public final static Property Tag = new Property(4, String.class, "tag", false, "TAG");
-        public final static Property Start = new Property(5, Long.class, "start", false, "START");
-        public final static Property End = new Property(6, Long.class, "end", false, "END");
-        public final static Property BookName = new Property(7, String.class, "bookName", false, "BOOK_NAME");
+        public final static Property NodeId = new Property(1, Integer.class, "nodeId", false, "NODE_ID");
+        public final static Property DurChapterIndex = new Property(2, Integer.class, "durChapterIndex", false, "DUR_CHAPTER_INDEX");
+        public final static Property DurChapterUrl = new Property(3, String.class, "durChapterUrl", true, "DUR_CHAPTER_URL");
+        public final static Property DurChapterName = new Property(4, String.class, "durChapterName", false, "DUR_CHAPTER_NAME");
+        public final static Property Tag = new Property(5, String.class, "tag", false, "TAG");
+        public final static Property Start = new Property(6, Integer.class, "start", false, "START");
+        public final static Property End = new Property(7, Integer.class, "end", false, "END");
+        public final static Property BookName = new Property(8, String.class, "bookName", false, "BOOK_NAME");
     }
 
 
@@ -48,13 +49,14 @@ public class ChapterListBeanDao extends AbstractDao<ChapterListBean, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"CHAPTER_LIST_BEAN\" (" + //
                 "\"NOTE_URL\" TEXT," + // 0: noteUrl
-                "\"DUR_CHAPTER_INDEX\" INTEGER," + // 1: durChapterIndex
-                "\"DUR_CHAPTER_URL\" TEXT PRIMARY KEY NOT NULL ," + // 2: durChapterUrl
-                "\"DUR_CHAPTER_NAME\" TEXT," + // 3: durChapterName
-                "\"TAG\" TEXT," + // 4: tag
-                "\"START\" INTEGER," + // 5: start
-                "\"END\" INTEGER," + // 6: end
-                "\"BOOK_NAME\" TEXT);"); // 7: bookName
+                "\"NODE_ID\" INTEGER," + // 1: nodeId
+                "\"DUR_CHAPTER_INDEX\" INTEGER," + // 2: durChapterIndex
+                "\"DUR_CHAPTER_URL\" TEXT PRIMARY KEY NOT NULL ," + // 3: durChapterUrl
+                "\"DUR_CHAPTER_NAME\" TEXT," + // 4: durChapterName
+                "\"TAG\" TEXT," + // 5: tag
+                "\"START\" INTEGER," + // 6: start
+                "\"END\" INTEGER," + // 7: end
+                "\"BOOK_NAME\" TEXT);"); // 8: bookName
     }
 
     /** Drops the underlying database table. */
@@ -72,39 +74,44 @@ public class ChapterListBeanDao extends AbstractDao<ChapterListBean, String> {
             stmt.bindString(1, noteUrl);
         }
  
+        Integer nodeId = entity.getNodeId();
+        if (nodeId != null) {
+            stmt.bindLong(2, nodeId);
+        }
+ 
         Integer durChapterIndex = entity.getDurChapterIndex();
         if (durChapterIndex != null) {
-            stmt.bindLong(2, durChapterIndex);
+            stmt.bindLong(3, durChapterIndex);
         }
  
         String durChapterUrl = entity.getDurChapterUrl();
         if (durChapterUrl != null) {
-            stmt.bindString(3, durChapterUrl);
+            stmt.bindString(4, durChapterUrl);
         }
  
         String durChapterName = entity.getDurChapterName();
         if (durChapterName != null) {
-            stmt.bindString(4, durChapterName);
+            stmt.bindString(5, durChapterName);
         }
  
         String tag = entity.getTag();
         if (tag != null) {
-            stmt.bindString(5, tag);
+            stmt.bindString(6, tag);
         }
  
-        Long start = entity.getStart();
+        Integer start = entity.getStart();
         if (start != null) {
-            stmt.bindLong(6, start);
+            stmt.bindLong(7, start);
         }
  
-        Long end = entity.getEnd();
+        Integer end = entity.getEnd();
         if (end != null) {
-            stmt.bindLong(7, end);
+            stmt.bindLong(8, end);
         }
  
         String bookName = entity.getBookName();
         if (bookName != null) {
-            stmt.bindString(8, bookName);
+            stmt.bindString(9, bookName);
         }
     }
 
@@ -117,58 +124,64 @@ public class ChapterListBeanDao extends AbstractDao<ChapterListBean, String> {
             stmt.bindString(1, noteUrl);
         }
  
+        Integer nodeId = entity.getNodeId();
+        if (nodeId != null) {
+            stmt.bindLong(2, nodeId);
+        }
+ 
         Integer durChapterIndex = entity.getDurChapterIndex();
         if (durChapterIndex != null) {
-            stmt.bindLong(2, durChapterIndex);
+            stmt.bindLong(3, durChapterIndex);
         }
  
         String durChapterUrl = entity.getDurChapterUrl();
         if (durChapterUrl != null) {
-            stmt.bindString(3, durChapterUrl);
+            stmt.bindString(4, durChapterUrl);
         }
  
         String durChapterName = entity.getDurChapterName();
         if (durChapterName != null) {
-            stmt.bindString(4, durChapterName);
+            stmt.bindString(5, durChapterName);
         }
  
         String tag = entity.getTag();
         if (tag != null) {
-            stmt.bindString(5, tag);
+            stmt.bindString(6, tag);
         }
  
-        Long start = entity.getStart();
+        Integer start = entity.getStart();
         if (start != null) {
-            stmt.bindLong(6, start);
+            stmt.bindLong(7, start);
         }
  
-        Long end = entity.getEnd();
+        Integer end = entity.getEnd();
         if (end != null) {
-            stmt.bindLong(7, end);
+            stmt.bindLong(8, end);
         }
  
         String bookName = entity.getBookName();
         if (bookName != null) {
-            stmt.bindString(8, bookName);
+            stmt.bindString(9, bookName);
         }
     }
 
     @Override
     public String readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2);
+        return cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3);
     }    
 
     @Override
     public ChapterListBean readEntity(Cursor cursor, int offset) {
         ChapterListBean entity = new ChapterListBean( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // noteUrl
-            cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // durChapterIndex
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // durChapterUrl
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // durChapterName
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // tag
-            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // start
-            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // end
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // bookName
+            cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // nodeId
+            cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // durChapterIndex
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // durChapterUrl
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // durChapterName
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // tag
+            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // start
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // end
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // bookName
         );
         return entity;
     }
@@ -176,13 +189,14 @@ public class ChapterListBeanDao extends AbstractDao<ChapterListBean, String> {
     @Override
     public void readEntity(Cursor cursor, ChapterListBean entity, int offset) {
         entity.setNoteUrl(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setDurChapterIndex(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
-        entity.setDurChapterUrl(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setDurChapterName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setTag(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setStart(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
-        entity.setEnd(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
-        entity.setBookName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setNodeId(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
+        entity.setDurChapterIndex(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
+        entity.setDurChapterUrl(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setDurChapterName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setTag(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setStart(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
+        entity.setEnd(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setBookName(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
      }
     
     @Override

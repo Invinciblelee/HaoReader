@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppTheme.CardView.Item"
     android:layout_width="match_parent"
@@ -9,12 +10,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="110dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/iv_cover"
-            android:layout_width="65dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/book"
             android:scaleType="fitXY"
@@ -55,34 +56,65 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="3dp"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingBottom="1dp"
+                        android:paddingTop="1dp">
 
-                        <ImageView
+                        <android.support.v7.widget.AppCompatImageView
+                            android:layout_width="18sp"
+                            android:layout_height="18sp"
+                            android:paddingEnd="2dp"
+                            android:contentDescription="@string/author"
+                            android:src="@drawable/ic_author_black_24dp"
+                            app:tint="@color/tv_text_secondary"
+                            tools:ignore="RtlSymmetry" />
+
+                        <TextView
+                            android:id="@+id/tv_author"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:maxLines="1"
+                            android:paddingEnd="6dp"
+                            android:text="@string/author"
+                            android:textColor="@color/tv_text_secondary"
+                            android:textSize="13sp"
+                            tools:ignore="RtlSymmetry" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="1dp"
+                        android:paddingBottom="1dp">
+
+                        <android.support.v7.widget.AppCompatImageView
                             android:layout_width="18sp"
                             android:layout_height="18sp"
                             android:contentDescription="@string/book_source"
-                            android:paddingRight="2dp"
+                            android:paddingEnd="2dp"
                             android:src="@drawable/ic_source_black_24dp"
-                            android:tint="@color/tv_text_default" />
+                            app:tint="@color/tv_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_origin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
                             android:ellipsize="end"
+                            android:includeFontPadding="false"
                             android:lines="1"
                             android:text="来源"
-                            android:textColor="@color/tv_text_default"
-                            android:textSize="12sp" />
+                            android:textColor="@color/tv_text_secondary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_origin_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
                             android:layout_marginLeft="5dp"
                             android:ellipsize="end"
                             android:lines="1"
@@ -103,10 +135,11 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginRight="5dp"
                             android:background="@drawable/shape_round_rect"
+                            android:includeFontPadding="false"
                             android:paddingLeft="2dp"
-                            android:paddingTop="0.4dp"
+                            android:paddingTop="0.5dp"
                             android:paddingRight="2dp"
-                            android:paddingBottom="0.4dp"
+                            android:paddingBottom="0.5dp"
                             android:text="连载"
                             android:textColor="#ffffff"
                             android:textSize="12sp" />
@@ -118,11 +151,12 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginRight="5dp"
                             android:background="@drawable/shape_round_rect"
+                            android:includeFontPadding="false"
                             android:lines="1"
                             android:paddingLeft="2dp"
-                            android:paddingTop="0.4dp"
+                            android:paddingTop="0.5dp"
                             android:paddingRight="2dp"
-                            android:paddingBottom="0.4dp"
+                            android:paddingBottom="0.5dp"
                             android:text="现代都市"
                             android:textColor="#ffffff"
                             android:textSize="12sp" />
@@ -133,11 +167,12 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:background="@drawable/shape_round_rect"
+                            android:includeFontPadding="false"
                             android:lines="1"
                             android:paddingLeft="2dp"
-                            android:paddingTop="0.4dp"
+                            android:paddingTop="0.5dp"
                             android:paddingRight="2dp"
-                            android:paddingBottom="0.4dp"
+                            android:paddingBottom="0.5dp"
                             android:text="1.2万字"
                             android:textColor="#ffffff"
                             android:textSize="12sp" />
@@ -148,10 +183,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:paddingTop="1dp"
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="最新章节"
-                        android:textColor="@color/tv_text_default"
+                        android:textColor="@color/tv_text_summary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -160,6 +196,7 @@
                     android:layout_width="60dp"
                     android:layout_height="30dp"
                     android:layout_gravity="top"
+                    android:layout_marginTop="15dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/selector_tv_first_button"

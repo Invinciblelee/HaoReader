@@ -2,7 +2,7 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -13,15 +13,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.view.activity.MainActivity;
-import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
+import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
+import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
 
@@ -32,110 +31,10 @@ import java.util.Objects;
 
 import me.grantland.widget.AutofitTextView;
 
-public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdapter.MyViewHolder> {
+public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapter.MyViewHolder> {
 
-    private List<BookShelfBean> books;
-
-    private OnItemClickListenerTwo itemClickListener;
-    private String bookshelfPx;
-    private Activity activity;
-
-    private int animationIndex = -1;
-
-    private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
-        @Override
-        public void onSwiped(int adapterPosition) {
-
-        }
-
-        @Override
-        public boolean onMove(int srcPosition, int targetPosition) {
-            Collections.swap(books, srcPosition, targetPosition);
-            notifyItemMoved(srcPosition, targetPosition);
-            int start = srcPosition;
-            int end = targetPosition;
-            if (start > end) {
-                start = targetPosition;
-                end = srcPosition;
-            }
-            notifyItemRangeChanged(start, end - start + 1);
-            return true;
-        }
-
-        @Override
-        public void onRelease() {
-            ((MainActivity) activity).saveData();
-        }
-    };
-
-    public MyItemTouchHelpCallback.OnItemTouchCallbackListener getItemTouchCallbackListener() {
-        return itemTouchCallbackListener;
-    }
-
-    public BookShelfGridAdapter(Activity activity) {
-        this.activity = activity;
-        books = new ArrayList<>();
-    }
-
-    public boolean updateBook(BookShelfBean bookShelf, boolean sort) {
-        if (bookShelf != null) {
-            for (int i = 0, size = books.size(); i < size; i++) {
-                if (Objects.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
-                    books.set(i, bookShelf);
-                    if (sort) {
-                        BookshelfHelp.order(books, bookshelfPx);
-                        notifyDataSetChanged();
-                    } else {
-                        notifyItemChanged(i);
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void addBook(BookShelfBean bookShelf) {
-        if (books == null) {
-            books = new ArrayList<>();
-        }
-        if (bookShelf != null && !updateBook(bookShelf, true)) {
-            books.add(bookShelf);
-            BookshelfHelp.order(books, bookshelfPx);
-            notifyDataSetChanged();
-        }
-    }
-
-    public void removeBook(BookShelfBean bookShelf) {
-        if (bookShelf == null || books == null || books.isEmpty()) {
-            return;
-        }
-
-        int index = -1;
-        for (int i = 0, size = books.size(); i < size; i++) {
-            if (Objects.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
-                index = i;
-                break;
-            }
-        }
-        if (index >= 0) {
-            books.remove(index);
-            notifyItemRemoved(index);
-        }
-
-    }
-
-    public void sort() {
-        if (books != null) {
-            BookshelfHelp.order(books, bookshelfPx);
-            notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        //如果不为0，按正常的流程跑
-        return books.size();
+    public BookShelfGridAdapter(Context context, int group, String bookPx) {
+        super(context, group, bookPx);
     }
 
     @NonNull
@@ -146,24 +45,21 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int index) {
-        final BookShelfBean item = books.get(holder.getLayoutPosition());
+        final BookShelfBean item = getItem(holder.getLayoutPosition());
+        assert item != null;
         holder.tvName.setText(item.getBookInfoBean().getName());
-        if (!activity.isFinishing()) {
-            if (TextUtils.isEmpty(item.getCustomCoverPath())) {
-                Glide.with(activity).load(item.getBookInfoBean().getCoverUrl())
-                        .apply(new RequestOptions().dontAnimate()
-                                .centerCrop().placeholder(R.drawable.img_cover_default)
-                                .error(R.drawable.img_cover_default))
-                        .into(holder.ivCover);
-            } else if (item.getCustomCoverPath().startsWith("http")) {
-                Glide.with(activity).load(item.getCustomCoverPath())
-                        .apply(new RequestOptions().dontAnimate()
-                                .centerCrop().placeholder(R.drawable.img_cover_default)
-                                .error(R.drawable.img_cover_default))
-                        .into(holder.ivCover);
-            } else {
-                holder.ivCover.setImageBitmap(BitmapFactory.decodeFile(item.getCustomCoverPath()));
-            }
+        if (TextUtils.isEmpty(item.getCustomCoverPath())) {
+            Glide.with(getContext()).load(item.getBookInfoBean().getCoverUrl())
+                    .apply(new RequestOptions().dontAnimate()
+                            .centerCrop().placeholder(R.drawable.img_cover_default)
+                            .error(R.drawable.img_cover_default))
+                    .into(holder.ivCover);
+        } else {
+            Glide.with(getContext()).load(item.getCustomCoverPath())
+                    .apply(new RequestOptions().dontAnimate()
+                            .centerCrop().placeholder(R.drawable.img_cover_default)
+                            .error(R.drawable.img_cover_default))
+                    .into(holder.ivCover);
         }
         if (item.getHasUpdate()) {
             holder.ivHasNew.setVisibility(View.VISIBLE);
@@ -171,27 +67,16 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             holder.ivHasNew.setVisibility(View.INVISIBLE);
         }
 
-        holder.content.setOnClickListener(v -> {
-            if (itemClickListener != null)
-                itemClickListener.onClick(v, holder.getLayoutPosition());
-        });
+        holder.content.setOnClickListener(v -> onClick(v, item));
 
-        if (Objects.equals(bookshelfPx, "2")) {
+        if (Objects.equals(getBookshelfPx(), "2")) {
             holder.tvName.setClickable(true);
-            holder.tvName.setOnLongClickListener(v -> {
-                if (itemClickListener != null) {
-                    itemClickListener.onLongClick(v, holder.getLayoutPosition());
-                }
-                return true;
-            });
-        }
-
-        if (!Objects.equals(bookshelfPx, "2")) {
+            holder.tvName.setOnClickListener(v -> onLongClick(v, item));
+            holder.content.setOnLongClickListener(null);
+        }else {
             holder.tvName.setClickable(false);
             holder.content.setOnLongClickListener(v -> {
-                if (itemClickListener != null) {
-                    itemClickListener.onLongClick(v, holder.getLayoutPosition());
-                }
+                onLongClick(v, item);
                 return true;
             });
         }
@@ -218,25 +103,6 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             holder.rotateLoading.setVisibility(View.INVISIBLE);
             holder.rotateLoading.stop();
         }
-    }
-
-    public void setItemClickListener(OnItemClickListenerTwo itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
-    public synchronized void replaceAll(List<BookShelfBean> newDataS, String bookshelfPx) {
-        this.bookshelfPx = bookshelfPx;
-        if (null != newDataS && newDataS.size() > 0) {
-            BookshelfHelp.order(newDataS, bookshelfPx);
-            books = newDataS;
-        } else {
-            books.clear();
-        }
-        notifyDataSetChanged();
-    }
-
-    public List<BookShelfBean> getBooks() {
-        return books;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

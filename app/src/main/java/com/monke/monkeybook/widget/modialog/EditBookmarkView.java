@@ -25,13 +25,12 @@ public class EditBookmarkView {
     private View llEdit;
     private View tvOk;
 
-    private MoDialogHUD moDialogHUD;
     private MoDialogView moDialogView;
     private OnBookmarkClick bookmarkClick;
     private Context context;
     private BookmarkBean bookmarkBean;
 
-    public static EditBookmarkView getInstance(MoDialogView moDialogView) {
+    public static EditBookmarkView newInstance(MoDialogView moDialogView) {
         return new EditBookmarkView(moDialogView);
     }
 
@@ -41,8 +40,7 @@ public class EditBookmarkView {
         bindView();
     }
 
-    void showBookmark(@NotNull BookmarkBean bookmarkBean, boolean isAdd, final OnBookmarkClick bookmarkClick, MoDialogHUD moDialogHUD) {
-        this.moDialogHUD = moDialogHUD;
+    void showBookmark(@NotNull BookmarkBean bookmarkBean, boolean isAdd, final OnBookmarkClick bookmarkClick) {
         this.bookmarkClick = bookmarkClick;
         this.bookmarkBean = bookmarkBean;
 
@@ -72,7 +70,7 @@ public class EditBookmarkView {
         tvChapterName = moDialogView.findViewById(R.id.tvChapterName);
         tvChapterName.setOnClickListener(view -> {
             bookmarkClick.openChapter(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex());
-            moDialogHUD.dismiss();
+            dismiss();
         });
         tvContent = moDialogView.findViewById(R.id.tie_content);
 
@@ -80,24 +78,28 @@ public class EditBookmarkView {
         tvOk.setOnClickListener(view -> {
             bookmarkBean.setContent(tvContent.getText().toString());
             bookmarkClick.saveBookmark(bookmarkBean);
-            moDialogHUD.dismiss();
+            dismiss();
         });
 
         View tvSave = moDialogView.findViewById(R.id.tv_save);
         tvSave.setOnClickListener(view -> {
             bookmarkBean.setContent(tvContent.getText().toString());
             bookmarkClick.saveBookmark(bookmarkBean);
-            moDialogHUD.dismiss();
+            dismiss();
         });
         View tvDel = moDialogView.findViewById(R.id.tv_del);
         tvDel.setOnClickListener(view -> {
             bookmarkClick.delBookmark(bookmarkBean);
-            moDialogHUD.dismiss();
+            dismiss();
         });
 
         llEdit = moDialogView.findViewById(R.id.llEdit);
 
         ImmersionBar.resetBoxPosition((Activity) context, moDialogView, R.id.cv_root);
+    }
+
+    private void dismiss(){
+        moDialogView.getMoDialogHUD().dismiss();
     }
 
     /**

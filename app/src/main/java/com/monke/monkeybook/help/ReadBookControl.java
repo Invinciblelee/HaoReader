@@ -74,12 +74,12 @@ public class ReadBookControl {
         initTextDrawable();
         readPreference = MApplication.getInstance().getSharedPreferences("CONFIG", 0);
         this.hideStatusBar = readPreference.getBoolean("hide_status_bar", false);
-        this.textSize = readPreference.getInt("textSize", 16);
+        this.textSize = readPreference.getInt("textSize", 18);
         this.canClickTurn = readPreference.getBoolean("canClickTurn", true);
         this.canKeyTurn = readPreference.getBoolean("canKeyTurn", true);
         this.readAloudCanKeyTurn = readPreference.getBoolean("readAloudCanKeyTurn", true);
-        this.lineSpacing = readPreference.getInt("lineSpacing", 7);
-        this.paragraphSpacing = readPreference.getInt("paragraphSpacing",7);
+        this.lineSpacing = readPreference.getInt("lineSpacing", 4);
+        this.paragraphSpacing = readPreference.getInt("paragraphSpacing",16);
         this.clickSensitivity = readPreference.getInt("clickSensitivity", 50) > 100
                 ? 50 : readPreference.getInt("clickSensitivity", 50);
         this.clickAllNext = readPreference.getBoolean("clickAllNext", false);
@@ -135,7 +135,7 @@ public class ReadBookControl {
             Map<String, Integer> temp5 = new HashMap<>();
             temp5.put("textColor", Color.parseColor("#a3a3a3"));
             temp5.put("bgIsColor", 1);
-            temp5.put("textBackground", Color.parseColor("#181818"));
+            temp5.put("textBackground", Color.parseColor("#2a2a2a"));
             temp5.put("darkStatusIcon", 0);
             textDrawable.add(temp5);
         }

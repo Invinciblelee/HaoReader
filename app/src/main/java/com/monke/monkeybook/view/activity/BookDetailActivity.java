@@ -47,6 +47,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     CardView cardView;
     @BindView(R.id.iv_blur_cover)
     ImageView ivBlurCover;
+    @BindView(R.id.cover_card)
+    View cardCover;
     @BindView(R.id.iv_cover)
     ImageView ivCover;
     @BindView(R.id.tv_name)
@@ -90,17 +92,18 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     public static void startThis(MBaseActivity activity, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, BookDetailActivity.class);
+        intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_BOOKSHELF);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
-        activity.startActivityByAnim(intent, R.anim.anim_fade_in, R.anim.anim_fade_out);
+        activity.startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     public static void startThis(MBaseActivity activity, SearchBookBean searchBook) {
         Intent intent = new Intent(activity, BookDetailActivity.class);
         intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_SEARCH);
         intent.putExtra("data", searchBook);
-        activity.startActivityByAnim(intent, R.anim.anim_fade_in, R.anim.anim_fade_out);
+        activity.startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
@@ -193,7 +196,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             tvName.setText(mPresenter.getSearchBook().getName());
             tvAuthor.setText(mPresenter.getSearchBook().getAuthor());
             if (TextUtils.isEmpty(tvAuthor.getText())) {
-                tvAuthor.setText("未知");
+                tvAuthor.setText(R.string.author_unknown);
             }
             if (mPresenter.getSearchBook().getOrigin() != null && mPresenter.getSearchBook().getOrigin().length() > 0) {
                 tvOrigin.setVisibility(View.VISIBLE);
@@ -244,7 +247,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
             tvAuthor.setText(mPresenter.getBookShelf().getBookInfoBean().getAuthor());
             if (TextUtils.isEmpty(tvAuthor.getText())) {
-                tvAuthor.setText("未知");
+                tvAuthor.setText(R.string.author_unknown);
             }
 
             if (mPresenter.inBookShelf()) {
@@ -274,7 +277,9 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
 
             if (!TextUtils.isEmpty(mPresenter.getBookShelf().getBookInfoBean().getIntroduce())) {
-                tvIntro.setText(mPresenter.getBookShelf().getBookInfoBean().getIntroduce());
+                tvIntro.setText(getString(R.string.book_intro, mPresenter.getBookShelf().getBookInfoBean().getIntroduce()));
+            } else {
+                tvIntro.setText(null);
             }
             if (tvIntro.getVisibility() != View.VISIBLE) {
                 tvIntro.setVisibility(View.VISIBLE);
@@ -311,7 +316,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         tvRead.setOnClickListener(v -> {
             //进入阅读
             ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf().copy(), mPresenter.inBookShelf());
-            finish();
+            finishNoAnim();
         });
 
         tvRemoveShelf.setOnClickListener(v -> {
@@ -336,7 +341,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
         ivCover.setOnClickListener(view -> {
             if (mPresenter.getOpenFrom() == FROM_BOOKSHELF) {
-                BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl());
+                BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl(), cardCover);
             }
         });
 
@@ -348,7 +353,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 RxBus.get().post(RxBusTag.SEARCH_BOOK, tvAuthor.getText().toString());
             }
-            finish();
+            finishNoAnim();
         });
 
         tvName.setOnClickListener(view -> {
@@ -357,7 +362,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 RxBus.get().post(RxBusTag.SEARCH_BOOK, tvName.getText().toString());
             }
-            finish();
+            finishNoAnim();
         });
     }
 
@@ -397,19 +402,19 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     private void changeSource() {
         if (!isNetworkAvailable()) {
-            Toast.makeText(this, "网络不可用，无法换源!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络不可用，无法换源", Toast.LENGTH_SHORT).show();
             return;
         }
         moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(),
                 searchBookBean -> {
                     tvOrigin.setText(searchBookBean.getOrigin());
-                    showLoading(true);
-                    if (mPresenter.inBookShelf()) {
-                        mPresenter.changeBookSource(searchBookBean);
+                    if (!TextUtils.isEmpty(searchBookBean.getLastChapter())) {
+                        tvLastChapter.setText(searchBookBean.getLastChapter());
                     } else {
-                        mPresenter.initBookFormSearch(searchBookBean);
-                        mPresenter.getBookShelfInfo();
+                        tvLastChapter.setText(getString(R.string.book_search_last, getString(R.string.text_placeholder)));
                     }
+                    showLoading(true);
+                    mPresenter.changeBookSource(searchBookBean);
                 });
     }
 
@@ -418,4 +423,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void finish() {
+        super.finishByAnim(0, android.R.anim.fade_out);
+    }
 }

@@ -1,11 +1,12 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
@@ -27,10 +28,14 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
     private List<SearchBookBean> searchBookBeans;
     private OnItemClickListener mOnItemClickListener;
     private Context mContext;
+    private boolean noSelected;
+    private int lastSelectIndex = -1;
 
-    public ChangeSourceAdapter(Context context, Boolean needLoadMore) {
-        super(needLoadMore);
-        mContext = context;
+    public ChangeSourceAdapter(Context context, boolean noSelected) {
+        super(false);
+        this.mContext = context;
+        this.noSelected = noSelected;
+
         searchBookBeans = new ArrayList<>();
     }
 
@@ -52,7 +57,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int index);
+        void onItemClick(View view, SearchBookBean searchBookBean);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -66,7 +71,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvBookSource;
         TextView tvLastChapter;
-        ImageView ivChecked;
+        RadioButton ivChecked;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -83,26 +88,43 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
 
     @Override
     public void onBindIViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final int realPosition = holder.getLayoutPosition();
-        final SearchBookBean item = searchBookBeans.get(realPosition);
-        holder.itemView.setTag(realPosition);
+
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List payloads) {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
-        myViewHolder.tvBookSource.setText(item.getOrigin());
-        if (isEmpty(item.getLastChapter())) {
-            myViewHolder.tvLastChapter.setText(R.string.no_last_chapter);
-        } else {
-            myViewHolder.tvLastChapter.setText(item.getLastChapter());
-        }
-        if (item.getIsCurrentSource()) {
-            myViewHolder.ivChecked.setVisibility(View.VISIBLE);
-        } else {
-            myViewHolder.ivChecked.setVisibility(View.INVISIBLE);
-        }
-        myViewHolder.itemView.setOnClickListener(view -> {
-            if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(view, realPosition);
+        if (!payloads.isEmpty()) {
+            myViewHolder.ivChecked.setChecked(false);
+        }else {
+            final int realPosition = holder.getLayoutPosition();
+            final SearchBookBean item = searchBookBeans.get(realPosition);
+            myViewHolder.tvBookSource.setText(item.getOrigin());
+            if (isEmpty(item.getLastChapter())) {
+                myViewHolder.tvLastChapter.setText(R.string.no_last_chapter);
+            } else {
+                myViewHolder.tvLastChapter.setText(item.getLastChapter());
             }
-        });
+
+            if (!noSelected) {
+                myViewHolder.ivChecked.setChecked(item.getIsCurrentSource());
+                if (myViewHolder.ivChecked.isChecked()) {
+                    lastSelectIndex = realPosition;
+                }
+            }
+
+            myViewHolder.itemView.setOnClickListener(view -> {
+                if (lastSelectIndex != -1 && lastSelectIndex != holder.getLayoutPosition()) {
+                    notifyItemChanged(lastSelectIndex, 0);
+                }
+                if (!myViewHolder.ivChecked.isChecked()) {
+                    myViewHolder.ivChecked.setChecked(true);
+                }
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(view, item);
+                }
+            });
+        }
     }
 
     @Override

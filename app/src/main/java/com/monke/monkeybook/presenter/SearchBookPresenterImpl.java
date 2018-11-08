@@ -5,8 +5,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -26,6 +24,8 @@ import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -83,8 +83,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     }
 
     @Override
-    public void fromIntentSearch(Activity activity) {
-        Intent intent = activity.getIntent();
+    public void fromIntentSearch(Intent intent) {
         String keyWord = null;
         if (intent != null) {
             keyWord = intent.getStringExtra("searchKey");
@@ -94,7 +93,11 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             }
         }
         if (keyWord != null) {
-            if(keyWord.length() > 12){
+            int start = keyWord.indexOf("《");
+            int end = keyWord.indexOf("》");
+            if (start >= 0 && end > 1) {
+                keyWord = keyWord.substring(start + 1, end);
+            } else if (keyWord.length() > 12) {
                 keyWord = keyWord.substring(0, 12);
             }
         }
@@ -218,9 +221,9 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
     @Override
     public void toSearchBooks(String key) {
+        searchKey = key;
         if (!NetworkUtil.isNetworkAvailable()) {
-            Toast.makeText(mView.getContext(), "无网络，搜索失败", Toast.LENGTH_SHORT).show();
-            mView.refreshFinish();
+            mView.searchBookError();
             return;
         }
 
@@ -228,14 +231,13 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         if (key == null) {
             searchBookModel.startSearch(id, searchKey);
         } else {
-            searchKey = key;
             searchBookModel.startSearch(id, key);
         }
     }
 
     @Override
-    public void stopSearch() {
-        searchBookModel.stopSearch();
+    public void stopSearch(boolean callEvent) {
+        searchBookModel.stopSearch(callEvent);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

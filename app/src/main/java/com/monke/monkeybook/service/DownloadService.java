@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -57,6 +58,7 @@ public class DownloadService extends Service {
         //创建 Notification.Builder 对象
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdDownload)
                 .setSmallIcon(R.drawable.ic_download)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setOngoing(false)
                 .setContentTitle(getString(R.string.download_offline_t))
                 .setContentText(getString(R.string.download_offline_s));
@@ -128,6 +130,7 @@ public class DownloadService extends Service {
                 }
                 downloadTasks.put(getId(), this);
                 sendUpDownloadBook(addDownloadAction, downloadBook);
+                toast(String.format(Locale.getDefault(), "%s：任务已添加", downloadBook.getName()));
             }
 
             @Override
@@ -146,6 +149,7 @@ public class DownloadService extends Service {
                     managerCompat.cancel(getId());
                     downloadTasks.remove(getId());
                 }
+
                 toast(String.format(Locale.getDefault(), "%s：下载失败", downloadBook.getName()));
 
                 startNextTaskAfterRemove(downloadBook);
@@ -161,8 +165,8 @@ public class DownloadService extends Service {
                     } else {
                         toast(String.format(Locale.getDefault(), "%s：共下载%d章", downloadBook.getName(), downloadBook.getSuccessCount()));
                     }
-                }else if(!downloadBook.isValid()){
-                    toast(String.format(Locale.getDefault(), "%s：下载失败", downloadBook.getName()));
+                } else if (!downloadBook.isValid()) {
+                    toast(String.format(Locale.getDefault(), "%s：所有章节已缓存，无需重复下载", downloadBook.getName()));
                 }
                 startNextTaskAfterRemove(downloadBook);
             }
@@ -266,7 +270,7 @@ public class DownloadService extends Service {
     }
 
     private void toast(String msg) {
-        Toast.makeText(DownloadService.this, msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(DownloadService.this, msg, Toast.LENGTH_LONG).show();
     }
 
     private PendingIntent getChancelPendingIntent(String noteUrl) {
@@ -292,6 +296,8 @@ public class DownloadService extends Service {
         //创建 Notification.Builder 对象
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdDownload)
                 .setSmallIcon(R.drawable.ic_download)
+                //通知栏大图标
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 //点击通知后自动清除
                 .setAutoCancel(true)
                 .setContentTitle("正在下载：" + downloadChapterBean.getBookName())

@@ -1,6 +1,7 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -38,7 +39,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     private BookShelfBean bookShelf;
     private Boolean inBookShelf = false;
 
-    private CompositeDisposable changeSourceDisp = new CompositeDisposable();
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     public void initData(Intent intent) {
@@ -70,18 +71,22 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         bookShelf = BookshelfHelp.getBookFromSearchBook(searchBookBean);
     }
 
+    @Override
     public Boolean inBookShelf() {
         return bookShelf != null && inBookShelf;
     }
 
+    @Override
     public int getOpenFrom() {
         return openFrom;
     }
 
+    @Override
     public SearchBookBean getSearchBook() {
         return searchBook;
     }
 
+    @Override
     public BookShelfBean getBookShelf() {
         return bookShelf;
     }
@@ -91,12 +96,9 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             BookShelfBean bookShelfBean;
             if (openFrom == FROM_BOOKSHELF) {
-                bookShelfBean = BookshelfHelp.getBookByUrl(bookShelf.getNoteUrl());
+                bookShelfBean = BookshelfHelp.getBookByUrl(bookShelf.getNoteUrl(), false);
             } else {//来自搜索页面
                 bookShelfBean = BookshelfHelp.getBookByName(searchBook.getName(), searchBook.getAuthor());
-                if(bookShelfBean != null && bookShelfBean.getTag().equals(BookShelfBean.LOCAL_TAG)){
-                    bookShelfBean = null;
-                }
             }
 
             if (bookShelfBean != null) {
@@ -110,7 +112,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getBookInfo(bookShelfBean))
                 .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean))
                 .flatMap(bookShelfBean -> {
-                    if(inBookShelf && bookShelfBean.getHasUpdate()){
+                    if (inBookShelf && bookShelfBean.getHasUpdate()) {
                         BookshelfHelp.saveBookToShelf(bookShelfBean);
                         RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, bookShelfBean);
                     }
@@ -119,6 +121,12 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposables.add(d);
+                    }
+
                     @Override
                     public void onNext(BookShelfBean bookShelfResult) {
                         bookShelf = bookShelfResult;
@@ -230,7 +238,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
      */
     @Override
     public void changeBookSource(SearchBookBean searchBookBean) {
-        changeSourceDisp.clear();
+        disposables.clear();
         BookShelfBean bookShelfBean = BookshelfHelp.getBookFromSearchBook(searchBookBean);
         bookShelfBean.setSerialNumber(bookShelf.getSerialNumber());
         bookShelfBean.setLastChapterName(bookShelf.getLastChapterName());
@@ -238,6 +246,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         bookShelfBean.setDurChapter(bookShelf.getDurChapter());
         bookShelfBean.setDurChapterPage(bookShelf.getDurChapterPage());
         bookShelfBean.setGroup(bookShelf.getGroup());
+        bookShelfBean.setFinalDate(bookShelf.getFinalDate());
         WebBookModelImpl.getInstance().getBookInfo(bookShelfBean)
                 .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
                 .subscribeOn(Schedulers.io())
@@ -246,12 +255,17 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        changeSourceDisp.add(d);
+                        disposables.add(d);
                     }
 
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
-                        saveChangedBook(bookShelfBean);
+                        if (inBookShelf) {
+                            saveChangedBook(bookShelfBean);
+                        } else {
+                            bookShelf = bookShelfBean;
+                            mView.updateView();
+                        }
                     }
 
                     @Override
@@ -275,14 +289,14 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        changeSourceDisp.add(d);
+                        disposables.add(d);
                     }
 
                     @Override
-                    public void onNext(BookShelfBean value) {
+                    public void onNext(BookShelfBean bookShelfBean) {
                         RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                        RxBus.get().post(RxBusTag.HAD_ADD_BOOK, value);
-                        bookShelf = value;
+                        RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                        bookShelf = bookShelfBean;
                         mView.updateView();
                     }
 
@@ -302,6 +316,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
     @Override
     public void detachView() {
+        disposables.dispose();
         RxBus.get().unregister(this);
     }
 

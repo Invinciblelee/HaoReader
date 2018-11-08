@@ -1,7 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.text.TextUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.monkeybook.MApplication;
@@ -12,11 +10,12 @@ import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.ReplaceRuleManager;
-import com.monke.monkeybook.utils.SharedPreferencesUtil;
 import com.monke.monkeybook.utils.FileUtil;
+import com.monke.monkeybook.utils.SharedPreferencesUtil;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +25,8 @@ import java.util.List;
  */
 
 public class DataRestore {
+
+    private static final String[] FILTER = {"versionCode", "nightTheme", "shelfGroup"};
 
     public static DataRestore getInstance() {
         return new DataRestore();
@@ -47,11 +48,10 @@ public class DataRestore {
             try {
                 JSONObject jsonObject = new JSONObject(json);
                 Iterator<String> it = jsonObject.keys();
+                List<String> filter = Arrays.asList(FILTER);
                 while (it.hasNext()) {
                     String key = it.next();
-                    if (!TextUtils.equals(key, "versionCode")
-                            && !TextUtils.equals(key, "nightTheme")
-                            && !TextUtils.equals(key, "shelfGroup")) {
+                    if (!filter.contains(key)) {
                         Object value = jsonObject.opt(key);
                         SharedPreferencesUtil.saveData(MApplication.getInstance(), key, value);
                     }

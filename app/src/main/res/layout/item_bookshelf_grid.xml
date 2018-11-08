@@ -17,8 +17,8 @@
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:layout_marginBottom="2dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/img_cover_default"
             android:transitionName="img_cover"
             tools:ignore="UnusedAttribute" />
@@ -28,8 +28,8 @@
             android:id="@+id/fl_has_new"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:layout_marginTop="3dp"
-            android:layout_gravity="end">
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp">
 
             <ImageView
                 android:id="@+id/iv_has_new"
@@ -43,43 +43,36 @@
                 android:id="@+id/rl_loading"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="2dp"
                 android:layout_gravity="center"
+                android:layout_margin="2dp"
                 android:visibility="invisible"
                 app:loading_color="@color/colorAccent"
                 app:loading_width="2dp" />
 
         </FrameLayout>
 
-        <LinearLayout
+
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:layout_gravity="bottom"
-            android:background="@drawable/bg_gradient_bottom"
-            android:orientation="vertical">
-
-            <me.grantland.widget.AutofitTextView
-                android:id="@+id/tv_name"
-                android:layout_width="match_parent"
-                android:layout_height="26dp"
-                android:layout_gravity="center_horizontal|bottom"
-                android:gravity="center"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:singleLine="true"
-                android:textColor="#ffffff"
-                android:textSize="12sp"
-                app:minTextSize="10sp" />
-
-        </LinearLayout>
+            android:background="@drawable/bg_gradient_bottom_deep"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            app:minTextSize="10sp" />
 
         <com.monke.mprogressbar.MHorProgressBar
             android:id="@+id/mpb_durProgress"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:visibility="invisible"
             android:layout_gravity="bottom"
-            app:bgdrawable="@color/btn_bg_press"
+            android:visibility="invisible"
+            app:bgdrawable="@color/progress_back_color"
             app:cantouch="false"
             app:fontdrawable="@color/colorAccent"
             tools:ignore="RtlHardcoded" />

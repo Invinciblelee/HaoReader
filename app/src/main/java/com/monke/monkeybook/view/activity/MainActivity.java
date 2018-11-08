@@ -9,41 +9,31 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.MyItemTouchHelpCallback;
-import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
-import com.monke.monkeybook.utils.ScreenUtils;
-import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
-import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
-import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
+import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
+import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
@@ -56,11 +46,12 @@ import butterknife.ButterKnife;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View {
+public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View, BookListFragment.IConfigGetter {
     private static final int BACKUP_RESULT = 11;
     private static final int RESTORE_RESULT = 12;
     private static final int FILE_SELECT_RESULT = 13;
-    private static final int REQUEST_BOOKSHELF_PX = 14;
+
+    private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj, R.string.item_group_bd};
 
     @BindView(R.id.layout_container)
     ScrimInsetsFrameLayout container;
@@ -72,20 +63,17 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     View appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.rv_bookshelf)
-    RecyclerView rvBookshelf;
     @BindView(R.id.bookshelf_search_view)
     BookShelfSearchView drawerRight;
 
     private Switch swNightTheme;
     private int group = -1;
-    private BookShelfGridAdapter bookShelfGridAdapter;
-    private BookShelfListAdapter bookShelfListAdapter;
     private boolean viewIsList;
     private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
-    private String bookPx;
     private boolean isRecreate;
+
+    private BookListFragment[] fragments = new BookListFragment[4];
 
     @Override
     protected MainContract.Presenter initInjector() {
@@ -94,16 +82,24 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            group = savedInstanceState.getInt("group", -1);
-        }
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("group", group);
+        if (savedInstanceState != null) {
+            FragmentManager manager = getSupportFragmentManager();
+            fragments[0] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[0]));
+            fragments[1] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[1]));
+            fragments[2] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[2]));
+            fragments[3] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[3]));
+
+            for (BookListFragment fragment : fragments) {
+                if (fragment != null) {
+                    fragment.setConfigGetter(this);
+                    fragment.setItemClickListenerTwo(getAdapterListener());
+                }
+            }
+        } else {
+            showFragment(this.group);
+        }
     }
 
     @Override
@@ -121,28 +117,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     protected void initData() {
-        viewIsList = preferences.getBoolean("bookshelfIsList", true);
-        bookPx = preferences.getString(getString(R.string.pk_bookshelf_px), "0");
-        if (group == -1) {
-            group = preferences.getInt("shelfGroup", 0);
-        }
+        viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
+        group = getPreferences().getInt("shelfGroup", 0);
         isRecreate = getIntent().getBooleanExtra("isRecreate", false);
         getIntent().putExtra("isRecreate", true);
-    }
-
-    private List<BookShelfBean> getBookshelfList() {
-        if (drawer.isDrawerOpen(GravityCompat.END)) {
-            return drawerRight.getBooks();
-        }
-        if (viewIsList) {
-            return bookShelfListAdapter.getBooks();
-        } else {
-            return bookShelfGridAdapter.getBooks();
-        }
-    }
-
-    private boolean getNeedAnim() {
-        return preferences.getBoolean(getString(R.string.pk_bookshelf_anim), false);
     }
 
     @Override
@@ -164,18 +142,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             drawerRight.applyWindowInsets(insets);
         });
 
-        if (viewIsList) {
-            int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
-            rvBookshelf.setPadding(0, padding, 0, padding);
-            bookShelfListAdapter = new BookShelfListAdapter(this);
-            rvBookshelf.setAdapter(bookShelfListAdapter);
-            rvBookshelf.setLayoutManager(new LinearLayoutManager(this));
-        } else {
-            bookShelfGridAdapter = new BookShelfGridAdapter(this);
-            rvBookshelf.setAdapter(bookShelfGridAdapter);
-            rvBookshelf.setLayoutManager(new GridLayoutManager(this, 3));
-        }
-
         moDialogHUD = new MoDialogHUD(this);
     }
 
@@ -190,37 +156,24 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     protected void bindEvent() {
-        MyItemTouchHelpCallback itemTouchHelpCallback = new MyItemTouchHelpCallback();
-        if (bookPx.equals("2")) {
-            itemTouchHelpCallback.setDragEnable(true);
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelpCallback);
-            itemTouchHelper.attachToRecyclerView(rvBookshelf);
-        } else {
-            itemTouchHelpCallback.setDragEnable(false);
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelpCallback);
-            itemTouchHelper.attachToRecyclerView(rvBookshelf);
-        }
-        if (viewIsList) {
-            bookShelfListAdapter.setItemClickListener(getAdapterListener());
-            itemTouchHelpCallback.setOnItemTouchCallbackListener(bookShelfListAdapter.getItemTouchCallbackListener());
-        } else {
-            bookShelfGridAdapter.setItemClickListener(getAdapterListener());
-            itemTouchHelpCallback.setOnItemTouchCallbackListener(bookShelfGridAdapter.getItemTouchCallbackListener());
-        }
-
         drawerRight.setOnItemClickListener(getAdapterListener());
+        drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
+
+        getWindow().getDecorView().post(this::versionUpRun);
     }
 
-    private OnItemClickListenerTwo getAdapterListener() {
-        return new OnItemClickListenerTwo() {
+    private OnBookItemClickListenerTwo getAdapterListener() {
+        return new OnBookItemClickListenerTwo() {
             @Override
-            public void onClick(View view, int index) {
+            public void onClick(View view, BookShelfBean bookShelf) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
-                BookShelfBean bookShelf = getBookshelfList().get(index);
-                if (!mPresenter.checkLocalBookExists(bookShelf)) {
+                if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
                             getString(R.string.ok),
-                            v -> mPresenter.removeFromBookSelf(bookShelf),
+                            v -> {
+                                mPresenter.removeFromBookShelf(bookShelf);
+                                moDialogHUD.dismiss();
+                            },
                             getString(R.string.cancel),
                             v -> moDialogHUD.dismiss());
                 } else {
@@ -229,13 +182,15 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             }
 
             @Override
-            public void onLongClick(View view, int index) {
+            public void onLongClick(View view, BookShelfBean bookShelf) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
-                BookShelfBean bookShelf = getBookshelfList().get(index);
-                if (!mPresenter.checkLocalBookExists(bookShelf)) {
+                if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
                             getString(R.string.ok),
-                            v -> mPresenter.removeFromBookSelf(bookShelf),
+                            v -> {
+                                mPresenter.removeFromBookShelf(bookShelf);
+                                moDialogHUD.dismiss();
+                            },
                             getString(R.string.cancel),
                             v -> moDialogHUD.dismiss());
                 } else {
@@ -244,14 +199,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             }
 
         };
-    }
-
-    public void saveData() {
-        if (viewIsList) {
-            mPresenter.saveData(bookShelfListAdapter.getBooks());
-        } else {
-            mPresenter.saveData(bookShelfGridAdapter.getBooks());
-        }
     }
 
     @Override
@@ -277,13 +224,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences.Editor editor = getPreferences().edit();
         int id = item.getItemId();
         switch (id) {
             case R.id.action_search:
                 //点击搜索
-                startActivityByAnim(new Intent(this, SearchBookActivity.class),
-                        toolbar, "sharedView", android.R.anim.fade_in, android.R.anim.fade_out);
+                startActivityByAnim(new Intent(this, SearchBookActivity.class), toolbar, "sharedView");
                 break;
             case R.id.action_library:
                 startActivity(new Intent(this, FindBookActivity.class));
@@ -300,14 +246,20 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 moDialogHUD.showInputBox("添加书籍网址", null, inputText -> mPresenter.addBookUrl(inputText));
                 break;
             case R.id.action_list_grid:
-                editor.putBoolean("bookshelfIsList", !viewIsList);
-                editor.apply();
-                recreate();
+                viewIsList = !viewIsList;
+                editor.putBoolean("bookshelfIsList", viewIsList);
+                if (editor.commit()) {
+                    for (BookListFragment fragment : fragments) {
+                        if (fragment != null) {
+                            fragment.updateLayoutType(viewIsList);
+                        }
+                    }
+                }
                 break;
             case R.id.action_clearCaches:
                 moDialogHUD.showTwoButton(getString(R.string.clean_caches_s),
                         getString(R.string.ok),
-                        v -> mPresenter.clearCaches(),
+                        v -> mPresenter.cleanCaches(),
                         getString(R.string.cancel),
                         v -> moDialogHUD.dismiss());
                 break;
@@ -319,14 +271,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                         v -> moDialogHUD.dismiss());
                 break;
             case R.id.action_refreshBookshelf:
-                mPresenter.queryBookShelf(NetworkUtil.isNetworkAvailable(), false, group);
-                if (!NetworkUtil.isNetworkAvailable()) {
-                    Toast.makeText(MainActivity.this, "无网络，请打开网络后再试。", Toast.LENGTH_SHORT).show();
+                BookListFragment current = fragments[this.group];
+                if (current != null) {
+                    current.refreshBookShelf();
                 }
                 break;
             case android.R.id.home:
-                if (drawer.isDrawerOpen(GravityCompat.START)
-                        ) {
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawers();
                 } else {
                     drawer.openDrawer(GravityCompat.START);
@@ -384,14 +335,40 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     private void upGroup(int group) {
         if (this.group != group) {
+            showFragment(group);
+
+            getPreferences().edit().putInt("shelfGroup", group).apply();
+
             this.group = group;
-
-            mPresenter.queryBookShelf(false, true, group);
-
-            preferences.edit().putInt("shelfGroup", group).apply();
         }
 
         drawerLeft.getMenu().getItem(group).setChecked(true);
+    }
+
+    private void showFragment(int group) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        BookListFragment from = fragments[this.group];
+        BookListFragment to = fragments[group];
+        if (from != null) {
+            transaction.hide(from);
+        }
+
+        if (to == null) {
+            to = fragments[group] = BookListFragment.newInstance(group);
+            to.setConfigGetter(this);
+            to.setItemClickListenerTwo(getAdapterListener());
+        }
+
+        if (!to.isAdded()) {
+            transaction.add(R.id.book_list_frame, to, getString(BOOK_GROUPS[group]))
+                    .show(to)
+                    .commitNowAllowingStateLoss();
+        }
+
+        if (to.isSupportHidden()) {
+            transaction.show(to)
+                    .commitNowAllowingStateLoss();
+        }
     }
 
     //侧边栏按钮
@@ -431,7 +408,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                     new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 200L);
                     break;
                 case R.id.action_setting:
-                    new Handler().postDelayed(() -> SettingActivity.startThis(this, REQUEST_BOOKSHELF_PX), 200L);
+                    new Handler().postDelayed(() -> SettingActivity.startThis(this), 200L);
                     break;
                 case R.id.action_about:
                     new Handler().postDelayed(() -> AboutActivity.startThis(this), 200L);
@@ -501,9 +478,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     private void versionUpRun() {
-        if (preferences.getInt("versionCode", 0) != MApplication.getVersionCode()) {
+        if (getPreferences().getInt("versionCode", 0) != MApplication.getVersionCode()) {
             //保存版本号
-            SharedPreferences.Editor editor = preferences.edit();
+            SharedPreferences.Editor editor = getPreferences().edit();
             editor.putInt("versionCode", MApplication.getVersionCode());
             editor.apply();
             //更新日志
@@ -511,117 +488,45 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
     }
 
-    private boolean haveRefresh() {
-        return preferences.getBoolean(getString(R.string.pk_auto_refresh), false) && !isRecreate;
-    }
-
-    private boolean isDayNightChanged() {
-        return isActNightTheme != isNightTheme();
+    @Override
+    public boolean isRecreate() {
+        return isRecreate;
     }
 
     @Override
-    protected void firstRequest() {
-        if (NetworkUtil.isNetworkAvailable()) {
-            mPresenter.queryBookShelf(haveRefresh(), true, group);
-        } else {
-            mPresenter.queryBookShelf(false, true, group);
-            if (haveRefresh()) {
-                Toast.makeText(MainActivity.this, "无网络，自动刷新失败！", Toast.LENGTH_SHORT).show();
+    public void clearBookshelf() {
+        drawerRight.clear();
+
+        for (BookListFragment fragment : fragments) {
+            if (fragment != null) {
+                fragment.clearBookShelf();
             }
-        }
-
-        getWindow().getDecorView().post(this::versionUpRun);
-    }
-
-    @Override
-    public void refreshBookShelf(int group, List<BookShelfBean> bookShelfBeanList) {
-        if (group != this.group) {
-            mPresenter.queryBookShelf(false, true, this.group);
-            return;
-        }
-
-        if (viewIsList) {
-            bookShelfListAdapter.replaceAll(bookShelfBeanList, bookPx);
-        } else {
-            bookShelfGridAdapter.replaceAll(bookShelfBeanList, bookPx);
         }
     }
 
     @Override
-    public void startLayoutAnimation() {
-        if (getNeedAnim()) {
-            if (rvBookshelf.getLayoutAnimation() == null) {
-                LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.anim_bookshelf_layout);
-                rvBookshelf.setLayoutAnimation(animation);
-            } else {
-                rvBookshelf.startLayoutAnimation();
-            }
-        } else {
-            if (rvBookshelf.getLayoutAnimation() != null) {
-                rvBookshelf.setLayoutAnimation(null);
-            }
-        }
+    public void showQueryBooks(List<BookShelfBean> bookShelfBeans) {
+        drawerRight.showQueryBooks(bookShelfBeans);
     }
 
     @Override
     public void updateBook(BookShelfBean bookShelfBean, boolean sort) {
-        drawerRight.updateBookIfNeed(bookShelfBean);
-        if (isDayNightChanged() || bookShelfBean.getGroup() != this.group) {
-            return;
-        }
-        if (viewIsList) {
-            bookShelfListAdapter.updateBook(bookShelfBean, sort);
-        } else {
-            bookShelfGridAdapter.updateBook(bookShelfBean, sort);
-        }
+        drawerRight.updateBookShelfIfNeed(bookShelfBean);
     }
 
     @Override
-    public void addToBookShelf(BookShelfBean bookShelfBean) {
-        drawerRight.addToBookShelfIfNeed(bookShelfBean);
-        if (isDayNightChanged() || bookShelfBean.getGroup() != this.group) {
-            return;
-        }
-        if (viewIsList) {
-            bookShelfListAdapter.addBook(bookShelfBean);
-        } else {
-            bookShelfGridAdapter.addBook(bookShelfBean);
-        }
+    public void addBookShelf(BookShelfBean bookShelfBean) {
+        drawerRight.addBookShelfIfNeed(bookShelfBean);
     }
 
     @Override
-    public void removeFromBookShelf(BookShelfBean bookShelfBean) {
-        if (isDayNightChanged()) {
-            return;
-        }
-        drawerRight.removeFromBookShelfIfNeed(bookShelfBean);
-        if (viewIsList) {
-            bookShelfListAdapter.removeBook(bookShelfBean);
-        } else {
-            bookShelfGridAdapter.removeBook(bookShelfBean);
-        }
-    }
-
-    @Override
-    public void sortBookShelf() {
-        if (isDayNightChanged()) {
-            return;
-        }
-        if (viewIsList) {
-            bookShelfListAdapter.sort();
-        } else {
-            bookShelfGridAdapter.sort();
-        }
+    public void removeBookShelf(BookShelfBean bookShelfBean) {
+        drawerRight.removeBookShelfIfNeed(bookShelfBean);
     }
 
     @Override
     public void dismissHUD() {
         moDialogHUD.dismiss();
-    }
-
-    @Override
-    public void refreshError(String error) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -636,14 +541,14 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void restoreSuccess() {
+        for (BookListFragment fragment : fragments) {
+            if (fragment != null) {
+                fragment.refreshBookShelf();
+            }
+        }
+
         dismissHUD();
-
         initImmersionBar();
-    }
-
-    @Override
-    public SharedPreferences getPreferences() {
-        return preferences;
     }
 
     @Override
@@ -681,7 +586,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     public void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Snackbar.make(rvBookshelf, "再按一次退出程序", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(drawer, "再按一次退出程序", Snackbar.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
@@ -689,11 +594,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_BOOKSHELF_PX && resultCode == RESULT_OK) {
-            recreate();
-        }
+    public void finish() {
+        super.finishNoAnim();
     }
-
 }

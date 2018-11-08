@@ -87,6 +87,7 @@
     <string name="add_book_url">添加网址</string>
     <string name="background">背景</string>
     <string name="author">作者</string>
+    <string name="author_unknown">未知</string>
     <string name="analyze_error">站点暂时不支持解析，请反馈</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_content">清除缓存</string>
@@ -142,7 +143,7 @@
     <string name="remove_shelf">移出书架</string>
     <string name="start_read">开始阅读</string>
     <string name="data_loading">加载数据中…</string>
-    <string name="book_intro">内容简介</string>
+    <string name="book_intro">内容简介：%s</string>
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin">来源</string>
     <string name="import_replace_rule">本地导入</string>
@@ -174,6 +175,7 @@
     <string name="content_sl">这是一段测试文字\n\u3000\u3000只是让你看看效果的</string>
     <string name="text_bg_style">文字颜色和背景(长按自定义)</string>
     <string name="immersion_status_bar">沉浸式状态栏</string>
+    <string name="immersion_status_bar_s">状态栏透明</string>
     <string name="un_download">还剩%d章未下载</string>
     <string name="long_click_input_color">长按输入颜色值</string>
     <string name="s_bookshelf_anim">打开书架时显示动画</string>
@@ -232,7 +234,7 @@
     <string name="nb_file_add_shelf">加入书架</string>
     <string name="nb_file_add_shelves">加入书架(%1$d)</string>
     <string name="nb_file_add_succeed">成功添加%1$d本书</string>
-    <string name="fonts_folder">请将字体文件放到SD根目录Fonts文件夹下重新选择</string>
+    <string name="fonts_folder">请将字体文件放到YueDu/Fonts文件夹下重新选择</string>
     <string name="default_font">默认字体</string>
     <string name="select_font">选择字体</string>
     <string name="text_size">字号</string>
@@ -261,4 +263,8 @@
     <string name="update_off">禁用更新</string>
     <string name="update_on">启用更新</string>
     <string name="text_placeholder">――</string>
+    <string name="category">目录</string>
+    <string name="swap_vert">倒序-顺序</string>
+    <string name="download_cover">下载封面</string>
+    <string name="download_cover_s">长按图片可下载该图片</string>
 </resources>

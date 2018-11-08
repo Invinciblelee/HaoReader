@@ -17,6 +17,8 @@ import com.victor.loading.rotate.RotateLoading;
  * 对话框
  */
 public class MoDialogView extends LinearLayout {
+
+    private MoDialogHUD moDialogHUD;
     private Context context;
 
     private OnDismissListener dismissListener;
@@ -33,6 +35,14 @@ public class MoDialogView extends LinearLayout {
         super(context, attrs, defStyleAttr);
         this.context = context;
         setOrientation(VERTICAL);
+    }
+
+    public MoDialogHUD getMoDialogHUD() {
+        return moDialogHUD;
+    }
+
+    public void onAttach(MoDialogHUD moDialogHUD){
+        this.moDialogHUD = moDialogHUD;
     }
 
     //转圈的载入

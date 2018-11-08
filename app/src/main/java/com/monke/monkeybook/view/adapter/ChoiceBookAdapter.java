@@ -58,10 +58,12 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
                             .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
-        if(TextUtils.isEmpty(searchBooks.get(position).getAuthor())){
-            myViewHolder.tvName.setText(searchBooks.get(position).getName());
+        myViewHolder.tvName.setText(searchBooks.get(position).getName());
+
+        if(!TextUtils.isEmpty(searchBooks.get(position).getAuthor())){
+            myViewHolder.tvAuthor.setText(searchBooks.get(position).getAuthor());
         }else {
-            myViewHolder.tvName.setText(String.format("%s(%s)", searchBooks.get(position).getName(), searchBooks.get(position).getAuthor()));
+            myViewHolder.tvAuthor.setText(R.string.author_unknown);
         }
         String state = searchBooks.get(position).getState();
         if (state == null || state.length() == 0) {
@@ -125,6 +127,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
         TextView tvName;
+        TextView tvAuthor;
         TextView tvState;
         TextView tvWords;
         TextView tvKind;
@@ -136,6 +139,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             super(itemView);
             ivCover = itemView.findViewById(R.id.iv_cover);
             tvName = itemView.findViewById(R.id.tv_name);
+            tvAuthor = itemView.findViewById(R.id.tv_author);
             tvState = itemView.findViewById(R.id.tv_state);
             tvWords = itemView.findViewById(R.id.tv_words);
             tvLasted = itemView.findViewById(R.id.tv_lasted);

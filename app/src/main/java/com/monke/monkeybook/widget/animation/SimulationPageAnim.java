@@ -19,34 +19,34 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private Path mPath0;
     private Path mPath1;
 
-    PointF mBezierStart1 = new PointF(); // 贝塞尔曲线起始点
-    PointF mBezierControl1 = new PointF(); // 贝塞尔曲线控制点
-    PointF mBeziervertex1 = new PointF(); // 贝塞尔曲线顶点
-    PointF mBezierEnd1 = new PointF(); // 贝塞尔曲线结束点
+    private PointF mBezierStart1 = new PointF(); // 贝塞尔曲线起始点
+    private PointF mBezierControl1 = new PointF(); // 贝塞尔曲线控制点
+    private PointF mBeziervertex1 = new PointF(); // 贝塞尔曲线顶点
+    private PointF mBezierEnd1 = new PointF(); // 贝塞尔曲线结束点
 
-    PointF mBezierStart2 = new PointF(); // 另一条贝塞尔曲线
-    PointF mBezierControl2 = new PointF();
-    PointF mBeziervertex2 = new PointF();
-    PointF mBezierEnd2 = new PointF();
+    private PointF mBezierStart2 = new PointF(); // 另一条贝塞尔曲线
+    private PointF mBezierControl2 = new PointF();
+    private PointF mBeziervertex2 = new PointF();
+    private PointF mBezierEnd2 = new PointF();
 
-    float mMiddleX;
-    float mMiddleY;
-    float mDegrees;
-    float mTouchToCornerDis;
+    private float mMiddleX;
+    private float mMiddleY;
+    private float mDegrees;
+    private float mTouchToCornerDis;
 
-    boolean mIsRTandLB; // 是否属于右上左下
+    private boolean mIsRTandLB; // 是否属于右上左下
     private float mMaxLength;
-    int[] mBackShadowColors;// 背面颜色组
-    int[] mFrontShadowColors;// 前面颜色组
-    GradientDrawable mBackShadowDrawableLR; // 有阴影的GradientDrawable
-    GradientDrawable mBackShadowDrawableRL;
-    GradientDrawable mFolderShadowDrawableLR;
-    GradientDrawable mFolderShadowDrawableRL;
+    private int[] mBackShadowColors;// 背面颜色组
+    private int[] mFrontShadowColors;// 前面颜色组
+    private GradientDrawable mBackShadowDrawableLR; // 有阴影的GradientDrawable
+    private GradientDrawable mBackShadowDrawableRL;
+    private GradientDrawable mFolderShadowDrawableLR;
+    private GradientDrawable mFolderShadowDrawableRL;
 
-    GradientDrawable mFrontShadowDrawableHBT;
-    GradientDrawable mFrontShadowDrawableHTB;
-    GradientDrawable mFrontShadowDrawableVLR;
-    GradientDrawable mFrontShadowDrawableVRL;
+    private GradientDrawable mFrontShadowDrawableHBT;
+    private GradientDrawable mFrontShadowDrawableHTB;
+    private GradientDrawable mFrontShadowDrawableVLR;
+    private GradientDrawable mFrontShadowDrawableVRL;
 
     public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
@@ -77,16 +77,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 drawCurrentPageShadow(canvas);
                 drawCurrentBackArea(canvas, mNextBitmap);
                 break;
-        }
-    }
-
-    @Override
-    public void drawStatic(Canvas canvas) {
-        if (isCancel) {
-            mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
-            canvas.drawBitmap(mCurBitmap, 0, 0, null);
-        } else {
-            canvas.drawBitmap(mNextBitmap, 0, 0, null);
         }
     }
 
@@ -133,7 +123,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
         super.setDirection(direction);
 
         switch (direction) {
-            case PRE:
+            case PREV:
                 //上一页滑动不出现对角
                 if (mStartX > mScreenWidth / 2) {
                     calcCornerXY(mStartX, mScreenHeight);
@@ -159,7 +149,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
         //触摸y中间位置吧y变成屏幕高度
-        if ((mStartY > mScreenHeight / 3 && mStartY < mScreenHeight * 2 / 3) || mDirection.equals(Direction.PRE)) {
+        if ((mStartY > mScreenHeight / 3 && mStartY < mScreenHeight * 2 / 3) || mDirection.equals(Direction.PREV)) {
             mTouchY = mScreenHeight;
         }
 
@@ -291,7 +281,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
      *
      * @param canvas
      */
-    public void drawCurrentPageShadow(Canvas canvas) {
+    private void drawCurrentPageShadow(Canvas canvas) {
         double degree;
         if (mIsRTandLB) {
             degree = Math.PI

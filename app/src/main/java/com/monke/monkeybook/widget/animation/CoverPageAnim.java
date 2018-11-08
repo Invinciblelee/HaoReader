@@ -1,11 +1,8 @@
 package com.monke.monkeybook.widget.animation;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -25,16 +22,6 @@ public class CoverPageAnim extends HorizonPageAnim {
         mBackShadowDrawableLR = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, mBackShadowColors);
         mBackShadowDrawableLR.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-    }
-
-    @Override
-    public void drawStatic(Canvas canvas) {
-        if (isCancel) {
-            mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
-            canvas.drawBitmap(mCurBitmap, 0, 0, null);
-        } else {
-            canvas.drawBitmap(mNextBitmap, 0, 0, null);
-        }
     }
 
     @Override

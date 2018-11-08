@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.activity.MainActivity">
 
-    <group android:id="@+id/menuOnLine" >
+    <group android:id="@+id/menuOnLine">
         <item
             android:id="@+id/action_change_source"
             android:icon="@drawable/ic_exchange"
@@ -32,7 +32,7 @@
             android:id="@+id/action_clean_cache"
             android:icon="@drawable/ic_clear_all"
             android:title="@string/clean_caches"
-            app:showAsAction="never"/>
+            app:showAsAction="never" />
     </group>
 
     <group android:id="@+id/menuShow">
@@ -55,4 +55,5 @@
         android:icon="@drawable/ic_toc"
         android:title="@string/book_info"
         app:showAsAction="never" />
+
 </menu>

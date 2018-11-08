@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +27,8 @@ import java.lang.reflect.Method;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
     protected ImmersionBar mImmersionBar;
-    public SharedPreferences preferences;
-    public boolean isActNightTheme;
+    private SharedPreferences preferences;
+    private boolean isActNightTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +172,14 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         return preferences.getBoolean("nightTheme", false);
     }
 
+    public boolean isActNightTheme() {
+        return isActNightTheme;
+    }
+
+    public SharedPreferences getPreferences() {
+        return preferences;
+    }
+
     public void setNightTheme(boolean isNightTheme) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("nightTheme", isNightTheme);
@@ -206,13 +215,13 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
-        overridePendingTransition(R.anim.anim_bottom_in, R.anim.anim_fade_out);
+        overridePendingTransition(R.anim.anim_in_right, R.anim.anim_out_left);
     }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         super.startActivityForResult(intent, requestCode);
-        overridePendingTransition(R.anim.anim_bottom_in, R.anim.anim_fade_out);
+        overridePendingTransition(R.anim.anim_in_right, R.anim.anim_out_left);
     }
 
     public void startActivityForResultByAnim(Intent intent, int requestCode, int animIn, int animExit) {
@@ -225,19 +234,23 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         overridePendingTransition(animIn, animExit);
     }
 
-    public void startActivityByAnim(Intent intent, @NonNull View view, @NonNull String transitionName, int animIn, int animExit) {
+    public void startActivityByAnim(Intent intent, @NonNull View view, @NonNull String transitionName) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, view, transitionName);
             startActivity(intent, options.toBundle());
         } else {
-            startActivityByAnim(intent, animIn, animExit);
+            startActivity(intent);
         }
     }
 
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
+        overridePendingTransition(R.anim.anim_in_left, R.anim.anim_out_right);
+    }
+
+    public void finishNoAnim(){
+        super.finish();
     }
 
     public void finishByAnim(int animIn, int animOut) {

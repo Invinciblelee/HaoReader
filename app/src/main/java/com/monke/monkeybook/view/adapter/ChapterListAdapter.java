@@ -1,6 +1,7 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.adapter;
 
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.help.FormatWebText;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +27,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.ThisViewHolder> {
+
     private BookShelfBean bookShelfBean;
     private OnItemClickListener itemClickListener;
     private List<ChapterListBean> chapterListBeans = new ArrayList<>();
     private List<BookmarkBean> bookmarkBeans = new ArrayList<>();
     private int index = 0;
     private int tabPosition;
-    private Boolean isSearch = false;
+    private boolean isSearch = false;
 
     public ChapterListAdapter(BookShelfBean bookShelfBean, @NonNull OnItemClickListener itemClickListener) {
         this.bookShelfBean = bookShelfBean;
@@ -41,20 +44,8 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     public void upChapter(int index) {
         if (bookShelfBean.getChapterListSize() > index) {
             if (tabPosition == 0 && !isSearch) {
-                notifyItemChanged(index, index);
+                notifyItemChanged(index, 0);
             }
-        }
-    }
-
-    public void upChapterList(BookShelfBean bookShelfBean) {
-        if (bookShelfBean == null) {
-            return;
-        }
-
-        this.bookShelfBean = bookShelfBean;
-
-        if (tabPosition == 0 && !isSearch) {
-            notifyDataSetChanged();
         }
     }
 
@@ -119,7 +110,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ThisViewHolder holder, int position, @NonNull List<Object> payloads) {
         int realPosition = holder.getLayoutPosition();
-        if (holder.getLayoutPosition() == (tabPosition == 0 ? 0 : getItemCount() - 1)) {
+        if (realPosition == getItemCount() - 1) {
             holder.line.setVisibility(View.GONE);
         } else {
             holder.line.setVisibility(View.VISIBLE);
@@ -127,34 +118,43 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         if (tabPosition == 0) {
             if (payloads.size() > 0) {
                 holder.tvName.setSelected(true);
+                holder.indicator.setSelected(true);
                 holder.tvName.getPaint().setFakeBoldText(true);
                 return;
             }
             ChapterListBean chapterListBean = isSearch ? chapterListBeans.get(realPosition) : bookShelfBean.getChapter(realPosition);
+            if (chapterListBean.getDurChapterIndex() == index) {
+                int color = holder.indicator.getResources().getColor(R.color.colorAccent);
+                holder.tvName.setTextColor(color);
+                AppCompat.setTint(holder.indicator, color);
+            } else {
+                ColorStateList colors = holder.indicator.getResources().getColorStateList(R.color.color_chapter_item);
+                holder.tvName.setTextColor(colors);
+                AppCompat.setTintList(holder.indicator, colors);
+            }
+
             holder.tvName.setText(FormatWebText.trim(chapterListBean.getDurChapterName()));
             if (Objects.equals(bookShelfBean.getTag(), BookShelfBean.LOCAL_TAG) || chapterListBean.getHasCache(bookShelfBean.getBookInfoBean())) {
                 holder.tvName.setSelected(true);
+                holder.indicator.setSelected(true);
                 holder.tvName.getPaint().setFakeBoldText(true);
             } else {
                 holder.tvName.setSelected(false);
+                holder.indicator.setSelected(false);
                 holder.tvName.getPaint().setFakeBoldText(false);
             }
-            holder.tvName.setOnClickListener(v -> {
+
+            holder.llName.setOnClickListener(v -> {
                 setIndex(realPosition);
                 itemClickListener.itemClick(chapterListBean.getDurChapterIndex(), 0, tabPosition);
             });
-            if (chapterListBean.getDurChapterIndex() == index) {
-                holder.tvName.setBackgroundResource(R.color.btn_bg_press);
-            } else {
-                holder.tvName.setBackgroundResource(R.color.transparent);
-            }
         } else {
             BookmarkBean bookmarkBean = isSearch ? bookmarkBeans.get(realPosition) : bookShelfBean.getBookmark(realPosition);
             holder.tvName.setText(bookmarkBean.getContent());
-            holder.tvName.setOnClickListener(v -> {
+            holder.llName.setOnClickListener(v -> {
                 itemClickListener.itemClick(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex(), tabPosition);
             });
-            holder.tvName.setOnLongClickListener(view -> {
+            holder.llName.setOnLongClickListener(view -> {
                 itemClickListener.itemLongClick(bookmarkBean, tabPosition);
                 return true;
             });
@@ -185,18 +185,22 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     public void setIndex(int index) {
         if (tabPosition == 0) {
             this.index = index;
-            notifyDataSetChanged();
+            notifyItemChanged(this.index, 0);
         }
     }
 
     static class ThisViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName;
         private View line;
+        private View llName;
+        private View indicator;
 
         ThisViewHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             line = itemView.findViewById(R.id.v_line);
+            llName = itemView.findViewById(R.id.ll_name);
+            indicator = itemView.findViewById(R.id.iv_indicator);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.graphics.Color;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -144,13 +143,14 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
 
     /**
      * 手指松开的时候还原
+     *
      * @param recyclerView
      * @param viewHolder
      */
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-        if(onItemTouchCallbackListener != null){
+        if (onItemTouchCallbackListener != null) {
             onItemTouchCallbackListener.onRelease();
         }
     }

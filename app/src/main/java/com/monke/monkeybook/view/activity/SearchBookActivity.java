@@ -2,13 +2,10 @@
 package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -17,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,12 +22,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.help.ACache;
-import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
@@ -82,10 +78,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         }
     };
 
-    public static void startByKey(Context context, String searchKey) {
-        Intent intent = new Intent(context, SearchBookActivity.class);
+    public static void startByKey(MBaseActivity activity, String searchKey) {
+        Intent intent = new Intent(activity, SearchBookActivity.class);
         intent.putExtra("searchKey", searchKey);
-        context.startActivity(intent);
+        activity.startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
@@ -95,8 +91,30 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            showHistory = savedInstanceState.getBoolean("showHistory");
+            showStop = savedInstanceState.getBoolean("showStop");
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected void onCreateActivity() {
         setContentView(R.layout.activity_search_book);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean("showHistory", showHistory);
+        savedInstanceState.putBoolean("showStop", showStop);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mPresenter.fromIntentSearch(intent);
     }
 
     @Override
@@ -189,9 +207,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                         toSearch();
                     }
                 } else {
-                    mPresenter.stopSearch();
-                    showStop = false;
-                    supportInvalidateOptionsMenu();
+                    mPresenter.stopSearch(true);
                 }
                 break;
             case R.id.action_book_source_manage:
@@ -232,8 +248,14 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void finish() {
-        super.finish();
-        overridePendingTransition(0, android.R.anim.fade_out);
+        if (!AppActivityManager.getInstance().isExist(MainActivity.class)
+                && !AppActivityManager.getInstance().isExist(ReadBookActivity.class)) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+            super.finishNoAnim();
+        } else {
+            super.finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
     }
 
     private void initSearchView() {
@@ -257,7 +279,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         searchView.setOnQueryTextFocusChangeListener((view, b) -> {
             showHistory = b;
             if (showHistory) {
-                mPresenter.stopSearch();
+                mPresenter.stopSearch(true);
                 openOrCloseHistory(showHistory);
             }
         });
@@ -333,7 +355,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void firstRequest() {
         super.firstRequest();
-        mPresenter.fromIntentSearch(this);
+        mPresenter.fromIntentSearch(getIntent());
     }
 
     @Override
@@ -353,7 +375,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         if (!TextUtils.isEmpty(searchView.getQuery())) {
             searchView.setQuery(null, false);
             searchView.clearFocus();
-            mPresenter.stopSearch();
+            mPresenter.stopSearch(true);
             openOrCloseHistory(true);
         } else {
             finish();
@@ -363,7 +385,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     public void searchBook(String searchKey) {
         if (!TextUtils.isEmpty(searchKey)) {
-            mPresenter.stopSearch();
+            mPresenter.stopSearch(false);
             mSearchAutoComplete.setText(searchKey);
             searchView.clearFocus();
             toSearch();
@@ -386,9 +408,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             rfRvSearchBooks.startRefresh();
             searchBookAdapter.clearAll();
             //执行搜索请求
-            new Handler().postDelayed(() -> {
-                mPresenter.toSearchBooks(query);
-            }, 300);
+            mPresenter.toSearchBooks(query);
         }
     }
 
@@ -438,16 +458,20 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void refreshFinish() {
-        showStop = false;
-        supportInvalidateOptionsMenu();
-        rfRvSearchBooks.finishRefresh(true, true);
+        if (showStop) {
+            showStop = false;
+            supportInvalidateOptionsMenu();
+        }
+        rfRvSearchBooks.finishRefresh(true, false);
     }
 
 
     @Override
     public void searchBookError() {
-        showStop = false;
-        supportInvalidateOptionsMenu();
+        if (showStop) {
+            showStop = false;
+            supportInvalidateOptionsMenu();
+        }
         rfRvSearchBooks.refreshError();
     }
 

@@ -2,6 +2,7 @@ package com.monke.monkeybook.widget;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -176,6 +178,24 @@ public class ReadBottomStatusBar extends FrameLayout {
         progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
+    public void updateTextTypeface(String fontPath){
+        Typeface typeface;
+        try {
+            if (fontPath != null) {
+                typeface = Typeface.createFromFile(fontPath);
+            } else {
+                typeface = Typeface.SANS_SERIF;
+            }
+        } catch (Exception e) {
+            typeface = Typeface.SANS_SERIF;
+        }
+
+        tvTime.setTypeface(typeface);
+        tvTitle.setTypeface(typeface);
+        tvPageIndex.setTypeface(typeface);
+        tvChapterIndex.setTypeface(typeface);
+    }
+
     public void refreshUI(ReadBookControl readConfig) {
         boolean hideStatusBar = readConfig.getHideStatusBar();
         if (hideStatusBar) {
@@ -184,6 +204,7 @@ public class ReadBottomStatusBar extends FrameLayout {
             setShowTimeBattery(false);
         }
         updateTextColor(readConfig.getTextColor());
+        updateTextTypeface(readConfig.getFontPath());
     }
 
     public void updateOnPageChanged(BookShelfBean bookShelfBean, int durPageSize) {
@@ -204,12 +225,14 @@ public class ReadBottomStatusBar extends FrameLayout {
             return "";
         }
         StringBuilder title = new StringBuilder();
-        if (titleStr.length() > 12) {
-            title.append(titleStr.subSequence(0, 12)).append("…");
+        if (titleStr.length() > 14) {
+            title.append(titleStr.substring(0, 7))
+                    .append("\u2026")
+                    .append(titleStr.substring(titleStr.length() - 7, titleStr.length()));
         } else {
             title.append(titleStr);
         }
-        title.append(String.format(Locale.getDefault(), "【%d/%d】", durPageSize == 0 ? 1 : durPage, durPageSize == 0 ? 1 : durPageSize));
+        title.append(String.format(Locale.getDefault(), " (%d/%d)", durPageSize == 0 ? 1 : durPage, durPageSize == 0 ? 1 : durPageSize));
         return title.toString();
     }
 }

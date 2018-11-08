@@ -186,15 +186,11 @@ dependencies {
     //简繁转换
     implementation 'com.luhuiguo:chinese-utils:1.0'
 
-    implementation('nl.siegmann.epublib:epublib-core:3.1') {
-        exclude group: 'org.slf4j'
-        exclude group: 'xmlpull'
-    }
-    implementation 'org.slf4j:slf4j-android:1.7.25'
+    implementation 'com.github.florent37:arclayout:1.0.3'
 }
 
 greendao {
-    schemaVersion 53
+    schemaVersion 55
     daoPackage 'com.monke.monkeybook.dao'
     targetGenDir 'src/main/java'
 }

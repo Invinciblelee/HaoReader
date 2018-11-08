@@ -3,7 +3,6 @@ package com.monke.monkeybook.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
@@ -115,13 +114,13 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (searchTasks.isEmpty()) {
             int length = searchEngineS.size();
             int seek = length % threadsNum == 0 ? length / threadsNum : (length / threadsNum + 1);
-            for (int i = 0; i < Math.min(length, threadsNum); i++) {
+            for (int i = 0, size = Math.min(length, threadsNum); i < size; i++) {
                 int end = (i + 1) * seek;
                 List<SearchEngine> engines = searchEngineS.subList(i * seek, end >= length ? length : end);
                 ISearchTask searchTask = new SearchTaskImpl(id, new ArrayList<>(engines), this);
                 searchTask.startSearch(query, scheduler);
                 searchTasks.add(searchTask);
-                if(end >= length){
+                if (end >= length) {
                     break;
                 }
             }
@@ -132,9 +131,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
     }
 
-    public void stopSearch() {
+    public void stopSearch(boolean callEvent) {
         resetSearch(false, 0);
-        searchListener.searchBookFinish();
+        if(callEvent) {
+            searchListener.searchBookFinish();
+        }
     }
 
     public void shutdownSearch() {

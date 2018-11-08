@@ -1,6 +1,6 @@
 package com.monke.monkeybook.view.activity;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -23,8 +23,8 @@ public class SettingActivity extends MBaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    public static void startThis(Activity context, int requestCode) {
-        context.startActivityForResult(new Intent(context, SettingActivity.class), requestCode);
+    public static void startThis(Context context) {
+        context.startActivity(new Intent(context, SettingActivity.class));
     }
 
     @Override

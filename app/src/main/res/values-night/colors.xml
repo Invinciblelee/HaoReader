@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#292929</color>
-    <color name="card_background">#252525</color>
+    <color name="background">#2a2a2a</color>
+    <color name="card_background">#363636</color>
 
-    <color name="colorPrimary">#222222</color>
-    <color name="colorPrimaryDark">#222222</color>
-    <color name="colorAccent">#199589</color>
+    <color name="colorPrimary">#363636</color>
+    <color name="colorPrimaryDark">#363636</color>
 
-    <color name="btn_bg_press">#424242</color>
-    <color name="btn_bg_press_2">#212121</color>
-    <color name="btn_bg_press_tp">#88000000</color>
+    <color name="btn_bg_press">#454545</color>
+    <color name="btn_bg_press_2">#303030</color>
+    <color name="btn_bg_press_tp">#66000000</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#565656</color>
-    <color name="tv_btn_black">#343434</color>
-    <color name="bg_library">#404040</color>
 
     <color name="tv_chapter_color_selected">#b7b7b7</color>
     <color name="tv_chapter_color_normal">#969696</color>
 
-    <color name="progress_back_color">#424242</color>
-    <color name="progress_color">#737373</color>
+    <color name="progress_back_color">#454545</color>
+    <color name="progress_color">#767676</color>
+    <color name="progress_text_color">#666666</color>
 
-    <color name="tv_text_default">#b7b7b7</color>
-    <color name="menu_color_default">#b7b7b7</color>
+    <color name="tv_text_default">#ffffffff</color>
+    <color name="tv_text_secondary">#e5ffffff</color>
+    <color name="tv_text_summary">#b3ffffff</color>
+    <color name="menu_color_default">#ffffffff</color>
 
-    <color name="tv_text_button_nor">#292929</color>
+    <color name="tv_text_button_nor">#303030</color>
     <color name="tv_text_button_disable">#434343</color>
 
     <!-- 分格线背景色 -->
-    <color name="bg_divider_line">#ff323232</color>
     <color name="navigation_bar_bag">#222222</color>
 </resources>

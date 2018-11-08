@@ -32,7 +32,7 @@ public class Constant {
             + "book_record" + File.separator;
 
     public static String APP_CRASH_PATH = FileUtil.getSdCardPath() + File.separator
-            + "YueDu" + File.separator + "" + File.separator;
+            + "YueDu" + File.separator + "crash" + File.separator;
 
     //BookType
     @StringDef({

@@ -38,7 +38,7 @@ public class SearchEngine {
         this.page = page;
     }
 
-    public void pageAdd(){
+    public synchronized void pageAdd(){
         this.page += 1;
     }
 

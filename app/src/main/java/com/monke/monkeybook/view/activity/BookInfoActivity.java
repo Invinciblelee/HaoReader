@@ -1,6 +1,5 @@
 package com.monke.monkeybook.view.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,10 +8,13 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -26,12 +28,20 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.utils.FileUtil;
 import com.monke.monkeybook.utils.KeyboardUtil;
+import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.disposables.Disposable;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+
+import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
 
 public class BookInfoActivity extends MBaseActivity {
     private final int ResultSelectCover = 103;
@@ -52,8 +62,8 @@ public class BookInfoActivity extends MBaseActivity {
     TextInputEditText tieCoverUrl;
     @BindView(R.id.til_cover_url)
     TextInputLayout tilCoverUrl;
-    @BindView(R.id.tv_select_cover)
-    TextView tvSelectCover;
+    @BindView(R.id.tv_select_local_cover)
+    TextView tvSelectLocalCover;
     @BindView(R.id.tv_change_cover)
     TextView tvChangeCover;
     @BindView(R.id.tv_refresh_cover)
@@ -68,7 +78,13 @@ public class BookInfoActivity extends MBaseActivity {
     private MoDialogHUD moDialogHUD;
 
 
-    public static void startThis(Context context, String noteUrl) {
+    public static void startThis(MBaseActivity context, String noteUrl, View transitionView) {
+        Intent intent = new Intent(context, BookInfoActivity.class);
+        intent.putExtra("noteUrl", noteUrl);
+        context.startActivityByAnim(intent, transitionView, transitionView.getTransitionName());
+    }
+
+    public static void startThis(MBaseActivity context, String noteUrl) {
         Intent intent = new Intent(context, BookInfoActivity.class);
         intent.putExtra("noteUrl", noteUrl);
         context.startActivity(intent);
@@ -117,11 +133,10 @@ public class BookInfoActivity extends MBaseActivity {
      */
     @Override
     protected void initData() {
-        if (!TextUtils.isEmpty(getIntent().getStringExtra("noteUrl"))) {
-            noteUrl = getIntent().getStringExtra("noteUrl");
-        }
+        noteUrl = getIntent().getStringExtra("noteUrl");
+
         if (!TextUtils.isEmpty(noteUrl)) {
-            book = BookshelfHelp.getBookByUrl(noteUrl);
+            book = BookshelfHelp.getBookByUrl(noteUrl, false);
             if (book != null) {
                 tieBookName.setText(book.getBookInfoBean().getName());
                 tieBookAuthor.setText(book.getBookInfoBean().getAuthor());
@@ -142,7 +157,7 @@ public class BookInfoActivity extends MBaseActivity {
     @Override
     protected void bindEvent() {
         super.bindEvent();
-        tvSelectCover.setOnClickListener(view -> {
+        tvSelectLocalCover.setOnClickListener(view -> {
             if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -152,11 +167,10 @@ public class BookInfoActivity extends MBaseActivity {
                 EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
             }
         });
-        tvChangeCover.setOnClickListener(view ->
-                moDialogHUD.showChangeSource(this, book, searchBookBean -> {
-                    tieCoverUrl.setText(searchBookBean.getCoverUrl());
-                    initCover(getTextString(tieCoverUrl));
-                }));
+        tvChangeCover.setOnClickListener(view -> moDialogHUD.showChangeSource(this, book, searchBookBean -> {
+            tieCoverUrl.setText(searchBookBean.getCoverUrl());
+            initCover(getTextString(tieCoverUrl));
+        }));
         tvRefreshCover.setOnClickListener(view -> initCover(getTextString(tieCoverUrl)));
     }
 
@@ -197,7 +211,7 @@ public class BookInfoActivity extends MBaseActivity {
                 saveInfo();
                 break;
             case android.R.id.home:
-                finish();
+                finishByTransition();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -210,12 +224,12 @@ public class BookInfoActivity extends MBaseActivity {
         book.setCustomCoverPath(getTextString(tieCoverUrl));
         BookshelfHelp.saveBookToShelf(book);
         RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, book);
-        finish();
+        finishByTransition();
     }
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        tvSelectCover.callOnClick();
+        tvSelectLocalCover.callOnClick();
     }
 
     @Override
@@ -238,8 +252,13 @@ public class BookInfoActivity extends MBaseActivity {
     }
 
     @Override
-    public void finish() {
-        KeyboardUtil.hideKeyboard(this);
-        super.finish();
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
+
+    private void finishByTransition() {
+        KeyboardUtil.hideKeyboard(this);
+        super.supportFinishAfterTransition();
+    }
+
 }

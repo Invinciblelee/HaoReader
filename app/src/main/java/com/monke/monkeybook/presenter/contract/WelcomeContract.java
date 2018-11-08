@@ -1,6 +1,7 @@
 package com.monke.monkeybook.presenter.contract;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
@@ -11,11 +12,13 @@ public interface WelcomeContract {
     interface View extends IView {
         void openBookFromUri();
 
-        void startReadBook(BookShelfBean shelfBean, boolean inShelf, long delay);
+        void startReadBookAct(BookShelfBean shelfBean, boolean inShelf, boolean fromUri, long startDelay);
 
-        void onNormalCreate();
+        void onStartNormal(long startDelay);
 
-        void onFromOtherCreate();
+        void onStartFromUri();
+
+        SharedPreferences getPreferences();
 
         void finish();
     }
@@ -23,6 +26,8 @@ public interface WelcomeContract {
     interface Presenter extends IPresenter {
 
         void initData(Activity activity);
+
+        void openBookFromRecent();
 
         void openBookFromUri(Activity activity);
 

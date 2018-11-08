@@ -1,10 +1,8 @@
 package com.monke.monkeybook.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,29 +14,24 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
-import com.monke.monkeybook.view.adapter.base.OnItemClickListenerTwo;
+import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class BookShelfSearchView extends LinearLayout {
     @BindView(R.id.recycler_view)
     RecyclerView rvList;
     @BindView(R.id.appBar)
-    AppBarLayout appBar;
+    FrameLayout appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     SearchView searchView;
@@ -47,9 +40,12 @@ public class BookShelfSearchView extends LinearLayout {
 
     private BookShelfListAdapter adapter;
 
+    private String query;
+    private IQuery iQuery;
+
     public BookShelfSearchView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        initView(context);
     }
 
     @Override
@@ -70,8 +66,8 @@ public class BookShelfSearchView extends LinearLayout {
         appBar.setPadding(0, insets.top, 0, 0);
     }
 
-    private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_search_bookshelf, this, true);
+    private void initView(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.view_search_bookshelf, this, true);
         ButterKnife.bind(this);
         AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
         toolbar.inflateMenu(R.menu.menu_search_view);
@@ -93,8 +89,8 @@ public class BookShelfSearchView extends LinearLayout {
                 return false;
             }
         });
-        rvList.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new BookShelfListAdapter((Activity) getContext());
+        rvList.setLayoutManager(new LinearLayoutManager(context));
+        adapter = new BookShelfListAdapter(context, -1, "1");
         rvList.setAdapter(adapter);
 
         toolbar.setNavigationOnClickListener(v -> {
@@ -111,53 +107,28 @@ public class BookShelfSearchView extends LinearLayout {
             return;
         }
 
-        Observable.create((ObservableOnSubscribe<List<BookShelfBean>>) e -> {
-            e.onNext(BookshelfHelp.queryBooks(query));
-            e.onComplete();
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<List<BookShelfBean>>() {
-                    @Override
-                    public void onNext(List<BookShelfBean> value) {
-                        if (!value.isEmpty()) {
-                            adapter.replaceAll(value, "1");
-                        } else {
-                            adapter.clear();
-                        }
-                    }
+        this.query = query;
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-    public void addToBookShelfIfNeed(BookShelfBean bookShelfBean) {
-        if (bookShelfBean != null && adapter.getItemCount() != 0) {
-            adapter.addBook(bookShelfBean);
+        if (iQuery != null) {
+            iQuery.query(query);
         }
     }
 
-    public void removeFromBookShelfIfNeed(BookShelfBean bookShelfBean) {
-        if (bookShelfBean != null && adapter.getItemCount() != 0) {
-            adapter.removeBook(bookShelfBean);
-        }
+    public void setIQuery(IQuery query) {
+        this.iQuery = query;
     }
 
-    public void updateBookIfNeed(BookShelfBean bookShelfBean) {
-        if (bookShelfBean != null && adapter.getItemCount() != 0) {
-            adapter.updateBook(bookShelfBean, false);
-        }
-    }
-
-    public void setOnItemClickListener(OnItemClickListenerTwo itemClickListenerTwo) {
+    public void setOnItemClickListener(OnBookItemClickListenerTwo itemClickListenerTwo) {
         adapter.setItemClickListener(itemClickListenerTwo);
     }
 
-    public List<BookShelfBean> getBooks() {
-        return adapter.getBooks();
+    public void clear() {
+        searchView.setQuery(null, false);
+        adapter.clear();
+    }
+
+    public void showQueryBooks(List<BookShelfBean> value) {
+        adapter.replaceAll(value, "1");
     }
 
     public View getSearchAutoComplete(boolean focus) {
@@ -166,4 +137,30 @@ public class BookShelfSearchView extends LinearLayout {
         }
         return searchAutoComplete;
     }
+
+    public void removeBookShelfIfNeed(BookShelfBean bookShelfBean) {
+        if (bookShelfBean != null && adapter.getItemCount() != 0) {
+            adapter.removeBook(bookShelfBean);
+        }
+    }
+
+    public void addBookShelfIfNeed(BookShelfBean bookShelfBean) {
+        if (bookShelfBean != null
+                && adapter.getItemCount() != 0
+                && (bookShelfBean.getBookInfoBean().getName().contains(this.query)
+                || bookShelfBean.getBookInfoBean().getAuthor().contains(this.query))) {
+            adapter.addBook(bookShelfBean);
+        }
+    }
+
+    public void updateBookShelfIfNeed(BookShelfBean bookShelfBean) {
+        if (bookShelfBean != null && adapter.getItemCount() != 0) {
+            adapter.updateBook(bookShelfBean, false);
+        }
+    }
+
+    public interface IQuery {
+        void query(String query);
+    }
+
 }

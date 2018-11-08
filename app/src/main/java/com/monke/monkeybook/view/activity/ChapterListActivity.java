@@ -9,6 +9,9 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -26,6 +29,8 @@ import com.monke.monkeybook.view.adapter.ChapterListAdapter;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,6 +45,14 @@ public class ChapterListActivity extends MBaseActivity {
     TabLayout toolbarTab;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tv_current_chapter_info)
+    TextView tvChapterInfo;
+    @BindView(R.id.iv_chapter_sort)
+    ImageView ivChapterSort;
+    @BindView(R.id.ll_chapter_base_info)
+    View llBaseInfo;
+    @BindView(R.id.v_shadow)
+    View vShadow;
 
     SearchView searchView;
 
@@ -48,6 +61,8 @@ public class ChapterListActivity extends MBaseActivity {
     private LinearLayoutManager layoutManager;
 
     private BookShelfBean bookShelf;
+
+    private boolean isChapterReverse;
 
     public static void startThis(MBaseActivity activity, BookShelfBean bookShelf, int requestCode) {
         Intent intent = new Intent(activity, ChapterListActivity.class);
@@ -69,6 +84,16 @@ public class ChapterListActivity extends MBaseActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (bookShelf != null) {
+            String key = String.valueOf(System.currentTimeMillis());
+            getIntent().putExtra("data_key", key);
+            BitIntentDataManager.getInstance().putData(key, bookShelf);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         RxBus.get().unregister(this);
         super.onDestroy();
@@ -84,6 +109,8 @@ public class ChapterListActivity extends MBaseActivity {
         String key = getIntent().getStringExtra("data_key");
         bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
         BitIntentDataManager.getInstance().cleanData(key);
+
+        isChapterReverse = getPreferences().getBoolean("isChapterReverse", false);
     }
 
     @Override
@@ -91,17 +118,18 @@ public class ChapterListActivity extends MBaseActivity {
         ButterKnife.bind(this);
         setupActionBar();
         AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
-        rvList.setLayoutManager(layoutManager = new LinearLayoutManager(getContext()));
+        rvList.setLayoutManager(layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, isChapterReverse));
         rvList.setItemAnimator(null);
+        setData(bookShelf);
+    }
+
+    @Override
+    protected void bindEvent() {
         toolbarTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (chapterListAdapter != null) {
-                    chapterListAdapter.tabChange(tab.getPosition());
-                    if (tab.getPosition() == 0) {
-                        updateIndex(bookShelf.getDurChapter());
-                    }
-                }
+                showChapterInfo(tab.getPosition() == 0);
+                updateWhenTabChanged(tab.getPosition());
             }
 
             @Override
@@ -111,16 +139,18 @@ public class ChapterListActivity extends MBaseActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                if (chapterListAdapter != null) {
-                    chapterListAdapter.tabChange(tab.getPosition());
-                    if (tab.getPosition() == 0) {
-                        updateIndex(bookShelf.getDurChapter());
-                    }
-                }
+                updateWhenTabChanged(tab.getPosition());
             }
         });
 
-        setData(bookShelf);
+        ivChapterSort.setOnClickListener(v -> {
+            if (chapterListAdapter != null) {
+                isChapterReverse = !isChapterReverse;
+                getPreferences().edit().putBoolean("isChapterReverse", isChapterReverse).apply();
+                layoutManager.setReverseLayout(isChapterReverse);
+                layoutManager.scrollToPositionWithOffset(bookShelf.getDurChapter(), 0);
+            }
+        });
     }
 
     @Override
@@ -206,6 +236,7 @@ public class ChapterListActivity extends MBaseActivity {
         });
         rvList.setAdapter(chapterListAdapter);
         updateIndex(bookShelf.getDurChapter());
+        updateChapterInfo();
     }
 
     private void updateIndex(int durChapter) {
@@ -216,6 +247,33 @@ public class ChapterListActivity extends MBaseActivity {
         }
 
         layoutManager.scrollToPositionWithOffset(durChapter, 0);
+    }
+
+    private void updateChapterInfo() {
+        if (bookShelf != null) {
+            if (chapterListAdapter.getItemCount() == 0) {
+                tvChapterInfo.setText(bookShelf.getDurChapterName());
+            } else {
+                tvChapterInfo.setText(String.format(Locale.getDefault(), "%s (%d/%d章)", bookShelf.getDurChapterName(), bookShelf.getDurChapter() + 1, bookShelf.getChapterListSize()));
+            }
+        }
+    }
+
+    private void showChapterInfo(boolean show) {
+        llBaseInfo.setVisibility(show ? View.VISIBLE : View.GONE);
+        vShadow.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateWhenTabChanged(int tabPos) {
+        if (chapterListAdapter != null) {
+            chapterListAdapter.tabChange(tabPos);
+            if (tabPos == 0) {
+                layoutManager.setReverseLayout(isChapterReverse);
+                updateIndex(bookShelf.getDurChapter());
+            } else {
+                layoutManager.setReverseLayout(false);
+            }
+        }
     }
 
     private void searchViewCollapsed() {

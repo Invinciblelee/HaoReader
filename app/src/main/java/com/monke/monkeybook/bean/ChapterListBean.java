@@ -3,28 +3,15 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import com.monke.monkeybook.dao.BookInfoBeanDao;
-import com.monke.monkeybook.dao.ChapterListBeanDao;
-import com.monke.monkeybook.dao.DaoSession;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ChapterHelp;
-import com.monke.monkeybook.utils.StringUtils;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Keep;
-import org.greenrobot.greendao.annotation.ToOne;
-import org.greenrobot.greendao.annotation.Transient;
-import org.greenrobot.greendao.annotation.Unique;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 章节列表
@@ -34,33 +21,24 @@ public class ChapterListBean implements Parcelable {
 
     private String noteUrl; //对应BookInfoBean noteUrl;
 
+    private Integer nodeId; // epub节点
     private Integer durChapterIndex;  //当前章节数
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址
     private String durChapterName;  //当前章节名称
     private String tag;
     //章节内容在文章中的起始位置(本地)
-    private Long start;
+    private Integer start;
     //章节内容在文章中的终止位置(本地)
-    private Long end;
+    private Integer end;
     private String bookName;
 
 
-    protected ChapterListBean(Parcel in) {
-        noteUrl = in.readString();
-        durChapterIndex = in.readInt();
-        durChapterUrl = in.readString();
-        durChapterName = in.readString();
-        tag = in.readString();
-        start = in.readLong();
-        end = in.readLong();
-        bookName = in.readString();
-    }
-
-    @Generated(hash = 634102195)
-    public ChapterListBean(String noteUrl, Integer durChapterIndex, String durChapterUrl, String durChapterName, String tag,
-            Long start, Long end, String bookName) {
+    @Generated(hash = 1489359445)
+    public ChapterListBean(String noteUrl, Integer nodeId, Integer durChapterIndex, String durChapterUrl,
+            String durChapterName, String tag, Integer start, Integer end, String bookName) {
         this.noteUrl = noteUrl;
+        this.nodeId = nodeId;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
         this.durChapterName = durChapterName;
@@ -74,15 +52,64 @@ public class ChapterListBean implements Parcelable {
     public ChapterListBean() {
     }
 
+    protected ChapterListBean(Parcel in) {
+        noteUrl = in.readString();
+        if (in.readByte() == 0) {
+            nodeId = null;
+        } else {
+            nodeId = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            durChapterIndex = null;
+        } else {
+            durChapterIndex = in.readInt();
+        }
+        durChapterUrl = in.readString();
+        durChapterName = in.readString();
+        tag = in.readString();
+        if (in.readByte() == 0) {
+            start = null;
+        } else {
+            start = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            end = null;
+        } else {
+            end = in.readInt();
+        }
+        bookName = in.readString();
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(noteUrl);
-        dest.writeInt(durChapterIndex);
+        if (nodeId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(nodeId);
+        }
+        if (durChapterIndex == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(durChapterIndex);
+        }
         dest.writeString(durChapterUrl);
         dest.writeString(durChapterName);
         dest.writeString(tag);
-        dest.writeLong(start);
-        dest.writeLong(end);
+        if (start == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(start);
+        }
+        if (end == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(end);
+        }
         dest.writeString(bookName);
     }
 
@@ -91,7 +118,6 @@ public class ChapterListBean implements Parcelable {
         return 0;
     }
 
-    @Transient
     public static final Creator<ChapterListBean> CREATOR = new Creator<ChapterListBean>() {
         @Override
         public ChapterListBean createFromParcel(Parcel in) {
@@ -155,6 +181,14 @@ public class ChapterListBean implements Parcelable {
         this.durChapterUrl = durChapterUrl;
     }
 
+    public Integer getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
     public int getDurChapterIndex() {
         return this.durChapterIndex == null ? 0 : this.durChapterIndex;
     }
@@ -171,19 +205,19 @@ public class ChapterListBean implements Parcelable {
         this.noteUrl = noteUrl;
     }
 
-    public Long getStart() {
-        return this.start;
+    public int getStart() {
+        return this.start == null ? 0 : this.start;
     }
 
-    public void setStart(Long start) {
+    public void setStart(int start) {
         this.start = start;
     }
 
-    public Long getEnd() {
-        return this.end;
+    public int getEnd() {
+        return this.end == null ? 0 : this.end;
     }
 
-    public void setEnd(Long end) {
+    public void setEnd(int end) {
         this.end = end;
     }
 
@@ -198,4 +232,13 @@ public class ChapterListBean implements Parcelable {
     public void setBookName(String bookName) {
         this.bookName = bookName;
     }
+
+    public void setStart(Integer start) {
+        this.start = start;
+    }
+
+    public void setEnd(Integer end) {
+        this.end = end;
+    }
+
 }

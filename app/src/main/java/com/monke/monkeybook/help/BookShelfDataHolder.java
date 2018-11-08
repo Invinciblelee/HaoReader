@@ -9,14 +9,14 @@ public class BookShelfDataHolder {
 
     private volatile static BookShelfDataHolder mInstance;
 
-    private BookShelfDataHolder(){
+    private BookShelfDataHolder() {
 
     }
 
-    public static BookShelfDataHolder getInstance(){
-        if(mInstance == null){
-            synchronized (BookShelfDataHolder.class){
-                if(mInstance == null){
+    public static BookShelfDataHolder getInstance() {
+        if (mInstance == null) {
+            synchronized (BookShelfDataHolder.class) {
+                if (mInstance == null) {
                     mInstance = new BookShelfDataHolder();
                 }
             }
@@ -25,11 +25,11 @@ public class BookShelfDataHolder {
     }
 
 
-    public void setBookShelf(BookShelfBean bookShelf){
+    public void setBookShelf(BookShelfBean bookShelf) {
         this.bookShelf = bookShelf;
     }
 
-    public BookShelfBean getBookShelf(){
+    public BookShelfBean getBookShelf() {
         return this.bookShelf;
     }
 
@@ -41,7 +41,7 @@ public class BookShelfDataHolder {
         this.inBookShelf = inBookShelf;
     }
 
-    public void cleanData(){
+    public void cleanData() {
         this.bookShelf = null;
     }
 }

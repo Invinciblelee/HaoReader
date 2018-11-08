@@ -1,7 +1,9 @@
 package com.monke.basemvplib;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,18 +12,56 @@ import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 
 public abstract class BaseFragment<T extends IPresenter> extends com.trello.rxlifecycle2.components.support.RxFragment implements IView {
+    private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
+
+    private boolean isSupportHidden;
+
     protected View view;
     protected Bundle savedInstanceState;
     protected T mPresenter;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null && getFragmentManager() != null) {
+            isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            if (isSupportHidden) {
+                ft.hide(this);
+            } else {
+                ft.show(this);
+            }
+            ft.commit();
+        } else {
+            isSupportHidden = isHidden();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_SAVE_IS_HIDDEN, isHidden());
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        isSupportHidden = hidden;
+    }
+
+    public boolean isSupportHidden() {
+        return isSupportHidden;
+    }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
         this.savedInstanceState = savedInstanceState;
         initSDK();
         view = createView(inflater, container);
         mPresenter = initInjector();
-        if(mPresenter != null) {
+        if (mPresenter != null) {
             mPresenter.attachView(this);
         }
         initData();
@@ -33,7 +73,7 @@ public abstract class BaseFragment<T extends IPresenter> extends com.trello.rxli
 
     @Override
     public void onDestroy() {
-        if(mPresenter != null) {
+        if (mPresenter != null) {
             mPresenter.detachView();
         }
         super.onDestroy();
@@ -42,7 +82,7 @@ public abstract class BaseFragment<T extends IPresenter> extends com.trello.rxli
     /**
      * P层绑定   若无则返回null;
      */
-    protected T initInjector(){
+    protected T initInjector() {
         return null;
     }
 
@@ -85,4 +125,5 @@ public abstract class BaseFragment<T extends IPresenter> extends com.trello.rxli
     protected void initSDK() {
 
     }
+
 }

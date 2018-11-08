@@ -1,18 +1,14 @@
 package com.monke.monkeybook.view.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.view.activity.SettingActivity;
 
@@ -36,7 +32,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         bindPreferenceSummaryToValue(findPreference(mContext.getString(R.string.pk_bookshelf_px)));
     }
 
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (Preference preference, Object value)-> {
+    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (Preference preference, Object value) -> {
         String stringValue = value.toString();
 
         if (preference instanceof ListPreference) {
@@ -76,7 +72,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             settingActivity.initImmersionBar();
             RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
         } else if (key.equals(getString(R.string.pk_bookshelf_px))) {
-            getActivity().setResult(Activity.RESULT_OK);
+            RxBus.get().post(RxBusTag.UPDATE_BOOK_PX, sharedPreferences.getString(key, "0"));
         }
     }
 }

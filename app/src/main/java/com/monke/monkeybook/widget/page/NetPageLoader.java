@@ -17,6 +17,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_ERROR;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CONTENT_EMPTY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_FINISH;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_LOADING;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_NETWORK_ERROR;
+
 /**
  * Created by newbiechen on 17-5-29.
  * 网络页面加载器
@@ -26,7 +33,7 @@ public class NetPageLoader extends PageLoader {
 
     private Disposable mChapterDisp;
 
-    public NetPageLoader(PageView pageView, BookShelfBean collBook) {
+    NetPageLoader(PageView pageView, BookShelfBean collBook) {
         super(pageView, collBook);
     }
 
@@ -41,23 +48,19 @@ public class NetPageLoader extends PageLoader {
 
     @Override
     public void refreshChapterList() {
-        if (mCollBook == null) return;
-
-        if (mCollBook.getChapterList().size() > 0) {
-            isChapterListPrepare = true;
+        if (!getCollBook().realChapterListEmpty()) {
+            setChapterListPrepared();
 
             // 打开章节
-            skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
+            skipToChapter(getCollBook().getDurChapter(), getCollBook().getDurChapterPage());
 
             // 目录加载完成，执行回调操作。
-            if (mPageChangeListener != null) {
-                mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
-            }
+            dispatchCategoryFinishEvent(getCollBook().getChapterList());
         } else {
             if (mChapterDisp != null) {
                 mChapterDisp.dispose();
             }
-            WebBookModelImpl.getInstance().getChapterList(mCollBook)
+            WebBookModelImpl.getInstance().getChapterList(getCollBook())
                     .subscribeOn(Schedulers.single())
                     .doOnNext(bookShelfBean -> {
                         // 存储章节到数据库
@@ -68,7 +71,7 @@ public class NetPageLoader extends PageLoader {
                         }
                     })
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(mPageView.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                    .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<BookShelfBean>() {
 
                         @Override
@@ -78,23 +81,25 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            isChapterListPrepare = true;
+                            if (bookShelfBean.realChapterListEmpty()) {
+                                setCurrentStatus(STATUS_CATEGORY_EMPTY);
+                            } else {
+                                setChapterListPrepared();
 
-                            // 加载并显示当前章节
-                            skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
+                                // 加载并显示当前章节
+                                skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
 
-                            // 提示目录加载完成
-                            if (mPageChangeListener != null) {
-                                mPageChangeListener.onCategoryFinish(bookShelfBean.getChapterList());
+                                // 提示目录加载完成
+                                dispatchCategoryFinishEvent(bookShelfBean.getChapterList());
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             if (NetworkUtil.isNetworkAvailable()) {
-                                changePageStatus(STATUS_CATEGORY_EMPTY);
+                                setCurrentStatus(STATUS_CATEGORY_ERROR);
                             } else {
-                                changePageStatus(STATUS_NETWORK_ERROR);
+                                setCurrentStatus(STATUS_NETWORK_ERROR);
                             }
                         }
                     });
@@ -102,8 +107,8 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    protected BufferedReader getChapterReader(ChapterListBean chapter) throws Exception {
-        File file = BookshelfHelp.getBookFile(BookshelfHelp.getCachePathName(mCollBook.getBookInfoBean()),
+    BufferedReader getChapterReader(ChapterListBean chapter) throws Exception {
+        File file = BookshelfHelp.getBookFile(BookshelfHelp.getCachePathName(getCollBook().getBookInfoBean()),
                 BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName()));
         if (!file.exists()) return null;
         Reader reader = new FileReader(file);
@@ -111,48 +116,54 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    protected boolean hasChapterData(ChapterListBean chapter) {
-        return BookshelfHelp.isChapterCached(BookshelfHelp.getCachePathName(mCollBook.getBookInfoBean()),
+    boolean hasChapterData(ChapterListBean chapter) {
+        return BookshelfHelp.isChapterCached(BookshelfHelp.getCachePathName(getCollBook().getBookInfoBean()),
                 BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName()));
     }
 
     @Override
-    boolean parsePrevChapter() {
-        boolean isRight = super.parsePrevChapter();
-        if (mPageChangeListener != null && mCurChapterPos >= 1 && shouldRequestChapter(mCurChapterPos - 1)) {
-            mPageChangeListener.requestChapter(mCurChapterPos - 1);
+    void dealLoadChapter(int chapterPos) {
+        super.dealLoadChapter(chapterPos);
+        if (getCurrentChapter().isEmpty()) {
+            if (!NetworkUtil.isNetworkAvailable()) {
+                setCurrentStatus(STATUS_NETWORK_ERROR, false);
+            } else if (getCurrentStatus() != STATUS_FINISH && getCurrentStatus() != STATUS_CONTENT_EMPTY) {
+                setCurrentStatus(STATUS_LOADING, false);
+                getChapterProvider().loadChapterContent(chapterPos);
+            }
         }
-        return isRight;
     }
 
     @Override
-    boolean parseCurChapter() {
-        boolean isRight = super.parseCurChapter();
-        if (mPageChangeListener != null) {
-            for (int i = mCurChapterPos; i < mCurChapterPos + 5; i++) {
-                if (i < mCollBook.getChapterListSize() && shouldRequestChapter(i)) {
-                    mPageChangeListener.requestChapter(i);
-                }
-            }
+    void parsePrevChapter() {
+        super.parsePrevChapter();
+        if (getChapterPosition() >= 1 && shouldRequestChapter(getChapterPosition() - 1)) {
+            getChapterProvider().loadChapterContent(getChapterPosition() - 1);
         }
-        return isRight;
     }
 
     @Override
-    boolean parseNextChapter() {
-        boolean isRight = super.parseNextChapter();
-        if (mPageChangeListener != null) {
-            for (int i = mCurChapterPos + 1; i < mCurChapterPos + 5; i++) {
-                if (i < mCollBook.getChapterListSize() && shouldRequestChapter(i)) {
-                    mPageChangeListener.requestChapter(i);
-                }
+    void parseCurChapter() {
+        super.parseCurChapter();
+        for (int i = getChapterPosition() >= 1 ? getChapterPosition() - 1 : getChapterPosition(); i < getChapterPosition() + 5; i++) {
+            if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
+                getChapterProvider().loadChapterContent(i);
             }
         }
-        return isRight;
+    }
+
+    @Override
+    void parseNextChapter() {
+        super.parseNextChapter();
+        for (int i = getChapterPosition() + 1; i < getChapterPosition() + 5; i++) {
+            if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
+                getChapterProvider().loadChapterContent(i);
+            }
+        }
     }
 
     private boolean shouldRequestChapter(Integer chapterIndex) {
-        return !hasChapterData(mCollBook.getChapter(chapterIndex));
+        return !hasChapterData(getCollBook().getChapter(chapterIndex));
     }
 }
 

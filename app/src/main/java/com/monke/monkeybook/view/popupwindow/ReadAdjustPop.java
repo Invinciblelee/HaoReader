@@ -151,25 +151,28 @@ public class ReadAdjustPop extends PopupWindow {
 
         //朗读语速调节
         scbTtsFollowSys.setChecked(readBookControl.isSpeechRateFollowSys());
-        if (readBookControl.isSpeechRateFollowSys()) {
-            hpbTtsSpeechRate.setCanTouch(false);
-        }
+        hpbTtsSpeechRate.setCanTouch(!scbTtsFollowSys.isChecked());
         llTtsSpeechRate.setOnClickListener(v -> {
             if (scbTtsFollowSys.isChecked()) {
                 scbTtsFollowSys.setChecked(false, true);
-                //不跟随系统
-                hpbTtsSpeechRate.setCanTouch(true);
-                readBookControl.setSpeechRateFollowSys(false);
-                if (adjustListener != null) {
-                    adjustListener.changeSpeechRate(readBookControl.getSpeechRate());
-                }
             } else {
                 scbTtsFollowSys.setChecked(true, true);
+            }
+        });
+        scbTtsFollowSys.setOnCheckedChangeListener((checkBox, isChecked) -> {
+            if (isChecked) {
                 //跟随系统
                 hpbTtsSpeechRate.setCanTouch(false);
                 readBookControl.setSpeechRateFollowSys(true);
                 if (adjustListener != null) {
                     adjustListener.speechRateFollowSys();
+                }
+            } else {
+                //不跟随系统
+                hpbTtsSpeechRate.setCanTouch(true);
+                readBookControl.setSpeechRateFollowSys(false);
+                if (adjustListener != null) {
+                    adjustListener.changeSpeechRate(readBookControl.getSpeechRate());
                 }
             }
         });

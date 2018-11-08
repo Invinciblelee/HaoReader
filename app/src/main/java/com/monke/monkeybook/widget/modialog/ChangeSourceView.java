@@ -24,6 +24,7 @@ import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.view.activity.BookInfoActivity;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -46,25 +47,26 @@ public class ChangeSourceView {
     private ImageButton ibtStop;
     private RefreshRecyclerView rvSource;
 
-    private MoDialogHUD moDialogHUD;
     private MoDialogView moDialogView;
     private OnClickSource onClickSource;
     private Context context;
     private ChangeSourceAdapter adapter;
     private SearchBookModel searchBookModel;
     private BookInfoBean book;
+    private boolean selectCover;
 
-    public static ChangeSourceView getInstance(BaseActivity activity, MoDialogView moDialogView) {
+    public static ChangeSourceView newInstance(BaseActivity activity, MoDialogView moDialogView) {
         return new ChangeSourceView(activity, moDialogView);
     }
 
     private ChangeSourceView(BaseActivity activity, MoDialogView moDialogView) {
         this.moDialogView = moDialogView;
         this.context = moDialogView.getContext();
+        this.selectCover = activity.getClass().equals(BookInfoActivity.class);
         bindView();
-        adapter = new ChangeSourceAdapter(context, false);
+        adapter = new ChangeSourceAdapter(context, selectCover);
         rvSource.setRefreshRecyclerViewAdapter(adapter, new LinearLayoutManager(context));
-        adapter.setOnItemClickListener((view, index) -> selectSource(adapter.getSearchBookBeans().get(index)));
+        adapter.setOnItemClickListener((view, item) -> selectSource(item));
         View viewRefreshError = LayoutInflater.from(context).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
             //刷新失败 ，重试
@@ -78,7 +80,7 @@ public class ChangeSourceView {
             public void searchSourceEmpty() {
                 Toast.makeText(context, "没有选中任何书源", Toast.LENGTH_SHORT).show();
                 ibtStop.setVisibility(View.INVISIBLE);
-                rvSource.finishRefresh(true, true);
+                rvSource.finishRefresh(true, false);
             }
 
             @Override
@@ -90,7 +92,7 @@ public class ChangeSourceView {
             @Override
             public void searchBookFinish() {
                 ibtStop.setVisibility(View.INVISIBLE);
-                rvSource.finishRefresh(true, true);
+                rvSource.finishRefresh(true, false);
             }
 
             @Override
@@ -112,7 +114,7 @@ public class ChangeSourceView {
             @Override
             public void searchBookError() {
                 ibtStop.setVisibility(View.INVISIBLE);
-                rvSource.finishRefresh(true);
+                rvSource.finishRefresh(false);
             }
 
             @Override
@@ -124,39 +126,28 @@ public class ChangeSourceView {
         moDialogView.setOnDismissListener(() -> searchBookModel.shutdownSearch());
     }
 
-    void showChangeSource(BookShelfBean bookShelf, final OnClickSource onClickSource, MoDialogHUD moDialogHUD) {
-        this.moDialogHUD = moDialogHUD;
+    void showChangeSource(BookShelfBean bookShelf, OnClickSource onClickSource) {
         this.onClickSource = onClickSource;
         book = bookShelf.getBookInfoBean();
-        atvTitle.setText(String.format("%s(%s)", book.getName(), book.getAuthor()));
+        if (TextUtils.isEmpty(book.getAuthor())) {
+            atvTitle.setText(book.getName());
+        } else {
+            atvTitle.setText(String.format("%s(%s)", book.getName(), book.getAuthor()));
+        }
         rvSource.startRefresh();
-        getSearchBookInDb();
+        moDialogView.post(this::getSearchBookInDb);
     }
 
     private void selectSource(SearchBookBean searchBook) {
-        Observable.create((ObservableOnSubscribe<SearchBookBean>) e -> {
-            BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchBook.getTag());
-            if (sourceBean != null) {
-                sourceBean.increaseWeightBySelection();
-                BookshelfHelp.saveBookSource(sourceBean);
+        moDialogView.getMoDialogHUD().dismiss();
+        if (!selectCover) {
+            if (!searchBook.getIsCurrentSource()) {
+                onClickSource.changeSource(searchBook);
+                saveInfoBySelection(searchBook);
             }
-            e.onNext(searchBook);
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<SearchBookBean>() {
-                    @Override
-                    public void onNext(SearchBookBean searchBookBean) {
-                        moDialogHUD.dismiss();
-                        onClickSource.changeSource(searchBookBean);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        moDialogHUD.dismiss();
-                        onClickSource.changeSource(searchBook);
-                    }
-                });
-
+        } else {
+            onClickSource.changeSource(searchBook);
+        }
     }
 
     private void getSearchBookInDb() {
@@ -204,44 +195,70 @@ public class ChangeSourceView {
 
     private synchronized void addSearchBook(List<SearchBookBean> value) {
         if (value.size() > 0) {
-            Observable.create((ObservableOnSubscribe<SearchBookBean>) e -> {
-                for (SearchBookBean searchBookBean : value) {
-                    if (test(searchBookBean, book)) {
-                        if (TextUtils.equals(searchBookBean.getTag(), book.getTag())) {
-                            searchBookBean.setIsCurrentSource(true);
-                        } else {
-                            searchBookBean.setIsCurrentSource(false);
-                        }
-
-                        BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchBookBean.getTag());
-                        if (book.getChapterList().size() > 0 && bookSourceBean != null) {
-                            int lastChapter = ChapterHelp.guessChapterNum(searchBookBean.getLastChapter());
-                            if (lastChapter > book.getChapterList().size()) {
-                                bookSourceBean.increaseWeight(100);
-                                BookshelfHelp.saveBookSource(bookSourceBean);
-                            }
-                        }
-
-                        DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplace(searchBookBean);
-                        e.onNext(searchBookBean);
-                        break;
+            for (SearchBookBean searchBookBean : value) {
+                if (test(searchBookBean, book)) {
+                    if (TextUtils.equals(searchBookBean.getTag(), book.getTag())) {
+                        searchBookBean.setIsCurrentSource(true);
+                    } else {
+                        searchBookBean.setIsCurrentSource(false);
                     }
+                    adapter.addSourceAdapter(searchBookBean);
+
+                    saveInfoIfChanged(searchBookBean);
+                    break;
                 }
-                e.onComplete();
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SimpleObserver<SearchBookBean>() {
-                        @Override
-                        public void onNext(SearchBookBean searchBookBean) {
-                            adapter.addSourceAdapter(searchBookBean);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-                    });
+            }
         }
+    }
+
+    private void saveInfoIfChanged(SearchBookBean searchBookBean) {
+        Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplace(searchBookBean);
+
+            BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchBookBean.getTag());
+            if (book.getChapterList().size() > 0 && bookSourceBean != null) {
+                int lastChapter = ChapterHelp.guessChapterNum(searchBookBean.getLastChapter());
+                if (lastChapter > book.getChapterList().size()) {
+                    bookSourceBean.increaseWeight(100);
+                    BookshelfHelp.saveBookSource(bookSourceBean);
+                }
+            }
+            e.onNext(true);
+            e.onComplete();
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<Boolean>() {
+                    @Override
+                    public void onNext(Boolean bool) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+    }
+
+    private void saveInfoBySelection(SearchBookBean searchBook) {
+        Observable.create((ObservableOnSubscribe<SearchBookBean>) e -> {
+            BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchBook.getTag());
+            if (sourceBean != null) {
+                sourceBean.increaseWeightBySelection();
+                BookshelfHelp.saveBookSource(sourceBean);
+            }
+            e.onNext(searchBook);
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<SearchBookBean>() {
+                    @Override
+                    public void onNext(SearchBookBean searchBookBean) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
     }
 
     private boolean test(SearchBookBean searchBookBean, BookInfoBean book) {
@@ -261,7 +278,7 @@ public class ChangeSourceView {
         ibtStop.setVisibility(View.INVISIBLE);
 
         rvSource.setBaseRefreshListener(this::reSearchBook);
-        ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
+        ibtStop.setOnClickListener(v -> searchBookModel.stopSearch(true));
     }
 
     /**

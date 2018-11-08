@@ -1,6 +1,10 @@
 package com.monke.monkeybook.utils;
 
 import android.support.annotation.StringRes;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 
 import com.monke.monkeybook.MApplication;
 
@@ -11,6 +15,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by newbiechen on 17-4-22.

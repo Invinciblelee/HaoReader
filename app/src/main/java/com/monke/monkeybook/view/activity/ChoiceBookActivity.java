@@ -2,7 +2,6 @@
 package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.ChoiceBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 import com.monke.monkeybook.view.adapter.ChoiceBookAdapter;

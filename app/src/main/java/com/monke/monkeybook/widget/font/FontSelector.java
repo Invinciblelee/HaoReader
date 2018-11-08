@@ -28,7 +28,7 @@ public class FontSelector {
         builder.setView(view);
         builder.setTitle(R.string.select_font);
         builder.setNegativeButton(R.string.cancel, null);
-        fontPath = FileUtil.getSdCardPath() + "/Fonts";
+        fontPath = FileUtil.getSdCardPath() + "/YueDu/Fonts";
         adapter = new FontAdapter(context, selectPath,
                 new OnThisListener() {
                     @Override

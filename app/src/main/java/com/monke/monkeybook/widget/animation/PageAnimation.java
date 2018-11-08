@@ -2,9 +2,9 @@ package com.monke.monkeybook.widget.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
 import com.monke.monkeybook.help.ReadBookControl;
@@ -25,6 +25,8 @@ public abstract class PageAnimation {
     //移动方向
     protected Direction mDirection = Direction.NONE;
 
+    //是否取消翻页
+    protected boolean isCancel = false;
     protected boolean isRunning = false;
     protected boolean isStarted = false;
 
@@ -48,11 +50,11 @@ public abstract class PageAnimation {
     protected float mLastX;
     protected float mLastY;
 
-    public PageAnimation(int w, int h, View view, OnPageChangeListener listener) {
+    PageAnimation(int w, int h, View view, OnPageChangeListener listener) {
         this(w, h, 0, 0, 0, view, listener);
     }
 
-    public PageAnimation(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener) {
+    PageAnimation(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener) {
         mScreenWidth = w;
         mScreenHeight = h;
 
@@ -66,7 +68,7 @@ public abstract class PageAnimation {
         mView = view;
         mListener = listener;
 
-        mScroller = new Scroller(mView.getContext(), new LinearInterpolator());
+        mScroller = new Scroller(mView.getContext(), new FastOutSlowInInterpolator());
     }
 
     public Scroller getScroller() {
@@ -97,17 +99,20 @@ public abstract class PageAnimation {
         return isStarted;
     }
 
-    public void setStarted(boolean started) {
-        this.isStarted = started;
+    public void resetAnim() {
+        isStarted = false;
+        isCancel = false;
+        isRunning = false;
+        mDirection = Direction.NONE;
     }
 
     /**
      * 开启翻页动画
      */
-    public void startAnim(){
+    public void startAnim() {
         isStarted = true;
         isRunning = true;
-        mView.postInvalidate();
+        mView.invalidate();
     }
 
     public Direction getDirection() {
@@ -152,16 +157,6 @@ public abstract class PageAnimation {
      * 获取内容显示版面
      */
     public abstract Bitmap getContentBitmap();
-
-    public enum Direction {
-        NONE(true), NEXT(true), PRE(true), UP(false), DOWN(false);
-
-        public final boolean isHorizontal;
-
-        Direction(boolean isHorizontal) {
-            this.isHorizontal = isHorizontal;
-        }
-    }
 
     public interface OnPageChangeListener {
         boolean hasPrev();

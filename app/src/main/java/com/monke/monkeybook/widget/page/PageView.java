@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,13 +16,14 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.widget.animation.CoverPageAnim;
+import com.monke.monkeybook.widget.animation.Direction;
 import com.monke.monkeybook.widget.animation.HorizonPageAnim;
 import com.monke.monkeybook.widget.animation.NonePageAnim;
 import com.monke.monkeybook.widget.animation.PageAnimation;
 import com.monke.monkeybook.widget.animation.SimulationPageAnim;
 import com.monke.monkeybook.widget.animation.SlidePageAnim;
 
-import java.util.Objects;
+import java.lang.ref.WeakReference;
 
 
 /**
@@ -29,7 +31,7 @@ import java.util.Objects;
  */
 public class PageView extends View {
 
-    private ReadBookActivity activity;
+    private WeakReference<ReadBookActivity> activity;
 
     private int mViewWidth = 0; // 当前View的宽
     private int mViewHeight = 0; // 当前View的高
@@ -39,8 +41,6 @@ public class PageView extends View {
     private boolean isMove = false;
     private int mPageIndex;
     private int mChapterIndex;
-    // 初始化参数
-    private ReadBookControl readBookControl = ReadBookControl.getInstance();
     // 是否允许点击
     private boolean canTouch = true;
     // 唤醒菜单的区域
@@ -48,6 +48,8 @@ public class PageView extends View {
     private boolean isLayoutPrepared;
     // 动画类
     private PageAnimation mPageAnim;
+    private boolean drawAfterComputeScroll = false;
+
     // 动画监听类
     private PageAnimation.OnPageChangeListener mPageAnimListener = new PageAnimation.OnPageChangeListener() {
         @Override
@@ -121,7 +123,7 @@ public class PageView extends View {
     }
 
     public ReadBookActivity getActivity() {
-        return activity;
+        return activity.get();
     }
 
     public Bitmap getContentBitmap() {
@@ -134,21 +136,26 @@ public class PageView extends View {
         return mPageAnim.getBgBitmap();
     }
 
+    Direction getAnimDirection() {
+        if (mPageAnim == null) return null;
+        return mPageAnim.getDirection();
+    }
+
     public boolean autoPrevPage() {
-        startPageAnim(PageAnimation.Direction.PRE);
+        startPageAnim(Direction.PREV);
         return true;
     }
 
     public boolean autoNextPage() {
-        startPageAnim(PageAnimation.Direction.NEXT);
+        startPageAnim(Direction.NEXT);
         return true;
     }
 
-    private void startPageAnim(PageAnimation.Direction direction) {
+    private void startPageAnim(Direction direction) {
         if (mTouchListener == null) return;
         //是否正在执行动画
         abortAnimation();
-        if (direction == PageAnimation.Direction.NEXT) {
+        if (direction == Direction.NEXT) {
             int x = mViewWidth;
             int y = mViewHeight;
             //初始化动画
@@ -242,7 +249,7 @@ public class PageView extends View {
                         return true;
                     }
 
-                    if (!readBookControl.getCanClickTurn()) {
+                    if (!ReadBookControl.getInstance().getCanClickTurn()) {
                         return true;
                     }
                 }
@@ -258,7 +265,7 @@ public class PageView extends View {
      * 判断是否存在上一页
      */
     private boolean hasPrevPage() {
-        if (mPageLoader.prev()) {
+        if (mPageLoader.prevPage()) {
             return true;
         } else {
             if (mSnackbar == null) {
@@ -277,7 +284,7 @@ public class PageView extends View {
      * 判断是否下一页存在
      */
     private boolean hasNextPage() {
-        if (mPageLoader.next()) {
+        if (mPageLoader.nextPage()) {
             return true;
         } else {
             if (mSnackbar == null) {
@@ -302,9 +309,13 @@ public class PageView extends View {
         if (mPageAnim != null) {
             mPageAnim.scrollAnim();
             if (mPageAnim.isStarted() && !mPageAnim.getScroller().computeScrollOffset()) {
-                mPageAnim.setStarted(false);
-                if (mPageLoader.getPagePos() != mPageIndex | mPageLoader.getChapterPos() != mChapterIndex) {
-                    mPageLoader.pagingEnd();
+                mPageAnim.resetAnim();
+                if (drawAfterComputeScroll) {
+                    drawCurrentPage();
+                    drawAfterComputeScroll = false;
+                }
+                if (mPageLoader.getPagePosition() != mPageIndex | mPageLoader.getChapterPosition() != mChapterIndex) {
+                    mPageLoader.dispatchPagingEndEvent();
                 }
             }
         }
@@ -352,19 +363,21 @@ public class PageView extends View {
     /**
      * 绘制当前页。
      */
-    public void drawCurPage() {
-        drawCurPage(false);
+    public void drawCurrentPage() {
+        drawCurrentPage(false);
+    }
+
+    public void postDrawCurrentPage() {
+        drawAfterComputeScroll = true;
     }
 
     /**
      * 绘制当前页。
-     *
-     * @param isPreview true 只绘制背景
      */
-    public void drawCurPage(boolean isPreview) {
+    public void drawCurrentPage(boolean willNotDraw) {
         if (!isLayoutPrepared) return;
         if (mPageLoader != null) {
-            mPageLoader.drawPage(getContentBitmap(), isPreview);
+            mPageLoader.drawPage(getContentBitmap(), willNotDraw);
         }
     }
 
@@ -384,13 +397,13 @@ public class PageView extends View {
      * 获取 PageLoader
      */
     public PageLoader getPageLoader(ReadBookActivity activity, BookShelfBean collBook) {
-        this.activity = activity;
-        // 判是否已经存在
-        if (mPageLoader != null) {
-            return mPageLoader;
-        }
+        this.activity = new WeakReference<>(activity);
 
-        mPageLoader = PageLoaderFactory.createPageLoader(this, collBook);
+        if (TextUtils.equals(collBook.getTag(), BookShelfBean.LOCAL_TAG)) {
+            mPageLoader = new LocalPageLoader(this, collBook);
+        } else {
+            mPageLoader = new NetPageLoader(this, collBook);
+        }
 
         // 判断是否 PageView 已经初始化完成
         if (mViewWidth != 0 || mViewHeight != 0) {

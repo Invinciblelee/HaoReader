@@ -2,9 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context="com.monke.monkeybook.view.activity.ReadStyleActivity">
 
     <LinearLayout
@@ -17,9 +17,9 @@
             android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="16dp"
             android:includeFontPadding="false"
             android:lineSpacingExtra="5dp"
-            android:layout_margin="16dp"
             android:lineSpacingMultiplier="1"
             android:text="@string/content_sl"
             android:textSize="19sp" />
@@ -57,7 +57,7 @@
             android:background="@color/colorPrimary"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:text="@string/long_click_input_color"/>
+            android:text="@string/long_click_input_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,10 +73,10 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:singleLine="true"
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:padding="6dp"
+                android:singleLine="true"
                 android:text="文字颜色"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -88,10 +88,10 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:singleLine="true"
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:padding="6dp"
+                android:singleLine="true"
                 android:text="背景颜色"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -103,10 +103,10 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:singleLine="true"
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:padding="6dp"
+                android:singleLine="true"
                 android:text="背景图片"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -118,28 +118,23 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:singleLine="true"
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:padding="6dp"
+                android:singleLine="true"
                 android:text="恢复默认"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
-        <android.support.design.widget.AppBarLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        </android.support.design.widget.AppBarLayout>
     </LinearLayout>
 </FrameLayout>

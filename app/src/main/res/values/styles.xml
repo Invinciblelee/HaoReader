@@ -7,15 +7,20 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu</item>
         <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text.style</item>
+        <item name="alertDialogTheme">@style/CAppTheme.AlertDialog</item>
         <item name="android:listDivider">@drawable/bg_list_divider</item>
         <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
-        <item name="alertDialogTheme">@style/CAppTheme.AlertDialog</item>
     </style>
 
     <style name="CAppTheme.Activity" parent="CAppTheme">
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="CAppTheme.Activity.Search" parent="CAppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="CAppTheme.Activity.Read" parent="CAppTheme">
@@ -31,11 +36,11 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-    <style name="CAppTheme.Activity.Translucent" parent="CAppTheme">
+    <style name="CAppTheme.Activity.Welcome" parent="CAppTheme">
         <!-- Customize your theme here. -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@null</item>
+        <item name="android:windowBackground">@drawable/bg_welcome_drawable</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="CAppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
@@ -100,12 +105,12 @@
     <style name="Style.Shadow.Top" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/shadow_height</item>
-        <item name="android:background">@drawable/bg_shadow_top</item>
+        <item name="android:background">@drawable/bg_gradient_top</item>
     </style>
 
     <style name="Style.Shadow.Bottom" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/shadow_height</item>
-        <item name="android:background">@drawable/bg_shadow_bottom</item>
+        <item name="android:background">@drawable/bg_gradient_bottom</item>
     </style>
 </resources>

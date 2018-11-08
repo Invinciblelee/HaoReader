@@ -19,9 +19,10 @@
             android:id="@+id/tv_page_index"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="2dp"
+            android:includeFontPadding="false"
+            android:paddingBottom="1dp"
             android:textSize="12sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/batteryProgress"
@@ -39,9 +40,10 @@
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:includeFontPadding="false"
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
-            android:paddingBottom="2dp"
+            android:paddingBottom="1dp"
             android:textSize="12sp"
             android:visibility="gone" />
     </LinearLayout>
@@ -51,8 +53,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:includeFontPadding="false"
         android:maxLines="1"
-        android:paddingBottom="2dp"
+        android:paddingBottom="1dp"
         android:textSize="12sp" />
 
 
@@ -61,6 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
-        android:paddingBottom="2dp"
+        android:includeFontPadding="false"
+        android:paddingBottom="1dp"
         android:textSize="12sp" />
 </com.monke.monkeybook.widget.ReadBottomStatusBar>

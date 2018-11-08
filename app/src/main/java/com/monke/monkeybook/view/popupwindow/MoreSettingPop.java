@@ -23,14 +23,24 @@ import butterknife.ButterKnife;
 
 public class MoreSettingPop extends PopupWindow {
 
+    @BindView(R.id.ll_sb_click_all_next)
+    View llsbClickAllNext;
     @BindView(R.id.sb_click_all_next)
     Switch sbClickAllNext;
+    @BindView(R.id.ll_sb_click)
+    View llsbClick;
     @BindView(R.id.sb_click)
     Switch sbClick;
+    @BindView(R.id.ll_sb_showTimeBattery)
+    View llsbShowTimeBattery;
     @BindView(R.id.sb_showTimeBattery)
     Switch sbShowTimeBattery;
+    @BindView(R.id.ll_sb_hideStatusBar)
+    View llsbHideStatusBar;
     @BindView(R.id.sb_hideStatusBar)
     Switch sbHideStatusBar;
+    @BindView(R.id.ll_sbImmersionBar)
+    View llsbImmersionBar;
     @BindView(R.id.sbImmersionBar)
     Switch sbImmersionBar;
     @BindView(R.id.llScreenTimeOut)
@@ -41,8 +51,12 @@ public class MoreSettingPop extends PopupWindow {
     View llJFConvert;
     @BindView(R.id.tvJFConvert)
     TextView tvJFConvert;
+    @BindView(R.id.ll_sw_volume_next_page)
+    View llswVolumeNextPage;
     @BindView(R.id.sw_volume_next_page)
     Switch swVolumeNextPage;
+    @BindView(R.id.ll_sw_read_aloud_key)
+    View llswReadAloudKey;
     @BindView(R.id.sw_read_aloud_key)
     Switch swReadAloudKey;
 
@@ -76,48 +90,48 @@ public class MoreSettingPop extends PopupWindow {
     }
 
     private void bindEvent() {
-        sbHideStatusBar.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setHideStatusBar(isChecked);
-                changeProListener.refresh();
-                upView();
-            }
+        llsbHideStatusBar.setOnClickListener(v -> {
+            boolean isChecked = sbHideStatusBar.isChecked();
+            sbHideStatusBar.setChecked(!isChecked);
+            readBookControl.setHideStatusBar(!isChecked);
+            changeProListener.refresh();
+            upView();
         });
-        swVolumeNextPage.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (compoundButton.isPressed()) {
-                readBookControl.setCanKeyTurn(b);
-                upView();
-            }
+        llswVolumeNextPage.setOnClickListener(v -> {
+            boolean isChecked = swVolumeNextPage.isChecked();
+            swVolumeNextPage.setChecked(!isChecked);
+            readBookControl.setCanKeyTurn(!isChecked);
+            upView();
         });
-        swReadAloudKey.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (compoundButton.isPressed()) {
-                readBookControl.setAloudCanKeyTurn(b);
-            }
+        llswReadAloudKey.setOnClickListener(v -> {
+            boolean isChecked = swReadAloudKey.isChecked();
+            swReadAloudKey.setChecked(!isChecked);
+            readBookControl.setAloudCanKeyTurn(!isChecked);
         });
-        sbClick.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setCanClickTurn(isChecked);
-            }
+        llsbClick.setOnClickListener(v -> {
+            boolean isChecked = sbClick.isChecked();
+            sbClick.setChecked(!isChecked);
+            readBookControl.setCanClickTurn(!isChecked);
         });
-        sbClickAllNext.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setClickAllNext(isChecked);
-            }
-        });
-
-        sbShowTimeBattery.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setShowTimeBattery(isChecked);
-                changeProListener.refresh();
-            }
+        llsbClickAllNext.setOnClickListener(v -> {
+            boolean isChecked = sbClickAllNext.isChecked();
+            sbClickAllNext.setChecked(!isChecked);
+            readBookControl.setClickAllNext(!isChecked);
         });
 
-        sbImmersionBar.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonView.isPressed()) {
-                readBookControl.setImmersionStatusBar(isChecked);
-                RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
-                changeProListener.refresh();
-            }
+        llsbShowTimeBattery.setOnClickListener(v -> {
+            boolean isChecked = sbShowTimeBattery.isChecked();
+            sbShowTimeBattery.setChecked(!isChecked);
+            readBookControl.setShowTimeBattery(!isChecked);
+            changeProListener.refresh();
+        });
+
+        llsbImmersionBar.setOnClickListener(v -> {
+            boolean isChecked = sbImmersionBar.isChecked();
+            sbImmersionBar.setChecked(!isChecked);
+            readBookControl.setImmersionStatusBar(!isChecked);
+            RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
+            changeProListener.refresh();
         });
 
         llScreenTimeOut.setOnClickListener(view -> {
@@ -161,14 +175,14 @@ public class MoreSettingPop extends PopupWindow {
 
     private void upView() {
         if (readBookControl.getHideStatusBar()) {
-            sbShowTimeBattery.setVisibility(View.VISIBLE);
+            llsbShowTimeBattery.setVisibility(View.VISIBLE);
         } else {
-            sbShowTimeBattery.setVisibility(View.GONE);
+            llsbShowTimeBattery.setVisibility(View.GONE);
         }
         if (readBookControl.getCanKeyTurn()) {
-            swReadAloudKey.setVisibility(View.VISIBLE);
+            llswReadAloudKey.setVisibility(View.VISIBLE);
         } else {
-            swReadAloudKey.setVisibility(View.GONE);
+            llswReadAloudKey.setVisibility(View.GONE);
         }
     }
 

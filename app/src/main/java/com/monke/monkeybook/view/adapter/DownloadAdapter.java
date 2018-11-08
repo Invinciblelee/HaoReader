@@ -30,9 +30,6 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
     private DownloadActivity activity;
     private final List<DownloadBookBean> dataS;
 
-    private HashSet<Integer> downloading;
-
-
     private final Object mLock = new Object();
 
     public DownloadAdapter(DownloadActivity activity) {
@@ -64,7 +61,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
             }
         }
         if(index >= 0){
-            notifyItemChanged(index, data.getSuccessCount());
+            notifyItemChanged(index, data.getWaitingCount());
         }
     }
 
@@ -111,25 +108,25 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
         final DownloadBookBean item = dataS.get(holder.getLayoutPosition());
         if (!payloads.isEmpty()) {
             holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
-            holder.tvDownload.setText(activity.getString(R.string.un_download, item.getDownloadCount() - (Integer) payloads.get(0)));
-            return;
-        }
-        holder.ivDel.getDrawable().mutate();
-        holder.ivDel.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
-        Glide.with(activity)
-                .load(item.getCoverUrl())
-                .apply(new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
-                        .dontAnimate().placeholder(R.drawable.img_cover_default)
-                        .error(R.drawable.img_cover_default))
-                .into(holder.ivCover);
-        if(item.getSuccessCount() > 0) {
-            holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
+            holder.tvDownload.setText(activity.getString(R.string.un_download, (Integer) payloads.get(0)));
         }else {
-            holder.tvName.setText(String.format(Locale.getDefault(), "%s(等待下载)", item.getName()));
+            holder.ivDel.getDrawable().mutate();
+            holder.ivDel.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+            Glide.with(activity)
+                    .load(item.getCoverUrl())
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
+                            .dontAnimate().placeholder(R.drawable.img_cover_default)
+                            .error(R.drawable.img_cover_default))
+                    .into(holder.ivCover);
+            if (item.getSuccessCount() > 0) {
+                holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
+            } else {
+                holder.tvName.setText(String.format(Locale.getDefault(), "%s(等待下载)", item.getName()));
+            }
+            holder.tvDownload.setText(activity.getString(R.string.un_download, item.getDownloadCount() - item.getSuccessCount()));
+            holder.ivDel.setOnClickListener(view -> DownloadService.removeDownload(activity, item.getNoteUrl()));
         }
-        holder.tvDownload.setText(activity.getString(R.string.un_download, item.getDownloadCount() - item.getSuccessCount()));
-        holder.ivDel.setOnClickListener(view ->DownloadService.removeDownload(activity, item.getNoteUrl()));
     }
 
     @Override

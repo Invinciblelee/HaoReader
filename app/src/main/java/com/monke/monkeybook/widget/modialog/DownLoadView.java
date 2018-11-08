@@ -25,7 +25,7 @@ class DownLoadView {
     private TextView tvCancel;
     private TextView tvDownload;
 
-    public static DownLoadView getInstance(MoDialogView moDialogView) {
+    public static DownLoadView newInstance(MoDialogView moDialogView) {
         return new DownLoadView(moDialogView);
     }
 

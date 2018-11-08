@@ -123,8 +123,14 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
         return successCount;
     }
 
-    public void successCountAdd() {
-        this.successCount += 1;
+    public int getWaitingCount(){
+        return this.downloadCount - this.successCount;
+    }
+
+    public synchronized void successCountAdd() {
+        if(this.successCount < this.downloadCount) {
+            this.successCount += 1;
+        }
     }
 
     public boolean isValid() {

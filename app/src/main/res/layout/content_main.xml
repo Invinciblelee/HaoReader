@@ -25,13 +25,11 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_bookshelf"
+    <FrameLayout
+        android:id="@+id/book_list_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:layout_below="@id/appBar"
-        android:overScrollMode="never" />
+        android:layout_below="@id/appBar"/>
 
     <View style="@style/Style.Shadow.Top"
         android:layout_below="@id/appBar"/>

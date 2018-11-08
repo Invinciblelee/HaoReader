@@ -64,10 +64,8 @@ public class EncodeConverter extends Converter.Factory {
                 String content = metaTag.attr("content");
                 String http_equiv = metaTag.attr("http-equiv");
                 charsetStr = metaTag.attr("charset");
-                if (!charsetStr.isEmpty()) {
-                    if (!isEmpty(charsetStr)) {
-                        return new String(responseBytes, Charset.forName(charsetStr));
-                    }
+                if (!isEmpty(charsetStr)) {
+                    return new String(responseBytes, Charset.forName(charsetStr));
                 }
                 if (http_equiv.toLowerCase().equals("content-type")) {
                     if (content.toLowerCase().contains("charset")) {

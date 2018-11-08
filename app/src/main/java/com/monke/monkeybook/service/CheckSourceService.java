@@ -6,11 +6,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.OkHttpHelper;
@@ -27,8 +27,6 @@ import com.monke.monkeybook.view.activity.BookSourceActivity;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -125,6 +123,7 @@ public class CheckSourceService extends Service {
     private void updateNotification(int state) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdReadAloud)
                 .setSmallIcon(R.drawable.ic_network_check)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setOngoing(true)
                 .setContentTitle(getString(R.string.check_book_source))
                 .setContentText(String.format(getString(R.string.progress_show), state, bookSourceBeanList.size()))

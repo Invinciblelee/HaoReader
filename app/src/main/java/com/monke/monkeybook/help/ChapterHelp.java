@@ -11,12 +11,13 @@ import java.util.regex.Pattern;
 public class ChapterHelp {
 
     private static String[] CHAPTER_PATTERNS = new String[]{
-            "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节篇回集])[、，。　：:.\\s]*",
-            "^([\\(（\\[【]*([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[】\\]）\\)]*)[、，。　：:.\\s]*"
+            "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节回])[、，。　：:.\\s]*",
+            "^([\\(（\\[【]*([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[】\\]）\\)]*)[、，。　：:.\\s]+"
     };
 
+    private static String SPECIAL_PATTERN = "第.*?[卷篇集].*?第.*[章节回].*?";
+
     public static int guessChapterNum(String name) {
-        String SPECIAL_PATTERN = "第.*?卷.*?第.*[章节回].*?";
         if (TextUtils.isEmpty(name) || name.matches(SPECIAL_PATTERN)) {
             return -1;
         }
@@ -34,11 +35,18 @@ public class ChapterHelp {
         if (TextUtils.isEmpty(chapterName)) {
             return "";
         }
+
+        chapterName = chapterName.replaceAll("\\u3000", " ");
+
+        if(chapterName.matches(SPECIAL_PATTERN)){
+            return chapterName;
+        }
+
         for (String str : CHAPTER_PATTERNS) {
             Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
-                String SIMPLE_CHAPTER_PATTERN = "^第.*\\d+.*[章节篇回集]";//eg. 第20-24章
+                String SIMPLE_CHAPTER_PATTERN = "^第.*\\d+.*[章节回]";//eg. 第20-24章
                 if(matcher.group(0).matches(SIMPLE_CHAPTER_PATTERN)){
                     return matcher.replaceFirst("$1 ");
                 }
@@ -49,7 +57,6 @@ public class ChapterHelp {
         }
         return chapterName;
     }
-
 
     public String getPureChapterName(String chapterName) {
         return chapterName == null ? ""

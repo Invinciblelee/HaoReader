@@ -49,7 +49,7 @@ public class AppCompat {
         LinearLayout plate = searchView.findViewById(R.id.search_plate);
         if(showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
-            setTint(bag, createSearchPlateBagState(searchView.getResources().getColor(R.color.colorAccent),
+            setTintList(bag, createSearchPlateBagState(searchView.getResources().getColor(R.color.colorAccent),
                     searchText.getCurrentHintTextColor()));
             android.support.v4.view.ViewCompat.setBackground(plate, bag);
         }else {
@@ -129,15 +129,27 @@ public class AppCompat {
         }
     }
 
-    public static void setTint(Drawable drawable, ColorStateList tint, @NonNull PorterDuff.Mode tintMode) {
+    public static void setTintList(Drawable drawable, ColorStateList tint, @NonNull PorterDuff.Mode tintMode) {
         if(drawable == null) return;
         final Drawable wrappedDrawable = DrawableCompat.wrap(drawable.mutate());
         DrawableCompat.setTintList(wrappedDrawable, tint);
         DrawableCompat.setTintMode(wrappedDrawable, tintMode);
     }
 
-    public static void setTint(Drawable drawable, ColorStateList tint) {
-        setTint(drawable, tint, PorterDuff.Mode.SRC_ATOP);
+    public static void setTintList(Drawable drawable, ColorStateList tint) {
+        setTintList(drawable, tint, PorterDuff.Mode.SRC_ATOP);
+    }
+
+    public static void setTintList(View view, ColorStateList tint) {
+        if (view instanceof ImageView) {
+            Drawable drawable = ((ImageView) view).getDrawable();
+            setTintList(drawable, tint);
+        } else if (view instanceof TextView) {
+            Drawable[] drawables = ((TextView) view).getCompoundDrawables();
+            for (Drawable drawable : drawables) {
+                setTintList(drawable, tint);
+            }
+        }
     }
 
     public static void setTint(Drawable drawable, @ColorInt int tint, @NonNull PorterDuff.Mode tintMode) {
