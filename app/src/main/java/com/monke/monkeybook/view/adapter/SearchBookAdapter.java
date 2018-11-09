@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
@@ -64,15 +63,16 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                             .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
-        myViewHolder.tvName.setText(searchBooks.get(position).getName());
+        myViewHolder.tvName.setText(item.getName());
 
-        if(!TextUtils.isEmpty(searchBooks.get(position).getAuthor())){
-            myViewHolder.tvAuthor.setText(searchBooks.get(position).getAuthor());
-        }else {
+        if (!TextUtils.isEmpty(item.getAuthor())) {
+            myViewHolder.tvAuthor.setText(item.getAuthor());
+        } else {
             myViewHolder.tvAuthor.setText(R.string.author_unknown);
         }
+
         String state = item.getState();
-        if (state == null || state.length() == 0) {
+        if (TextUtils.isEmpty(state)) {
             myViewHolder.tvState.setVisibility(View.GONE);
         } else {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
@@ -80,7 +80,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         }
         long words = item.getWords();
         if (words <= 0) {
-            myViewHolder.tvWords.setVisibility(View.GONE);
+            myViewHolder.tvWords.setVisibility(View.INVISIBLE);
         } else {
             String wordsS = Long.toString(words) + "字";
             if (words > 10000) {
@@ -91,23 +91,22 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvWords.setText(wordsS);
         }
         String kind = item.getKind();
-        if (kind == null || kind.length() <= 0) {
+        if (TextUtils.isEmpty(kind)) {
             myViewHolder.tvKind.setVisibility(View.GONE);
         } else {
             myViewHolder.tvKind.setVisibility(View.VISIBLE);
             myViewHolder.tvKind.setText(kind);
         }
-        if (item.getLastChapter() != null && item.getLastChapter().length() > 0)
-            myViewHolder.tvLasted.setText(item.getLastChapter());
-        else if (item.getDesc() != null && item.getDesc().length() > 0) {
-            myViewHolder.tvLasted.setText(item.getDesc());
-        } else
-            myViewHolder.tvLasted.setText("");
-        if (item.getOrigin() != null && item.getOrigin().length() > 0) {
+
+        String desc = !TextUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
+                : !TextUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
+        myViewHolder.tvLasted.setText(desc);
+
+        if (!TextUtils.isEmpty(item.getOrigin())) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
             myViewHolder.tvOrigin.setText(item.getOrigin());
         } else {
-            myViewHolder.tvOrigin.setVisibility(View.GONE);
+            myViewHolder.tvOrigin.setVisibility(View.INVISIBLE);
         }
         myViewHolder.tvOriginNum.setText(String.format("共%d个源", item.getOriginNum()));
 

@@ -11,13 +11,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -75,6 +73,8 @@ public class ReadBottomStatusBar extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+
+        refreshUI();
     }
 
     @Nullable
@@ -153,7 +153,7 @@ public class ReadBottomStatusBar extends FrameLayout {
 
         if (showTimeBattery) {
             tvTitle.setText(formatTitle(durChapterName, durPage, durPageSize));
-        }else {
+        } else {
             tvPageIndex.setText(formatTitle(durChapterName, durPage, durPageSize));
         }
     }
@@ -178,7 +178,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
-    public void updateTextTypeface(String fontPath){
+    public void updateTextTypeface(String fontPath) {
         Typeface typeface;
         try {
             if (fontPath != null) {
@@ -196,7 +196,8 @@ public class ReadBottomStatusBar extends FrameLayout {
         tvChapterIndex.setTypeface(typeface);
     }
 
-    public void refreshUI(ReadBookControl readConfig) {
+    public void refreshUI() {
+        ReadBookControl readConfig = ReadBookControl.getInstance();
         boolean hideStatusBar = readConfig.getHideStatusBar();
         if (hideStatusBar) {
             setShowTimeBattery(readConfig.getShowTimeBattery());
@@ -205,6 +206,12 @@ public class ReadBottomStatusBar extends FrameLayout {
         }
         updateTextColor(readConfig.getTextColor());
         updateTextTypeface(readConfig.getFontPath());
+        setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
+    }
+
+    public void updatePadding() {
+        ReadBookControl readConfig = ReadBookControl.getInstance();
+        setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
     }
 
     public void updateOnPageChanged(BookShelfBean bookShelfBean, int durPageSize) {

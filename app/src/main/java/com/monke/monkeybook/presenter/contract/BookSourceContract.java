@@ -27,12 +27,16 @@ public interface BookSourceContract {
 
         void importBookSource(String url);
 
+        void importDefaultSource();
+
         void checkBookSource();
     }
 
     interface View extends IView {
 
         void refreshBookSource();
+
+        void importDefaultSource();
 
         Snackbar getSnackBar(String msg, int length);
 

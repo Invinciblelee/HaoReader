@@ -78,7 +78,7 @@ public class ReadBookControl {
         this.canClickTurn = readPreference.getBoolean("canClickTurn", true);
         this.canKeyTurn = readPreference.getBoolean("canKeyTurn", true);
         this.readAloudCanKeyTurn = readPreference.getBoolean("readAloudCanKeyTurn", true);
-        this.lineSpacing = readPreference.getInt("lineSpacing", 4);
+        this.lineSpacing = readPreference.getInt("lineSpacing", 6);
         this.paragraphSpacing = readPreference.getInt("paragraphSpacing",16);
         this.clickSensitivity = readPreference.getInt("clickSensitivity", 50) > 100
                 ? 50 : readPreference.getInt("clickSensitivity", 50);
@@ -92,7 +92,7 @@ public class ReadBookControl {
         this.lastNoteUrl = readPreference.getString("lastNoteUrl", "");
         this.screenTimeOut = readPreference.getInt("screenTimeOut", 0);
         this.paddingLeft = readPreference.getInt("paddingLeft", 24);
-        this.paddingTop = readPreference.getInt("paddingTop", 16);
+        this.paddingTop = readPreference.getInt("paddingTop", 0);
         this.paddingRight = readPreference.getInt("paddingRight", 24);
         this.paddingBottom = readPreference.getInt("paddingBottom", 0);
         this.pageMode = readPreference.getInt("pageMode", 0);

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -74,7 +75,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public void queryBookShelf(boolean refresh) {
-        boolean needRefresh = group != 3 && refresh || haveRefresh();
+        boolean needRefresh = group != 3 && (refresh || haveRefresh());
         Observable.create((ObservableOnSubscribe<List<BookShelfBean>>) e -> {
             List<BookShelfBean> bookShelfList = BookshelfHelp.getBooksByGroup(group);
             e.onNext(bookShelfList == null ? new ArrayList<>() : bookShelfList);

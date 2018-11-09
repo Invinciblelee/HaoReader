@@ -149,7 +149,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private boolean autoPage = false;
     private boolean isOrWillShow = false;
 
-    private Handler mHandler;
+    private final Handler mHandler = new Handler();
     private Runnable keepScreenRunnable;
     private Runnable upHpbNextPage;
 
@@ -186,7 +186,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         readBookControl.initPageConfiguration();
         screenTimeOut = getResources().getIntArray(R.array.screen_time_out_value)[readBookControl.getScreenTimeOut()];
         super.onCreate(savedInstanceState);
-        mHandler = new Handler();
     }
 
     @Override
@@ -371,7 +370,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
 
         flContent.setBackground(readBookControl.getBgDrawable(this));
-        readStatusBar.refreshUI(readBookControl);
 
         mPresenter.handleIntent(getIntent());
     }
@@ -570,6 +568,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 if (mPageLoader != null) {
                     mPageLoader.upMargin();
                 }
+
+                readStatusBar.updatePadding();
             }
 
             @Override
@@ -579,12 +579,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 if (mPageLoader != null) {
                     mPageLoader.setPageStyle(false);
                 }
-                readStatusBar.refreshUI(readBookControl);
+                readStatusBar.refreshUI();
             }
 
             @Override
             public void refresh() {
-                readStatusBar.refreshUI(readBookControl);
+                readStatusBar.refreshUI();
                 if (mPageLoader != null) {
                     mPageLoader.refreshUi();
                 }
@@ -611,7 +611,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             @Override
             public void refresh() {
                 initImmersionBar();
-                readStatusBar.refreshUI(readBookControl);
+                readStatusBar.refreshUI();
                 if (mPageLoader != null) {
                     mPageLoader.refreshUi();
                 }
@@ -1174,7 +1174,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             if (readInterfacePop != null) {
                 readInterfacePop.setBg();
             }
-            readStatusBar.refreshUI(readBookControl);
+            readStatusBar.refreshUI();
             initImmersionBar();
         }
     }
@@ -1251,6 +1251,16 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     }
                     return true;
                 } else if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    if (mPageLoader != null && !pageView.isStarted()) {
+                        mPageLoader.skipToPrePage();
+                    }
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_N) {
+                    if (mPageLoader != null && !pageView.isStarted()) {
+                        mPageLoader.skipToNextPage();
+                    }
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_P) {
                     if (mPageLoader != null && !pageView.isStarted()) {
                         mPageLoader.skipToPrePage();
                     }
@@ -1374,9 +1384,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (!AppActivityManager.getInstance().isExist(MainActivity.class)
                 && !AppActivityManager.getInstance().isExist(SearchBookActivity.class)) {
             android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
-            startActivityByAnim(intent,  android.R.anim.fade_in, android.R.anim.fade_out);
+            startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
             super.finishNoAnim();
-        }else {
+        } else {
             super.finish();
         }
     }

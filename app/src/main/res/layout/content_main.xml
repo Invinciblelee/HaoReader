@@ -8,11 +8,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay"
         tools:ignore="UnusedAttribute">
 
@@ -23,14 +24,11 @@
             android:transitionName="sharedView"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/book_list_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar"/>
-
-    <View style="@style/Style.Shadow.Top"
         android:layout_below="@id/appBar"/>
 </RelativeLayout>

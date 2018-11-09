@@ -7,16 +7,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.text.DecimalFormat;
@@ -48,33 +45,36 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
 
     @Override
     public void onBindIViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        final int realPosition = holder.getLayoutPosition();
+        final SearchBookBean item = searchBooks.get(realPosition);
         MyViewHolder myViewHolder = (MyViewHolder) holder;
         if (!activity.isFinishing()) {
             Glide.with(activity)
-                    .load(searchBooks.get(position).getCoverUrl())
+                    .load(item.getCoverUrl())
                     .apply(new RequestOptions()
                             .fitCenter().dontAnimate()
                             .placeholder(R.drawable.img_cover_default)
                             .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
-        myViewHolder.tvName.setText(searchBooks.get(position).getName());
+        myViewHolder.tvName.setText(item.getName());
 
-        if(!TextUtils.isEmpty(searchBooks.get(position).getAuthor())){
-            myViewHolder.tvAuthor.setText(searchBooks.get(position).getAuthor());
-        }else {
+        if (!TextUtils.isEmpty(item.getAuthor())) {
+            myViewHolder.tvAuthor.setText(item.getAuthor());
+        } else {
             myViewHolder.tvAuthor.setText(R.string.author_unknown);
         }
-        String state = searchBooks.get(position).getState();
-        if (state == null || state.length() == 0) {
+
+        String state = item.getState();
+        if (TextUtils.isEmpty(state)) {
             myViewHolder.tvState.setVisibility(View.GONE);
         } else {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
             myViewHolder.tvState.setText(state);
         }
-        long words = searchBooks.get(position).getWords();
+        long words = item.getWords();
         if (words <= 0) {
-            myViewHolder.tvWords.setVisibility(View.GONE);
+            myViewHolder.tvWords.setVisibility(View.INVISIBLE);
         } else {
             String wordsS = Long.toString(words) + "字";
             if (words > 10000) {
@@ -84,33 +84,32 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvWords.setVisibility(View.VISIBLE);
             myViewHolder.tvWords.setText(wordsS);
         }
-        String kind = searchBooks.get(position).getKind();
-        if (kind == null || kind.length() <= 0) {
+        String kind = item.getKind();
+        if (TextUtils.isEmpty(kind)) {
             myViewHolder.tvKind.setVisibility(View.GONE);
         } else {
             myViewHolder.tvKind.setVisibility(View.VISIBLE);
             myViewHolder.tvKind.setText(kind);
         }
-        if (searchBooks.get(position).getLastChapter() != null && searchBooks.get(position).getLastChapter().length() > 0)
-            myViewHolder.tvLasted.setText(searchBooks.get(position).getLastChapter());
-        else if (searchBooks.get(position).getDesc() != null && searchBooks.get(position).getDesc().length() > 0) {
-            myViewHolder.tvLasted.setText(searchBooks.get(position).getDesc());
-        } else
-            myViewHolder.tvLasted.setText("");
-        if (searchBooks.get(position).getOrigin() != null && searchBooks.get(position).getOrigin().length() > 0) {
+
+        String desc = !TextUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
+                : !TextUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
+        myViewHolder.tvLasted.setText(desc);
+
+        if (!TextUtils.isEmpty(item.getOrigin())) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
-            myViewHolder.tvOrigin.setText(searchBooks.get(position).getOrigin());
+            myViewHolder.tvOrigin.setText(item.getOrigin());
         } else {
-            myViewHolder.tvOrigin.setVisibility(View.GONE);
+            myViewHolder.tvOrigin.setVisibility(View.INVISIBLE);
         }
 
         myViewHolder.itemView.setOnClickListener(v -> {
             if (itemClickListener != null)
-                itemClickListener.clickItem(v, position, searchBooks.get(position));
+                itemClickListener.clickItem(v, realPosition, item);
         });
         myViewHolder.tvAddShelf.setOnClickListener(v -> {
             if (itemClickListener != null)
-                itemClickListener.clickAddShelf(myViewHolder.tvAddShelf, position, searchBooks.get(position));
+                itemClickListener.clickAddShelf(myViewHolder.tvAddShelf, realPosition, item);
         });
     }
 

@@ -31,7 +31,7 @@ public class BookShelfSearchView extends LinearLayout {
     @BindView(R.id.recycler_view)
     RecyclerView rvList;
     @BindView(R.id.appBar)
-    FrameLayout appBar;
+    View appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     SearchView searchView;

@@ -1,10 +1,14 @@
 package com.monke.monkeybook.model;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Observable;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -66,6 +71,10 @@ public class BookSourceManager extends BaseModelImpl {
 
     public List<String> getGroupList() {
         return groupList;
+    }
+
+    public boolean isEmpty(){
+        return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().count() == 0;
     }
 
     public void refreshBookSource() {
@@ -157,4 +166,29 @@ public class BookSourceManager extends BaseModelImpl {
         });
     }
 
+    public void importDefaultSource(Context context, OnImportSourceListener listener){
+        try {
+            URL url = new URL(context.getString(R.string.default_source_url));
+            BookSourceManager.getInstance().importSourceFromWww(url)
+                    .subscribe(new SimpleObserver<Boolean>() {
+                        @Override
+                        public void onNext(Boolean aBoolean) {
+                            listener.onSuccess();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            listener.onError();
+                        }
+                    });
+        } catch (Exception e) {
+            listener.onError();
+        }
+    }
+
+
+    public interface OnImportSourceListener{
+        void onSuccess();
+        void onError();
+    }
 }

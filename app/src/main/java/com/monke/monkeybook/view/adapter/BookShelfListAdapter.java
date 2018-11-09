@@ -24,8 +24,6 @@ import com.victor.loading.rotate.RotateLoading;
 import java.util.Locale;
 import java.util.Objects;
 
-import me.grantland.widget.AutofitTextView;
-
 public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapter.MyViewHolder> {
 
     public BookShelfListAdapter(Context context, int group, String bookPx) {
@@ -82,9 +80,9 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.ivHasNew.setVisibility(View.INVISIBLE);
         }
 
-        if(item.getChapterListSize() == 0){
+        if (item.getChapterListSize() == 0) {
             holder.tvCurChapter.setText("--/--");
-        }else {
+        } else {
             holder.tvCurChapter.setText(String.format(Locale.getDefault(), "%d/%d", item.getDurChapter() + 1, item.getChapterListSize()));
         }
 
@@ -129,10 +127,10 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
         ImageView ivHasNew;
-        AutofitTextView tvName;
+        TextView tvName;
         TextView tvAuthor;
-        AutofitTextView tvRead;
-        AutofitTextView tvLast;
+        TextView tvRead;
+        TextView tvLast;
         TextView tvCurChapter;
         MHorProgressBar mpbDurProgress;
         RotateLoading rotateLoading;

@@ -97,11 +97,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
+
         <activity
             android:name=".view.activity.BookDetailActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity.BookDetail" />
         <activity
             android:name=".view.activity.ImportBookActivity"

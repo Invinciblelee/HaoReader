@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -205,5 +206,4 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     protected void firstRequest() {
         super.firstRequest();
     }
-
 }

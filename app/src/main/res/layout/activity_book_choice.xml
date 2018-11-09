@@ -7,19 +7,26 @@
     android:fitsSystemWindows="true"
     app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:background="@color/colorPrimary"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:transitionName="sharedView"
-        app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        android:layout_height="wrap_content"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
 
 
     <FrameLayout
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/appBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
@@ -34,7 +41,4 @@
             app:speed="2dp" />
 
     </FrameLayout>
-
-    <View style="@style/Style.Shadow.Top"
-        android:layout_below="@id/toolbar"/>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

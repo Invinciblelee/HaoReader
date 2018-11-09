@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@drawable/selector_common_bg"
+    android:foreground="?attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <FrameLayout
@@ -58,6 +58,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="15dp"
                 android:background="@drawable/selector_tv_first_button"
+                android:clickable="false"
+                android:focusable="false"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:paddingStart="5dp"

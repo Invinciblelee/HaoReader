@@ -62,8 +62,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (useMy716 && Objects.equals(ACache.get(MApplication.getInstance()).getAsString("getZfbHb"), "True")) {
             searchEngineS.add(new SearchEngine(My716.TAG));
         }
-        for (BookSourceBean bookSourceBean : BookSourceManager.getInstance().getSelectedBookSource()) {
-            searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
+        List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
+        if(bookSourceBeans != null) {
+            for (BookSourceBean bookSourceBean : bookSourceBeans) {
+                searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
+            }
         }
         searchEngineChanged = false;
     }

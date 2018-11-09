@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
@@ -34,6 +35,7 @@ import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.adapter.SearchHistoryAdapter;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.flowlayout.TagFlowLayout;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
@@ -70,6 +72,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     private boolean useMy716;
     private boolean showStop;
     private boolean stopAutoScroll;
+
+    private MoDialogHUD moDialogHUD;
 
     private Runnable fabHidden = new Runnable() {
         @Override
@@ -137,9 +141,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         tflSearchHistory.setAdapter(searchHistoryAdapter);
 
         int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
-        rfRvSearchBooks.getRecyclerView().setClipToPadding(false);
         rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
-        rfRvSearchBooks.getRecyclerView().setHasFixedSize(true);
         rfRvSearchBooks.getRecyclerView().setItemAnimator(null);
         rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
 
@@ -496,4 +498,17 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         return searchBookAdapter;
     }
 
+    @Override
+    public void showBookSourceEmptyTip() {
+        if (moDialogHUD == null) {
+            moDialogHUD = new MoDialogHUD(this);
+        }
+
+        moDialogHUD.showTwoButton("您没有选择任何书源", "去选择"
+                , v -> {
+                    moDialogHUD.dismiss();
+                    BookSourceActivity.startThis(SearchBookActivity.this);
+                }, "取消",
+                v -> moDialogHUD.dismiss());
+    }
 }

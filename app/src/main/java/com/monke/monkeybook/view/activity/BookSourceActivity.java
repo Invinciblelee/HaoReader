@@ -166,6 +166,17 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         saveDate(adapter.getDataList());
     }
 
+    @Override
+    public void importDefaultSource() {
+        moDialogHUD.showTwoButton("当前没有书源，是否导入默认书源？",
+                getString(R.string.ok),
+                v -> {
+                    showLoading("正在导入默认书源");
+                    mPresenter.importDefaultSource();
+                }, getString(R.string.cancel),
+                v -> moDialogHUD.dismiss());
+    }
+
     public void upSearchView(int size) {
         AppCompat.setQueryHintForSearchText(mSearchAutoComplete, getString(R.string.search_book_source_num, size));
     }

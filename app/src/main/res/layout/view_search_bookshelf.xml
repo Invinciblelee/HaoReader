@@ -7,26 +7,26 @@
     android:background="@color/background"
     android:orientation="vertical">
 
-    <FrameLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay"
         tools:ignore="UnusedAttribute">
-
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
             app:contentInsetStartWithNavigation="0dp"
             app:navigationContentDescription="@string/back"
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 
-    </FrameLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -37,8 +37,4 @@
         android:overScrollMode="never"
         android:paddingTop="@dimen/half_card_item_margin"
         android:paddingBottom="@dimen/half_card_item_margin" />
-
-    <View
-        style="@style/Style.Shadow.Top"
-        android:layout_below="@id/appBar" />
 </RelativeLayout>

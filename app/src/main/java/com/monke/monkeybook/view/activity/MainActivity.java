@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +23,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
@@ -31,7 +31,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.widget.AppCompat;
@@ -143,6 +142,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
 
         moDialogHUD = new MoDialogHUD(this);
+    }
+
+    @Override
+    protected void firstRequest() {
+        if (!EasyPermissions.hasPermissions(this, MApplication.PerList)) {
+            ActivityCompat.requestPermissions(this, MApplication.PerList, MApplication.RESULT__PERMS);
+        }
     }
 
     @Override

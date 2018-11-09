@@ -1,5 +1,7 @@
 package com.monke.monkeybook.widget.page;
 
+import android.util.Log;
+
 import java.util.List;
 
 /**
@@ -137,28 +139,26 @@ public class TxtChapter {
      * 获取上一个页面
      */
     boolean prevPage() {
-        lastPage = currentPage;
         int pos = getPosition() - 1;
         if (pos >= 0) {
+            lastPage = currentPage;
             currentPage = txtPages.get(pos);
-        } else {
-            currentPage = null;
+            return true;
         }
-        return currentPage != null;
+        return false;
     }
 
     /**
      * 获取下一的页面
      */
     boolean nextPage() {
-        lastPage = currentPage;
         int pos = getPosition() + 1;
-        if (size() > 0 && pos < txtPages.size()) {
+        if (pos < size()) {
+            lastPage = currentPage;
             currentPage = txtPages.get(pos);
-        } else {
-            currentPage = null;
+            return true;
         }
-        return currentPage != null;
+        return false;
     }
 
     /**

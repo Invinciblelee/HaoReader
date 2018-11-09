@@ -75,6 +75,8 @@ public interface SearchBookContract {
          */
         SearchBookAdapter getSearchBookAdapter();
 
+        void showBookSourceEmptyTip();
+
         void upMenu();
     }
 

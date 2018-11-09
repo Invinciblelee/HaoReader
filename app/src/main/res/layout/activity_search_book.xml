@@ -8,32 +8,39 @@
     android:fitsSystemWindows="true"
     app:appInsetForeground="@color/colorPrimary">
 
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:transitionName="sharedView"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        android:layout_height="wrap_content"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.SearchView
-            android:id="@+id/searchView"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:imeOptions="actionSearch"
-            app:defaultQueryHint="@string/search"
-            tools:ignore="UnusedAttribute" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:transitionName="sharedView"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    </android.support.v7.widget.Toolbar>
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:imeOptions="actionSearch"
+                app:defaultQueryHint="@string/search"
+                tools:ignore="UnusedAttribute" />
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/appBar">
 
         <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
             android:id="@+id/rfRv_search_books"
@@ -127,8 +134,5 @@
             app:fabSize="mini"
             app:layout_anchorGravity="right|bottom" />
     </RelativeLayout>
-
-    <View style="@style/Style.Shadow.Top"
-        android:layout_below="@id/toolbar"/>
 
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

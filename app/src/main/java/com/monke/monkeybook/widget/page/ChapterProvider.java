@@ -3,7 +3,6 @@ package com.monke.monkeybook.widget.page;
 import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.text.StaticLayout;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;

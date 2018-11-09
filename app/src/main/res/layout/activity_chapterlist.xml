@@ -9,50 +9,59 @@
     android:orientation="vertical"
     app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:contentInsetStartWithNavigation="0dp"
-        app:navigationContentDescription="@string/back"
-        app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        android:layout_height="wrap_content"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/toolbar_tab"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:fillViewport="false"
-            app:layout_scrollFlags="scroll"
-            app:tabIndicatorColor="@color/colorAccent"
-            app:tabIndicatorHeight="2.0dp"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorAccent"
-            app:tabTextColor="@color/menu_color_default">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationContentDescription="@string/back"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <android.support.design.widget.TabItem
+            <android.support.design.widget.TabLayout
+                android:id="@+id/toolbar_tab"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/table_of_contents" />
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:fillViewport="false"
+                app:layout_scrollFlags="scroll"
+                app:tabIndicatorColor="@color/colorAccent"
+                app:tabIndicatorHeight="2.0dp"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/colorAccent"
+                app:tabTextColor="@color/menu_color_default">
 
-            <android.support.design.widget.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/bookmark" />
+                <android.support.design.widget.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/table_of_contents" />
 
-        </android.support.design.widget.TabLayout>
+                <android.support.design.widget.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/bookmark" />
 
-    </android.support.v7.widget.Toolbar>
+            </android.support.design.widget.TabLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/appBar"
         android:layout_alignParentStart="true"
         android:background="@color/background"
         android:descendantFocusability="blocksDescendants">
@@ -71,10 +80,12 @@
             android:id="@+id/ll_chapter_base_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:stateListAnimator="@animator/design_bottombar_state_list_animator"
             android:layout_alignParentBottom="true"
             android:background="@color/colorPrimary"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:outlineProvider="background"
             android:padding="5dp">
 
             <TextView
@@ -82,10 +93,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="middle"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:singleLine="true"
-                android:ellipsize="middle"
                 android:textColor="@color/tv_text_default"
                 android:textSize="12sp" />
 
@@ -93,8 +104,8 @@
                 android:id="@+id/iv_chapter_sort"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/bg_ib_pre_round"
                 android:contentDescription="@string/swap_vert"
                 android:padding="2dp"
@@ -102,13 +113,6 @@
                 app:tint="@color/tv_text_default" />
         </LinearLayout>
 
-        <View
-            android:id="@+id/v_shadow"
-            style="@style/Style.Shadow.Bottom"
-            android:layout_above="@id/ll_chapter_base_info" />
     </RelativeLayout>
 
-    <View
-        style="@style/Style.Shadow.Top"
-        android:layout_below="@id/toolbar" />
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

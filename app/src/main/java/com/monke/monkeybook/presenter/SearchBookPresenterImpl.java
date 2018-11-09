@@ -1,11 +1,9 @@
 package com.monke.monkeybook.presenter;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -24,8 +22,6 @@ import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -44,8 +40,8 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
             @Override
             public void searchSourceEmpty() {
-                Toast.makeText(mView.getContext(), "没有选中任何书源", Toast.LENGTH_SHORT).show();
                 mView.refreshFinish();
+                mView.showBookSourceEmptyTip();
             }
 
             @Override
@@ -221,7 +217,9 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
     @Override
     public void toSearchBooks(String key) {
-        searchKey = key;
+        if (key != null) {
+            searchKey = key;
+        }
         if (!NetworkUtil.isNetworkAvailable()) {
             mView.searchBookError();
             return;

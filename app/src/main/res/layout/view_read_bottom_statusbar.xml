@@ -3,9 +3,7 @@
     android:id="@+id/read_statusbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:layout_gravity="bottom">
 
     <LinearLayout
         android:id="@+id/ll_battery_time"

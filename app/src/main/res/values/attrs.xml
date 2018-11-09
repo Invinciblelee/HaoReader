@@ -36,12 +36,6 @@
         <attr name="android:summary" />
     </declare-styleable>
 
-    <declare-styleable name="RefreshLayout">
-        <attr name="layout_refresh_empty" format="reference"/>
-        <attr name="layout_refresh_error" format="reference"/>
-        <attr name="layout_refresh_loading" format="reference"/>
-    </declare-styleable>
-
     <declare-styleable name="FastScroller">
         <attr name="fadeScrollbar" format="boolean" />
         <attr name="showBubble" format="boolean" />

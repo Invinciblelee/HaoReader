@@ -7,13 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 
@@ -59,7 +57,7 @@ public class RefreshRecyclerView extends FrameLayout {
         View view = LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler_view, this, false);
         ButterKnife.bind(this, view);
 
-        recyclerView.setOverScrollMode(OVER_SCROLL_NEVER);
+        recyclerView.setHasFixedSize(true);
 
         @SuppressLint("CustomViewStyleable")
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RefreshProgressBar);
@@ -158,7 +156,7 @@ public class RefreshRecyclerView extends FrameLayout {
                 recyclerView.post(() -> {
                     if (((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getICount() == 0) {
                         noDataView.setVisibility(VISIBLE);
-                    }else {
+                    } else {
                         noDataView.setVisibility(GONE);
                     }
                 });
@@ -194,7 +192,7 @@ public class RefreshRecyclerView extends FrameLayout {
         recyclerView.setAdapter(refreshRecyclerViewAdapter);
     }
 
-    public void setRefreshRecyclerViewAdapter(View headerView ,RefreshRecyclerViewAdapter refreshRecyclerViewAdapter, RecyclerView.LayoutManager layoutManager) {
+    public void setRefreshRecyclerViewAdapter(View headerView, RefreshRecyclerViewAdapter refreshRecyclerViewAdapter, RecyclerView.LayoutManager layoutManager) {
         refreshRecyclerViewAdapter.setClickTryAgainListener(() -> {
             if (loadMoreListener != null)
                 loadMoreListener.loadMoreErrorTryAgain();

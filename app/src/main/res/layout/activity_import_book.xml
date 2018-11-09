@@ -8,11 +8,11 @@
     android:fitsSystemWindows="true"
     app:appInsetForeground="@color/colorPrimary">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:background="@color/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -71,7 +71,7 @@
                 tools:ignore="RtlHardcoded" />
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/content_frame"
@@ -80,14 +80,13 @@
         android:layout_height="match_parent"
         android:layout_above="@id/file_system_bottom_bar" />
 
-    <View style="@style/Style.Shadow.Bottom"
-        android:layout_above="@id/file_system_bottom_bar"/>
 
     <!--文件点击按钮-->
     <RelativeLayout
         android:id="@+id/file_system_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:stateListAnimator="@animator/design_bottombar_state_list_animator"
         android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true">
 
@@ -98,7 +97,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:text="全选"
-            android:textColor="@color/tv_text_default" />
+            android:textColor="@color/selector_btn_file_delete" />
 
         <Button
             android:id="@+id/file_system_btn_add_book"
@@ -123,7 +122,4 @@
             android:text="删除"
             android:textColor="@color/selector_btn_file_delete" />
     </RelativeLayout>
-
-    <View style="@style/Style.Shadow.Top"
-        android:layout_below="@id/appBar"/>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

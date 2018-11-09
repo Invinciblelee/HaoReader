@@ -97,7 +97,8 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
             bookListAdapter = new BookShelfListAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new LinearLayoutManager(getContext()));
         } else {
-            rvBookshelf.setPadding(0, 0, 0, 0);
+            int padding = 0;
+            rvBookshelf.setPadding(padding, padding, padding, padding);
             bookListAdapter = new BookShelfGridAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new GridLayoutManager(getContext(), 3));
         }
@@ -189,7 +190,12 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public void updateLayoutType(boolean viewIsList) {
-        List<BookShelfBean> books = bookListAdapter.getBooks();
+        final List<BookShelfBean> books;
+        if (bookListAdapter instanceof BookShelfListAdapter) {
+            books = ((BookShelfListAdapter) bookListAdapter).getBooks();
+        }else {
+            books = ((BookShelfGridAdapter) bookListAdapter).getBooks();
+        }
 
         String bookPx = mPresenter.getBookPx();
 
@@ -199,7 +205,8 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
             bookListAdapter = new BookShelfListAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new LinearLayoutManager(getContext()));
         } else {
-            rvBookshelf.setPadding(0, 0, 0, 0);
+            int padding = 0;
+            rvBookshelf.setPadding(padding, padding, padding, padding);
             bookListAdapter = new BookShelfGridAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new GridLayoutManager(getContext(), 3));
         }
@@ -238,12 +245,12 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     public void setItemClickListenerTwo(OnBookItemClickListenerTwo itemClickListenerTwo) {
         this.itemClickListenerTwo = itemClickListenerTwo;
-        if(bookListAdapter != null){
+        if (bookListAdapter != null) {
             bookListAdapter.setItemClickListener(this.itemClickListenerTwo);
         }
     }
 
-    public interface IConfigGetter{
+    public interface IConfigGetter {
         boolean isRecreate();
 
         SharedPreferences getPreferences();

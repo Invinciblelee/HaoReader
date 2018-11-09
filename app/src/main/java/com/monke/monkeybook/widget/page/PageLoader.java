@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -85,7 +84,7 @@ public abstract class PageLoader {
     // 判断章节列表是否加载完成
     private boolean isChapterListPrepare;
     //展示加载界面
-    private boolean willNotDraw;
+    private boolean willNotDraw = false;
 
     // 是否打开过章节
     private boolean isFirstOpen = true;
@@ -441,7 +440,6 @@ public abstract class PageLoader {
         mCollBook = collBook;
         mCurChapterPos = mCollBook.getDurChapter();
         mLastChapterPos = mCurChapterPos;
-        willNotDraw = isChapterListPrepare = !mCollBook.realChapterListEmpty();
         mCurChapter = new TxtChapter(mCurChapterPos, STATUS_LOADING);
         if (!isChapterListPrepare) {
             mCurChapter.setStatus(STATUS_PREPARE_CATEGORY);
@@ -814,9 +812,9 @@ public abstract class PageLoader {
             dispatchChapterChangeEvent();
         } else {
             dealLoadChapter(prevChapter);
-            if(!mCurChapter.isEmpty()){
+            if (!mCurChapter.isEmpty()) {
                 mCurChapter.setPosition(mCurChapter.size() - 1);
-            }else {
+            } else {
                 mTargetIntent = TxtChapter.Intent.PREV;
             }
         }
@@ -862,9 +860,9 @@ public abstract class PageLoader {
         } else {
             // 处理页面解析
             dealLoadChapter(nextChapter);
-            if(!mCurChapter.isEmpty()){
+            if (!mCurChapter.isEmpty()) {
                 mCurChapter.setPosition(0);
-            }else {
+            } else {
                 mTargetIntent = TxtChapter.Intent.NEXT;
             }
         }

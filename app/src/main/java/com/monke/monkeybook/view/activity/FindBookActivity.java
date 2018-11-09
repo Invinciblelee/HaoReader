@@ -68,11 +68,11 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         //  设置分组项的点击监听事件
         expandableList.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             // 请务必返回 false，否则分组不会展开
-            if(!expandableList.isGroupExpanded(groupPosition)) {
+            if (!expandableList.isGroupExpanded(groupPosition)) {
                 expandOnlyOne(groupPosition);
                 expandableList.expandGroup(groupPosition);
                 expandableList.post(() -> expandableList.setSelectedGroup(groupPosition));
-            }else {
+            } else {
                 expandableList.collapseGroup(groupPosition);
             }
             return true;
@@ -81,12 +81,11 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         //  设置子选项点击监听事件
         expandableList.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             FindKindBean kindBean = adapter.getDataList().get(groupPosition).getChildren().get(childPosition);
-
             Intent intent = new Intent(this, ChoiceBookActivity.class);
             intent.putExtra("url", kindBean.getKindUrl());
             intent.putExtra("title", kindBean.getKindName());
             intent.putExtra("tag", kindBean.getTag());
-            startActivityByAnim(intent, v, "sharedView");
+            startActivity(intent);
             return true;
         });
 

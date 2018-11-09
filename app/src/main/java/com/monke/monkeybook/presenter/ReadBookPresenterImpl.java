@@ -80,7 +80,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 mView.prepareDisplay(true);
             }
         }
-        mView.showHideView();
     }
 
     /**
@@ -315,7 +314,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             bookShelf.setHasUpdate(false);
             e.onNext(true);
             e.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
