@@ -1,2 +1,4 @@
 *.iml
+*.jks
 /build
+/version.properties
