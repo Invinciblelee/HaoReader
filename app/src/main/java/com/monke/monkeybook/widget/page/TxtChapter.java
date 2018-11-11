@@ -1,7 +1,5 @@
 package com.monke.monkeybook.widget.page;
 
-import android.util.Log;
-
 import java.util.List;
 
 /**
