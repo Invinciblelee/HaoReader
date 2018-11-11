@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapter.MyViewHolder> {
 
-    public BookShelfListAdapter(Context context, int group, String bookPx) {
+    public BookShelfListAdapter(Context context, int group, int bookPx) {
         super(context, group, bookPx);
     }
 

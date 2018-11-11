@@ -76,7 +76,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 if (inBookShelf) {
                     readBookControl.setLastNoteUrl(bookShelf.getNoteUrl());
                 }
-                mView.updateTitle(bookShelf.getBookInfoBean().getName());
                 mView.prepareDisplay(true);
             }
         }

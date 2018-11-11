@@ -1,6 +1,7 @@
 package com.monke.monkeybook.widget;
 
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -50,7 +51,7 @@ public class AppCompat {
         if(showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
             setTintList(bag, createSearchPlateBagState(searchView.getResources().getColor(R.color.colorAccent),
-                    searchText.getCurrentHintTextColor()));
+                    Color.GRAY));
             android.support.v4.view.ViewCompat.setBackground(plate, bag);
         }else {
             android.support.v4.view.ViewCompat.setBackground(plate, null);
@@ -63,7 +64,6 @@ public class AppCompat {
         useCustomIconForSearchView(searchView, hint, true, true);
     }
 
-
     private static ColorStateList createSearchPlateBagState(int activeColor, int normalColor) {
         int[] colors = new int[]{activeColor, activeColor, activeColor, normalColor, normalColor};
         int[][] states = new int[5][];
@@ -75,24 +75,24 @@ public class AppCompat {
         return new ColorStateList(states, colors);
     }
 
-    public static void setQueryHintForSearchText(SearchView.SearchAutoComplete textView, String hintText) {
-        setQueryHintForSearchText(textView, hintText, true);
+    public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText) {
+        setQueryHintForSearchText(searchText, hintText, true);
     }
 
 
-    public static void setQueryHintForSearchText(SearchView.SearchAutoComplete textView, String hintText, boolean showIcon) {
-        textView.setTextColor(textView.getResources().getColor(R.color.tv_text_default));
+    public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText, boolean showIcon) {
+        searchText.setTextColor(searchText.getResources().getColor(R.color.tv_text_default));
         if(showIcon) {
-            final int textSize = (int) (textView.getTextSize() * 1.25);
-            Drawable mSearchHintIcon = textView.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
+            final int textSize = (int) (searchText.getTextSize() * 1.25);
+            Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
             mSearchHintIcon.setBounds(0, 0, textSize, textSize);
-            setTint(mSearchHintIcon, textView.getCurrentTextColor());
+            setTint(mSearchHintIcon, Color.GRAY);
             final SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
             ssb.setSpan(new ImageSpan(mSearchHintIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             ssb.append(hintText);
-            textView.setHint(ssb);
+            searchText.setHint(ssb);
         }else {
-            textView.setHint(hintText);
+            searchText.setHint(hintText);
         }
     }
 

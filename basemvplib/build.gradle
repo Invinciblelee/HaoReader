@@ -50,5 +50,5 @@ dependencies {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }
     //J_SOUP
-    api 'org.jsoup:jsoup:1.10.2'
+    api 'org.jsoup:jsoup:1.11.3'
 }

@@ -72,7 +72,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             settingActivity.initImmersionBar();
             RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
         } else if (key.equals(getString(R.string.pk_bookshelf_px))) {
-            RxBus.get().post(RxBusTag.UPDATE_BOOK_PX, sharedPreferences.getString(key, "0"));
+            String bookPx = sharedPreferences.getString(key, "0");
+            RxBus.get().post(RxBusTag.UPDATE_BOOK_PX, Integer.parseInt(bookPx));
         }
     }
 }

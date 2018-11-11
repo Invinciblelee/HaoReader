@@ -67,8 +67,10 @@ import static com.monke.monkeybook.service.ReadAloudService.NEXT;
 import static com.monke.monkeybook.service.ReadAloudService.PAUSE;
 import static com.monke.monkeybook.service.ReadAloudService.PLAY;
 import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
+import static com.monke.monkeybook.utils.ScreenBrightnessUtil.getScreenBrightness;
+import static com.monke.monkeybook.utils.ScreenBrightnessUtil.setScreenBrightness;
 
-public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> implements ReadBookContract.View, OnPageChangeListener {
+public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> implements ReadBookContract.View, OnPageChangeListener, View.OnClickListener, View.OnLongClickListener {
 
     private static final int CHAPTER_SKIP_RESULT = 11;
 
@@ -131,7 +133,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private Animation menuTopOut;
     private Animation menuBottomIn;
     private Animation menuBottomOut;
-    private ActionBar actionBar;
     private PageLoader mPageLoader;
 
     private int aloudStatus;
@@ -292,7 +293,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
     }
 
-
     /**
      * 自动翻页
      */
@@ -344,13 +344,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     protected void initData() {
-
     }
 
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
         setupActionBar();
 
         int menuColor = getResources().getColor(R.color.menu_color_default);
@@ -366,16 +364,42 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
 
         if (!readBookControl.getLightIsFollowSys()) {
-            ReadAdjustPop.setScreenBrightness(this, readBookControl.getScreenLight(ReadAdjustPop.getScreenBrightness(this)));
+            setScreenBrightness(this, readBookControl.getScreenLight(getScreenBrightness(this)));
         }
-
-        flContent.setBackground(readBookControl.getBgDrawable(this));
+        readStatusBar.refreshUI();
 
         mPresenter.handleIntent(getIntent());
     }
 
     @Override
-    public void showHideView() {
+    public void prepareDisplay(boolean check) {
+        mPageLoader = pageView.getPageLoader(this, mPresenter.getBookShelf());
+
+        if (check) {
+            getWindow().getDecorView().post(() -> mPresenter.checkBookInfo());
+        } else {
+            startLoadingBook();
+        }
+
+        if (mPresenter.getBookShelf().getChapterListSize() > 0) {
+            readStatusBar.updateChapterInfo(mPresenter.getBookShelf(), 0);
+        }
+
+        updateTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
+        showHideView();
+    }
+
+    //设置ToolBar
+    private void setupActionBar() {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        }
+    }
+
+    private void showHideView() {
         if (mPresenter.getBookShelf() == null
                 || mPresenter.getBookShelf().realChapterListEmpty()
                 || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
@@ -390,22 +414,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public void prepareDisplay(boolean check) {
-        mPageLoader = pageView.getPageLoader(this, mPresenter.getBookShelf());
-
-        if (mPresenter.getBookShelf().getChapterListSize() > 0) {
-            readStatusBar.updateOnPageChanged(mPresenter.getBookShelf(), 0);
-        }
-
-        if (check) {
-            getWindow().getDecorView().post(() -> mPresenter.checkBookInfo());
-        } else {
-            startLoadingBook();
-        }
-
-        showHideView();
+    public void updateTitle(String title) {
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setTitle(title);
     }
-
 
     @Override
     public void showLoading(String msg) {
@@ -565,28 +577,28 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
             @Override
             public void upMargin() {
+                readStatusBar.updatePadding();
+
                 if (mPageLoader != null) {
                     mPageLoader.upMargin();
                 }
-
-                readStatusBar.updatePadding();
             }
 
             @Override
             public void bgChange() {
                 initImmersionBar();
-                flContent.setBackground(readBookControl.getBgDrawable(ReadBookActivity.this));
+                readStatusBar.refreshUI();
+
                 if (mPageLoader != null) {
                     mPageLoader.setPageStyle(false);
                 }
-                readStatusBar.refreshUI();
             }
 
             @Override
             public void refresh() {
                 readStatusBar.refreshUI();
                 if (mPageLoader != null) {
-                    mPageLoader.refreshUi();
+                    mPageLoader.refreshUI();
                 }
             }
 
@@ -613,7 +625,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 initImmersionBar();
                 readStatusBar.refreshUI();
                 if (mPageLoader != null) {
-                    mPageLoader.refreshUi();
+                    mPageLoader.refreshUI();
                 }
             }
 
@@ -705,7 +717,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mPresenter.getBookShelf().upDurChapterName();
         mPresenter.saveProgress();
 
-        readStatusBar.updateOnPageChanged(mPresenter.getBookShelf(), pageSize);
+        readStatusBar.updateChapterInfo(mPresenter.getBookShelf(), pageSize);
 
         hpbReadProgress.post(() -> hpbReadProgress.setDurProgress(pageIndex));
 
@@ -732,8 +744,49 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     protected void bindEvent() {
+        //打开URL
+        atvUrl.setOnClickListener(this);
+
+        //朗读定时
+        fabReadAloudTimer.setOnClickListener(this);
+
+        //朗读
+        fabReadAloud.setOnClickListener(this);
+        //长按停止朗读
+        fabReadAloud.setOnLongClickListener(this);
+
+        //自动翻页
+        fabAutoPage.setOnClickListener(this);
+        fabAutoPage.setOnLongClickListener(this);
+
+        //替换
+        fabReplaceRule.setOnClickListener(this);
+        fabReplaceRule.setOnLongClickListener(this);
+
+        //夜间模式
+        fabNightTheme.setOnClickListener(this);
+        fabNightTheme.setOnLongClickListener(this);
+
+        //上一章
+        tvPre.setOnClickListener(this);
+
+        //下一章
+        tvNext.setOnClickListener(this);
+
+        //目录
+        btnCatalog.setOnClickListener(this);
+
+        //亮度
+        btnLight.setOnClickListener(this);
+
+        //界面
+        btnFont.setOnClickListener(this);
+
+        //设置
+        btnSetting.setOnClickListener(this);
+
         //菜单
-        controlsView.setOnClickListener(v -> popMenuOut());
+        controlsView.setOnClickListener(this);
 
         //动态设置状态栏，导航栏
         controlsView.setOnInsetsCallback(insets -> {
@@ -772,144 +825,116 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
             }
         });
-
-        //打开URL
-        atvUrl.setOnClickListener(view -> {
-            try {
-                String url = atvUrl.getText().toString();
-                android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
-            } catch (Exception e) {
-                e.printStackTrace();
-                toast(getString(R.string.can_not_open));
-            }
-        });
-
-        //朗读定时
-        fabReadAloudTimer.setOnClickListener(view -> ReadAloudService.setTimer(this));
-
-        //朗读
-        fabReadAloud.setOnClickListener(view -> onMediaButton());
-        //长按停止朗读
-        fabReadAloud.setOnLongClickListener(view -> {
-            if (ReadAloudService.running) {
-                toast(getString(R.string.aloud_stop));
-                ReadAloudService.stop(this);
-            } else {
-                toast(getString(R.string.read_aloud));
-            }
-            return true;
-        });
-
-        //自动翻页
-        fabAutoPage.setOnClickListener(view -> {
-            if (ReadAloudService.running) {
-                Toast.makeText(this, "朗读正在运行,不能自动翻页", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            autoPage = !autoPage;
-            autoPage();
-            popMenuOut();
-        });
-        fabAutoPage.setOnLongClickListener(view -> {
-            toast(getString(R.string.auto_next_page));
-            return true;
-        });
-
-        //替换
-        fabReplaceRule.setOnClickListener(view -> {
-            isOrWillShow = true;
-            popMenuOut();
-            new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 200L);
-        });
-        fabReplaceRule.setOnLongClickListener(view -> {
-            toast(getString(R.string.replace_rule_title));
-            return true;
-        });
-
-        //夜间模式
-        fabNightTheme.setOnClickListener(view -> {
-            popMenuOut();
-            new Handler().postDelayed(() -> setNightTheme(!isNightTheme()), 200L);
-        });
-        fabNightTheme.setOnLongClickListener(view -> {
-            toast(getString(R.string.night_theme));
-            return true;
-        });
-
-        //上一章
-        tvPre.setOnClickListener(view -> {
-            if (mPresenter.getBookShelf() != null) {
-                mPageLoader.skipPreChapter();
-            }
-        });
-
-        //下一章
-        tvNext.setOnClickListener(view -> {
-            if (mPresenter.getBookShelf() != null) {
-                mPageLoader.skipNextChapter();
-            }
-        });
-
-        //目录
-        btnCatalog.setOnClickListener(view -> {
-            isOrWillShow = true;
-            popMenuOut();
-            if (mPresenter.getBookShelf() != null && !mPresenter.getBookShelf().realChapterListEmpty()) {
-                new Handler().postDelayed(() -> ChapterListActivity.startThis(ReadBookActivity.this, mPresenter.getBookShelf(), CHAPTER_SKIP_RESULT), 200L);
-            }
-        });
-
-        //亮度
-        btnLight.setOnClickListener(view -> {
-            isOrWillShow = true;
-            popMenuOut();
-            ensureReadAdjustPop();
-            new Handler().postDelayed(() -> {
-                readAdjustPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
-                initImmersionBar();
-            }, 220L);
-        });
-
-        //界面
-        btnFont.setOnClickListener(view -> {
-            isOrWillShow = true;
-            popMenuOut();
-            ensureReadInterfacePop();
-            new Handler().postDelayed(() -> {
-                readInterfacePop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
-                initImmersionBar();
-            }, 220L);
-        });
-
-        //设置
-        btnSetting.setOnClickListener(view -> {
-            isOrWillShow = true;
-            popMenuOut();
-            ensureMoreSettingPop();
-            new Handler().postDelayed(() -> {
-                moreSettingPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
-                initImmersionBar();
-            }, 220L);
-        });
-
-        tvReadAloudTimer.setOnClickListener(null);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.controls_frame:
+                popMenuOut();
+                break;
+            case R.id.atv_url:
+                openCurrentChapterBrowser();
+                break;
+            case R.id.fab_read_aloud_timer:
+                ReadAloudService.setTimer(this);
+                break;
+            case R.id.fabReadAloud:
+                onMediaButton();
+                break;
+            case R.id.fabAutoPage:
+                if (ReadAloudService.running) {
+                    Toast.makeText(this, "朗读正在运行,不能自动翻页", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                autoPage = !autoPage;
+                autoPage();
+                popMenuOut();
+                break;
+            case R.id.fabReplaceRule:
+                isOrWillShow = true;
+                popMenuOut();
+                new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 200L);
+                break;
+            case R.id.fabNightTheme:
+                popMenuOut();
+                new Handler().postDelayed(() -> setNightTheme(!isNightTheme()), 200L);
+                break;
+            case R.id.tv_pre:
+                if (mPresenter.getBookShelf() != null) {
+                    mPageLoader.skipPreChapter();
+                }
+                break;
+            case R.id.tv_next:
+                if (mPresenter.getBookShelf() != null) {
+                    mPageLoader.skipNextChapter();
+                }
+                break;
+            case R.id.btn_catalog:
+                isOrWillShow = true;
+                popMenuOut();
+                if (mPresenter.getBookShelf() != null && !mPresenter.getBookShelf().realChapterListEmpty()) {
+                    new Handler().postDelayed(() -> ChapterListActivity.startThis(ReadBookActivity.this, mPresenter.getBookShelf(), CHAPTER_SKIP_RESULT), 200L);
+                }
+                break;
+            case R.id.btn_light:
+                isOrWillShow = true;
+                popMenuOut();
+                ensureReadAdjustPop();
+                new Handler().postDelayed(() -> {
+                    readAdjustPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                    initImmersionBar();
+                }, 220L);
+                break;
+            case R.id.btn_font:
+                isOrWillShow = true;
+                popMenuOut();
+                ensureReadInterfacePop();
+                new Handler().postDelayed(() -> {
+                    readInterfacePop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                    initImmersionBar();
+                }, 220L);
+                break;
+            case R.id.btn_setting:
+                isOrWillShow = true;
+                popMenuOut();
+                ensureMoreSettingPop();
+                new Handler().postDelayed(() -> {
+                    moreSettingPop.showAtLocation(flContent, Gravity.BOTTOM, 0, 0);
+                    initImmersionBar();
+                }, 220L);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.fabReadAloud:
+                if (ReadAloudService.running) {
+                    toast(getString(R.string.aloud_stop));
+                    ReadAloudService.stop(this);
+                } else {
+                    toast(getString(R.string.read_aloud));
+                }
+                break;
+            case R.id.fabAutoPage:
+                toast(getString(R.string.auto_next_page));
+                break;
+            case R.id.fabReplaceRule:
+                toast(getString(R.string.replace_rule_title));
+                break;
+            case R.id.fabNightTheme:
+                toast(getString(R.string.night_theme));
+                break;
+        }
+        return true;
+    }
 
     @Override
     public void startLoadingBook() {
         hpbReadProgress.setMaxProgress(0);
         initPageView();
-    }
-
-    //设置ToolBar
-    private void setupActionBar() {
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override
@@ -978,6 +1003,18 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openCurrentChapterBrowser() {
+        try {
+            String url = atvUrl.getText().toString();
+            android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            toast(getString(R.string.can_not_open));
+        }
     }
 
     /**
@@ -1110,13 +1147,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public void updateTitle(String title) {
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-        }
-    }
-
-    @Override
     public void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
@@ -1169,7 +1199,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             recreate();
         } else {
             if (mPageLoader != null) {
-                mPageLoader.refreshUi();
+                mPageLoader.refreshUI();
             }
             if (readInterfacePop != null) {
                 readInterfacePop.setBg();

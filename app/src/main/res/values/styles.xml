@@ -27,7 +27,6 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@null</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="CAppTheme.Activity.BookDetail" parent="CAppTheme">

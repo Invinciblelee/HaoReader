@@ -6,6 +6,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import com.monke.monkeybook.help.ReadBookControl;
+
 /**
  * Created by newbiechen on 17-7-24.
  * 横向动画的模板
@@ -13,7 +15,6 @@ import android.view.ViewConfiguration;
 
 public abstract class HorizonPageAnim extends PageAnimation {
     //动画速度
-    static final int animationSpeed = 300;
     Bitmap mCurBitmap;
     Bitmap mNextBitmap;
 
@@ -28,11 +29,15 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
+    private int mTouchSlop;
+
     HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
+
+        mTouchSlop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
     }
 
     /**
@@ -48,7 +53,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
         //获取点击位置
         int x = (int) event.getX();
         int y = (int) event.getY();
@@ -78,7 +82,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             case MotionEvent.ACTION_MOVE:
                 //判断是否移动了
                 if (!isMove) {
-                    isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartX - y) > slop;
+                    isMove = Math.abs(mStartX - x) > 0 || Math.abs(mStartX - y) > 0;
                 }
 
                 if (isMove) {
@@ -122,7 +126,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isMove) {
-                    isNext = x > mScreenWidth / 2 || readBookControl.getClickAllNext();
+                    isNext = x > mScreenWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
 
                     if (isNext) {
                         //判断是否下一页存在
@@ -140,7 +144,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                         }
                     }
                 } else {
-                    isCancel = Math.abs(mLastX - mStartX) < slop * 3 || isCancel;
+                    isCancel = Math.abs(mLastX - mStartX) < mTouchSlop * 3 || isCancel;
                 }
 
                 // 是否取消翻页

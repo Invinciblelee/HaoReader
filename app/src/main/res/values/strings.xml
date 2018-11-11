@@ -250,6 +250,7 @@
     <string name="auto_next_page">自动翻页</string>
     <string name="auto_next_page_stop">停止自动翻页</string>
     <string name="auto_next_page_speed">自动翻页间隔</string>
+    <string name="page_anim_duration">翻页动画间隔</string>
     <string name="book_info">书籍信息</string>
     <string name="ps_default_read">默认打开书架</string>
     <string name="pt_default_read">自动跳转最近阅读</string>
@@ -267,4 +268,8 @@
     <string name="swap_vert">倒序-顺序</string>
     <string name="download_cover">下载封面</string>
     <string name="download_cover_s">长按图片可下载该图片</string>
+    <string name="sort">排序</string>
+    <string name="sort_auto">智能排序</string>
+    <string name="sort_manual">手动排序</string>
+    <string name="sort_ping_yin">拼音排序</string>
 </resources>

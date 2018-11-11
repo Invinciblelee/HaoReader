@@ -61,7 +61,7 @@ public class NetPageLoader extends PageLoader {
                 mChapterDisp.dispose();
             }
             WebBookModelImpl.getInstance().getChapterList(getCollBook())
-                    .subscribeOn(Schedulers.single())
+                    .subscribeOn(Schedulers.newThread())
                     .doOnNext(bookShelfBean -> {
                         // 存储章节到数据库
                         bookShelfBean.setHasUpdate(false);

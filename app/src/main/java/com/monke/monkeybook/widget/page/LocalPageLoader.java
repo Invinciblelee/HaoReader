@@ -367,7 +367,7 @@ public class LocalPageLoader extends PageLoader {
                 List<ChapterListBean> chapterList = loadChapters();
                 e.onNext(chapterList);
                 e.onComplete();
-            }).subscribeOn(Schedulers.single())
+            }).subscribeOn(Schedulers.newThread())
                     .flatMap(chapterList -> {
                         getCollBook().setChapterList(chapterList);
                         getCollBook().upChapterListSize();

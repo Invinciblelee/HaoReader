@@ -122,6 +122,10 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void delData(List<BookSourceBean> bookSourceBeans) {
+        if(bookSourceBeans == null || bookSourceBeans.isEmpty()){
+            return;
+        }
+
         mView.showLoading("正在删除选中书源");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             for (BookSourceBean sourceBean : bookSourceBeans) {

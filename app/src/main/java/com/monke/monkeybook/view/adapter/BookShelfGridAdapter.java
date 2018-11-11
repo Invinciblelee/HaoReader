@@ -33,7 +33,7 @@ import me.grantland.widget.AutofitTextView;
 
 public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapter.MyViewHolder> {
 
-    public BookShelfGridAdapter(Context context, int group, String bookPx) {
+    public BookShelfGridAdapter(Context context, int group, int bookPx) {
         super(context, group, bookPx);
     }
 

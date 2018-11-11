@@ -53,6 +53,9 @@ public class BookmarkBeanDao extends AbstractDao<BookmarkBean, Long> {
                 "\"CHAPTER_INDEX\" INTEGER," + // 4: chapterIndex
                 "\"PAGE_INDEX\" INTEGER," + // 5: pageIndex
                 "\"CONTENT\" TEXT);"); // 6: content
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_BOOKMARK_BEAN_CHAPTER_INDEX ON \"BOOKMARK_BEAN\"" +
+                " (\"CHAPTER_INDEX\" ASC);");
     }
 
     /** Drops the underlying database table. */

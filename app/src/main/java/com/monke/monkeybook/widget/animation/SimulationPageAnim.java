@@ -9,6 +9,8 @@ import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 
+import com.monke.monkeybook.help.ReadBookControl;
+
 /**
  * Created by newbiechen on 17-7-24.
  */
@@ -114,6 +116,8 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 dy = (int) (1 - mTouchY); // 防止mTouchY最终变为0
             }
         }
+
+        int animationSpeed = ReadBookControl.getInstance().getAnimSpeed();
         mScroller.startScroll((int) mTouchX, (int) mTouchY, dx, dy, animationSpeed);
         super.startAnim();
     }

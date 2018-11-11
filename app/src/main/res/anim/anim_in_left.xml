@@ -3,5 +3,5 @@
     android:interpolator="@android:interpolator/fast_out_slow_in"
     android:shareInterpolator="true">
     <translate android:fromXDelta="-15%p" android:toXDelta="0"
-        android:duration="@android:integer/config_mediumAnimTime"/>
+        android:duration="@integer/activity_animTime"/>
 </set>

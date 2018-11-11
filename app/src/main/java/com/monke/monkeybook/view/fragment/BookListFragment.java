@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.presenter.BookListPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookListContract;
-import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
@@ -90,7 +88,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
         rvBookshelf.setHasFixedSize(true);
 
-        String bookPx = mPresenter.getBookPx();
+        int bookPx = mPresenter.getBookshelfPx();
         if (mPresenter.viewIsList()) {
             int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
             rvBookshelf.setPadding(0, padding, 0, padding);
@@ -118,13 +116,13 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
     }
 
     @Override
-    public void refreshBookShelf() {
-        mPresenter.queryBookShelf(true);
+    public void refreshBookShelf(boolean update) {
+        mPresenter.queryBookShelf(update);
     }
 
     @Override
     public void addAllBookShelf(List<BookShelfBean> bookShelfBeanList) {
-        bookListAdapter.replaceAll(bookShelfBeanList, mPresenter.getBookPx());
+        bookListAdapter.replaceAll(bookShelfBeanList, mPresenter.getBookshelfPx());
 
         startLayoutAnimation();
     }
@@ -172,8 +170,8 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
     }
 
     @Override
-    public void updateBookPx(String bookPx) {
-        if (TextUtils.equals(bookPx, "2")) {
+    public void updateBookPx(int bookPx) {
+        if (bookPx == 2) {
             if (itemTouchHelper == null) {
                 itemTouchHelpCallback = new MyItemTouchHelpCallback();
                 itemTouchHelpCallback.setDragEnable(true);
@@ -193,11 +191,11 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         final List<BookShelfBean> books;
         if (bookListAdapter instanceof BookShelfListAdapter) {
             books = ((BookShelfListAdapter) bookListAdapter).getBooks();
-        }else {
+        } else {
             books = ((BookShelfGridAdapter) bookListAdapter).getBooks();
         }
 
-        String bookPx = mPresenter.getBookPx();
+        int bookPx = mPresenter.getBookshelfPx();
 
         if (viewIsList) {
             int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);

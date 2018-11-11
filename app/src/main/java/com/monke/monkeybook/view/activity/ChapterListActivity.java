@@ -51,8 +51,6 @@ public class ChapterListActivity extends MBaseActivity {
     ImageView ivChapterSort;
     @BindView(R.id.ll_chapter_base_info)
     View llBaseInfo;
-//    @BindView(R.id.v_shadow)
-//    View vShadow;
 
     SearchView searchView;
 
@@ -261,7 +259,6 @@ public class ChapterListActivity extends MBaseActivity {
 
     private void showChapterInfo(boolean show) {
         llBaseInfo.setVisibility(show ? View.VISIBLE : View.GONE);
-//        vShadow.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void updateWhenTabChanged(int tabPos) {

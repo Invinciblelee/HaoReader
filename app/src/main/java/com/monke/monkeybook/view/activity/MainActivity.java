@@ -71,6 +71,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
     private boolean isRecreate;
+    private boolean isActNightTheme;
 
     private BookListFragment[] fragments = new BookListFragment[4];
 
@@ -106,6 +107,14 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         setContentView(R.layout.activity_main);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && isActNightTheme != isNightTheme()) {
+            getDelegate().applyDayNight();
+        }
+    }
+
     /**
      * 沉浸状态栏
      */
@@ -116,6 +125,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     protected void initData() {
+        isActNightTheme = isNightTheme();
         viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
         group = getPreferences().getInt("shelfGroup", 0);
         isRecreate = getIntent().getBooleanExtra("isRecreate", false);
@@ -279,7 +289,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             case R.id.action_refreshBookshelf:
                 BookListFragment current = fragments[this.group];
                 if (current != null) {
-                    current.refreshBookShelf();
+                    current.refreshBookShelf(true);
                 }
                 break;
             case android.R.id.home:
@@ -549,7 +559,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     public void restoreSuccess() {
         for (BookListFragment fragment : fragments) {
             if (fragment != null) {
-                fragment.refreshBookShelf();
+                fragment.refreshBookShelf(false);
             }
         }
 

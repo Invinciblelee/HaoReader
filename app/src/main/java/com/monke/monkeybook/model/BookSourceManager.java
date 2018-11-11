@@ -6,12 +6,13 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
+import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.utils.StringUtils;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Observable;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -37,7 +37,7 @@ public class BookSourceManager extends BaseModelImpl {
     private List<BookSourceBean> allBookSource;
     private List<String> groupList = new ArrayList<>();
 
-    private BookSourceManager(){
+    private BookSourceManager() {
 
     }
 
@@ -53,7 +53,7 @@ public class BookSourceManager extends BaseModelImpl {
         if (selectedBookSource == null) {
             selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                     .where(BookSourceBeanDao.Properties.Enable.eq(true))
-                    .orderDesc(BookSourceBeanDao.Properties.Weight)
+                    .orderRaw(getBookSourceSort())
                     .list();
         }
         return selectedBookSource;
@@ -62,7 +62,7 @@ public class BookSourceManager extends BaseModelImpl {
     public List<BookSourceBean> getAllBookSource() {
         if (allBookSource == null) {
             allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .orderDesc(BookSourceBeanDao.Properties.Weight)
+                    .orderRaw(getBookSourceSort())
                     .list();
             upGroupList();
         }
@@ -73,19 +73,37 @@ public class BookSourceManager extends BaseModelImpl {
         return groupList;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().count() == 0;
     }
 
     public void refreshBookSource() {
         allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                .orderDesc(BookSourceBeanDao.Properties.Weight)
+                .orderRaw(getBookSourceSort())
                 .list();
-        selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                .where(BookSourceBeanDao.Properties.Enable.eq(true))
-                .orderDesc(BookSourceBeanDao.Properties.Weight)
-                .list();
+
+        selectedBookSource = new ArrayList<>();
+        if (allBookSource != null) {
+            for (BookSourceBean bookSourceBean : allBookSource) {
+                if (bookSourceBean.getEnable()) {
+                    selectedBookSource.add(bookSourceBean);
+                }
+            }
+        }
+
         upGroupList();
+    }
+
+    public String getBookSourceSort() {
+        int sourceSort = AppConfigHelper.get(MApplication.getInstance()).getInt("SourceSort", 0);
+        switch (sourceSort) {
+            case 1:
+                return BookSourceBeanDao.Properties.Weight.columnName + " DESC";
+            case 2:
+                return BookSourceBeanDao.Properties.BookSourceName.columnName + " ASC";
+            default:
+                return BookSourceBeanDao.Properties.SerialNumber.columnName + " ASC";
+        }
     }
 
     public void addBookSource(List<BookSourceBean> bookSourceBeans) {
@@ -166,7 +184,7 @@ public class BookSourceManager extends BaseModelImpl {
         });
     }
 
-    public void importDefaultSource(Context context, OnImportSourceListener listener){
+    public void importDefaultSource(Context context, OnImportSourceListener listener) {
         try {
             URL url = new URL(context.getString(R.string.default_source_url));
             BookSourceManager.getInstance().importSourceFromWww(url)
@@ -187,8 +205,9 @@ public class BookSourceManager extends BaseModelImpl {
     }
 
 
-    public interface OnImportSourceListener{
+    public interface OnImportSourceListener {
         void onSuccess();
+
         void onError();
     }
 }

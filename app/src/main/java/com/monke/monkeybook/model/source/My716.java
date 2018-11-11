@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.monke.basemvplib.BaseModelImpl;
+import com.monke.monkeybook.BuildConfig;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
@@ -76,7 +77,7 @@ public class My716 extends BaseModelImpl implements IStationBookModel {
             JsonObject root = new JsonParser().parse(Objects.requireNonNull(response.body())).getAsJsonObject();
             if (root.get("ok").getAsBoolean()) {
                 JsonArray bookArray = root.get("books").getAsJsonArray();
-                for (int i = 0; i < bookArray.size(); i++) {
+                for (int i = 0, size = bookArray.size(); i < size; i++) {
                     JsonObject book = bookArray.get(i).getAsJsonObject();
 
                     SearchBookBean searchBookBean = new SearchBookBean();

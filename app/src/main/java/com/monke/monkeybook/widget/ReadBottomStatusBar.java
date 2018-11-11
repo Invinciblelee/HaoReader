@@ -73,8 +73,6 @@ public class ReadBottomStatusBar extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
-
-        refreshUI();
     }
 
     @Nullable
@@ -214,7 +212,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
     }
 
-    public void updateOnPageChanged(BookShelfBean bookShelfBean, int durPageSize) {
+    public void updateChapterInfo(BookShelfBean bookShelfBean, int durPageSize) {
         if (bookShelfBean == null) {
             return;
         }
@@ -231,11 +229,20 @@ public class ReadBottomStatusBar extends FrameLayout {
         if (TextUtils.isEmpty(titleStr)) {
             return "";
         }
+
+        int maxLength = 14;
+        ReadBookControl readBookControl = ReadBookControl.getInstance();
+        if(!showTimeBattery){
+            maxLength = 16;
+        }else if (readBookControl.getPaddingLeft() > 30 || readBookControl.getPaddingRight() > 30) {
+            maxLength = 10;
+        }
+
         StringBuilder title = new StringBuilder();
-        if (titleStr.length() > 14) {
-            title.append(titleStr.substring(0, 7))
+        if (titleStr.length() > maxLength) {
+            title.append(titleStr.substring(0, maxLength / 2))
                     .append("\u2026")
-                    .append(titleStr.substring(titleStr.length() - 7, titleStr.length()));
+                    .append(titleStr.substring(titleStr.length() - maxLength / 2, titleStr.length()));
         } else {
             title.append(titleStr);
         }

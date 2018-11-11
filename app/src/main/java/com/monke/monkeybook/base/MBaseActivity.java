@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.view.ViewGroup;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.widget.AppCompat;
 
@@ -28,11 +28,10 @@ import java.lang.reflect.Method;
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
     protected ImmersionBar mImmersionBar;
     private SharedPreferences preferences;
-    private boolean isActNightTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        preferences = getSharedPreferences("CONFIG", 0);
+        preferences = AppConfigHelper.get(this).getPreferences();
         initNightTheme();
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -76,14 +75,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
             }
         }
         return null;
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && isActNightTheme != isNightTheme()) {
-            getDelegate().applyDayNight();
-        }
     }
 
     @Override
@@ -172,10 +163,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         return preferences.getBoolean("nightTheme", false);
     }
 
-    public boolean isActNightTheme() {
-        return isActNightTheme;
-    }
-
     public SharedPreferences getPreferences() {
         return preferences;
     }
@@ -205,7 +192,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     }
 
     public void initNightTheme() {
-        if (isActNightTheme = isNightTheme()) {
+        if (isNightTheme()) {
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -249,7 +236,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         overridePendingTransition(R.anim.anim_in_left, R.anim.anim_out_right);
     }
 
-    public void finishNoAnim(){
+    public void finishNoAnim() {
         super.finish();
     }
 

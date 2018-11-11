@@ -6,14 +6,11 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
-import com.monke.monkeybook.widget.page.TxtChapter;
 
 public interface ReadBookContract {
     interface View extends IView {
 
         void changeSourceFinish(boolean success);
-
-        void showHideView();
 
         void prepareDisplay(boolean check);
 

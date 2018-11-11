@@ -214,6 +214,9 @@ public class BitmapUtil {
      * 设置固定的宽度，高度随之变化，使图片不会变形
      */
     public static Bitmap fitBitmap(Bitmap target, int newWidth) {
+        if(target == null){
+            return null;
+        }
         int width = target.getWidth();
         int height = target.getHeight();
         Matrix matrix = new Matrix();
@@ -225,12 +228,11 @@ public class BitmapUtil {
         // matrix,true);
         Bitmap bmp = Bitmap.createBitmap(target, 0, 0, width, height, matrix,
                 true);
-        if (target != null && !target.equals(bmp) && !target.isRecycled()) {
+        if (!target.equals(bmp) && !target.isRecycled()) {
             target.recycle();
             target = null;
         }
-        return bmp;// Bitmap.createBitmap(target, 0, 0, width, height, matrix,
-        // true);
+        return bmp;
     }
 
     /**

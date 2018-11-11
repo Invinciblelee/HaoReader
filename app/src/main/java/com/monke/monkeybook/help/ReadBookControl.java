@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.utils.BitmapUtil;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.widget.page.PageMode;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class ReadBookControl {
     private static final int DEFAULT_BG = 1;
 
     private List<Map<String, Integer>> textDrawable;
+    private int animSpeed;
     private int speechRate;
     private boolean speechRateFollowSys;
     private int textSize;
@@ -72,16 +74,19 @@ public class ReadBookControl {
 
     private ReadBookControl() {
         initTextDrawable();
-        readPreference = MApplication.getInstance().getSharedPreferences("CONFIG", 0);
+        readPreference = AppConfigHelper.get(MApplication.getInstance()).getPreferences();
         this.hideStatusBar = readPreference.getBoolean("hide_status_bar", false);
         this.textSize = readPreference.getInt("textSize", 18);
         this.canClickTurn = readPreference.getBoolean("canClickTurn", true);
         this.canKeyTurn = readPreference.getBoolean("canKeyTurn", true);
         this.readAloudCanKeyTurn = readPreference.getBoolean("readAloudCanKeyTurn", true);
         this.lineSpacing = readPreference.getInt("lineSpacing", 6);
-        this.paragraphSpacing = readPreference.getInt("paragraphSpacing",16);
-        this.clickSensitivity = readPreference.getInt("clickSensitivity", 50) > 100
-                ? 50 : readPreference.getInt("clickSensitivity", 50);
+        this.paragraphSpacing = readPreference.getInt("paragraphSpacing", 16);
+        this.animSpeed = readPreference.getInt("animSpeed", 300);
+        this.clickSensitivity = readPreference.getInt("clickSensitivity", 50);
+        if (this.clickSensitivity < 5) {
+            this.clickSensitivity = 5;
+        }
         this.clickAllNext = readPreference.getBoolean("clickAllNext", false);
         this.fontPath = readPreference.getString("fontPath", null);
         this.textConvert = readPreference.getInt("textConvertInt", 0);
@@ -162,19 +167,18 @@ public class ReadBookControl {
                 bgIsColor = false;
                 bgPath = getBgPath(textDrawableIndex);
                 bgBitmap = BitmapFactory.decodeFile(bgPath);
-                bgBitmap = BitmapUtil.fitBitmap(bgBitmap, 600);
-                return;
+                bgBitmap = BitmapUtil.fitBitmap(bgBitmap, ScreenUtils.getDisplayMetrics().widthPixels);
             } else if (getBgCustom(textDrawableIndex) == 1) {
                 bgIsColor = true;
                 bgColor = getBgColor(textDrawableIndex);
-                return;
+            } else {
+                bgIsColor = true;
+                bgColor = textDrawable.get(textDrawableIndex).get("textBackground");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            bgIsColor = true;
+            bgColor = textDrawable.get(textDrawableIndex).get("textBackground");
         }
-
-        bgIsColor = true;
-        bgColor = textDrawable.get(textDrawableIndex).get("textBackground");
     }
 
     private void setTextDrawable() {
@@ -286,6 +290,17 @@ public class ReadBookControl {
         editor.apply();
     }
 
+    public int getAnimSpeed() {
+        return animSpeed;
+    }
+
+    public void setAnimSpeed(int animSpeed) {
+        this.animSpeed = animSpeed;
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putInt("animSpeed", animSpeed);
+        editor.apply();
+    }
+
     public String getLastNoteUrl() {
         return lastNoteUrl;
     }
@@ -329,6 +344,9 @@ public class ReadBookControl {
     }
 
     public Bitmap getBgBitmap() {
+        if (bgBitmap == null) {
+            return null;
+        }
         return bgBitmap.copy(Bitmap.Config.RGB_565, true);
     }
 

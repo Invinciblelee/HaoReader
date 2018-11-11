@@ -4,21 +4,23 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
 
 @Entity
-public class BookmarkBean implements Parcelable{
+public class BookmarkBean implements Parcelable {
 
     @Id
     private Long id = System.currentTimeMillis();
     private String noteUrl;
     private String bookName;
     private String chapterName;
+    @Index
     private Integer chapterIndex;
     private Integer pageIndex;
     private String content;
-    
+
 
     protected BookmarkBean(Parcel in) {
         id = in.readLong();
@@ -32,7 +34,7 @@ public class BookmarkBean implements Parcelable{
 
     @Generated(hash = 1176037419)
     public BookmarkBean(Long id, String noteUrl, String bookName, String chapterName,
-            Integer chapterIndex, Integer pageIndex, String content) {
+                        Integer chapterIndex, Integer pageIndex, String content) {
         this.id = id;
         this.noteUrl = noteUrl;
         this.bookName = bookName;

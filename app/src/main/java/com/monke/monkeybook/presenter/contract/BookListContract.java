@@ -19,7 +19,7 @@ public interface BookListContract {
          */
         void addAllBookShelf(List<BookShelfBean> bookShelfBeanList);
 
-        void refreshBookShelf();
+        void refreshBookShelf(boolean update);
 
         void startLayoutAnimation();
 
@@ -35,7 +35,7 @@ public interface BookListContract {
 
         void sortBookShelf();
 
-        void updateBookPx(String bookPx);
+        void updateBookPx(int bookPx);
 
         void updateLayoutType(boolean viewIsList);
 
@@ -57,7 +57,7 @@ public interface BookListContract {
 
         boolean viewIsList();
 
-        String getBookPx();
+        int getBookshelfPx();
 
         int getGroup();
 

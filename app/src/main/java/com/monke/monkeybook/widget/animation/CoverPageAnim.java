@@ -5,6 +5,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 
+import com.monke.monkeybook.help.ReadBookControl;
+
 /**
  * Created by newbiechen on 17-7-24.
  */
@@ -85,6 +87,7 @@ public class CoverPageAnim extends HorizonPageAnim {
                 break;
         }
 
+        int animationSpeed = ReadBookControl.getInstance().getAnimSpeed();
         //滑动速度保持一致
         int duration = (animationSpeed * Math.abs(dx)) / mViewWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);

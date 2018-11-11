@@ -2,6 +2,7 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -62,9 +63,11 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @BindView(R.id.searchView)
     SearchView searchView;
 
+    private MyItemTouchHelpCallback itemTouchHelpCallback;
     private boolean selectAll = true;
     private MenuItem groupItem;
     private SubMenu groupMenu;
+    private SubMenu sortMenu;
     private BookSourceAdapter adapter;
     private MoDialogHUD moDialogHUD;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
@@ -140,11 +143,12 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BookSourceAdapter(this);
         recyclerView.setAdapter(adapter);
-        MyItemTouchHelpCallback itemTouchHelpCallback = new MyItemTouchHelpCallback();
+        itemTouchHelpCallback = new MyItemTouchHelpCallback();
         itemTouchHelpCallback.setOnItemTouchCallbackListener(adapter.getItemTouchCallbackListener());
         itemTouchHelpCallback.setDragEnable(true);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelpCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
+        setDragEnable(getPreferences().getInt("SourceSort", 0));
     }
 
     public void upDateSelectAll() {
@@ -164,6 +168,22 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         adapter.notifyDataSetChanged();
         selectAll = !selectAll;
         saveDate(adapter.getDataList());
+    }
+
+    private void setDragEnable(int sort) {
+        if (itemTouchHelpCallback == null) {
+            return;
+        }
+        if (sort == 0) {
+            itemTouchHelpCallback.setDragEnable(true);
+        } else {
+            itemTouchHelpCallback.setDragEnable(false);
+        }
+        if (sort == 2) {
+            adapter.setCanTop(false);
+        } else {
+            adapter.setCanTop(true);
+        }
     }
 
     @Override
@@ -194,7 +214,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                     .whereOr(BookSourceBeanDao.Properties.BookSourceName.like(term),
                             BookSourceBeanDao.Properties.BookSourceGroup.like(term),
                             BookSourceBeanDao.Properties.BookSourceUrl.like(term))
-                    .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                    .orderRaw(BookSourceManager.getInstance().getBookSourceSort())
                     .list();
             adapter.resetDataS(sourceBeanList);
         } else {
@@ -256,7 +276,9 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     public boolean onPrepareOptionsMenu(Menu menu) {
         groupItem = menu.findItem(R.id.action_group);
         groupMenu = groupItem.getSubMenu();
+        sortMenu = menu.findItem(R.id.action_sort).getSubMenu();
         upGroupMenu();
+        upSortMenu();
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -275,23 +297,25 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 selectBookSourceFile();
                 break;
             case R.id.action_import_book_source_onLine:
-                String cacheUrl = ACache.get(this).getAsString("sourceUrl");
-                moDialogHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl,
-                        inputText -> {
-                            ACache.get(this).put("sourceUrl", inputText);
-                            mPresenter.importBookSource(inputText);
-                        });
+                importBookSourceOnline();
                 break;
             case R.id.action_del_select:
-                if (adapter.getSelectDataList().size() > 0) {
-                    mPresenter.delData(adapter.getSelectDataList());
-                }
+                mPresenter.delData(adapter.getSelectDataList());
                 break;
             case R.id.action_reset_book_source:
                 mPresenter.importBookSource(getString(R.string.default_source_url));
                 break;
             case R.id.action_check_book_source:
                 mPresenter.checkBookSource();
+                break;
+            case R.id.sort_manual:
+                upSourceSort(0);
+                break;
+            case R.id.sort_auto:
+                upSourceSort(1);
+                break;
+            case R.id.sort_ping_yin:
+                upSourceSort(2);
                 break;
             case android.R.id.home:
                 finish();
@@ -316,6 +340,23 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         }
     }
 
+    private void upSortMenu() {
+        sortMenu.getItem(0).setChecked(false);
+        sortMenu.getItem(1).setChecked(false);
+        sortMenu.getItem(2).setChecked(false);
+        sortMenu.getItem(getPreferences().getInt("SourceSort", 0)).setChecked(true);
+    }
+
+    private void upSourceSort(int sort) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putInt("SourceSort", sort);
+        editor.apply();
+        upSortMenu();
+        setDragEnable(sort);
+        BookSourceManager.getInstance().refreshBookSource();
+        refreshBookSource();
+    }
+
     private void addBookSource() {
         Intent intent = new Intent(this, SourceEditActivity.class);
         startActivityForResult(intent, EDIT_SOURCE);
@@ -331,6 +372,15 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
             EasyPermissions.requestPermissions(this, getString(R.string.import_book_source),
                     RESULT_IMPORT_PERMS, MApplication.PerList);
         }
+    }
+
+    private void importBookSourceOnline() {
+        String cacheUrl = ACache.get(this).getAsString("sourceUrl");
+        moDialogHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl,
+                inputText -> {
+                    ACache.get(this).put("sourceUrl", inputText);
+                    mPresenter.importBookSource(inputText);
+                });
     }
 
     @AfterPermissionGranted(RESULT_IMPORT_PERMS)

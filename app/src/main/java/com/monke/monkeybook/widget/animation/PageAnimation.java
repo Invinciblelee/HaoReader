@@ -2,9 +2,12 @@ package com.monke.monkeybook.widget.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
 import com.monke.monkeybook.help.ReadBookControl;
@@ -17,7 +20,6 @@ import com.monke.monkeybook.help.ReadBookControl;
 public abstract class PageAnimation {
     //正在使用的View
     protected View mView;
-    protected ReadBookControl readBookControl = ReadBookControl.getInstance();
     //滑动装置
     protected Scroller mScroller;
     //监听器
@@ -68,7 +70,7 @@ public abstract class PageAnimation {
         mView = view;
         mListener = listener;
 
-        mScroller = new Scroller(mView.getContext(), new FastOutSlowInInterpolator());
+        mScroller = new Scroller(mView.getContext(), new LinearOutSlowInInterpolator());
     }
 
     public Scroller getScroller() {

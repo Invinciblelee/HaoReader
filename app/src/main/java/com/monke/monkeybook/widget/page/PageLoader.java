@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -115,6 +116,8 @@ public abstract class PageLoader {
     //上一章的记录
     private int mLastChapterPos = 0;
 
+    private Bitmap mBgBitmap;
+
     /*****************************init params*******************************/
     PageLoader(PageView pageView, BookShelfBean collBook) {
         mPageView = pageView;
@@ -200,7 +203,7 @@ public abstract class PageLoader {
     /**
      * 刷新界面
      */
-    public void refreshUi() {
+    public void refreshUI() {
         initData();
         setPageStyle(false);
 
@@ -373,6 +376,12 @@ public abstract class PageLoader {
         mTitlePaint.setColor(mTextColor);
         mTextPaint.setColor(mTextColor);
 
+        if(!mSettingManager.bgIsColor()) {
+            mBgBitmap = mSettingManager.getBgBitmap();
+        }else {
+            destroyBgBitmap();
+        }
+
         mPageView.drawCurrentPage(isPreview);
     }
 
@@ -441,7 +450,7 @@ public abstract class PageLoader {
         mCurChapterPos = mCollBook.getDurChapter();
         mLastChapterPos = mCurChapterPos;
         mCurChapter = new TxtChapter(mCurChapterPos, STATUS_LOADING);
-        if (!isChapterListPrepare) {
+        if (mCollBook.realChapterListEmpty()) {
             mCurChapter.setStatus(STATUS_PREPARE_CATEGORY);
         }
     }
@@ -616,7 +625,7 @@ public abstract class PageLoader {
             canvas.drawColor(mSettingManager.getBgColor());
         } else {
             Rect mDestRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-            canvas.drawBitmap(mSettingManager.getBgBitmap(), null, mDestRect, null);
+            canvas.drawBitmap(mBgBitmap, null, mDestRect, null);
         }
     }
 
@@ -979,6 +988,13 @@ public abstract class PageLoader {
         }
     }
 
+    private void destroyBgBitmap(){
+        if(mBgBitmap != null){
+            mBgBitmap.recycle();
+            mBgBitmap = null;
+        }
+    }
+
     /**
      * 取消翻页
      */
@@ -1171,6 +1187,8 @@ public abstract class PageLoader {
         mCurChapter = null;
         mNextChapter = null;
         mPageView = null;
+
+        destroyBgBitmap();
 
         chapterProvider.close();
     }

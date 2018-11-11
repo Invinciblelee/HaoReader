@@ -41,7 +41,7 @@
             android:paddingBottom="@dimen/half_card_item_margin"
             app:bubbleColor="@color/tv_text_button_deep_pre"
             app:handleColor="@color/tv_text_button_pre"
-            app:trackColor="@color/bg_divider_line" />
+            app:trackColor="@color/scroller_track_color" />
 
     </RelativeLayout>
 

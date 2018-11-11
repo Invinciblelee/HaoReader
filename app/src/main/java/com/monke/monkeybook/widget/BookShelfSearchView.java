@@ -90,7 +90,7 @@ public class BookShelfSearchView extends LinearLayout {
             }
         });
         rvList.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new BookShelfListAdapter(context, -1, "1");
+        adapter = new BookShelfListAdapter(context, -1, 1);
         rvList.setAdapter(adapter);
 
         toolbar.setNavigationOnClickListener(v -> {
@@ -128,7 +128,7 @@ public class BookShelfSearchView extends LinearLayout {
     }
 
     public void showQueryBooks(List<BookShelfBean> value) {
-        adapter.replaceAll(value, "1");
+        adapter.replaceAll(value, 1);
     }
 
     public View getSearchAutoComplete(boolean focus) {

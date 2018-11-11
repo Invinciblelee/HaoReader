@@ -4,12 +4,14 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 
+import com.monke.monkeybook.help.ReadBookControl;
+
 /**
  * Created by newbiechen on 17-7-24.
  */
 
 public class SlidePageAnim extends HorizonPageAnim {
-    private Rect mSrcRect, mDestRect,mNextSrcRect,mNextDestRect;
+    private Rect mSrcRect, mDestRect, mNextSrcRect, mNextDestRect;
 
     public SlidePageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
@@ -22,11 +24,11 @@ public class SlidePageAnim extends HorizonPageAnim {
     @Override
     public void drawMove(Canvas canvas) {
         int dis;
-        switch (mDirection){
+        switch (mDirection) {
             case NEXT:
                 //左半边的剩余区域
                 dis = (int) (mScreenWidth - mStartX + mTouchX);
-                if (dis > mScreenWidth){
+                if (dis > mScreenWidth) {
                     dis = mScreenWidth;
                 }
                 //计算bitmap截取的区域
@@ -38,16 +40,16 @@ public class SlidePageAnim extends HorizonPageAnim {
                 //计算下一页在canvas显示的区域
                 mNextDestRect.left = dis;
 
-                canvas.drawBitmap(mNextBitmap,mNextSrcRect,mNextDestRect,null);
-                canvas.drawBitmap(mCurBitmap,mSrcRect,mDestRect,null);
+                canvas.drawBitmap(mNextBitmap, mNextSrcRect, mNextDestRect, null);
+                canvas.drawBitmap(mCurBitmap, mSrcRect, mDestRect, null);
                 break;
             default:
                 dis = (int) (mTouchX - mStartX);
-                if (dis < 0){
+                if (dis < 0) {
                     dis = 0;
                     mStartX = mTouchX;
                 }
-                mSrcRect.left =  mScreenWidth - dis;
+                mSrcRect.left = mScreenWidth - dis;
                 mDestRect.right = dis;
 
                 //计算下一页截取的区域
@@ -55,8 +57,8 @@ public class SlidePageAnim extends HorizonPageAnim {
                 //计算下一页在canvas显示的区域
                 mNextDestRect.left = dis;
 
-                canvas.drawBitmap(mCurBitmap,mNextSrcRect,mNextDestRect,null);
-                canvas.drawBitmap(mNextBitmap,mSrcRect,mDestRect,null);
+                canvas.drawBitmap(mCurBitmap, mNextSrcRect, mNextDestRect, null);
+                canvas.drawBitmap(mNextBitmap, mSrcRect, mDestRect, null);
                 break;
         }
     }
@@ -64,28 +66,30 @@ public class SlidePageAnim extends HorizonPageAnim {
     @Override
     public void startAnim() {
         int dx;
-        switch (mDirection){
+        switch (mDirection) {
             case NEXT:
-                if (isCancel){
-                    int dis = (int)((mScreenWidth - mStartX) + mTouchX);
-                    if (dis > mScreenWidth){
+                if (isCancel) {
+                    int dis = (int) ((mScreenWidth - mStartX) + mTouchX);
+                    if (dis > mScreenWidth) {
                         dis = mScreenWidth;
                     }
                     dx = mScreenWidth - dis;
-                }else{
+                } else {
                     dx = (int) -(mTouchX + (mScreenWidth - mStartX));
                 }
                 break;
             default:
-                if (isCancel){
-                    dx = (int)-Math.abs(mTouchX - mStartX);
-                }else{
+                if (isCancel) {
+                    dx = (int) -Math.abs(mTouchX - mStartX);
+                } else {
                     dx = (int) (mScreenWidth - (mTouchX - mStartX));
                 }
                 break;
         }
+
+        int animationSpeed = ReadBookControl.getInstance().getAnimSpeed();
         //滑动速度保持一致
-        int duration =  (animationSpeed * Math.abs(dx)) / mScreenWidth;
+        int duration = (animationSpeed * Math.abs(dx)) / mScreenWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);
         super.startAnim();
     }

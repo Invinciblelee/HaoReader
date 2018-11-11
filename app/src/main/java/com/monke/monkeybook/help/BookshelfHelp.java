@@ -252,7 +252,6 @@ public class BookshelfHelp {
     public static List<ChapterListBean> getChapterList(String noteUrl) {
         return DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().queryBuilder()
                 .where(ChapterListBeanDao.Properties.NoteUrl.eq(noteUrl))
-                .orderAsc(ChapterListBeanDao.Properties.DurChapterIndex)
                 .build()
                 .list();
     }
@@ -268,7 +267,6 @@ public class BookshelfHelp {
     public static List<BookmarkBean> getBookmarkList(String bookName) {
         return DbHelper.getInstance().getmDaoSession().getBookmarkBeanDao().queryBuilder()
                 .where(BookmarkBeanDao.Properties.BookName.eq(bookName))
-                .orderAsc(BookmarkBeanDao.Properties.ChapterIndex)
                 .build()
                 .list();
     }
@@ -294,35 +292,19 @@ public class BookshelfHelp {
     /**
      * 排序
      */
-    public static void order(List<BookShelfBean> books, String bookshelfOrder) {
+    public static void order(List<BookShelfBean> books, int bookshelfOrder) {
         if (books == null || books.size() == 0) {
             return;
         }
         switch (bookshelfOrder) {
-            case "0":
-                Collections.sort(books, (o1, o2) -> {
-                    if (o1.getFinalDate() - o2.getFinalDate() > 0) {
-                        return -1;
-                    } else if (o1.getFinalDate() - o2.getFinalDate() < 0) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
+            case 0:
+                Collections.sort(books, (o1, o2) -> Long.compare(o2.getFinalDate(), o1.getFinalDate()));
                 break;
-            case "1":
-                Collections.sort(books, (o1, o2) -> {
-                    if (o1.getFinalRefreshData() - o2.getFinalRefreshData() > 0) {
-                        return -1;
-                    } else if (o1.getFinalRefreshData() - o2.getFinalRefreshData() < 0) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
+            case 1:
+                Collections.sort(books, (o1, o2) -> Long.compare(o2.getFinalRefreshData(), o1.getFinalRefreshData()));
                 break;
-            case "2":
-                Collections.sort(books, (o1, o2) -> o1.getSerialNumber() - o2.getSerialNumber());
+            case 2:
+                Collections.sort(books, (o1, o2) -> Integer.compare(o1.getSerialNumber(), o2.getSerialNumber()));
                 break;
         }
     }

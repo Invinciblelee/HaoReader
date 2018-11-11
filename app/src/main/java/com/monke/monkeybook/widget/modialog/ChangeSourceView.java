@@ -275,6 +275,8 @@ public class ChangeSourceView {
         atvTitle = moDialogView.findViewById(R.id.atv_title);
         ibtStop = moDialogView.findViewById(R.id.ibt_stop);
         rvSource = moDialogView.findViewById(R.id.rf_rv_change_source);
+        rvSource.getRecyclerView().setVerticalScrollBarEnabled(true);
+        rvSource.getRecyclerView().setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         ibtStop.setVisibility(View.INVISIBLE);
 
         rvSource.setBaseRefreshListener(this::reSearchBook);

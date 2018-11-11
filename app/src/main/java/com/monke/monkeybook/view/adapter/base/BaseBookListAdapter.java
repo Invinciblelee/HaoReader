@@ -19,7 +19,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
 
     private final List<BookShelfBean> books;
     private Integer group;
-    private String bookshelfPx;
+    private int bookshelfPx;
     private Context context;
     private OnBookItemClickListenerTwo itemClickListener;
 
@@ -71,12 +71,12 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         }
     }
 
-    protected final String getBookshelfPx() {
+    protected final int getBookshelfPx() {
         return bookshelfPx;
     }
 
-    public final void setBookshelfPx(String bookshelfPx) {
-        if (!TextUtils.equals(this.bookshelfPx, bookshelfPx)) {
+    public final void setBookshelfPx(int bookshelfPx) {
+        if (this.bookshelfPx != bookshelfPx) {
             this.bookshelfPx = bookshelfPx;
             if (!books.isEmpty()) {
                 BookshelfHelp.order(books, bookshelfPx);
@@ -97,7 +97,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         return books.isEmpty() ? null : books.get(position);
     }
 
-    public BaseBookListAdapter(Context context, int group, String bookshelfPx) {
+    public BaseBookListAdapter(Context context, int group, int bookshelfPx) {
         this.context = context;
         this.group = group;
         this.bookshelfPx = bookshelfPx;
@@ -156,7 +156,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         }
     }
 
-    public synchronized void replaceAll(List<BookShelfBean> newDataS, String bookshelfPx) {
+    public synchronized void replaceAll(List<BookShelfBean> newDataS, int bookshelfPx) {
         this.bookshelfPx = bookshelfPx;
         books.clear();
         if (null != newDataS && newDataS.size() > 0) {

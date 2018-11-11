@@ -50,6 +50,8 @@
     <color name="progress_color">#767676</color>
     <color name="progress_text_color">#aaaaaa</color>
 
+    <color name="scroller_track_color">#337e7e7e</color>
+
     <color name="tv_text_button_nor">#efefef</color>
     <color name="tv_text_button_pre">@color/colorAccent</color>
     <color name="tv_text_button_deep_pre">#11665e</color>

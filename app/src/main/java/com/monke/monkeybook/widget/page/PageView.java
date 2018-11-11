@@ -223,10 +223,9 @@ public class PageView extends View {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                final int slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
                 // 判断是否大于最小滑动值。
                 if (!isMove) {
-                    isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
+                    isMove = Math.abs(mStartX - x) > 0 || Math.abs(mStartY - y) > 0;
                 }
 
                 if (!mPageLoader.isPageFrozen() && isMove) {

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -59,8 +58,9 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
     }
 
     @Override
-    public String getBookPx() {
-        return mView.getPreferences().getString(mView.getContext().getString(R.string.pk_bookshelf_px), "0");
+    public int getBookshelfPx() {
+        String bookPx = mView.getPreferences().getString(mView.getContext().getString(R.string.pk_bookshelf_px), "0");
+        return Integer.parseInt(bookPx);
     }
 
     @Override
@@ -311,7 +311,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
             tags = {@Tag(RxBusTag.UPDATE_BOOK_PX)})
-    public void updateBookPx(String px) {
+    public void updateBookPx(Integer px) {
         mView.updateBookPx(px);
     }
 }

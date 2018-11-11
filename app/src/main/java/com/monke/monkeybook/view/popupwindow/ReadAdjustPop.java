@@ -1,13 +1,9 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.popupwindow;
 
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -21,6 +17,9 @@ import com.monke.mprogressbar.OnProgressListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.monke.monkeybook.utils.ScreenBrightnessUtil.getScreenBrightness;
+import static com.monke.monkeybook.utils.ScreenBrightnessUtil.setScreenBrightness;
 
 public class ReadAdjustPop extends PopupWindow {
     @BindView(R.id.hpb_light)
@@ -41,6 +40,10 @@ public class ReadAdjustPop extends PopupWindow {
     SmoothCheckBox scbTtsFollowSys;
     @BindView(R.id.tv_auto_page)
     TextView tvAutoPage;
+    @BindView(R.id.hpb_anim_duration)
+    MHorProgressBar hpbAnimDuration;
+    @BindView(R.id.tv_anim_duration)
+    TextView tvAnimDuration;
 
     private ReadBookActivity activity;
     private Boolean isFollowSys;
@@ -123,9 +126,9 @@ public class ReadAdjustPop extends PopupWindow {
         });
 
         //自动翻页间隔
-        hpbClick.setMaxProgress(180);
+        hpbClick.setMaxProgress(175);
 
-        hpbClick.setDurProgress(readBookControl.getClickSensitivity());
+        hpbClick.setDurProgress(readBookControl.getClickSensitivity() - 5);
         hpbClick.setProgressListener(new OnProgressListener() {
             @Override
             public void moveStartProgress(float dur) {
@@ -134,8 +137,34 @@ public class ReadAdjustPop extends PopupWindow {
 
             @Override
             public void durProgressChange(float dur) {
-                tvAutoPage.setText(String.format("%sS", (int) dur));
-                readBookControl.setClickSensitivity((int) dur);
+                tvAutoPage.setText(String.format("%sS", (int) dur + 5));
+                readBookControl.setClickSensitivity((int) dur + 5);
+            }
+
+            @Override
+            public void moveStopProgress(float dur) {
+
+            }
+
+            @Override
+            public void setDurProgress(float dur) {
+
+            }
+        });
+
+        hpbAnimDuration.setMaxProgress(400);
+
+        hpbAnimDuration.setDurProgress(readBookControl.getAnimSpeed() - 200);
+        hpbAnimDuration.setProgressListener(new OnProgressListener() {
+            @Override
+            public void moveStartProgress(float dur) {
+
+            }
+
+            @Override
+            public void durProgressChange(float dur) {
+                tvAnimDuration.setText(String.format("%sMS", (int) dur + 200));
+                readBookControl.setAnimSpeed((int) dur + 200);
             }
 
             @Override
@@ -217,26 +246,5 @@ public class ReadAdjustPop extends PopupWindow {
         scbFollowSys.setChecked(isFollowSys);
     }
 
-    public static void setScreenBrightness(Activity activity, int value) {
-        WindowManager.LayoutParams params = (activity).getWindow().getAttributes();
-        params.screenBrightness = value * 1.0f / 255f;
-        (activity).getWindow().setAttributes(params);
-    }
 
-    public static void setScreenBrightness(Activity activity) {
-        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-        params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-        activity.getWindow().setAttributes(params);
-    }
-
-    public static int getScreenBrightness(Activity activity) {
-        int value = 1;
-        ContentResolver cr = activity.getContentResolver();
-        try {
-            value = Settings.System.getInt(cr, Settings.System.SCREEN_BRIGHTNESS);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-        return value;
-    }
 }
