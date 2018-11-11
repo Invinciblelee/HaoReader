@@ -11,7 +11,7 @@
 ![image](https://github.com/gedoor/MyBookshelf/blob/master/docs/image/mybookshelf.jpg)
 
 # 软件体验
-![阅读,apk](https://github.com/Invinciblelee/MyBookshelf-master/blob/master/apk/MONKOVEL_2.0.428314.apk)
+[阅读.apk](https://github.com/Invinciblelee/MyBookshelf-master/blob/master/apk/MONKOVEL_2.0.428314.apk)
 
 ![image](https://github.com/Invinciblelee/MyBookshelf-master/blob/master/apk/1541934001.png)
 

@@ -11,6 +11,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
+import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Unique;
 
 import java.util.Objects;
@@ -22,8 +23,7 @@ import java.util.Objects;
 public class ChapterListBean implements Parcelable {
 
     private String noteUrl; //对应BookInfoBean noteUrl;
-
-    @Index
+    @OrderBy
     private Integer durChapterIndex;  //当前章节数
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址

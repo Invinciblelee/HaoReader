@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
+import org.greenrobot.greendao.annotation.OrderBy;
 
 @Entity
 public class BookmarkBean implements Parcelable {
@@ -16,7 +17,7 @@ public class BookmarkBean implements Parcelable {
     private String noteUrl;
     private String bookName;
     private String chapterName;
-    @Index
+    @OrderBy
     private Integer chapterIndex;
     private Integer pageIndex;
     private String content;

@@ -55,9 +55,6 @@ public class ChapterListBeanDao extends AbstractDao<ChapterListBean, String> {
                 "\"START\" INTEGER," + // 5: start
                 "\"END\" INTEGER," + // 6: end
                 "\"BOOK_NAME\" TEXT);"); // 7: bookName
-        // Add Indexes
-        db.execSQL("CREATE INDEX " + constraint + "IDX_CHAPTER_LIST_BEAN_DUR_CHAPTER_INDEX ON \"CHAPTER_LIST_BEAN\"" +
-                " (\"DUR_CHAPTER_INDEX\" ASC);");
     }
 
     /** Drops the underlying database table. */
