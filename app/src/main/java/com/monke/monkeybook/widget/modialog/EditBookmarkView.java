@@ -2,6 +2,7 @@ package com.monke.monkeybook.widget.modialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
@@ -11,8 +12,6 @@ import android.widget.TextView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.utils.barUtil.ImmersionBar;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by GKF on 2018/1/17.
@@ -40,7 +39,7 @@ public class EditBookmarkView {
         bindView();
     }
 
-    void showBookmark(@NotNull BookmarkBean bookmarkBean, boolean isAdd, final OnBookmarkClick bookmarkClick) {
+    void showBookmark(@NonNull BookmarkBean bookmarkBean, boolean isAdd, final OnBookmarkClick bookmarkClick) {
         this.bookmarkClick = bookmarkClick;
         this.bookmarkBean = bookmarkBean;
 
@@ -98,7 +97,7 @@ public class EditBookmarkView {
         ImmersionBar.resetBoxPosition((Activity) context, moDialogView, R.id.cv_root);
     }
 
-    private void dismiss(){
+    private void dismiss() {
         moDialogView.getMoDialogHUD().dismiss();
     }
 
