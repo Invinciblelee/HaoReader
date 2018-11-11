@@ -16,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,6 +29,7 @@ import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
@@ -130,6 +132,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         group = getPreferences().getInt("shelfGroup", 0);
         isRecreate = getIntent().getBooleanExtra("isRecreate", false);
         getIntent().putExtra("isRecreate", true);
+
+        long count = DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().queryBuilder().count();
+        Log.e("TAG", "chaterCount: " + count);
     }
 
     @Override
