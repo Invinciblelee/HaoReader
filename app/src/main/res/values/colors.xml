@@ -46,7 +46,7 @@
     <color name="tv_text_summary">#8a000000</color>
     <color name="menu_color_default">#de000000</color>
 
-    <color name="progress_back_color">#dddddd</color>
+    <color name="progress_back_color">#cccccc</color>
     <color name="progress_color">#767676</color>
     <color name="progress_text_color">#aaaaaa</color>
 
