@@ -54,7 +54,6 @@
             android:configChanges="locale|keyboardHidden"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing|stateHidden"
-            android:launchMode="singleTask"
             android:theme="@style/CAppTheme.Activity.Read"/>
 
         <activity

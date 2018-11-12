@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;

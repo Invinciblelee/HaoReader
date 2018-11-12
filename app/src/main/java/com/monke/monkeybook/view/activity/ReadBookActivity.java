@@ -160,6 +160,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         activity.startActivity(intent);
     }
 
@@ -170,6 +171,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         activity.startActivity(intent);
     }
 

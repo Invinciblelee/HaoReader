@@ -167,7 +167,6 @@ public class ReadBookControl {
                 bgIsColor = false;
                 bgPath = getBgPath(textDrawableIndex);
                 bgBitmap = BitmapFactory.decodeFile(bgPath);
-                bgBitmap = BitmapUtil.fitBitmap(bgBitmap, ScreenUtils.getDisplayMetrics().widthPixels);
             } else if (getBgCustom(textDrawableIndex) == 1) {
                 bgIsColor = true;
                 bgColor = getBgColor(textDrawableIndex);

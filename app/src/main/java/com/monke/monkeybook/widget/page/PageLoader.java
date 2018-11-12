@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -376,9 +375,9 @@ public abstract class PageLoader {
         mTitlePaint.setColor(mTextColor);
         mTextPaint.setColor(mTextColor);
 
-        if(!mSettingManager.bgIsColor()) {
+        if (!mSettingManager.bgIsColor()) {
             mBgBitmap = mSettingManager.getBgBitmap();
-        }else {
+        } else {
             destroyBgBitmap();
         }
 
@@ -988,8 +987,8 @@ public abstract class PageLoader {
         }
     }
 
-    private void destroyBgBitmap(){
-        if(mBgBitmap != null){
+    private void destroyBgBitmap() {
+        if (mBgBitmap != null) {
             mBgBitmap.recycle();
             mBgBitmap = null;
         }
