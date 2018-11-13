@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gyf.barlibrary.BarHide;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.R;
@@ -40,7 +41,6 @@ import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.ReadAloudService;
 import com.monke.monkeybook.utils.SystemUtil;
-import com.monke.monkeybook.utils.barUtil.BarHide;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
@@ -227,8 +227,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     @Override
     protected void initImmersionBar() {
-        super.initImmersionBar();
         mImmersionBar.fullScreen(true);
+
+        if (isImmersionBarEnabled()) {
+            mImmersionBar.transparentStatusBar();
+        } else {
+            mImmersionBar.statusBarColor(R.color.status_bar_bag);
+        }
+
+        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
 
         if (isMenuShowing() || isPopShowing()) {
             if (isImmersionBarEnabled() && !isNightTheme()) {
@@ -259,7 +266,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
-
         }
 
         mImmersionBar.init();
@@ -860,7 +866,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 break;
             case R.id.fabNightTheme:
                 popMenuOut();
-                new Handler().postDelayed(() -> setNightTheme(!isNightTheme()), 200L);
+                new Handler().postDelayed(() -> setNightTheme(!isNightTheme()), navigationBar.getPaddingBottom() > 0 ? 400L : 200L);
                 break;
             case R.id.tv_pre:
                 if (mPresenter.getBookShelf() != null) {

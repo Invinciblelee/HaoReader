@@ -33,7 +33,8 @@
         android:layout_below="@id/appBar"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        android:scrollbars="none" />
 
     <TextView
         android:id="@+id/tv_empty"
@@ -41,6 +42,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:gravity="center"
-        android:textSize="18sp"
-        android:textColor="@color/tv_text_secondary"/>
+        android:textColor="@color/tv_text_secondary"
+        android:textSize="18sp" />
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

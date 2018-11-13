@@ -25,9 +25,10 @@
     <color name="tv_text_summary">#b3ffffff</color>
     <color name="menu_color_default">#ffffffff</color>
 
+    <color name="textfield_search_color">#331a1a1a</color>
+
     <color name="tv_text_button_nor">#303030</color>
     <color name="tv_text_button_disable">#434343</color>
 
-    <!-- 分格线背景色 -->
     <color name="navigation_bar_bag">#222222</color>
 </resources>

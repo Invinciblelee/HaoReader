@@ -8,5 +8,5 @@
         android:id="@+id/file_category_rv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never" />
 </LinearLayout>

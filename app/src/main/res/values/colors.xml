@@ -48,7 +48,7 @@
 
     <color name="progress_back_color">#cccccc</color>
     <color name="progress_color">#767676</color>
-    <color name="progress_text_color">#aaaaaa</color>
+    <color name="progress_text_color">#a4a4a4</color>
 
     <color name="scroller_track_color">#337e7e7e</color>
 
@@ -56,6 +56,8 @@
     <color name="tv_text_button_pre">@color/colorAccent</color>
     <color name="tv_text_button_deep_pre">#11665e</color>
     <color name="tv_text_button_disable">#dddddd</color>
+
+    <color name="textfield_search_color">#339e9e9e</color>
 
     <!-- 自定义header背景色 -->
     <color name="bg_head">#FF0F4AAA</color>

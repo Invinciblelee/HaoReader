@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.internal.NavigationMenuPresenter;
@@ -36,22 +37,36 @@ public class AppCompat {
     }
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchIcon, boolean showBg) {
-        AppCompatImageView close = searchView.findViewById(R.id.search_close_btn);
-        close.setImageResource(R.drawable.ic_close_black_24dp);
-        setTint(close, searchView.getResources().getColor(R.color.menu_color_default));
-        close.setPadding(0, ScreenUtils.dpToPx(2f), 0, 0);
-
+        final int normalColor = searchView.getResources().getColor(R.color.menu_color_default);
         AppCompatImageView search = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         search.setImageResource(R.drawable.ic_search_black_24dp_new);
-        setTint(search, searchView.getResources().getColor(R.color.menu_color_default));
+        setTint(search, normalColor);
 
         SearchView.SearchAutoComplete searchText = searchView.findViewById(R.id.search_src_text);
+        searchText.setTextSize(14f);
+
+        final int textSize = (int) (searchText.getTextSize() * 1.25);
+        Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
+        searchIcon.setBounds(0, 0, textSize, textSize);
+        setTint(searchIcon, normalColor);
+        searchText.setCompoundDrawables(searchIcon, null, null, null);
+        searchText.setCompoundDrawablePadding(ScreenUtils.dpToPx(5));
+        searchText.setIncludeFontPadding(false);
+
+        AppCompatImageView close = searchView.findViewById(R.id.search_close_btn);
+        close.setImageResource(R.drawable.ic_close_black_24dp);
+        setTint(close, normalColor);
 
         LinearLayout plate = searchView.findViewById(R.id.search_plate);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) plate.getLayoutParams();
+        params.topMargin = ScreenUtils.dpToPx(7);
+        params.bottomMargin = ScreenUtils.dpToPx(7);
+        plate.setLayoutParams(params);
+
+        plate.setPadding(ScreenUtils.dpToPx(7), 0, ScreenUtils.dpToPx(7), 0);
+
         if(showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
-            setTintList(bag, createSearchPlateBagState(searchView.getResources().getColor(R.color.colorAccent),
-                    Color.GRAY));
             android.support.v4.view.ViewCompat.setBackground(plate, bag);
         }else {
             android.support.v4.view.ViewCompat.setBackground(plate, null);
@@ -61,7 +76,7 @@ public class AppCompat {
     }
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint) {
-        useCustomIconForSearchView(searchView, hint, true, true);
+        useCustomIconForSearchView(searchView, hint, false, true);
     }
 
     private static ColorStateList createSearchPlateBagState(int activeColor, int normalColor) {
@@ -76,7 +91,7 @@ public class AppCompat {
     }
 
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText) {
-        setQueryHintForSearchText(searchText, hintText, true);
+        setQueryHintForSearchText(searchText, hintText, false);
     }
 
 

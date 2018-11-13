@@ -181,6 +181,8 @@ dependencies {
     implementation 'com.luhuiguo:chinese-utils:1.0'
 
     implementation 'com.github.florent37:arclayout:1.0.3'
+
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta03'
 }
 
 greendao {

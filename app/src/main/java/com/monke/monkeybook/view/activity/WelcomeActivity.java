@@ -4,8 +4,10 @@ package com.monke.monkeybook.view.activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
+import com.gyf.barlibrary.BarHide;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -104,5 +106,13 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     @Override
     public void finish() {
         super.finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

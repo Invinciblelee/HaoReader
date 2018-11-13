@@ -1,21 +1,20 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -101,42 +100,19 @@ public class SearchTaskImpl implements ISearchTask {
             WebBookModelImpl.getInstance()
                     .searchOtherBook(query, searchEngine.getPage(), searchEngine.getTag())
                     .subscribeOn(scheduler)
-                    .doOnComplete(() -> {
-                        int searchTime = (int) (System.currentTimeMillis() - start);
-                        BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchEngine.getTag());
-                        if (bookSourceBean != null && searchTime < 10000) {
-                            bookSourceBean.increaseWeight(10000 / (1000 + searchTime));
-                            BookshelfHelp.saveBookSource(bookSourceBean);
-                        }
-                    })
-                    .doOnError(throwable -> {
-                        BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchEngine.getTag());
-                        if (sourceBean != null) {
-                            sourceBean.increaseWeight(-100);
-                            BookshelfHelp.saveBookSource(sourceBean);
-                        }
-                    })
+                    .flatMap(this::dispatchResult)
+                    .doOnComplete(() -> incrementBookSourceWeight(searchEngine.getTag(), start))
+                    .doOnError(throwable -> decrementBookSourceWeight(searchEngine.getTag()))
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SimpleObserver<List<SearchBookBean>>() {
+                    .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             disposables.add(d);
                         }
 
                         @Override
-                        public void onNext(List<SearchBookBean> searchBookBeans) {
-                            boolean hasMore = true;
-                            if (!isComplete && listener.checkSameTask(getId())) {
-                                searchBookBeans = removeDuplicate(searchBookBeans);
-                                if (searchBookBeans.size() > 0) {
-                                    if (!listener.checkExists(searchBookBeans.get(0))) {
-                                        listener.onSearchResult(searchBookBeans);
-                                    }
-                                } else {
-                                    hasMore = false;
-                                }
-                            }
-                            whenNext(searchEngine, hasMore, query, scheduler);
+                        public void onNext(Boolean bool) {
+                            whenNext(searchEngine, bool, query, scheduler);
                         }
 
                         @Override
@@ -171,9 +147,9 @@ public class SearchTaskImpl implements ISearchTask {
         searchEngine.setHasMore(false);
         if (!listener.checkSearchEngine(getNextSearchEngine())) {
             stopSearch();
-            if(listener.getShowingItemCount() == 0) {
+            if (listener.getShowingItemCount() == 0) {
                 listener.onSearchError();
-            }else {
+            } else {
                 listener.onSearchComplete();
             }
         } else {
@@ -181,13 +157,44 @@ public class SearchTaskImpl implements ISearchTask {
         }
     }
 
-    private static List<SearchBookBean> removeDuplicate(List<SearchBookBean> orderList) {
-        Set<SearchBookBean> set = new TreeSet<>((a, b) -> {
-            // 字符串则按照asicc码升序排列
-            return a.getName().compareTo(b.getName());
-        });
+    private Observable<Boolean> dispatchResult(final List<SearchBookBean> searchBookBeans) {
+        return Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            boolean hasMore = true;
+            if (!isComplete && listener.checkSameTask(getId())) {
+                if (searchBookBeans.size() > 0) {
+                    if (!listener.checkExists(searchBookBeans.get(0))) {
+                        listener.onSearchResult(searchBookBeans);
 
-        set.addAll(orderList);
-        return new ArrayList<>(set);
+                        saveData(searchBookBeans);
+                    }
+                } else {
+                    hasMore = false;
+                }
+            }
+            emitter.onNext(hasMore);
+        }).onErrorReturnItem(false);
+    }
+
+    private void incrementBookSourceWeight(String tag, long startTime) {
+        int searchTime = (int) (System.currentTimeMillis() - startTime);
+        BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(tag);
+        if (bookSourceBean != null && searchTime < 10000) {
+            bookSourceBean.increaseWeight(10000 / (1000 + searchTime));
+            BookshelfHelp.saveBookSource(bookSourceBean);
+        }
+    }
+
+    private void decrementBookSourceWeight(String tag) {
+        BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(tag);
+        if (sourceBean != null) {
+            sourceBean.increaseWeight(-100);
+            BookshelfHelp.saveBookSource(sourceBean);
+        }
+    }
+
+    private static void saveData(List<SearchBookBean> searchBookBeans) {
+        if (searchBookBeans != null) {
+            DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplaceInTx(searchBookBeans);
+        }
     }
 }

@@ -23,15 +23,15 @@
             app:showAsAction="ifRoom" />
 
         <item
-            android:id="@+id/disable_book_source"
-            android:icon="@drawable/ic_cancel"
-            android:title="@string/disable_book_source"
-            app:showAsAction="never" />
-
-        <item
             android:id="@+id/action_clean_cache"
             android:icon="@drawable/ic_clear_all"
             android:title="@string/clean_caches"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/disable_book_source"
+            android:icon="@drawable/ic_cancel"
+            android:title="@string/disable_book_source"
             app:showAsAction="never" />
     </group>
 
@@ -52,7 +52,7 @@
 
     <item
         android:id="@+id/action_book_info"
-        android:icon="@drawable/ic_toc"
+        android:icon="@drawable/ic_info_outline_black_24dp"
         android:title="@string/book_info"
         app:showAsAction="never" />
 

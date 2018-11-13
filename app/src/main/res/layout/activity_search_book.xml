@@ -53,6 +53,26 @@
             app:second_max_progress="80dp"
             app:speed="2dp" />
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="30dp"
+                android:src="@drawable/ic_stop_black_24dp"
+                app:fabCustomSize="45dp"
+                app:layout_anchorGravity="right|bottom" />
+
+        </FrameLayout>
+
         <LinearLayout
             android:id="@+id/ll_search_history"
             android:layout_width="match_parent"
@@ -75,7 +95,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
                     android:text="@string/searchHistory"
-                    android:textColor="#767676"
+                    android:textColor="@color/tv_text_summary"
                     android:textSize="16sp"
                     tools:ignore="RtlHardcoded" />
 
@@ -118,21 +138,6 @@
             </ScrollView>
 
         </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabScrollTop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="30dp"
-            android:src="@drawable/ic_top_black_24dp"
-            android:tint="@color/menu_color_default"
-            app:backgroundTint="@color/background"
-            app:elevation="5dp"
-            app:fabSize="mini"
-            app:layout_anchorGravity="right|bottom" />
     </RelativeLayout>
 
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

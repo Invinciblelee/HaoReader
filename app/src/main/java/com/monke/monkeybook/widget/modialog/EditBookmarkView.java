@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookmarkBean;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
+import com.monke.monkeybook.utils.KeyboardUtil;
 
 /**
  * Created by GKF on 2018/1/17.
@@ -94,7 +94,7 @@ public class EditBookmarkView {
 
         llEdit = moDialogView.findViewById(R.id.llEdit);
 
-        ImmersionBar.resetBoxPosition((Activity) context, moDialogView, R.id.cv_root);
+        KeyboardUtil.resetViewPosition((Activity) context, moDialogView.findViewById(R.id.cv_root));
     }
 
     private void dismiss() {

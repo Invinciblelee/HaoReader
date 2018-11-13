@@ -11,9 +11,7 @@
 ![image](https://github.com/gedoor/MyBookshelf/blob/master/docs/image/mybookshelf.jpg)
 
 # 软件体验
-[阅读.apk](https://github.com/Invinciblelee/MyBookshelf-master/blob/master/apk/MONKOVEL_2.0.428318.apk)
-
-![image](https://github.com/Invinciblelee/MyBookshelf-master/blob/master/apk/1541947234.png)
+[MONKOVEL_2.0.428357.apk](https://raw.githubusercontent.com/Invinciblelee/MyBookshelf-master/master/apk/MONKOVEL_2.0.428357.apk)
 
 # 免责声明（Disclaimer）
 阅读是一款提供网络文学搜索的工具，为广大网络文学爱好者提供一种方便、快捷舒适的试读体验。

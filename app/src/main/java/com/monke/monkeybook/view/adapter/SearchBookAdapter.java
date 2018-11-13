@@ -18,6 +18,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
+import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +29,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
-    private Activity activity;
-    private final List<SearchBookBean> searchBooks;
+    private WeakReference<Activity> activityRef;
+    private List<SearchBookBean> searchBooks;
 
     public interface OnItemClickListener {
         void clickItem(View animView, int position, SearchBookBean searchBookBean);
@@ -39,7 +40,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
 
     public SearchBookAdapter(Activity activity) {
         super(true);
-        this.activity = activity;
+        this.activityRef = new WeakReference<>(activity);
         searchBooks = new ArrayList<>();
     }
 
@@ -54,7 +55,8 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         final int realPosition = holder.getLayoutPosition();
         final MyViewHolder myViewHolder = (MyViewHolder) holder;
         final SearchBookBean item = searchBooks.get(realPosition);
-        if (!activity.isFinishing()) {
+        Activity activity = activityRef.get();
+        if (activity != null && !activity.isFinishing()) {
             Glide.with(activity)
                     .load(item.getCoverUrl())
                     .apply(new RequestOptions()
@@ -123,7 +125,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
 
     @Override
     public int getICount() {
-        return searchBooks.size();
+        return searchBooks == null ? 0 : searchBooks.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -156,33 +158,18 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
     }
 
     public synchronized void addAll(List<SearchBookBean> newDataS, String keyWord) {
+        List<SearchBookBean> copyDataS = new ArrayList<>(searchBooks);
         if (newDataS != null && newDataS.size() > 0) {
-            saveSearchToDb(newDataS);
             List<SearchBookBean> searchBookBeansAdd = new ArrayList<>();
-            if (searchBooks.size() == 0) {
-                searchBooks.addAll(newDataS);
-                Collections.sort(searchBooks, (o1, o2) -> {
-                    if (TextUtils.equals(keyWord, o1.getName())
-                            || TextUtils.equals(keyWord, o1.getAuthor())) {
-                        return -1;
-                    } else if (TextUtils.equals(keyWord, o2.getName())
-                            || TextUtils.equals(keyWord, o2.getAuthor())) {
-                        return 1;
-                    } else if (o1.getName().contains(keyWord) || o1.getAuthor().contains(keyWord)) {
-                        return -1;
-                    } else if (o2.getName().contains(keyWord) || o2.getAuthor().contains(keyWord)) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
-                notifyDataSetChanged();
+            if (copyDataS.size() == 0) {
+                copyDataS.addAll(newDataS);
+                sortSearchBooks(copyDataS, keyWord);
             } else {
                 //存在
                 for (SearchBookBean temp : newDataS) {
                     Boolean hasSame = false;
-                    for (int i = 0, size = searchBooks.size(); i < size; i++) {
-                        SearchBookBean searchBook = searchBooks.get(i);
+                    for (int i = 0, size = copyDataS.size(); i < size; i++) {
+                        SearchBookBean searchBook = copyDataS.get(i);
                         if (TextUtils.equals(temp.getName(), searchBook.getName())
                                 && TextUtils.equals(temp.getAuthor(), searchBook.getAuthor())) {
                             hasSame = true;
@@ -199,68 +186,71 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                 //添加
                 for (SearchBookBean temp : searchBookBeansAdd) {
                     if (TextUtils.equals(keyWord, temp.getName())) {
-                        for (int i = 0; i < searchBooks.size(); i++) {
-                            SearchBookBean searchBook = searchBooks.get(i);
+                        for (int i = 0; i < copyDataS.size(); i++) {
+                            SearchBookBean searchBook = copyDataS.get(i);
                             if (!TextUtils.equals(keyWord, searchBook.getName())) {
-                                searchBooks.add(i, temp);
-                                notifyItemInserted(i);
+                                copyDataS.add(i, temp);
                                 break;
                             }
                         }
                     } else if (TextUtils.equals(keyWord, temp.getAuthor())) {
-                        for (int i = 0; i < searchBooks.size(); i++) {
-                            SearchBookBean searchBook = searchBooks.get(i);
+                        for (int i = 0; i < copyDataS.size(); i++) {
+                            SearchBookBean searchBook = copyDataS.get(i);
                             if (!TextUtils.equals(keyWord, searchBook.getName()) && !TextUtils.equals(keyWord, searchBook.getAuthor())) {
-                                searchBooks.add(i, temp);
-                                notifyItemInserted(i);
+                                copyDataS.add(i, temp);
                                 break;
                             }
                         }
                     } else if (temp.getName().contains(keyWord) || temp.getAuthor().contains(keyWord)) {
-                        for (int i = 0; i < searchBooks.size(); i++) {
-                            SearchBookBean searchBook = searchBooks.get(i);
+                        for (int i = 0; i < copyDataS.size(); i++) {
+                            SearchBookBean searchBook = copyDataS.get(i);
                             if (!TextUtils.equals(keyWord, searchBook.getName()) && !TextUtils.equals(keyWord, searchBook.getAuthor())) {
-                                searchBooks.add(i, temp);
-                                notifyItemInserted(i);
+                                copyDataS.add(i, temp);
                                 break;
                             }
                         }
                     } else {
-                        searchBooks.add(temp);
-                        notifyItemInserted(searchBooks.size() - 1);
+                        copyDataS.add(temp);
                     }
                 }
+            }
+            searchBooks = copyDataS;
+            Activity activity = activityRef.get();
+            if(activity != null) {
+                activity.runOnUiThread(this::notifyDataSetChanged);
             }
         }
     }
 
     public void clearAll() {
-        int bookSize = searchBooks.size();
-        if (bookSize > 0) {
-            try {
-                Glide.with(activity).onDestroy();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            searchBooks.clear();
-            notifyItemRangeRemoved(0, bookSize);
+        if(searchBooks == null || searchBooks.isEmpty()){
+            return;
         }
+        try {
+            Glide.with(activityRef.get()).onDestroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        searchBooks.clear();
+        notifyItemRangeRemoved(0, searchBooks.size());
     }
 
-    public List<SearchBookBean> getSearchBooks() {
-        return searchBooks;
-    }
-
-    private void saveSearchToDb(List<SearchBookBean> newDataS) {
-        Observable.create(e -> {
-            DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao()
-                    .insertOrReplaceInTx(newDataS);
-            e.onNext(true);
-            e.onComplete();
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+    private void sortSearchBooks(List<SearchBookBean> searchBookBeans, String keyWord) {
+        Collections.sort(searchBookBeans, (o1, o2) -> {
+            if (TextUtils.equals(keyWord, o1.getName())
+                    || TextUtils.equals(keyWord, o1.getAuthor())) {
+                return -1;
+            } else if (TextUtils.equals(keyWord, o2.getName())
+                    || TextUtils.equals(keyWord, o2.getAuthor())) {
+                return 1;
+            } else if (o1.getName().contains(keyWord) || o1.getAuthor().contains(keyWord)) {
+                return -1;
+            } else if (o2.getName().contains(keyWord) || o2.getAuthor().contains(keyWord)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 
 }

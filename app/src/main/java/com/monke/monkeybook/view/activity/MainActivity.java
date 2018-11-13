@@ -28,6 +28,7 @@ import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;

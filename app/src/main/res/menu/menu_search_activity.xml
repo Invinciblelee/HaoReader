@@ -10,12 +10,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_stop"
-        android:icon="@drawable/ic_submit_black_24dp"
-        android:title="@string/stop"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
-    <item
         android:id="@+id/action_my716"
         android:checkable="true"
         android:checked="true"

@@ -91,7 +91,7 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (needLoadMore && isRequesting != 1 && !isAll && position == getItemCount() - 1 && getICount() > 0) {
+        if (needLoadMore && isRequesting != 1 && !isAll && position == getItemCount() - 1 && getICount() > 5) {
             return LOAD_MORE_TYPE;
         } else {
             return getIViewType(position);
@@ -102,7 +102,7 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        if (needLoadMore && isRequesting != 1 && !isAll && getICount() > 0) {
+        if (needLoadMore && isRequesting != 1 && !isAll && getICount() > 5) {
             return getICount() + 1;
         } else
             return getICount();

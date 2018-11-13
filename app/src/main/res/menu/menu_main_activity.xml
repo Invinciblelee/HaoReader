@@ -24,7 +24,7 @@
 
     <item
         android:id="@+id/action_add_url"
-        android:icon="@drawable/ic_add_black_24dp_new"
+        android:icon="@drawable/ic_link_black_24dp"
         android:title="@string/add_book_url"
         app:showAsAction="never" />
 

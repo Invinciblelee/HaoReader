@@ -15,12 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
+import com.gyf.barlibrary.ImmersionBar;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.widget.AppCompat;
 
 import java.lang.reflect.Method;

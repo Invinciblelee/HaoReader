@@ -216,7 +216,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         }
 
         Animation animIn = AnimationUtils.loadAnimation(this, R.anim.anim_scale_in);
-        getWindow().getDecorView().post(() -> cardView.startAnimation(animIn));
+        cardView.startAnimation(animIn);
     }
 
     @Override
@@ -395,7 +395,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                             .centerCrop()
                             .placeholder(R.drawable.img_cover_gs)
                             .error(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 4)))
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
                     .into(ivBlurCover);
         }
     }

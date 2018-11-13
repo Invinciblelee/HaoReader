@@ -176,8 +176,8 @@
                         android:paddingBottom="3dp">
 
                         <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="18sp"
-                            android:layout_height="18sp"
+                            android:layout_width="@dimen/desc_icon_size"
+                            android:layout_height="@dimen/desc_icon_size"
                             android:paddingEnd="2dp"
                             android:contentDescription="@string/author"
                             android:src="@drawable/ic_author_black_24dp"
@@ -231,8 +231,8 @@
                         android:paddingBottom="3dp">
 
                         <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="18sp"
-                            android:layout_height="18sp"
+                            android:layout_width="@dimen/desc_icon_size"
+                            android:layout_height="@dimen/desc_icon_size"
                             android:contentDescription="@string/book_source"
                             android:paddingEnd="2dp"
                             android:src="@drawable/ic_source_black_24dp"
@@ -282,8 +282,8 @@
                         android:paddingBottom="3dp">
 
                         <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="18sp"
-                            android:layout_height="18sp"
+                            android:layout_width="@dimen/desc_icon_size"
+                            android:layout_height="@dimen/desc_icon_size"
                             android:contentDescription="@string/book_search_last"
                             android:paddingEnd="2dp"
                             android:src="@drawable/ic_book_last_24dp"
@@ -325,8 +325,8 @@
                         android:visibility="visible">
 
                         <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="18sp"
-                            android:layout_height="18sp"
+                            android:layout_width="@dimen/desc_icon_size"
+                            android:layout_height="@dimen/desc_icon_size"
                             android:contentDescription="@string/read_dur_progress"
                             android:paddingEnd="2dp"
                             android:src="@drawable/ic_history_black_24dp"
@@ -353,8 +353,7 @@
                         android:paddingBottom="10dp"
                         android:text="@string/book_intro"
                         android:textColor="@color/tv_text_summary"
-                        android:textSize="14sp"
-                        android:textStyle="italic" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </ScrollView>

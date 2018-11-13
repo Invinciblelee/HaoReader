@@ -53,7 +53,9 @@
         <item name="colorButtonNormal">@color/menu_color_default</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="overlapAnchor">false</item>
+    </style>
 
     <style name="AppTheme.CardView" parent="CardView.Light">
         <item name="cardBackgroundColor">@color/card_background</item>

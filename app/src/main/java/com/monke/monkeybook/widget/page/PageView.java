@@ -50,6 +50,8 @@ public class PageView extends View {
     private PageAnimation mPageAnim;
     private boolean drawAfterComputeScroll = false;
 
+    private int mTouchSlop;
+
     // 动画监听类
     private PageAnimation.OnPageChangeListener mPageAnimListener = new PageAnimation.OnPageChangeListener() {
         @Override
@@ -85,6 +87,8 @@ public class PageView extends View {
 
     public PageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
     @Override
@@ -158,6 +162,9 @@ public class PageView extends View {
         if (direction == Direction.NEXT) {
             int x = mViewWidth;
             int y = mViewHeight;
+            if (mPageAnim instanceof SimulationPageAnim) {
+                y = y * 2 / 3;
+            }
             //初始化动画
             mPageAnim.setStartPoint(x, y);
             //设置点击点
@@ -225,7 +232,7 @@ public class PageView extends View {
             case MotionEvent.ACTION_MOVE:
                 // 判断是否大于最小滑动值。
                 if (!isMove) {
-                    isMove = Math.abs(mStartX - x) > 0 || Math.abs(mStartY - y) > 0;
+                    isMove = Math.abs(mStartX - x) > mTouchSlop || Math.abs(mStartY - y) > mTouchSlop;
                 }
 
                 if (!mPageLoader.isPageFrozen() && isMove) {

@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
+import com.monke.monkeybook.utils.KeyboardUtil;
 
 /**
  * 输入框
@@ -55,7 +55,7 @@ public class InputView {
         etInput = moDialogView.findViewById(R.id.et_input);
         tvOk = moDialogView.findViewById(R.id.tv_ok);
 
-        ImmersionBar.resetBoxPosition((Activity) context, moDialogView, R.id.cv_root);
+        KeyboardUtil.resetViewPosition((Activity) context, moDialogView.findViewById(R.id.cv_root));
     }
 
     /**

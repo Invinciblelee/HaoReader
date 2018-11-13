@@ -65,13 +65,13 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         if (TextUtils.isEmpty(durChapterName)) {
             holder.tvRead.setText(getContext().getString(R.string.read_dur_progress, getContext().getString(R.string.text_placeholder)));
         } else {
-            holder.tvRead.setText(holder.tvRead.getContext().getString(R.string.read_dur_progress, FormatWebText.trim(durChapterName)));
+            holder.tvRead.setText(FormatWebText.trim(durChapterName));
         }
         String lastChapterName = item.getLastChapterName();
         if (TextUtils.isEmpty(lastChapterName)) {
             holder.tvLast.setText(getContext().getString(R.string.book_search_last, getContext().getString(R.string.text_placeholder)));
         } else {
-            holder.tvLast.setText(holder.tvLast.getContext().getString(R.string.book_search_last, FormatWebText.trim(lastChapterName)));
+            holder.tvLast.setText(FormatWebText.trim(lastChapterName));
         }
 
         if (item.getHasUpdate()) {
@@ -102,7 +102,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
         holder.content.setOnClickListener(v -> onClick(v, item));
 
-        if (Objects.equals(getBookshelfPx(), "2")) {
+        if (getBookshelfPx() == 2) {
             holder.ivCover.setClickable(true);
             holder.ivCover.setOnClickListener(v -> onLongClick(v, item));
             holder.content.setOnLongClickListener(null);

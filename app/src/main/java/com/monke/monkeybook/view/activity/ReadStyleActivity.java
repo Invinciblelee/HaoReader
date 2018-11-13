@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.gyf.barlibrary.ImmersionBar;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.MApplication;
@@ -31,7 +32,6 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.utils.ColorUtil;
 import com.monke.monkeybook.utils.FileUtil;
-import com.monke.monkeybook.utils.barUtil.ImmersionBar;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
@@ -167,27 +167,28 @@ public class ReadStyleActivity extends MBaseActivity {
             return true;
         });
         //选择背景颜色
-        tvSelectBgColor.setOnClickListener(view -> {ColorPickerDialogBuilder
-                .with(this)
-                .setTitle("选择背景颜色")
-                .initialColor(bgColor)
-                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                .density(12)
-                .lightnessSliderOnly()
-                .setOnColorSelectedListener(selectedColor -> {
+        tvSelectBgColor.setOnClickListener(view -> {
+            ColorPickerDialogBuilder
+                    .with(this)
+                    .setTitle("选择背景颜色")
+                    .initialColor(bgColor)
+                    .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                    .density(12)
+                    .lightnessSliderOnly()
+                    .setOnColorSelectedListener(selectedColor -> {
 
-                })
-                .setPositiveButton(getString(R.string.ok), (dialog, selectedColor, allColors) -> {
-                    bgCustom = 1;
-                    bgColor = selectedColor;
-                    bgDrawable = new ColorDrawable(bgColor);
-                    upBg();
-                })
-                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                    })
+                    .setPositiveButton(getString(R.string.ok), (dialog, selectedColor, allColors) -> {
+                        bgCustom = 1;
+                        bgColor = selectedColor;
+                        bgDrawable = new ColorDrawable(bgColor);
+                        upBg();
+                    })
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
 
-                })
-                .build()
-                .show();
+                    })
+                    .build()
+                    .show();
         });
         tvSelectBgColor.setOnLongClickListener((View view) -> {
             moDialogHUD.showInputBox("输入背景颜色", ColorUtil.intToString(bgColor), inputText -> {
@@ -262,7 +263,7 @@ public class ReadStyleActivity extends MBaseActivity {
     }
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
-    private void imageSelectorResult(){
+    private void imageSelectorResult() {
         tvSelectBgImage.callOnClick();
     }
 

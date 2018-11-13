@@ -69,7 +69,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
 
         holder.content.setOnClickListener(v -> onClick(v, item));
 
-        if (Objects.equals(getBookshelfPx(), "2")) {
+        if (getBookshelfPx() == 2) {
             holder.tvName.setClickable(true);
             holder.tvName.setOnClickListener(v -> onLongClick(v, item));
             holder.content.setOnLongClickListener(null);

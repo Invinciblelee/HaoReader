@@ -11,6 +11,8 @@
     <dimen name="half_card_item_margin">4dp</dimen>
     <dimen name="card_item_margin">8dp</dimen>
 
+    <dimen name="desc_icon_size">17.5sp</dimen>
+
     <dimen name="fastscroll_bubble_radius">44dp</dimen>
     <dimen name="fastscroll_bubble_size">88dp</dimen>
     <dimen name="fastscroll_bubble_textsize">48sp</dimen>
