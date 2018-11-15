@@ -214,7 +214,7 @@ public class ChapterListActivity extends MBaseActivity {
                 searchViewCollapsed();
                 if (index != bookShelf.getDurChapter()) {
                     Intent data = new Intent();
-                    data.putExtra("what", 0);
+                    data.putExtra("what", tabPosition);
                     data.putExtra("chapter", index);
                     data.putExtra("page", page);
                     setResult(RESULT_OK, data);

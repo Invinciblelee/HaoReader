@@ -3,6 +3,7 @@ package com.monke.monkeybook.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.utils.FileStack;
 import com.monke.monkeybook.utils.FileUtil;
+import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.view.activity.ImportBookActivity;
 import com.monke.monkeybook.view.adapter.FileSystemAdapter;
 import com.monke.monkeybook.widget.itemdecoration.DividerItemDecoration;
@@ -31,14 +33,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.disposables.Disposable;
 
 public class FileCategoryFragment extends BaseFileFragment {
     @BindView(R.id.file_category_rv_content)
     RecyclerView mRvContent;
+    @BindView(R.id.loading_progress)
+    ContentLoadingProgressBar progressBar;
     TextView mTvPath;
     Unbinder unbinder;
 
@@ -147,20 +157,39 @@ public class FileCategoryFragment extends BaseFileFragment {
     }
 
     private void toggleFileTree(File file) {
-        //路径名
-        mTvPath.setText(file.getPath().replace(rootFilePath, ""));
-        //获取数据
-        File[] files = file.listFiles(new SimpleFileFilter());
-        //转换成List
-        List<File> rootFiles = Arrays.asList(files);
-        //排序
-        Collections.sort(rootFiles, new FileComparator());
-        //加入
-        mAdapter.refreshItems(rootFiles);
-        //反馈
-        if (mListener != null) {
-            mListener.onCategoryChanged();
-        }
+        Single.create((SingleOnSubscribe<List<File>>) emitter -> {
+            //获取数据
+            File[] files = file.listFiles(new SimpleFileFilter());
+            //转换成List
+            List<File> rootFiles = Arrays.asList(files);
+            //排序
+            Collections.sort(rootFiles, new FileComparator());
+            emitter.onSuccess(rootFiles);
+        }).compose(RxUtils::toSimpleSingle)
+                .subscribe(new SingleObserver<List<File>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(List<File> files) {
+                        //路径名
+                        mTvPath.setText(file.getPath().replace(rootFilePath, ""));
+                        //加入
+                        mAdapter.refreshItems(files);
+                        //反馈
+                        if (mListener != null) {
+                            mListener.onCategoryChanged();
+                        }
+                        progressBar.hide();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        progressBar.hide();
+                    }
+                });
     }
 
     @Override

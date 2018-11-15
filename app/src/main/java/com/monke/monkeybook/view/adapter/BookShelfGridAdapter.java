@@ -3,7 +3,6 @@ package com.monke.monkeybook.view.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,18 +15,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.help.MyItemTouchHelpCallback;
-import com.monke.monkeybook.view.activity.MainActivity;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
-import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
-import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -45,6 +36,11 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int index) {
+
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final BookShelfBean item = getItem(holder.getLayoutPosition());
         assert item != null;
         holder.tvName.setText(item.getBookInfoBean().getName());
@@ -73,26 +69,12 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
             holder.tvName.setClickable(true);
             holder.tvName.setOnClickListener(v -> onLongClick(v, item));
             holder.content.setOnLongClickListener(null);
-        }else {
+        } else {
             holder.tvName.setClickable(false);
             holder.content.setOnLongClickListener(v -> {
                 onLongClick(v, item);
                 return true;
             });
-        }
-
-        //进度条
-        holder.mpbDurProgress.setVisibility(View.VISIBLE);
-        holder.mpbDurProgress.setMaxProgress(item.getChapterListSize());
-        float speed = item.getChapterListSize() * 1.0f / 60;
-
-        holder.mpbDurProgress.setSpeed(speed <= 0 ? 1 : speed);
-
-        if (animationIndex < holder.getLayoutPosition()) {
-            holder.mpbDurProgress.setDurProgressWithAnim(item.getDurChapter() + 1);
-            animationIndex = holder.getLayoutPosition();
-        } else {
-            holder.mpbDurProgress.setDurProgress(item.getDurChapter() + 1);
         }
 
         if (item.isLoading()) {
@@ -105,20 +87,18 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         }
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
         ImageView ivHasNew;
         AutofitTextView tvName;
-        MHorProgressBar mpbDurProgress;
         RotateLoading rotateLoading;
-        View content;
+        public View content;
 
         MyViewHolder(View itemView) {
             super(itemView);
             ivCover = itemView.findViewById(R.id.iv_cover);
             ivHasNew = itemView.findViewById(R.id.iv_has_new);
             tvName = itemView.findViewById(R.id.tv_name);
-            mpbDurProgress = itemView.findViewById(R.id.mpb_durProgress);
             rotateLoading = itemView.findViewById(R.id.rl_loading);
             content = itemView.findViewById(R.id.content_card);
         }

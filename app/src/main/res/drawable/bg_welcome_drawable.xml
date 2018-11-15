@@ -3,6 +3,7 @@
 
     <item>
         <color android:color="@color/background" />
+
     </item>
 
     <item android:drawable="@drawable/ic_welcome"/>

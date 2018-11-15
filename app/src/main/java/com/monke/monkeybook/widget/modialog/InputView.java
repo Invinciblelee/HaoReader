@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
@@ -16,7 +17,7 @@ import com.monke.monkeybook.utils.KeyboardUtil;
 
 public class InputView {
     private TextView tvTitle;
-    private EditText etInput;
+    private AutoCompleteTextView etInput;
     private TextView tvOk;
 
     private MoDialogView moDialogView;
@@ -37,11 +38,17 @@ public class InputView {
         });
     }
 
-    void showInputView(final OnInputOk onInputOk, String title, String defaultValue) {
+    void showInputView(final OnInputOk onInputOk, String title, String defaultValue, String[] adapterValues) {
         this.onInputOk = onInputOk;
         tvTitle.setText(title);
         if (defaultValue != null) {
             etInput.setText(defaultValue);
+            etInput.setSelectAllOnFocus(true);
+        }
+
+        if (adapterValues != null) {
+            ArrayAdapter mAdapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, adapterValues);
+            etInput.setAdapter(mAdapter);
         }
     }
 

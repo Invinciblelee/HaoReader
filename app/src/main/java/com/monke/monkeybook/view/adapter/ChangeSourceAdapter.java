@@ -113,7 +113,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
                 }
             }
 
-            myViewHolder.itemView.setOnClickListener(view -> {
+            final View.OnClickListener clickListener = view -> {
                 if (lastSelectIndex != -1 && lastSelectIndex != holder.getLayoutPosition()) {
                     notifyItemChanged(lastSelectIndex, 0);
                 }
@@ -123,7 +123,9 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
                 if (mOnItemClickListener != null) {
                     mOnItemClickListener.onItemClick(view, item);
                 }
-            });
+            };
+
+            myViewHolder.itemView.setOnClickListener(clickListener);
         }
     }
 

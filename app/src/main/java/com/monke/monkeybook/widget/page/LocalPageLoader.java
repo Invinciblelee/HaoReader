@@ -33,6 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.monke.monkeybook.help.FileHelp.BLANK;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CHANGE_CHARSET;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PARING;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PARSE_ERROR;
 
@@ -425,6 +426,10 @@ public class LocalPageLoader extends PageLoader {
         return true;
     }
 
+    public void updateCharset(){
+        setCurrentStatus(STATUS_CHANGE_CHARSET);
+        refreshChapterList();
+    }
 
     private class SubChapter {
         String title;

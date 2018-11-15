@@ -5,6 +5,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
+import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
+
 /**
  * Created by GKF on 2018/3/16.
  */
@@ -139,6 +143,13 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         super.onSelectedChanged(viewHolder, actionState);
+        if (viewHolder instanceof BookShelfGridAdapter.MyViewHolder) {
+            ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.scroller_track_color);
+        }else if(viewHolder instanceof BookShelfListAdapter.MyViewHolder){
+            ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.scroller_track_color);
+        }else if(viewHolder != null){
+            viewHolder.itemView.setBackgroundResource(R.color.scroller_track_color);
+        }
     }
 
     /**
@@ -150,6 +161,13 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
+        if (viewHolder instanceof BookShelfGridAdapter.MyViewHolder) {
+            ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.transparent);
+        }else if(viewHolder instanceof BookShelfListAdapter.MyViewHolder){
+            ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.transparent);
+        }else {
+            viewHolder.itemView.setBackgroundResource(R.color.transparent);
+        }
         if (onItemTouchCallbackListener != null) {
             onItemTouchCallbackListener.onRelease();
         }

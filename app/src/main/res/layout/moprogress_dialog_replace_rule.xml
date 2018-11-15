@@ -31,7 +31,8 @@
                 android:id="@+id/tie_replace_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="2" />
+                android:maxLines="2"
+                android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -44,7 +45,8 @@
                 android:id="@+id/tie_replace_rule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3" />
+                android:maxLines="3"
+                android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView
@@ -62,7 +64,8 @@
                 android:id="@+id/tie_replace_to"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3" />
+                android:maxLines="3"
+                android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -75,7 +78,8 @@
                 android:id="@+id/tie_use_to"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3" />
+                android:maxLines="3"
+                android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView
@@ -90,7 +94,8 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="@string/ok"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

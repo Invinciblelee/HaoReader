@@ -1,6 +1,5 @@
 package com.monke.monkeybook.presenter;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.provider.DocumentFile;
@@ -79,14 +78,12 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
                     public void onNext(List<BookSourceBean> bookSourceBeans) {
-                        if (bookSourceBeans != null && !bookSourceBeans.isEmpty()) {
-                            Collections.sort(bookSourceBeans);
-                        } else if(!hasShown){
+                        mView.resetData(bookSourceBeans);
+
+                        if ((bookSourceBeans == null || bookSourceBeans.isEmpty()) && !hasShown) {
                             mView.importDefaultSource();
                             hasShown = true;
                         }
-                        mView.resetData(bookSourceBeans);
-
                     }
 
                     @Override
@@ -122,7 +119,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void delData(List<BookSourceBean> bookSourceBeans) {
-        if(bookSourceBeans == null || bookSourceBeans.isEmpty()){
+        if (bookSourceBeans == null || bookSourceBeans.isEmpty()) {
             return;
         }
 
@@ -172,15 +169,9 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     }
 
     @Override
-    public void importBookSource(Uri uri) {
-        String json;
-        if (uri.toString().startsWith("content://")) {
-            json = DocumentHelper.readString(uri);
-        } else {
-            String path = uri.getPath();
-            DocumentFile file = DocumentFile.fromFile(new File(path));
-            json = DocumentHelper.readString(file);
-        }
+    public void importBookSource(File file) {
+        DocumentFile documentFile = DocumentFile.fromFile(file);
+        String json = DocumentHelper.readString(documentFile);
         if (!isEmpty(json)) {
             mView.showLoading("正在导入书源");
             BookSourceManager.getInstance().importBookSourceO(json)

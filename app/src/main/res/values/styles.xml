@@ -66,11 +66,30 @@
         <item name="android:layout_marginBottom">@dimen/card_margin</item>
     </style>
 
+    <style name="AppTheme.CardView.Image" parent="CardView.Light">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="cardElevation">5dp</item>
+        <item name="cardCornerRadius">3dp</item>
+        <item name="android:layout_marginLeft">@dimen/card_item_margin</item>
+        <item name="android:layout_marginRight">@dimen/card_item_margin</item>
+        <item name="android:layout_marginTop">@dimen/card_item_margin</item>
+        <item name="android:layout_marginBottom">@dimen/card_item_margin</item>
+    </style>
+
     <style name="AppTheme.CardView.Item" parent="CardView.Light">
         <item name="cardBackgroundColor">@color/card_background</item>
         <item name="cardElevation">1dp</item>
         <item name="android:layout_marginLeft">@dimen/card_item_margin</item>
         <item name="android:layout_marginRight">@dimen/card_item_margin</item>
+        <item name="android:layout_marginTop">@dimen/half_card_item_margin</item>
+        <item name="android:layout_marginBottom">@dimen/half_card_item_margin</item>
+    </style>
+
+    <style name="AppTheme.CardView.Item.Half" parent="CardView.Light">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="cardElevation">1dp</item>
+        <item name="android:layout_marginLeft">@dimen/half_card_item_margin</item>
+        <item name="android:layout_marginRight">@dimen/half_card_item_margin</item>
         <item name="android:layout_marginTop">@dimen/half_card_item_margin</item>
         <item name="android:layout_marginBottom">@dimen/half_card_item_margin</item>
     </style>
@@ -84,6 +103,11 @@
 
     <style name="Overflow.Menu.Text.style" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
         <item name="android:textColor">@color/menu_color_default</item>
+    </style>
+
+    <style name="Widget.AppCompat.CompoundButton.Light" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/light_gray</item>
     </style>
 
     <style name="anim_pop_checkaddshelf">

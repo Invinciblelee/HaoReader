@@ -28,7 +28,7 @@ public interface SearchBookContract {
 
         void toSearchBooks(String key);
 
-        void stopSearch(boolean callEvent);
+        void stopSearch();
     }
 
     interface View extends IView {

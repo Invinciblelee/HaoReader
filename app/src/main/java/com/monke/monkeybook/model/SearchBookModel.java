@@ -63,7 +63,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchEngineS.add(new SearchEngine(My716.TAG));
         }
         List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
-        if(bookSourceBeans != null) {
+        if (bookSourceBeans != null) {
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
                 searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
             }
@@ -134,11 +134,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
     }
 
-    public void stopSearch(boolean callEvent) {
-        resetSearch(false, 0);
-        if(callEvent) {
+    public void stopSearch() {
+        if(isTaskRunning()){
             searchListener.searchBookFinish();
         }
+        resetSearch(false, 0);
     }
 
     public void shutdownSearch() {
@@ -192,12 +192,24 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     @Override
     public void onSearchComplete() {
+        if (isTaskRunning()) {
+            return;
+        }
+
+        searchListener.searchBookFinish();
+    }
+
+    private boolean isTaskRunning() {
+        if (searchTasks.isEmpty()) {
+            return false;
+        }
+
         for (ISearchTask searchTask : searchTasks) {
             if (!searchTask.isComplete()) {
-                return;
+                return true;
             }
         }
-        searchListener.searchBookFinish();
+        return false;
     }
 
     public interface OnSearchListener {

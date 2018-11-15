@@ -130,7 +130,7 @@ public class DownloadService extends Service {
                 }
                 downloadTasks.put(getId(), this);
                 sendUpDownloadBook(addDownloadAction, downloadBook);
-                toast(String.format(Locale.getDefault(), "%s：任务已添加", downloadBook.getName()));
+                toast(String.format(Locale.getDefault(), "%s：下载任务添加成功", downloadBook.getName()));
             }
 
             @Override

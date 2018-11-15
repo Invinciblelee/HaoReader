@@ -36,7 +36,7 @@ public class AppCompat {
 
     }
 
-    public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchIcon, boolean showBg) {
+    public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchHintIcon, boolean showBg) {
         final int normalColor = searchView.getResources().getColor(R.color.menu_color_default);
         AppCompatImageView search = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         search.setImageResource(R.drawable.ic_search_black_24dp_new);
@@ -72,7 +72,7 @@ public class AppCompat {
             android.support.v4.view.ViewCompat.setBackground(plate, null);
         }
 
-        setQueryHintForSearchText(searchText, hint, showSearchIcon);
+        setQueryHintForSearchText(searchText, hint, showSearchHintIcon);
     }
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint) {

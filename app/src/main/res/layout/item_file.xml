@@ -18,11 +18,13 @@
             android:scaleType="center"
             android:visibility="gone"
             tools:src="@drawable/ic_folder_black_24dp" />
+
         <!--选择是否添加文件-->
         <CheckBox
             android:id="@+id/file_cb_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:layout_gravity="center"
             android:clickable="true"
             android:enabled="true"
@@ -68,6 +70,7 @@
                 android:paddingBottom="1dp"
                 android:text="TXT"
                 android:textColor="@color/white"
+                android:textSize="12sp"
                 tools:ignore="HardcodedText,RtlHardcoded" />
 
             <TextView
@@ -76,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="15dp"
                 tools:ignore="RtlHardcoded"
-                tools:text="324kb" />
+                tools:text="324kb"/>
 
             <TextView
                 android:id="@+id/file_tv_date"

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp_new"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_format_line_spacing_black_24dp"
+        android:title="@string/sort"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
+
+        <menu android:id="@+id/group_sort_option">
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/item_sort_name_asc"
+                    android:title="@string/sort_by_name_asc"
+                    android:checked="true"
+                    app:showAsAction="never"/>
+
+                <item
+                    android:id="@+id/item_sort_date_desc"
+                    android:title="@string/sort_by_date_desc"
+                    app:showAsAction="never"/>
+
+                <item
+                    android:id="@+id/item_sort_length_desc"
+                    android:title="@string/sort_by_size_desc"
+                    app:showAsAction="never"
+                    />
+
+                <item
+                    android:id="@+id/item_sort_date_asc"
+                    android:title="@string/sort_by_date_asc"
+                    app:showAsAction="never"/>
+
+                <item
+                    android:id="@+id/item_sort_length_asc"
+                    android:title="@string/sort_by_size_asc"
+                    app:showAsAction="never"
+                    />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+</menu>

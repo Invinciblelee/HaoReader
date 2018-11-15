@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:id="@+id/fl_rb_checker"
+        android:layout_width="60dp"
+        android:layout_height="60dp">
+
+        <RadioButton
+            android:id="@+id/file_rb_checker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:clickable="false"
+            android:focusable="false" />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/fl_rb_checker"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/file_tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/file_ll_brief"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/file_tv_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/shape_round_rect"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingStart="5dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="1dp"
+                android:text="TXT"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText,RtlHardcoded" />
+
+            <TextView
+                android:id="@+id/file_tv_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                tools:ignore="RtlHardcoded"
+                tools:text="324kb" />
+
+            <TextView
+                android:id="@+id/file_tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2017-05-22" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/file_tv_sub_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            tools:text="0 项" />
+    </RelativeLayout>
+</RelativeLayout>
+

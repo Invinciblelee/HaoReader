@@ -18,7 +18,7 @@ import static android.text.TextUtils.isEmpty;
  * 书源信息
  */
 @Entity
-public class BookSourceBean implements Parcelable, Cloneable, Comparable<BookSourceBean> {
+public class BookSourceBean implements Parcelable, Cloneable {
     @Id
     private String bookSourceUrl;
     private String bookSourceName;
@@ -451,10 +451,5 @@ public class BookSourceBean implements Parcelable, Cloneable, Comparable<BookSou
 
     public void setWeight(int weight) {
         this.weight = weight;
-    }
-
-    @Override
-    public int compareTo(BookSourceBean o) {
-        return Integer.compare(o.weight, this.weight);
     }
 }

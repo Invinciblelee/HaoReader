@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_card"
-    style="@style/AppTheme.CardView"
-    app:cardUseCompatPadding="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_item_margin"
-    android:foreground="?attr/selectableItemBackground">
+    android:orientation="vertical"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="@dimen/half_card_item_margin">
 
-    <FrameLayout
+    <com.monke.monkeybook.widget.CoverCardView
+        android:id="@+id/cover_card"
+        style="@style/AppTheme.CardView.Image"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/half_card_item_margin">
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="2dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_cover_default"
             android:transitionName="img_cover"
             tools:ignore="UnusedAttribute" />
-
 
         <FrameLayout
             android:id="@+id/fl_has_new"
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_gravity="end"
-            android:layout_marginTop="2dp">
+            >
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/iv_has_new"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="6dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_circle_red_24dp"
                 android:visibility="invisible" />
 
@@ -51,32 +51,19 @@
                 app:loading_width="2dp" />
 
         </FrameLayout>
+    </com.monke.monkeybook.widget.CoverCardView>
 
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:gravity="center_horizontal"
+        android:paddingTop="2dp"
+        android:singleLine="true"
+        android:textColor="@color/tv_text_default"
+        android:textSize="14sp"
+        app:minTextSize="10sp" />
 
-        <me.grantland.widget.AutofitTextView
-            android:id="@+id/tv_name"
-            android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bg_gradient_bottom"
-            android:gravity="center"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:singleLine="true"
-            android:textColor="#ffffff"
-            android:textSize="12sp"
-            app:minTextSize="10sp" />
-
-        <com.monke.mprogressbar.MHorProgressBar
-            android:id="@+id/mpb_durProgress"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_gravity="bottom"
-            android:visibility="invisible"
-            app:bgdrawable="@color/progress_back_color"
-            app:cantouch="false"
-            app:fontdrawable="@color/colorAccent"
-            tools:ignore="RtlHardcoded" />
-
-    </FrameLayout>
-</android.support.v7.widget.CardView>
+</LinearLayout>

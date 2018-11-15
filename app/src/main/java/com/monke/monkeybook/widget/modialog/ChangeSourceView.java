@@ -266,7 +266,7 @@ public class ChangeSourceView {
         ibtStop.setVisibility(View.INVISIBLE);
 
         rvSource.setBaseRefreshListener(this::reSearchBook);
-        ibtStop.setOnClickListener(v -> searchBookModel.stopSearch(true));
+        ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
     }
 
     /**

@@ -13,6 +13,8 @@
 
     <dimen name="desc_icon_size">17.5sp</dimen>
 
+    <dimen name="progress_bar_height">2dp</dimen>
+
     <dimen name="fastscroll_bubble_radius">44dp</dimen>
     <dimen name="fastscroll_bubble_size">88dp</dimen>
     <dimen name="fastscroll_bubble_textsize">48sp</dimen>

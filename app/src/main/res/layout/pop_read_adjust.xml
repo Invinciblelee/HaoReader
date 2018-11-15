@@ -75,7 +75,7 @@
                 app:cursordrawable_width="13dp"
                 app:fontdrawable="@color/progress_color"
                 app:maxprogress="255"
-                app:progresswidth="2dp" />
+                app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
 
@@ -141,7 +141,7 @@
                 app:cursordrawable_width="13dp"
                 app:fontdrawable="@color/progress_color"
                 app:maxprogress="20"
-                app:progresswidth="2dp" />
+                app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
 
@@ -197,7 +197,7 @@
                 app:cursordrawable_width="13dp"
                 app:fontdrawable="@color/progress_color"
                 app:maxprogress="180"
-                app:progresswidth="2dp" />
+                app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
 
@@ -253,7 +253,7 @@
                 app:cursordrawable_width="13dp"
                 app:fontdrawable="@color/progress_color"
                 app:maxprogress="800"
-                app:progresswidth="2dp" />
+                app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
     </LinearLayout>

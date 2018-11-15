@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:id="@+id/fl_content"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_big_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:layout_gravity="center"
+        android:transitionName="big_image"
+        android:scaleType="fitCenter"/>
+
+</FrameLayout>

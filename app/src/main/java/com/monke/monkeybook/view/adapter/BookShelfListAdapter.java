@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -21,8 +20,8 @@ import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
 
+import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapter.MyViewHolder> {
 
@@ -37,7 +36,12 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int index) {
+    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
+
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final BookShelfBean item = getItem(holder.getLayoutPosition());
         assert item != null;
         if (TextUtils.isEmpty(item.getCustomCoverPath())) {
@@ -93,7 +97,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
         holder.mpbDurProgress.setSpeed(speed <= 0 ? 1 : speed);
 
-        if (animationIndex < holder.getLayoutPosition()) {
+        if (holder.getLayoutPosition() > animationIndex) {
             holder.mpbDurProgress.setDurProgressWithAnim(item.getDurChapter() + 1);
             animationIndex = holder.getLayoutPosition();
         } else {
@@ -124,7 +128,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
         ImageView ivHasNew;
         TextView tvName;
@@ -134,7 +138,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         TextView tvCurChapter;
         MHorProgressBar mpbDurProgress;
         RotateLoading rotateLoading;
-        View content;
+        public View content;
 
         MyViewHolder(View itemView) {
             super(itemView);

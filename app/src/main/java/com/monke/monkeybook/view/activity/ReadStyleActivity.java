@@ -30,6 +30,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ColorUtil;
 import com.monke.monkeybook.utils.FileUtil;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
@@ -156,7 +157,7 @@ public class ReadStyleActivity extends MBaseActivity {
                 .build()
                 .show());
         tvSelectTextColor.setOnLongClickListener((View view) -> {
-            moDialogHUD.showInputBox("输入文字颜色", ColorUtil.intToString(textColor), inputText -> {
+            moDialogHUD.showInputBox("输入文字颜色", ColorUtil.intToString(textColor), null, inputText -> {
                 try {
                     textColor = Color.parseColor(inputText);
                     upText();
@@ -191,7 +192,7 @@ public class ReadStyleActivity extends MBaseActivity {
                     .show();
         });
         tvSelectBgColor.setOnLongClickListener((View view) -> {
-            moDialogHUD.showInputBox("输入背景颜色", ColorUtil.intToString(bgColor), inputText -> {
+            moDialogHUD.showInputBox("输入背景颜色", ColorUtil.intToString(bgColor), null, inputText -> {
                 try {
                     bgColor = Color.parseColor(inputText);
                     bgDrawable = new ColorDrawable(bgColor);
@@ -206,10 +207,7 @@ public class ReadStyleActivity extends MBaseActivity {
         //选择背景图片
         tvSelectBgImage.setOnClickListener(view -> {
             if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
-                startActivityForResult(intent, ResultSelectBg);
+                imageSelectorResult();
             } else {
                 EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
             }
@@ -264,7 +262,7 @@ public class ReadStyleActivity extends MBaseActivity {
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        tvSelectBgImage.callOnClick();
+        FileSelector.startThis(this, ResultSelectBg, "选择图片", FileSelectorContract.MediaType.IMAGE, new String[]{"png", "jpg", "jpeg"});
     }
 
     /**
@@ -297,9 +295,9 @@ public class ReadStyleActivity extends MBaseActivity {
     /**
      * 自定义背景
      */
-    public void setCustomBg(Uri uri) {
+    public void setCustomBg(String path) {
         try {
-            bgPath = FileUtil.getPath(this, uri);
+            bgPath = path;
             Bitmap bitmap = BitmapFactory.decodeFile(bgPath);
             bgCustom = 2;
             bgDrawable = new BitmapDrawable(getResources(), bitmap);
@@ -316,7 +314,7 @@ public class ReadStyleActivity extends MBaseActivity {
         switch (requestCode) {
             case ResultSelectBg:
                 if (resultCode == RESULT_OK && null != data) {
-                    setCustomBg(data.getData());
+                    setCustomBg(data.getStringExtra(FileSelector.RESULT));
                 }
                 break;
         }

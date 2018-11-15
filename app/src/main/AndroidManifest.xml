@@ -163,6 +163,18 @@
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
 
+        <activity android:name=".view.activity.FileSelector"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity"/>
+
+        <activity android:name=".view.activity.BigImageActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity"/>
+
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />
         <service android:name=".service.CheckSourceService" />

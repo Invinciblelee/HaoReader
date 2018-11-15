@@ -89,13 +89,12 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         rvBookshelf.setHasFixedSize(true);
 
         int bookPx = mPresenter.getBookshelfPx();
+        int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
         if (mPresenter.viewIsList()) {
-            int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
             rvBookshelf.setPadding(0, padding, 0, padding);
             bookListAdapter = new BookShelfListAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new LinearLayoutManager(getContext()));
         } else {
-            int padding = 0;
             rvBookshelf.setPadding(padding, padding, padding, padding);
             bookListAdapter = new BookShelfGridAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new GridLayoutManager(getContext(), 3));
@@ -122,9 +121,15 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public void addAllBookShelf(List<BookShelfBean> bookShelfBeanList) {
+        boolean isEmptyBefore = bookListAdapter.getItemCount() == 0;
+
         bookListAdapter.replaceAll(bookShelfBeanList, mPresenter.getBookshelfPx());
 
-        startLayoutAnimation();
+        if(!isEmptyBefore) {
+            rvBookshelf.scrollToPosition(0);
+        }else {
+            startLayoutAnimation();
+        }
     }
 
     @Override
@@ -196,14 +201,12 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         }
 
         int bookPx = mPresenter.getBookshelfPx();
-
+        int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
         if (viewIsList) {
-            int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
             rvBookshelf.setPadding(0, padding, 0, padding);
             bookListAdapter = new BookShelfListAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new LinearLayoutManager(getContext()));
         } else {
-            int padding = 0;
             rvBookshelf.setPadding(padding, padding, padding, padding);
             bookListAdapter = new BookShelfGridAdapter(getContext(), mPresenter.getGroup(), bookPx);
             rvBookshelf.setLayoutManager(new GridLayoutManager(getContext(), 3));

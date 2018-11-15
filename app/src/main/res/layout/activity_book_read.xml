@@ -43,7 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:theme="@style/AppTheme.AppBarOverlay"
-                    app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+                    app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
 
                 <View
@@ -237,7 +237,7 @@
                     app:cursordrawable_height="13dp"
                     app:cursordrawable_width="13dp"
                     app:fontdrawable="@color/progress_color"
-                    app:progresswidth="2dp" />
+                    app:progresswidth="@dimen/progress_bar_height" />
 
                 <TextView
                     android:id="@+id/tv_next"
@@ -364,7 +364,7 @@
     <com.monke.mprogressbar.MHorProgressBar
         android:id="@+id/hpb_next_page_progress"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="@dimen/progress_bar_height"
         android:visibility="invisible"
         app:bgdrawable="@color/transparent"
         app:cantouch="false"

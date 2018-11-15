@@ -127,7 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/AppTheme.AppBarOverlay"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp_new"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </LinearLayout>

@@ -32,10 +32,12 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
+import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -341,9 +343,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     private void upSortMenu() {
-        sortMenu.getItem(0).setChecked(false);
-        sortMenu.getItem(1).setChecked(false);
-        sortMenu.getItem(2).setChecked(false);
         sortMenu.getItem(getPreferences().getInt("SourceSort", 0)).setChecked(true);
     }
 
@@ -364,10 +363,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void selectBookSourceFile() {
         if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/*");//设置类型
-            startActivityForResult(intent, IMPORT_SOURCE);
+            resultImportPerms();
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.import_book_source),
                     RESULT_IMPORT_PERMS, MApplication.PerList);
@@ -376,7 +372,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void importBookSourceOnline() {
         String cacheUrl = ACache.get(this).getAsString("sourceUrl");
-        moDialogHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl,
+        moDialogHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl, null,
                 inputText -> {
                     ACache.get(this).put("sourceUrl", inputText);
                     mPresenter.importBookSource(inputText);
@@ -385,7 +381,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @AfterPermissionGranted(RESULT_IMPORT_PERMS)
     private void resultImportPerms() {
-        selectBookSourceFile();
+        FileSelector.startThis(this, IMPORT_SOURCE, "选择文件", FileSelectorContract.MediaType.FIlE, new String[]{"txt", "json", "xml"});
     }
 
 
@@ -406,7 +402,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                     break;
                 case IMPORT_SOURCE:
                     if (data != null) {
-                        mPresenter.importBookSource(data.getData());
+                        mPresenter.importBookSource(new File(data.getStringExtra(FileSelector.RESULT)));
                     }
                     break;
             }

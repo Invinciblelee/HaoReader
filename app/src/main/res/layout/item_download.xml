@@ -1,72 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/AppTheme.CardView.Item"
-    android:orientation="vertical">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/card_item_margin"
+    android:paddingTop="@dimen/half_card_item_margin"
+    android:paddingRight="@dimen/card_item_margin"
+    android:paddingBottom="@dimen/half_card_item_margin">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <com.monke.monkeybook.widget.CoverCardView
+        style="@style/AppTheme.CardView.Image"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/iv_cover"
-            android:layout_width="45dp"
-            android:layout_height="65dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/img_cover"
             android:src="@drawable/img_cover_default" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp"
-            tools:ignore="RtlHardcoded,RtlSymmetry">
+    </com.monke.monkeybook.widget.CoverCardView>
 
-            <me.grantland.widget.AutofitTextView
-                android:id="@+id/tv_name"
-                android:layout_width="match_parent"
-                android:layout_height="26dp"
-                android:layout_gravity="center_horizontal|bottom"
-                android:singleLine="true"
-                android:text="@string/tv_book_name"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp"
-                app:minTextSize="10sp" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/half_card_item_margin"
+        android:paddingRight="@dimen/half_card_item_margin"
+        tools:ignore="RtlHardcoded,RtlSymmetry">
 
-            <me.grantland.widget.AutofitTextView
-                android:id="@+id/tv_download"
-                android:layout_width="match_parent"
-                android:layout_height="26dp"
-                android:layout_gravity="center_horizontal|bottom"
-                android:singleLine="true"
-                android:text="@string/download_offline"
-                android:textColor="@color/tv_text_default"
-                android:textSize="14sp"
-                app:minTextSize="10sp" />
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:singleLine="true"
+            android:text="@string/tv_book_name"
+            android:textColor="@color/tv_text_default"
+            android:textSize="16sp"
+            app:minTextSize="10sp" />
 
-        </LinearLayout>
-
-
-        <ImageView
-            android:id="@+id/iv_delete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/bg_ib_pre_round"
-            android:clickable="true"
-            android:focusable="true"
-            android:scaleType="center"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_delete_forever_black_24dp" />
-
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/tv_download"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:singleLine="true"
+            android:text="@string/download_offline"
+            android:textColor="@color/tv_text_default"
+            android:textSize="14sp"
+            app:minTextSize="10sp" />
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_ib_pre_round"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_delete_forever_black_24dp" />
+
+
+</LinearLayout>

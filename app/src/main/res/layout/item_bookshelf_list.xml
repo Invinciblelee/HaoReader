@@ -1,215 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_card"
-    style="@style/AppTheme.CardView.Item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?attr/selectableItemBackground">
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingLeft="@dimen/card_item_margin"
+    android:paddingTop="@dimen/half_card_item_margin"
+    android:paddingRight="@dimen/card_item_margin"
+    android:paddingBottom="@dimen/half_card_item_margin">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <com.monke.monkeybook.widget.CoverCardView
+        android:id="@+id/cover_card"
+        style="@style/AppTheme.CardView.Image"
+        android:layout_width="80dp"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/iv_cover"
-            android:layout_width="80dp"
-            android:layout_height="110dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/img_cover_default"
             android:transitionName="@string/img_cover"
             tools:targetApi="lollipop" />
 
+    </com.monke.monkeybook.widget.CoverCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/cover_card"
+        android:layout_alignBottom="@id/cover_card"
+        android:layout_toEndOf="@+id/cover_card"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/half_card_item_margin"
+        android:paddingEnd="12dp">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="2dp"
+            android:ellipsize="end"
+            android:paddingStart="0dp"
+            android:paddingEnd="2dp"
+            android:singleLine="true"
+            android:text="@string/tv_book_name"
+            android:textColor="@color/tv_text_default"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/ll_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="@dimen/desc_icon_size"
+                android:layout_height="@dimen/desc_icon_size"
+                android:contentDescription="@string/author"
+                android:paddingEnd="2dp"
+                android:src="@drawable/ic_author_black_24dp"
+                app:tint="@color/tv_text_secondary"
+                tools:ignore="RtlSymmetry" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:paddingEnd="6dp"
+                android:text="@string/author"
+                android:textColor="@color/tv_text_secondary"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/iv_cover"
-            android:layout_alignBottom="@id/iv_cover"
-            android:layout_toEndOf="@+id/iv_cover"
-            android:orientation="vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="@dimen/desc_icon_size"
+                android:layout_height="@dimen/desc_icon_size"
+                android:contentDescription="@string/book_search_last"
+                android:paddingEnd="2dp"
+                android:src="@drawable/ic_book_last_24dp"
+                app:tint="@color/tv_text_secondary"
+                tools:ignore="RtlSymmetry" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tv_last"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:paddingStart="0dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="2dp"
+                android:includeFontPadding="false"
                 android:singleLine="true"
-                android:text="@string/tv_book_name"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:id="@+id/ll_author"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="@dimen/desc_icon_size"
-                    android:layout_height="@dimen/desc_icon_size"
-                    android:contentDescription="@string/author"
-                    android:paddingEnd="2dp"
-                    android:src="@drawable/ic_author_black_24dp"
-                    app:tint="@color/tv_text_secondary"
-                    tools:ignore="RtlSymmetry" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_author"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:paddingEnd="6dp"
-                    android:text="@string/author"
-                    android:textColor="@color/tv_text_secondary"
-                    android:textSize="13sp"
-                    tools:ignore="RtlSymmetry" />
-
-            </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="@dimen/desc_icon_size"
-                    android:layout_height="@dimen/desc_icon_size"
-                    android:contentDescription="@string/book_search_last"
-                    android:paddingEnd="2dp"
-                    android:src="@drawable/ic_book_last_24dp"
-                    app:tint="@color/tv_text_secondary"
-                    tools:ignore="RtlSymmetry" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_last"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@string/book_search_last"
-                    android:textColor="@color/tv_text_secondary"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="@dimen/desc_icon_size"
-                    android:layout_height="@dimen/desc_icon_size"
-                    android:contentDescription="@string/read_dur_progress"
-                    android:paddingEnd="2dp"
-                    android:src="@drawable/ic_history_black_24dp"
-                    app:tint="@color/tv_text_secondary"
-                    tools:ignore="RtlSymmetry" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_read"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@string/read_dur_progress"
-                    android:textColor="@color/tv_text_secondary"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.monke.mprogressbar.MHorProgressBar
-                    android:id="@+id/mpb_durProgress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    android:layout_weight="1"
-                    android:visibility="invisible"
-                    app:bgdrawable="@color/progress_back_color"
-                    app:cantouch="false"
-                    app:fontdrawable="@color/colorAccent"
-                    tools:ignore="NestedWeights,RtlHardcoded" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_current_chapter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
-                    android:paddingStart="2dp"
-                    android:paddingEnd="0dp"
-                    android:textColor="@color/progress_text_color"
-                    android:textSize="8sp"
-                    tools:ignore="SmallSp" />
-
-            </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:text="@string/book_search_last"
+                android:textColor="@color/tv_text_secondary"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/fl_has_new"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="2dp">
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/iv_has_new"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="6dp"
-                android:src="@drawable/ic_circle_red_24dp"
-                android:visibility="invisible" />
+                android:layout_width="@dimen/desc_icon_size"
+                android:layout_height="@dimen/desc_icon_size"
+                android:contentDescription="@string/read_dur_progress"
+                android:paddingEnd="2dp"
+                android:src="@drawable/ic_history_black_24dp"
+                app:tint="@color/tv_text_secondary"
+                tools:ignore="RtlSymmetry" />
 
-            <com.victor.loading.rotate.RotateLoading
-                android:id="@+id/rl_loading"
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_read"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_margin="2dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:text="@string/read_dur_progress"
+                android:textColor="@color/tv_text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.monke.mprogressbar.MHorProgressBar
+                android:id="@+id/mpb_durProgress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/progress_bar_height"
+                android:layout_weight="1"
                 android:visibility="invisible"
-                app:loading_color="@color/colorAccent"
-                app:loading_width="2dp" />
+                app:bgdrawable="@color/progress_back_color"
+                app:cantouch="false"
+                app:fontdrawable="@color/colorAccent"
+                tools:ignore="NestedWeights,RtlHardcoded" />
 
-        </FrameLayout>
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_current_chapter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:paddingStart="2dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/progress_text_color"
+                android:textSize="8sp"
+                tools:ignore="SmallSp" />
 
-    </RelativeLayout>
-</android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_has_new"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_alignTop="@id/cover_card"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_has_new"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:src="@drawable/ic_circle_red_24dp"
+            android:visibility="invisible" />
+
+        <com.victor.loading.rotate.RotateLoading
+            android:id="@+id/rl_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="2dp"
+            android:visibility="invisible"
+            app:loading_color="@color/colorAccent"
+            app:loading_width="2dp" />
+
+    </FrameLayout>
+
+</RelativeLayout>

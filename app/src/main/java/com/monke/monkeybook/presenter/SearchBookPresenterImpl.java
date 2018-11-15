@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -40,7 +41,6 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
             @Override
             public void searchSourceEmpty() {
-                mView.refreshFinish();
                 mView.showBookSourceEmptyTip();
             }
 
@@ -86,15 +86,16 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             if (keyWord == null && intent.getClipData() != null && intent.getClipData().getItemCount() > 0) {
                 ClipData.Item item = intent.getClipData().getItemAt(0);
                 keyWord = item.getText().toString();
-            }
-        }
-        if (keyWord != null) {
-            int start = keyWord.indexOf("《");
-            int end = keyWord.indexOf("》");
-            if (start >= 0 && end > 1) {
-                keyWord = keyWord.substring(start + 1, end);
-            } else if (keyWord.length() > 12) {
-                keyWord = keyWord.substring(0, 12);
+
+                if (!TextUtils.isEmpty(keyWord)) {
+                    int start = keyWord.indexOf("《");
+                    int end = keyWord.indexOf("》");
+                    if (start >= 0 && end > 1) {
+                        keyWord = keyWord.substring(start + 1, end);
+                    } else if (keyWord.length() > 12) {
+                        keyWord = keyWord.substring(0, 12);
+                    }
+                }
             }
         }
         mView.searchBook(keyWord);
@@ -234,8 +235,8 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     }
 
     @Override
-    public void stopSearch(boolean callEvent) {
-        searchBookModel.stopSearch(callEvent);
+    public void stopSearch() {
+        searchBookModel.stopSearch();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

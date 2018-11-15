@@ -47,13 +47,20 @@
             android:icon="@drawable/ic_settings_backup_restore"
             android:title="@string/copy_text"
             app:showAsAction="ifRoom" />
-
     </group>
+
+
+    <item
+        android:id="@+id/edit_charset"
+        android:enabled="false"
+        android:icon="@drawable/ic_translate_black_24dp"
+        android:title="@string/edit_charset"
+        android:visible="false"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_book_info"
         android:icon="@drawable/ic_info_outline_black_24dp"
         android:title="@string/book_info"
         app:showAsAction="never" />
-
 </menu>

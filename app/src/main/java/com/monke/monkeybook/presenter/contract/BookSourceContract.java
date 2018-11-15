@@ -7,6 +7,7 @@ import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.BookSourceBean;
 
+import java.io.File;
 import java.util.List;
 
 public interface BookSourceContract {
@@ -23,7 +24,7 @@ public interface BookSourceContract {
 
         void initData();
 
-        void importBookSource(Uri uri);
+        void importBookSource(File file);
 
         void importBookSource(String url);
 

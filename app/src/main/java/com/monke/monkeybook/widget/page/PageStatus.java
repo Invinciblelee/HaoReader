@@ -15,6 +15,7 @@ public class PageStatus {
     public static final int STATUS_CATEGORY_ERROR = 10; //目录获取失败
     public static final int STATUS_HY = 11;            // 换源
     public static final int STATUS_HY_ERROR = 12;      // 换源失败
+    public static final int STATUS_CHANGE_CHARSET = 13; //设置编码
 
     private PageStatus() {
 
@@ -52,6 +53,9 @@ public class PageStatus {
                 break;
             case STATUS_HY:
                 tip = "正在换源请等待...";
+                break;
+            case STATUS_CHANGE_CHARSET:
+                tip = "正在设置编码...";
                 break;
             default:
                 tip = "正在拼命加载中...";

@@ -260,7 +260,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 }
                 break;
             case R.id.action_add_url:
-                moDialogHUD.showInputBox("添加书籍网址", null, inputText -> mPresenter.addBookUrl(inputText));
+                moDialogHUD.showInputBox("添加书籍网址", null, null, inputText -> mPresenter.addBookUrl(inputText));
                 break;
             case R.id.action_list_grid:
                 viewIsList = !viewIsList;

@@ -5,14 +5,17 @@ import android.content.Context;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.DocumentHelper;
+import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class FontSelector {
     private AlertDialog.Builder builder;
@@ -76,9 +79,8 @@ public class FontSelector {
 
     private File[] getFontFiles() {
         try {
-            DocumentHelper.createDirIfNotExist(fontPath);
-            File file = new File(fontPath);
-            return file.listFiles(pathName -> pathName.getName().endsWith(".TTF") || pathName.getName().endsWith(".ttf"));
+            File folder = FileHelp.getFolder(fontPath);
+            return folder.listFiles(pathName -> pathName.getName().endsWith(".TTF") || pathName.getName().endsWith(".ttf"));
         } catch (Exception e) {
             return null;
         }

@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -50,6 +51,7 @@ import com.monke.monkeybook.widget.ReadBottomStatusBar;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.modialog.EditBookmarkView;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
+import com.monke.monkeybook.widget.page.LocalPageLoader;
 import com.monke.monkeybook.widget.page.OnPageChangeListener;
 import com.monke.monkeybook.widget.page.PageLoader;
 import com.monke.monkeybook.widget.page.PageStatus;
@@ -403,7 +405,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-
         }
     }
 
@@ -960,7 +961,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     menu.getItem(i).setEnabled(false);
                 }
             }
+            if(mPresenter.getBookShelf() != null) {
+                menu.findItem(R.id.edit_charset).setVisible(true);
+                menu.findItem(R.id.edit_charset).setEnabled(true);
+            }
         } else {
+
             for (int i = 0; i < menu.size(); i++) {
                 if (menu.getItem(i).getGroupId() == R.id.menuOnLine) {
                     menu.getItem(i).setVisible(true);
@@ -1002,6 +1008,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 break;
             case R.id.action_clean_cache:
                 mPresenter.cleanCache();
+                break;
+            case R.id.edit_charset:
+                setCharset();
                 break;
             case R.id.action_book_info:
                 BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl());
@@ -1128,6 +1137,31 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         moDialogHUD.dismiss();
                         mPresenter.addDownload(start, end);
                     });
+        }
+    }
+
+    /**
+     * 设置编码
+     */
+    private void setCharset() {
+        popMenuOut();
+
+        if (mPageLoader instanceof LocalPageLoader && mPresenter.getBookShelf() != null) {
+            ensureProgressHUD();
+            String charset = mPresenter.getBookShelf().getBookInfoBean().getCharset();
+            moDialogHUD.showInputBox(getString(R.string.edit),
+                    charset,
+                    new String[]{"UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "ASCII"}
+                    , inputText -> {
+                        if (!TextUtils.equals(charset, inputText)) {
+                            mPresenter.getBookShelf().getBookInfoBean().setCharset(inputText);
+                            mPresenter.saveProgress();
+                            mPresenter.getBookShelf().setHasUpdate(true);
+                            ((LocalPageLoader) mPageLoader).updateCharset();
+                        }
+                    });
+        } else {
+            toast("正在加载，请稍候");
         }
     }
 
