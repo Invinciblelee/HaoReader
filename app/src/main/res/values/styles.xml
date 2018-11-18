@@ -5,17 +5,29 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/tv_text_secondary</item>
+        <item name="colorButtonNormal">@color/tv_text_secondary</item>
         <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu</item>
         <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text.style</item>
-        <item name="alertDialogTheme">@style/CAppTheme.AlertDialog</item>
         <item name="android:listDivider">@drawable/bg_list_divider</item>
         <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
+        <item name="android:textColorPrimary">@color/tv_text_default</item>
+        <item name="android:textColorSecondary">@color/tv_text_secondary</item>
+        <item name="android:textColorAlertDialogListItem">@color/tv_text_default</item>
     </style>
 
     <style name="CAppTheme.Activity" parent="CAppTheme">
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
+    </style>
+
+    <style name="Animation.Activity" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_out_right</item>
     </style>
 
     <style name="CAppTheme.Activity.Search" parent="CAppTheme">
@@ -27,6 +39,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@null</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
     </style>
 
     <style name="CAppTheme.Activity.BookDetail" parent="CAppTheme">
@@ -42,15 +55,13 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
-    <style name="CAppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="android:background">@color/card_background</item>
-        <item name="android:textColorPrimary">@color/tv_text_default</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorControlNormal">@color/menu_color_default</item>
         <item name="colorButtonNormal">@color/menu_color_default</item>
+    </style>
+
+    <style name="CAppTheme.Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
@@ -92,6 +103,13 @@
         <item name="android:layout_marginRight">@dimen/half_card_item_margin</item>
         <item name="android:layout_marginTop">@dimen/half_card_item_margin</item>
         <item name="android:layout_marginBottom">@dimen/half_card_item_margin</item>
+    </style>
+
+    <style name="AppTheme.TextView.Marquee" parent="android:Widget">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
     </style>
 
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">

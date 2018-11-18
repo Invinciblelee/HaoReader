@@ -19,6 +19,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:text="@string/replace_rule_edit"
+            android:textColor="@color/tv_text_default"
             android:textSize="20sp" />
 
         <android.support.design.widget.TextInputLayout
@@ -32,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="2"
+                android:textColor="@color/tv_text_default"
                 android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
@@ -46,13 +48,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
+                android:textColor="@color/tv_text_default"
                 android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=" .代表任意一个字符.*代表任意多个字符" />
+            android:text=" .代表任意一个字符.*代表任意多个字符"
+            android:textColor="@color/tv_text_secondary" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_replace_to"
@@ -65,6 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
+                android:textColor="@color/tv_text_default"
                 android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
@@ -79,6 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
+                android:textColor="@color/tv_text_default"
                 android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
@@ -94,7 +100,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="@string/ok"
-            android:textColor="#ffffff"
+            android:textColor="@color/white"
             android:textSize="14sp" />
 
     </LinearLayout>

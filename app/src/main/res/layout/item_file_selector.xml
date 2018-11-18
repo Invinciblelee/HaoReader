@@ -71,13 +71,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="15dp"
                 tools:ignore="RtlHardcoded"
-                tools:text="324kb" />
+                tools:text="324kb"
+                android:textColor="@color/tv_text_secondary"/>
 
             <TextView
                 android:id="@+id/file_tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="2017-05-22" />
+                tools:text="2017-05-22"
+                android:textColor="@color/tv_text_secondary"/>
         </LinearLayout>
 
         <TextView

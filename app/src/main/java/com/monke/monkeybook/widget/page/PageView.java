@@ -275,7 +275,7 @@ public class PageView extends View {
             return true;
         } else {
             if (mSnackbar == null) {
-                mSnackbar = Snackbar.make(this, "", Snackbar.LENGTH_SHORT);
+                mSnackbar = getActivity().getSnackBar("");
             }
 
             if (!mSnackbar.isShown()) {
@@ -294,7 +294,7 @@ public class PageView extends View {
             return true;
         } else {
             if (mSnackbar == null) {
-                mSnackbar = Snackbar.make(this, "", Snackbar.LENGTH_SHORT);
+                mSnackbar = getActivity().getSnackBar("");
             }
 
             if (!mSnackbar.isShown()) {

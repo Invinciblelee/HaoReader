@@ -21,6 +21,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:transitionName="sharedView"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -28,11 +30,7 @@
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:imeOptions="actionSearch"
-                app:defaultQueryHint="@string/search"
-                tools:ignore="UnusedAttribute" />
+                android:imeOptions="actionSearch" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -68,7 +66,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="30dp"
-                android:src="@drawable/ic_stop_black_24dp"
+                android:src="@drawable/ic_stop_white_24dp"
                 android:visibility="invisible"
                 app:fabCustomSize="45dp" />
 
@@ -79,7 +77,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/background"
-            android:orientation="vertical">
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="18dp"
+                    android:layout_marginLeft="15dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
                     android:text="@string/searchHistory"
@@ -99,7 +100,7 @@
                     android:textSize="16sp"
                     tools:ignore="RtlHardcoded" />
 
-                <View
+                <Space
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="1" />
@@ -121,21 +122,17 @@
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <ScrollView
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/tfl_search_history"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:scrollbars="none">
-
-                <com.monke.monkeybook.widget.flowlayout.TagFlowLayout
-                    android:id="@+id/tfl_search_history"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="3dp"
-                    android:clickable="false" />
-            </ScrollView>
+                android:layout_height="wrap_content"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:showDivider="middle"
+                app:dividerDrawable="@drawable/shape_space_divider"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:padding="15dp" />
 
         </LinearLayout>
     </RelativeLayout>

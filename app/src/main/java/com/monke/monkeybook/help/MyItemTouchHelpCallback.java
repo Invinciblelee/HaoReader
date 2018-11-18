@@ -122,7 +122,7 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder srcViewHolder, RecyclerView.ViewHolder targetViewHolder) {
         if (onItemTouchCallbackListener != null) {
-            return onItemTouchCallbackListener.onMove(srcViewHolder.getAdapterPosition(), targetViewHolder.getAdapterPosition());
+            return onItemTouchCallbackListener.onMove(srcViewHolder.getLayoutPosition(), targetViewHolder.getLayoutPosition());
         }
         return false;
     }
@@ -130,7 +130,7 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         if (onItemTouchCallbackListener != null) {
-            onItemTouchCallbackListener.onSwiped(viewHolder.getAdapterPosition());
+            onItemTouchCallbackListener.onSwiped(viewHolder.getLayoutPosition());
         }
     }
 
@@ -177,9 +177,9 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
         /**
          * 当某个Item被滑动删除的时候
          *
-         * @param adapterPosition item的position
+         * @param position item的position
          */
-        void onSwiped(int adapterPosition);
+        void onSwiped(int position);
 
         /**
          * 当两个Item位置互换的时候被回调

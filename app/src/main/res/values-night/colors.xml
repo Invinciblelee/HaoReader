@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#2a2a2a</color>
+    <color name="background">#2b2b2b</color>
     <color name="card_background">#363636</color>
 
     <color name="colorPrimary">#363636</color>
@@ -20,10 +20,10 @@
     <color name="progress_color">#767676</color>
     <color name="progress_text_color">#666666</color>
 
-    <color name="tv_text_default">#ffffffff</color>
-    <color name="tv_text_secondary">#e5ffffff</color>
-    <color name="tv_text_summary">#b3ffffff</color>
-    <color name="menu_color_default">#ffffffff</color>
+    <color name="tv_text_default">#f3f3f3</color>
+    <color name="tv_text_secondary">#c9c9c9</color>
+    <color name="tv_text_summary">#999999</color>
+    <color name="menu_color_default">#f3f3f3</color>
 
     <color name="textfield_search_color">#331a1a1a</color>
 

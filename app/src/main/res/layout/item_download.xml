@@ -22,8 +22,8 @@
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:contentDescription="@string/img_cover"
+            android:scaleType="centerCrop"
             android:src="@drawable/img_cover_default" />
 
     </com.monke.monkeybook.widget.CoverCardView>
@@ -38,32 +38,30 @@
         android:paddingRight="@dimen/half_card_item_margin"
         tools:ignore="RtlHardcoded,RtlSymmetry">
 
-        <me.grantland.widget.AutofitTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tv_name"
+            style="@style/AppTheme.TextView.Marquee"
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:layout_gravity="center_horizontal|bottom"
-            android:singleLine="true"
             android:text="@string/tv_book_name"
             android:textColor="@color/tv_text_default"
-            android:textSize="16sp"
-            app:minTextSize="10sp" />
+            android:textSize="16sp" />
 
-        <me.grantland.widget.AutofitTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tv_download"
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:layout_gravity="center_horizontal|bottom"
             android:singleLine="true"
             android:text="@string/download_offline"
-            android:textColor="@color/tv_text_default"
-            android:textSize="14sp"
-            app:minTextSize="10sp" />
+            android:textColor="@color/tv_text_secondary"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/iv_delete"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -73,7 +71,8 @@
         android:clickable="true"
         android:focusable="true"
         android:scaleType="center"
-        android:src="@drawable/ic_delete_forever_black_24dp" />
+        android:src="@drawable/ic_delete_forever_black_24dp"
+        app:tint="@color/tv_text_secondary" />
 
 
 </LinearLayout>

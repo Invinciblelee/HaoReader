@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.hwangjr.rxbus.RxBus;
@@ -225,11 +225,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         supportInvalidateOptionsMenu();
     }
 
-    @Override
-    public Snackbar getSnackBar(String msg, int length) {
-        return Snackbar.make(rlContent, msg, length);
-    }
-
     public void delBookSource(BookSourceBean bookSource) {
         mPresenter.delData(bookSource);
     }
@@ -244,11 +239,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     @Override
-    public void showSnackBar(String msg, int length) {
-        Snackbar.make(rlContent, msg, length).show();
-    }
-
-    @Override
     public void showLoading(String msg) {
         moDialogHUD.showLoading(msg);
     }
@@ -256,6 +246,11 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @Override
     public void dismissHUD() {
         moDialogHUD.dismiss();
+    }
+
+    @Override
+    protected View getSnackBarView() {
+        return rlContent;
     }
 
     //设置ToolBar

@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -42,8 +41,8 @@ public class ReadBottomStatusBar extends FrameLayout {
     TextView tvTime;
     @BindView(R.id.tv_title)
     TextView tvTitle;
-    @BindView(R.id.tv_page_index)
-    TextView tvPageIndex;
+    @BindView(R.id.tv_title_left)
+    TextView tvTitleLeft;
     @BindView(R.id.tv_chapter_index)
     TextView tvChapterIndex;
 
@@ -60,12 +59,13 @@ public class ReadBottomStatusBar extends FrameLayout {
 
     public ReadBottomStatusBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setVisibility(View.INVISIBLE);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(ScreenUtils.getStatusBarHeight(), MeasureSpec.EXACTLY);
+        if (!isInEditMode()) {
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(ScreenUtils.getStatusBarHeight(), MeasureSpec.EXACTLY);
+        }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
@@ -114,7 +114,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         if (showTimeBattery) {
             tvTime.setVisibility(VISIBLE);
             batteryProgress.setVisibility(VISIBLE);
-            tvPageIndex.setVisibility(GONE);
+            tvTitleLeft.setVisibility(GONE);
             tvTitle.setVisibility(VISIBLE);
 
             updateTime();
@@ -123,7 +123,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         } else {
             tvTime.setVisibility(GONE);
             batteryProgress.setVisibility(GONE);
-            tvPageIndex.setVisibility(VISIBLE);
+            tvTitleLeft.setVisibility(VISIBLE);
             tvTitle.setVisibility(GONE);
         }
     }
@@ -152,7 +152,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         if (showTimeBattery) {
             tvTitle.setText(formatTitle(durChapterName, durPage, durPageSize));
         } else {
-            tvPageIndex.setText(formatTitle(durChapterName, durPage, durPageSize));
+            tvTitleLeft.setText(formatTitle(durChapterName, durPage, durPageSize));
         }
     }
 
@@ -166,7 +166,7 @@ public class ReadBottomStatusBar extends FrameLayout {
     public void updateTextColor(int color) {
         tvTime.setTextColor(color);
         tvTitle.setTextColor(color);
-        tvPageIndex.setTextColor(color);
+        tvTitleLeft.setTextColor(color);
         tvChapterIndex.setTextColor(color);
 
         AppCompat.setTint(batteryProgress.getBackground(), color);
@@ -176,7 +176,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
-    public void updateTextTypeface(String fontPath) {
+    public void updateTextTypeface(String fontPath, boolean bold) {
         Typeface typeface;
         try {
             if (fontPath != null) {
@@ -190,8 +190,12 @@ public class ReadBottomStatusBar extends FrameLayout {
 
         tvTime.setTypeface(typeface);
         tvTitle.setTypeface(typeface);
-        tvPageIndex.setTypeface(typeface);
+        tvTitleLeft.setTypeface(typeface);
         tvChapterIndex.setTypeface(typeface);
+        tvTime.getPaint().setFakeBoldText(bold);
+        tvTitle.getPaint().setFakeBoldText(bold);
+        tvTitleLeft.getPaint().setFakeBoldText(bold);
+        tvChapterIndex.getPaint().setFakeBoldText(bold);
     }
 
     public void refreshUI() {
@@ -203,7 +207,7 @@ public class ReadBottomStatusBar extends FrameLayout {
             setShowTimeBattery(false);
         }
         updateTextColor(readConfig.getTextColor());
-        updateTextTypeface(readConfig.getFontPath());
+        updateTextTypeface(readConfig.getFontPath(), readConfig.getTextBold());
         setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
     }
 
@@ -232,9 +236,9 @@ public class ReadBottomStatusBar extends FrameLayout {
 
         int maxLength = 14;
         ReadBookControl readBookControl = ReadBookControl.getInstance();
-        if(!showTimeBattery){
+        if (!showTimeBattery) {
             maxLength = 16;
-        }else if (readBookControl.getPaddingLeft() > 30 || readBookControl.getPaddingRight() > 30) {
+        } else if (readBookControl.getPaddingLeft() > 30 || readBookControl.getPaddingRight() > 30) {
             maxLength = 10;
         }
 

@@ -14,7 +14,7 @@
             android:layout_gravity="center"
             android:text="未搜索到相关书籍~"
             android:textColor="@color/tv_text_secondary"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </FrameLayout>
 
 </FrameLayout>

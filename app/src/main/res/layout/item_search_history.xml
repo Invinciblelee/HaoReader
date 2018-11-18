@@ -3,11 +3,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/shape_round_rect"
-    android:padding="7dp"
-    android:layout_marginStart="7dp"
-    android:layout_marginEnd="3dp"
-    android:layout_marginBottom="4dp"
-    android:textColor="#ffffff"
-    android:textSize="15sp"
     android:clickable="true"
-    android:focusable="true"/>
+    android:focusable="true"
+    android:ellipsize="middle"
+    android:singleLine="true"
+    android:padding="7dp"
+    android:textColor="@color/white"
+    android:textSize="15sp" />

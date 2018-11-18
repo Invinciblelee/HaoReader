@@ -70,7 +70,5 @@ public interface ReadBookContract {
         void delBookmark(BookmarkBean bookmarkBean);
 
         void disableDurBookSource();
-
-        void cleanCache();
     }
 }

@@ -14,13 +14,13 @@
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -32,9 +32,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingTop="@dimen/half_card_item_margin"
-            android:paddingBottom="@dimen/half_card_item_margin"
-            android:orientation="vertical">
+            android:paddingBottom="@dimen/half_card_item_margin">
 
             <android.support.v7.widget.CardView
                 style="@style/AppTheme.CardView.Item"
@@ -52,6 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/app_name"
+                        android:textColor="@color/tv_text_default"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -59,7 +60,8 @@
                         android:id="@+id/tv_app_summary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/about_description" />
+                        android:text="@string/about_description"
+                        android:textColor="@color/tv_text_default" />
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -76,10 +78,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="6dp"
-                    android:drawableStart="@drawable/ic_turned_in_not_black_24dp"
+                    android:drawableStart="@drawable/ic_version_border_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/version_name" />
+                    android:text="@string/version_name"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -99,7 +102,8 @@
                     android:drawableStart="@drawable/ic_update_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/update_url" />
+                    android:text="@string/update_url"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -116,10 +120,11 @@
                     android:layout_gravity="center"
                     android:layout_margin="6dp"
                     android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_list_black_24dp"
+                    android:drawableStart="@drawable/ic_reorder_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/update_log" />
+                    android:text="@string/update_log"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -136,30 +141,11 @@
                     android:layout_gravity="center"
                     android:layout_margin="6dp"
                     android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_qq_group"
+                    android:drawableStart="@drawable/ic_qq_group_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/qqq" />
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/vw_donate"
-                style="@style/AppTheme.CardView.Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_donate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_local_cafe_black_24dp_new"
-                    android:drawablePadding="6dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/donate" />
+                    android:text="@string/qqq"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -176,10 +162,11 @@
                     android:layout_gravity="center"
                     android:layout_margin="6dp"
                     android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_scoring"
+                    android:drawableStart="@drawable/ic_scoring_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/scoring" />
+                    android:text="@string/scoring"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -196,10 +183,11 @@
                     android:layout_gravity="center"
                     android:layout_margin="6dp"
                     android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_mail"
+                    android:drawableStart="@drawable/ic_mail_outline_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/send_mail" />
+                    android:text="@string/send_mail"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -219,7 +207,8 @@
                     android:drawableStart="@drawable/ic_launch_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/git_hub" />
+                    android:text="@string/git_hub"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -239,7 +228,8 @@
                     android:drawableStart="@drawable/ic_launch_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/home_page" />
+                    android:text="@string/home_page"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -259,7 +249,8 @@
                     android:drawableStart="@drawable/ic_launch_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/source_rule_s" />
+                    android:text="@string/source_rule_s"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
 
@@ -279,7 +270,8 @@
                     android:drawableStart="@drawable/ic_launch_black_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
-                    android:text="@string/disclaimer" />
+                    android:text="@string/disclaimer"
+                    android:textColor="@color/tv_text_default" />
 
             </android.support.v7.widget.CardView>
         </LinearLayout>

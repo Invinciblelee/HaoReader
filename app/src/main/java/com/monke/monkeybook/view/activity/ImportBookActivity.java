@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -134,18 +133,22 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
         );
 
         mBtnDelete.setOnClickListener(v -> {
-                    //弹出，确定删除文件吗。
-                    new AlertDialog.Builder(this)
-                            .setTitle("删除文件")
-                            .setMessage("确定删除文件吗?")
-                            .setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {
+                    if (moDialogHUD == null) {
+                        moDialogHUD = new MoDialogHUD(this);
+                    }
+
+                    moDialogHUD.showTwoButton("确定要删除这个文件吗？"
+                            , getString(R.string.ok),
+                            v1 -> {
                                 //删除选中的文件
                                 mCategoryFragment.deleteCheckedFiles();
                                 //提示删除文件成功
-                                Toast.makeText(ImportBookActivity.this, "删除文件成功", Toast.LENGTH_SHORT).show();
-                            })
-                            .setNegativeButton(getResources().getString(R.string.cancel), null)
-                            .show();
+                                toast("删除文件成功");
+                                moDialogHUD.dismiss();
+                            }, getString(R.string.cancel),
+                            v12 -> {
+                                moDialogHUD.dismiss();
+                            });
                 }
         );
 
@@ -188,7 +191,7 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
 
     @Override
     public void onBackPressed() {
-        if(mCategoryFragment.backLastCategory()){
+        if (mCategoryFragment.backLastCategory()) {
             return;
         }
         super.onBackPressed();
@@ -267,8 +270,13 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
     }
 
     @Override
+    protected View getSnackBarView() {
+        return toolbar;
+    }
+
+    @Override
     public void showLoading(String msg) {
-        if(moDialogHUD == null){
+        if (moDialogHUD == null) {
             moDialogHUD = new MoDialogHUD(this);
         }
         moDialogHUD.showLoading(msg);
@@ -276,7 +284,7 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
 
     @Override
     public void dismissHUD() {
-        if(moDialogHUD != null){
+        if (moDialogHUD != null) {
             moDialogHUD.dismiss();
         }
     }
@@ -295,6 +303,6 @@ public class ImportBookActivity extends MBaseActivity<ImportBookContract.Present
     @Override
     public void addError(String msg) {
         dismissHUD();
-        Snackbar.make(toolbar, msg, Snackbar.LENGTH_SHORT).show();
+        showSnackBar(msg);
     }
 }

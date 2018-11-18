@@ -36,11 +36,11 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
     @Override
     public Observable<LocBookShelfBean> importBook(final File file) {
         return Observable.create(e -> {
-            String suffix = FileHelp.getFileSuffix(file);
+            String fileName = file.getName();
             LocBookShelfBean locBookShelfBean;
-            if (suffix.equalsIgnoreCase(FileHelp.SUFFIX_TXT)) {
+            if (fileName.toLowerCase().endsWith(FileHelp.SUFFIX_TXT)) {
                 locBookShelfBean = getBookForTxtFile(file);
-            } else if (suffix.equalsIgnoreCase(FileHelp.SUFFIX_EPUB)) {
+            } else if (fileName.toLowerCase().endsWith(FileHelp.SUFFIX_EPUB)) {
 //                locBookShelfBean = getBookForEpubFile(file);
                 locBookShelfBean = null;
             } else {

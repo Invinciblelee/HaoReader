@@ -3,7 +3,6 @@ package com.monke.monkeybook.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +12,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.hwangjr.rxbus.RxBus;
@@ -26,6 +26,7 @@ import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.presenter.ReplaceRulePresenterImpl;
+import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
@@ -207,10 +208,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     private void selectReplaceRuleFile() {
         if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/*");//设置类型
-            startActivityForResult(intent, IMPORT_SOURCE);
+            resultImportPerms();
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.import_book_source),
                     RESULT_IMPORT_PERMS, MApplication.PerList);
@@ -219,9 +217,14 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @AfterPermissionGranted(RESULT_IMPORT_PERMS)
     private void resultImportPerms() {
-        selectReplaceRuleFile();
+        FileSelector.startThis(this, IMPORT_SOURCE, "选择文件", FileSelectorContract.MediaType.FIlE, new String[]{"txt", "json", "xml"});
     }
 
+
+    @Override
+    protected View getSnackBarView() {
+        return toolbar;
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -254,16 +257,6 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     @Override
     public void refresh() {
         adapter.resetDataS(ReplaceRuleManager.getInstance().getAll());
-    }
-
-    @Override
-    public Snackbar getSnackBar(String msg, int length) {
-        return Snackbar.make(rlContent, msg, length);
-    }
-
-    @Override
-    public void showSnackBar(String msg, int length) {
-        Snackbar.make(rlContent, msg, length).show();
     }
 
     @Override

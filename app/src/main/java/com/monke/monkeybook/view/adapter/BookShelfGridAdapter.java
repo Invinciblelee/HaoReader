@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -19,8 +20,6 @@ import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.List;
-
-import me.grantland.widget.AutofitTextView;
 
 public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapter.MyViewHolder> {
 
@@ -90,7 +89,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
         ImageView ivHasNew;
-        AutofitTextView tvName;
+        TextView tvName;
         RotateLoading rotateLoading;
         public View content;
 

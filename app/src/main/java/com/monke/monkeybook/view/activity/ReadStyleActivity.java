@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
@@ -32,7 +30,6 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ColorUtil;
-import com.monke.monkeybook.utils.FileUtil;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
@@ -162,7 +159,7 @@ public class ReadStyleActivity extends MBaseActivity {
                     textColor = Color.parseColor(inputText);
                     upText();
                 } catch (Exception e) {
-                    Toast.makeText(this, "颜色值错误", Toast.LENGTH_SHORT).show();
+                    toast("颜色值错误");
                 }
             });
             return true;
@@ -199,7 +196,7 @@ public class ReadStyleActivity extends MBaseActivity {
                     bgCustom = 1;
                     upBg();
                 } catch (Exception e) {
-                    Toast.makeText(this, "颜色值错误", Toast.LENGTH_SHORT).show();
+                    toast("颜色值错误");
                 }
             });
             return true;
@@ -304,7 +301,6 @@ public class ReadStyleActivity extends MBaseActivity {
             upBg();
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

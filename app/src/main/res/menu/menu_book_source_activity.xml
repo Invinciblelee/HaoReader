@@ -4,15 +4,8 @@
     tools:context=".view.activity.BookSourceActivity">
 
     <item
-        android:id="@+id/action_select_all"
-        android:icon="@drawable/ic_done_all_black_24dp_new"
-        android:title="@string/select_all"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
-
-    <item
         android:id="@+id/action_group"
-        android:icon="@drawable/ic_group"
+        android:icon="@drawable/ic_group_black_24dp"
         android:title="@string/menu_action_group"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction">
@@ -33,7 +26,7 @@
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction">
 
-        <menu >
+        <menu>
             <group android:checkableBehavior="single">
 
                 <item
@@ -55,38 +48,45 @@
     </item>
 
     <item
+        android:id="@+id/action_select_all"
+        android:icon="@drawable/ic_select_all_black_24dp"
+        android:title="@string/select_all"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
         android:id="@+id/action_add_book_source"
-        android:icon="@drawable/ic_add_black_24dp_new"
+        android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/add_book_source"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_import_book_source_local"
-        android:icon="@drawable/ic_settings_ethernet_black_24dp_new"
+        android:icon="@drawable/ic_folder_open_black_24dp"
         android:title="@string/import_book_source_local"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_import_book_source_onLine"
-        android:icon="@drawable/ic_settings_ethernet_black_24dp_new"
+        android:icon="@drawable/ic_link_black_24dp"
         android:title="@string/import_book_source_on_line"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_del_select"
-        android:icon="@drawable/ic_clear_all"
-        android:title="@string/del_select"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_reset_book_source"
-        android:icon="@drawable/ic_refresh_black_24dp_new"
+        android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/refresh_default"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_check_book_source"
-        android:icon="@drawable/ic_refresh_black_24dp_new"
+        android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/check_book_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_del_select"
+        android:icon="@drawable/ic_clear_all_black_24dp"
+        android:title="@string/del_select"
         app:showAsAction="never" />
 </menu>

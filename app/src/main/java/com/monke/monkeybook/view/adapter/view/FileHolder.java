@@ -13,6 +13,7 @@ import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.adapter.base.ViewHolderImpl;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.io.File;
 import java.util.HashMap;
@@ -57,15 +58,13 @@ public class FileHolder extends ViewHolderImpl<File> {
         } else {
             setFile(data);
         }
-        mCbSelect.setClickable(false);
     }
 
     private void setFile(File file) {
         //选择
         if (BookshelfHelp.isInBookShelf(file.getAbsolutePath())) {
-            mIvIcon.setImageResource(R.drawable.ic_book_has);
-            mIvIcon.getDrawable().mutate();
-            mIvIcon.getDrawable().setColorFilter(getContext().getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
+            mIvIcon.setImageResource(R.drawable.ic_book_added_black_24dp);
+            AppCompat.setTint(mIvIcon, mIvIcon.getResources().getColor(R.color.tv_text_secondary));
             mIvIcon.setVisibility(View.VISIBLE);
             mCbSelect.setVisibility(View.GONE);
         } else {
@@ -81,7 +80,7 @@ public class FileHolder extends ViewHolderImpl<File> {
         mTvName.setText(file.getName());
         mTvSize.setText(FileHelp.getFileSize(file.length()));
         mTvDate.setText(StringUtils.dateConvert(file.lastModified(), Constant.FORMAT_FILE_DATE));
-        mTvTag.setText(FileHelp.getFileSuffix(file).substring(1).toUpperCase());
+        mTvTag.setText(FileHelp.getFileSuffix(file).toUpperCase());
     }
 
     public void setFolder(File folder) {

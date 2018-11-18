@@ -1,7 +1,6 @@
 package com.monke.monkeybook.presenter.contract;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
@@ -20,7 +19,7 @@ public interface SourceEditContract {
 
         Bitmap encodeAsBitmap(String str);
 
-        void analyzeBitmap(Uri uri);
+        void analyzeBitmap(String path);
     }
 
     interface View extends IView {
@@ -31,6 +30,6 @@ public interface SourceEditContract {
 
         void saveSuccess();
 
-        void showSnackBar(String msg, int length);
+        void showSnackBar(String msg);
     }
 }

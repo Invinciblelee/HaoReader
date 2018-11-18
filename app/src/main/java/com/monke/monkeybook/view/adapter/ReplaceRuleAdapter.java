@@ -28,7 +28,7 @@ public class ReplaceRuleAdapter extends RecyclerView.Adapter<ReplaceRuleAdapter.
     private ReplaceRuleActivity activity;
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override
-        public void onSwiped(int adapterPosition) {
+        public void onSwiped(int position) {
 
         }
 
@@ -79,14 +79,13 @@ public class ReplaceRuleAdapter extends RecyclerView.Adapter<ReplaceRuleAdapter.
         final ReplaceRuleBean item = dataList.get(holder.getLayoutPosition());
         holder.checkBox.setText(item.getReplaceSummary());
         holder.checkBox.setChecked(item.getEnable());
-        holder.checkBox.setOnClickListener((View view) -> {
+        holder.itemView.setOnClickListener((View view) -> {
+            holder.checkBox.setChecked(!holder.checkBox.isChecked());
             item.setEnable(holder.checkBox.isChecked());
             activity.upDateSelectAll();
             activity.saveDataS();
         });
-        AppCompat.setTint(holder.editView, activity.getResources().getColor(R.color.tv_text_default));
         holder.editView.setOnClickListener(view -> activity.editReplaceRule(item));
-        AppCompat.setTint(holder.delView, activity.getResources().getColor(R.color.tv_text_default));
         holder.delView.setOnClickListener(view -> {
             activity.delData(item);
             dataList.remove(holder.getLayoutPosition());
@@ -101,8 +100,8 @@ public class ReplaceRuleAdapter extends RecyclerView.Adapter<ReplaceRuleAdapter.
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         CheckBox checkBox;
-        ImageView editView;
-        ImageView delView;
+        View editView;
+        View delView;
 
         MyViewHolder(View itemView) {
             super(itemView);

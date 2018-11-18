@@ -104,7 +104,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Override
     public void insertSearchHistory() {
         final int type = SearchBookPresenterImpl.BOOK;
-        final String content = mView.getEdtContent().getText().toString().trim();
+        final String content = mView.getEdtContent();
         Observable.create((ObservableOnSubscribe<SearchHistoryBean>) e -> {
             List<SearchHistoryBean> data = DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao()
                     .queryBuilder()
@@ -138,7 +138,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
     @Override
     public void cleanSearchHistory() {
-        final String content = mView.getEdtContent().getText().toString().trim();
+        final String content = mView.getEdtContent();
         Observable.create((ObservableOnSubscribe<Integer>) e -> {
             int a = DbHelper.getInstance().getDb().delete(SearchHistoryBeanDao.TABLENAME,
                     SearchHistoryBeanDao.Properties.Type.columnName + "=? and " + SearchHistoryBeanDao.Properties.Content.columnName + " like ?",
@@ -173,7 +173,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                     @Override
                     public void onNext(Boolean value) {
                         if (value) {
-                            querySearchHistory(mView.getEdtContent().getText().toString().trim());
+                            querySearchHistory(mView.getEdtContent());
                         }
                     }
 

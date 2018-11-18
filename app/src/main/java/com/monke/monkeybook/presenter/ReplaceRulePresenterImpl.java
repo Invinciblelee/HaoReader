@@ -65,7 +65,8 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                     @Override
                     public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
                         mView.refresh();
-                        mView.getSnackBar(replaceRuleBean.getReplaceSummary() + "已删除", Snackbar.LENGTH_LONG)
+                        mView.getSnackBar(replaceRuleBean.getReplaceSummary() + "已删除")
+                                .setDuration(Snackbar.LENGTH_LONG)
                                 .setAction("恢复", view -> restoreData(replaceRuleBean))
                                 .show();
                     }
@@ -79,7 +80,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
 
     @Override
     public void delData(List<ReplaceRuleBean> replaceRuleBeans) {
-        mView.showSnackBar("正在删除选中规则", Snackbar.LENGTH_SHORT);
+        mView.showSnackBar("正在删除选中规则");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             ReplaceRuleManager.getInstance().delDataS(replaceRuleBeans);
             e.onNext(true);
@@ -88,13 +89,13 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
-                        mView.showSnackBar("删除成功", Snackbar.LENGTH_SHORT);
+                        mView.showSnackBar("删除成功");
                         mView.refresh();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("删除失败", Snackbar.LENGTH_SHORT);
+                        mView.showSnackBar("删除失败");
                     }
                 });
     }
@@ -135,12 +136,12 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                 }.getType());
                 ReplaceRuleManager.getInstance().saveDataS(dataS);
                 mView.refresh();
-                mView.showSnackBar("规则导入成功", Snackbar.LENGTH_SHORT);
+                mView.showSnackBar("规则导入成功");
             } catch (Exception e) {
-                mView.showSnackBar("规则导入失败", Snackbar.LENGTH_SHORT);
+                mView.showSnackBar("规则导入失败");
             }
         } else {
-            mView.showSnackBar("文件读取失败", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("文件读取失败");
         }
     }
 
@@ -151,7 +152,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             url = new URL(sourceUrl);
         } catch (Exception e) {
             e.printStackTrace();
-            mView.showSnackBar("URL格式不对", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("URL格式不对");
             return;
         }
         ReplaceRuleManager.getInstance().importReplaceRuleFromWww(url)
@@ -160,15 +161,15 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
                             mView.refresh();
-                            mView.showSnackBar("规则导入成功", Snackbar.LENGTH_SHORT);
+                            mView.showSnackBar("规则导入成功");
                         } else {
-                            mView.showSnackBar("规则导入失败", Snackbar.LENGTH_SHORT);
+                            mView.showSnackBar("规则导入失败");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("规则导入失败", Snackbar.LENGTH_SHORT);
+                        mView.showSnackBar("规则导入失败");
                     }
                 });
     }

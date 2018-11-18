@@ -107,7 +107,7 @@ public class FileHelp {
         }
         String fileName = file.getName();
         int dotIndex = fileName.lastIndexOf(".");
-        return dotIndex > 0 ? fileName.substring(dotIndex) : "";
+        return (dotIndex > -1) ? fileName.substring(dotIndex + 1) : "";
     }
 
     /**

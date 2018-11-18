@@ -6,13 +6,13 @@
     android:gravity="bottom"
     android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="160dp"
+        android:layout_height="80dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:tint="@color/colorAccent"
-        android:src="@drawable/icon_read_book"
+        android:src="@drawable/ic_read"
         android:contentDescription="@string/app_name" />
 
     <TextView

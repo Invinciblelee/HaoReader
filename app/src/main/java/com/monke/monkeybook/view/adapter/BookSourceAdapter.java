@@ -40,7 +40,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override
-        public void onSwiped(int adapterPosition) {
+        public void onSwiped(int position) {
 
         }
 
@@ -131,13 +131,12 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             holder.cbView.setText(String.format("%s(%s)", item.getBookSourceName(), item.getBookSourceGroup()));
         }
         holder.cbView.setChecked(item.getEnable());
-        holder.cbView.setOnClickListener((View view) -> {
+        holder.itemView.setOnClickListener((View view) -> {
+            holder.cbView.setChecked(!holder.cbView.isChecked());
             item.setEnable(holder.cbView.isChecked());
             activity.saveDate(item);
             activity.upDateSelectAll();
         });
-        holder.editView.getDrawable().mutate();
-        holder.editView.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         holder.editView.setOnClickListener(view -> {
             Intent intent = new Intent(activity, SourceEditActivity.class);
             String key = String.valueOf(System.currentTimeMillis());
@@ -145,8 +144,6 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             BitIntentDataManager.getInstance().putData(key, item.clone());
             activity.startActivityForResult(intent, BookSourceActivity.EDIT_SOURCE);
         });
-        holder.delView.getDrawable().mutate();
-        holder.delView.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         holder.delView.setOnClickListener(view -> {
             activity.delBookSource(item);
             dataList.remove(realPosition);
@@ -154,8 +151,6 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             activity.saveDate(dataList);
             activity.upSearchView(dataList.size());
         });
-        holder.topView.getDrawable().mutate();
-        holder.topView.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
         holder.topView.setOnClickListener(view -> {
             allDataList(BookSourceManager.getInstance().getAllBookSource());
 
@@ -195,9 +190,9 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         CheckBox cbView;
-        ImageView editView;
-        ImageView delView;
-        ImageView topView;
+        View editView;
+        View delView;
+        View topView;
 
         MyViewHolder(View itemView) {
             super(itemView);

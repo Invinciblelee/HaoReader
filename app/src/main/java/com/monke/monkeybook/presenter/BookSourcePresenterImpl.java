@@ -22,7 +22,6 @@ import com.monke.monkeybook.service.CheckSourceService;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -104,14 +103,15 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
-                        mView.getSnackBar(delBookSource.getBookSourceName() + "已删除", Snackbar.LENGTH_LONG)
+                        mView.getSnackBar(delBookSource.getBookSourceName() + "已删除")
+                                .setDuration(Snackbar.LENGTH_LONG)
                                 .setAction("恢复", view -> restoreBookSource(delBookSource))
                                 .show();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("删除失败", Snackbar.LENGTH_SHORT);
+                        mView.showSnackBar("删除失败");
                         mView.refreshBookSource();
                     }
                 });
@@ -136,14 +136,14 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                     @Override
                     public void onNext(Boolean aBoolean) {
                         mView.dismissHUD();
-                        mView.showSnackBar("删除成功", Snackbar.LENGTH_SHORT);
+                        mView.showSnackBar("删除成功");
                         mView.refreshBookSource();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.showSnackBar("删除失败", Snackbar.LENGTH_SHORT);
+                        mView.showSnackBar("删除失败");
                     }
                 });
     }
@@ -179,7 +179,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(getImportObserver());
         } else {
-            mView.showSnackBar("文件读取失败", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("文件读取失败");
         }
     }
 
@@ -190,7 +190,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             url = new URL(sourceUrl);
         } catch (Exception e) {
             e.printStackTrace();
-            mView.showSnackBar("URL格式不对", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("URL格式不对");
             return;
         }
         mView.showLoading("正在导入书源");
@@ -204,14 +204,14 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             @Override
             public void onSuccess() {
                 mView.dismissHUD();
-                mView.showSnackBar("书源导入成功", Snackbar.LENGTH_SHORT);
+                mView.showSnackBar("书源导入成功");
                 initData();
             }
 
             @Override
             public void onError() {
                 mView.dismissHUD();
-                mView.showSnackBar("书源导入失败", Snackbar.LENGTH_SHORT);
+                mView.showSnackBar("书源导入失败");
             }
         });
     }
@@ -223,16 +223,16 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                 mView.dismissHUD();
                 if (aBoolean) {
                     mView.refreshBookSource();
-                    mView.showSnackBar("书源导入成功", Snackbar.LENGTH_SHORT);
+                    mView.showSnackBar("书源导入成功");
                 } else {
-                    mView.showSnackBar("书源导入失败", Snackbar.LENGTH_SHORT);
+                    mView.showSnackBar("书源导入失败");
                 }
             }
 
             @Override
             public void onError(Throwable e) {
                 mView.dismissHUD();
-                mView.showSnackBar(e.getMessage(), Snackbar.LENGTH_SHORT);
+                mView.showSnackBar(e.getMessage());
             }
         };
     }
@@ -267,10 +267,10 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         mView.refreshBookSource();
 
         if (state == -1) {
-            mView.showSnackBar("校验完成", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("校验完成");
         } else {
             if (progressSnackBar == null) {
-                progressSnackBar = mView.getSnackBar(getProgressStr(state), Snackbar.LENGTH_INDEFINITE);
+                progressSnackBar = mView.getSnackBar(getProgressStr(state)).setDuration(Snackbar.LENGTH_INDEFINITE);
                 progressSnackBar.setAction(mView.getContext().getString(R.string.cancel), view -> CheckSourceService.stop(mView.getContext()));
             } else {
                 progressSnackBar.setText(getProgressStr(state));

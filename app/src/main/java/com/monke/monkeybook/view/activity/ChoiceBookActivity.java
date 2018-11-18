@@ -5,11 +5,9 @@ import android.annotation.SuppressLint;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -189,7 +187,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
 
     @Override
     public void addBookShelfFailed(String massage) {
-        Toast.makeText(this, massage, Toast.LENGTH_SHORT).show();
+        toast(massage);
     }
 
     @Override

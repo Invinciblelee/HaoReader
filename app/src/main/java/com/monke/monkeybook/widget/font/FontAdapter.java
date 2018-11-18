@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
@@ -43,11 +44,9 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
             holder.tvFont.setTypeface(typeface);
             holder.tvFont.setText(fileList.get(position).getName());
             if (fileList.get(position).getAbsolutePath().equals(selectPath)) {
-                holder.ivChecked.setVisibility(View.VISIBLE);
+                holder.ivChecked.setChecked(true);
             } else {
-                holder.ivChecked.setVisibility(View.INVISIBLE);
-                holder.ivChecked.getDrawable().mutate();
-                holder.ivChecked.getDrawable().setColorFilter(context.getResources().getColor(R.color.menu_color_default), PorterDuff.Mode.SRC_ATOP);
+                holder.ivChecked.setChecked(false);
             }
             holder.itemView.setOnClickListener(view -> {
                 if (thisListener != null) {
@@ -81,7 +80,7 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvFont;
-        ImageView ivChecked;
+        RadioButton ivChecked;
 
         MyViewHolder(View itemView) {
             super(itemView);

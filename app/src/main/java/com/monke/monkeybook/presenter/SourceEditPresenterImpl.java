@@ -2,13 +2,10 @@ package com.monke.monkeybook.presenter;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
@@ -81,7 +78,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
         ClipData clipData = ClipData.newPlainText(null, mView.getBookSourceStr());
         if (clipboard != null) {
             clipboard.setPrimaryClip(clipData);
-            mView.showSnackBar("拷贝成功", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("拷贝成功");
         }
     }
 
@@ -101,7 +98,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             BookSourceBean bookSourceBean = gson.fromJson(bookSourceStr, BookSourceBean.class);
             mView.setText(bookSourceBean);
         } catch (Exception e) {
-            mView.showSnackBar("数据格式不对", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("数据格式不对");
         }
     }
 
@@ -126,10 +123,9 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
     }
 
     @Override
-    public void analyzeBitmap(Uri uri) {
-        ContentResolver cr = mView.getContext().getContentResolver();
+    public void analyzeBitmap(String path) {
         try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(cr, uri);//显得到bitmap图片
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
             bitmap = BitmapUtil.getImage(bitmap);
 
             int width = bitmap.getWidth();
@@ -147,12 +143,12 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
                 setText(result.getText());
             } catch (NotFoundException | ChecksumException | FormatException e) {
                 e.printStackTrace();
-                mView.showSnackBar("解析图片错误", Snackbar.LENGTH_SHORT);
+                mView.showSnackBar("解析图片错误");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            mView.showSnackBar("图片获取错误", Snackbar.LENGTH_SHORT);
+            mView.showSnackBar("图片获取错误");
         }
 
     }

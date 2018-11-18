@@ -11,8 +11,6 @@
     <dimen name="half_card_item_margin">4dp</dimen>
     <dimen name="card_item_margin">8dp</dimen>
 
-    <dimen name="desc_icon_size">17.5sp</dimen>
-
     <dimen name="progress_bar_height">2dp</dimen>
 
     <dimen name="fastscroll_bubble_radius">44dp</dimen>

@@ -234,7 +234,8 @@ public class FileCategoryFragment extends BaseFileFragment {
     public class SimpleFileFilter implements FileFilter {
         @Override
         public boolean accept(File pathname) {
-            if (pathname.getName().startsWith(".")) {
+            String fileName = pathname.getName();
+            if (fileName.startsWith(".")) {
                 return false;
             }
             //文件夹内部数量为0
@@ -243,9 +244,8 @@ public class FileCategoryFragment extends BaseFileFragment {
             }
 
             //文件内容为空,或者不以txt为开头
-            String fileSuffix = FileHelp.getFileSuffix(pathname);
             return pathname.isDirectory() ||
-                    fileSuffix.equalsIgnoreCase(FileHelp.SUFFIX_TXT);
+                    fileName.toLowerCase().endsWith(FileHelp.SUFFIX_TXT);
         }
     }
 }

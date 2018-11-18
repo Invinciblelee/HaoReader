@@ -110,8 +110,6 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
             holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
             holder.tvDownload.setText(activity.getString(R.string.un_download, (Integer) payloads.get(0)));
         }else {
-            holder.ivDel.getDrawable().mutate();
-            holder.ivDel.getDrawable().setColorFilter(activity.getResources().getColor(R.color.tv_text_default), PorterDuff.Mode.SRC_ATOP);
             Glide.with(activity)
                     .load(item.getCoverUrl())
                     .apply(new RequestOptions()

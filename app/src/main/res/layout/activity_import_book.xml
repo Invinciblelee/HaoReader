@@ -60,10 +60,12 @@
 
             <TextView
                 android:id="@+id/file_category_tv_back_last"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:drawableLeft="@drawable/ic_back_last"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/ic_subdirectory_arrow_left_black_24dp"
                 android:gravity="center"
                 android:text="上一级"
                 android:textColor="@color/tv_text_default"
@@ -90,14 +92,15 @@
         android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true">
 
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/file_system_cb_selected_all"
             android:layout_width="120dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
+            android:background="@null"
             android:text="全选"
-            android:textColor="@color/selector_btn_file_delete" />
+            android:textColor="@color/tv_text_default" />
 
         <Button
             android:id="@+id/file_system_btn_add_book"

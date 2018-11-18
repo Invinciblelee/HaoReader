@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.lang.ref.WeakReference;
@@ -23,10 +23,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
     private WeakReference<Activity> activityRef;
@@ -62,6 +58,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                     .apply(new RequestOptions()
                             .centerCrop()
                             .dontAnimate().placeholder(R.drawable.img_cover_default)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
@@ -216,14 +213,14 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             }
             searchBooks = copyDataS;
             Activity activity = activityRef.get();
-            if(activity != null) {
+            if (activity != null) {
                 activity.runOnUiThread(this::notifyDataSetChanged);
             }
         }
     }
 
     public void clearAll() {
-        if(searchBooks == null || searchBooks.isEmpty()){
+        if (searchBooks == null || searchBooks.isEmpty()) {
             return;
         }
         try {

@@ -316,7 +316,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         tvRead.setOnClickListener(v -> {
             //进入阅读
             ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf().copy(), mPresenter.inBookShelf());
-            finishNoAnim();
+            finish();
         });
 
         tvRemoveShelf.setOnClickListener(v -> {
@@ -353,7 +353,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 RxBus.get().post(RxBusTag.SEARCH_BOOK, tvAuthor.getText().toString());
             }
-            finishNoAnim();
+            finish();
         });
 
         tvName.setOnClickListener(view -> {
@@ -362,7 +362,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 RxBus.get().post(RxBusTag.SEARCH_BOOK, tvName.getText().toString());
             }
-            finishNoAnim();
+            finish();
         });
     }
 

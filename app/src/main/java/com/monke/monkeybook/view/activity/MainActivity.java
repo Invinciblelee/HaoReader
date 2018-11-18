@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,13 +21,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Switch;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
@@ -55,6 +54,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @BindView(R.id.layout_container)
     ScrimInsetsFrameLayout container;
+    @BindView(R.id.book_list_frame)
+    FrameLayout frameContent;
     @BindView(R.id.drawer)
     DrawerLayout drawer;
     @BindView(R.id.navigation_view)
@@ -176,7 +177,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerRight.setOnItemClickListener(getAdapterListener());
         drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
 
-        getWindow().getDecorView().post(this::versionUpRun);
+        versionUpRun();
     }
 
     private OnBookItemClickListenerTwo getAdapterListener() {
@@ -222,10 +223,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem pauseMenu = menu.findItem(R.id.action_list_grid);
         if (viewIsList) {
+            pauseMenu.setIcon(R.drawable.ic_view_grid_black_24dp);
             pauseMenu.setTitle(R.string.action_grid);
         } else {
+            pauseMenu.setIcon(R.drawable.ic_view_list_black_24dp);
             pauseMenu.setTitle(R.string.action_list);
         }
+        AppCompat.setTint(pauseMenu, getResources().getColor(R.color.menu_color_default));
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -500,8 +504,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             SharedPreferences.Editor editor = getPreferences().edit();
             editor.putInt("versionCode", MApplication.getVersionCode());
             editor.apply();
-            //更新日志
-            moDialogHUD.showAssetMarkdown("updateLog.md");
         }
     }
 
@@ -569,6 +571,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
+    protected View getSnackBarView() {
+        return toolbar;
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -603,15 +610,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     public void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Snackbar.make(drawer, "再按一次退出程序", Snackbar.LENGTH_SHORT).show();
+            showSnackBar("再按一次退出程序");
             exitTime = System.currentTimeMillis();
         } else {
             finish();
         }
     }
 
-    @Override
-    public void finish() {
-        super.finishNoAnim();
-    }
 }

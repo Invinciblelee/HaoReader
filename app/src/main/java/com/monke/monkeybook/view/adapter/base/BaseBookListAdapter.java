@@ -27,7 +27,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override
-        public void onSwiped(int adapterPosition) {
+        public void onSwiped(int position) {
 
         }
 

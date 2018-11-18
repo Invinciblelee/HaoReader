@@ -39,11 +39,11 @@ public interface BookSourceContract {
 
         void importDefaultSource();
 
-        Snackbar getSnackBar(String msg, int length);
+        Snackbar getSnackBar(String msg);
 
         void resetData(List<BookSourceBean> bookSourceBeans);
 
-        void showSnackBar(String msg, int length);
+        void showSnackBar(String msg);
 
         void showLoading(String msg);
 

@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_black_24dp_new"
+        android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/action_search"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
@@ -18,7 +18,7 @@
 
     <item
         android:id="@+id/action_add_local"
-        android:icon="@drawable/ic_add_black_24dp_new"
+        android:icon="@drawable/ic_folder_open_black_24dp"
         android:title="@string/book_local"
         app:showAsAction="never" />
 
@@ -30,26 +30,26 @@
 
     <item
         android:id="@+id/action_list_grid"
-        android:icon="@drawable/ic_view_quilt_black_24dp_new"
+        android:icon="@drawable/ic_view_grid_black_24dp"
         android:title="@string/action_list_grid"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_clearCaches"
-        android:icon="@drawable/ic_clear_all"
+        android:icon="@drawable/ic_clean_cache_black_24dp"
         android:title="@string/clean_caches"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_clearBookshelf"
-        android:icon="@drawable/ic_clear_all"
+        android:icon="@drawable/ic_clear_all_black_24dp"
         android:title="@string/clear_bookshelf"
         app:showAsAction="never" />
 
 
     <item
         android:id="@+id/action_refreshBookshelf"
-        android:icon="@drawable/ic_refresh_black_24dp_new"
+        android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/refresh_bookshelf"
         app:showAsAction="never" />
 </menu>

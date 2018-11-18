@@ -145,9 +145,6 @@ dependencies {
     // If you want to use the GPU Filters
     implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 
-    //AutoFitTextView
-    implementation 'me.grantland:autofittextview:0.2.1'
-
     //删除粒子效果
     implementation 'tyrantgit:explosionfield:1.0.1'
 
@@ -182,7 +179,9 @@ dependencies {
 
     implementation 'com.github.florent37:arclayout:1.0.3'
 
-    implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta03'
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta05'
+
+    implementation 'com.google.android:flexbox:1.0.0'
 }
 
 greendao {

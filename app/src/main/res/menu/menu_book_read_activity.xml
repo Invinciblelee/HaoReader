@@ -6,31 +6,25 @@
     <group android:id="@+id/menuOnLine">
         <item
             android:id="@+id/action_change_source"
-            android:icon="@drawable/ic_exchange"
+            android:icon="@drawable/ic_exchange_black_24dp"
             android:title="@string/change_origin"
             app:showAsAction="always" />
 
         <item
             android:id="@+id/action_refresh"
-            android:icon="@drawable/ic_refresh_black_24dp_new"
+            android:icon="@drawable/ic_refresh_black_24dp"
             android:title="@string/refresh"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/action_download"
-            android:icon="@drawable/ic_download_line"
+            android:icon="@drawable/ic_download_black_24dp"
             android:title="@string/download_offline"
             app:showAsAction="ifRoom" />
 
         <item
-            android:id="@+id/action_clean_cache"
-            android:icon="@drawable/ic_clear_all"
-            android:title="@string/clean_caches"
-            app:showAsAction="never" />
-
-        <item
             android:id="@+id/disable_book_source"
-            android:icon="@drawable/ic_cancel"
+            android:icon="@drawable/ic_forbid_black_24dp"
             android:title="@string/disable_book_source"
             app:showAsAction="never" />
     </group>
@@ -38,13 +32,13 @@
     <group android:id="@+id/menuShow">
         <item
             android:id="@+id/add_bookmark"
-            android:icon="@drawable/ic_bookmark"
+            android:icon="@drawable/ic_bookmark_black_24dp"
             android:title="@string/bookmark_add"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/action_copy_text"
-            android:icon="@drawable/ic_settings_backup_restore"
+            android:icon="@drawable/ic_content_copy_black_24dp"
             android:title="@string/copy_text"
             app:showAsAction="ifRoom" />
     </group>

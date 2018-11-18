@@ -1,21 +1,18 @@
 package com.monke.monkeybook.widget.font;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.help.DocumentHelper;
 import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class FontSelector {
     private AlertDialog.Builder builder;

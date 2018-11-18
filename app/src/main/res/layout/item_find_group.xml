@@ -11,7 +11,7 @@
         android:layout_marginStart="25dp"
         android:padding="10dp"
         android:singleLine="true"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/tv_text_default"/>
 
 </LinearLayout>

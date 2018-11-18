@@ -4,7 +4,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.internal.NavigationMenuPresenter;
@@ -32,21 +31,21 @@ import java.lang.reflect.Field;
 
 public class AppCompat {
 
-    private AppCompat(){
+    private AppCompat() {
 
     }
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchHintIcon, boolean showBg) {
         final int normalColor = searchView.getResources().getColor(R.color.menu_color_default);
         AppCompatImageView search = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
-        search.setImageResource(R.drawable.ic_search_black_24dp_new);
+        search.setImageResource(R.drawable.ic_search_black_24dp);
         setTint(search, normalColor);
 
         SearchView.SearchAutoComplete searchText = searchView.findViewById(R.id.search_src_text);
         searchText.setTextSize(14f);
 
         final int textSize = (int) (searchText.getTextSize() * 1.25);
-        Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
+        Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
         searchIcon.setBounds(0, 0, textSize, textSize);
         setTint(searchIcon, normalColor);
         searchText.setCompoundDrawables(searchIcon, null, null, null);
@@ -63,12 +62,12 @@ public class AppCompat {
         params.bottomMargin = ScreenUtils.dpToPx(7);
         plate.setLayoutParams(params);
 
-        plate.setPadding(ScreenUtils.dpToPx(7), 0, ScreenUtils.dpToPx(7), 0);
+        plate.setPadding(ScreenUtils.dpToPx(6), 0, ScreenUtils.dpToPx(6), 0);
 
-        if(showBg) {
+        if (showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
             android.support.v4.view.ViewCompat.setBackground(plate, bag);
-        }else {
+        } else {
             android.support.v4.view.ViewCompat.setBackground(plate, null);
         }
 
@@ -97,16 +96,16 @@ public class AppCompat {
 
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText, boolean showIcon) {
         searchText.setTextColor(searchText.getResources().getColor(R.color.tv_text_default));
-        if(showIcon) {
+        if (showIcon) {
             final int textSize = (int) (searchText.getTextSize() * 1.25);
-            Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp_new);
+            Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
             mSearchHintIcon.setBounds(0, 0, textSize, textSize);
             setTint(mSearchHintIcon, Color.GRAY);
             final SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
             ssb.setSpan(new ImageSpan(mSearchHintIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             ssb.append(hintText);
             searchText.setHint(ssb);
-        }else {
+        } else {
             searchText.setHint(hintText);
         }
     }
@@ -145,7 +144,7 @@ public class AppCompat {
     }
 
     public static void setTintList(Drawable drawable, ColorStateList tint, @NonNull PorterDuff.Mode tintMode) {
-        if(drawable == null) return;
+        if (drawable == null) return;
         final Drawable wrappedDrawable = DrawableCompat.wrap(drawable.mutate());
         DrawableCompat.setTintList(wrappedDrawable, tint);
         DrawableCompat.setTintMode(wrappedDrawable, tintMode);
@@ -168,7 +167,7 @@ public class AppCompat {
     }
 
     public static void setTint(Drawable drawable, @ColorInt int tint, @NonNull PorterDuff.Mode tintMode) {
-        if(drawable == null) return;
+        if (drawable == null) return;
         final Drawable wrappedDrawable = DrawableCompat.wrap(drawable.mutate());
         DrawableCompat.setTint(wrappedDrawable, tint);
         DrawableCompat.setTintMode(wrappedDrawable, tintMode);
@@ -183,15 +182,19 @@ public class AppCompat {
             Drawable drawable = ((ImageView) view).getDrawable();
             setTint(drawable, color);
         } else if (view instanceof TextView) {
-            Drawable[] drawables = ((TextView) view).getCompoundDrawables();
+//            Drawable[] drawables = ((TextView) view).getCompoundDrawables();
+//            for (Drawable drawable : drawables) {
+//                setTint(drawable, color);
+//            }
+            Drawable[] drawables = ((TextView) view).getCompoundDrawablesRelative();
             for (Drawable drawable : drawables) {
                 setTint(drawable, color);
             }
         }
     }
 
-    public static void setTint(MenuItem item, int color){
-        if(item != null && item.getIcon() != null){
+    public static void setTint(MenuItem item, int color) {
+        if (item != null && item.getIcon() != null) {
             setTint(item.getIcon(), color);
         }
     }

@@ -67,24 +67,22 @@
 
             </com.monke.monkeybook.widget.CoverCardView>
 
-            <me.grantland.widget.AutofitTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_name"
+                style="@style/AppTheme.TextView.Marquee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/cover_card"
                 android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:gravity="center|start"
-                android:paddingLeft="10dp"
                 android:paddingTop="8dp"
-                android:paddingRight="10dp"
                 android:paddingBottom="8dp"
-                android:singleLine="true"
                 android:text="@string/tv_book_name"
                 android:textColor="@color/tv_text_default"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                app:minTextSize="16sp"
-                tools:ignore="RtlHardcoded,RtlSymmetry" />
+                android:textStyle="bold" />
 
             <RadioGroup
                 android:id="@+id/rg_book_group"
@@ -174,31 +172,26 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp">
 
-                        <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="@dimen/desc_icon_size"
-                            android:layout_height="@dimen/desc_icon_size"
-                            android:contentDescription="@string/author"
-                            android:paddingEnd="2dp"
-                            android:src="@drawable/ic_author_black_24dp"
-                            app:tint="@color/tv_text_secondary"
-                            tools:ignore="RtlSymmetry" />
-
                         <FrameLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="6dp">
 
-                            <TextView
+                            <com.monke.monkeybook.widget.ScaleDrawableTextView
                                 android:id="@+id/tv_author"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_author_black_24dp"
+                                android:drawablePadding="2dp"
+                                android:gravity="center_vertical"
                                 android:includeFontPadding="false"
-                                android:maxLines="1"
-                                android:paddingEnd="6dp"
+                                android:singleLine="true"
                                 android:text="@string/author"
                                 android:textColor="@color/tv_text_secondary"
                                 android:textSize="13sp"
-                                tools:ignore="RtlSymmetry" />
+                                app:drawableColor="@color/tv_text_secondary" />
                         </FrameLayout>
 
 
@@ -230,28 +223,23 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp">
 
-                        <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="@dimen/desc_icon_size"
-                            android:layout_height="@dimen/desc_icon_size"
-                            android:contentDescription="@string/book_source"
-                            android:paddingEnd="2dp"
-                            android:src="@drawable/ic_source_black_24dp"
-                            app:tint="@color/tv_text_secondary"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
+                        <com.monke.monkeybook.widget.ScaleDrawableTextView
                             android:id="@+id/tv_origin"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:drawableStart="@drawable/ic_source_black_24dp"
+                            android:drawablePadding="2dp"
                             android:ellipsize="end"
+                            android:gravity="center_vertical"
                             android:includeFontPadding="false"
-                            android:maxLines="1"
-                            android:paddingRight="6dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="6dp"
+                            android:singleLine="true"
                             android:text="@string/origin"
                             android:textColor="@color/tv_text_secondary"
                             android:textSize="13sp"
-                            tools:ignore="RtlHardcoded,RtlSymmetry" />
+                            app:drawableColor="@color/tv_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_change_origin"
@@ -282,28 +270,23 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp">
 
-                        <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="@dimen/desc_icon_size"
-                            android:layout_height="@dimen/desc_icon_size"
-                            android:contentDescription="@string/book_search_last"
-                            android:paddingEnd="2dp"
-                            android:src="@drawable/ic_book_last_24dp"
-                            app:tint="@color/tv_text_secondary"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
+                        <com.monke.monkeybook.widget.ScaleDrawableTextView
                             android:id="@+id/tv_chapter_last"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:drawableStart="@drawable/ic_book_last_black_24dp"
+                            android:drawablePadding="2dp"
                             android:ellipsize="end"
+                            android:gravity="center_vertical"
                             android:includeFontPadding="false"
-                            android:maxLines="1"
+                            android:paddingStart="0dp"
                             android:paddingEnd="6dp"
+                            android:singleLine="true"
                             android:text="@string/book_search_last"
                             android:textColor="@color/tv_text_secondary"
                             android:textSize="13sp"
-                            tools:ignore="RtlSymmetry" />
+                            app:drawableColor="@color/tv_text_secondary" />
 
                         <android.support.v7.widget.AppCompatImageView
                             android:id="@+id/iv_refresh"
@@ -326,25 +309,20 @@
                         android:paddingBottom="3dp"
                         android:visibility="visible">
 
-                        <android.support.v7.widget.AppCompatImageView
-                            android:layout_width="@dimen/desc_icon_size"
-                            android:layout_height="@dimen/desc_icon_size"
-                            android:contentDescription="@string/read_dur_progress"
-                            android:paddingEnd="2dp"
-                            android:src="@drawable/ic_history_black_24dp"
-                            app:tint="@color/tv_text_secondary"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
+                        <com.monke.monkeybook.widget.ScaleDrawableTextView
                             android:id="@+id/tv_chapter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_history_black_24dp"
+                            android:drawablePadding="2dp"
                             android:ellipsize="end"
+                            android:gravity="center_vertical"
                             android:includeFontPadding="false"
-                            android:maxLines="1"
+                            android:singleLine="true"
                             android:text="@string/read_dur_progress"
                             android:textColor="@color/tv_text_secondary"
-                            android:textSize="13sp" />
+                            android:textSize="13sp"
+                            app:drawableColor="@color/tv_text_secondary" />
                     </LinearLayout>
 
                     <TextView

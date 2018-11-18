@@ -33,6 +33,7 @@
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:text="@string/text_bold"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <View
@@ -49,6 +50,7 @@
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:text="@string/custom_font"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <View
@@ -65,6 +67,7 @@
                 android:background="@drawable/selector_pop_font_bg"
                 android:gravity="center"
                 android:text="@string/page_mode"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
@@ -86,7 +89,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/text_size" />
+                android:text="@string/text_size"
+                android:textColor="@color/tv_text_default" />
 
             <com.monke.monkeybook.widget.number.NumberButton
                 android:id="@+id/nbTextSize"
@@ -100,6 +104,7 @@
                 android:layout_marginLeft="5dp"
                 android:gravity="center_vertical"
                 android:text="@string/line_size"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="RtlHardcoded" />
 
             <com.monke.monkeybook.widget.number.NumberButton
@@ -114,6 +119,7 @@
                 android:layout_marginLeft="5dp"
                 android:gravity="center_vertical"
                 android:text="@string/paragraph_size"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="RtlHardcoded" />
 
             <com.monke.monkeybook.widget.number.NumberButton
@@ -140,13 +146,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/padding" />
+                android:text="@string/padding"
+                android:textColor="@color/tv_text_default" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/top" />
+                android:text="@string/top"
+                android:textColor="@color/tv_text_default" />
 
             <com.monke.monkeybook.widget.number.NumberButton
                 android:id="@+id/nbPaddingTop"
@@ -160,6 +168,7 @@
                 android:layout_marginLeft="5dp"
                 android:gravity="center"
                 android:text="@string/bottom"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="RtlHardcoded" />
 
             <com.monke.monkeybook.widget.number.NumberButton
@@ -174,6 +183,7 @@
                 android:layout_marginLeft="5dp"
                 android:gravity="center"
                 android:text="@string/left"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="RtlHardcoded" />
 
             <com.monke.monkeybook.widget.number.NumberButton
@@ -188,6 +198,7 @@
                 android:layout_marginLeft="5dp"
                 android:gravity="center"
                 android:text="@string/right"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="RtlHardcoded" />
 
             <com.monke.monkeybook.widget.number.NumberButton
@@ -211,7 +222,8 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:text="@string/text_bg_style" />
+                android:text="@string/text_bg_style"
+                android:textColor="@color/tv_text_default" />
 
             <LinearLayout
                 android:layout_width="match_parent"

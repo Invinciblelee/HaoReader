@@ -109,7 +109,7 @@
                 android:background="@drawable/bg_ib_pre_round"
                 android:contentDescription="@string/swap_vert"
                 android:padding="2dp"
-                android:src="@drawable/ic_swap_calls_black_24dp"
+                android:src="@drawable/ic_swap_vert_black_24dp"
                 app:tint="@color/tv_text_default" />
         </LinearLayout>
 

@@ -26,7 +26,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gyf.barlibrary.BarHide;
 import com.monke.basemvplib.AppActivityManager;
@@ -239,6 +238,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
 
+        if(canNavigationBarLightFont()){
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
         if (isMenuShowing() || isPopShowing()) {
             if (isImmersionBarEnabled() && !isNightTheme()) {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
@@ -318,11 +321,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 upHpbNextPage = this::upHpbNextPage;
             }
             mHandler.postDelayed(upHpbNextPage, HPB_UPDATE_INTERVAL);
-            fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop);
+            fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop_black_24dp);
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page_stop));
         } else {
             hpbNextPageProgress.setVisibility(View.INVISIBLE);
-            fabAutoPage.setImageResource(R.drawable.ic_auto_page);
+            fabAutoPage.setImageResource(R.drawable.ic_auto_page_black_24dp);
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page));
         }
         AppCompat.setTint(fabAutoPage, getResources().getColor(R.color.menu_color_default));
@@ -368,9 +371,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         AppCompat.setTint(btnSetting, menuColor);
 
         if (isNightTheme()) {
-            fabNightTheme.setImageResource(R.drawable.ic_daytime_24dp);
+            fabNightTheme.setImageResource(R.drawable.ic_day_border_bleak_24dp);
         } else {
-            fabNightTheme.setImageResource(R.drawable.ic_brightness);
+            fabNightTheme.setImageResource(R.drawable.ic_night_border_black_24dp);
         }
 
         if (!readBookControl.getLightIsFollowSys()) {
@@ -397,6 +400,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         updateTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
         showHideView();
+    }
+
+    @Override
+    protected View getSnackBarView() {
+        return pageView;
     }
 
     //设置ToolBar
@@ -853,7 +861,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 break;
             case R.id.fabAutoPage:
                 if (ReadAloudService.running) {
-                    Toast.makeText(this, "朗读正在运行,不能自动翻页", Toast.LENGTH_SHORT).show();
+                    toast("朗读正在运行,不能自动翻页");
                     return;
                 }
                 autoPage = !autoPage;
@@ -961,7 +969,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     menu.getItem(i).setEnabled(false);
                 }
             }
-            if(mPresenter.getBookShelf() != null) {
+            if (mPresenter.getBookShelf() != null) {
                 menu.findItem(R.id.edit_charset).setVisible(true);
                 menu.findItem(R.id.edit_charset).setEnabled(true);
             }
@@ -1005,9 +1013,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 break;
             case R.id.disable_book_source:
                 mPresenter.disableDurBookSource();
-                break;
-            case R.id.action_clean_cache:
-                mPresenter.cleanCache();
                 break;
             case R.id.edit_charset:
                 setCharset();
@@ -1149,7 +1154,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPageLoader instanceof LocalPageLoader && mPresenter.getBookShelf() != null) {
             ensureProgressHUD();
             String charset = mPresenter.getBookShelf().getBookInfoBean().getCharset();
-            moDialogHUD.showInputBox(getString(R.string.edit),
+            moDialogHUD.showInputBox(getString(R.string.edit_charset),
                     charset,
                     new String[]{"UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "ASCII"}
                     , inputText -> {
@@ -1188,11 +1193,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
     }
 
-    @Override
-    public void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
     /**
      * 更新朗读状态
      */
@@ -1211,15 +1211,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 }
                 break;
             case PLAY:
-                fabReadAloud.setImageResource(R.drawable.ic_pause2);
+                fabReadAloud.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp);
                 llReadAloudTimer.setVisibility(View.VISIBLE);
                 break;
             case PAUSE:
-                fabReadAloud.setImageResource(R.drawable.ic_play2);
+                fabReadAloud.setImageResource(R.drawable.ic_play_circle_outline_black_24dp);
                 llReadAloudTimer.setVisibility(View.VISIBLE);
                 break;
             default:
-                fabReadAloud.setImageResource(R.drawable.ic_read_aloud);
+                fabReadAloud.setImageResource(R.drawable.ic_headset_black_24dp);
                 llReadAloudTimer.setVisibility(View.INVISIBLE);
         }
         AppCompat.setTint(fabReadAloud, getResources().getColor(R.color.menu_color_default));
@@ -1457,10 +1457,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 && !AppActivityManager.getInstance().isExist(SearchBookActivity.class)) {
             android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
             startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
-            super.finishNoAnim();
-        } else {
-            super.finish();
         }
+        super.finish();
     }
 
 

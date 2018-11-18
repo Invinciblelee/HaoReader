@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.FileProvider;
@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,6 +29,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
+import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 
@@ -38,6 +38,8 @@ import java.io.FileOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -216,7 +218,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     private void saveBookSource() {
         if (isEmpty(tieBookSourceName.getText().toString().trim()) || isEmpty(tieBookSourceUrl.getText().toString().trim())) {
-            Toast.makeText(MApplication.getInstance(), "书源名称和URL不能为空", Toast.LENGTH_SHORT).show();
+            toast("书源名称和URL不能为空");
             return;
         }
         mPresenter.saveSource(getBookSource(), bookSourceBean);
@@ -225,7 +227,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @Override
     public void saveSuccess() {
         bookSourceBean = getBookSource();
-        Toast.makeText(MApplication.getInstance(), "保存成功", Toast.LENGTH_SHORT).show();
+        toast("保存成功");
         setResult(RESULT_OK);
         finish();
     }
@@ -366,11 +368,9 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         }
     }
 
+    @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void selectLocalImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_QR_IMAGE);
+        FileSelector.startThis(this, REQUEST_QR_IMAGE, "选择图片", FileSelectorContract.MediaType.IMAGE, new String[]{"png", "jpg", "jpeg"});
     }
 
     private void openRuleSummary() {
@@ -379,8 +379,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             intent.setData(Uri.parse(getString(R.string.source_rule_url)));
             startActivity(intent);
         } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, R.string.can_not_open, Toast.LENGTH_SHORT).show();
+            toast(R.string.can_not_open);
         }
     }
 
@@ -398,11 +397,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_book_source_edit, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void showSnackBar(String msg, int length) {
-        Snackbar.make(rlContent, msg, length).show();
     }
 
     //菜单
@@ -426,7 +420,11 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 shareBookSource();
                 break;
             case R.id.action_qr_code_image:
-                selectLocalImage();
+                if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
+                    selectLocalImage();
+                } else {
+                    EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
+                }
                 break;
             case R.id.action_rule_summary:
                 openRuleSummary();
@@ -439,10 +437,16 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_QR_IMAGE && resultCode == RESULT_OK && null != data) {
-            mPresenter.analyzeBitmap(data.getData());
+            mPresenter.analyzeBitmap(data.getStringExtra(FileSelector.RESULT));
             return;
         }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

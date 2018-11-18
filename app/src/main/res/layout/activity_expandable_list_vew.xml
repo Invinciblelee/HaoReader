@@ -43,5 +43,5 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:gravity="center"
         android:textColor="@color/tv_text_secondary"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

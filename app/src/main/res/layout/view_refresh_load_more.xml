@@ -13,7 +13,7 @@
         android:id="@+id/rl_loading"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        app:loading_color="#A0ABAE"
+        app:loading_color="@color/tv_text_summary"
         app:loading_width="2dp" />
 
     <TextView
@@ -24,6 +24,6 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="正在加载..."
-        android:textColor="#A0ABAE"
+        android:textColor="@color/tv_text_summary"
         android:textSize="14sp" />
 </LinearLayout>

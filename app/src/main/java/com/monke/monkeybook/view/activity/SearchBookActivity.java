@@ -1,14 +1,12 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -16,10 +14,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -29,9 +26,7 @@ import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
-import com.monke.monkeybook.view.adapter.SearchHistoryAdapter;
 import com.monke.monkeybook.widget.AppCompat;
-import com.monke.monkeybook.widget.flowlayout.TagFlowLayout;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -48,11 +43,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.ll_search_history)
-    LinearLayout llSearchHistory;
+    View llSearchHistory;
     @BindView(R.id.tv_search_history_clean)
     TextView tvSearchHistoryClean;
     @BindView(R.id.tfl_search_history)
-    TagFlowLayout tflSearchHistory;
+    FlexboxLayout tflSearchHistory;
     @BindView(R.id.rfRv_search_books)
     RefreshRecyclerView rfRvSearchBooks;
     @BindView(R.id.fabStop)
@@ -60,13 +55,27 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     MenuItem itemMy716;
     MenuItem itemDonate;
-    private SearchHistoryAdapter searchHistoryAdapter;
     private ExplosionField explosionField;
     private SearchBookAdapter searchBookAdapter;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private boolean useMy716;
 
     private MoDialogHUD moDialogHUD;
+
+    private final View.OnClickListener historyItemClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            SearchHistoryBean searchHistoryBean = (SearchHistoryBean) v.getTag();
+            searchView.setQuery(searchHistoryBean.getContent(), true);
+        }
+    };
+
+    private final View.OnLongClickListener historyItemLongClick = v -> {
+        SearchHistoryBean searchHistoryBean = (SearchHistoryBean) v.getTag();
+        explosionField.explode(v);
+        mPresenter.cleanSearchHistory(searchHistoryBean);
+        return false;
+    };
 
     public static void startByKey(MBaseActivity activity, String searchKey) {
         Intent intent = new Intent(activity, SearchBookActivity.class);
@@ -94,7 +103,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void initData() {
         explosionField = ExplosionField.attach2Window(this);
-        searchHistoryAdapter = new SearchHistoryAdapter();
         searchBookAdapter = new SearchBookAdapter(this);
     }
 
@@ -105,9 +113,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         this.setSupportActionBar(toolbar);
         setupActionBar();
         initSearchView();
-
-        llSearchHistory.setOnClickListener(null);
-        tflSearchHistory.setAdapter(searchHistoryAdapter);
 
         int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
         rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
@@ -130,6 +135,16 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         fabStop.setOnClickListener(view -> {
             mPresenter.stopSearch();
             fabStop.hide();
+        });
+
+        searchBookAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (searchBookAdapter.getICount() > 0
+                        && rfRvSearchBooks.getNoDataView().isShown()) {
+                    rfRvSearchBooks.getNoDataView().setVisibility(View.GONE);
+                }
+            }
         });
     }
 
@@ -204,19 +219,19 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 && !AppActivityManager.getInstance().isExist(ReadBookActivity.class)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
-            super.finishNoAnim();
+            super.finish();
         } else {
-            super.finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out);
+            finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initSearchView() {
         AppCompat.useCustomIconForSearchView(searchView, getString(R.string.searchBook));
         mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchView.clearFocus();
                 toSearch();
                 return false;
             }
@@ -229,7 +244,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         });
 
         searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
-            if(hasFocus){
+            if (!hasFocus && TextUtils.isEmpty(searchView.getQuery())) {
+                finish();
+            }
+
+            if (hasFocus) {
                 mPresenter.stopSearch();
                 openOrCloseHistory(true);
             }
@@ -243,19 +262,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 explosionField.explode(tflSearchHistory.getChildAt(i));
             }
             mPresenter.cleanSearchHistory();
-        });
-
-        searchHistoryAdapter.setOnItemClickListener(new SearchHistoryAdapter.OnItemClickListener() {
-            @Override
-            public void itemClick(SearchHistoryBean searchHistoryBean) {
-                searchView.setQuery(searchHistoryBean.getContent(), true);
-            }
-
-            @Override
-            public void itemLongClick(int index) {
-                explosionField.explode(tflSearchHistory.getChildAt(index));
-                mPresenter.cleanSearchHistory(searchHistoryAdapter.getItemData(index));
-            }
         });
     }
 
@@ -296,33 +302,40 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         String query = searchView.getQuery().toString().trim();
         if (!TextUtils.isEmpty(query)) {
             openOrCloseHistory(false);
+            searchView.clearFocus();
             mPresenter.stopSearch();
             mPresenter.insertSearchHistory();
             rfRvSearchBooks.startRefresh();
             //执行搜索请求
-            searchView.postDelayed(() -> mPresenter.toSearchBooks(query), 300);
+            searchView.postDelayed(() -> mPresenter.toSearchBooks(query), 100L);
         }
     }
 
     private void openOrCloseHistory(boolean open) {
         if (open) {
-            if (llSearchHistory.getVisibility() != View.VISIBLE) {
+            if(!llSearchHistory.isShown()) {
                 llSearchHistory.setVisibility(View.VISIBLE);
-                ObjectAnimator animator = ObjectAnimator.ofFloat(llSearchHistory, "alpha", 0f, 1f);
-                animator.start();
             }
         } else {
-            if (llSearchHistory.getVisibility() == View.VISIBLE) {
-                ObjectAnimator animator = ObjectAnimator.ofFloat(llSearchHistory, "alpha", 1f, 0f);
-                animator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        llSearchHistory.setVisibility(View.GONE);
-                    }
-                });
-                animator.start();
+            if(llSearchHistory.isShown()) {
+                llSearchHistory.setVisibility(View.GONE);
             }
             searchBookAdapter.clearAll();
+        }
+    }
+
+    private void addNewHistories(List<SearchHistoryBean> historyBeans){
+        tflSearchHistory.removeAllViews();
+        if (historyBeans != null) {
+            TextView tagView;
+            for (SearchHistoryBean searchHistoryBean : historyBeans) {
+                tagView = (TextView) getLayoutInflater().inflate(R.layout.item_search_history, tflSearchHistory, false);
+                tagView.setTag(searchHistoryBean);
+                tagView.setText(searchHistoryBean.getContent());
+                tagView.setOnClickListener(historyItemClick);
+                tagView.setOnLongClickListener(historyItemLongClick);
+                tflSearchHistory.addView(tagView);
+            }
         }
     }
 
@@ -334,13 +347,15 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void querySearchHistorySuccess(List<SearchHistoryBean> datas) {
-        searchHistoryAdapter.replaceAll(datas);
-        if (searchHistoryAdapter.getDataSize() > 0) {
+        addNewHistories(datas);
+
+        if (tflSearchHistory.getChildCount() > 0) {
             tvSearchHistoryClean.setVisibility(View.VISIBLE);
         } else {
             tvSearchHistoryClean.setVisibility(View.INVISIBLE);
         }
     }
+
 
     @Override
     public void resetSearchBook() {
@@ -379,8 +394,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     }
 
     @Override
-    public EditText getEdtContent() {
-        return mSearchAutoComplete;
+    public String getEdtContent() {
+        return mSearchAutoComplete.getText().toString().trim();
     }
 
     @Override

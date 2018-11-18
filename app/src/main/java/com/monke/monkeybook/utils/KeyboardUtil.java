@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.monke.monkeybook.widget.flowlayout.TagFlowLayout;
-
 public class KeyboardUtil {
 
     public static void hideKeyboard(Activity activity) {

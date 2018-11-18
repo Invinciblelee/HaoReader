@@ -27,9 +27,9 @@ public interface ReplaceRuleContract {
 
         void refresh();
 
-        Snackbar getSnackBar(String msg, int length);
+        Snackbar getSnackBar(String msg);
 
-        void showSnackBar(String msg, int length);
+        void showSnackBar(String msg);
     }
 
 }

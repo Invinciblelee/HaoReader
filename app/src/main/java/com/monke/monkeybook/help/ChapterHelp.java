@@ -1,5 +1,6 @@
 package com.monke.monkeybook.help;
 
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -36,7 +37,7 @@ public class ChapterHelp {
             return "";
         }
 
-        chapterName = chapterName.replaceAll("\\u3000", " ");
+        chapterName = StringUtils.fullToHalf(chapterName);
 
         if(chapterName.matches(SPECIAL_PATTERN)){
             return chapterName;

@@ -68,7 +68,7 @@ public interface SearchBookContract {
         /**
          * 获取搜索内容EditText
          */
-        EditText getEdtContent();
+        String getEdtContent();
 
         /**
          * @return SearchBookAdapter

@@ -57,7 +57,7 @@ public class DownloadService extends Service {
         isRunning = true;
         //创建 Notification.Builder 对象
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdDownload)
-                .setSmallIcon(R.drawable.ic_download)
+                .setSmallIcon(R.drawable.ic_download_white_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setOngoing(false)
                 .setContentTitle(getString(R.string.download_offline_t))
@@ -295,7 +295,7 @@ public class DownloadService extends Service {
         PendingIntent mainPendingIntent = PendingIntent.getActivity(this, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         //创建 Notification.Builder 对象
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdDownload)
-                .setSmallIcon(R.drawable.ic_download)
+                .setSmallIcon(R.drawable.ic_download_white_24dp)
                 //通知栏大图标
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 //点击通知后自动清除
@@ -303,7 +303,7 @@ public class DownloadService extends Service {
                 .setContentTitle("正在下载：" + downloadChapterBean.getBookName())
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);
-        builder.addAction(R.drawable.ic_stop_black_24dp, getString(R.string.cancel), getChancelPendingIntent(downloadChapterBean.getNoteUrl()));
+        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getChancelPendingIntent(downloadChapterBean.getNoteUrl()));
         //发送通知
         managerCompat.notify(notificationId, builder.build());
     }

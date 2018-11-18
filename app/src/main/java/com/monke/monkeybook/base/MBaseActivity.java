@@ -9,13 +9,16 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gyf.barlibrary.ImmersionBar;
 import com.monke.basemvplib.BaseActivity;
@@ -137,17 +140,27 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
             } else {
                 mImmersionBar.statusBarColor(R.color.status_bar_bag);
             }
+
+            mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+
+            if (canNavigationBarLightFont()) {
+                mImmersionBar.navigationBarDarkIcon(false);
+            }
+
             if (isImmersionBarEnabled() && !isNightTheme()) {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
             } else {
                 mImmersionBar.statusBarDarkFont(false);
             }
 
-            mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
             mImmersionBar.init();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    protected boolean canNavigationBarLightFont() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
     /**
@@ -200,23 +213,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-    @Override
-    public void startActivity(Intent intent) {
-        super.startActivity(intent);
-        overridePendingTransition(R.anim.anim_in_right, R.anim.anim_out_left);
-    }
-
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
-        overridePendingTransition(R.anim.anim_in_right, R.anim.anim_out_left);
-    }
-
-    public void startActivityForResultByAnim(Intent intent, int requestCode, int animIn, int animExit) {
-        super.startActivityForResult(intent, requestCode);
-        overridePendingTransition(animIn, animExit);
-    }
-
     public void startActivityByAnim(Intent intent, int animIn, int animExit) {
         super.startActivity(intent);
         overridePendingTransition(animIn, animExit);
@@ -231,18 +227,38 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.anim_in_left, R.anim.anim_out_right);
-    }
-
-    public void finishNoAnim() {
-        super.finish();
-    }
-
     public void finishByAnim(int animIn, int animOut) {
         super.finish();
         overridePendingTransition(animIn, animOut);
+    }
+
+    protected View getSnackBarView() {
+        return null;
+    }
+
+    public Snackbar getSnackBar(String msg) {
+        if (getSnackBarView() == null) {
+            return null;
+        }
+        Snackbar snackbar = Snackbar.make(getSnackBarView(), msg, Snackbar.LENGTH_SHORT);
+        View view = snackbar.getView();
+        view.setBackgroundResource(R.color.background);
+        ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(getResources().getColor(R.color.tv_text_default));
+        return snackbar;
+    }
+
+    public void showSnackBar(String msg) {
+        Snackbar snackbar = getSnackBar(msg);
+        if (snackbar != null) {
+            snackbar.show();
+        }
+    }
+
+    public void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public void toast(@StringRes int resId) {
+        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
     }
 }

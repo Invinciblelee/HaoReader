@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.bean.RipeFile;
@@ -185,7 +186,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                 file.setPath(cursor.getString(pathIndex));
                 file.setName(file.getPath().substring(file.getPath().lastIndexOf("/") + 1));
                 file.setSize(cursor.getLong(sizeIndex));
-                file.setSuffix(FileHelp.getFileSuffix(file.getPath()).substring(1).toUpperCase());
+                file.setSuffix(FileHelp.getFileSuffix(file.getPath()).toUpperCase());
                 File f = new File(file.getPath());
                 file.setDate(f.lastModified());
 
@@ -209,6 +210,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.hideLoading();
                     }
                 });

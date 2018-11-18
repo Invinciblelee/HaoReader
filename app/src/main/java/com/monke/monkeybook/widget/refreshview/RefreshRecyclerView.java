@@ -107,6 +107,14 @@ public class RefreshRecyclerView extends FrameLayout {
         return recyclerView;
     }
 
+    public View getNoDataView() {
+        return noDataView;
+    }
+
+    public View getRefreshErrorView() {
+        return refreshErrorView;
+    }
+
     public void refreshError() {
         rpb.setIsAutoLoading(false);
         rpb.clean();

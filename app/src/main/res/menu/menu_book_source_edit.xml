@@ -4,37 +4,43 @@
 
     <item
         android:id="@+id/action_save"
-        android:icon="@drawable/ic_save_black_24dp_new"
+        android:icon="@drawable/ic_save_black_24dp"
         android:title="@string/action_save"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_share_it"
+        android:icon="@drawable/ic_share_black_24dp"
         android:title="@string/share"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_copy_source"
+        android:icon="@drawable/ic_content_copy_black_24dp"
         android:title="@string/copy_source"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_paste_source"
+        android:icon="@drawable/ic_content_paste_black_24dp"
         android:title="@string/paste_source"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_qr_code_camera"
+        android:icon="@drawable/ic_qr_scan_black_24dp"
         android:title="@string/camera_scan"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_qr_code_image"
+        android:icon="@drawable/ic_picture_black_24dp"
         android:title="@string/scan_image"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_rule_summary"
+        android:icon="@drawable/ic_help_outline_black_24dp"
         android:title="@string/rule_summary"
         app:showAsAction="never" />
 

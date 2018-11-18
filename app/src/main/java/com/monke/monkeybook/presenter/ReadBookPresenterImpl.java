@@ -110,32 +110,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     }
 
     @Override
-    public void cleanCache() {
-        if (bookShelf != null) {
-            mView.showLoading("正在清除缓存");
-            Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-                BookshelfHelp.cleanBookCache(bookShelf);
-                emitter.onNext(true);
-                emitter.onComplete();
-            }).subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SimpleObserver<Boolean>() {
-                        @Override
-                        public void onNext(Boolean aBoolean) {
-                            mView.dismissHUD();
-                            mView.toast("缓存清除成功");
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            mView.dismissHUD();
-                            mView.toast("缓存清除失败");
-                        }
-                    });
-        }
-    }
-
-    @Override
     public void saveProgress() {
         if (bookShelf != null && inBookShelf) {
             Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {

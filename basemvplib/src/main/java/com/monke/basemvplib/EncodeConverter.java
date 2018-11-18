@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.ByteArrayInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
@@ -83,7 +84,7 @@ public class EncodeConverter extends Converter.Factory {
                 }
             }
             //根据内容判断
-            charsetStr = CharsetDetector.detectCharset(value.byteStream());
+            charsetStr = CharsetDetector.detectCharset(new ByteArrayInputStream(responseBytes));
             return new String(responseBytes, Charset.forName(charsetStr));
         };
     }
