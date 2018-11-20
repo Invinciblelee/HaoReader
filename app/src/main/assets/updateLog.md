@@ -5,7 +5,7 @@
 * 修改动画，解决详情界面跳转到阅读界面没有动画的问题
 * 优化本地导入界面，文件夹扫描改为异步
 * 修改本地封面选择更加方便
-* 加入一个搜索分页规则\{index（第一页）, indexSecond（第二页）, indexThird（第三页）, index-searchPage+1 或 index-searchPage-1 或 index-searchPage\}  
+* 加入一个搜索分页规则{index（第一页）, indexSecond（第二页）, indexThird（第三页）, index-searchPage+1 或 index-searchPage-1 或 index-searchPage}  
 * 修复背景被回收的bug
 
 **2018/11/18**
