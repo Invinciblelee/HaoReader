@@ -14,34 +14,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
+import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.utils.FileUtil;
+import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleObserver;
-import io.reactivex.SingleOnSubscribe;
-import io.reactivex.disposables.Disposable;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
-
-import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
 
 public class BookInfoActivity extends MBaseActivity {
     private final int ResultSelectCover = 103;
@@ -73,20 +66,24 @@ public class BookInfoActivity extends MBaseActivity {
     @BindView(R.id.til_book_jj)
     TextInputLayout tilBookJj;
 
-    private String noteUrl;
-    private BookShelfBean book;
+    private BookShelfBean bookShelf;
+    private BookInfoBean bookInfo;
     private MoDialogHUD moDialogHUD;
 
 
-    public static void startThis(MBaseActivity context, String noteUrl, View transitionView) {
+    public static void startThis(MBaseActivity context, BookShelfBean bookShelf, View transitionView) {
         Intent intent = new Intent(context, BookInfoActivity.class);
-        intent.putExtra("noteUrl", noteUrl);
+        String key = String.valueOf(System.currentTimeMillis());
+        intent.putExtra("data_key", key);
+        BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
         context.startActivityByAnim(intent, transitionView, transitionView.getTransitionName());
     }
 
-    public static void startThis(MBaseActivity context, String noteUrl) {
+    public static void startThis(MBaseActivity context, BookShelfBean bookShelf) {
         Intent intent = new Intent(context, BookInfoActivity.class);
-        intent.putExtra("noteUrl", noteUrl);
+        String key = String.valueOf(System.currentTimeMillis());
+        intent.putExtra("data_key", key);
+        BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
         context.startActivity(intent);
     }
 
@@ -99,17 +96,13 @@ public class BookInfoActivity extends MBaseActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null && !TextUtils.isEmpty(savedInstanceState.getString("noteUrl"))) {
-            noteUrl = savedInstanceState.getString("noteUrl");
-        }
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("noteUrl", noteUrl);
+        if (bookShelf != null) {
+            String key = String.valueOf(System.currentTimeMillis());
+            getIntent().putExtra("data_key", key);
+            BitIntentDataManager.getInstance().putData(key, bookShelf);
+        }
     }
 
     /**
@@ -133,22 +126,22 @@ public class BookInfoActivity extends MBaseActivity {
      */
     @Override
     protected void initData() {
-        noteUrl = getIntent().getStringExtra("noteUrl");
+        String key = getIntent().getStringExtra("data_key");
+        bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+        bookInfo = bookShelf.getBookInfoBean();
+        BitIntentDataManager.getInstance().cleanData(key);
 
-        if (!TextUtils.isEmpty(noteUrl)) {
-            book = BookshelfHelp.getBookByUrl(noteUrl, false);
-            if (book != null) {
-                tieBookName.setText(book.getBookInfoBean().getName());
-                tieBookAuthor.setText(book.getBookInfoBean().getAuthor());
-                tieBookJj.setText(book.getBookInfoBean().getIntroduce());
-                if (TextUtils.isEmpty(book.getCustomCoverPath())) {
-                    tieCoverUrl.setText(book.getBookInfoBean().getCoverUrl());
-                } else {
-                    tieCoverUrl.setText(book.getCustomCoverPath());
-                }
+        if (bookInfo != null) {
+            tieBookName.setText(bookInfo.getName());
+            tieBookAuthor.setText(bookInfo.getAuthor());
+            tieBookJj.setText(bookInfo.getIntroduce());
+            if (TextUtils.isEmpty(bookInfo.getCustomCoverPath())) {
+                tieCoverUrl.setText(bookInfo.getCoverUrl());
+            } else {
+                tieCoverUrl.setText(bookInfo.getCustomCoverPath());
             }
-            initCover(getTextString(tieCoverUrl));
         }
+        initCover(getTextString(tieCoverUrl));
     }
 
     /**
@@ -159,15 +152,12 @@ public class BookInfoActivity extends MBaseActivity {
         super.bindEvent();
         tvSelectLocalCover.setOnClickListener(view -> {
             if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
-                startActivityForResult(intent, ResultSelectCover);
+                imageSelectorResult();
             } else {
                 EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
             }
         });
-        tvChangeCover.setOnClickListener(view -> moDialogHUD.showChangeSource(this, book, searchBookBean -> {
+        tvChangeCover.setOnClickListener(view -> moDialogHUD.showChangeSource(this, bookInfo, searchBookBean -> {
             tieCoverUrl.setText(searchBookBean.getCoverUrl());
             initCover(getTextString(tieCoverUrl));
         }));
@@ -218,18 +208,19 @@ public class BookInfoActivity extends MBaseActivity {
     }
 
     private void saveInfo() {
-        book.getBookInfoBean().setName(getTextString(tieBookName));
-        book.getBookInfoBean().setAuthor(getTextString(tieBookAuthor));
-        book.getBookInfoBean().setIntroduce(getTextString(tieBookJj));
-        book.setCustomCoverPath(getTextString(tieCoverUrl));
-        BookshelfHelp.saveBookToShelf(book);
-        RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, book);
+        bookInfo.setName(getTextString(tieBookName));
+        bookInfo.setAuthor(getTextString(tieBookAuthor));
+        bookInfo.setIntroduce(getTextString(tieBookJj));
+        bookInfo.setCustomCoverPath(getTextString(tieCoverUrl));
+        bookShelf.setBookInfoBean(bookInfo);
+        DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().insertOrReplace(bookInfo);
+        RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, bookShelf);
         finishByTransition();
     }
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        tvSelectLocalCover.callOnClick();
+        FileSelector.startThis(this, ResultSelectCover, "选择图片", FileSelectorContract.MediaType.IMAGE, new String[]{"png", "jpg", "jpeg"});
     }
 
     @Override
@@ -244,7 +235,7 @@ public class BookInfoActivity extends MBaseActivity {
         switch (requestCode) {
             case ResultSelectCover:
                 if (resultCode == RESULT_OK && null != data) {
-                    tieCoverUrl.setText(FileUtil.getPath(this, data.getData()));
+                    tieCoverUrl.setText(data.getStringExtra(FileSelector.RESULT));
                     initCover(getTextString(tieCoverUrl));
                 }
                 break;

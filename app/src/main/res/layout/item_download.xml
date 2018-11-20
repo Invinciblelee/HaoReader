@@ -66,7 +66,6 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="center"
-        android:layout_marginEnd="10dp"
         android:background="@drawable/bg_ib_pre_round"
         android:clickable="true"
         android:focusable="true"

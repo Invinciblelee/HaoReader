@@ -2,4 +2,6 @@
 <resources>
     <integer name="activity_animTime">400</integer>
 
+    <integer name="activity_longAnimTime">600</integer>
+
 </resources>

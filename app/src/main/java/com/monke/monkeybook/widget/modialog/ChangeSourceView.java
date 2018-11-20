@@ -13,14 +13,12 @@ import com.monke.basemvplib.BaseActivity;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
-import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -42,7 +40,7 @@ import io.reactivex.schedulers.Schedulers;
  * 换源
  */
 
-public class ChangeSourceView {
+public class ChangeSourceView implements SearchBookModel.SearchListener {
     private TextView atvTitle;
     private ImageButton ibtStop;
     private RefreshRecyclerView rvSource;
@@ -52,7 +50,7 @@ public class ChangeSourceView {
     private Context context;
     private ChangeSourceAdapter adapter;
     private SearchBookModel searchBookModel;
-    private BookInfoBean book;
+    private BookInfoBean bookInfo;
     private boolean selectCover;
 
     public static ChangeSourceView newInstance(BaseActivity activity, MoDialogView moDialogView) {
@@ -74,59 +72,51 @@ public class ChangeSourceView {
         });
         rvSource.setNoDataAndrRefreshErrorView(LayoutInflater.from(context).inflate(R.layout.view_searchbook_no_data, null),
                 viewRefreshError);
-        searchBookModel = new SearchBookModel(activity, new SearchBookModel.OnSearchListener() {
-
-            @Override
-            public void searchSourceEmpty() {
-                Toast.makeText(context, "没有选中任何书源", Toast.LENGTH_SHORT).show();
-                ibtStop.setVisibility(View.INVISIBLE);
-                rvSource.finishRefresh(true, false);
-            }
-
-            @Override
-            public void resetSearchBook() {
-                ibtStop.setVisibility(View.VISIBLE);
-                adapter.reSetSourceAdapter();
-            }
-
-            @Override
-            public void searchBookFinish() {
-                ibtStop.setVisibility(View.INVISIBLE);
-                rvSource.finishRefresh(true, false);
-            }
-
-            @Override
-            public boolean checkExists(SearchBookBean searchBook) {
-                return test(searchBook);
-            }
-
-            @Override
-            public void loadMoreSearchBook(List<SearchBookBean> value) {
-                addSearchBook(value);
-            }
-
-            @Override
-            public void searchBookError() {
-                ibtStop.setVisibility(View.INVISIBLE);
-                rvSource.finishRefresh(false);
-            }
-
-            @Override
-            public int getItemCount() {
-                return adapter.getICount();
-            }
-        }, !TextUtils.equals(ACache.get(activity).getAsString("useMy716"), "False"));
 
         moDialogView.setOnDismissListener(() -> searchBookModel.shutdownSearch());
+
+        searchBookModel = new SearchBookModel(activity, !TextUtils.equals(ACache.get(activity).getAsString("useMy716"), "False"), this);
+        searchBookModel.onlyOnePage();
     }
 
-    void showChangeSource(BookShelfBean bookShelf, OnClickSource onClickSource) {
+
+    @Override
+    public void searchSourceEmpty() {
+        Toast.makeText(context, "没有选中任何书源", Toast.LENGTH_SHORT).show();
+        ibtStop.setVisibility(View.INVISIBLE);
+        rvSource.finishRefresh(true, false);
+    }
+
+    @Override
+    public void resetSearchBook() {
+        ibtStop.setVisibility(View.VISIBLE);
+        adapter.reSetSourceAdapter();
+    }
+
+    @Override
+    public void searchBookFinish() {
+        ibtStop.setVisibility(View.INVISIBLE);
+        rvSource.finishRefresh(true, false);
+    }
+
+    @Override
+    public void loadMoreSearchBook(List<SearchBookBean> value) {
+        addSearchBook(value);
+    }
+
+    @Override
+    public void searchBookError() {
+        ibtStop.setVisibility(View.INVISIBLE);
+        rvSource.finishRefresh(false);
+    }
+
+    void showChangeSource(BookInfoBean bookInfoBean, OnClickSource onClickSource) {
         this.onClickSource = onClickSource;
-        book = bookShelf.getBookInfoBean();
-        if (TextUtils.isEmpty(book.getAuthor())) {
-            atvTitle.setText(book.getName());
+        this.bookInfo = bookInfoBean;
+        if (TextUtils.isEmpty(bookInfo.getAuthor())) {
+            atvTitle.setText(bookInfo.getName());
         } else {
-            atvTitle.setText(String.format("%s(%s)", book.getName(), book.getAuthor()));
+            atvTitle.setText(String.format("%s(%s)", bookInfo.getName(), bookInfo.getAuthor()));
         }
         rvSource.startRefresh();
         moDialogView.post(this::getSearchBookInDb);
@@ -137,7 +127,7 @@ public class ChangeSourceView {
         if (!selectCover) {
             if (!searchBook.getIsCurrentSource()) {
                 onClickSource.changeSource(searchBook);
-                incrementBookSourceWeight(searchBook);
+                incrementSourceWeightBySelection(searchBook);
             }
         } else {
             onClickSource.changeSource(searchBook);
@@ -147,7 +137,7 @@ public class ChangeSourceView {
     private void getSearchBookInDb() {
         Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
             List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().queryBuilder()
-                    .where(SearchBookBeanDao.Properties.Name.eq(book.getName()), SearchBookBeanDao.Properties.Author.eq(book.getAuthor())).list();
+                    .where(SearchBookBeanDao.Properties.Name.eq(bookInfo.getName()), SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
             e.onNext(searchBookBeans == null ? new ArrayList<>() : searchBookBeans);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -155,9 +145,9 @@ public class ChangeSourceView {
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
                     @Override
                     public void onNext(List<SearchBookBean> searchBookBeans) {
-                        if (searchBookBeans.size() > 0) {
+                        if (!searchBookBeans.isEmpty()) {
                             for (SearchBookBean searchBookBean : searchBookBeans) {
-                                if (Objects.equals(searchBookBean.getTag(), book.getTag())) {
+                                if (Objects.equals(searchBookBean.getTag(), bookInfo.getTag())) {
                                     searchBookBean.setIsCurrentSource(true);
                                 } else {
                                     searchBookBean.setIsCurrentSource(false);
@@ -184,74 +174,36 @@ public class ChangeSourceView {
         DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().deleteInTx(adapter.getSearchBookBeans());
         adapter.reSetSourceAdapter();
         int id = (int) System.currentTimeMillis();
-        searchBookModel.startSearch(id, book.getName());
+        searchBookModel.startSearch(id, bookInfo.getName());
     }
 
     private synchronized void addSearchBook(List<SearchBookBean> searchBookBeans) {
-        if (searchBookBeans != null && searchBookBeans.size() > 0) {
-            searchBookBeans = ListUtil.filter(searchBookBeans, searchBookBean -> ChangeSourceView.this.test(searchBookBean, book));
-            for (SearchBookBean searchBookBean : searchBookBeans) {
-                if (test(searchBookBean, book)) {
-                    if (TextUtils.equals(searchBookBean.getTag(), book.getTag())) {
-                        searchBookBean.setIsCurrentSource(true);
-                    } else {
-                        searchBookBean.setIsCurrentSource(false);
-                    }
-                    rvSource.post(() -> adapter.addSourceAdapter(searchBookBean));
-
-                    incrementBookSourceWeightSync(searchBookBean);
-                    break;
+        final List<SearchBookBean> newDataS = ListUtil.filter(searchBookBeans, searchBookBean -> ChangeSourceView.this.test(searchBookBean, bookInfo));
+        if (!newDataS.isEmpty()) {
+            for (SearchBookBean searchBookBean : newDataS) {
+                if (TextUtils.equals(searchBookBean.getTag(), bookInfo.getTag())) {
+                    searchBookBean.setIsCurrentSource(true);
+                } else {
+                    searchBookBean.setIsCurrentSource(false);
                 }
             }
+            rvSource.post(() -> adapter.addAllSourceAdapter(newDataS));
         }
     }
 
-    private void incrementBookSourceWeightSync(SearchBookBean searchBookBean) {
-        BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(searchBookBean.getTag());
-        if (book.getChapterList().size() > 0 && bookSourceBean != null) {
-            int lastChapter = ChapterHelp.guessChapterNum(searchBookBean.getLastChapter());
-            if (lastChapter > book.getChapterList().size()) {
-                bookSourceBean.increaseWeight(100);
-                BookshelfHelp.saveBookSource(bookSourceBean);
-            }
-        }
-    }
-
-    private void incrementBookSourceWeight(SearchBookBean searchBook) {
-        Observable.create((ObservableOnSubscribe<SearchBookBean>) e -> {
+    private void incrementSourceWeightBySelection(SearchBookBean searchBook) {
+        Schedulers.single().createWorker().schedule(() -> {
             BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchBook.getTag());
             if (sourceBean != null) {
                 sourceBean.increaseWeightBySelection();
                 BookshelfHelp.saveBookSource(sourceBean);
             }
-            e.onNext(searchBook);
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<SearchBookBean>() {
-                    @Override
-                    public void onNext(SearchBookBean searchBookBean) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-                });
+        });
     }
 
     private boolean test(SearchBookBean searchBookBean, BookInfoBean book) {
         return TextUtils.equals(searchBookBean.getName(), book.getName())
                 && TextUtils.equals(searchBookBean.getAuthor(), book.getAuthor());
-    }
-
-    private synchronized boolean test(SearchBookBean searchBook) {
-        List<SearchBookBean> searchBooks = adapter.getSearchBookBeans();
-        for (SearchBookBean temp : searchBooks) {
-            if (TextUtils.equals(temp.getTag(), searchBook.getTag())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void bindView() {

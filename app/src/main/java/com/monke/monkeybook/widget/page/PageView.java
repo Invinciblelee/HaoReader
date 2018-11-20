@@ -2,6 +2,7 @@ package com.monke.monkeybook.widget.page;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -14,6 +15,7 @@ import android.view.ViewConfiguration;
 
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.ReadBookControl;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.widget.animation.CoverPageAnim;
 import com.monke.monkeybook.widget.animation.Direction;

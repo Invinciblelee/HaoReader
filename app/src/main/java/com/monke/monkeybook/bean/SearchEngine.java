@@ -7,11 +7,13 @@ public class SearchEngine {
     private String tag;
     private boolean hasMore;
     private int page;
+    private boolean isRunning;
 
     public SearchEngine(String tag) {
         this.tag = tag;
         hasMore = true;
-        page = 1;
+        isRunning = false;
+        page = 0;
     }
 
     public String getTag() {
@@ -26,25 +28,33 @@ public class SearchEngine {
         return hasMore;
     }
 
-    public void setHasMore(boolean hasMore) {
-        this.hasMore = hasMore;
-    }
-
     public int getPage() {
         return page;
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public boolean isRunning() {
+        return isRunning;
     }
 
-    public synchronized void pageAdd(){
+    public void searchBegin() {
         this.page += 1;
+        this.isRunning = true;
+    }
+
+    public void searchEnd(boolean hasMore) {
+        this.hasMore = hasMore;
+        this.isRunning = false;
+    }
+
+    public void searchReset() {
+        this.hasMore = true;
+        this.isRunning = false;
+        this.page = 0;
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(obj instanceof SearchEngine){
+        if (obj instanceof SearchEngine) {
             return TextUtils.equals(((SearchEngine) obj).tag, this.tag);
         }
         return super.equals(obj);

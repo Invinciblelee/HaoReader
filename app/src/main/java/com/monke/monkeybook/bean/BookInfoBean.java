@@ -3,12 +3,10 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,31 +24,28 @@ public class BookInfoBean implements Parcelable {
     private String chapterUrl;  //章节目录地址
     private Long finalRefreshData = System.currentTimeMillis();  //章节最后更新时间
     private String coverUrl; //小说封面
+    private String customCoverPath;//自定义小说封面
     private String author;//作者
     private String introduce; //简介
     private String origin; //来源
     private String charset;//编码
-
-    @Transient
-    private List<ChapterListBean> chapterList = new ArrayList<>();    //章节列表
-    @Transient
-    private List<BookmarkBean> bookmarkList = new ArrayList<>();    //书签列表
 
     public BookInfoBean() {
 
     }
 
 
-    @Generated(hash = 928796558)
-    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl,
-                        Long finalRefreshData, String coverUrl, String author, String introduce, String origin,
-                        String charset) {
+    @Generated(hash = 1236199332)
+    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl, Long finalRefreshData,
+            String coverUrl, String customCoverPath, String author, String introduce, String origin,
+            String charset) {
         this.name = name;
         this.tag = tag;
         this.noteUrl = noteUrl;
         this.chapterUrl = chapterUrl;
         this.finalRefreshData = finalRefreshData;
         this.coverUrl = coverUrl;
+        this.customCoverPath = customCoverPath;
         this.author = author;
         this.introduce = introduce;
         this.origin = origin;
@@ -69,12 +64,11 @@ public class BookInfoBean implements Parcelable {
             finalRefreshData = in.readLong();
         }
         coverUrl = in.readString();
+        customCoverPath = in.readString();
         author = in.readString();
         introduce = in.readString();
         origin = in.readString();
         charset = in.readString();
-        chapterList = in.createTypedArrayList(ChapterListBean.CREATOR);
-        bookmarkList = in.createTypedArrayList(BookmarkBean.CREATOR);
     }
 
     @Override
@@ -90,12 +84,11 @@ public class BookInfoBean implements Parcelable {
             dest.writeLong(finalRefreshData);
         }
         dest.writeString(coverUrl);
+        dest.writeString(customCoverPath);
         dest.writeString(author);
         dest.writeString(introduce);
         dest.writeString(origin);
         dest.writeString(charset);
-        dest.writeTypedList(chapterList);
-        dest.writeTypedList(bookmarkList);
     }
 
     @Override
@@ -147,17 +140,6 @@ public class BookInfoBean implements Parcelable {
         this.chapterUrl = chapterUrl;
     }
 
-    public List<ChapterListBean> getChapterList() {
-        if (chapterList == null) {
-            chapterList = new ArrayList<>();
-        }
-        return chapterList;
-    }
-
-    void setChapterList(List<ChapterListBean> chapterlist) {
-        this.chapterList = chapterlist;
-    }
-
     public long getFinalRefreshData() {
         return finalRefreshData;
     }
@@ -172,6 +154,14 @@ public class BookInfoBean implements Parcelable {
 
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
+    }
+
+    public String getCustomCoverPath() {
+        return customCoverPath;
+    }
+
+    public void setCustomCoverPath(String customCoverPath) {
+        this.customCoverPath = customCoverPath;
     }
 
     public String getAuthor() {
@@ -206,17 +196,6 @@ public class BookInfoBean implements Parcelable {
         this.charset = charset;
     }
 
-    public List<BookmarkBean> getBookmarkList() {
-        if (bookmarkList == null) {
-            bookmarkList = new ArrayList<>();
-        }
-        return bookmarkList;
-    }
-
-    void setBookmarkList(List<BookmarkBean> bookmarkList) {
-        this.bookmarkList = bookmarkList;
-    }
-
     BookInfoBean copy() {
         BookInfoBean bookInfoBean = new BookInfoBean();
         bookInfoBean.name = name;
@@ -224,24 +203,11 @@ public class BookInfoBean implements Parcelable {
         bookInfoBean.noteUrl = noteUrl;
         bookInfoBean.chapterUrl = chapterUrl;
         bookInfoBean.coverUrl = coverUrl;
+        bookInfoBean.customCoverPath = customCoverPath;
         bookInfoBean.author = author;
         bookInfoBean.introduce = introduce;
         bookInfoBean.origin = origin;
         bookInfoBean.charset = charset;
-        if (chapterList != null) {
-            List<ChapterListBean> newListC = new ArrayList<>();
-            for (ChapterListBean aChapterList : chapterList) {
-                newListC.add(aChapterList.copy());
-            }
-            bookInfoBean.setChapterList(newListC);
-        }
-        if (bookmarkList != null) {
-            List<BookmarkBean> newListM = new ArrayList<>();
-            for (BookmarkBean aBookmarkList : bookmarkList) {
-                newListM.add(aBookmarkList.copy());
-            }
-            bookInfoBean.setBookmarkList(newListM);
-        }
         return bookInfoBean;
     }
 }

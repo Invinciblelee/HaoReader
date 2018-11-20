@@ -383,12 +383,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         if (!to.isAdded()) {
             transaction.add(R.id.book_list_frame, to, getString(BOOK_GROUPS[group]))
                     .show(to)
-                    .commitNowAllowingStateLoss();
+                    .commitAllowingStateLoss();
         }
 
         if (to.isSupportHidden()) {
-            transaction.show(to)
-                    .commitNowAllowingStateLoss();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .show(to)
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -408,34 +409,34 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerLeft.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_group_zg:
-                    new Handler().postDelayed(() -> upGroup(0), 200L);
+                    new Handler().postDelayed(() -> upGroup(0), 220L);
                     break;
                 case R.id.action_group_yf:
-                    new Handler().postDelayed(() -> upGroup(1), 200L);
+                    new Handler().postDelayed(() -> upGroup(1), 220L);
                     break;
                 case R.id.action_group_sc:
-                    new Handler().postDelayed(() -> upGroup(2), 200L);
+                    new Handler().postDelayed(() -> upGroup(2), 220L);
                     break;
                 case R.id.action_group_bd:
-                    new Handler().postDelayed(() -> upGroup(3), 200L);
+                    new Handler().postDelayed(() -> upGroup(3), 220L);
                     break;
                 case R.id.action_download:
-                    new Handler().postDelayed(() -> DownloadActivity.startThis(this), 200L);
+                    new Handler().postDelayed(() -> DownloadActivity.startThis(this), 220L);
                     break;
                 case R.id.action_book_source_manage:
-                    new Handler().postDelayed(() -> BookSourceActivity.startThis(this), 200L);
+                    new Handler().postDelayed(() -> BookSourceActivity.startThis(this), 220L);
                     break;
                 case R.id.action_replace_rule:
-                    new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 200L);
+                    new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 220L);
                     break;
                 case R.id.action_setting:
-                    new Handler().postDelayed(() -> SettingActivity.startThis(this), 200L);
+                    new Handler().postDelayed(() -> SettingActivity.startThis(this), 220L);
                     break;
                 case R.id.action_about:
-                    new Handler().postDelayed(() -> AboutActivity.startThis(this), 200L);
+                    new Handler().postDelayed(() -> AboutActivity.startThis(this), 220L);
                     break;
                 case R.id.action_donate:
-                    new Handler().postDelayed(() -> DonateActivity.startThis(this), 200L);
+                    new Handler().postDelayed(() -> DonateActivity.startThis(this), 220L);
                     break;
                 case R.id.action_backup:
                     backup();

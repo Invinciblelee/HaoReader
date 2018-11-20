@@ -306,21 +306,22 @@ public class ReadInterfacePop extends PopupWindow {
         civBgGreen.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
         civBgBlack.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
         civBgBlue.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
+        int selectColor = activity.getResources().getColor(R.color.colorAccent);
         switch (index) {
             case 0:
-                civBgWhite.setBorderColor(Color.parseColor("#F3B63F"));
+                civBgWhite.setBorderColor(selectColor);
                 break;
             case 1:
-                civBgYellow.setBorderColor(Color.parseColor("#F3B63F"));
+                civBgYellow.setBorderColor(selectColor);
                 break;
             case 2:
-                civBgGreen.setBorderColor(Color.parseColor("#F3B63F"));
+                civBgGreen.setBorderColor(selectColor);
                 break;
             case 3:
-                civBgBlue.setBorderColor(Color.parseColor("#F3B63F"));
+                civBgBlue.setBorderColor(selectColor);
                 break;
             case 4:
-                civBgBlack.setBorderColor(Color.parseColor("#F3B63F"));
+                civBgBlack.setBorderColor(selectColor);
                 break;
         }
         readBookControl.setTextDrawableIndex(index);

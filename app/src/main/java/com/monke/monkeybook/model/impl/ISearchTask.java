@@ -13,8 +13,6 @@ public interface ISearchTask {
 
     void setId(int id);
 
-    SearchEngine getNextSearchEngine();
-
     void startSearch(String query, Scheduler scheduler);
 
     void stopSearch();
@@ -24,11 +22,7 @@ public interface ISearchTask {
     interface OnSearchingListener {
         boolean checkSameTask(int id);
 
-        boolean checkSearchEngine(SearchEngine engine);
-
-        boolean checkExists(SearchBookBean searchBook);
-
-        int getShowingItemCount();
+        SearchEngine getNextSearchEngine();
 
         void onSearchResult(List<SearchBookBean> searchBooks);
 

@@ -69,7 +69,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
                         }
                     }
                 } else {
-                    for (BookmarkBean bookmarkBean : bookShelfBean.getBookInfoBean().getBookmarkList()) {
+                    for (BookmarkBean bookmarkBean : bookShelfBean.getBookmarkList()) {
                         if (bookmarkBean.getChapterName().contains(key)) {
                             bookmarkBeans.add(bookmarkBean);
                         } else if (bookmarkBean.getContent().contains(key)) {

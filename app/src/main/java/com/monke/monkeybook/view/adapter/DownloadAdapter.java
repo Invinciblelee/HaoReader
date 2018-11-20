@@ -1,14 +1,10 @@
 package com.monke.monkeybook.view.adapter;
 
-import android.graphics.PorterDuff;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +18,6 @@ import com.monke.monkeybook.view.activity.DownloadActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +40,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
                 Collections.sort(this.dataS);
             }
         }
-        if(dataS != null) {
+        if (dataS != null) {
             notifyDataSetChanged();
         }
     }
@@ -55,12 +50,12 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
         synchronized (mLock) {
             if (data != null && !this.dataS.isEmpty()) {
                 index = this.dataS.indexOf(data);
-                if(index >= 0) {
+                if (index >= 0) {
                     this.dataS.set(index, data);
                 }
             }
         }
-        if(index >= 0){
+        if (index >= 0) {
             notifyItemChanged(index, data.getWaitingCount());
         }
     }
@@ -75,18 +70,18 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
                 }
             }
         }
-        if(index >=0){
+        if (index >= 0) {
             notifyItemRemoved(index);
         }
     }
 
-    public void addData(DownloadBookBean data){
+    public void addData(DownloadBookBean data) {
         synchronized (mLock) {
             if (data != null) {
                 this.dataS.add(data);
             }
         }
-        if(data != null){
+        if (data != null) {
             notifyItemInserted(this.dataS.size() - 1);
         }
     }
@@ -109,7 +104,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
         if (!payloads.isEmpty()) {
             holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
             holder.tvDownload.setText(activity.getString(R.string.un_download, (Integer) payloads.get(0)));
-        }else {
+        } else {
             Glide.with(activity)
                     .load(item.getCoverUrl())
                     .apply(new RequestOptions()

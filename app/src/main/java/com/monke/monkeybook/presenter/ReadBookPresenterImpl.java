@@ -123,7 +123,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     .subscribe(new SimpleObserver<BookShelfBean>() {
                         @Override
                         public void onNext(BookShelfBean value) {
-                            RxBus.get().post(RxBusTag.UPDATE_BOOK_PROGRESS, bookShelf);
+                            RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelf);
                         }
 
                         @Override

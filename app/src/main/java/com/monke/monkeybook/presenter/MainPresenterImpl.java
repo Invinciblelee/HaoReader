@@ -295,7 +295,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
-            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO), @Tag(RxBusTag.UPDATE_BOOK_PROGRESS)})
+            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO), @Tag(RxBusTag.UPDATE_BOOK_SHELF)})
     public void hadUpdateBook(BookShelfBean bookShelfBean) {
         mView.updateBook(bookShelfBean, true);
     }

@@ -38,6 +38,13 @@
         android:summary="@string/default_expand_first"
         android:title="@string/auto_expand_find" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/pk_show_all_find"
+        android:layout="@layout/view_preference"
+        android:summary="@string/show_all_find_s"
+        android:title="@string/show_all_find" />
+
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/bookshelf_px_title"
@@ -48,7 +55,7 @@
 
 
     <com.monke.monkeybook.widget.number.NumberPickerPreference
-        android:defaultValue="3"
+        android:defaultValue="1"
         android:key="@string/pk_search_page_count"
         android:layout="@layout/view_preference"
         android:summary="@string/search_page_count"
@@ -57,7 +64,7 @@
         app:MinValue="1" />
 
     <com.monke.monkeybook.widget.number.NumberPickerPreference
-        android:defaultValue="4"
+        android:defaultValue="6"
         android:key="@string/pk_threads_num"
         android:layout="@layout/view_preference"
         android:summary="@string/threads_num"

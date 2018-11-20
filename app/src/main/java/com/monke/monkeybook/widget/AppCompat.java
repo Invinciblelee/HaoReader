@@ -43,12 +43,13 @@ public class AppCompat {
 
         SearchView.SearchAutoComplete searchText = searchView.findViewById(R.id.search_src_text);
         searchText.setTextSize(14f);
+        searchText.setPaddingRelative(searchText.getPaddingLeft(), 0, 0, 0);
 
         final int textSize = (int) (searchText.getTextSize() * 1.25);
         Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
         searchIcon.setBounds(0, 0, textSize, textSize);
         setTint(searchIcon, normalColor);
-        searchText.setCompoundDrawables(searchIcon, null, null, null);
+        searchText.setCompoundDrawablesRelative(searchIcon, null, null, null);
         searchText.setCompoundDrawablePadding(ScreenUtils.dpToPx(5));
         searchText.setIncludeFontPadding(false);
 
@@ -62,7 +63,7 @@ public class AppCompat {
         params.bottomMargin = ScreenUtils.dpToPx(7);
         plate.setLayoutParams(params);
 
-        plate.setPadding(ScreenUtils.dpToPx(6), 0, ScreenUtils.dpToPx(6), 0);
+        plate.setPaddingRelative(ScreenUtils.dpToPx(6), 0, ScreenUtils.dpToPx(6), 0);
 
         if (showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
@@ -182,11 +183,11 @@ public class AppCompat {
             Drawable drawable = ((ImageView) view).getDrawable();
             setTint(drawable, color);
         } else if (view instanceof TextView) {
-//            Drawable[] drawables = ((TextView) view).getCompoundDrawables();
-//            for (Drawable drawable : drawables) {
-//                setTint(drawable, color);
-//            }
-            Drawable[] drawables = ((TextView) view).getCompoundDrawablesRelative();
+            Drawable[] drawables = ((TextView) view).getCompoundDrawables();
+            for (Drawable drawable : drawables) {
+                setTint(drawable, color);
+            }
+            drawables = ((TextView) view).getCompoundDrawablesRelative();
             for (Drawable drawable : drawables) {
                 setTint(drawable, color);
             }

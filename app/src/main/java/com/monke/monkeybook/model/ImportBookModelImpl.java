@@ -59,35 +59,34 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
     private LocBookShelfBean getBookForTxtFile(File file) {
         //判断文件是否存在
         boolean isNew = false;
-        BookShelfBean bookShelfBean;
-        bookShelfBean = BookshelfHelp.getBookByUrl(file.getAbsolutePath(), false);
-        if (bookShelfBean == null) {
+        BookShelfBean bookInfo = BookshelfHelp.getSimpleBookByUrl(file.getAbsolutePath());
+        if (bookInfo == null) {
             isNew = true;
-            bookShelfBean = new BookShelfBean();
-            bookShelfBean.setGroup(3);
-            bookShelfBean.setHasUpdate(true);
-            bookShelfBean.setFinalDate(System.currentTimeMillis());
-            bookShelfBean.setDurChapter(0);
-            bookShelfBean.setDurChapterPage(0);
-            bookShelfBean.setTag(BookShelfBean.LOCAL_TAG);
-            bookShelfBean.setNoteUrl(file.getAbsolutePath());
+            bookInfo = new BookShelfBean();
+            bookInfo.setGroup(3);
+            bookInfo.setHasUpdate(true);
+            bookInfo.setFinalDate(System.currentTimeMillis());
+            bookInfo.setDurChapter(0);
+            bookInfo.setDurChapterPage(0);
+            bookInfo.setTag(BookShelfBean.LOCAL_TAG);
+            bookInfo.setNoteUrl(file.getAbsolutePath());
 
             String fileName = file.getName().replace(".txt", "").replace(".TXT", "");
             int authorIndex = fileName.indexOf("作者");
             if (authorIndex != -1) {
-                bookShelfBean.getBookInfoBean().setAuthor(FormatWebText.getAuthor(fileName.substring(authorIndex)));
-                bookShelfBean.getBookInfoBean().setName(fileName.substring(0, authorIndex));
+                bookInfo.getBookInfoBean().setAuthor(FormatWebText.getAuthor(fileName.substring(authorIndex)));
+                bookInfo.getBookInfoBean().setName(fileName.substring(0, authorIndex));
             } else {
-                bookShelfBean.getBookInfoBean().setAuthor("");
-                bookShelfBean.getBookInfoBean().setName(fileName);
+                bookInfo.getBookInfoBean().setAuthor("");
+                bookInfo.getBookInfoBean().setName(fileName);
             }
 
-            bookShelfBean.getBookInfoBean().setFinalRefreshData(file.lastModified());
-            bookShelfBean.getBookInfoBean().setCoverUrl("");
-            bookShelfBean.getBookInfoBean().setNoteUrl(file.getAbsolutePath());
-            bookShelfBean.getBookInfoBean().setTag(BookShelfBean.LOCAL_TAG);
+            bookInfo.getBookInfoBean().setFinalRefreshData(file.lastModified());
+            bookInfo.getBookInfoBean().setCoverUrl("");
+            bookInfo.getBookInfoBean().setNoteUrl(file.getAbsolutePath());
+            bookInfo.getBookInfoBean().setTag(BookShelfBean.LOCAL_TAG);
         }
-        return new LocBookShelfBean(isNew, bookShelfBean);
+        return new LocBookShelfBean(isNew, bookInfo);
     }
 
 //    private LocBookShelfBean getBookForEpubFile(File file) {

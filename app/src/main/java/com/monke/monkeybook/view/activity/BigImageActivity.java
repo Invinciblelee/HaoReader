@@ -59,6 +59,6 @@ public class BigImageActivity extends MBaseActivity {
                 .transition(new DrawableTransitionOptions().crossFade())
                 .into(bigImage);
 
-        flContent.setOnClickListener(v -> finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out));
+        flContent.setOnClickListener(v -> finishByAnim(R.anim.anim_alpha_in, R.anim.anim_alpha_out));
     }
 }

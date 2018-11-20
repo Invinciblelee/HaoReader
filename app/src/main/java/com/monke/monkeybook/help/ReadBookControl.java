@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.utils.BitmapUtil;
@@ -343,7 +344,10 @@ public class ReadBookControl {
     }
 
     public Bitmap getBgBitmap() {
-        if (bgBitmap == null) {
+        if (bgBitmap == null || bgBitmap.isRecycled()) {
+            if(!TextUtils.isEmpty(bgPath)){
+                bgBitmap = BitmapFactory.decodeFile(bgPath);
+            }
             return null;
         }
         return bgBitmap.copy(Bitmap.Config.RGB_565, true);

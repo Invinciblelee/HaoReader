@@ -1,13 +1,11 @@
 package com.monke.monkeybook.presenter.contract;
 
 import android.content.Intent;
-import android.widget.EditText;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
-import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 
 import java.util.List;
 
@@ -69,11 +67,6 @@ public interface SearchBookContract {
          * 获取搜索内容EditText
          */
         String getEdtContent();
-
-        /**
-         * @return SearchBookAdapter
-         */
-        SearchBookAdapter getSearchBookAdapter();
 
         void showBookSourceEmptyTip();
 

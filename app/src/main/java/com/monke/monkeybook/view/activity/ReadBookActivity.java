@@ -150,6 +150,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     private boolean autoPage = false;
     private boolean isOrWillShow = false;
+    private boolean isWindowAnimTranslucent;
 
     private final Handler mHandler = new Handler();
     private Runnable keepScreenRunnable;
@@ -160,6 +161,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         intent.putExtra("inBookShelf", inBookShelf);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
+        intent.putExtra("fromDetail", activity instanceof BookDetailActivity);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         activity.startActivity(intent);
@@ -186,9 +188,18 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             aloudStatus = savedInstanceState.getInt("aloudStatus");
+            isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
         }
         readBookControl.initPageConfiguration();
         screenTimeOut = getResources().getIntArray(R.array.screen_time_out_value)[readBookControl.getScreenTimeOut()];
+
+        if (getIntent().getBooleanExtra("fromDetail", false)) {//解决透明activity没有动画
+            getWindow().setWindowAnimations(R.style.Animation_Activity_Translucent);
+            isWindowAnimTranslucent = true;
+        } else {
+            getWindow().setWindowAnimations(R.style.Animation_Activity);
+            isWindowAnimTranslucent = false;
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -206,9 +217,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt("aloudStatus", aloudStatus);
+        outState.putBoolean("isWindowAnimTranslucent", isWindowAnimTranslucent);
         if (mPresenter.getBookShelf() != null) {
-            outState.putInt("aloudStatus", aloudStatus);
-
             BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
             holder.setBookShelf(mPresenter.getBookShelf());
             holder.setInBookShelf(mPresenter.inBookShelf());
@@ -238,7 +249,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
 
-        if(canNavigationBarLightFont()){
+        if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
         }
 
@@ -568,6 +579,13 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
     }
 
+    private void ensureWindowAnimNotTranslucent(){
+        if (isWindowAnimTranslucent) {
+            getWindow().setWindowAnimations(R.style.Animation_Activity);
+            isWindowAnimTranslucent = false;
+        }
+    }
+
     /**
      * 界面设置
      */
@@ -871,6 +889,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.fabReplaceRule:
                 isOrWillShow = true;
                 popMenuOut();
+                ensureWindowAnimNotTranslucent();
                 new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 200L);
                 break;
             case R.id.fabNightTheme:
@@ -890,6 +909,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.btn_catalog:
                 isOrWillShow = true;
                 popMenuOut();
+                ensureWindowAnimNotTranslucent();
                 if (mPresenter.getBookShelf() != null && !mPresenter.getBookShelf().realChapterListEmpty()) {
                     new Handler().postDelayed(() -> ChapterListActivity.startThis(ReadBookActivity.this, mPresenter.getBookShelf(), CHAPTER_SKIP_RESULT), 200L);
                 }
@@ -1018,7 +1038,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 setCharset();
                 break;
             case R.id.action_book_info:
-                BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl());
+                ensureWindowAnimNotTranslucent();
+                BookInfoActivity.startThis(this, mPresenter.getBookShelf().copy());
                 break;
             case android.R.id.home:
                 finish();
@@ -1102,7 +1123,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         popMenuOut();
         if (mPresenter.getBookShelf() != null) {
             ensureProgressHUD();
-            moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(), searchBookBean -> {
+            moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
                 if (!Objects.equals(searchBookBean.getNoteUrl(), mPresenter.getBookShelf().getNoteUrl())) {
                     mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
                     mPresenter.changeBookSource(searchBookBean);
@@ -1456,7 +1477,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (!AppActivityManager.getInstance().isExist(MainActivity.class)
                 && !AppActivityManager.getInstance().isExist(SearchBookActivity.class)) {
             android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
-            startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+            startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
         }
         super.finish();
     }

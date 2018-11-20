@@ -10,6 +10,7 @@ import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
@@ -62,25 +63,25 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
     @Override
     public void openBookFromRecent() {
         long start = System.currentTimeMillis();
-        final BookShelfBean[] bookShelf = new BookShelfBean[1];
-        Single.create((SingleOnSubscribe<Boolean>) e -> {
+        Single.create((SingleOnSubscribe<BookShelfBean>) e -> {
+            BookShelfBean bookShelfBean = null;
             String noteUrl = ReadBookControl.getInstance().getLastNoteUrl();
             if (!TextUtils.isEmpty(noteUrl)) {
-                bookShelf[0] = BookshelfHelp.getBookByUrl(noteUrl, true);
+                bookShelfBean = BookshelfHelp.getBookByUrl(noteUrl);
             }
-            e.onSuccess(bookShelf[0] != null);
+            e.onSuccess(bookShelfBean == null ? new BookShelfBean() : bookShelfBean);
         }).compose(RxUtils::toSimpleSingle)
-                .subscribe(new SingleObserver<Boolean>() {
+                .subscribe(new SingleObserver<BookShelfBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onSuccess(Boolean aBoolean) {
+                    public void onSuccess(BookShelfBean bookShelfBean) {
                         long delay = START_DELAY - (System.currentTimeMillis() - start);
-                        if (aBoolean) {
-                            mView.startReadBookAct(bookShelf[0], true, false, delay);
+                        if (!TextUtils.isEmpty(bookShelfBean.getNoteUrl())) {
+                            mView.startReadBookAct(bookShelfBean, true, false, delay);
                         } else {
                             mView.onStartNormal(delay);
                         }

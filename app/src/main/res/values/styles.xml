@@ -20,14 +20,22 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
     </style>
 
     <style name="Animation.Activity" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/anim_in_right</item>
-        <item name="android:activityOpenExitAnimation">@anim/anim_out_left</item>
-        <item name="android:activityCloseEnterAnimation">@anim/anim_in_left</item>
-        <item name="android:activityCloseExitAnimation">@anim/anim_out_right</item>
+        <item name="android:activityOpenEnterAnimation">@anim/anim_right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_alpha_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_alpha_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_right_out</item>
+    </style>
+
+    <style name="Animation.Activity.Translucent" parent="@android:style/Animation.Translucent">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_alpha_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_alpha_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_right_out</item>
     </style>
 
     <style name="CAppTheme.Activity.Search" parent="CAppTheme">
@@ -39,7 +47,6 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@null</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
     </style>
 
     <style name="CAppTheme.Activity.BookDetail" parent="CAppTheme">
@@ -62,6 +69,10 @@
 
     <style name="CAppTheme.Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="CAppTheme.Navigation.Text" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
@@ -110,6 +121,10 @@
         <item name="android:singleLine">true</item>
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <style name="AppTheme.ScaleDrawableTextView">
+        <item name="drawableSize">16.5sp</item>
     </style>
 
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">

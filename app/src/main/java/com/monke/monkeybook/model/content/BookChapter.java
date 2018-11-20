@@ -1,12 +1,14 @@
 package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.WebChapterBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeElement;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
@@ -55,10 +57,8 @@ public class BookChapter {
             List<ChapterListBean> chapterList = webChapterBean.chapters;
 
             List<String> nextUrls = new ArrayList<>();
-            while (!TextUtils.isEmpty(webChapterBean.nextUrl)) {
-                if(nextUrls.contains(webChapterBean.nextUrl)){
-                    break;
-                }
+            int retryCount = 0;
+            while (!TextUtils.isEmpty(webChapterBean.nextUrl) && !nextUrls.contains(webChapterBean.nextUrl)) {
                 Call<String> call = OkHttpHelper.getInstance().createService(bookSourceBean.getBookSourceUrl(), IHttpGetApi.class)
                         .getWebContentCall(webChapterBean.nextUrl, AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
                 String response = "";
@@ -69,9 +69,19 @@ public class BookChapter {
                         e.onError(exception);
                     }
                 }
+                if (!TextUtils.isEmpty(response)) {
+                    nextUrls.add(webChapterBean.nextUrl);
+                    retryCount = 0;
+                } else {
+                    retryCount += 1;
+                    if(retryCount > 5){
+                        break;
+                    }else {//失败重试
+                        continue;
+                    }
+                }
                 webChapterBean = analyzeChapterList(response, bookInfo.getName(), webChapterBean.nextUrl, ruleChapterList);
                 chapterList.addAll(webChapterBean.chapters);
-                nextUrls.add(webChapterBean.nextUrl);
             }
             if (dx) {
                 Collections.reverse(chapterList);

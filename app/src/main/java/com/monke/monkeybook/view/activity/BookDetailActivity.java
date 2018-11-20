@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.AppActivityManager;
@@ -96,14 +97,14 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
-        activity.startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.startActivityByAnim(intent, R.anim.anim_alpha_in, 0);
     }
 
     public static void startThis(MBaseActivity activity, SearchBookBean searchBook) {
         Intent intent = new Intent(activity, BookDetailActivity.class);
         intent.putExtra("openFrom", BookDetailPresenterImpl.FROM_SEARCH);
         intent.putExtra("data", searchBook);
-        activity.startActivityByAnim(intent, android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.startActivityByAnim(intent, R.anim.anim_alpha_in, 0);
     }
 
     @Override
@@ -244,7 +245,9 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
             changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
 
-            tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
+            if (TextUtils.isEmpty(tvName.getText())) {
+                tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
+            }
             tvAuthor.setText(mPresenter.getBookShelf().getBookInfoBean().getAuthor());
             if (TextUtils.isEmpty(tvAuthor.getText())) {
                 tvAuthor.setText(R.string.author_unknown);
@@ -286,7 +289,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 tvIntro.startAnimation(animShowInfo);
             }
 
-            String coverImage = mPresenter.getBookShelf().getCustomCoverPath();
+            String coverImage = mPresenter.getBookShelf().getBookInfoBean().getCustomCoverPath();
             if (TextUtils.isEmpty(coverImage)) {
                 coverImage = mPresenter.getBookShelf().getBookInfoBean().getCoverUrl();
             }
@@ -341,7 +344,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
         ivCover.setOnClickListener(view -> {
             if (mPresenter.getOpenFrom() == FROM_BOOKSHELF) {
-                BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl(), cardCover);
+                BookInfoActivity.startThis(this, mPresenter.getBookShelf().copy(), cardCover);
             }
         });
 
@@ -387,12 +390,14 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             Glide.with(this).load(image)
                     .apply(new RequestOptions().dontAnimate().centerCrop()
                             .placeholder(R.drawable.img_cover_default)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .error(R.drawable.img_cover_default)).into(ivCover);
 
             Glide.with(this).load(image)
                     .apply(new RequestOptions()
                             .dontAnimate()
                             .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .placeholder(R.drawable.img_cover_gs)
                             .error(R.drawable.img_cover_gs))
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
@@ -405,7 +410,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             Toast.makeText(this, "网络不可用，无法换源", Toast.LENGTH_SHORT).show();
             return;
         }
-        moDialogHUD.showChangeSource(this, mPresenter.getBookShelf(),
+        moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(),
                 searchBookBean -> {
                     tvOrigin.setText(searchBookBean.getOrigin());
                     if (!TextUtils.isEmpty(searchBookBean.getLastChapter())) {
@@ -425,6 +430,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     @Override
     public void finish() {
-        super.finishByAnim(0, android.R.anim.fade_out);
+        super.finishByAnim(0, R.anim.anim_alpha_out);
     }
 }

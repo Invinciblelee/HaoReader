@@ -20,9 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            android:transitionName="sharedView"
             android:focusable="true"
             android:focusableInTouchMode="true"
+            android:transitionName="sharedView"
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -122,17 +122,26 @@
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/tfl_search_history"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:flexDirection="row"
-                app:flexWrap="wrap"
-                app:showDivider="middle"
-                app:dividerDrawable="@drawable/shape_space_divider"
-                android:clipToPadding="false"
+                android:fillViewport="true"
                 android:overScrollMode="never"
-                android:padding="15dp" />
+                android:scrollbars="none">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/tfl_search_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:padding="15dp"
+                    app:dividerDrawable="@drawable/shape_space_divider"
+                    app:flexDirection="row"
+                    app:flexWrap="wrap"
+                    app:showDivider="middle" />
+
+            </ScrollView>
 
         </LinearLayout>
     </RelativeLayout>

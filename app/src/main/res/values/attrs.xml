@@ -67,5 +67,6 @@
     <declare-styleable name="ScaleDrawableTextView">
         <attr name="drawableScale" format="reference|float"/>
         <attr name="drawableColor" format="reference"/>
+        <attr name="drawableSize" format="reference|dimension"/>
     </declare-styleable>
 </resources>

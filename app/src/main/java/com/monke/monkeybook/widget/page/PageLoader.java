@@ -623,8 +623,16 @@ public abstract class PageLoader {
         if (mSettingManager.bgIsColor()) {
             canvas.drawColor(mSettingManager.getBgColor());
         } else {
-            Rect mDestRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-            canvas.drawBitmap(mBgBitmap, null, mDestRect, null);
+            if(mBgBitmap == null || mBgBitmap.isRecycled()){
+                mBgBitmap = mSettingManager.getBgBitmap();
+            }
+
+            if(mBgBitmap != null) {
+                Rect mDestRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                canvas.drawBitmap(mBgBitmap, null, mDestRect, null);
+            }else {
+                canvas.drawColor(mSettingManager.getDefaultBgColor());
+            }
         }
     }
 

@@ -37,8 +37,7 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
         public final static Property DurChapterName = new Property(10, String.class, "durChapterName", false, "DUR_CHAPTER_NAME");
         public final static Property LastChapterName = new Property(11, String.class, "lastChapterName", false, "LAST_CHAPTER_NAME");
         public final static Property ChapterListSize = new Property(12, Integer.class, "chapterListSize", false, "CHAPTER_LIST_SIZE");
-        public final static Property CustomCoverPath = new Property(13, String.class, "customCoverPath", false, "CUSTOM_COVER_PATH");
-        public final static Property UpdateOff = new Property(14, Boolean.class, "updateOff", false, "UPDATE_OFF");
+        public final static Property UpdateOff = new Property(13, Boolean.class, "updateOff", false, "UPDATE_OFF");
     }
 
 
@@ -67,8 +66,7 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
                 "\"DUR_CHAPTER_NAME\" TEXT," + // 10: durChapterName
                 "\"LAST_CHAPTER_NAME\" TEXT," + // 11: lastChapterName
                 "\"CHAPTER_LIST_SIZE\" INTEGER," + // 12: chapterListSize
-                "\"CUSTOM_COVER_PATH\" TEXT," + // 13: customCoverPath
-                "\"UPDATE_OFF\" INTEGER);"); // 14: updateOff
+                "\"UPDATE_OFF\" INTEGER);"); // 13: updateOff
     }
 
     /** Drops the underlying database table. */
@@ -146,14 +144,9 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
             stmt.bindLong(13, chapterListSize);
         }
  
-        String customCoverPath = entity.getCustomCoverPath();
-        if (customCoverPath != null) {
-            stmt.bindString(14, customCoverPath);
-        }
- 
         Boolean updateOff = entity.getUpdateOff();
         if (updateOff != null) {
-            stmt.bindLong(15, updateOff ? 1L: 0L);
+            stmt.bindLong(14, updateOff ? 1L: 0L);
         }
     }
 
@@ -226,14 +219,9 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
             stmt.bindLong(13, chapterListSize);
         }
  
-        String customCoverPath = entity.getCustomCoverPath();
-        if (customCoverPath != null) {
-            stmt.bindString(14, customCoverPath);
-        }
- 
         Boolean updateOff = entity.getUpdateOff();
         if (updateOff != null) {
-            stmt.bindLong(15, updateOff ? 1L: 0L);
+            stmt.bindLong(14, updateOff ? 1L: 0L);
         }
     }
 
@@ -258,8 +246,7 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // durChapterName
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // lastChapterName
             cursor.isNull(offset + 12) ? null : cursor.getInt(offset + 12), // chapterListSize
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // customCoverPath
-            cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0 // updateOff
+            cursor.isNull(offset + 13) ? null : cursor.getShort(offset + 13) != 0 // updateOff
         );
         return entity;
     }
@@ -279,8 +266,7 @@ public class BookShelfBeanDao extends AbstractDao<BookShelfBean, String> {
         entity.setDurChapterName(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setLastChapterName(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setChapterListSize(cursor.isNull(offset + 12) ? null : cursor.getInt(offset + 12));
-        entity.setCustomCoverPath(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setUpdateOff(cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0);
+        entity.setUpdateOff(cursor.isNull(offset + 13) ? null : cursor.getShort(offset + 13) != 0);
      }
     
     @Override

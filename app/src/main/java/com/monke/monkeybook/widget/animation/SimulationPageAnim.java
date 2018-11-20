@@ -3,20 +3,30 @@ package com.monke.monkeybook.widget.animation;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.v4.graphics.ColorUtils;
 import android.view.View;
 
 import com.monke.monkeybook.help.ReadBookControl;
+import com.monke.monkeybook.utils.ScreenUtils;
 
 /**
  * Created by newbiechen on 17-7-24.
  */
 
 public class SimulationPageAnim extends HorizonPageAnim {
+
+    private static final String TAG = "SimulationPageAnim";
 
     private int mCornerX = 1; // 拖拽点对应的页脚
     private int mCornerY = 1;
@@ -37,6 +47,9 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private float mMiddleY;
     private float mDegrees;
     private float mTouchToCornerDis;
+    private ColorMatrixColorFilter mColorMatrixFilter;
+    private Matrix mMatrix;
+    private float[] mMatrixArray = {0, 0, 0, 0, 0, 0, 0, 0, 1.0f};
 
     private boolean mIsRTandLB; // 是否属于右上左下
     private float mMaxLength;
@@ -52,13 +65,27 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private GradientDrawable mFrontShadowDrawableVLR;
     private GradientDrawable mFrontShadowDrawableVRL;
 
+    private Paint mPaint;
+
     public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
         mPath0 = new Path();
         mPath1 = new Path();
         mMaxLength = (float) Math.hypot(mScreenWidth, mScreenHeight);
+        mPaint = new Paint();
+
+        mPaint.setStyle(Paint.Style.FILL);
 
         createDrawable();
+
+        ColorMatrix cm = new ColorMatrix();//设置颜色数组
+        float array[] = {1, 0, 0, 0, 0,
+                0, 1, 0, 0, 0,
+                0, 0, 1, 0, 0,
+                0, 0, 0, 1, 0};
+        cm.set(array);
+        mColorMatrixFilter = new ColorMatrixColorFilter(cm);
+        mMatrix = new Matrix();
 
         mTouchX = 0.01f; // 不让x,y为0,否则在点计算时会有问题
         mTouchY = 0.01f;
@@ -69,7 +96,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
         switch (mDirection) {
             case NEXT:
                 calcPoints();
-                drawCurrentPageArea(canvas, mCurBitmap, mPath0);
+                drawCurrentPageArea(canvas, mCurBitmap, mPath0);//绘制翻页时的正面页
                 drawNextPageAreaAndShadow(canvas, mNextBitmap);
                 drawCurrentPageShadow(canvas);
                 drawCurrentBackArea(canvas, mCurBitmap);
@@ -118,7 +145,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 dy = (int) (1 - mTouchY); // 防止mTouchY最终变为0
             }
         }
-
         int animationSpeed = ReadBookControl.getInstance().getAnimSpeed();
         mScroller.startScroll((int) mTouchX, (int) mTouchY, dx, dy, animationSpeed);
         super.startAnim();
@@ -168,7 +194,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
      * 创建阴影的GradientDrawable
      */
     private void createDrawable() {
-        int[] color = {0x333333, 0x66333333};
+        int[] color = {0x333333, 0xb0333333};
         mFolderShadowDrawableRL = new GradientDrawable(
                 GradientDrawable.Orientation.RIGHT_LEFT, color);
         mFolderShadowDrawableRL
@@ -188,7 +214,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 GradientDrawable.Orientation.LEFT_RIGHT, mBackShadowColors);
         mBackShadowDrawableLR.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        mFrontShadowColors = new int[]{0x66111111, 0x111111};
+        mFrontShadowColors = new int[]{0x80111111, 0x111111};
         mFrontShadowDrawableVLR = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, mFrontShadowColors);
         mFrontShadowDrawableVLR
@@ -260,15 +286,8 @@ public class SimulationPageAnim extends HorizonPageAnim {
         }
 
         //对Bitmap进行取色
-        int color = bitmap.getPixel(1, 1);
-        //获取对应的三色
-        int red = (color & 0xff0000) >> 16;
-        int green = (color & 0x00ff00) >> 8;
-        int blue = (color & 0x0000ff);
-        //转换成含有透明度的颜色
-        int tempColor = Color.argb(200, red, green, blue);
-
-        canvas.drawColor(tempColor);
+        int color = bitmap.getPixel(ScreenUtils.dpToPx(10), ScreenUtils.dpToPx(10));
+        canvas.drawColor(color);
 
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y);
         mFolderShadowDrawable.setBounds(left, (int) mBezierStart1.y, right,
@@ -459,7 +478,8 @@ public class SimulationPageAnim extends HorizonPageAnim {
         canvas.drawBitmap(bitmap, 0, 0, null);
         try {
             canvas.restore();
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

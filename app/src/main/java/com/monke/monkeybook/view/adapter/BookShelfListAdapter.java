@@ -44,14 +44,14 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final BookShelfBean item = getItem(holder.getLayoutPosition());
         assert item != null;
-        if (TextUtils.isEmpty(item.getCustomCoverPath())) {
+        if (TextUtils.isEmpty(item.getBookInfoBean().getCustomCoverPath())) {
             Glide.with(getContext()).load(item.getBookInfoBean().getCoverUrl())
                     .apply(new RequestOptions().dontAnimate()
                             .centerCrop().placeholder(R.drawable.img_cover_default)
                             .error(R.drawable.img_cover_default))
                     .into(holder.ivCover);
         } else {
-            Glide.with(getContext()).load(item.getCustomCoverPath())
+            Glide.with(getContext()).load(item.getBookInfoBean().getCustomCoverPath())
                     .apply(new RequestOptions().dontAnimate()
                             .centerCrop().placeholder(R.drawable.img_cover_default)
                             .error(R.drawable.img_cover_default))
@@ -90,8 +90,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvCurChapter.setText(String.format(Locale.getDefault(), "%d/%d", item.getDurChapter() + 1, item.getChapterListSize()));
         }
 
-        //进度条
-        holder.mpbDurProgress.setVisibility(View.VISIBLE);
         holder.mpbDurProgress.setMaxProgress(item.getChapterListSize());
         float speed = item.getChapterListSize() * 1.0f / 60;
 

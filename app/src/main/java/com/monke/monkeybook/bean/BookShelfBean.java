@@ -9,6 +9,7 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,20 +39,23 @@ public class BookShelfBean implements Parcelable {
     private String durChapterName;
     private String lastChapterName;
     private Integer chapterListSize = 0;
-    private String customCoverPath;
     private Boolean updateOff = false; //禁止更新
 
     @Transient
     private BookInfoBean bookInfoBean = new BookInfoBean();
+    @Transient
+    private List<ChapterListBean> chapterList = new ArrayList<>();    //章节列表
+    @Transient
+    private List<BookmarkBean> bookmarkList = new ArrayList<>();    //书签列表
 
     public BookShelfBean() {
     }
 
 
-    @Generated(hash = 121009933)
+    @Generated(hash = 1946753255)
     public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate, Boolean hasUpdate, Integer newChapters,
-                         String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
-                         Integer chapterListSize, String customCoverPath, Boolean updateOff) {
+            String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
+            Integer chapterListSize, Boolean updateOff) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
@@ -65,7 +69,6 @@ public class BookShelfBean implements Parcelable {
         this.durChapterName = durChapterName;
         this.lastChapterName = lastChapterName;
         this.chapterListSize = chapterListSize;
-        this.customCoverPath = customCoverPath;
         this.updateOff = updateOff;
     }
 
@@ -119,10 +122,11 @@ public class BookShelfBean implements Parcelable {
         } else {
             chapterListSize = in.readInt();
         }
-        customCoverPath = in.readString();
         byte tmpUpdateOff = in.readByte();
         updateOff = tmpUpdateOff == 0 ? null : tmpUpdateOff == 1;
         bookInfoBean = in.readParcelable(BookInfoBean.class.getClassLoader());
+        chapterList = in.createTypedArrayList(ChapterListBean.CREATOR);
+        bookmarkList = in.createTypedArrayList(BookmarkBean.CREATOR);
     }
 
     @Override
@@ -182,9 +186,10 @@ public class BookShelfBean implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(chapterListSize);
         }
-        dest.writeString(customCoverPath);
         dest.writeByte((byte) (updateOff == null ? 0 : updateOff ? 1 : 2));
         dest.writeParcelable(bookInfoBean, flags);
+        dest.writeTypedList(chapterList);
+        dest.writeTypedList(bookmarkList);
     }
 
     @Override
@@ -219,9 +224,18 @@ public class BookShelfBean implements Parcelable {
         bookShelfBean.durChapterName = durChapterName;
         bookShelfBean.lastChapterName = lastChapterName;
         bookShelfBean.chapterListSize = chapterListSize;
-        bookShelfBean.customCoverPath = customCoverPath;
         bookShelfBean.updateOff = updateOff;
         bookShelfBean.bookInfoBean = bookInfoBean.copy();
+        if (chapterList != null) {
+            for (ChapterListBean aChapterList : chapterList) {
+                bookShelfBean.chapterList.add(aChapterList.copy());
+            }
+        }
+        if (bookmarkList != null) {
+            for (BookmarkBean aBookmarkList : bookmarkList) {
+                bookShelfBean.bookmarkList.add(aBookmarkList.copy());
+            }
+        }
         return bookShelfBean;
     }
 
@@ -362,7 +376,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public void upDurChapterName() {
-        if(realChapterListEmpty()){
+        if (realChapterListEmpty()) {
             return;
         }
         if (getChapterListSize() > 0) {
@@ -385,7 +399,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public void upLastChapterName() {
-        if(realChapterListEmpty()){
+        if (realChapterListEmpty()) {
             return;
         }
 
@@ -401,7 +415,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public void setChapterList(List<ChapterListBean> chapterList) {
-        this.bookInfoBean.setChapterList(chapterList);
+        this.chapterList = chapterList;
     }
 
     public void upChapterListSize() {
@@ -409,15 +423,21 @@ public class BookShelfBean implements Parcelable {
     }
 
     public List<ChapterListBean> getChapterList() {
-        return this.bookInfoBean.getChapterList();
+        if (chapterList != null) {
+            return chapterList;
+        }
+        return new ArrayList<>();
     }
 
     public void setBookmarkList(List<BookmarkBean> markList) {
-        this.bookInfoBean.setBookmarkList(markList);
+        this.bookmarkList = markList;
     }
 
     public List<BookmarkBean> getBookmarkList() {
-        return this.bookInfoBean.getBookmarkList();
+        if (bookmarkList != null) {
+            return bookmarkList;
+        }
+        return new ArrayList<>();
     }
 
     public int getBookmarkListSize() {
@@ -430,14 +450,6 @@ public class BookShelfBean implements Parcelable {
 
     public boolean realBookmarkListEmpty() {
         return getBookmarkList().isEmpty();
-    }
-
-    public String getCustomCoverPath() {
-        return this.customCoverPath;
-    }
-
-    public void setCustomCoverPath(String customCoverPath) {
-        this.customCoverPath = customCoverPath;
     }
 
     public void setChapterListSize(Integer chapterListSize) {

@@ -10,7 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.bean.RipeFile;
@@ -153,10 +153,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
         return new CursorLoader(mView.getContext(),
                 mediaType == FileSelectorContract.MediaType.FIlE ? MediaStore.Files.getContentUri("external")
                         : MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[]{
-                        MediaStore.Files.FileColumns.DATA,
-                        MediaStore.Files.FileColumns.SIZE
-                },
+                new String[]{MediaStore.Files.FileColumns.DATA},
                 buildSelection(suffixes.length),
                 buildSelectionArgs(suffixes),
                 null
@@ -178,20 +175,24 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             files.clear();
 
             int pathIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-            int sizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE);
+
+            RipeFile ripeFile;
+            File file;
+            String filePath;
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                RipeFile file = new RipeFile();
-                file.setPath(cursor.getString(pathIndex));
-                file.setName(file.getPath().substring(file.getPath().lastIndexOf("/") + 1));
-                file.setSize(cursor.getLong(sizeIndex));
-                file.setSuffix(FileHelp.getFileSuffix(file.getPath()).toUpperCase());
-                File f = new File(file.getPath());
-                file.setDate(f.lastModified());
-
-                files.add(file);
-
+                ripeFile = new RipeFile();
+                filePath = cursor.getString(pathIndex);
+                if (!TextUtils.isEmpty(filePath)) {
+                    file = new File(filePath);
+                    ripeFile.setPath(file.getAbsolutePath());
+                    ripeFile.setName(file.getName());
+                    ripeFile.setSize(file.length());
+                    ripeFile.setDate(file.lastModified());
+                    ripeFile.setSuffix(FileHelp.getFileSuffix(file).toUpperCase());
+                    files.add(ripeFile);
+                }
                 cursor.moveToNext();
             }
             sortFiles(files, this.orderIndex);

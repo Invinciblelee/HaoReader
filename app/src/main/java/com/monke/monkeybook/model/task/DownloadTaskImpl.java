@@ -36,8 +36,6 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     private DownloadBookBean downloadBook;
     private List<ChapterListBean> downloadChapters;
 
-    private boolean isLocked = false;
-
     private CompositeDisposable disposables;
 
     public DownloadTaskImpl(int id, DownloadBookBean downloadBook) {
@@ -138,29 +136,25 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
         return downloadBook;
     }
 
-    private synchronized void toDownload(Scheduler scheduler) {
+    private void toDownload(Scheduler scheduler) {
         if (isFinishing()) {
             return;
         }
 
-        if (!isLocked) {
-            getDownloadingChapter()
-                    .subscribe(new SimpleObserver<ChapterListBean>() {
-                        @Override
-                        public void onNext(ChapterListBean chapterBean) {
-                            if (chapterBean != null) {
-                                downloading(chapterBean, scheduler);
-                            } else {
-                                isLocked = true;
-                            }
+        getDownloadingChapter()
+                .subscribe(new SimpleObserver<ChapterListBean>() {
+                    @Override
+                    public void onNext(ChapterListBean chapterBean) {
+                        if (!TextUtils.isEmpty(chapterBean.getDurChapterUrl())) {
+                            downloading(chapterBean, scheduler);
                         }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            onDownloadError(downloadBook);
-                        }
-                    });
-        }
+                    @Override
+                    public void onError(Throwable e) {
+                        onDownloadError(downloadBook);
+                    }
+                });
     }
 
     private Observable<ChapterListBean> getDownloadingChapter() {
@@ -178,11 +172,11 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                     break;
                 }
             }
-            emitter.onNext(next);
+            emitter.onNext(next == null ? new ChapterListBean() : next);
         });
     }
 
-    private synchronized void downloading(ChapterListBean chapter, Scheduler scheduler) {
+    private void downloading(ChapterListBean chapter, Scheduler scheduler) {
         whenProgress(chapter);
         Observable.create((ObservableOnSubscribe<ChapterListBean>) e -> {
             if (!BookshelfHelp.isChapterCached(
@@ -215,16 +209,16 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                     @Override
                     public void onError(Throwable e) {
                         removeFromDownloadList(chapter);
-                        if(TextUtils.equals(e.getMessage(), "cached")){
+                        if (TextUtils.equals(e.getMessage(), "cached")) {
                             whenNext(scheduler, false);
-                        }else {
+                        } else {
                             whenError(scheduler);
                         }
                     }
                 });
     }
 
-    private synchronized void removeFromDownloadList(ChapterListBean chapterBean) {
+    private void removeFromDownloadList(ChapterListBean chapterBean) {
         downloadChapters.remove(chapterBean);
     }
 
@@ -233,7 +227,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             return;
         }
 
-        if(success) {
+        if (success) {
             downloadBook.successCountAdd();
         }
         if (isFinishing()) {
@@ -252,9 +246,9 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
         if (isFinishing()) {
             stopDownload();
-            if(downloadBook.getSuccessCount() == 0) {
+            if (downloadBook.getSuccessCount() == 0) {
                 onDownloadError(downloadBook);
-            }else {
+            } else {
                 onDownloadComplete(downloadBook);
             }
         } else {

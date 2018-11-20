@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.MApplication;
@@ -10,6 +9,7 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.help.ACache;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.source.My716;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
@@ -32,7 +32,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private int startThisId;
     private int threadsNum;
     private int searchPageCount;
-    private OnSearchListener searchListener;
+    private SearchListener searchListener;
     private boolean useMy716;
     private boolean searchEngineChanged = false;
 
@@ -42,13 +42,12 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
-
-    public SearchBookModel(Context context, OnSearchListener searchListener, boolean useMy716) {
-        this.searchListener = searchListener;
+    public SearchBookModel(Context context, boolean useMy716, SearchListener searchListener) {
         this.useMy716 = useMy716;
-        SharedPreferences preference = context.getSharedPreferences("CONFIG", 0);
-        threadsNum = preference.getInt(context.getString(R.string.pk_threads_num), 4);
-        searchPageCount = preference.getInt(context.getString(R.string.pk_search_page_count), 3);
+        this.searchListener = searchListener;
+        AppConfigHelper helper = AppConfigHelper.get(context);
+        threadsNum = helper.getInt(context.getString(R.string.pk_threads_num), 6);
+        searchPageCount = helper.getInt(context.getString(R.string.pk_search_page_count), 1);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
         initSearchEngineS();
@@ -62,6 +61,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (useMy716 && Objects.equals(ACache.get(MApplication.getInstance()).getAsString("getZfbHb"), "True")) {
             searchEngineS.add(new SearchEngine(My716.TAG));
         }
+
         List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
         if (bookSourceBeans != null) {
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
@@ -71,61 +71,42 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         searchEngineChanged = false;
     }
 
-    private void resetSearchEngineS(boolean init) {
-        if (init || searchEngineS.isEmpty()) {
-            initSearchEngineS();
-        } else {
-            for (SearchEngine searchEngine : searchEngineS) {
-                searchEngine.setPage(1);
-                searchEngine.setHasMore(true);
-            }
-        }
-    }
-
-    private void resetSearch(boolean clear, int id) {
-        if (!searchTasks.isEmpty()) {
-            for (ISearchTask searchTask : searchTasks) {
-                searchTask.stopSearch();
-                searchTask.setId(id);
-            }
-            if (clear) {
-                searchTasks.clear();
-            }
-        }
-    }
-
     public void startSearch(int id, String query) {
         if (TextUtils.isEmpty(query)) {
             return;
         }
 
         startThisId = id;
-        resetSearch(searchEngineChanged, startThisId);
-        resetSearchEngineS(searchEngineChanged);
+
+        if (!searchTasks.isEmpty()) {
+            for (ISearchTask searchTask : searchTasks) {
+                searchTask.stopSearch();
+                searchTask.setId(id);
+            }
+        }
+
+        if (searchEngineChanged || searchEngineS.isEmpty()) {
+            initSearchEngineS();
+        } else {
+            for (SearchEngine searchEngine : searchEngineS) {
+                searchEngine.searchReset();
+            }
+        }
 
         if (searchEngineS.isEmpty()) {
             searchListener.searchSourceEmpty();
-            return;
+        } else {
+            searchListener.resetSearchBook();
+            search(id, query);
         }
-
-        searchListener.resetSearchBook();
-
-        search(id, query);
     }
 
     private void search(int id, String query) {
         if (searchTasks.isEmpty()) {
-            int length = searchEngineS.size();
-            int seek = length % threadsNum == 0 ? length / threadsNum : (length / threadsNum + 1);
-            for (int i = 0, size = Math.min(length, threadsNum); i < size; i++) {
-                int end = (i + 1) * seek;
-                List<SearchEngine> engines = searchEngineS.subList(i * seek, end >= length ? length : end);
-                ISearchTask searchTask = new SearchTaskImpl(id, new ArrayList<>(engines), this);
+            for (int i = 0, size = Math.min(searchEngineS.size(), threadsNum); i < size; i++) {
+                ISearchTask searchTask = new SearchTaskImpl(id, this);
                 searchTask.startSearch(query, scheduler);
                 searchTasks.add(searchTask);
-                if (end >= length) {
-                    break;
-                }
             }
         } else {
             for (ISearchTask searchTask : searchTasks) {
@@ -135,23 +116,37 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     }
 
     public void stopSearch() {
-        if(isTaskRunning()){
+        if (isTaskRunning()) {
             searchListener.searchBookFinish();
         }
-        resetSearch(false, 0);
+        if (!searchTasks.isEmpty()) {
+            for (ISearchTask searchTask : searchTasks) {
+                searchTask.stopSearch();
+                searchTask.setId(0);
+            }
+        }
     }
 
     public void shutdownSearch() {
-        resetSearch(true, 0);
+        if (!searchTasks.isEmpty()) {
+            for (ISearchTask searchTask : searchTasks) {
+                searchTask.stopSearch();
+            }
+            searchTasks.clear();
+        }
         executor.shutdown();
     }
 
     public void setUseMy716(boolean useMy716) {
         this.useMy716 = useMy716;
-        setSearchEngineChanged();
+        notifySearchEngineChanged();
     }
 
-    public void setSearchEngineChanged() {
+    public void onlyOnePage() {
+        searchPageCount = 1;
+    }
+
+    public void notifySearchEngineChanged() {
         searchEngineChanged = true;
     }
 
@@ -161,18 +156,17 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     }
 
     @Override
-    public boolean checkSearchEngine(SearchEngine engine) {
-        return engine != null && engine.getHasMore() && engine.getPage() <= searchPageCount;
-    }
-
-    @Override
-    public boolean checkExists(SearchBookBean searchBook) {
-        return searchListener.checkExists(searchBook);
-    }
-
-    @Override
-    public int getShowingItemCount() {
-        return searchListener.getItemCount();
+    public SearchEngine getNextSearchEngine() {
+        SearchEngine searchEngine = null;
+        synchronized (this) {
+            for (SearchEngine engine : searchEngineS) {
+                if (engine.getHasMore() && !engine.isRunning() && engine.getPage() < searchPageCount) {
+                    searchEngine = engine;
+                    break;
+                }
+            }
+        }
+        return searchEngine;
     }
 
     @Override
@@ -212,20 +206,16 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return false;
     }
 
-    public interface OnSearchListener {
+    public interface SearchListener {
         void searchSourceEmpty();
 
         void resetSearchBook();
 
         void searchBookFinish();
 
-        boolean checkExists(SearchBookBean searchBook);
-
         void loadMoreSearchBook(List<SearchBookBean> searchBookBeanList);
 
         void searchBookError();
-
-        int getItemCount();
     }
 
 }

@@ -18,6 +18,7 @@ import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
@@ -56,8 +57,7 @@ public class CheckSourceService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        SharedPreferences preference = getSharedPreferences("CONFIG", 0);
-        threadsNum = preference.getInt(this.getString(R.string.pk_threads_num), 4);
+        threadsNum = AppConfigHelper.get(this).getInt(this.getString(R.string.pk_threads_num), 6);
         executorService = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executorService);
         compositeDisposable = new CompositeDisposable();

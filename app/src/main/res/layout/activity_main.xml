@@ -23,6 +23,7 @@
             android:layout_width="230dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            app:itemTextAppearance="@style/CAppTheme.Navigation.Text"
             app:itemTextColor="@color/navigation_color"
             app:itemIconTint="@color/navigation_icon_color"
             android:background="@color/card_background"

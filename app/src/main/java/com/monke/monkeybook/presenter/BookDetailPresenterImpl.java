@@ -95,7 +95,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             BookShelfBean bookShelfBean;
             if (openFrom == FROM_BOOKSHELF) {
-                bookShelfBean = BookshelfHelp.getBookByUrl(bookShelf.getNoteUrl(), false);
+                bookShelfBean = BookshelfHelp.getBookByUrl(bookShelf.getNoteUrl());
             } else {//来自搜索页面
                 bookShelfBean = BookshelfHelp.getBookByName(searchBook.getName(), searchBook.getAuthor());
             }
@@ -113,7 +113,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 .flatMap(bookShelfBean -> {
                     if (inBookShelf && bookShelfBean.getHasUpdate()) {
                         BookshelfHelp.saveBookToShelf(bookShelfBean);
-                        RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, bookShelfBean);
+                        RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
                     }
                     return Observable.just(bookShelfBean);
                 })
@@ -320,7 +320,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
-            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO), @Tag(RxBusTag.UPDATE_BOOK_PROGRESS)})
+            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO)})
     public void updateBookInfo(BookShelfBean bookShelfBean) {
         bookShelf = bookShelfBean;
         mView.updateView();

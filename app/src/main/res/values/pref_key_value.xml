@@ -9,6 +9,7 @@
     <string name="pk_read_type">read_type</string>
     <string name="pk_find_expand_group">expandGroupFind</string>
     <string name="pk_ImmersionStatusBar">immersionStatusBar</string>
+    <string name="pk_show_all_find">showAllFind</string>
     <string name="pk_bookshelf_anim">bookshelfAnim</string>
     <string name="pk_default_read">defaultToRead</string>
     <string name="pk_search_page_count">search_page_count</string>
@@ -22,5 +23,5 @@
     <string name="this_github_url">https://github.com/gedoor/MyBookshelf</string>
     <string name="disclaimer_url">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
     <string name="home_page_url">https://gedoor.github.io/MyBookshelf/</string>
-    <string name="latest_release_url">https://github.com/gedoor/MyBookshelf/releases/latest</string>
+    <string name="latest_release_url">https://github.com/Invinciblelee/MyBookshelf-master/releases</string>
 </resources>

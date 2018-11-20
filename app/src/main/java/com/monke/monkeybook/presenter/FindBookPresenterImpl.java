@@ -7,10 +7,12 @@ import android.text.TextUtils;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
+import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 
@@ -39,7 +41,13 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     @Override
     public void initData() {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            for (BookSourceBean sourceBean : BookSourceManager.getInstance().getAllBookSource()) {
+            List<BookSourceBean> bookSourceBeans;
+            if (AppConfigHelper.get(mView.getContext()).getBoolean(mView.getContext().getString(R.string.pk_show_all_find), true)) {
+                bookSourceBeans = BookSourceManager.getInstance().getAllBookSource();
+            } else {
+                bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
+            }
+            for (BookSourceBean sourceBean : bookSourceBeans) {
                 if (!TextUtils.isEmpty(sourceBean.getRuleFindUrl())) {
                     String kindA[] = sourceBean.getRuleFindUrl().split("&&");
                     List<FindKindBean> children = new ArrayList<>();

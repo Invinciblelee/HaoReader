@@ -14,7 +14,7 @@ import android.widget.FrameLayout;
 
 import com.monke.basemvplib.BaseActivity;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 
@@ -314,13 +314,13 @@ public class MoDialogHUD {
     /**
      * 换源
      */
-    public void showChangeSource(BaseActivity activity, BookShelfBean bookShelf, ChangeSourceView.OnClickSource clickSource) {
+    public void showChangeSource(BaseActivity activity, BookInfoBean bookInfo, ChangeSourceView.OnClickSource clickSource) {
         initCenter();
         initAnimation();
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
         ChangeSourceView.newInstance(activity, mSharedView)
-                .showChangeSource(bookShelf, clickSource);
+                .showChangeSource(bookInfo, clickSource);
         if (!isShowing()) {
             onAttached();
         }

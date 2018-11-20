@@ -29,53 +29,15 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContract.View> implements SearchBookContract.Presenter {
+public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContract.View> implements SearchBookContract.Presenter, SearchBookModel.SearchListener {
     private static final int BOOK = 2;
 
     private String searchKey;
     private SearchBookModel searchBookModel;
 
     public SearchBookPresenterImpl(Context context, boolean useMy716) {
-        //搜索监听
-        SearchBookModel.OnSearchListener onSearchListener = new SearchBookModel.OnSearchListener() {
-
-            @Override
-            public void searchSourceEmpty() {
-                mView.showBookSourceEmptyTip();
-            }
-
-            @Override
-            public void resetSearchBook() {
-                mView.resetSearchBook();
-            }
-
-            @Override
-            public void searchBookFinish() {
-                mView.refreshFinish();
-            }
-
-            @Override
-            public boolean checkExists(SearchBookBean searchBook) {
-                return false;//这里不用检查
-            }
-
-            @Override
-            public void loadMoreSearchBook(List<SearchBookBean> searchBookBeanList) {
-                mView.loadMoreSearchBook(searchBookBeanList);
-            }
-
-            @Override
-            public void searchBookError() {
-                mView.searchBookError();
-            }
-
-            @Override
-            public int getItemCount() {
-                return mView.getSearchBookAdapter().getICount();
-            }
-        };
         //搜索引擎初始化
-        searchBookModel = new SearchBookModel(context, onSearchListener, useMy716);
+        searchBookModel = new SearchBookModel(context, useMy716, this);
     }
 
     @Override
@@ -191,7 +153,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                     .queryBuilder()
                     .where(SearchHistoryBeanDao.Properties.Type.eq(SearchBookPresenterImpl.BOOK), SearchHistoryBeanDao.Properties.Content.like("%" + query + "%"))
                     .orderDesc(SearchHistoryBeanDao.Properties.Date)
-                    .limit(20)
+                    .limit(100)
                     .build().list();
             e.onNext(data);
         })
@@ -239,6 +201,31 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         searchBookModel.stopSearch();
     }
 
+    @Override
+    public void searchSourceEmpty() {
+        mView.showBookSourceEmptyTip();
+    }
+
+    @Override
+    public void resetSearchBook() {
+        mView.resetSearchBook();
+    }
+
+    @Override
+    public void searchBookFinish() {
+        mView.refreshFinish();
+    }
+
+    @Override
+    public void loadMoreSearchBook(List<SearchBookBean> searchBookBeanList) {
+        mView.loadMoreSearchBook(searchBookBeanList);
+    }
+
+    @Override
+    public void searchBookError() {
+        mView.searchBookError();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -260,7 +247,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
     public void sourceListChange(Boolean change) {
-        searchBookModel.setSearchEngineChanged();
+        searchBookModel.notifySearchEngineChanged();
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.GET_ZFB_Hb)})

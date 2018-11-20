@@ -54,13 +54,14 @@
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_name"
-        style="@style/AppTheme.TextView.Marquee"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:ellipsize="end"
         android:gravity="center_horizontal"
         android:paddingTop="2dp"
+        android:singleLine="true"
         android:textColor="@color/tv_text_default"
         android:textSize="14sp" />
 

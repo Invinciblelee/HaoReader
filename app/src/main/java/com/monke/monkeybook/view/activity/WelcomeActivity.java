@@ -105,7 +105,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
 
     @Override
     public void finish() {
-        super.finishByAnim(android.R.anim.fade_in, android.R.anim.fade_out);
+        super.finishByAnim(R.anim.anim_alpha_in, R.anim.anim_alpha_out);
     }
 
     @Override

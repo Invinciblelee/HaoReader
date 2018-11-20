@@ -293,8 +293,8 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
-            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO), @Tag(RxBusTag.UPDATE_BOOK_PROGRESS)})
-    public void hadUpdateBook(BookShelfBean bookShelfBean) {
+            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO), @Tag(RxBusTag.UPDATE_BOOK_SHELF)})
+    public void updateBookShelf(BookShelfBean bookShelfBean) {
         if (this.group == bookShelfBean.getGroup()
                 || checkNeedUpdate(bookShelfBean)) {
             mView.updateBook(bookShelfBean, true);

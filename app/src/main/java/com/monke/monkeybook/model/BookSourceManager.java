@@ -119,8 +119,6 @@ public class BookSourceManager extends BaseModelImpl {
             bookSourceBean.setBookSourceUrl(bookSourceBean.getBookSourceUrl().substring(0, bookSourceBean.getBookSourceUrl().lastIndexOf("/")));
         }
 
-        bookSourceBean.setBookSourceName(StringUtils.clearString(bookSourceBean.getBookSourceName()));
-
         BookSourceBean temp = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl())).unique();
         if (temp != null) {

@@ -39,12 +39,6 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
         searchBookBeans = new ArrayList<>();
     }
 
-    public synchronized void addSourceAdapter(SearchBookBean value) {
-        searchBookBeans.add(value);
-        Collections.sort(searchBookBeans);
-        notifyDataSetChanged();
-    }
-
     public synchronized void addAllSourceAdapter(List<SearchBookBean> value) {
         searchBookBeans.addAll(value);
         Collections.sort(searchBookBeans);
@@ -96,7 +90,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
         if (!payloads.isEmpty()) {
             myViewHolder.ivChecked.setChecked(false);
-        }else {
+        } else {
             final int realPosition = holder.getLayoutPosition();
             final SearchBookBean item = searchBookBeans.get(realPosition);
             myViewHolder.tvBookSource.setText(item.getOrigin());

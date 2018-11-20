@@ -26,6 +26,5 @@
         android:text="重试"
         android:gravity="center"
         android:textSize="14sp"
-        android:lines="1"
         android:textColor="@color/white" />
 </LinearLayout>

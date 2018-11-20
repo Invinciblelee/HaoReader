@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -19,6 +18,7 @@ import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.impl.IDownloadTask;
 import com.monke.monkeybook.model.task.DownloadTaskImpl;
 import com.monke.monkeybook.view.activity.DownloadActivity;
@@ -66,8 +66,7 @@ public class DownloadService extends Service {
         managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(notificationId, builder.build());
 
-        SharedPreferences preferences = getSharedPreferences("CONFIG", 0);
-        threadsNum = preferences.getInt(this.getString(R.string.pk_threads_num), 4);
+        threadsNum = AppConfigHelper.get(this).getInt(this.getString(R.string.pk_threads_num), 4);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
     }

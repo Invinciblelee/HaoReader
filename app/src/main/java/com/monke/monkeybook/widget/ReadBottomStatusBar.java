@@ -1,10 +1,14 @@
 package com.monke.monkeybook.widget;
 
 import android.content.Context;
+import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -168,10 +172,14 @@ public class ReadBottomStatusBar extends FrameLayout {
         tvTitle.setTextColor(color);
         tvTitleLeft.setTextColor(color);
         tvChapterIndex.setTextColor(color);
+    }
 
+    public void updateBatteryColor(int color) {
         AppCompat.setTint(batteryProgress.getBackground(), color);
 
         LayerDrawable drawable = (LayerDrawable) batteryProgress.getProgressDrawable();
+        GradientDrawable background = (GradientDrawable) drawable.findDrawableByLayerId(android.R.id.background);
+        background.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
         ClipDrawable progressDrawable = (ClipDrawable) drawable.findDrawableByLayerId(android.R.id.progress);
         progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
@@ -209,6 +217,7 @@ public class ReadBottomStatusBar extends FrameLayout {
         updateTextColor(readConfig.getTextColor());
         updateTextTypeface(readConfig.getFontPath(), readConfig.getTextBold());
         setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
+        updateBatteryColor(readConfig.getTextColor());
     }
 
     public void updatePadding() {

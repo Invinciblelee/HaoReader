@@ -52,10 +52,8 @@ public class BookContent {
             bookContentBean.setDurChapterContent(webContentBean.content);
 
             List<String> nextUrls = new ArrayList<>();
-            while (!TextUtils.isEmpty(webContentBean.nextUrl)) {
-                if(nextUrls.contains(webContentBean.nextUrl)){//防止重复死循环
-                    break;
-                }
+            int retryCount = 0;
+            while (!TextUtils.isEmpty(webContentBean.nextUrl) && !nextUrls.contains(webContentBean.nextUrl)) {
                 Call<String> call = OkHttpHelper.getInstance().createService(bookSourceBean.getBookSourceUrl(), IHttpGetApi.class)
                         .getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
                 String response = "";
@@ -66,11 +64,21 @@ public class BookContent {
                         e.onError(exception);
                     }
                 }
+                if (!TextUtils.isEmpty(response)) {
+                    nextUrls.add(webContentBean.nextUrl);
+                    retryCount = 0;
+                } else {
+                    retryCount += 1;
+                    if(retryCount > 5){
+                        break;
+                    }else {
+                        continue;
+                    }
+                }
                 webContentBean = analyzeBookContent(response, webContentBean.nextUrl);
                 if (!TextUtils.isEmpty(webContentBean.content)) {
                     bookContentBean.setDurChapterContent(bookContentBean.getDurChapterContent() + "\n" + webContentBean.content);
                 }
-                nextUrls.add(webContentBean.nextUrl);
             }
             e.onNext(bookContentBean);
             e.onComplete();
