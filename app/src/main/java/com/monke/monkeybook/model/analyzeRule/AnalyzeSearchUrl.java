@@ -31,9 +31,7 @@ public class AnalyzeSearchUrl {
             analyzeQt(ruleUrlS[1]);
         }
         //设置页数
-        if (!setPage(ruleUrlS)) {
-            setPageSpecially(ruleUrlS);
-        }
+        setPage(ruleUrlS);
 
         //分离post参数
         ruleUrlS = ruleUrlS[0].split("@");
@@ -54,7 +52,7 @@ public class AnalyzeSearchUrl {
     /**
      * 解析页数
      */
-    private boolean setPage(String[] ruleUrlS) {
+    private void setPage(String[] ruleUrlS) {
         Pattern pattern = Pattern.compile("(?<=\\{).+?(?=\\})");
         Matcher matcher = pattern.matcher(ruleUrlS[0]);
         if (matcher.find()) {
@@ -64,37 +62,9 @@ public class AnalyzeSearchUrl {
             } else {
                 ruleUrlS[0] = ruleUrlS[0].replaceAll("\\{.*?\\}", pages[pages.length - 1].trim());
             }
-            return true;
-        }
-        return false;
-    }
-
-    private void setPageSpecially(String[] ruleUrlS) {
-        Pattern pattern = Pattern.compile("(?<=\\[).+?(?=\\])");
-        Matcher matcher = pattern.matcher(ruleUrlS[0]);
-        if (matcher.find()) {
-            String[] pages = matcher.group(0).split(",");
-            String page;
-            if (searchPage <= pages.length) {
-                page = pages[searchPage - 1].trim();
-            } else {
-                page = pages[pages.length - 1].trim();
-            }
-
-            if (page.equals("searchPage+")) {
-                page = String.valueOf(searchPage);
-            } else {
-                pages = page.split("searchPage");
-                if (pages.length > 1) {
-                    if (pages[1].equals("+")) {
-                        page = pages[0] + searchPage;
-                    } else {
-                        page = pages[0] + (searchPage + Integer.parseInt(pages[1].substring(1)));
-                    }
-                }
-            }
-
-            ruleUrlS[0] = ruleUrlS[0].replaceAll("\\[.*?\\]", page);
+            ruleUrlS[0] = ruleUrlS[0].replace("searchPage-1", String.valueOf(searchPage - 1))
+                    .replace("searchPage+1", String.valueOf(searchPage + 1))
+                    .replace("searchPage", String.valueOf(searchPage));
         }
     }
 

@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.content;
 
+import android.util.Log;
+
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -87,6 +89,7 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
                     emitter.onComplete();
                 });
             }
+            Log.e("TAG", analyzeSearchUrl.getSearchPath());
             if (url.contains("@")) {
                 return createService(analyzeSearchUrl.getSearchUrl(), IHttpPostApi.class)
                         .searchBook(analyzeSearchUrl.getSearchPath(),
