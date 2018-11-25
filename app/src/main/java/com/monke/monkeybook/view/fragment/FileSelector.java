@@ -43,6 +43,8 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
     Button okBth, backBtn;
 
+    boolean isShowing;
+
     private FileSelectorAdapter adapter;
 
     private OnFileSelectedListener selectedListener;
@@ -111,13 +113,16 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     @Override
     public void onStart() {
         super.onStart();
-        AlertDialog dialog = (AlertDialog) getDialog();
-        okBth = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        backBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        backBtn.setVisibility(View.INVISIBLE);
+        if (!isShowing) {
+            AlertDialog dialog = (AlertDialog) getDialog();
+            okBth = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            backBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            backBtn.setVisibility(View.INVISIBLE);
 
-        backBtn.setOnClickListener(this);
-        okBth.setOnClickListener(this);
+            backBtn.setOnClickListener(this);
+            okBth.setOnClickListener(this);
+            isShowing = true;
+        }
     }
 
     @Override

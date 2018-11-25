@@ -36,6 +36,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     private boolean checkBookAdded;
     private boolean isImage;
 
+    private boolean sortChanged;
     private FileSnapshot current;
 
     private final Stack<FileSnapshot> snapshots = new Stack<>();
@@ -60,6 +61,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     public Comparator<RipeFile> sort(int orderIndex) {
         if (this.orderIndex != orderIndex) {
             this.orderIndex = orderIndex;
+            sortChanged = true;
         }
 
         return new FileComparator(orderIndex);
@@ -117,6 +119,9 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
         }
         current = snapshots.pop();
         if (current != null) {
+            if(sortChanged){
+                sortFiles(current.getFiles(), orderIndex);
+            }
             mView.onShow(current, true);
             return true;
         }
@@ -221,6 +226,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     private void sortFiles(List<RipeFile> files, int orderIndex) {
         if (files != null) {
             Collections.sort(files, new FileComparator(orderIndex));
+            sortChanged = false;
         }
     }
 
