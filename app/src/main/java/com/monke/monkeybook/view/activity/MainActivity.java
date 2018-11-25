@@ -33,6 +33,7 @@ import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
+import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
@@ -257,7 +258,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 break;
             case R.id.action_add_local:
                 if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                    startActivity(new Intent(this, ImportBookActivity.class));
+                    fileSelectResult();
                 } else {
                     EasyPermissions.requestPermissions(this, "添加本地书籍",
                             FILE_SELECT_RESULT, MApplication.PerList);
@@ -496,7 +497,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @AfterPermissionGranted(FILE_SELECT_RESULT)
     private void fileSelectResult() {
-        startActivity(new Intent(MainActivity.this, ImportBookActivity.class));
+        FileSelector.newInstance(false, true, false, new String[]{"txt"}).show(this, new FileSelector.OnFileSelectedListener() {
+            @Override
+            public void onMultiplyChoice(List<String> paths) {
+                mPresenter.importBooks(paths);
+            }
+        });
     }
 
     private void versionUpRun() {
@@ -557,6 +563,14 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     public void onRestore(String msg) {
         moDialogHUD.showLoading(msg);
+    }
+
+    @Override
+    public void addSuccess(BookShelfBean bookShelfBean) {
+        BookListFragment fragment = fragments[fragments.length - 1];
+        if (fragment != null) {
+            fragment.addBookShelf(bookShelfBean);
+        }
     }
 
     @Override

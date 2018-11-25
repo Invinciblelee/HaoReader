@@ -7,12 +7,10 @@ public class SearchEngine {
     private String tag;
     private boolean hasMore;
     private int page;
-    private boolean isRunning;
 
     public SearchEngine(String tag) {
         this.tag = tag;
         hasMore = true;
-        isRunning = false;
         page = 0;
     }
 
@@ -32,23 +30,16 @@ public class SearchEngine {
         return page;
     }
 
-    public boolean isRunning() {
-        return isRunning;
-    }
-
     public void searchBegin() {
         this.page += 1;
-        this.isRunning = true;
     }
 
     public void searchEnd(boolean hasMore) {
         this.hasMore = hasMore;
-        this.isRunning = false;
     }
 
     public void searchReset() {
         this.hasMore = true;
-        this.isRunning = false;
         this.page = 0;
     }
 

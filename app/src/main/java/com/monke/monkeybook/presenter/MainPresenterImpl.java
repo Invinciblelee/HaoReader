@@ -17,12 +17,14 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.LocBookShelfBean;
 import com.monke.monkeybook.dao.BookInfoBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.DataBackup;
 import com.monke.monkeybook.help.DataRestore;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.ImportBookModelImpl;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.trello.rxlifecycle2.android.ActivityEvent;
@@ -35,7 +37,9 @@ import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> implements MainContract.Presenter {
@@ -224,6 +228,38 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(mView.getContext(), "缓存清除失败", Toast.LENGTH_SHORT).show();
+                        mView.dismissHUD();
+                    }
+                });
+    }
+
+    @Override
+    public void importBooks(List<String> books) {
+        mView.showLoading("正在导入书籍");
+        Observable.fromIterable(books)
+                .subscribeOn(Schedulers.io())
+                .map(File::new)
+                .flatMap(file -> ImportBookModelImpl.getInstance().importBook(file))
+                .flatMap((Function<LocBookShelfBean, ObservableSource<LocBookShelfBean>>) locBookShelfBean -> {
+                    if (locBookShelfBean.getNew()) {
+                        BookshelfHelp.saveBookToShelf(locBookShelfBean.getBookShelfBean());
+                    }
+                    return Observable.just(locBookShelfBean);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new SimpleObserver<LocBookShelfBean>() {
+                    @Override
+                    public void onNext(LocBookShelfBean value) {
+                       if (value.getNew()) {
+                            mView.addSuccess(value.getBookShelfBean());
+                        }
+                        mView.dismissHUD();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.toast(e.getMessage());
                         mView.dismissHUD();
                     }
                 });

@@ -3,60 +3,96 @@ package com.monke.monkeybook.bean;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.FileHelp;
+import com.monke.monkeybook.utils.StringUtils;
+
+import java.io.File;
+
 public class RipeFile {
 
+    private boolean isSelected;
+    private File file;
     private String name;
-    private String path;
-    private long size;
-    private long date;
+    private String size;
+    private String date;
     private String suffix;
+    private String path;
+    private Boolean isDirectory;
+    private Integer childCount;
 
-    public RipeFile() {
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        if (!isDirectory()) {
+            isSelected = selected;
+        }
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+        this.path = file.getAbsolutePath();
     }
 
     public String getName() {
+        if (name == null) {
+            name = file.getName();
+        }
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public long getSize() {
+    public String getSize() {
+        if (size == null) {
+            size = FileHelp.getFileSize(file.length());
+        }
         return size;
     }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
 
-    public long getDate() {
+    public String getDate() {
+        if (date == null) {
+            date = StringUtils.dateConvert(file.lastModified(), Constant.FORMAT_FILE_DATE);
+        }
         return date;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public boolean isDirectory() {
+        if (isDirectory == null) {
+            isDirectory = file.isDirectory();
+        }
+        return isDirectory;
+    }
+
+    public String getPath() {
+        if (path == null) {
+            path = file.getAbsolutePath();
+        }
+        return path;
     }
 
     public String getSuffix() {
+        if (suffix == null) {
+            suffix = FileHelp.getFileSuffix(file).toUpperCase();
+        }
         return suffix;
     }
 
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
+    public int getChildCount() {
+        if (childCount == null) {
+            childCount = file.list().length;
+        }
+        return childCount;
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(obj instanceof RipeFile){
+        if (obj instanceof RipeFile) {
             return TextUtils.equals(((RipeFile) obj).path, this.path);
         }
         return super.equals(obj);

@@ -38,9 +38,18 @@ public interface MainContract {
         void onRestore(String msg);
 
         void restoreSuccess();
+
+        /**
+         * 添加成功
+         */
+        void addSuccess(BookShelfBean bookShelfBean);
+
+        void toast(String msg);
     }
 
     interface Presenter extends IPresenter {
+        void importBooks(List<String> books);
+
         void backupData();
 
         void restoreData();

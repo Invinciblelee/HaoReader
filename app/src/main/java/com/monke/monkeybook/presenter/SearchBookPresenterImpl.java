@@ -188,11 +188,10 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             return;
         }
 
-        int id = (int) System.currentTimeMillis();
         if (key == null) {
-            searchBookModel.startSearch(id, searchKey);
+            searchBookModel.startSearch(searchKey);
         } else {
-            searchBookModel.startSearch(id, key);
+            searchBookModel.startSearch(key);
         }
     }
 

@@ -9,26 +9,24 @@ import io.reactivex.Scheduler;
 
 public interface ISearchTask {
 
-    int getId();
-
-    void setId(int id);
-
     void startSearch(String query, Scheduler scheduler);
 
     void stopSearch();
 
-    boolean isComplete();
-
     interface OnSearchingListener {
-        boolean checkSameTask(int id);
+        SearchEngine nextSearchEngine();
 
-        SearchEngine getNextSearchEngine();
+        boolean hasNextSearchEngine();
+
+        void moveToNextSearchEngine();
+
+        void onSearchStart(ISearchTask searchTask);
 
         void onSearchResult(List<SearchBookBean> searchBooks);
 
-        void onSearchError();
+        void onSearchError(ISearchTask searchTask);
 
-        void onSearchComplete();
+        void onSearchComplete(ISearchTask searchTask);
     }
 
 }

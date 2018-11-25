@@ -296,11 +296,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         if (!TextUtils.isEmpty(query)) {
             openOrCloseHistory(false);
             searchView.clearFocus();
-            mPresenter.stopSearch();
             mPresenter.insertSearchHistory();
             rfRvSearchBooks.startRefresh();
             //执行搜索请求
-            searchView.postDelayed(() -> mPresenter.toSearchBooks(query), 200L);
+            mPresenter.toSearchBooks(query);
         }
     }
 
@@ -352,9 +351,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void resetSearchBook() {
-        if (fabStop.isOrWillBeHidden()) {
-            fabStop.show();
-        }
+        fabStop.postDelayed(() -> {
+            if (fabStop.isOrWillBeHidden()) {
+                fabStop.show();
+            }
+        }, 300L);
         searchBookAdapter.clearAll();
     }
 

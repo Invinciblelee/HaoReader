@@ -175,7 +175,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        activity.startActivity(intent);
+        activity.startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
     }
 
 
@@ -1438,6 +1438,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void onPause() {
         super.onPause();
+        ensureWindowAnimNotTranslucent();
         autoPageStop();
         if (batInfoReceiver != null) {
             unregisterReceiver(batInfoReceiver);
@@ -1478,8 +1479,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 && !AppActivityManager.getInstance().isExist(SearchBookActivity.class)) {
             android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
             startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
+            super.finishByAnim(R.anim.anim_alpha_in, R.anim.anim_alpha_out);
+        }else {
+            super.finish();
         }
-        super.finish();
     }
 
 

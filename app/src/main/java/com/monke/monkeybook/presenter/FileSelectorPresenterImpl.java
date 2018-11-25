@@ -1,262 +1,259 @@
 package com.monke.monkeybook.presenter;
 
-import android.content.Intent;
-import android.database.Cursor;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.os.Environment;
+import android.support.v4.app.Fragment;
 
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.monkeybook.bean.FileSnapshot;
 import com.monke.monkeybook.bean.RipeFile;
-import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
+import com.monke.monkeybook.utils.FileUtil;
 import com.monke.monkeybook.utils.RxUtils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Stack;
 
 import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.disposables.Disposable;
 
-public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorContract.View> implements FileSelectorContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorContract.View> implements FileSelectorContract.Presenter, FileFilter {
 
-    private static final int TASK_ID = 99;
 
-    private String title;
-    private FileSelectorContract.MediaType mediaType;
-    private String[] suffixes;
     private int orderIndex = 0;
-    private LoaderManager loaderManager;
+    private String[] suffixes;
+    private boolean isSingleChoice;
+    private boolean checkBookAdded;
+    private boolean isImage;
 
-    private Collator collator = Collator.getInstance(java.util.Locale.CHINA);
+    private FileSnapshot current;
 
-    private final List<RipeFile> files = new ArrayList<>();
+    private final Stack<FileSnapshot> snapshots = new Stack<>();
+
+    private final Collator collator = Collator.getInstance(java.util.Locale.CHINA);
+
 
     @Override
-    public void init(AppCompatActivity activity) {
-        Intent intent = activity.getIntent();
-        title = intent.getStringExtra("title");
-        mediaType = intent.getParcelableExtra("mediaType");
-        ArrayList<String> list = intent.getStringArrayListExtra("suffixes");
+    public void init(Fragment fragment) {
+        Bundle bundle = fragment.getArguments();
+        assert bundle != null;
+        isSingleChoice = bundle.getBoolean("isSingleChoice");
+        checkBookAdded = bundle.getBoolean("checkBookAdded");
+        isImage = bundle.getBoolean("isImage");
+        ArrayList<String> list = bundle.getStringArrayList("suffixes");
+        assert list != null;
         suffixes = new String[list.size()];
         list.toArray(suffixes);
-
-        loaderManager = LoaderManager.getInstance(activity);
     }
 
     @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public FileSelectorContract.MediaType getMediaType() {
-        return mediaType;
-    }
-
-    @Override
-    public void sort(int orderIndex) {
-        this.orderIndex = orderIndex;
-        if (files.isEmpty()) {
-            return;
-        }
-        mView.showLoading();
-        Single.create((SingleOnSubscribe<List<RipeFile>>) emitter -> {
-            sortFiles(files, this.orderIndex);
-            emitter.onSuccess(files);
-        }).compose(RxUtils::toSimpleSingle)
-                .subscribe(new SingleObserver<List<RipeFile>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<RipeFile> files) {
-                        mView.onLoadFinish(files);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.hideLoading();
-                    }
-                });
-    }
-
-    @Override
-    public void query(String query) {
-        if (files.isEmpty()) {
-            return;
+    public Comparator<RipeFile> sort(int orderIndex) {
+        if (this.orderIndex != orderIndex) {
+            this.orderIndex = orderIndex;
         }
 
-        if (query == null) {
-            mView.onLoadFinish(files);
-            return;
-        }
-
-        mView.showLoading();
-        Single.create((SingleOnSubscribe<List<RipeFile>>) emitter -> {
-            List<RipeFile> newFiles = new ArrayList<>();
-            for (RipeFile file : files) {
-                if (file.getName().contains(query)) {
-                    newFiles.add(file);
-                }
-            }
-            emitter.onSuccess(newFiles);
-        }).compose(RxUtils::toSimpleSingle)
-                .subscribe(new SingleObserver<List<RipeFile>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<RipeFile> files) {
-                        mView.onLoadFinish(files);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.hideLoading();
-                    }
-                });
+        return new FileComparator(orderIndex);
     }
 
+    @SuppressLint("SdCardPath")
     @Override
     public void startLoad() {
-        if (loaderManager.getLoader(TASK_ID) == null) {
-            loaderManager.initLoader(TASK_ID, null, this);
-        } else {
-            loaderManager.restartLoader(TASK_ID, null, this);
+        mView.showLoading();
+
+        final File root;
+        if (FileUtil.checkSDCardAvailable()) {
+            root = new File(Environment.getExternalStorageDirectory().getPath());
+
+            mView.showSubtitle(root.getAbsolutePath());
+        }else {
+            root = null;
+
+            mView.showSubtitle("/sdcard");
         }
+
+        Single.create((SingleOnSubscribe<FileSnapshot>) emitter -> {
+            if(root != null) {
+                loadRootFiles(root);
+            }
+            if (current != null) {
+                emitter.onSuccess(current);
+            } else {
+                emitter.onError(new Exception("file load failed!"));
+            }
+        }).compose(RxUtils::toSimpleSingle)
+                .subscribe(new SingleObserver<FileSnapshot>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(FileSnapshot snapshot) {
+                        mView.onShow(snapshot, false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideLoading();
+                    }
+                });
+
+    }
+
+    @Override
+    public boolean pop() {
+        if (snapshots.empty()) {
+            return false;
+        }
+        current = snapshots.pop();
+        if (current != null) {
+            mView.onShow(current, true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean push(RipeFile folder, int offset) {
+        current.setScrollOffset(offset);
+        snapshots.push(current);
+        if (folder.isDirectory()) {
+            File[] files = folder.getFile().listFiles(this);
+            if (files != null) {
+                current = new FileSnapshot();
+                current.setParent(folder);
+                List<RipeFile> fileList = new ArrayList<>();
+                RipeFile ripeFile;
+                for (File file : files) {
+                    ripeFile = new RipeFile();
+                    ripeFile.setFile(file);
+                    fileList.add(ripeFile);
+                }
+                sortFiles(fileList, orderIndex);
+                current.setFiles(fileList);
+                current.setScrollOffset(offset);
+                mView.onShow(current, false);
+                return true;
+            } else {
+                mView.onShow(null, false);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canGoBack() {
+        return !snapshots.empty();
+    }
+
+    @Override
+    public boolean isSingleChoice() {
+        return isSingleChoice;
+    }
+
+    @Override
+    public boolean checkBookAdded() {
+        return checkBookAdded;
+    }
+
+    @Override
+    public boolean isImage() {
+        return isImage;
+    }
+
+    @Override
+    public boolean accept(java.io.File pathname) {
+        String fileName = pathname.getName();
+        if (fileName.startsWith(".")) {
+            return false;
+        }
+        //文件夹内部数量为0
+        if (pathname.isDirectory() && pathname.list().length == 0) {
+            return false;
+        }
+
+        if (pathname.isDirectory()) {
+            return true;
+        }
+
+        for (String suffix : suffixes) {
+            if (fileName.toUpperCase().endsWith("." + suffix.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void detachView() {
-        loaderManager.destroyLoader(TASK_ID);
-    }
-
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
-        return new CursorLoader(mView.getContext(),
-                mediaType == FileSelectorContract.MediaType.FIlE ? MediaStore.Files.getContentUri("external")
-                        : MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Files.FileColumns.DATA},
-                buildSelection(suffixes.length),
-                buildSelectionArgs(suffixes),
-                null
-        );
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-        loadCursor(cursor);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
     }
 
-    private void loadCursor(Cursor cursor) {
-        Single.create((SingleOnSubscribe<List<RipeFile>>) emitter -> {
-            files.clear();
-
-            int pathIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-
+    private void loadRootFiles(File root) {
+        File[] files = root.listFiles(FileSelectorPresenterImpl.this);
+        if (files != null) {
+            current = new FileSnapshot();
+            RipeFile parent = new RipeFile();
+            parent.setFile(root);
+            current.setParent(parent);
+            List<RipeFile> fileList = new ArrayList<>();
             RipeFile ripeFile;
-            File file;
-            String filePath;
-
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
+            for (File file : files) {
                 ripeFile = new RipeFile();
-                filePath = cursor.getString(pathIndex);
-                if (!TextUtils.isEmpty(filePath)) {
-                    file = new File(filePath);
-                    ripeFile.setPath(file.getAbsolutePath());
-                    ripeFile.setName(file.getName());
-                    ripeFile.setSize(file.length());
-                    ripeFile.setDate(file.lastModified());
-                    ripeFile.setSuffix(FileHelp.getFileSuffix(file).toUpperCase());
-                    files.add(ripeFile);
-                }
-                cursor.moveToNext();
+                ripeFile.setFile(file);
+                fileList.add(ripeFile);
             }
-            sortFiles(files, this.orderIndex);
-            emitter.onSuccess(files);
-        }).compose(RxUtils::toSimpleSingle)
-                .subscribe(new SingleObserver<List<RipeFile>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<RipeFile> files) {
-                        mView.onLoadFinish(files);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mView.hideLoading();
-                    }
-                });
-    }
-
-    private String buildSelection(int selectionArgsLength) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(MediaStore.Files.FileColumns.SIZE)
-                .append(" > 0 and ")
-                .append(MediaStore.Files.FileColumns.SIZE)
-                .append(" < 5242880 and ");
-        for (int i = 0; i < selectionArgsLength; i++) {
-            builder.append(MediaStore.Files.FileColumns.DATA).append(" like ? ");
-            if (i < selectionArgsLength - 1) {
-                builder.append(" or ");
-            }
+            sortFiles(fileList, orderIndex);
+            current.setFiles(fileList);
         }
-        builder.append("COLLATE NOCASE");
-        return builder.toString();
-    }
-
-    private String[] buildSelectionArgs(String[] selectionArgs) {
-        String[] args = new String[selectionArgs.length];
-        for (int i = 0, length = selectionArgs.length; i < length; i++) {
-            args[i] = "%." + selectionArgs[i];
-        }
-        return args;
-    }
-
-    private int compare(long val1, long val2) {
-        return Long.compare(val1, val2);
     }
 
     private void sortFiles(List<RipeFile> files, int orderIndex) {
-        Collections.sort(files, (o1, o2) -> {
-            if (orderIndex == 0) {
-                return collator.compare(o1.getName(), o2.getName());
-            } else if (orderIndex == 1) {
-                return compare(o1.getDate(), o2.getDate());
-            } else if (orderIndex == 2) {
-                return compare(o1.getSize(), o2.getSize());
-            } else if (orderIndex == 3) {
-                return compare(o2.getDate(), o1.getDate());
-            }
-            return compare(o2.getSize(), o1.getSize());
-        });
+        if (files != null) {
+            Collections.sort(files, new FileComparator(orderIndex));
+        }
     }
+
+private class FileComparator implements Comparator<RipeFile> {
+
+    int orderIndex;
+
+    FileComparator(int orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    @Override
+    public int compare(RipeFile file1, RipeFile file2) {
+        File o1 = file1.getFile();
+        File o2 = file2.getFile();
+        if (o1.isDirectory() && o2.isFile()) {
+            return -1;
+        }
+        if (o2.isDirectory() && o1.isFile()) {
+            return 1;
+        }
+        if (orderIndex == 0) {
+            return collator.compare(o1.getName(), o2.getName());
+        } else if (orderIndex == 1) {
+            return collator.compare(o2.getName(), o1.getName());
+        } else if (orderIndex == 2) {
+            return Long.compare(o1.lastModified(), o2.lastModified());
+        } else if (orderIndex == 3) {
+            return Long.compare(o2.lastModified(), o1.lastModified());
+        } else if (orderIndex == 4) {
+            return Long.compare(o1.length(), o2.length());
+        }
+        return Long.compare(o2.length(), o1.length());
+    }
+}
 }

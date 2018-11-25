@@ -2,6 +2,8 @@ package com.monke.monkeybook.help;
 
 import android.text.TextUtils;
 
+import com.monke.monkeybook.utils.StringUtils;
+
 /**
  * Created by GKF on 2017/12/27.
  * 去除空格等
@@ -25,13 +27,14 @@ public class FormatWebText {
             return "";
         }
 
+        str = StringUtils.fullToHalf(str);
+
         return trim(str.replace("&nbsp;", "")
                 .replace(":", "：")
                 .replace(",", "，")
-                .replaceAll("[\\u3000 ]+", "")
-                .replaceAll("\\s", " ")
-                .replaceAll("[?？!！。~]", "")
-                .replaceAll("([(（].*[）)])", ""));
+                .replaceAll("\\s+", " ")
+                .replaceAll("[?？!！。~]+", ""))
+                .replaceAll("([\\[【(].*[)】\\]])", "");
     }
 
     public static String getAuthor(String str) {
@@ -40,9 +43,9 @@ public class FormatWebText {
         }
 
         return trim(str.replace("&nbsp;", "")
-                .replaceAll("[：:()【】\\[\\]（）\\u3000 ]+", "")
-                .replaceAll("\\s", " ")
-                .replaceAll("作.*?者", ""));
+                .replaceAll("\\s+", " ")
+                .replaceAll("作.*?者", "")
+                .replaceAll("[?？!！。~：:()（）【】]+", ""));
     }
 
 

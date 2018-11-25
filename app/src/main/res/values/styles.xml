@@ -14,6 +14,8 @@
         <item name="android:textColorPrimary">@color/tv_text_default</item>
         <item name="android:textColorSecondary">@color/tv_text_secondary</item>
         <item name="android:textColorAlertDialogListItem">@color/tv_text_default</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="colorBackgroundFloating">@color/card_background</item>
     </style>
 
     <style name="CAppTheme.Activity" parent="CAppTheme">
@@ -51,8 +53,10 @@
 
     <style name="CAppTheme.Activity.BookDetail" parent="CAppTheme">
         <!-- Customize your theme here. -->
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
     </style>
 
     <style name="CAppTheme.Activity.Welcome" parent="CAppTheme">
@@ -67,6 +71,11 @@
         <item name="colorButtonNormal">@color/menu_color_default</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorControlNormal">@color/menu_color_default</item>
+        <item name="colorButtonNormal">@color/menu_color_default</item>
+    </style>
+
     <style name="CAppTheme.Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">12sp</item>
     </style>
@@ -76,7 +85,7 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="overlapAnchor">false</item>
+
     </style>
 
     <style name="AppTheme.CardView" parent="CardView.Light">
@@ -124,13 +133,13 @@
     </style>
 
     <style name="AppTheme.ScaleDrawableTextView">
-        <item name="drawableSize">16.5sp</item>
+        <item name="drawableSize">16sp</item>
     </style>
 
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
         <item name="overlapAnchor">false</item>
-        <!--背景-->
+        <!--&lt;!&ndash;背景&ndash;&gt;-->
         <item name="android:popupBackground">@drawable/bg_popup_background</item>
     </style>
 
@@ -151,6 +160,15 @@
     <style name="anim_pop_windowlight">
         <item name="android:windowEnterAnimation">@anim/anim_pop_windowlight_in</item>
         <item name="android:windowExitAnimation">@anim/anim_pop_windowlight_out</item>
+    </style>
+
+    <style name="anim_dialog">
+        <item name="android:windowEnterAnimation">@anim/moprogress_in</item>
+        <item name="android:windowExitAnimation">@anim/moprogress_out</item>
+    </style>
+
+    <style name="Style.Dialog.Files" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowAnimationStyle">@style/anim_dialog</item>
     </style>
 
     <style name="Style.Line" parent="android:Widget">

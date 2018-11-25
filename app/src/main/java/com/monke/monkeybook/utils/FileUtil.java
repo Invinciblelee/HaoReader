@@ -45,6 +45,10 @@ public final class FileUtil {
         return sdCardDirectory;
     }
 
+    public static boolean checkSDCardAvailable() {
+        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+
     public static ArrayList<String> getStorageData(Context pContext) {
 
         final StorageManager storageManager = (StorageManager) pContext.getSystemService(Context.STORAGE_SERVICE);

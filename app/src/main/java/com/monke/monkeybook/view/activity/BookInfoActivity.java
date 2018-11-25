@@ -27,8 +27,8 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
+import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
@@ -37,8 +37,6 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class BookInfoActivity extends MBaseActivity {
-    private final int ResultSelectCover = 103;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.iv_cover)
@@ -220,26 +218,19 @@ public class BookInfoActivity extends MBaseActivity {
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        FileSelector.startThis(this, ResultSelectCover, "选择图片", FileSelectorContract.MediaType.IMAGE, new String[]{"png", "jpg", "jpeg"});
+        FileSelector.newInstance(true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
+            @Override
+            public void onSingleChoice(String path) {
+                tieCoverUrl.setText(path);
+                initCover(getTextString(tieCoverUrl));
+            }
+        });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case ResultSelectCover:
-                if (resultCode == RESULT_OK && null != data) {
-                    tieCoverUrl.setText(data.getStringExtra(FileSelector.RESULT));
-                    initCover(getTextString(tieCoverUrl));
-                }
-                break;
-        }
     }
 
     @Override

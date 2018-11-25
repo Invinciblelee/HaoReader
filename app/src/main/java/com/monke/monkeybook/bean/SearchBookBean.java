@@ -11,6 +11,7 @@ import com.monke.monkeybook.model.source.My716;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     @Transient
     private int originNum = 1;
     @Transient
-    private List<String> originUrls;
+    private List<String> tags;
 
     public SearchBookBean() {
 
@@ -92,7 +93,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         state = in.readString();
         isCurrentSource = in.readByte() != 0;
         originNum = in.readInt();
-        originUrls = in.createStringArrayList();
+        tags = in.createStringArrayList();
     }
 
     @Override
@@ -119,7 +120,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         dest.writeString(state);
         dest.writeByte((byte) (isCurrentSource ? 1 : 0));
         dest.writeInt(originNum);
-        dest.writeStringList(originUrls);
+        dest.writeStringList(tags);
     }
 
     @Override
@@ -220,7 +221,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
 
     public void setTag(String tag) {
         this.tag = tag;
-        addOriginUrl(tag);
+        addTag(tag);
     }
 
     public String getOrigin() {
@@ -231,19 +232,15 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.origin = origin;
     }
 
-    public void addOriginUrl(String origin) {
-        if (this.originUrls == null) {
-            this.originUrls = new ArrayList<>();
+    public void addTag(String origin) {
+        if (this.tags == null) {
+            this.tags = new ArrayList<>();
         }
 
-        if (!this.originUrls.contains(origin)) {
-            this.originUrls.add(origin);
+        if (!this.tags.contains(origin)) {
+            this.tags.add(origin);
         }
-        originNum = this.originUrls.size();
-    }
-
-    public List<String> getOriginUrls() {
-        return this.originUrls == null ? new ArrayList<String>() : this.originUrls;
+        originNum = this.tags.size();
     }
 
     public Boolean getCurrentSource() {

@@ -28,8 +28,8 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ColorUtil;
+import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
@@ -38,7 +38,6 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class ReadStyleActivity extends MBaseActivity {
-    private final int ResultSelectBg = 103;
 
     @BindView(R.id.ll_content)
     LinearLayout llContent;
@@ -259,7 +258,12 @@ public class ReadStyleActivity extends MBaseActivity {
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        FileSelector.startThis(this, ResultSelectBg, "选择图片", FileSelectorContract.MediaType.IMAGE, new String[]{"png", "jpg", "jpeg"});
+        FileSelector.newInstance(true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
+            @Override
+            public void onSingleChoice(String path) {
+                setCustomBg(path);
+            }
+        });
     }
 
     /**
@@ -304,15 +308,4 @@ public class ReadStyleActivity extends MBaseActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case ResultSelectBg:
-                if (resultCode == RESULT_OK && null != data) {
-                    setCustomBg(data.getStringExtra(FileSelector.RESULT));
-                }
-                break;
-        }
-    }
 }

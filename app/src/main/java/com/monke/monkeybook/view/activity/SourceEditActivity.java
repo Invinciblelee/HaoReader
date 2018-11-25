@@ -29,9 +29,9 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
-import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
+import com.monke.monkeybook.view.fragment.FileSelector;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,8 +49,6 @@ import static android.text.TextUtils.isEmpty;
  */
 
 public class SourceEditActivity extends MBaseActivity<SourceEditContract.Presenter> implements SourceEditContract.View {
-    private final int REQUEST_QR_IMAGE = 202;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rl_content)
@@ -370,7 +368,12 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void selectLocalImage() {
-        FileSelector.startThis(this, REQUEST_QR_IMAGE, "选择图片", FileSelectorContract.MediaType.IMAGE, new String[]{"png", "jpg", "jpeg"});
+        FileSelector.newInstance(true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
+            @Override
+            public void onSingleChoice(String path) {
+                mPresenter.analyzeBitmap(path);
+            }
+        });
     }
 
     private void openRuleSummary() {
@@ -445,10 +448,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_QR_IMAGE && resultCode == RESULT_OK && null != data) {
-            mPresenter.analyzeBitmap(data.getStringExtra(FileSelector.RESULT));
-            return;
-        }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {

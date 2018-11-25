@@ -32,8 +32,8 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
-import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
+import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
@@ -53,8 +53,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class BookSourceActivity extends MBaseActivity<BookSourceContract.Presenter> implements BookSourceContract.View {
     public static final int EDIT_SOURCE = 101;
-    public static final int IMPORT_SOURCE = 102;
-    public static final int RESULT_IMPORT_PERMS = 103;
+    public static final int RESULT_IMPORT_PERMS = 102;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -376,7 +375,12 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @AfterPermissionGranted(RESULT_IMPORT_PERMS)
     private void resultImportPerms() {
-        FileSelector.startThis(this, IMPORT_SOURCE, "选择文件", FileSelectorContract.MediaType.FIlE, new String[]{"txt", "json", "xml"});
+        FileSelector.newInstance(true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelector.OnFileSelectedListener() {
+            @Override
+            public void onSingleChoice(String path) {
+                mPresenter.importBookSource(new File(path));
+            }
+        });
     }
 
 
@@ -394,11 +398,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
             switch (requestCode) {
                 case EDIT_SOURCE:
                     refreshBookSource();
-                    break;
-                case IMPORT_SOURCE:
-                    if (data != null) {
-                        mPresenter.importBookSource(new File(data.getStringExtra(FileSelector.RESULT)));
-                    }
                     break;
             }
         }

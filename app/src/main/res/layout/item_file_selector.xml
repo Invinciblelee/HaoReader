@@ -1,38 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <FrameLayout
         android:id="@+id/fl_rb_checker"
-        android:layout_width="60dp"
-        android:layout_height="60dp">
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:layout_height="?android:attr/listPreferredItemHeight">
 
-        <RadioButton
-            android:id="@+id/file_rb_checker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null"
-            android:clickable="false"
-            android:focusable="false" />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/file_iv_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_folder_black_24dp"
+            app:tint="@color/colorAccent" />
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/file_iv_added"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:layout_margin="14dp"
+            app:tint="@color/tv_text_secondary"
+            android:src="@drawable/ic_book_added_black_24dp" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/file_iv_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:layout_margin="14dp"
+            android:scaleType="centerCrop" />
     </FrameLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@id/fl_rb_checker"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="8dp">
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/file_tv_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:text="@string/app_name"
@@ -43,45 +62,47 @@
             android:id="@+id/file_ll_brief"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_marginTop="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/file_tv_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="10dp"
                 android:background="@drawable/shape_round_rect"
-                android:clickable="false"
-                android:focusable="false"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingStart="5dp"
-                android:paddingTop="1dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="1dp"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
                 android:text="TXT"
                 android:textColor="@color/white"
-                android:textSize="12sp"
-                tools:ignore="HardcodedText,RtlHardcoded" />
+                android:textSize="10sp"
+                android:visibility="visible"
+                tools:ignore="HardcodedText,RtlHardcoded,SmallSp" />
 
-            <TextView
-                android:id="@+id/file_tv_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                tools:ignore="RtlHardcoded"
-                tools:text="324kb"
-                android:textColor="@color/tv_text_secondary"/>
 
-            <TextView
-                android:id="@+id/file_tv_date"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/file_tv_info"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="2017-05-22"
-                android:textColor="@color/tv_text_secondary"/>
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:textColor="@color/tv_text_secondary"
+                android:textSize="13sp"
+                tools:text="2017-05-22" />
         </LinearLayout>
-    </RelativeLayout>
-</RelativeLayout>
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/file_rb_checker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        android:background="@null"
+        android:clickable="false"
+        android:focusable="false" />
+</LinearLayout>
 

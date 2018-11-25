@@ -1,6 +1,5 @@
 package com.monke.monkeybook.presenter;
 
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.provider.DocumentFile;
 
@@ -121,15 +120,9 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
     }
 
     @Override
-    public void importDataS(Uri uri) {
-        String json;
-        if (uri.toString().startsWith("content://")) {
-            json = DocumentHelper.readString(uri);
-        } else {
-            String path = uri.getPath();
-            DocumentFile file = DocumentFile.fromFile(new File(path));
-            json = DocumentHelper.readString(file);
-        }
+    public void importDataS(File file) {
+        DocumentFile documentFile = DocumentFile.fromFile(file);
+        String json = DocumentHelper.readString(documentFile);
         if (!isEmpty(json)) {
             try {
                 List<ReplaceRuleBean> dataS = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {

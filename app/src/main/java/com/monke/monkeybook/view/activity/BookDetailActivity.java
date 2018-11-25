@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -216,8 +217,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             showLoading(true);
         }
 
-        Animation animIn = AnimationUtils.loadAnimation(this, R.anim.anim_scale_in);
-        cardView.startAnimation(animIn);
+        final Animation animation = AnimationUtils.loadAnimation(this, R.anim.moprogress_in);
+        cardView.post(() -> cardView.startAnimation(animation));
     }
 
     @Override

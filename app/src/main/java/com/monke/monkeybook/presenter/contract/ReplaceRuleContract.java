@@ -1,12 +1,12 @@
 package com.monke.monkeybook.presenter.contract;
 
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 
+import java.io.File;
 import java.util.List;
 
 public interface ReplaceRuleContract {
@@ -18,7 +18,7 @@ public interface ReplaceRuleContract {
 
         void delData(List<ReplaceRuleBean> replaceRuleBeans);
 
-        void importDataS(Uri uri);
+        void importDataS(File file);
 
         void importDataS(String url);
     }

@@ -26,11 +26,12 @@ import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.presenter.ReplaceRulePresenterImpl;
-import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
+import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,7 +43,6 @@ import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.monke.monkeybook.view.activity.BookSourceActivity.IMPORT_SOURCE;
 import static com.monke.monkeybook.view.activity.BookSourceActivity.RESULT_IMPORT_PERMS;
 
 /**
@@ -217,7 +217,12 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @AfterPermissionGranted(RESULT_IMPORT_PERMS)
     private void resultImportPerms() {
-        FileSelector.startThis(this, IMPORT_SOURCE, "选择文件", FileSelectorContract.MediaType.FIlE, new String[]{"txt", "json", "xml"});
+        FileSelector.newInstance(true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelector.OnFileSelectedListener() {
+            @Override
+            public void onSingleChoice(String path) {
+                mPresenter.importDataS(new File(path));
+            }
+        });
     }
 
 
@@ -237,20 +242,6 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
                 return true;
             }
             return super.onKeyDown(keyCode, event);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case IMPORT_SOURCE:
-                    if (data != null) {
-                        mPresenter.importDataS(data.getData());
-                    }
-                    break;
-            }
         }
     }
 

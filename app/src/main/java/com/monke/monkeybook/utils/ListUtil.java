@@ -1,7 +1,10 @@
 package com.monke.monkeybook.utils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ListUtil {
 
@@ -14,6 +17,13 @@ public class ListUtil {
         }
         r.trimToSize();
         return r;
+    }
+
+    public static <T> List<T> removeDuplicate(List<T> list, Comparator<T> comparator) {
+        if (list == null) return new ArrayList<>();
+        Set<T> set = new TreeSet<>(comparator);
+        set.addAll(list);
+        return new ArrayList<>(set);
     }
 
     public interface ListLook<T> {

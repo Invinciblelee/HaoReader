@@ -26,7 +26,6 @@ import com.monke.monkeybook.view.activity.BookInfoActivity;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -138,7 +137,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
         Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
             List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().queryBuilder()
                     .where(SearchBookBeanDao.Properties.Name.eq(bookInfo.getName()), SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
-            e.onNext(searchBookBeans == null ? new ArrayList<>() : searchBookBeans);
+            e.onNext(ListUtil.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getTag().compareTo(o2.getTag())));
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -173,8 +172,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
         rvSource.startRefresh();
         DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().deleteInTx(adapter.getSearchBookBeans());
         adapter.reSetSourceAdapter();
-        int id = (int) System.currentTimeMillis();
-        searchBookModel.startSearch(id, bookInfo.getName());
+        searchBookModel.startSearch(bookInfo.getName());
     }
 
     private synchronized void addSearchBook(List<SearchBookBean> searchBookBeans) {

@@ -276,6 +276,7 @@
     <string name="sort_manual">手动排序</string>
     <string name="sort_ping_yin">拼音排序</string>
     <string name="sort_by_name_asc">按名称(升序)</string>
+    <string name="sort_by_name_desc">按名称(倒序)</string>
     <string name="sort_by_date_asc">按时间(升序)</string>
     <string name="sort_by_size_asc">按大小(升序)</string>
     <string name="sort_by_date_desc">按时间(倒序)</string>

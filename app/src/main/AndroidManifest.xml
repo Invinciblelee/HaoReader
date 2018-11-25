@@ -27,8 +27,8 @@
 
         <activity
             android:name=".view.activity.WelcomeActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,23 +46,23 @@
             android:name=".view.activity.MainActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
-            android:theme="@style/CAppTheme.Activity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity" />
 
         <activity
             android:name=".view.activity.ReadBookActivity"
             android:configChanges="locale|keyboardHidden"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
-            android:theme="@style/CAppTheme.Activity.Read"/>
+            android:theme="@style/CAppTheme.Activity.Read"
+            android:windowSoftInputMode="adjustNothing|stateHidden" />
 
         <activity
             android:name=".view.activity.ChapterListActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="stateHidden|adjustPan"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"/>
+            android:theme="@style/CAppTheme.Activity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".view.activity.QRCodeScanActivity"
@@ -77,11 +77,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity.Search"
-            android:windowSoftInputMode="stateHidden|adjustUnspecified" >
+            android:windowSoftInputMode="stateHidden|adjustNothing">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="android.intent.action.SEND"/>
-                <data android:mimeType="text/plain"/>
+                <action android:name="android.intent.action.SEND" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity
@@ -102,12 +102,6 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:theme="@style/CAppTheme.Activity.BookDetail" />
-        <activity
-            android:name=".view.activity.ImportBookActivity"
-            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
         <activity
             android:name=".view.activity.BookSourceActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -163,17 +157,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
 
-        <activity android:name=".view.activity.FileSelector"
+        <activity
+            android:name=".view.activity.BigImageActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"/>
-
-        <activity android:name=".view.activity.BigImageActivity"
-            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"/>
+            android:theme="@style/CAppTheme.Activity" />
 
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />
