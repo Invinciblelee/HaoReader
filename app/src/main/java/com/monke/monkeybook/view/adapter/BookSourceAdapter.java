@@ -1,7 +1,5 @@
 package com.monke.monkeybook.view.adapter;
 
-import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -9,14 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.view.activity.BookSourceActivity;
@@ -137,13 +132,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             activity.saveDate(item);
             activity.upDateSelectAll();
         });
-        holder.editView.setOnClickListener(view -> {
-            Intent intent = new Intent(activity, SourceEditActivity.class);
-            String key = String.valueOf(System.currentTimeMillis());
-            intent.putExtra("data_key", key);
-            BitIntentDataManager.getInstance().putData(key, item.clone());
-            activity.startActivityForResult(intent, BookSourceActivity.EDIT_SOURCE);
-        });
+        holder.editView.setOnClickListener(view -> SourceEditActivity.startThis(activity, item));
         holder.delView.setOnClickListener(view -> {
             activity.delBookSource(item);
             dataList.remove(realPosition);
@@ -158,7 +147,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             int maxWeight = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                     .orderDesc(BookSourceBeanDao.Properties.Weight).limit(1).unique().getWeight();
             moveData.setWeight(maxWeight + 1);
-            BookshelfHelp.saveBookSource(moveData);
+            BookSourceManager.getInstance().saveBookSource(moveData);
 
             dataList.remove(realPosition);
             notifyItemInserted(0);

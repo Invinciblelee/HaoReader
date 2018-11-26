@@ -50,15 +50,15 @@ public class BookList {
                         item.setTag(tag);
                         item.setOrigin(name);
                         AnalyzeElement analyzeElement = new AnalyzeElement(booksE.get(i), baseURI);
-                        item.setAuthor(FormatWebText.getAuthor(analyzeElement.getResult(bookSourceBean.getRuleSearchAuthor())));
-                        item.setKind(analyzeElement.getResult(bookSourceBean.getRuleSearchKind()));
-                        item.setLastChapter(FormatWebText.trim(analyzeElement.getResult(bookSourceBean.getRuleSearchLastChapter())));
-                        item.setName(FormatWebText.getBookName(analyzeElement.getResult(bookSourceBean.getRuleSearchName())));
-                        item.setNoteUrl(analyzeElement.getResult(bookSourceBean.getRuleSearchNoteUrl()));
+                        item.setAuthor(FormatWebText.getAuthor(analyzeElement.getResultContent(bookSourceBean.getRuleSearchAuthor())));
+                        item.setKind(analyzeElement.getResultContent(bookSourceBean.getRuleSearchKind()));
+                        item.setLastChapter(FormatWebText.trim(analyzeElement.getResultContent(bookSourceBean.getRuleSearchLastChapter())));
+                        item.setName(FormatWebText.getBookName(analyzeElement.getResultContent(bookSourceBean.getRuleSearchName())));
+                        item.setNoteUrl(analyzeElement.getResultUrl(bookSourceBean.getRuleSearchNoteUrl()));
                         if (isEmpty(item.getNoteUrl())) {
                             item.setNoteUrl(baseURI);
                         }
-                        item.setCoverUrl(analyzeElement.getResult(bookSourceBean.getRuleSearchCoverUrl()));
+                        item.setCoverUrl(analyzeElement.getResultUrl(bookSourceBean.getRuleSearchCoverUrl()));
                         if (!isEmpty(item.getName())) {
                             books.add(item);
                         }

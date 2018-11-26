@@ -63,7 +63,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchEngineS.clear();
         }
 
-        if (useMy716 && Objects.equals(ACache.get(MApplication.getInstance()).getAsString("getZfbHb"), "True")) {
+       if (useMy716 && Objects.equals(ACache.get(MApplication.getInstance()).getAsString("getZfbHb"), "True")) {
             searchEngineS.add(new SearchEngine(My716.TAG));
         }
 

@@ -27,6 +27,7 @@ import com.monke.monkeybook.help.BookShelfDataHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.source.My716;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
@@ -101,7 +102,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     if (TextUtils.isEmpty(bookSource.getBookSourceGroup()))
                         bookSource.setBookSourceGroup("禁用");
                     mView.toast("已禁用" + bookSource.getBookSourceName());
-                    BookshelfHelp.saveBookSource(bookSource);
+                    BookSourceManager.getInstance().saveBookSource(bookSource);
                     break;
             }
         } catch (Exception e) {

@@ -89,7 +89,6 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
                     emitter.onComplete();
                 });
             }
-            Log.e("TAG", analyzeSearchUrl.getSearchPath());
             if (url.contains("@")) {
                 return createService(analyzeSearchUrl.getSearchUrl(), IHttpPostApi.class)
                         .searchBook(analyzeSearchUrl.getSearchPath(),

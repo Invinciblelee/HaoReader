@@ -7,7 +7,7 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.source.My716;
@@ -62,9 +62,9 @@ public class SearchTaskImpl implements ISearchTask {
         if (searchEngine != null) {
             if (!searchEngine.getHasMore()) {
                 listener.moveToNextSearchEngine();
-                if(listener.hasNextSearchEngine()){
+                if (listener.hasNextSearchEngine()) {
                     toSearch(query, scheduler);
-                }else {
+                } else {
                     stopSearch();
                     listener.onSearchComplete(this);
                 }
@@ -81,7 +81,7 @@ public class SearchTaskImpl implements ISearchTask {
                         .subscribe(new SimpleObserver<Boolean>() {
                             @Override
                             public void onSubscribe(Disposable d) {
-                                if(!isDisposed()) {
+                                if (!isDisposed()) {
                                     disposables.add(d);
                                 }
                             }
@@ -157,20 +157,20 @@ public class SearchTaskImpl implements ISearchTask {
     private static void incrementSourceWeight(String tag, long startTime) {
         Schedulers.single().createWorker().schedule(() -> {
             int searchTime = (int) (System.currentTimeMillis() - startTime);
-            BookSourceBean bookSourceBean = BookshelfHelp.getBookSourceByTag(tag);
+            BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
             if (bookSourceBean != null && searchTime < 10000) {
                 bookSourceBean.increaseWeight(10000 / (1000 + searchTime));
-                BookshelfHelp.saveBookSource(bookSourceBean);
+                BookSourceManager.getInstance().saveBookSource(bookSourceBean);
             }
         });
     }
 
     private static void decrementSourceWeight(String tag) {
         Schedulers.single().createWorker().schedule(() -> {
-            BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(tag);
+            BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
             if (sourceBean != null) {
                 sourceBean.increaseWeight(-100);
-                BookshelfHelp.saveBookSource(sourceBean);
+                BookSourceManager.getInstance().saveBookSource(sourceBean);
             }
         });
     }

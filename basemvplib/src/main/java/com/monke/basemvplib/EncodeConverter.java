@@ -47,7 +47,7 @@ public class EncodeConverter extends Converter.Factory {
             String charsetStr;
             MediaType mediaType = value.contentType();
             byte[] responseBytes = value.bytes();
-            //根据http头判断
+            //根据http头判断；
             if (mediaType != null) {
                 Charset charset = mediaType.charset();
                 if (charset != null) {

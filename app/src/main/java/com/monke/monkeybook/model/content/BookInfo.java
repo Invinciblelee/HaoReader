@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -44,16 +43,16 @@ public class BookInfo {
             Document doc = Jsoup.parse(s);
             AnalyzeElement analyzeElement = new AnalyzeElement(doc, bookShelfBean.getNoteUrl());
             if (isEmpty(bookInfoBean.getCoverUrl())) {
-                bookInfoBean.setCoverUrl(analyzeElement.getResult(bookSourceBean.getRuleCoverUrl()));
+                bookInfoBean.setCoverUrl(analyzeElement.getResultUrl(bookSourceBean.getRuleCoverUrl()));
             }
             if (isEmpty(bookInfoBean.getName())) {
-                bookInfoBean.setName(analyzeElement.getResult(bookSourceBean.getRuleBookName()));
+                bookInfoBean.setName(analyzeElement.getResultContent(bookSourceBean.getRuleBookName()));
             }
             if (isEmpty(bookInfoBean.getAuthor())) {
-                bookInfoBean.setAuthor(FormatWebText.getAuthor(analyzeElement.getResult(bookSourceBean.getRuleBookAuthor())));
+                bookInfoBean.setAuthor(FormatWebText.getAuthor(analyzeElement.getResultContent(bookSourceBean.getRuleBookAuthor())));
             }
-            bookInfoBean.setIntroduce(analyzeElement.getResult(bookSourceBean.getRuleIntroduce()));
-            String chapterUrl = analyzeElement.getResult(bookSourceBean.getRuleChapterUrl());
+            bookInfoBean.setIntroduce(analyzeElement.getResultContent(bookSourceBean.getRuleIntroduce()));
+            String chapterUrl = analyzeElement.getResultUrl(bookSourceBean.getRuleChapterUrl());
             if (isEmpty(chapterUrl)) {
                 bookInfoBean.setChapterUrl(bookShelfBean.getNoteUrl());
             } else {

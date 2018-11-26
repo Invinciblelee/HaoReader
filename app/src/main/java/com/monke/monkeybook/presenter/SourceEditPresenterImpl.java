@@ -93,11 +93,15 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
 
     @Override
     public void setText(String bookSourceStr) {
-        try {
+        if(bookSourceStr.startsWith("{") && bookSourceStr.endsWith("}")) {
             Gson gson = new Gson();
             BookSourceBean bookSourceBean = gson.fromJson(bookSourceStr, BookSourceBean.class);
-            mView.setText(bookSourceBean);
-        } catch (Exception e) {
+            if(bookSourceBean != null) {
+                mView.setText(bookSourceBean);
+            }else {
+                mView.showSnackBar("数据格式不对");
+            }
+        }else {
             mView.showSnackBar("数据格式不对");
         }
     }

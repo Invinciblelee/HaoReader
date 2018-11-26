@@ -242,7 +242,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
         Snackbar snackbar = Snackbar.make(getSnackBarView(), msg, Snackbar.LENGTH_SHORT);
         View view = snackbar.getView();
-        view.setBackgroundResource(R.color.background);
+        view.setBackgroundResource(R.color.card_background);
         ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(getResources().getColor(R.color.tv_text_default));
         return snackbar;
     }

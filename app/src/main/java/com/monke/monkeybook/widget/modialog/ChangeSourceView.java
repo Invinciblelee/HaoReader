@@ -18,7 +18,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.help.ACache;
-import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtil;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -191,10 +191,10 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
 
     private void incrementSourceWeightBySelection(SearchBookBean searchBook) {
         Schedulers.single().createWorker().schedule(() -> {
-            BookSourceBean sourceBean = BookshelfHelp.getBookSourceByTag(searchBook.getTag());
+            BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(searchBook.getTag());
             if (sourceBean != null) {
                 sourceBean.increaseWeightBySelection();
-                BookshelfHelp.saveBookSource(sourceBean);
+                BookSourceManager.getInstance().saveBookSource(sourceBean);
             }
         });
     }

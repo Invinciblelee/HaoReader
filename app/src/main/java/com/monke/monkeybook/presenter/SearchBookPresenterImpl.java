@@ -60,6 +60,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                 }
             }
         }
+
         mView.searchBook(keyWord);
     }
 

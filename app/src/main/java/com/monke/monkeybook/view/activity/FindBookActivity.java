@@ -3,18 +3,22 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.view.adapter.FindKindAdapter;
@@ -65,19 +69,6 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         Drawable indicator = getResources().getDrawable(R.drawable.ic_group_expander);
         AppCompat.setTint(indicator, getResources().getColor(R.color.tv_text_default));
         expandableList.setGroupIndicator(indicator);
-        //  设置分组项的点击监听事件
-        expandableList.setOnGroupClickListener((parent, v, groupPosition, id) -> {
-            // 请务必返回 false，否则分组不会展开
-            if (!expandableList.isGroupExpanded(groupPosition)) {
-                expandOnlyOne(groupPosition);
-                expandableList.expandGroup(groupPosition);
-                expandableList.post(() -> expandableList.setSelectedGroup(groupPosition));
-            } else {
-                expandableList.collapseGroup(groupPosition);
-            }
-            return true;
-        });
-
         //  设置子选项点击监听事件
         expandableList.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             FindKindBean kindBean = adapter.getDataList().get(groupPosition).getChildren().get(childPosition);
@@ -87,6 +78,27 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
             intent.putExtra("tag", kindBean.getTag());
             startActivity(intent);
             return true;
+        });
+
+        adapter.setOnGroupItemClickListener(new FindKindAdapter.OnGroupItemClickListener() {
+            @Override
+            public void onGroupItemClick(int groupPosition, View view) {
+                if (!expandableList.isGroupExpanded(groupPosition)) {
+                    expandOnlyOne(groupPosition);
+                    expandableList.expandGroup(groupPosition);
+                    expandableList.post(() -> expandableList.setSelectedGroup(groupPosition));
+                } else {
+                    expandableList.collapseGroup(groupPosition);
+                }
+            }
+
+            @Override
+            public void onGroupItemLongClick(FindKindGroupBean groupBean) {
+                BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(groupBean.getTag());
+                if (sourceBean != null) {
+                    SourceEditActivity.startThis(FindBookActivity.this, sourceBean);
+                }
+            }
         });
 
     }
@@ -147,6 +159,14 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
             if (autoExpandGroup() || group.size() == 1) {
                 expandableList.expandGroup(0);
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SourceEditActivity.EDIT_SOURCE && resultCode == RESULT_OK){
+            initData();
         }
     }
 

@@ -7,6 +7,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -24,6 +25,7 @@ public class OkHttpHelper {
                 .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.createTrustAllManager())
                 .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE))
                 .addInterceptor(getHeaderInterceptor())
                 .addInterceptor(new RetryInterceptor(1)).build();
     }
@@ -60,7 +62,7 @@ public class OkHttpHelper {
         return getRetrofitString(url).create(tClass);
     }
 
-    public <T> T createService(String url, String encode, Class<T> tClass){
+    public <T> T createService(String url, String encode, Class<T> tClass) {
         return getRetrofitString(url, encode).create(tClass);
     }
 
@@ -75,4 +77,5 @@ public class OkHttpHelper {
             return chain.proceed(request);
         };
     }
+
 }

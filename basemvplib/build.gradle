@@ -37,9 +37,10 @@ dependencies {
     // If you want to bind to Android-specific lifecycles
     api 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
     //Retrofit
-    api 'com.squareup.retrofit2:retrofit:2.4.0'
-    api 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    api 'com.squareup.retrofit2:converter-scalars:2.4.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    api 'com.squareup.retrofit2:retrofit:2.5.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    api 'com.squareup.retrofit2:converter-scalars:2.5.0'
     //RxBus
     api('com.hwangjr.rxbus:rxbus:2.0.0') {
         exclude group: 'com.jakewharton.timber', module: 'timber'

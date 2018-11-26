@@ -70,6 +70,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     @Override
     public void initData() {
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
+            BookSourceManager.getInstance().refreshBookSource();
             e.onNext(BookSourceManager.getInstance().getAllBookSource());
             e.onComplete();
         }).subscribeOn(Schedulers.newThread())

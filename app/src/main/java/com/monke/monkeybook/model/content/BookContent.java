@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -69,9 +68,9 @@ public class BookContent {
                     retryCount = 0;
                 } else {
                     retryCount += 1;
-                    if(retryCount > 5){
+                    if (retryCount > 5) {
                         break;
-                    }else {
+                    } else {
                         continue;
                     }
                 }
@@ -90,9 +89,9 @@ public class BookContent {
         try {
             Document doc = Jsoup.parse(s);
             AnalyzeElement analyzeElement = new AnalyzeElement(doc, chapterUrl);
-            webContentBean.content = analyzeElement.getResult(ruleBookContent);
+            webContentBean.content = analyzeElement.getResultContent(ruleBookContent);
             if (!TextUtils.isEmpty(bookSourceBean.getRuleContentUrlNext())) {
-                webContentBean.nextUrl = analyzeElement.getResult(bookSourceBean.getRuleContentUrlNext());
+                webContentBean.nextUrl = analyzeElement.getResultUrl(bookSourceBean.getRuleContentUrlNext());
             }
         } catch (Exception ex) {
             ex.printStackTrace();

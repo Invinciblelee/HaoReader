@@ -124,11 +124,27 @@ public class BookSourceManager extends BaseModelImpl {
         if (temp != null) {
             bookSourceBean.setSerialNumber(temp.getSerialNumber());
             bookSourceBean.setEnable(temp.getEnable());
+        }else {
+            bookSourceBean.setEnable(true);
         }
+
         if (bookSourceBean.getSerialNumber() == 0) {
             bookSourceBean.setSerialNumber(allBookSource.size() + 1);
         }
         DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
+    }
+
+    public BookSourceBean getBookSourceByTag(String tag) {
+        if (tag == null)
+            return null;
+        return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
+    }
+
+    public void saveBookSource(BookSourceBean sourceBean) {
+        if (sourceBean != null) {
+            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+        }
     }
 
     private synchronized void upGroupList() {

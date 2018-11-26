@@ -1,6 +1,7 @@
 package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
@@ -49,6 +51,8 @@ import static android.text.TextUtils.isEmpty;
  */
 
 public class SourceEditActivity extends MBaseActivity<SourceEditContract.Presenter> implements SourceEditContract.View {
+    public final static int EDIT_SOURCE = 1101;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rl_content)
@@ -159,6 +163,14 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private boolean enable;
     private String title;
 
+    public static void startThis(Activity activity, BookSourceBean sourceBean) {
+        Intent intent = new Intent(activity, SourceEditActivity.class);
+        String key = String.valueOf(System.currentTimeMillis());
+        intent.putExtra("data_key", key);
+        BitIntentDataManager.getInstance().putData(key, sourceBean.clone());
+        activity.startActivityForResult(intent, EDIT_SOURCE);
+    }
+
     @Override
     protected SourceEditContract.Presenter initInjector() {
         return new SourceEditPresenterImpl();
@@ -220,6 +232,11 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             return;
         }
         mPresenter.saveSource(getBookSource(), bookSourceBean);
+    }
+
+    @Override
+    protected View getSnackBarView() {
+        return toolbar;
     }
 
     @Override

@@ -1,14 +1,12 @@
 package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterListBean;
-import com.monke.monkeybook.bean.WebChapterBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeElement;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
@@ -21,7 +19,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -98,7 +95,7 @@ public class BookChapter {
         AnalyzeElement analyzeElement;
         if (!TextUtils.isEmpty(bookSourceBean.getRuleChapterUrlNext())) {
             analyzeElement = new AnalyzeElement(doc, chapterUrl);
-            webChapterBean.nextUrl = analyzeElement.getResult(bookSourceBean.getRuleChapterUrlNext());
+            webChapterBean.nextUrl = analyzeElement.getResultUrl(bookSourceBean.getRuleChapterUrlNext());
         }
         Elements elements = AnalyzeElement.getElements(doc, ruleChapterList);
         int chapterIndex = 0;
@@ -106,8 +103,8 @@ public class BookChapter {
             analyzeElement = new AnalyzeElement(element, chapterUrl);
             ChapterListBean temp = new ChapterListBean();
             temp.setBookName(bookName);
-            temp.setDurChapterUrl(analyzeElement.getResult(bookSourceBean.getRuleContentUrl()));   //id
-            temp.setDurChapterName(analyzeElement.getResult(bookSourceBean.getRuleChapterName()));
+            temp.setDurChapterUrl(analyzeElement.getResultUrl(bookSourceBean.getRuleContentUrl()));   //id
+            temp.setDurChapterName(analyzeElement.getResultContent(bookSourceBean.getRuleChapterName()));
             temp.setTag(tag);
             if (!isEmpty(temp.getDurChapterUrl())
                     && !isEmpty(temp.getDurChapterName())

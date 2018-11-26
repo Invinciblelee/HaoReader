@@ -52,7 +52,6 @@ import pub.devrel.easypermissions.EasyPermissions;
  */
 
 public class BookSourceActivity extends MBaseActivity<BookSourceContract.Presenter> implements BookSourceContract.View {
-    public static final int EDIT_SOURCE = 101;
     public static final int RESULT_IMPORT_PERMS = 102;
 
     @BindView(R.id.toolbar)
@@ -352,7 +351,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void addBookSource() {
         Intent intent = new Intent(this, SourceEditActivity.class);
-        startActivityForResult(intent, EDIT_SOURCE);
+        startActivityForResult(intent, SourceEditActivity.EDIT_SOURCE);
     }
 
     private void selectBookSourceFile() {
@@ -394,12 +393,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case EDIT_SOURCE:
-                    refreshBookSource();
-                    break;
-            }
+        if (requestCode == SourceEditActivity.EDIT_SOURCE && resultCode == RESULT_OK) {
+            refreshBookSource();
         }
     }
 

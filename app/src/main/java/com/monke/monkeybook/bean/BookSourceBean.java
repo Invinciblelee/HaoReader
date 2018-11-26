@@ -181,6 +181,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
             return stringEquals(bookSourceUrl, bs.bookSourceUrl)
                     && stringEquals(bookSourceName, bs.bookSourceName)
                     && stringEquals(bookSourceGroup, bs.bookSourceGroup)
+                    && stringEquals(ruleFindUrl, bs.ruleFindUrl)
                     && stringEquals(ruleBookName, bs.ruleBookName)
                     && stringEquals(ruleBookAuthor, bs.ruleBookAuthor)
                     && stringEquals(ruleChapterUrl, bs.ruleChapterUrl)

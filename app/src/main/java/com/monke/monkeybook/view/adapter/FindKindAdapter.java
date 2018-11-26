@@ -20,6 +20,8 @@ import java.util.List;
 public class FindKindAdapter extends BaseExpandableListAdapter {
     private List<FindKindGroupBean> dataList;
 
+    private OnGroupItemClickListener itemClickListener;
+
     public FindKindAdapter() {
         dataList = new ArrayList<>();
     }
@@ -31,6 +33,10 @@ public class FindKindAdapter extends BaseExpandableListAdapter {
 
     public List<FindKindGroupBean> getDataList() {
         return dataList;
+    }
+
+    public void setOnGroupItemClickListener(OnGroupItemClickListener longClickLitener){
+        this.itemClickListener = longClickLitener;
     }
 
     @Override
@@ -80,6 +86,19 @@ public class FindKindAdapter extends BaseExpandableListAdapter {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
         groupViewHolder.tvTitle.setText(dataList.get(i).getGroupName());
+
+        convertView.setOnClickListener(v -> {
+            if(itemClickListener != null){
+                itemClickListener.onGroupItemClick(i, v);
+            }
+        });
+
+        convertView.setOnLongClickListener(v -> {
+           if(itemClickListener != null){
+               itemClickListener.onGroupItemLongClick(dataList.get(i));
+           }
+            return true;
+        });
         return convertView;
     }
 
@@ -114,5 +133,11 @@ public class FindKindAdapter extends BaseExpandableListAdapter {
 
     private static class ChildViewHolder {
         TextView tvTitle;
+    }
+
+    public interface OnGroupItemClickListener {
+        void onGroupItemClick(int groupPosition, View view);
+
+        void onGroupItemLongClick(FindKindGroupBean groupBean);
     }
 }

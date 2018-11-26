@@ -11,6 +11,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -43,6 +44,7 @@ public class BaseModelImpl {
     protected Observable<String> getAjaxHtml(Context context, String url, String userAgent) {
         return Observable.create(e -> {
             WebView webView = new WebView(context);
+            webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setUserAgentString(userAgent);
             webView.addJavascriptInterface(new MyJavaScriptInterface(webView, e), "HTMLOUT");
@@ -85,6 +87,7 @@ public class BaseModelImpl {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
             view.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
         }
 

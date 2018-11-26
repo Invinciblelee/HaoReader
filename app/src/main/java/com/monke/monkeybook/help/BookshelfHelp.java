@@ -229,19 +229,6 @@ public class BookshelfHelp {
         return count > 0;
     }
 
-    public static BookSourceBean getBookSourceByTag(String tag) {
-        if (tag == null)
-            return null;
-        return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
-    }
-
-    public static void saveBookSource(BookSourceBean sourceBean) {
-        if (sourceBean != null) {
-            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
-        }
-    }
-
     public static BookShelfBean getBookFromSearchBook(SearchBookBean searchBookBean) {
         BookShelfBean bookShelfBean = new BookShelfBean();
         bookShelfBean.setTag(searchBookBean.getTag());

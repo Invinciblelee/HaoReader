@@ -74,7 +74,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
     private boolean isRecreate;
-    private boolean isActNightTheme;
 
     private BookListFragment[] fragments = new BookListFragment[4];
 
@@ -110,14 +109,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         setContentView(R.layout.activity_main);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && isActNightTheme != isNightTheme()) {
-            getDelegate().applyDayNight();
-        }
-    }
-
     /**
      * 沉浸状态栏
      */
@@ -128,7 +119,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     protected void initData() {
-        isActNightTheme = isNightTheme();
         viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
         group = getPreferences().getInt("shelfGroup", 0);
         isRecreate = getIntent().getBooleanExtra("isRecreate", false);
