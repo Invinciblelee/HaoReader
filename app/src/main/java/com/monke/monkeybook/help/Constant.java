@@ -5,10 +5,12 @@ import android.support.annotation.StringDef;
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.annotation.Target;
+
+import static com.monke.monkeybook.help.Constant.RuleType.DEFAULT;
 
 /**
  * Created by newbiechen on 17-4-16.
@@ -20,71 +22,45 @@ public class Constant {
     public static final String FORMAT_BOOK_DATE = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String FORMAT_TIME = "HH:mm";
     public static final String FORMAT_FILE_DATE = "yyyy-MM-dd";
-    //RxBus
-    public static final int MSG_SELECTOR = 1;
-    //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
-    public static String BOOK_CACHE_PATH = FileHelp.getCachePath() + File.separator
-            + "book_cache" + File.separator;
-    public static String BOOK_COVER_PATH = FileHelp.getCachePath() + File.separator
-            + "book_cover" + File.separator;
-    //文件阅读记录保存的路径
-    public static String BOOK_RECORD_PATH = FileHelp.getCachePath() + File.separator
-            + "book_record" + File.separator;
 
+    //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
+    public static String BOOK_CACHE_PATH = FileUtil.getSdCardPath() + File.separator
+            + "YueDu" + File.separator + "chapters" + File.separator;
     public static String APP_CRASH_PATH = FileUtil.getSdCardPath() + File.separator
-            + "YueDu" + File.separator + "crash" + File.separator;
+            + "YueDu" + File.separator + "crashes" + File.separator;
 
     //BookType
     @StringDef({
-            BookType.ALL,
-            BookType.XHQH,
-            BookType.WXXX,
-            BookType.DSYN,
-            BookType.LSJS,
-            BookType.YXJJ,
-            BookType.KHLY,
-            BookType.CYJK,
-            BookType.HMZC,
-            BookType.XDYQ,
-            BookType.GDYQ,
-            BookType.HXYQ,
-            BookType.DMTR
+            BookType.TEXT,
+            BookType.AUDIO,
+            BookType.DOWNLOAD,
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface BookType {
-        String ALL = "all";
-
-        String XHQH = "xhqh";
-
-        String WXXX = "wxxx";
-
-        String DSYN = "dsyn";
-
-        String LSJS = "lsjs";
-
-        String YXJJ = "yxjj";
-        String KHLY = "khly";
-        String CYJK = "cyjk";
-        String HMZC = "hmzc";
-        String XDYQ = "xdyq";
-        String GDYQ = "gdyq";
-        String HXYQ = "hxyq";
-        String DMTR = "dmtr";
+        String TEXT = "TEXT";
+        String AUDIO = "AUDIO";
+        String DOWNLOAD = "DOWNLOAD";
     }
 
-    public static Map<String, String> bookType = new HashMap<String, String>() {{
-        put("qt", "其他");
-        put(BookType.XHQH, "玄幻奇幻");
-        put(BookType.WXXX, "武侠仙侠");
-        put(BookType.DSYN, "都市异能");
-        put(BookType.LSJS, "历史军事");
-        put(BookType.YXJJ, "游戏竞技");
-        put(BookType.KHLY, "科幻灵异");
-        put(BookType.CYJK, "穿越架空");
-        put(BookType.HMZC, "豪门总裁");
-        put(BookType.XDYQ, "现代言情");
-        put(BookType.GDYQ, "古代言情");
-        put(BookType.HXYQ, "幻想言情");
-        put(BookType.DMTR, "耽美同人");
-    }};
+    public static final String[] BOOK_TYPES = {
+            BookType.TEXT, BookType.AUDIO, BookType.DOWNLOAD
+    };
+
+
+    //BookType
+    @StringDef({
+            RuleType.DEFAULT,
+            RuleType.XPATH,
+            RuleType.JSON
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface RuleType {
+        String DEFAULT = "DEFAULT";
+        String XPATH = "XPATH";
+        String JSON = "JSON";
+    }
+
+    public static final String[] RULE_TYPES = {
+            RuleType.DEFAULT, RuleType.XPATH, RuleType.JSON
+    };
 }

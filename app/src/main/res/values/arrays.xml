@@ -56,4 +56,15 @@
         <item>发现</item>
     </string-array>
 
+    <string-array name="source_type">
+        <item>TEXT</item>
+        <item>AUDIO</item>
+        <item>DOWNLOAD</item>
+    </string-array>
+
+    <string-array name="source_rule_type">
+        <item>DEFAULT</item>
+        <item>XPATH</item>
+        <item>JSON</item>
+    </string-array>
 </resources>

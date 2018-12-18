@@ -1,42 +1,17 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:id="@+id/drawer_menu_book_group"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/action_group_zg"
-            android:checked="true"
-            android:icon="@drawable/ic_library_books_black_24dp"
-            android:title="@string/item_group_zg"/>
-
-        <item
-            android:id="@+id/action_group_yf"
-            android:icon="@drawable/ic_library_books_black_24dp"
-            android:title="@string/item_group_yf" />
-
-        <item
-            android:id="@+id/action_group_sc"
-            android:icon="@drawable/ic_library_books_black_24dp"
-            android:title="@string/item_group_wj" />
-
-        <item
-            android:id="@+id/action_group_bd"
-            android:icon="@drawable/ic_library_books_black_24dp"
-            android:title="@string/item_group_bd" />
-
-    </group>
-
     <group android:id="@+id/drawer_menu_book_source">
+        <item
+            android:id="@+id/action_book_source_manage"
+            android:icon="@drawable/ic_source_manager_black_24dp"
+            android:title="@string/book_source_manage" />
+
         <item
             android:id="@+id/action_download"
             android:icon="@drawable/ic_down_manager_black_24dp"
             android:title="@string/action_download"
             app:showAsAction="never" />
-
-        <item
-            android:id="@+id/action_book_source_manage"
-            android:icon="@drawable/ic_source_manager_black_24dp"
-            android:title="@string/book_source_manage" />
 
         <item
             android:id="@+id/action_replace_rule"

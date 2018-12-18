@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -29,6 +28,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
@@ -156,7 +156,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     @Override
-    public void getBookShelfError() {
+    public void getBookShelfError(boolean refresh) {
         llLoading.setVisibility(View.VISIBLE);
         tvLoadingMsg.setText("加载失败,点击重试");
         progressBar.setVisibility(View.GONE);
@@ -164,7 +164,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         llLoading.setEnabled(true);
         llLoading.setOnClickListener(v -> {
             showLoading(true);
-            mPresenter.getBookShelfInfo();
+            mPresenter.loadBookShelfInfo(refresh);
         });
     }
 
@@ -175,10 +175,9 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     @Override
     protected void firstRequest() {
-        super.firstRequest();
         if (mPresenter.getOpenFrom() == BookDetailPresenterImpl.FROM_SEARCH) {
             //网络请求
-            mPresenter.getBookShelfInfo();
+            mPresenter.loadBookShelfInfo(false);
         }
     }
 
@@ -190,7 +189,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
         if (mPresenter.getOpenFrom() == FROM_BOOKSHELF) {
             if (mPresenter.getBookShelf() == null) return;
-            updateView();
+            updateView(true);
         } else {
             if (mPresenter.getSearchBook() == null) return;
             showCoverImage(mPresenter.getSearchBook().getCoverUrl());
@@ -214,6 +213,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
             tvIntro.setVisibility(View.INVISIBLE);
             llBookRecent.setVisibility(View.GONE);
+            showHideViews(mPresenter.getSearchBook().getBookType());
             showLoading(true);
         }
 
@@ -222,7 +222,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     @Override
-    public void updateView() {
+    public void updateView(boolean stopLoading) {
         if (null != mPresenter.getBookShelf()) {
             boolean local = mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG);
             if (local) {
@@ -244,6 +244,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 }
             }
 
+            String bookType = mPresenter.getBookShelf().getBookInfoBean().getBookType();
+            showHideViews(bookType);
             changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
 
             if (TextUtils.isEmpty(tvName.getText())) {
@@ -263,7 +265,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 if (!TextUtils.isEmpty(durChapterName)) {
                     tvChapter.setText(durChapterName);
                 } else {
-                    tvChapter.setText(getString(R.string.read_dur_progress, getString(R.string.text_placeholder)));
+                    tvChapter.setText(getString(TextUtils.equals(bookType, Constant.BookType.AUDIO) ?
+                            R.string.play_dur_progress : R.string.read_dur_progress, getString(R.string.text_placeholder)));
                 }
                 tvRemoveShelf.setText(R.string.remove_shelf);
             } else {
@@ -281,7 +284,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
 
             if (!TextUtils.isEmpty(mPresenter.getBookShelf().getBookInfoBean().getIntroduce())) {
-                tvIntro.setText(getString(R.string.book_intro, mPresenter.getBookShelf().getBookInfoBean().getIntroduce()));
+                tvIntro.setText(mPresenter.getBookShelf().getBookInfoBean().getIntroduce());
             } else {
                 tvIntro.setText(null);
             }
@@ -296,7 +299,9 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
             showCoverImage(coverImage);
         }
-        showLoading(false);
+        if(stopLoading) {
+            showLoading(false);
+        }
     }
 
     @Override
@@ -317,11 +322,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
         tvChangeOrigin.setOnClickListener(view -> changeSource());
 
-        tvRead.setOnClickListener(v -> {
-            //进入阅读
-            ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf().copy(), mPresenter.inBookShelf());
-            finish();
-        });
+        tvRead.setOnClickListener(v -> startForBookType(mPresenter.getBookShelf().getBookInfoBean().getBookType()));
 
         tvRemoveShelf.setOnClickListener(v -> {
             if (!mPresenter.inBookShelf()) {
@@ -340,7 +341,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             animationSet.addAnimation(rotateAnimation);
             ivRefresh.startAnimation(animationSet);
             showLoading(true);
-            mPresenter.getBookShelfInfo();
+            mPresenter.loadBookShelfInfo(true);
         });
 
         ivCover.setOnClickListener(view -> {
@@ -368,6 +369,27 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
             finish();
         });
+    }
+
+    private void showHideViews(String bookType){
+        if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
+            tvRead.setText(R.string.start_listen);
+            rgGroup.setVisibility(View.GONE);
+        } else if (TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)) {
+
+        }
+    }
+
+    private void startForBookType(String bookType) {
+        if (TextUtils.equals(bookType, Constant.BookType.TEXT)) {
+            //进入阅读
+            ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf().copy(), mPresenter.inBookShelf());
+            finish();
+        } else if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
+
+        } else if (TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)) {
+
+        }
     }
 
     private void showLoading(boolean show) {

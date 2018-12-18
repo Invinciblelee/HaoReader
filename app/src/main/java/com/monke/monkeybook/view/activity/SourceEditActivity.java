@@ -15,6 +15,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +58,14 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     Toolbar toolbar;
     @BindView(R.id.rl_content)
     RelativeLayout rlContent;
+    @BindView(R.id.tie_book_source_type)
+    TextInputEditText tieBookSourceType;
+    @BindView(R.id.til_book_source_type)
+    TextInputLayout tilBookSourceType;
+    @BindView(R.id.tie_book_source_rule_type)
+    TextInputEditText tieBookSourceRuleType;
+    @BindView(R.id.til_book_source_rule_type)
+    TextInputLayout tilBookSourceRuleType;
     @BindView(R.id.tie_book_source_url)
     TextInputEditText tieBookSourceUrl;
     @BindView(R.id.til_book_source_url)
@@ -105,6 +114,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieRuleBookAuthor;
     @BindView(R.id.til_ruleBookAuthor)
     TextInputLayout tilRuleBookAuthor;
+    @BindView(R.id.til_ruleLastChapter)
+    TextInputLayout tilRuleLastChapter;
+    @BindView(R.id.tie_ruleLastChapter)
+    TextInputEditText tieRuleLastChapter;
     @BindView(R.id.tie_ruleCoverUrl)
     TextInputEditText tieRuleCoverUrl;
     @BindView(R.id.til_ruleCoverUrl)
@@ -149,6 +162,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieCheckUrl;
     @BindView(R.id.til_checkUrl)
     TextInputLayout tilCheckUrl;
+    @BindView(R.id.til_loginUrl)
+    TextInputLayout tilLoginUrl;
+    @BindView(R.id.tie_loginUrl)
+    TextInputEditText tieLoginUrl;
     @BindView(R.id.tie_ruleChapterUrlNext)
     TextInputEditText tieRuleChapterUrlNext;
     @BindView(R.id.til_ruleChapterUrlNext)
@@ -227,7 +244,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void saveBookSource() {
-        if (isEmpty(tieBookSourceName.getText().toString().trim()) || isEmpty(tieBookSourceUrl.getText().toString().trim())) {
+        if (isEmpty(tieBookSourceName.getText()) || isEmpty(tieBookSourceUrl.getText())) {
             toast("书源名称和URL不能为空");
             return;
         }
@@ -263,40 +280,44 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         integrator.initiateScan();
     }
 
-    private String trim(String string) {
+    private String trim(CharSequence string) {
         if (string == null) {
             return null;
         }
-        return string.trim();
+        return string.toString().trim();
     }
 
     private BookSourceBean getBookSource() {
         BookSourceBean bookSourceBeanN = new BookSourceBean();
-        bookSourceBeanN.setBookSourceName(trim(tieBookSourceName.getText().toString()));
-        bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText().toString()));
-        bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText().toString()));
-        bookSourceBeanN.setCheckUrl(trim(tieCheckUrl.getText().toString()));
-        bookSourceBeanN.setRuleBookAuthor(trim(tieRuleBookAuthor.getText().toString()));
-        bookSourceBeanN.setRuleBookContent(trim(tieRuleBookContent.getText().toString()));
-        bookSourceBeanN.setRuleBookName(trim(tieRuleBookName.getText().toString().trim()));
-        bookSourceBeanN.setRuleChapterList(trim(tieRuleChapterList.getText().toString()));
-        bookSourceBeanN.setRuleChapterName(trim(tieRuleChapterName.getText().toString()));
-        bookSourceBeanN.setRuleChapterUrl(trim(tieRuleChapterUrl.getText().toString()));
-        bookSourceBeanN.setRuleChapterUrlNext(trim(tieRuleChapterUrlNext.getText().toString()));
-        bookSourceBeanN.setRuleContentUrl(trim(tieRuleContentUrl.getText().toString()));
-        bookSourceBeanN.setRuleCoverUrl(trim(tieRuleCoverUrl.getText().toString()));
-        bookSourceBeanN.setRuleIntroduce(trim(tieRuleIntroduce.getText().toString()));
-        bookSourceBeanN.setRuleSearchAuthor(trim(tieRuleSearchAuthor.getText().toString()));
-        bookSourceBeanN.setRuleSearchCoverUrl(trim(tieRuleSearchCoverUrl.getText().toString()));
-        bookSourceBeanN.setRuleSearchKind(trim(tieRuleSearchKind.getText().toString()));
-        bookSourceBeanN.setRuleSearchLastChapter(trim(tieRuleSearchLastChapter.getText().toString()));
-        bookSourceBeanN.setRuleSearchList(trim(tieRuleSearchList.getText().toString()));
-        bookSourceBeanN.setRuleSearchName(trim(tieRuleSearchName.getText().toString()));
-        bookSourceBeanN.setRuleSearchNoteUrl(trim(tieRuleSearchNoteUrl.getText().toString()));
-        bookSourceBeanN.setRuleSearchUrl(trim(tieRuleSearchUrl.getText().toString()));
-        bookSourceBeanN.setHttpUserAgent(trim(tieHttpUserAgent.getText().toString()));
-        bookSourceBeanN.setRuleFindUrl(trim(tieRuleFindUrl.getText().toString()));
-        bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText().toString()));
+        bookSourceBeanN.setBookSourceType(trim(tieBookSourceType.getText()));
+        bookSourceBeanN.setBookSourceRuleType(trim(tieBookSourceRuleType.getText()));
+        bookSourceBeanN.setBookSourceName(trim(tieBookSourceName.getText()));
+        bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText()));
+        bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText()));
+        bookSourceBeanN.setCheckUrl(trim(tieCheckUrl.getText()));
+        bookSourceBeanN.setLoginUrl(trim(tieLoginUrl.getText()));
+        bookSourceBeanN.setRuleBookAuthor(trim(tieRuleBookAuthor.getText()));
+        bookSourceBeanN.setRuleBookContent(trim(tieRuleBookContent.getText()));
+        bookSourceBeanN.setRuleBookName(trim(tieRuleBookName.getText()));
+        bookSourceBeanN.setRuleLastChapter(trim(tieRuleLastChapter.getText()));
+        bookSourceBeanN.setRuleChapterList(trim(tieRuleChapterList.getText()));
+        bookSourceBeanN.setRuleChapterName(trim(tieRuleChapterName.getText()));
+        bookSourceBeanN.setRuleChapterUrl(trim(tieRuleChapterUrl.getText()));
+        bookSourceBeanN.setRuleChapterUrlNext(trim(tieRuleChapterUrlNext.getText()));
+        bookSourceBeanN.setRuleContentUrl(trim(tieRuleContentUrl.getText()));
+        bookSourceBeanN.setRuleCoverUrl(trim(tieRuleCoverUrl.getText()));
+        bookSourceBeanN.setRuleIntroduce(trim(tieRuleIntroduce.getText()));
+        bookSourceBeanN.setRuleSearchAuthor(trim(tieRuleSearchAuthor.getText()));
+        bookSourceBeanN.setRuleSearchCoverUrl(trim(tieRuleSearchCoverUrl.getText()));
+        bookSourceBeanN.setRuleSearchKind(trim(tieRuleSearchKind.getText()));
+        bookSourceBeanN.setRuleSearchLastChapter(trim(tieRuleSearchLastChapter.getText()));
+        bookSourceBeanN.setRuleSearchList(trim(tieRuleSearchList.getText()));
+        bookSourceBeanN.setRuleSearchName(trim(tieRuleSearchName.getText()));
+        bookSourceBeanN.setRuleSearchNoteUrl(trim(tieRuleSearchNoteUrl.getText()));
+        bookSourceBeanN.setRuleSearchUrl(trim(tieRuleSearchUrl.getText()));
+        bookSourceBeanN.setHttpUserAgent(trim(tieHttpUserAgent.getText()));
+        bookSourceBeanN.setRuleFindUrl(trim(tieRuleFindUrl.getText()));
+        bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText()));
         bookSourceBeanN.setEnable(enable);
         bookSourceBeanN.setSerialNumber(serialNumber);
         return bookSourceBeanN;
@@ -307,13 +328,23 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (bookSourceBean == null) {
             return;
         }
+        String bookType = trim(bookSourceBean.getBookSourceType());
+        if(!TextUtils.isEmpty(bookType)) {
+            tieBookSourceType.setText(bookType);
+        }
+        String ruleType = trim(bookSourceBean.getBookSourceRuleType());
+        if(!TextUtils.isEmpty(ruleType)){
+            tieBookSourceRuleType.setText(ruleType);
+        }
         tieBookSourceName.setText(trim(bookSourceBean.getBookSourceName()));
         tieBookSourceUrl.setText(trim(bookSourceBean.getBookSourceUrl()));
         tieBookSourceGroup.setText(trim(bookSourceBean.getBookSourceGroup()));
         tieCheckUrl.setText(trim(bookSourceBean.getCheckUrl()));
+        tieLoginUrl.setText(trim(bookSourceBean.getLoginUrl()));
         tieRuleBookAuthor.setText(trim(bookSourceBean.getRuleBookAuthor()));
         tieRuleBookContent.setText(trim(bookSourceBean.getRuleBookContent()));
         tieRuleBookName.setText(trim(bookSourceBean.getRuleBookName()));
+        tieRuleLastChapter.setText(trim(bookSourceBean.getRuleLastChapter()));
         tieRuleChapterList.setText(trim(bookSourceBean.getRuleChapterList()));
         tieRuleChapterName.setText(trim(bookSourceBean.getRuleChapterName()));
         tieRuleChapterUrl.setText(trim(bookSourceBean.getRuleChapterUrl()));
@@ -335,31 +366,35 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void setHint() {
-        tilBookSourceName.setHint("BookSourceName");
-        tilBookSourceUrl.setHint("BookSourceUrl");
-        tilBookSourceGroup.setHint("BookSourceGroup");
-        tilCheckUrl.setHint("CheckUrl");
-        tilRuleBookAuthor.setHint("RuleBookAuthor");
-        tilRuleBookContent.setHint("RuleBookContent");
-        tilRuleBookName.setHint("RuleBookName");
-        tilRuleChapterList.setHint("RuleChapterList");
-        tilRuleChapterName.setHint("RuleChapterName");
-        tilRuleChapterUrl.setHint("RuleChapterUrl");
-        tilRuleChapterUrlNext.setHint("RuleChapterUrlNext");
-        tilRuleContentUrl.setHint("RuleContentUrl");
-        tilRuleCoverUrl.setHint("RuleCoverUrl");
-        tilRuleIntroduce.setHint("RuleIntroduce");
-        tilRuleSearchAuthor.setHint("RuleSearchAuthor");
-        tilRuleSearchCoverUrl.setHint("RuleSearchCoverUrl");
-        tilRuleSearchKind.setHint("RuleSearchKind");
-        tilRuleSearchLastChapter.setHint("RuleSearchLastChapter");
-        tilRuleSearchList.setHint("RuleSearchList");
-        tilRuleSearchName.setHint("RuleSearchName");
-        tilRuleSearchNoteUrl.setHint("RuleSearchNoteUrl");
-        tilRuleSearchUrl.setHint("RuleSearchUrl");
-        tilHttpUserAgent.setHint("HttpUserAgent");
-        tilRuleFindUrl.setHint("RuleFindUrl");
-        tilRuleContentUrlNext.setHint("RuleContentUrlNext");
+        tilBookSourceType.setHint("书源类型");
+        tilBookSourceRuleType.setHint("书源规则类型");
+        tilBookSourceName.setHint("书源名称");
+        tilBookSourceUrl.setHint("书源URL");
+        tilBookSourceGroup.setHint("书源分组");
+        tilCheckUrl.setHint("书源校验URL");
+        tilLoginUrl.setHint("书源登录URL");
+        tilRuleBookAuthor.setHint("作者获取规则");
+        tilRuleBookContent.setHint("章节内容获取规则");
+        tilRuleBookName.setHint("书名获取规则");
+        tilRuleLastChapter.setHint("最新章节获取规则");
+        tilRuleChapterList.setHint("目录列表获取规则");
+        tilRuleChapterName.setHint("章节名称获取规则");
+        tilRuleChapterUrl.setHint("目录URL获取规则");
+        tilRuleChapterUrlNext.setHint("下一页目录URL获取规则");
+        tilRuleContentUrl.setHint("章节内容URL获取规则");
+        tilRuleCoverUrl.setHint("封面URL获取规则");
+        tilRuleIntroduce.setHint("简介获取规则");
+        tilRuleSearchAuthor.setHint("搜索结果作者获取规则");
+        tilRuleSearchCoverUrl.setHint("搜索结果封面获取规则");
+        tilRuleSearchKind.setHint("搜索分类获取规则");
+        tilRuleSearchLastChapter.setHint("搜索最新章节获取规则");
+        tilRuleSearchList.setHint("搜索结果列表获取规则");
+        tilRuleSearchName.setHint("搜索结果书名获取规则");
+        tilRuleSearchNoteUrl.setHint("搜索结果书籍URL获取规则");
+        tilRuleSearchUrl.setHint("搜索URL");
+        tilHttpUserAgent.setHint("用户代理");
+        tilRuleFindUrl.setHint("发现获取规则");
+        tilRuleContentUrlNext.setHint("下一页章节内容URL获取规则");
     }
 
     @SuppressLint("SetWorldReadable")

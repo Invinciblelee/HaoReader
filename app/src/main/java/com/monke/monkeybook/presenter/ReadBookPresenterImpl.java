@@ -22,14 +22,12 @@ import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.BookShelfDataHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
-import com.monke.monkeybook.model.source.My716;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
 import com.trello.rxlifecycle2.android.ActivityEvent;
@@ -91,10 +89,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             switch (bookShelf.getTag()) {
                 case BookShelfBean.LOCAL_TAG:
                     break;
-                case My716.TAG:
-                    ACache.get(mView.getContext()).put("useMy716", "False");
-                    mView.toast("已禁用My716书源");
-                    break;
                 default:
                     BookSourceBean bookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
                             .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookShelf.getTag())).unique();
@@ -150,6 +144,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void addDownload(int start, int end) {
         addToShelf(() -> {
             DownloadBookBean downloadBook = new DownloadBookBean();
+            downloadBook.setTag(bookShelf.getTag());
             downloadBook.setName(bookShelf.getBookInfoBean().getName());
             downloadBook.setNoteUrl(bookShelf.getNoteUrl());
             downloadBook.setCoverUrl(bookShelf.getBookInfoBean().getCoverUrl());
@@ -207,7 +202,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void saveBookmark(BookmarkBean bookmarkBean) {
         Observable.create((ObservableOnSubscribe<BookmarkBean>) e -> {
             BookshelfHelp.saveBookmark(bookmarkBean);
-            bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookmarkBean.getBookName()));
+            bookShelf.setBookmarkList(BookshelfHelp.queryBookmarkList(bookmarkBean.getBookName()));
             e.onNext(bookmarkBean);
             e.onComplete();
         })
@@ -220,7 +215,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void delBookmark(BookmarkBean bookmarkBean) {
         Observable.create((ObservableOnSubscribe<BookmarkBean>) e -> {
             BookshelfHelp.delBookmark(bookmarkBean);
-            bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookmarkBean.getBookName()));
+            bookShelf.setBookmarkList(BookshelfHelp.queryBookmarkList(bookmarkBean.getBookName()));
             e.onNext(bookmarkBean);
             e.onComplete();
         })
@@ -277,13 +272,13 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void checkBookInfo() {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             if (bookShelf.realChapterListEmpty()) {
-                bookShelf.setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
+                bookShelf.setChapterList(BookshelfHelp.queryChapterList(bookShelf.getNoteUrl()));
                 if (!bookShelf.realChapterListEmpty()) {
                     bookShelf.upChapterListSize();
                 }
             }
             if (bookShelf.realBookmarkListEmpty()) {
-                bookShelf.setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
+                bookShelf.setBookmarkList(BookshelfHelp.queryBookmarkList(bookShelf.getBookInfoBean().getName()));
             }
             bookShelf.setHasUpdate(false);
             e.onNext(true);

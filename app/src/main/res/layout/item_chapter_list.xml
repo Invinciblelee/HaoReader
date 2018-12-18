@@ -20,8 +20,8 @@
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/iv_indicator"
-            android:layout_width="13sp"
-            android:layout_height="13sp"
+            android:layout_width="12sp"
+            android:layout_height="12sp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="3dp"
             android:src="@drawable/ic_circle_red_24dp" />

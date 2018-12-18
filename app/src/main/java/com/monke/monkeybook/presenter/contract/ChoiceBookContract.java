@@ -38,8 +38,6 @@ public interface ChoiceBookContract {
         void addBookShelfFailed(String massage);
 
         ChoiceBookAdapter getSearchBookAdapter();
-
-        void startRefreshAnim();
     }
 
 

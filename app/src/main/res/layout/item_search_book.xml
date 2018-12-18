@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -75,12 +74,11 @@
             android:layout_weight="1" />
 
         <LinearLayout
+            android:id="@+id/ll_origin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="0dp"
-            android:paddingEnd="72dp">
+            android:orientation="horizontal">
 
             <com.monke.monkeybook.widget.ScaleDrawableTextView
                 android:id="@+id/tv_origin"
@@ -92,17 +90,18 @@
                 android:gravity="center_vertical"
                 android:includeFontPadding="false"
                 android:paddingStart="0dp"
-                android:paddingEnd="6dp"
+                android:paddingEnd="5dp"
                 android:singleLine="true"
                 android:text="@string/origin"
                 android:textColor="@color/tv_text_secondary"
                 android:textSize="13sp" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_origin_num"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="0dp"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:singleLine="true"
@@ -193,7 +192,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_add_shelf"
+        android:id="@+id/btn_search_book"
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"

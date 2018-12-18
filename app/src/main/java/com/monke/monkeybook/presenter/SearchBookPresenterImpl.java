@@ -35,9 +35,11 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     private String searchKey;
     private SearchBookModel searchBookModel;
 
-    public SearchBookPresenterImpl(Context context, boolean useMy716) {
+    public SearchBookPresenterImpl(Context context) {
         //搜索引擎初始化
-        searchBookModel = new SearchBookModel(context, useMy716, this);
+        searchBookModel = new SearchBookModel(context)
+                .listener(this)
+                .setup();
     }
 
     @Override
@@ -47,7 +49,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             keyWord = intent.getStringExtra("searchKey");
             if (keyWord == null && intent.getClipData() != null && intent.getClipData().getItemCount() > 0) {
                 ClipData.Item item = intent.getClipData().getItemAt(0);
-                keyWord = item.getText().toString();
+                keyWord = item.getText().toString().trim();
 
                 if (!TextUtils.isEmpty(keyWord)) {
                     int start = keyWord.indexOf("《");
@@ -175,11 +177,6 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     }
 
     @Override
-    public void setUseMy716(boolean useMy716) {
-        searchBookModel.setUseMy716(useMy716);
-    }
-
-    @Override
     public void toSearchBooks(String key) {
         if (key != null) {
             searchKey = key;
@@ -248,11 +245,5 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
     public void sourceListChange(Boolean change) {
         searchBookModel.notifySearchEngineChanged();
-    }
-
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.GET_ZFB_Hb)})
-    public void getZfbHB(Boolean getZfbHB) {
-        searchBookModel.setUseMy716(getZfbHB);
-        mView.upMenu();
     }
 }

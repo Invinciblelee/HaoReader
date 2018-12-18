@@ -186,7 +186,7 @@ public abstract class PageLoader {
         // 绘制标题的画笔
         mTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTitlePaint.setColor(mTextColor);
-        mTitlePaint.setTextSize(mTextSize);
+        mTitlePaint.setTextSize(mTextSize * 1.2f);
         mTitlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mTitlePaint.setTypeface(typeface);
         mTitlePaint.setFakeBoldText(true);
@@ -227,8 +227,8 @@ public abstract class PageLoader {
 
         setCurrentStatus(STATUS_LOADING);
 
-        BookshelfHelp.delChapter(BookshelfHelp.getCachePathName(mCollBook.getBookInfoBean()),
-                BookshelfHelp.getCacheFileName(mCurChapterPos, mCollBook.getChapter(mCurChapterPos).getDurChapterName()));
+        BookshelfHelp.delChapter(BookshelfHelp.getCacheFolderPath(mCollBook.getBookInfoBean()),
+                BookshelfHelp.getCacheFileName(mCollBook.getChapter(mCurChapterPos)));
         skipToChapter(mCurChapterPos);
     }
 
@@ -355,7 +355,7 @@ public abstract class PageLoader {
         // 设置画笔的字体大小
         mTextPaint.setTextSize(mTextSize);
         // 设置标题的字体大小
-        mTitlePaint.setTextSize(mTextSize);
+        mTitlePaint.setTextSize(mTextSize * 1.2f);
         // 取消缓存
         mPreChapter = null;
         mNextChapter = null;
@@ -606,6 +606,10 @@ public abstract class PageLoader {
      * 绘制页面
      */
     void drawPage(Bitmap bitmap, boolean willNotDraw) {
+        if(getCurrentStatus() == PageStatus.STATUS_FINISH && mCurChapter.isEmpty()){
+            return;
+        }
+
         drawBackground(mPageView.getBgBitmap());
         if (!willNotDraw) {
             drawContent(bitmap);
@@ -617,7 +621,6 @@ public abstract class PageLoader {
     /**
      * 绘制背景
      */
-    @SuppressLint("DefaultLocale")
     private void drawBackground(Bitmap bitmap) {
         Canvas canvas = new Canvas(bitmap);
         if (mSettingManager.bgIsColor()) {
@@ -678,8 +681,7 @@ public abstract class PageLoader {
             for (int i = 0; i < txtPage.titleLines; ++i) {
                 String line = txtPage.lines.get(i);
 
-                //计算文字显示的起始点
-                int start = (int) (mDisplayWidth - mTitlePaint.measureText(line)) / 2;
+                float start = (mDisplayWidth - mTitlePaint.measureText(line)) / 2;
                 //进行绘制
                 canvas.drawText(line, start, top, mTitlePaint);
 

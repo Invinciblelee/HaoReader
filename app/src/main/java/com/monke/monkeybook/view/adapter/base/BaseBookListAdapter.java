@@ -3,6 +3,7 @@ package com.monke.monkeybook.view.adapter.base;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.hwangjr.rxbus.RxBus;
@@ -156,8 +157,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         }
     }
 
-    public synchronized void replaceAll(List<BookShelfBean> newDataS, int bookshelfPx) {
-        this.bookshelfPx = bookshelfPx;
+    public synchronized void replaceAll(List<BookShelfBean> newDataS) {
         books.clear();
         if (null != newDataS && newDataS.size() > 0) {
             BookshelfHelp.order(newDataS, bookshelfPx);

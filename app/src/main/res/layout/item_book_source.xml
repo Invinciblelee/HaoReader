@@ -21,6 +21,8 @@
         android:clickable="false"
         android:focusable="false"
         android:singleLine="true"
+        android:paddingEnd="4dp"
+        android:paddingStart="0dp"
         android:text=""
         android:textColor="@color/tv_text_default" />
 

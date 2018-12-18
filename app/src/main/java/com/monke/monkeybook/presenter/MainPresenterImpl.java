@@ -251,7 +251,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<LocBookShelfBean>() {
                     @Override
                     public void onNext(LocBookShelfBean value) {
-                       if (value.getNew()) {
+                        if (value.getNew()) {
                             mView.addSuccess(value.getBookShelfBean());
                         }
                         mView.dismissHUD();
@@ -276,7 +276,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     @Override
                     public void onNext(BookShelfBean value) {
                         mView.dismissHUD();
-                        if (value.getBookInfoBean().getChapterUrl() == null) {
+                        if (value.getBookInfoBean().getChapterListUrl() == null) {
                             Toast.makeText(mView.getContext(), "添加书籍失败", Toast.LENGTH_SHORT).show();
                         } else {
                             //成功   //发送RxBus
@@ -311,6 +311,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     public void attachView(@NonNull IView iView) {
         super.attachView(iView);
         RxBus.get().register(this);
+        AudioBookPresenterImpl.setHasUpdated(false);
     }
 
     @Override

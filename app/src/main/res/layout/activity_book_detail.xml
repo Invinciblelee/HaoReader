@@ -93,16 +93,14 @@
                 <RadioButton
                     android:id="@+id/rb_zg"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/small_button_height"
                     android:layout_marginRight="4dp"
                     android:background="@drawable/selector_radio_book_group"
                     android:button="@null"
                     android:checked="true"
                     android:includeFontPadding="false"
                     android:paddingStart="4dp"
-                    android:paddingTop="1dp"
                     android:paddingEnd="4dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/group_zg"
                     android:textColor="@color/color_radio_book_group"
                     android:textSize="13sp"
@@ -111,15 +109,13 @@
                 <RadioButton
                     android:id="@+id/rb_yf"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/small_button_height"
                     android:layout_marginRight="4dp"
                     android:background="@drawable/selector_radio_book_group"
                     android:button="@null"
                     android:includeFontPadding="false"
                     android:paddingStart="4dp"
-                    android:paddingTop="1dp"
                     android:paddingEnd="4dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/group_yf"
                     android:textColor="@color/color_radio_book_group"
                     android:textSize="13sp"
@@ -128,14 +124,12 @@
                 <RadioButton
                     android:id="@+id/rb_wj"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/small_button_height"
                     android:background="@drawable/selector_radio_book_group"
                     android:button="@null"
                     android:includeFontPadding="false"
                     android:paddingStart="4dp"
-                    android:paddingTop="1dp"
                     android:paddingEnd="4dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/group_wj"
                     android:textColor="@color/color_radio_book_group"
                     android:textSize="13sp"
@@ -166,8 +160,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp">
+                       >
 
                         <FrameLayout
                             android:layout_width="0dp"
@@ -180,6 +173,8 @@
                                 android:id="@+id/tv_author"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
                                 android:drawableStart="@drawable/ic_author_black_24dp"
                                 android:drawablePadding="2dp"
                                 android:gravity="center_vertical"
@@ -195,16 +190,14 @@
                         <TextView
                             android:id="@+id/tv_update_switch"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/small_button_height"
                             android:background="@drawable/selector_tv_first_button"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center"
                             android:includeFontPadding="false"
                             android:paddingStart="4dp"
-                            android:paddingTop="1dp"
                             android:paddingEnd="4dp"
-                            android:paddingBottom="1dp"
                             android:text="@string/update_off"
                             android:textColor="@color/white"
                             android:textSize="13sp"
@@ -216,9 +209,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp">
+                        android:orientation="horizontal">
 
                         <com.monke.monkeybook.widget.ScaleDrawableTextView
                             android:id="@+id/tv_origin"
@@ -227,6 +218,8 @@
                             android:layout_weight="1"
                             android:drawableStart="@drawable/ic_source_black_24dp"
                             android:drawablePadding="2dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
                             android:ellipsize="end"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
@@ -240,16 +233,14 @@
                         <TextView
                             android:id="@+id/tv_change_origin"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/small_button_height"
                             android:background="@drawable/selector_tv_first_button"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center"
                             android:includeFontPadding="false"
                             android:paddingStart="4dp"
-                            android:paddingTop="1dp"
                             android:paddingEnd="4dp"
-                            android:paddingBottom="1dp"
                             android:text="@string/change_origin"
                             android:textColor="@color/white"
                             android:textSize="13sp"
@@ -263,8 +254,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp">
+                        >
 
                         <com.monke.monkeybook.widget.ScaleDrawableTextView
                             android:id="@+id/tv_chapter_last"
@@ -273,6 +263,8 @@
                             android:layout_weight="1"
                             android:drawableStart="@drawable/ic_book_last_black_24dp"
                             android:drawablePadding="2dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
                             android:ellipsize="end"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
@@ -286,8 +278,9 @@
 
                         <android.support.v7.widget.AppCompatImageView
                             android:id="@+id/iv_refresh"
-                            android:layout_width="18sp"
-                            android:layout_height="18sp"
+                            android:layout_width="@dimen/small_button_height"
+                            android:layout_height="@dimen/small_button_height"
+                            android:layout_marginTop="-0.5dp"
                             android:background="@drawable/selector_refresh_button"
                             android:contentDescription="@string/refresh"
                             android:padding="2dp"
@@ -301,14 +294,14 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
                         android:visibility="visible">
 
                         <com.monke.monkeybook.widget.ScaleDrawableTextView
                             android:id="@+id/tv_chapter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
                             android:drawableStart="@drawable/ic_history_black_24dp"
                             android:drawablePadding="2dp"
                             android:ellipsize="end"
@@ -328,7 +321,6 @@
                         android:lineSpacingExtra="2dp"
                         android:paddingTop="3dp"
                         android:paddingBottom="10dp"
-                        android:text="@string/book_intro"
                         android:textColor="@color/tv_text_summary"
                         android:textSize="14sp" />
 

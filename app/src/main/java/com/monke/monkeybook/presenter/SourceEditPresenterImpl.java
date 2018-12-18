@@ -6,6 +6,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
@@ -29,10 +31,13 @@ import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.BitmapUtil;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Objects;
 
@@ -93,15 +98,20 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
 
     @Override
     public void setText(String bookSourceStr) {
-        if(bookSourceStr.startsWith("{") && bookSourceStr.endsWith("}")) {
-            Gson gson = new Gson();
+        Gson gson = new Gson();
+        try {
             BookSourceBean bookSourceBean = gson.fromJson(bookSourceStr, BookSourceBean.class);
-            if(bookSourceBean != null) {
-                mView.setText(bookSourceBean);
-            }else {
-                mView.showSnackBar("数据格式不对");
+
+            if(!Arrays.asList(Constant.BOOK_TYPES).contains(bookSourceBean.getBookSourceType())){
+                bookSourceBean.setBookSourceType(Constant.BookType.TEXT);
             }
-        }else {
+
+            if(!Arrays.asList(Constant.RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())){
+                bookSourceBean.setBookSourceRuleType(Constant.RuleType.DEFAULT);
+            }
+
+            mView.setText(bookSourceBean);
+        }catch (Exception ignore){
             mView.showSnackBar("数据格式不对");
         }
     }

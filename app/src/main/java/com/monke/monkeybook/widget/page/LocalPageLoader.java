@@ -368,13 +368,13 @@ public class LocalPageLoader extends PageLoader {
                 List<ChapterListBean> chapterList = loadChapters();
                 e.onNext(chapterList);
                 e.onComplete();
-            }).subscribeOn(Schedulers.newThread())
+            }).subscribeOn(Schedulers.single())
                     .flatMap(chapterList -> {
                         getCollBook().setChapterList(chapterList);
                         getCollBook().upChapterListSize();
                         return Observable.just(getCollBook());
                     })
-                    .doOnNext(bookShelfBean -> {
+                    .doAfterNext(bookShelfBean -> {
                         // 存储章节到数据库
                         bookShelfBean.setHasUpdate(false);
                         bookShelfBean.setFinalRefreshData(System.currentTimeMillis());

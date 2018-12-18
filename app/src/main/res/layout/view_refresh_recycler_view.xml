@@ -15,7 +15,8 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="UselessParent">
@@ -26,12 +27,6 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:overScrollMode="never" />
-
-        <com.monke.monkeybook.widget.refreshview.RefreshProgressBar
-            android:id="@+id/rpb"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:visibility="visible" />
-    </FrameLayout>
+    </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
 
 </LinearLayout>

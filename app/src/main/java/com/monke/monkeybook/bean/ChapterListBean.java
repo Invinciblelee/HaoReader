@@ -33,12 +33,11 @@ public class ChapterListBean implements Parcelable {
     private Integer start;
     //章节内容在文章中的终止位置(本地)
     private Integer end;
-    private String bookName;
 
 
-    @Generated(hash = 256175124)
+    @Generated(hash = 1930034204)
     public ChapterListBean(String noteUrl, Integer durChapterIndex, String durChapterUrl,
-            String durChapterName, String tag, Integer start, Integer end, String bookName) {
+            String durChapterName, String tag, Integer start, Integer end) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
@@ -46,7 +45,6 @@ public class ChapterListBean implements Parcelable {
         this.tag = tag;
         this.start = start;
         this.end = end;
-        this.bookName = bookName;
     }
 
     @Generated(hash = 1096893365)
@@ -73,7 +71,6 @@ public class ChapterListBean implements Parcelable {
         } else {
             end = in.readInt();
         }
-        bookName = in.readString();
     }
 
     @Override
@@ -100,7 +97,6 @@ public class ChapterListBean implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(end);
         }
-        dest.writeString(bookName);
     }
 
     @Override
@@ -129,7 +125,6 @@ public class ChapterListBean implements Parcelable {
         chapterListBean.tag = tag;
         chapterListBean.start = start;
         chapterListBean.end = end;
-        chapterListBean.bookName = bookName;
         return chapterListBean;
     }
 
@@ -191,28 +186,12 @@ public class ChapterListBean implements Parcelable {
         return this.start == null ? 0 : this.start;
     }
 
-    public void setStart(int start) {
-        this.start = start;
-    }
-
     public int getEnd() {
         return this.end == null ? 0 : this.end;
     }
 
-    public void setEnd(int end) {
-        this.end = end;
-    }
-
     public void setDurChapterIndex(Integer durChapterIndex) {
         this.durChapterIndex = durChapterIndex;
-    }
-
-    public String getBookName() {
-        return bookName;
-    }
-
-    public void setBookName(String bookName) {
-        this.bookName = bookName;
     }
 
     public void setStart(Integer start) {

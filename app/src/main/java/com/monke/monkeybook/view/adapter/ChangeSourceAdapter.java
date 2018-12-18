@@ -101,7 +101,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
             }
 
             if (!noSelected) {
-                myViewHolder.ivChecked.setChecked(item.getIsCurrentSource());
+                myViewHolder.ivChecked.setChecked(item.isCurrentSource());
                 if (myViewHolder.ivChecked.isChecked()) {
                     lastSelectIndex = realPosition;
                 }

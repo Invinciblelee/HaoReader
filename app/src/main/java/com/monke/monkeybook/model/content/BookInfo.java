@@ -1,29 +1,22 @@
 package com.monke.monkeybook.model.content;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.help.FormatWebText;
-import com.monke.monkeybook.model.analyzeRule.AnalyzeElement;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
+import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
+import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
 
-import static android.text.TextUtils.isEmpty;
-
 public class BookInfo {
-    private String tag;
-    private String name;
-    private BookSourceBean bookSourceBean;
+    private OutAnalyzer analyzer;
 
     BookInfo(String tag, String name, BookSourceBean bookSourceBean) {
-        this.tag = tag;
-        this.name = name;
-        this.bookSourceBean = bookSourceBean;
+        this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                .tag(tag).name(name).bookSource(bookSourceBean));
     }
 
     public Observable<BookShelfBean> analyzeBookInfo(String s, final BookShelfBean bookShelfBean) {
@@ -33,34 +26,11 @@ public class BookInfo {
                 e.onComplete();
                 return;
             }
-            bookShelfBean.setTag(tag);
-            BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
-            if (bookInfoBean == null) {
-                bookInfoBean = new BookInfoBean();
-            }
-            bookInfoBean.setNoteUrl(bookShelfBean.getNoteUrl());   //id
-            bookInfoBean.setTag(tag);
-            Document doc = Jsoup.parse(s);
-            AnalyzeElement analyzeElement = new AnalyzeElement(doc, bookShelfBean.getNoteUrl());
-            if (isEmpty(bookInfoBean.getCoverUrl())) {
-                bookInfoBean.setCoverUrl(analyzeElement.getResultUrl(bookSourceBean.getRuleCoverUrl()));
-            }
-            if (isEmpty(bookInfoBean.getName())) {
-                bookInfoBean.setName(analyzeElement.getResultContent(bookSourceBean.getRuleBookName()));
-            }
-            if (isEmpty(bookInfoBean.getAuthor())) {
-                bookInfoBean.setAuthor(FormatWebText.getAuthor(analyzeElement.getResultContent(bookSourceBean.getRuleBookAuthor())));
-            }
-            bookInfoBean.setIntroduce(analyzeElement.getResultContent(bookSourceBean.getRuleIntroduce()));
-            String chapterUrl = analyzeElement.getResultUrl(bookSourceBean.getRuleChapterUrl());
-            if (isEmpty(chapterUrl)) {
-                bookInfoBean.setChapterUrl(bookShelfBean.getNoteUrl());
-            } else {
-                bookInfoBean.setChapterUrl(chapterUrl);
-            }
-            bookInfoBean.setOrigin(name);
-            bookShelfBean.setBookInfoBean(bookInfoBean);
-            e.onNext(bookShelfBean);
+            bookShelfBean.setTag(analyzer.getConfig().getTag());
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("book", bookShelfBean);
+            analyzer.apply(analyzer.newConfig().baseURL(bookShelfBean.getNoteUrl()).extras(bundle));
+            e.onNext(analyzer.getDelegate().getBook(s));
             e.onComplete();
         });
     }

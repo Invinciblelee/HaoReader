@@ -3,6 +3,8 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.monke.monkeybook.help.Constant;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -23,7 +25,10 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String bookSourceUrl;
     private String bookSourceName;
     private String bookSourceGroup;
+    private String bookSourceType = Constant.BookType.TEXT;
+    private String bookSourceRuleType = Constant.RuleType.DEFAULT;
     private String checkUrl;
+    private String loginUrl;
     @OrderBy
     private int serialNumber;
     @OrderBy
@@ -40,6 +45,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleSearchNoteUrl;
     private String ruleBookName;
     private String ruleBookAuthor;
+    private String ruleLastChapter;
     private String ruleChapterUrl;
     private String ruleChapterUrlNext;
     private String ruleCoverUrl;
@@ -51,62 +57,18 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleBookContent;
     private String httpUserAgent;
 
-
-    @Transient
-    public static final Creator<BookSourceBean> CREATOR = new Creator<BookSourceBean>() {
-        @Override
-        public BookSourceBean createFromParcel(Parcel in) {
-            return new BookSourceBean(in);
-        }
-
-        @Override
-        public BookSourceBean[] newArray(int size) {
-            return new BookSourceBean[size];
-        }
-    };
-
-    protected BookSourceBean(Parcel in) {
-        bookSourceUrl = in.readString();
-        bookSourceName = in.readString();
-        bookSourceGroup = in.readString();
-        checkUrl = in.readString();
-        serialNumber = in.readInt();
-        weight = in.readInt();
-        enable = in.readByte() != 0;
-
-        ruleFindUrl = in.readString();
-        ruleSearchUrl = in.readString();
-        ruleSearchList = in.readString();
-        ruleSearchName = in.readString();
-        ruleSearchAuthor = in.readString();
-        ruleSearchKind = in.readString();
-        ruleSearchLastChapter = in.readString();
-        ruleSearchCoverUrl = in.readString();
-        ruleSearchNoteUrl = in.readString();
-        ruleBookName = in.readString();
-        ruleBookAuthor = in.readString();
-        ruleChapterUrl = in.readString();
-        ruleChapterUrlNext = in.readString();
-        ruleCoverUrl = in.readString();
-        ruleIntroduce = in.readString();
-        ruleChapterList = in.readString();
-        ruleChapterName = in.readString();
-        ruleContentUrl = in.readString();
-        ruleChapterUrlNext = in.readString();
-        ruleBookContent = in.readString();
-        httpUserAgent = in.readString();
-    }
-
-    @Generated(hash = 1575328468)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String checkUrl, int serialNumber, int weight,
-                          boolean enable, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor,
-                          String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName,
-                          String ruleBookAuthor, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList,
-                          String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+    @Generated(hash = 732891766)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, String loginUrl, int serialNumber, int weight,
+            boolean enable, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter,
+            String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl,
+            String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
+        this.bookSourceType = bookSourceType;
+        this.bookSourceRuleType = bookSourceRuleType;
         this.checkUrl = checkUrl;
+        this.loginUrl = loginUrl;
         this.serialNumber = serialNumber;
         this.weight = weight;
         this.enable = enable;
@@ -121,6 +83,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchNoteUrl = ruleSearchNoteUrl;
         this.ruleBookName = ruleBookName;
         this.ruleBookAuthor = ruleBookAuthor;
+        this.ruleLastChapter = ruleLastChapter;
         this.ruleChapterUrl = ruleChapterUrl;
         this.ruleChapterUrlNext = ruleChapterUrlNext;
         this.ruleCoverUrl = ruleCoverUrl;
@@ -136,54 +99,108 @@ public class BookSourceBean implements Parcelable, Cloneable {
     public BookSourceBean() {
     }
 
+
+    protected BookSourceBean(Parcel in) {
+        bookSourceUrl = in.readString();
+        bookSourceName = in.readString();
+        bookSourceGroup = in.readString();
+        bookSourceType = in.readString();
+        bookSourceRuleType = in.readString();
+        checkUrl = in.readString();
+        loginUrl = in.readString();
+        serialNumber = in.readInt();
+        weight = in.readInt();
+        enable = in.readByte() != 0;
+        ruleFindUrl = in.readString();
+        ruleSearchUrl = in.readString();
+        ruleSearchList = in.readString();
+        ruleSearchName = in.readString();
+        ruleSearchAuthor = in.readString();
+        ruleLastChapter = in.readString();
+        ruleSearchKind = in.readString();
+        ruleSearchLastChapter = in.readString();
+        ruleSearchCoverUrl = in.readString();
+        ruleSearchNoteUrl = in.readString();
+        ruleBookName = in.readString();
+        ruleBookAuthor = in.readString();
+        ruleChapterUrl = in.readString();
+        ruleChapterUrlNext = in.readString();
+        ruleCoverUrl = in.readString();
+        ruleIntroduce = in.readString();
+        ruleChapterList = in.readString();
+        ruleChapterName = in.readString();
+        ruleContentUrl = in.readString();
+        ruleContentUrlNext = in.readString();
+        ruleBookContent = in.readString();
+        httpUserAgent = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(bookSourceUrl);
+        dest.writeString(bookSourceName);
+        dest.writeString(bookSourceGroup);
+        dest.writeString(bookSourceType);
+        dest.writeString(bookSourceRuleType);
+        dest.writeString(checkUrl);
+        dest.writeString(loginUrl);
+        dest.writeInt(serialNumber);
+        dest.writeInt(weight);
+        dest.writeByte((byte) (enable ? 1 : 0));
+        dest.writeString(ruleFindUrl);
+        dest.writeString(ruleSearchUrl);
+        dest.writeString(ruleSearchList);
+        dest.writeString(ruleSearchName);
+        dest.writeString(ruleSearchAuthor);
+        dest.writeString(ruleLastChapter);
+        dest.writeString(ruleSearchKind);
+        dest.writeString(ruleSearchLastChapter);
+        dest.writeString(ruleSearchCoverUrl);
+        dest.writeString(ruleSearchNoteUrl);
+        dest.writeString(ruleBookName);
+        dest.writeString(ruleBookAuthor);
+        dest.writeString(ruleChapterUrl);
+        dest.writeString(ruleChapterUrlNext);
+        dest.writeString(ruleCoverUrl);
+        dest.writeString(ruleIntroduce);
+        dest.writeString(ruleChapterList);
+        dest.writeString(ruleChapterName);
+        dest.writeString(ruleContentUrl);
+        dest.writeString(ruleContentUrlNext);
+        dest.writeString(ruleBookContent);
+        dest.writeString(httpUserAgent);
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(bookSourceUrl);
-        parcel.writeString(bookSourceName);
-        parcel.writeString(bookSourceGroup);
-        parcel.writeString(checkUrl);
-        parcel.writeInt(serialNumber);
-        parcel.writeInt(weight);
-        parcel.writeByte((byte) (enable ? 1 : 0));
+    public static final Creator<BookSourceBean> CREATOR = new Creator<BookSourceBean>() {
+        @Override
+        public BookSourceBean createFromParcel(Parcel in) {
+            return new BookSourceBean(in);
+        }
 
-        parcel.writeString(ruleFindUrl);
-        parcel.writeString(ruleSearchUrl);
-        parcel.writeString(ruleSearchList);
-        parcel.writeString(ruleSearchName);
-        parcel.writeString(ruleSearchAuthor);
-        parcel.writeString(ruleSearchKind);
-        parcel.writeString(ruleSearchLastChapter);
-        parcel.writeString(ruleSearchCoverUrl);
-        parcel.writeString(ruleSearchNoteUrl);
-        parcel.writeString(ruleBookName);
-        parcel.writeString(ruleBookAuthor);
-        parcel.writeString(ruleChapterUrl);
-        parcel.writeString(ruleChapterUrlNext);
-        parcel.writeString(ruleCoverUrl);
-        parcel.writeString(ruleIntroduce);
-        parcel.writeString(ruleChapterList);
-        parcel.writeString(ruleChapterName);
-        parcel.writeString(ruleContentUrl);
-        parcel.writeString(ruleChapterUrlNext);
-        parcel.writeString(ruleBookContent);
-        parcel.writeString(httpUserAgent);
-    }
+        @Override
+        public BookSourceBean[] newArray(int size) {
+            return new BookSourceBean[size];
+        }
+    };
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof BookSourceBean) {
             BookSourceBean bs = (BookSourceBean) obj;
-            return stringEquals(bookSourceUrl, bs.bookSourceUrl)
+            return stringEquals(bookSourceType, bs.bookSourceType)
+                    && stringEquals(bookSourceRuleType, bs.bookSourceRuleType)
+                    && stringEquals(bookSourceUrl, bs.bookSourceUrl)
                     && stringEquals(bookSourceName, bs.bookSourceName)
                     && stringEquals(bookSourceGroup, bs.bookSourceGroup)
                     && stringEquals(ruleFindUrl, bs.ruleFindUrl)
                     && stringEquals(ruleBookName, bs.ruleBookName)
                     && stringEquals(ruleBookAuthor, bs.ruleBookAuthor)
+                    && stringEquals(ruleLastChapter, bs.ruleLastChapter)
                     && stringEquals(ruleChapterUrl, bs.ruleChapterUrl)
                     && stringEquals(ruleChapterUrlNext, ruleChapterUrlNext)
                     && stringEquals(ruleCoverUrl, bs.ruleCoverUrl)
@@ -202,7 +219,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(ruleSearchCoverUrl, bs.ruleSearchCoverUrl)
                     && stringEquals(ruleSearchNoteUrl, bs.ruleSearchNoteUrl)
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
-                    && stringEquals(checkUrl, bs.checkUrl);
+                    && stringEquals(checkUrl, bs.checkUrl)
+                    && stringEquals(loginUrl, bs.loginUrl);
         }
         return false;
     }
@@ -227,6 +245,22 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setBookSourceName(String bookSourceName) {
         this.bookSourceName = bookSourceName;
+    }
+
+    public String getBookSourceType() {
+        return bookSourceType == null ? Constant.BookType.TEXT : bookSourceType;
+    }
+
+    public void setBookSourceType(@Constant.BookType String bookSourceType) {
+        this.bookSourceType = bookSourceType;
+    }
+
+    public String getBookSourceRuleType() {
+        return bookSourceRuleType == null ? Constant.RuleType.DEFAULT : bookSourceRuleType;
+    }
+
+    public void setBookSourceRuleType(@Constant.RuleType String bookSourceRuleType) {
+        this.bookSourceRuleType = bookSourceRuleType;
     }
 
     public String getBookSourceUrl() {
@@ -267,6 +301,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setRuleBookAuthor(String ruleBookAutoher) {
         this.ruleBookAuthor = ruleBookAutoher;
+    }
+
+    public String getRuleLastChapter() {
+        return ruleLastChapter;
+    }
+
+    public void setRuleLastChapter(String ruleLastChapter) {
+        this.ruleLastChapter = ruleLastChapter;
     }
 
     public String getRuleChapterUrl() {
@@ -419,6 +461,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setCheckUrl(String checkUrl) {
         this.checkUrl = checkUrl;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
     }
 
     public String getRuleChapterUrlNext() {

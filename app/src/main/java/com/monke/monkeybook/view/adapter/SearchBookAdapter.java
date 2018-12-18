@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.lang.ref.WeakReference;
@@ -52,7 +54,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         final MyViewHolder myViewHolder = (MyViewHolder) holder;
         final SearchBookBean item = searchBooks.get(realPosition);
         Activity activity = activityRef.get();
-        if (activity != null && !activity.isFinishing()) {
+        if (!activity.isFinishing()) {
             Glide.with(activity)
                     .load(item.getCoverUrl())
                     .apply(new RequestOptions()
@@ -62,7 +64,15 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                             .error(R.drawable.img_cover_default))
                     .into(myViewHolder.ivCover);
         }
-        myViewHolder.tvName.setText(item.getName());
+
+        StringBuilder builder = new StringBuilder(item.getName());
+        String bookType = item.getBookType();
+        if(TextUtils.equals(bookType, Constant.BookType.AUDIO)){
+            builder.insert(0, activity.getString(R.string.book_audio));
+        }else if(TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)){
+            builder.insert(0, activity.getString(R.string.book_download));
+        }
+        myViewHolder.tvName.setText(builder.toString());
 
         if (!TextUtils.isEmpty(item.getAuthor())) {
             myViewHolder.tvAuthor.setText(item.getAuthor());
@@ -167,7 +177,8 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                     Boolean hasSame = false;
                     for (int i = 0, size = copyDataS.size(); i < size; i++) {
                         SearchBookBean searchBook = copyDataS.get(i);
-                        if (TextUtils.equals(temp.getName(), searchBook.getName())
+                        if (TextUtils.equals(temp.getBookType(), searchBook.getBookType())
+                                && TextUtils.equals(temp.getName(), searchBook.getName())
                                 && TextUtils.equals(temp.getAuthor(), searchBook.getAuthor())) {
                             hasSame = true;
                             searchBook.addTag(temp.getTag());
@@ -222,13 +233,9 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         if (searchBooks == null || searchBooks.isEmpty()) {
             return;
         }
-        try {
-            Glide.with(activityRef.get()).onDestroy();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        int previousSize = searchBooks.size();
         searchBooks.clear();
-        notifyItemRangeRemoved(0, searchBooks.size());
+        notifyItemRangeRemoved(0, previousSize);
     }
 
     private void sortSearchBooks(List<SearchBookBean> searchBookBeans, String keyWord) {

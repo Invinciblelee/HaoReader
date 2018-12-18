@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_blur_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:foreground="@color/light_translucent" />
+
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:layout_marginTop="80dp"
+        android:text="赘婿-224章"
+        android:textSize="18sp"
+        android:textColor="@color/dark_white"
+        android:textStyle="bold" />
+
+    <com.monke.monkeybook.widget.SquareImageView
+        android:id="@+id/iv_circle_cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:transitionName="image_cover"
+        android:layout_below="@id/tv_title"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="64dp"
+        android:outlineProvider="background"
+        android:background="@drawable/shape_bg_circle_image_tp"
+        android:elevation="4dp"
+        android:padding="8dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layout_below="@id/iv_circle_cover"
+        android:layout_above="@id/ll_controls"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_current_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/dark_white" />
+
+        <android.support.v7.widget.AppCompatSeekBar
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:thumb="@drawable/shape_thumb"
+            android:max="100"
+            android:progress="50"
+            android:progressBackgroundTint="@color/dark_white"
+            android:progressTint="@color/colorAccentTranslucent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/dark_white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="24dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="24dp">
+
+
+        <com.monke.monkeybook.widget.ScaleDrawableTextView
+            android:id="@+id/btn_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_timer_white_24dp"
+            android:gravity="center_horizontal"
+            android:drawablePadding="2dp"
+            android:text="@string/set_timer"
+            android:textColor="@color/dark_white"
+            android:textSize="12sp"
+            app:drawableColor="@color/dark_white"
+            app:drawableSize="28dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.monke.monkeybook.widget.SquareImageView
+            android:id="@+id/btn_previous"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_skip_previous_black_24dp"
+            app:tint="@color/dark_white" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.monke.monkeybook.widget.SquareImageView
+            android:id="@+id/btn_pause"
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_pause_circle_outline_black_24dp"
+            app:tint="@color/dark_white" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.monke.monkeybook.widget.SquareImageView
+            android:id="@+id/btn_next"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_skip_next_black_24dp"
+            app:tint="@color/dark_white" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.monke.monkeybook.widget.ScaleDrawableTextView
+            android:id="@+id/btn_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_format_list_bulleted_black_24dp"
+            android:gravity="center_horizontal"
+            android:drawablePadding="1dp"
+            android:text="@string/category"
+            android:textColor="@color/dark_white"
+            android:textSize="12sp"
+            app:drawableColor="@color/dark_white"
+            app:drawableSize="28dp" />
+    </LinearLayout>
+</RelativeLayout>

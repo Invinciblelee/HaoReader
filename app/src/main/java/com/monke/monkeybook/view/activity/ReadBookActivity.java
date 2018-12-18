@@ -150,7 +150,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     private boolean autoPage = false;
     private boolean isOrWillShow = false;
-    private boolean isWindowAnimTranslucent;
+    private boolean isWindowAnimTranslucent = false;
 
     private final Handler mHandler = new Handler();
     private Runnable keepScreenRunnable;
@@ -189,17 +189,16 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (savedInstanceState != null) {
             aloudStatus = savedInstanceState.getInt("aloudStatus");
             isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
+        }else{
+            if (getIntent().getBooleanExtra("fromDetail", false)) {//解决透明activity没有动画
+                getWindow().setWindowAnimations(R.style.Animation_Activity_Translucent);
+                isWindowAnimTranslucent = true;
+            } else {
+                getWindow().setWindowAnimations(R.style.Animation_Activity);
+            }
         }
         readBookControl.initPageConfiguration();
         screenTimeOut = getResources().getIntArray(R.array.screen_time_out_value)[readBookControl.getScreenTimeOut()];
-
-        if (getIntent().getBooleanExtra("fromDetail", false)) {//解决透明activity没有动画
-            getWindow().setWindowAnimations(R.style.Animation_Activity_Translucent);
-            isWindowAnimTranslucent = true;
-        } else {
-            getWindow().setWindowAnimations(R.style.Animation_Activity);
-            isWindowAnimTranslucent = false;
-        }
         super.onCreate(savedInstanceState);
     }
 
@@ -410,7 +409,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
 
         updateTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
-        showHideView();
+        showHideViews();
     }
 
     @Override
@@ -427,7 +426,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
     }
 
-    private void showHideView() {
+    private void showHideViews() {
         if (mPresenter.getBookShelf() == null
                 || mPresenter.getBookShelf().realChapterListEmpty()
                 || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
@@ -735,7 +734,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mPresenter.getBookShelf().upChapterListSize();
         mPresenter.getBookShelf().upDurChapterName();
         mPresenter.getBookShelf().upLastChapterName();
-        showHideView();
+        showHideViews();
     }
 
     @Override
@@ -1027,8 +1026,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.action_copy_text:
                 popMenuOut();
                 if (mPageLoader != null) {
-                    ensureProgressHUD();
-                    moDialogHUD.showText(mPageLoader.getCurrentContent());
+                    String content = mPageLoader.getCurrentContent();
+                    if(!TextUtils.isEmpty(content)) {
+                        ensureProgressHUD();
+                        moDialogHUD.showText(content);
+                    }
                 }
                 break;
             case R.id.disable_book_source:

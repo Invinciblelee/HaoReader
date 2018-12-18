@@ -14,7 +14,7 @@
     <com.monke.monkeybook.widget.CoverCardView
         android:id="@+id/cover_card"
         style="@style/AppTheme.CardView.Image"
-        android:layout_width="80dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.AppCompatImageView
@@ -108,42 +108,6 @@
             android:text="@string/read_dur_progress"
             android:textColor="@color/tv_text_secondary"
             android:textSize="13sp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.monke.mprogressbar.MHorProgressBar
-                android:id="@+id/mpb_durProgress"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/progress_bar_height"
-                android:layout_marginStart="1dp"
-                android:layout_weight="1"
-                app:bgdrawable="@color/progress_back_color"
-                app:cantouch="false"
-                app:fontdrawable="@color/colorAccent"
-                tools:ignore="NestedWeights,RtlHardcoded" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/tv_current_chapter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:paddingStart="2dp"
-                android:paddingEnd="0dp"
-                android:textColor="@color/progress_text_color"
-                android:textSize="8sp"
-                tools:ignore="SmallSp" />
-
-        </LinearLayout>
 
         <Space
             android:layout_width="match_parent"

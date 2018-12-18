@@ -56,6 +56,21 @@ public class FileHelp {
         return file;
     }
 
+    public static synchronized File getFile(String dir, String filePath) {
+        File file = new File(dir, filePath);
+        try {
+            if (!file.exists()) {
+                //创建父类文件夹
+                getFolder(file.getParent());
+                //创建文件
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
     //获取Cache文件夹
     public static String getCachePath() {
         if (isSdCardExist()) {

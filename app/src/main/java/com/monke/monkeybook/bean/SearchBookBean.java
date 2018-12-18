@@ -6,12 +6,10 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.ChapterHelp;
-import com.monke.monkeybook.model.source.My716;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
@@ -31,6 +29,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     private String lastChapter;
     private String introduce; //简介
     private String chapterUrl;//目录URL
+    private String bookType;
     private Long addTime;
     @Transient
     private int weight;
@@ -52,10 +51,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     }
 
 
-    @Generated(hash = 1805065778)
+    @Generated(hash = 1546670250)
     public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag,
-                          String kind, String origin, String desc, String lastChapter, String introduce,
-                          String chapterUrl, Long addTime) {
+            String kind, String origin, String desc, String lastChapter, String introduce,
+            String chapterUrl, String bookType, Long addTime) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -67,6 +66,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.lastChapter = lastChapter;
         this.introduce = introduce;
         this.chapterUrl = chapterUrl;
+        this.bookType = bookType;
         this.addTime = addTime;
     }
 
@@ -94,6 +94,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         isCurrentSource = in.readByte() != 0;
         originNum = in.readInt();
         tags = in.createStringArrayList();
+        bookType = in.readString();
     }
 
     @Override
@@ -121,6 +122,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         dest.writeByte((byte) (isCurrentSource ? 1 : 0));
         dest.writeInt(originNum);
         dest.writeStringList(tags);
+        dest.writeString(bookType);
     }
 
     @Override
@@ -243,14 +245,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         originNum = this.tags.size();
     }
 
-    public Boolean getCurrentSource() {
-        return isCurrentSource;
-    }
-
-    public void setCurrentSource(Boolean currentSource) {
-        isCurrentSource = currentSource;
-    }
-
     public String getDesc() {
         return desc;
     }
@@ -259,7 +253,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.desc = desc;
     }
 
-    public Boolean getIsCurrentSource() {
+    public Boolean isCurrentSource() {
         return this.isCurrentSource;
     }
 
@@ -288,6 +282,14 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.chapterUrl = chapterUrl;
     }
 
+    public String getBookType() {
+        return bookType;
+    }
+
+    public void setBookType(String bookType) {
+        this.bookType = bookType;
+    }
+
     public int getWeight() {
         return weight;
     }
@@ -307,13 +309,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     @Override
     public int compareTo(SearchBookBean o) {
         int result;
-        if (this.getIsCurrentSource()) {
+        if (this.isCurrentSource()) {
             return -1;
-        } else if (o.getIsCurrentSource()) {
-            return 1;
-        } else if (TextUtils.equals(this.getTag(), My716.TAG)) {
-            return -1;
-        } else if (TextUtils.equals(o.getTag(), My716.TAG)) {
+        } else if (o.isCurrentSource()) {
             return 1;
         } else if ((result = Integer.compare(o.getLastChapterNum(), this.getLastChapterNum())) != 0) {
             return result;

@@ -61,8 +61,8 @@ public class NetPageLoader extends PageLoader {
                 mChapterDisp.dispose();
             }
             WebBookModelImpl.getInstance().getChapterList(getCollBook())
-                    .subscribeOn(Schedulers.newThread())
-                    .doOnNext(bookShelfBean -> {
+                    .subscribeOn(Schedulers.single())
+                    .doAfterNext(bookShelfBean -> {
                         // 存储章节到数据库
                         bookShelfBean.setHasUpdate(false);
                         bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
@@ -108,8 +108,8 @@ public class NetPageLoader extends PageLoader {
 
     @Override
     BufferedReader getChapterReader(ChapterListBean chapter) throws Exception {
-        File file = BookshelfHelp.getBookFile(BookshelfHelp.getCachePathName(getCollBook().getBookInfoBean()),
-                BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName()));
+        File file = BookshelfHelp.getBookFile(BookshelfHelp.getCacheFolderPath(getCollBook().getBookInfoBean()),
+                BookshelfHelp.getCacheFileName(chapter));
         if (!file.exists()) return null;
         Reader reader = new FileReader(file);
         return new BufferedReader(reader);
@@ -117,8 +117,7 @@ public class NetPageLoader extends PageLoader {
 
     @Override
     boolean hasChapterData(ChapterListBean chapter) {
-        return BookshelfHelp.isChapterCached(BookshelfHelp.getCachePathName(getCollBook().getBookInfoBean()),
-                BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName()));
+        return BookshelfHelp.isChapterCached(getCollBook().getBookInfoBean(), chapter);
     }
 
     @Override

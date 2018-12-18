@@ -38,13 +38,14 @@
                 app:tabIndicatorColor="@color/colorAccent"
                 app:tabIndicatorHeight="2.0dp"
                 app:tabMode="fixed"
+                app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:tabSelectedTextColor="@color/colorAccent"
                 app:tabTextColor="@color/menu_color_default">
 
                 <android.support.design.widget.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/table_of_contents" />
+                    android:text="@string/table_of_contents"/>
 
                 <android.support.design.widget.TabItem
                     android:layout_width="match_parent"
@@ -80,20 +81,23 @@
             android:id="@+id/ll_chapter_base_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stateListAnimator="@animator/design_bottombar_state_list_animator"
             android:layout_alignParentBottom="true"
             android:background="@color/colorPrimary"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:outlineProvider="background"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:stateListAnimator="@animator/design_bottombar_state_list_animator">
 
             <TextView
                 android:id="@+id/tv_current_chapter_info"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
                 android:ellipsize="middle"
+                android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:singleLine="true"

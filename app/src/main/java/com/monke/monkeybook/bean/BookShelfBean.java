@@ -22,8 +22,6 @@ public class BookShelfBean implements Parcelable {
     public static final String LOCAL_TAG = "loc_book";
     @Transient
     private boolean isLoading;
-    @Transient
-    private boolean isQueuing = true;
 
     @Id
     private String noteUrl; //对应BookInfoBean noteUrl;
@@ -35,7 +33,7 @@ public class BookShelfBean implements Parcelable {
     private String tag;
     private Integer serialNumber = 0; //手动排序
     private Long finalRefreshData = System.currentTimeMillis();  //章节最后更新时间
-    private Integer group = 0;
+    private Integer group = -1;
     private String durChapterName;
     private String lastChapterName;
     private Integer chapterListSize = 0;
@@ -75,7 +73,6 @@ public class BookShelfBean implements Parcelable {
 
     protected BookShelfBean(Parcel in) {
         isLoading = in.readByte() != 0;
-        isQueuing = in.readByte() != 0;
         noteUrl = in.readString();
         if (in.readByte() == 0) {
             durChapter = null;
@@ -132,7 +129,6 @@ public class BookShelfBean implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (isLoading ? 1 : 0));
-        dest.writeByte((byte) (isQueuing ? 1 : 0));
         dest.writeString(noteUrl);
         if (durChapter == null) {
             dest.writeByte((byte) 0);
@@ -323,16 +319,8 @@ public class BookShelfBean implements Parcelable {
         isLoading = loading;
     }
 
-    public boolean isQueuing() {
-        return isQueuing;
-    }
-
-    public void setQueuing(boolean queuing) {
-        this.isQueuing = queuing;
-    }
-
     public int getGroup() {
-        return this.group == null ? 0 : this.group;
+        return this.group == null ? -1 : this.group;
     }
 
     public void setDurChapter(int durChapter) {
@@ -473,4 +461,5 @@ public class BookShelfBean implements Parcelable {
     public void setDurChapterPage(Integer durChapterPage) {
         this.durChapterPage = durChapterPage;
     }
+
 }

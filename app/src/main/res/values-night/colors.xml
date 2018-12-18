@@ -25,7 +25,7 @@
     <color name="tv_text_summary">#999999</color>
     <color name="menu_color_default">#f3f3f3</color>
 
-    <color name="textfield_search_color">#331a1a1a</color>
+    <color name="textfield_search_color">#3f1a1a1a</color>
 
     <color name="tv_text_button_nor">#303030</color>
     <color name="tv_text_button_disable">#434343</color>

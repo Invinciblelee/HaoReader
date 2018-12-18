@@ -164,9 +164,24 @@
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
 
+        <activity
+            android:name=".view.activity.AudioBookActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity" />
+
+        <activity
+            android:name=".view.activity.AudioBookPlayActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity" />
+
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />
         <service android:name=".service.CheckSourceService" />
+        <service android:name=".service.AudioBookPlayService" />
 
         <receiver android:name=".service.MediaButtonIntentReceiver">
             <intent-filter>

@@ -9,6 +9,8 @@ public interface IDownloadTask {
 
     int getId();
 
+    long getWhen();
+
     void startDownload(Scheduler scheduler, int threadsNum);
 
     void stopDownload();
@@ -21,7 +23,7 @@ public interface IDownloadTask {
 
     void onDownloadPrepared(DownloadBookBean downloadBook);
 
-    void onDownloadProgress(ChapterListBean chapterBean);
+    void onDownloadProgress(String bookName, ChapterListBean chapterBean);
 
     void onDownloadChange(DownloadBookBean downloadBook);
 

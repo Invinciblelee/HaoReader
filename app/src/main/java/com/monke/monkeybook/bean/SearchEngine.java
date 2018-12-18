@@ -7,6 +7,7 @@ public class SearchEngine {
     private String tag;
     private boolean hasMore;
     private int page;
+    private long start;
 
     public SearchEngine(String tag) {
         this.tag = tag;
@@ -26,12 +27,17 @@ public class SearchEngine {
         return hasMore;
     }
 
+    public long getStart() {
+        return start;
+    }
+
     public int getPage() {
         return page;
     }
 
     public void searchBegin() {
         this.page += 1;
+        this.start = System.currentTimeMillis();
     }
 
     public void searchEnd(boolean hasMore) {

@@ -11,8 +11,6 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -22,7 +20,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -222,32 +219,7 @@ public class FastScroller extends LinearLayout {
         }
 
 
-        if (viewGroup instanceof ConstraintLayout) {
-
-            ConstraintSet constraintSet = new ConstraintSet();
-
-            @IdRes int layoutId = getId();
-
-
-            constraintSet.clone((ConstraintLayout) viewGroup);
-
-            constraintSet.connect(layoutId, ConstraintSet.TOP, recyclerViewId, ConstraintSet.TOP);
-
-            constraintSet.connect(layoutId, ConstraintSet.BOTTOM, recyclerViewId, ConstraintSet.BOTTOM);
-
-            constraintSet.connect(layoutId, ConstraintSet.END, recyclerViewId, ConstraintSet.END);
-
-            constraintSet.applyTo((ConstraintLayout) viewGroup);
-
-
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) getLayoutParams();
-
-            layoutParams.setMargins(0, marginTop, 0, marginBottom);
-
-            setLayoutParams(layoutParams);
-
-
-        } else if (viewGroup instanceof CoordinatorLayout) {
+       if (viewGroup instanceof CoordinatorLayout) {
 
             CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) getLayoutParams();
 
@@ -318,13 +290,13 @@ public class FastScroller extends LinearLayout {
 
             mRecyclerView.addOnScrollListener(mScrollListener);
 
-           getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-               @Override
-               public void onGlobalLayout() {
-                   getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                   setViewPositions(getScrollProportion(mRecyclerView));
-               }
-           });
+            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    setViewPositions(getScrollProportion(mRecyclerView));
+                }
+            });
         }
 
     }
@@ -723,12 +695,12 @@ public class FastScroller extends LinearLayout {
     private void setViewPositions(float y) {
 
         mBubbleHeight = mBubbleView.getHeight();
-        if(mBubbleHeight == 0){
+        if (mBubbleHeight == 0) {
             mBubbleHeight = getResources().getDimensionPixelSize(R.dimen.fastscroll_bubble_size);
         }
 
         mHandleHeight = mHandleView.getHeight();
-        if(mHandleHeight == 0){
+        if (mHandleHeight == 0) {
             mHandleHeight = getResources().getDimensionPixelSize(R.dimen.fastscroll_handle_height);
         }
 
@@ -947,7 +919,7 @@ public class FastScroller extends LinearLayout {
         mScrollbar = findViewById(R.id.fastscroll_scrollbar);
 
 
-        @ColorInt int bubbleColor = Color.rgb(130,166,245);
+        @ColorInt int bubbleColor = Color.rgb(130, 166, 245);
 
         @ColorInt int handleColor = Color.rgb(130, 166, 245);
 

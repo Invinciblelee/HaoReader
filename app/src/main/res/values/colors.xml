@@ -23,6 +23,7 @@
     <color name="light_blue">#039BE5</color>
     <color name="light_translucent">#23000000</color>
     <color name="common_gray">#EEEEEE</color>
+    <color name="dark_white">#f3f3f3</color>
 
     <color name="background">#f4f4f4</color>
     <color name="card_background">#ffffff</color>
@@ -31,6 +32,7 @@
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#199589</color>
+    <color name="colorAccentTranslucent">#66199589</color>
 
     <color name="btn_bg_press">#dddddd</color>
     <color name="btn_bg_press_2">#cfcfcf</color>

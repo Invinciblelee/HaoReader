@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RefreshProgressBar">
-        <attr name="max_progress" format="integer"/>
-        <attr name="dur_progress" format="integer"/>
-        <attr name="second_dur_progress" format="dimension"/>
-        <attr name="second_max_progress" format="dimension"/>
-        <attr name="bg_color" format="color"/>
-        <attr name="second_color" format="color"/>
-        <attr name="font_color" format="color"/>
-        <attr name="speed" format="dimension"/>
-    </declare-styleable>
-
     <declare-styleable name="TagFlowLayout">
         <attr name="auto_select_effect" format="boolean" />
         <attr name="max_select" format="integer" />
@@ -48,7 +37,7 @@
 
     <attr name="appInsetForeground" format="reference"/>
     <attr name="appConsumeInsets" format="boolean"/>
-    
+
     <declare-styleable name="ScrimInsetsFrameLayout">
         <attr name="appInsetForeground"/>
         <attr name="appConsumeInsets"/>
@@ -68,5 +57,16 @@
         <attr name="drawableScale" format="reference|float"/>
         <attr name="drawableColor" format="reference"/>
         <attr name="drawableSize" format="reference|dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="strokeWidth" format="dimension|reference"/>
+        <attr name="strokeColor" format="color|reference"/>
+        <attr name="maxProgress" format="float|reference"/>
+        <attr name="progress" format="float|reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="TextInputSpinner">
+        <attr name="android:entries"/>
     </declare-styleable>
 </resources>

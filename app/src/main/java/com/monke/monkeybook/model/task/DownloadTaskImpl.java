@@ -1,10 +1,12 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
@@ -29,11 +31,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public abstract class DownloadTaskImpl implements IDownloadTask {
 
-    private int id;
+    private final int id;
+    private final long when;
 
     private boolean isDownloading = false;
 
     private DownloadBookBean downloadBook;
+    private BookInfoBean bookInfo;
     private List<ChapterListBean> downloadChapters;
 
     private CompositeDisposable disposables;
@@ -41,6 +45,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     public DownloadTaskImpl(int id, DownloadBookBean downloadBook) {
         this.id = id;
         this.downloadBook = downloadBook;
+        this.when = System.currentTimeMillis();
         downloadChapters = new ArrayList<>();
         disposables = new CompositeDisposable();
 
@@ -48,10 +53,11 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             BookShelfBean book = DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().queryBuilder()
                     .where(BookShelfBeanDao.Properties.NoteUrl.eq(downloadBook.getNoteUrl())).build().unique();
             if (book != null) {
+                bookInfo = book.getBookInfoBean();
                 if (!book.realChapterListEmpty()) {
                     for (int i = downloadBook.getStart(); i <= downloadBook.getEnd(); i++) {
                         ChapterListBean chapter = book.getChapter(i);
-                        if (!chapter.getHasCache(book.getBookInfoBean())) {
+                        if (!chapter.getHasCache(bookInfo)) {
                             downloadChapters.add(chapter);
                         }
                     }
@@ -73,7 +79,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                     public void onNext(DownloadBookBean downloadBook) {
                         if (downloadBook.isValid()) {
                             onDownloadPrepared(downloadBook);
-                            whenProgress(downloadChapters.get(0));
+                            whenProgress(downloadBook.getName(), downloadChapters.get(0));
                         } else {
                             onDownloadComplete(downloadBook);
                         }
@@ -90,6 +96,11 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public long getWhen() {
+        return when;
     }
 
     @Override
@@ -152,6 +163,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         onDownloadError(downloadBook);
                     }
                 });
@@ -162,10 +174,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             ChapterListBean next = null;
             List<ChapterListBean> temp = new ArrayList<>(downloadChapters);
             for (ChapterListBean data : temp) {
-                boolean cached = BookshelfHelp.isChapterCached(
-                        BookshelfHelp.getCachePathName(data),
-                        BookshelfHelp.getCacheFileName(data.getDurChapterIndex(), data.getDurChapterName()));
-                if (cached) {
+                if (data.getHasCache(bookInfo)) {
                     removeFromDownloadList(data);
                 } else {
                     next = data;
@@ -173,23 +182,21 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                 }
             }
             emitter.onNext(next == null ? new ChapterListBean() : next);
+            emitter.onComplete();
         });
     }
 
     private void downloading(ChapterListBean chapter, Scheduler scheduler) {
-        whenProgress(chapter);
+        whenProgress(downloadBook.getName(), chapter);
         Observable.create((ObservableOnSubscribe<ChapterListBean>) e -> {
-            if (!BookshelfHelp.isChapterCached(
-                    BookshelfHelp.getCachePathName(chapter),
-                    BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName())
-            )) {
+            if (!BookshelfHelp.isChapterCached(downloadBook, chapter)) {
                 e.onNext(chapter);
             } else {
                 e.onError(new Exception("cached"));
             }
             e.onComplete();
         })
-                .flatMap(result -> WebBookModelImpl.getInstance().getBookContent(scheduler, chapter))
+                .flatMap(result -> WebBookModelImpl.getInstance().getBookContent(scheduler, bookInfo, chapter))
                 .timeout(20, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookContentBean>() {
@@ -208,6 +215,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         removeFromDownloadList(chapter);
                         if (TextUtils.equals(e.getMessage(), "cached")) {
                             whenNext(scheduler, false);
@@ -256,10 +264,10 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
         }
     }
 
-    private void whenProgress(ChapterListBean chapterBean) {
+    private void whenProgress(String bookName, ChapterListBean chapterBean) {
         if (!isDownloading) {
             return;
         }
-        onDownloadProgress(chapterBean);
+        onDownloadProgress(bookName, chapterBean);
     }
 }

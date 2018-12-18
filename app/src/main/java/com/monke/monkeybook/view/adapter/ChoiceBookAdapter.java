@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.text.DecimalFormat;
@@ -25,7 +26,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     private List<SearchBookBean> searchBooks;
 
     public interface OnItemClickListener {
-        void clickAddShelf(View clickView, int position, SearchBookBean searchBookBean);
+        void clickToSearch(View clickView, int position, SearchBookBean searchBookBean);
 
         void clickItem(View animView, int position, SearchBookBean searchBookBean);
     }
@@ -109,8 +110,10 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         });
         myViewHolder.tvAddShelf.setOnClickListener(v -> {
             if (itemClickListener != null)
-                itemClickListener.clickAddShelf(myViewHolder.tvAddShelf, realPosition, item);
+                itemClickListener.clickToSearch(myViewHolder.tvAddShelf, realPosition, item);
         });
+
+        myViewHolder.originView.setPadding(0, 0, ScreenUtils.dpToPx(72), 0);
     }
 
     @Override
@@ -133,6 +136,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvLasted;
         TextView tvAddShelf;
         TextView tvOrigin;
+        View originView;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -142,9 +146,10 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             tvState = itemView.findViewById(R.id.tv_state);
             tvWords = itemView.findViewById(R.id.tv_words);
             tvLasted = itemView.findViewById(R.id.tv_lasted);
-            tvAddShelf = itemView.findViewById(R.id.tv_add_shelf);
+            tvAddShelf = itemView.findViewById(R.id.btn_search_book);
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
+            originView = itemView.findViewById(R.id.ll_origin);
             tvAddShelf.setVisibility(View.VISIBLE);
         }
     }

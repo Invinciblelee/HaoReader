@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.util.Log;
-
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -32,13 +30,13 @@ import static android.text.TextUtils.isEmpty;
 /**
  * 默认检索规则
  */
-public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel {
+public class DefaultModel extends BaseModelImpl implements IStationBookModel {
     private String tag;
     private String name;
     private BookSourceBean bookSourceBean;
     private Map<String, String> headerMap = AnalyzeHeaders.getMap(null);
 
-    private DefaultModelImpl(String tag) {
+    private DefaultModel(String tag) {
         this.tag = tag;
         try {
             URL url = new URL(tag);
@@ -48,16 +46,15 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
         }
     }
 
-    public static DefaultModelImpl newInstance(String tag) {
-        return new DefaultModelImpl(tag);
+    public static DefaultModel newInstance(String tag) {
+        return new DefaultModel(tag);
     }
 
     private Boolean initBookSourceBean() {
         if (bookSourceBean == null) {
-            List<BookSourceBean> bookSourceBeans = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).build().list();
-            if (bookSourceBeans != null && bookSourceBeans.size() > 0) {
-                bookSourceBean = bookSourceBeans.get(0);
+            bookSourceBean = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                    .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
+            if (bookSourceBean != null) {
                 name = bookSourceBean.getBookSourceName();
                 headerMap = AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent());
                 return true;
@@ -188,17 +185,17 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
                 emitter.onComplete();
             });
         }
-        BookChapter bookChapter = new BookChapter(tag, bookSourceBean);
+        BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         return createService(tag, IHttpGetApi.class)
-                .getWebContent(bookShelfBean.getBookInfoBean().getChapterUrl(), headerMap)
-                .flatMap(response -> bookChapter.analyzeChapterList(response.body(), bookShelfBean));
+                .getWebContent(bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap)
+                .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean.getBookInfoBean().getChapterListUrl()));
     }
 
     /**
      * 获取正文
      */
     @Override
-    public Observable<BookContentBean> getBookContent(final Scheduler scheduler, final String durChapterUrl, final int durChapterIndex) {
+    public Observable<BookContentBean> getBookContent(final Scheduler scheduler, final ChapterListBean chapter) {
         if (!initBookSourceBean()) {
             return Observable.create(emitter -> {
                 emitter.onNext(new BookContentBean());
@@ -207,15 +204,15 @@ public class DefaultModelImpl extends BaseModelImpl implements IStationBookModel
         }
         BookContent bookContent = new BookContent(tag, bookSourceBean);
         if (bookContent.isAJAX()) {
-            return getAjaxHtml(MApplication.getInstance(), durChapterUrl, AnalyzeHeaders.getUserAgent(bookSourceBean.getHttpUserAgent()))
+            return getAjaxHtml(MApplication.getInstance(), chapter.getDurChapterUrl(), AnalyzeHeaders.getUserAgent(bookSourceBean.getHttpUserAgent()))
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(scheduler)
-                    .flatMap(response -> bookContent.analyzeBookContent(response, durChapterUrl, durChapterIndex));
+                    .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
         } else {
             return createService(tag, IHttpGetApi.class)
-                    .getWebContent(durChapterUrl, headerMap)
+                    .getWebContent(chapter.getDurChapterUrl(), headerMap)
                     .subscribeOn(scheduler)
-                    .flatMap(response -> bookContent.analyzeBookContent(response.body(), durChapterUrl, durChapterIndex));
+                    .flatMap(response -> bookContent.analyzeBookContent(response.body(), chapter));
         }
     }
 

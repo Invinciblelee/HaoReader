@@ -1,8 +1,6 @@
 package com.monke.monkeybook.help;
 
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -17,6 +15,9 @@ public class ChapterHelp {
     };
 
     private static String SPECIAL_PATTERN = "第.*?[卷篇集].*?第.*[章节回].*?";
+
+    private ChapterHelp() {
+    }
 
     public static int guessChapterNum(String name) {
         if (TextUtils.isEmpty(name) || name.matches(SPECIAL_PATTERN)) {
@@ -39,7 +40,7 @@ public class ChapterHelp {
 
         chapterName = StringUtils.fullToHalf(chapterName);
 
-        if(chapterName.matches(SPECIAL_PATTERN)){
+        if (chapterName.matches(SPECIAL_PATTERN)) {
             return chapterName;
         }
 
@@ -48,7 +49,7 @@ public class ChapterHelp {
             Matcher matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
                 String SIMPLE_CHAPTER_PATTERN = "^第.*\\d+.*[章节回]";//eg. 第20-24章
-                if(matcher.group(0).matches(SIMPLE_CHAPTER_PATTERN)){
+                if (matcher.group(0).matches(SIMPLE_CHAPTER_PATTERN)) {
                     return matcher.replaceFirst("$1 ");
                 }
                 int num = StringUtils.stringToInt(matcher.group(2));

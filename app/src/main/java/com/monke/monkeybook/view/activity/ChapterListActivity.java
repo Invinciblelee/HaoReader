@@ -24,6 +24,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
+import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
 import com.monke.monkeybook.widget.AppCompat;
@@ -149,6 +150,7 @@ public class ChapterListActivity extends MBaseActivity {
                 layoutManager.scrollToPositionWithOffset(bookShelf.getDurChapter(), 0);
             }
         });
+
     }
 
     @Override
@@ -218,8 +220,10 @@ public class ChapterListActivity extends MBaseActivity {
                     data.putExtra("chapter", index);
                     data.putExtra("page", page);
                     setResult(RESULT_OK, data);
+                    ChapterListActivity.super.finish();
+                } else {
+                    finish();
                 }
-                finish();
             }
 
             @Override
@@ -229,7 +233,7 @@ public class ChapterListActivity extends MBaseActivity {
                 data.putExtra("what", tabPosition);
                 data.putExtra("bookmark", bookmarkBean);
                 setResult(RESULT_OK, data);
-                finish();
+                ChapterListActivity.super.finish();
             }
         });
         rvList.setAdapter(chapterListAdapter);
@@ -249,10 +253,11 @@ public class ChapterListActivity extends MBaseActivity {
 
     private void updateChapterInfo() {
         if (bookShelf != null) {
+            String durChapterName = ChapterHelp.getFormatChapterName(bookShelf.getDurChapterName());
             if (chapterListAdapter.getItemCount() == 0) {
-                tvChapterInfo.setText(bookShelf.getDurChapterName());
+                tvChapterInfo.setText(durChapterName);
             } else {
-                tvChapterInfo.setText(String.format(Locale.getDefault(), "%s (%d/%d章)", bookShelf.getDurChapterName(), bookShelf.getDurChapter() + 1, bookShelf.getChapterListSize()));
+                tvChapterInfo.setText(String.format(Locale.getDefault(), "%s (%d/%d章)", durChapterName, bookShelf.getDurChapter() + 1, bookShelf.getChapterListSize()));
             }
         }
     }

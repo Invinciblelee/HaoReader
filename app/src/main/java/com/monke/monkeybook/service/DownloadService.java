@@ -55,17 +55,7 @@ public class DownloadService extends Service {
     public void onCreate() {
         super.onCreate();
         isRunning = true;
-        //创建 Notification.Builder 对象
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdDownload)
-                .setSmallIcon(R.drawable.ic_download_white_24dp)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setOngoing(false)
-                .setContentTitle(getString(R.string.download_offline_t))
-                .setContentText(getString(R.string.download_offline_s));
-        //发送通知
         managerCompat = NotificationManagerCompat.from(this);
-        managerCompat.notify(notificationId, builder.build());
-
         threadsNum = AppConfigHelper.get(this).getInt(this.getString(R.string.pk_threads_num), 4);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
@@ -133,8 +123,8 @@ public class DownloadService extends Service {
             }
 
             @Override
-            public void onDownloadProgress(ChapterListBean chapterBean) {
-                isProgress(getId(), chapterBean);
+            public void onDownloadProgress(String bookName, ChapterListBean chapterBean) {
+                isProgress(getId(), getWhen(), bookName, chapterBean);
             }
 
             @Override
@@ -272,14 +262,14 @@ public class DownloadService extends Service {
         Toast.makeText(DownloadService.this, msg, Toast.LENGTH_LONG).show();
     }
 
-    private PendingIntent getChancelPendingIntent(String noteUrl) {
+    private PendingIntent getRemovePendingIntent(String noteUrl) {
         Intent intent = new Intent(this, DownloadService.class);
         intent.setAction(DownloadService.removeDownloadAction);
         intent.putExtra("noteUrl", noteUrl);
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private void isProgress(int notificationId, ChapterListBean downloadChapterBean) {
+    private void isProgress(int notificationId, long when, String bookName, ChapterListBean downloadChapterBean) {
         if (!isRunning) {
             return;
         }
@@ -297,12 +287,14 @@ public class DownloadService extends Service {
                 .setSmallIcon(R.drawable.ic_download_white_24dp)
                 //通知栏大图标
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setOngoing(true)
                 //点击通知后自动清除
-                .setAutoCancel(true)
-                .setContentTitle("正在下载：" + downloadChapterBean.getBookName())
+                .setAutoCancel(false)
+                .setWhen(when)//位置不会更换
+                .setContentTitle("正在下载：" + bookName)
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);
-        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getChancelPendingIntent(downloadChapterBean.getNoteUrl()));
+        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(downloadChapterBean.getNoteUrl()));
         //发送通知
         managerCompat.notify(notificationId, builder.build());
     }

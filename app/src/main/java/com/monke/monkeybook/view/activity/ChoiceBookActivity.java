@@ -72,10 +72,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
         View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
             searchBookAdapter.replaceAll(null);
-            //刷新失败 ，重试
-            mPresenter.initPage();
-            mPresenter.toSearchBooks(null);
-            startRefreshAnim();
+            rfRvSearchBooks.startRefresh();
         });
         rfRvSearchBooks.setNoDataAndrRefreshErrorView(LayoutInflater.from(this).inflate(R.layout.view_searchbook_no_data, null),
                 viewRefreshError);
@@ -106,7 +103,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     protected void bindEvent() {
         searchBookAdapter.setItemClickListener(new ChoiceBookAdapter.OnItemClickListener() {
             @Override
-            public void clickAddShelf(View clickView, int position, SearchBookBean searchBookBean) {
+            public void clickToSearch(View clickView, int position, SearchBookBean searchBookBean) {
                 SearchBookActivity.startByKey(ChoiceBookActivity.this, searchBookBean.getName());
             }
 
@@ -116,12 +113,12 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
             }
         });
 
-        rfRvSearchBooks.setBaseRefreshListener(() -> {
+        rfRvSearchBooks.setOnRefreshListener(() -> {
             mPresenter.initPage();
             mPresenter.toSearchBooks(null);
-            startRefreshAnim();
         });
-        rfRvSearchBooks.setLoadMoreListener(new OnLoadMoreListener() {
+
+        rfRvSearchBooks.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void startLoadMore() {
                 mPresenter.toSearchBooks(null);
@@ -196,12 +193,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     }
 
     @Override
-    public void startRefreshAnim() {
-        rfRvSearchBooks.startRefresh();
-    }
-
-    @Override
     protected void firstRequest() {
-        super.firstRequest();
+        rfRvSearchBooks.startRefresh();
     }
 }

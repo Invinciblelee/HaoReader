@@ -2,6 +2,7 @@
 package com.monke.monkeybook.model.impl;
 
 import com.monke.monkeybook.bean.BookContentBean;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterListBean;
@@ -26,7 +27,7 @@ public interface IWebBookModel {
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(Scheduler scheduler, ChapterListBean chapter);
+    Observable<BookContentBean> getBookContent(Scheduler scheduler, BookInfoBean bookInfo, ChapterListBean chapter);
 
     /**
      * 其他站点资源整合搜索

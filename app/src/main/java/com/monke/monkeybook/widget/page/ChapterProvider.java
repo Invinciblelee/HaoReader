@@ -174,12 +174,12 @@ class ChapterProvider {
         return txtChapter;
     }
 
-    synchronized void loadChapterContent(int chapterIndex) {
+    void loadChapterContent(int chapterIndex) {
         final BookShelfBean bookShelf = pageLoader.getCollBook();
         if (NetworkUtil.isNetworkAvailable() && null != bookShelf && !bookShelf.realChapterListEmpty()) {
             final ChapterListBean chapter = bookShelf.getChapter(chapterIndex);
             if (!pageLoader.hasChapterData(chapter) && addDownloading(chapter.getDurChapterUrl())) {
-                WebBookModelImpl.getInstance().getBookContent(scheduler, chapter)
+                WebBookModelImpl.getInstance().getBookContent(scheduler, bookShelf.getBookInfoBean(), chapter)
                         .compose(pageLoader.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                         .timeout(20, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())

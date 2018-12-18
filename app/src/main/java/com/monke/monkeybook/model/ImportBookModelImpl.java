@@ -59,7 +59,7 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
     private LocBookShelfBean getBookForTxtFile(File file) {
         //判断文件是否存在
         boolean isNew = false;
-        BookShelfBean bookInfo = BookshelfHelp.getSimpleBookByUrl(file.getAbsolutePath());
+        BookShelfBean bookInfo = BookshelfHelp.querySimpleBookByUrl(file.getAbsolutePath());
         if (bookInfo == null) {
             isNew = true;
             bookInfo = new BookShelfBean();
@@ -93,7 +93,7 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
 //        //判断文件是否存在
 //        boolean isNew = false;
 //        BookShelfBean bookShelfBean;
-//        bookShelfBean = BookshelfHelp.getBookByUrl(file.getAbsolutePath());
+//        bookShelfBean = BookshelfHelp.queryBookByUrl(file.getAbsolutePath());
 //        if (bookShelfBean == null) {
 //            isNew = true;
 //            bookShelfBean = new BookShelfBean();

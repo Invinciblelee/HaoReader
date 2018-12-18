@@ -1,6 +1,8 @@
 package com.monke.monkeybook.widget.modialog;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,7 +19,6 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchBookBeanDao;
-import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtil;
@@ -25,6 +26,7 @@ import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.activity.BookInfoActivity;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +54,16 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     private BookInfoBean bookInfo;
     private boolean selectCover;
 
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private final Runnable searchTask = new Runnable() {
+        @Override
+        public void run() {
+            rvSource.startRefresh(false);
+            searchBookModel.startSearch(bookInfo.getName());
+        }
+    };
+
     public static ChangeSourceView newInstance(BaseActivity activity, MoDialogView moDialogView) {
         return new ChangeSourceView(activity, moDialogView);
     }
@@ -73,11 +85,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
                 viewRefreshError);
 
         moDialogView.setOnDismissListener(() -> searchBookModel.shutdownSearch());
-
-        searchBookModel = new SearchBookModel(activity, !TextUtils.equals(ACache.get(activity).getAsString("useMy716"), "False"), this);
-        searchBookModel.onlyOnePage();
     }
-
 
     @Override
     public void searchSourceEmpty() {
@@ -112,19 +120,24 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     void showChangeSource(BookInfoBean bookInfoBean, OnClickSource onClickSource) {
         this.onClickSource = onClickSource;
         this.bookInfo = bookInfoBean;
+        searchBookModel = new SearchBookModel(context)
+                .onlyOnePage()
+                .setSearchBookType(bookInfo.getBookType())
+                .listener(this)
+                .setup();
         if (TextUtils.isEmpty(bookInfo.getAuthor())) {
             atvTitle.setText(bookInfo.getName());
         } else {
             atvTitle.setText(String.format("%s(%s)", bookInfo.getName(), bookInfo.getAuthor()));
         }
-        rvSource.startRefresh();
-        moDialogView.post(this::getSearchBookInDb);
+        getSearchBookInDb();
+        rvSource.startRefresh(false);
     }
 
     private void selectSource(SearchBookBean searchBook) {
         moDialogView.getMoDialogHUD().dismiss();
         if (!selectCover) {
-            if (!searchBook.getIsCurrentSource()) {
+            if (!searchBook.isCurrentSource()) {
                 onClickSource.changeSource(searchBook);
                 incrementSourceWeightBySelection(searchBook);
             }
@@ -136,7 +149,9 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     private void getSearchBookInDb() {
         Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
             List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().queryBuilder()
-                    .where(SearchBookBeanDao.Properties.Name.eq(bookInfo.getName()), SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
+                    .where(SearchBookBeanDao.Properties.BookType.eq(bookInfo.getBookType()),
+                            SearchBookBeanDao.Properties.Name.eq(bookInfo.getName()),
+                            SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
             e.onNext(ListUtil.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getTag().compareTo(o2.getTag())));
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -169,10 +184,10 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     }
 
     private void reSearchBook() {
-        rvSource.startRefresh();
         DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().deleteInTx(adapter.getSearchBookBeans());
         adapter.reSetSourceAdapter();
-        searchBookModel.startSearch(bookInfo.getName());
+        handler.removeCallbacks(searchTask);
+        handler.post(searchTask);
     }
 
     private synchronized void addSearchBook(List<SearchBookBean> searchBookBeans) {
@@ -185,7 +200,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
                     searchBookBean.setIsCurrentSource(false);
                 }
             }
-            rvSource.post(() -> adapter.addAllSourceAdapter(newDataS));
+            handler.post(() -> adapter.addAllSourceAdapter(newDataS));
         }
     }
 
@@ -200,7 +215,8 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     }
 
     private boolean test(SearchBookBean searchBookBean, BookInfoBean book) {
-        return TextUtils.equals(searchBookBean.getName(), book.getName())
+        return TextUtils.equals(searchBookBean.getBookType(), book.getBookType())
+                && TextUtils.equals(searchBookBean.getName(), book.getName())
                 && TextUtils.equals(searchBookBean.getAuthor(), book.getAuthor());
     }
 
@@ -215,7 +231,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
         rvSource = moDialogView.findViewById(R.id.rf_rv_change_source);
         ibtStop.setVisibility(View.INVISIBLE);
 
-        rvSource.setBaseRefreshListener(this::reSearchBook);
+        rvSource.setOnRefreshListener(this::reSearchBook);
         ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
     }
 

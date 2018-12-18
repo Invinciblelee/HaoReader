@@ -10,8 +10,8 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.impl.ISearchTask;
-import com.monke.monkeybook.model.source.My716;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
 
 import java.util.ArrayList;
@@ -32,8 +32,8 @@ import io.reactivex.schedulers.Schedulers;
 public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private int threadsNum;
     private int searchPageCount;
+    private String searchBookType;
     private SearchListener searchListener;
-    private boolean useMy716;
     private boolean searchEngineChanged = false;
 
     private ExecutorService executor;
@@ -44,15 +44,12 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     private SearchIterator searchIterator;
 
-    public SearchBookModel(Context context, boolean useMy716, SearchListener searchListener) {
-        this.useMy716 = useMy716;
-        this.searchListener = searchListener;
+    public SearchBookModel(Context context) {
         AppConfigHelper helper = AppConfigHelper.get(context);
         threadsNum = helper.getInt(context.getString(R.string.pk_threads_num), 6);
         searchPageCount = helper.getInt(context.getString(R.string.pk_search_page_count), 1);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
-        initSearchEngineS();
     }
 
     /**
@@ -63,14 +60,13 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchEngineS.clear();
         }
 
-       if (useMy716 && Objects.equals(ACache.get(MApplication.getInstance()).getAsString("getZfbHb"), "True")) {
-            searchEngineS.add(new SearchEngine(My716.TAG));
-        }
-
         List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
         if (bookSourceBeans != null) {
             SearchEngine searchEngine;
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
+                if(searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)){
+                    continue;
+                }
                 searchEngine = new SearchEngine(bookSourceBean.getBookSourceUrl());
                 searchEngineS.add(searchEngine);
             }
@@ -82,6 +78,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (TextUtils.isEmpty(query)) {
             return;
         }
+
+        clearSearch();
 
         if (searchEngineChanged || searchEngineS.isEmpty()) {
             initSearchEngineS();
@@ -100,7 +98,6 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     }
 
     private void search(String query) {
-        searchTasks.clear();
         searchIterator = new SearchIterator(searchEngineS, searchPageCount);
 
         for (int i = 0, size = Math.min(searchEngineS.size(), threadsNum); i < size; i++) {
@@ -108,34 +105,46 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
     }
 
-    public void stopSearch() {
-        if (isLoading()) {
-            searchListener.searchBookFinish();
-
+    private boolean clearSearch(){
+        if(isLoading()) {
             for (ISearchTask searchTask : searchTasks) {
                 searchTask.stopSearch();
             }
             searchTasks.clear();
+            return true;
+        }
+        return false;
+    }
+
+    public void stopSearch() {
+        if (clearSearch()) {
+            searchListener.searchBookFinish();
         }
     }
 
     public void shutdownSearch() {
-        if (isLoading()) {
-            for (ISearchTask searchTask : searchTasks) {
-                searchTask.stopSearch();
-            }
-            searchTasks.clear();
-        }
+        clearSearch();
         executor.shutdown();
     }
 
-    public void setUseMy716(boolean useMy716) {
-        this.useMy716 = useMy716;
-        notifySearchEngineChanged();
+    public SearchBookModel onlyOnePage() {
+        searchPageCount = 1;
+        return this;
     }
 
-    public void onlyOnePage() {
-        searchPageCount = 1;
+    public SearchBookModel setSearchBookType(@Constant.BookType String searchBookType) {
+        this.searchBookType = searchBookType;
+        return this;
+    }
+
+    public SearchBookModel listener(SearchListener listener){
+        this.searchListener = listener;
+        return this;
+    }
+
+    public SearchBookModel setup(){
+        initSearchEngineS();
+        return this;
     }
 
     public void notifySearchEngineChanged() {
@@ -241,7 +250,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
 
         void moveToNext() {
-            if (cursor < limit - 1) {
+            if (cursor < limit) {
                 cursor++;
             }
         }

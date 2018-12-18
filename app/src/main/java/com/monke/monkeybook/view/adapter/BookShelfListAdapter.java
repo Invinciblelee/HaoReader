@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.mprogressbar.MHorProgressBar;
@@ -67,7 +69,9 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
         String durChapterName = item.getDurChapterName();
         if (TextUtils.isEmpty(durChapterName)) {
-            holder.tvRead.setText(getContext().getString(R.string.read_dur_progress, getContext().getString(R.string.text_placeholder)));
+            String bookType = item.getBookInfoBean().getBookType();
+            holder.tvRead.setText(getContext().getString(TextUtils.equals(bookType, Constant.BookType.AUDIO) ?
+                    R.string.play_dur_progress : R.string.read_dur_progress, getContext().getString(R.string.text_placeholder)));
         } else {
             holder.tvRead.setText(FormatWebText.trim(durChapterName));
         }
@@ -82,24 +86,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.ivHasNew.setVisibility(View.VISIBLE);
         } else {
             holder.ivHasNew.setVisibility(View.INVISIBLE);
-        }
-
-        if (item.getChapterListSize() == 0) {
-            holder.tvCurChapter.setText("--/--");
-        } else {
-            holder.tvCurChapter.setText(String.format(Locale.getDefault(), "%d/%d", item.getDurChapter() + 1, item.getChapterListSize()));
-        }
-
-        holder.mpbDurProgress.setMaxProgress(item.getChapterListSize());
-        float speed = item.getChapterListSize() * 1.0f / 60;
-
-        holder.mpbDurProgress.setSpeed(speed <= 0 ? 1 : speed);
-
-        if (holder.getLayoutPosition() > animationIndex) {
-            holder.mpbDurProgress.setDurProgressWithAnim(item.getDurChapter() + 1);
-            animationIndex = holder.getLayoutPosition();
-        } else {
-            holder.mpbDurProgress.setDurProgress(item.getDurChapter() + 1);
         }
 
         holder.content.setOnClickListener(v -> onClick(v, item));
@@ -133,8 +119,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         TextView tvAuthor;
         TextView tvRead;
         TextView tvLast;
-        TextView tvCurChapter;
-        MHorProgressBar mpbDurProgress;
         RotateLoading rotateLoading;
         public View content;
 
@@ -146,8 +130,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             tvAuthor = itemView.findViewById(R.id.tv_author);
             tvRead = itemView.findViewById(R.id.tv_read);
             tvLast = itemView.findViewById(R.id.tv_last);
-            mpbDurProgress = itemView.findViewById(R.id.mpb_durProgress);
-            tvCurChapter = itemView.findViewById(R.id.tv_current_chapter);
             rotateLoading = itemView.findViewById(R.id.rl_loading);
             content = itemView.findViewById(R.id.content_card);
         }

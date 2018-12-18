@@ -1,116 +1,52 @@
 package com.monke.monkeybook.model.content;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.model.ErrorAnalyContentManager;
-import com.monke.monkeybook.model.analyzeRule.AnalyzeElement;
-import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
-import com.monke.monkeybook.model.impl.IHttpGetApi;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
+import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
+import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
-import retrofit2.Call;
 
 public class BookContent {
-    private String tag;
-    private BookSourceBean bookSourceBean;
-    private String ruleBookContent;
     private boolean isAJAX;
 
+    private OutAnalyzer analyzer;
+
     BookContent(String tag, BookSourceBean bookSourceBean) {
-        this.tag = tag;
-        this.bookSourceBean = bookSourceBean;
-        ruleBookContent = bookSourceBean.getRuleBookContent();
-        if (ruleBookContent.startsWith("$")) {
+        String ruleBookContent = bookSourceBean.getRuleBookContent();
+        if (!TextUtils.equals(Constant.RuleType.JSON, bookSourceBean.getBookSourceRuleType()) && ruleBookContent.startsWith("$")) {
             isAJAX = true;
-            ruleBookContent = ruleBookContent.substring(1);
         }
+
+        analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                .tag(tag).bookSource(bookSourceBean));
     }
 
-    public Observable<BookContentBean> analyzeBookContent(final String s, final String durChapterUrl, final int durChapterIndex) {
+    public Observable<BookContentBean> analyzeBookContent(final String s, final ChapterListBean chapter) {
         return Observable.create(e -> {
             if (TextUtils.isEmpty(s)) {
                 e.onError(new Throwable("内容获取失败"));
                 e.onComplete();
                 return;
             }
-            BookContentBean bookContentBean = new BookContentBean();
-            bookContentBean.setDurChapterIndex(durChapterIndex);
-            bookContentBean.setDurChapterUrl(durChapterUrl);
-            bookContentBean.setTag(tag);
 
-            WebContentBean webContentBean = analyzeBookContent(s, durChapterUrl);
-            bookContentBean.setDurChapterContent(webContentBean.content);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("chapter", chapter);
+            analyzer.apply(analyzer.newConfig().baseURL(chapter.getDurChapterUrl()).extras(bundle));
 
-            List<String> nextUrls = new ArrayList<>();
-            int retryCount = 0;
-            while (!TextUtils.isEmpty(webContentBean.nextUrl) && !nextUrls.contains(webContentBean.nextUrl)) {
-                Call<String> call = OkHttpHelper.getInstance().createService(bookSourceBean.getBookSourceUrl(), IHttpGetApi.class)
-                        .getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent()));
-                String response = "";
-                try {
-                    response = call.execute().body();
-                } catch (Exception exception) {
-                    if (!e.isDisposed()) {
-                        e.onError(exception);
-                    }
-                }
-                if (!TextUtils.isEmpty(response)) {
-                    nextUrls.add(webContentBean.nextUrl);
-                    retryCount = 0;
-                } else {
-                    retryCount += 1;
-                    if (retryCount > 5) {
-                        break;
-                    } else {
-                        continue;
-                    }
-                }
-                webContentBean = analyzeBookContent(response, webContentBean.nextUrl);
-                if (!TextUtils.isEmpty(webContentBean.content)) {
-                    bookContentBean.setDurChapterContent(bookContentBean.getDurChapterContent() + "\n" + webContentBean.content);
-                }
-            }
-            e.onNext(bookContentBean);
+            e.onNext(analyzer.getDelegate().getContent(s));
             e.onComplete();
         });
     }
 
-    private WebContentBean analyzeBookContent(final String s, final String chapterUrl) {
-        WebContentBean webContentBean = new WebContentBean();
-        try {
-            Document doc = Jsoup.parse(s);
-            AnalyzeElement analyzeElement = new AnalyzeElement(doc, chapterUrl);
-            webContentBean.content = analyzeElement.getResultContent(ruleBookContent);
-            if (!TextUtils.isEmpty(bookSourceBean.getRuleContentUrlNext())) {
-                webContentBean.nextUrl = analyzeElement.getResultUrl(bookSourceBean.getRuleContentUrlNext());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            ErrorAnalyContentManager.getInstance().writeNewErrorUrl(chapterUrl);
-            webContentBean.content = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + ex.getMessage();
-        }
-        return webContentBean;
-    }
 
     public boolean isAJAX() {
         return isAJAX;
-    }
-
-    private static class WebContentBean {
-        private String content;
-        private String nextUrl;
-
-        private WebContentBean() {
-
-        }
     }
 }

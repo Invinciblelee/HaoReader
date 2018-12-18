@@ -1,24 +1,22 @@
 package com.monke.monkeybook.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
-import com.monke.monkeybook.R;
-import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
-import com.monke.monkeybook.utils.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class BookSourceManager extends BaseModelImpl {
+
     private List<BookSourceBean> selectedBookSource;
     private List<BookSourceBean> allBookSource;
     private List<String> groupList = new ArrayList<>();
@@ -124,8 +123,16 @@ public class BookSourceManager extends BaseModelImpl {
         if (temp != null) {
             bookSourceBean.setSerialNumber(temp.getSerialNumber());
             bookSourceBean.setEnable(temp.getEnable());
-        }else {
+        } else {
             bookSourceBean.setEnable(true);
+        }
+
+        if (!Arrays.asList(Constant.BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
+            bookSourceBean.setBookSourceType(Constant.BookType.TEXT);
+        }
+
+        if(!Arrays.asList(Constant.RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())){
+            bookSourceBean.setBookSourceRuleType(Constant.RuleType.DEFAULT);
         }
 
         if (bookSourceBean.getSerialNumber() == 0) {
@@ -196,32 +203,5 @@ public class BookSourceManager extends BaseModelImpl {
             }
             e.onComplete();
         });
-    }
-
-    public void importDefaultSource(Context context, OnImportSourceListener listener) {
-        try {
-            URL url = new URL(context.getString(R.string.default_source_url));
-            BookSourceManager.getInstance().importSourceFromWww(url)
-                    .subscribe(new SimpleObserver<Boolean>() {
-                        @Override
-                        public void onNext(Boolean aBoolean) {
-                            listener.onSuccess();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            listener.onError();
-                        }
-                    });
-        } catch (Exception e) {
-            listener.onError();
-        }
-    }
-
-
-    public interface OnImportSourceListener {
-        void onSuccess();
-
-        void onError();
     }
 }

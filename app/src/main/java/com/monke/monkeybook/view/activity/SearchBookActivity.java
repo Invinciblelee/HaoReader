@@ -3,6 +3,7 @@ package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,12 +54,9 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @BindView(R.id.fabStop)
     FloatingActionButton fabStop;
 
-    MenuItem itemMy716;
-    MenuItem itemDonate;
     private ExplosionField explosionField;
     private SearchBookAdapter searchBookAdapter;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
-    private boolean useMy716;
 
     private MoDialogHUD moDialogHUD;
 
@@ -77,6 +75,23 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         return false;
     };
 
+    private final Handler handler = new Handler();
+
+    private final Runnable searchTask = new Runnable() {
+        @Override
+        public void run() {
+            String query = searchView.getQuery().toString().trim();
+            if (!TextUtils.isEmpty(query)) {
+                openOrCloseHistory(false);
+                searchView.clearFocus();
+                mPresenter.insertSearchHistory();
+                rfRvSearchBooks.startRefresh();
+                //执行搜索请求
+                mPresenter.toSearchBooks(query);
+            }
+        }
+    };
+
     public static void startByKey(MBaseActivity activity, String searchKey) {
         Intent intent = new Intent(activity, SearchBookActivity.class);
         intent.putExtra("searchKey", searchKey);
@@ -85,8 +100,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     protected SearchBookContract.Presenter initInjector() {
-        useMy716 = !TextUtils.equals(ACache.get(this).getAsString("useMy716"), "False");
-        return new SearchBookPresenterImpl(this, useMy716);
+        return new SearchBookPresenterImpl(this);
     }
 
     @Override
@@ -118,6 +132,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
         rfRvSearchBooks.getRecyclerView().setItemAnimator(null);
         rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
+        rfRvSearchBooks.setEnabled(false);
 
         View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
@@ -164,14 +179,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        itemMy716 = menu.findItem(R.id.action_my716);
-        itemDonate = menu.findItem(R.id.action_donate);
-        upMenu();
-        return super.onPrepareOptionsMenu(menu);
-    }
-
     //菜单
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -180,37 +187,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             case R.id.action_book_source_manage:
                 BookSourceActivity.startThis(this);
                 break;
-            case R.id.action_my716:
-                useMy716 = !useMy716;
-                itemMy716.setChecked(useMy716);
-                mPresenter.setUseMy716(useMy716);
-                ACache.get(this).put("useMy716", useMy716 ? "True" : "False");
-                break;
-            case R.id.action_donate:
-                DonateActivity.startThis(this);
-                break;
             case android.R.id.home:
                 finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * 更新菜单
-     */
-    @Override
-    public void upMenu() {
-        if (itemMy716 != null) {
-            itemMy716.setChecked(useMy716);
-            if (TextUtils.equals(ACache.get(this).getAsString("getZfbHb"), "True")) {
-                itemMy716.setVisible(true);
-                itemDonate.setVisible(false);
-            } else {
-                itemMy716.setVisible(false);
-                itemDonate.setVisible(true);
-            }
-        }
     }
 
     @Override
@@ -292,15 +273,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
      * 开始搜索
      */
     private void toSearch() {
-        String query = searchView.getQuery().toString().trim();
-        if (!TextUtils.isEmpty(query)) {
-            openOrCloseHistory(false);
-            searchView.clearFocus();
-            mPresenter.insertSearchHistory();
-            rfRvSearchBooks.startRefresh();
-            //执行搜索请求
-            mPresenter.toSearchBooks(query);
-        }
+        handler.removeCallbacks(searchTask);
+        handler.post(searchTask);
     }
 
     private void openOrCloseHistory(boolean open) {
@@ -313,6 +287,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 llSearchHistory.setVisibility(View.GONE);
             }
             searchBookAdapter.clearAll();
+            rfRvSearchBooks.getRecyclerView().scrollTo(0, 0);
         }
     }
 
@@ -355,7 +330,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             if (fabStop.isOrWillBeHidden()) {
                 fabStop.show();
             }
-        }, 300L);
+        }, 200L);
         searchBookAdapter.clearAll();
     }
 

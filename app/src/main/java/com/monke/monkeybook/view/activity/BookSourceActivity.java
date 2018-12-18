@@ -186,17 +186,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         }
     }
 
-    @Override
-    public void importDefaultSource() {
-        moDialogHUD.showTwoButton("当前没有书源，是否导入默认书源？",
-                getString(R.string.ok),
-                v -> {
-                    showLoading("正在导入默认书源");
-                    mPresenter.importDefaultSource();
-                }, getString(R.string.cancel),
-                v -> moDialogHUD.dismiss());
-    }
-
     public void upSearchView(int size) {
         AppCompat.setQueryHintForSearchText(mSearchAutoComplete, getString(R.string.search_book_source_num, size));
     }
@@ -297,9 +286,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
             case R.id.action_del_select:
                 mPresenter.delData(adapter.getSelectDataList());
                 break;
-            case R.id.action_reset_book_source:
-                mPresenter.importBookSource(getString(R.string.default_source_url));
-                break;
             case R.id.action_check_book_source:
                 mPresenter.checkBookSource();
                 break;
@@ -365,7 +351,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void importBookSourceOnline() {
         String cacheUrl = ACache.get(this).getAsString("sourceUrl");
-        moDialogHUD.showInputBox("输入书源网址", TextUtils.isEmpty(cacheUrl) ? getString(R.string.default_source_url) : cacheUrl, null,
+        moDialogHUD.showInputBox("输入书源网址", cacheUrl, null,
                 inputText -> {
                     ACache.get(this).put("sourceUrl", inputText);
                     mPresenter.importBookSource(inputText);

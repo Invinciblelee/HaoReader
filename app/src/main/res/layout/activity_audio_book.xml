@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    app:appInsetForeground="@color/colorPrimary">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBar">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_bookshelf"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="4dp"
+            android:paddingBottom="66dp" />
+    </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/shape_audio_bar"
+        android:elevation="@dimen/bottom_shadow_height"
+        android:outlineProvider="background">
+
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_image_cover"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:transitionName="image_cover"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/shape_bg_circle_image" />
+
+        <com.monke.monkeybook.widget.CircleProgressBar
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            app:maxProgress="100"
+            app:progress="100"
+            app:strokeColor="@color/light_red"
+            app:strokeWidth="2dp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:contentDescription="@string/pause"
+            android:src="@drawable/ic_pause_round_black_24dp"
+            android:tint="@color/light_red" />
+    </FrameLayout>
+</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

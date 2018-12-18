@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewParent;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.monke.monkeybook.R;
@@ -128,7 +127,7 @@ public class BookShelfSearchView extends LinearLayout {
     }
 
     public void showQueryBooks(List<BookShelfBean> value) {
-        adapter.replaceAll(value, 1);
+        adapter.replaceAll(value);
     }
 
     public View getSearchAutoComplete(boolean focus) {
@@ -146,9 +145,7 @@ public class BookShelfSearchView extends LinearLayout {
 
     public void addBookShelfIfNeed(BookShelfBean bookShelfBean) {
         if (bookShelfBean != null
-                && adapter.getItemCount() != 0
-                && (bookShelfBean.getBookInfoBean().getName().contains(this.query)
-                || bookShelfBean.getBookInfoBean().getAuthor().contains(this.query))) {
+                && searchView.getQuery().toString().contains(this.query)) {
             adapter.addBook(bookShelfBean);
         }
     }

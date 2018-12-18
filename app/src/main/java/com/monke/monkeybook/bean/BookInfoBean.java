@@ -4,12 +4,11 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.monke.monkeybook.help.Constant;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 书本信息
@@ -21,7 +20,7 @@ public class BookInfoBean implements Parcelable {
     private String tag;
     @Id
     private String noteUrl;  //如果是来源网站   则小说根地址 /如果是本地  则是小说本地MD5
-    private String chapterUrl;  //章节目录地址
+    private String chapterListUrl;  //章节目录地址
     private Long finalRefreshData = System.currentTimeMillis();  //章节最后更新时间
     private String coverUrl; //小说封面
     private String customCoverPath;//自定义小说封面
@@ -29,20 +28,21 @@ public class BookInfoBean implements Parcelable {
     private String introduce; //简介
     private String origin; //来源
     private String charset;//编码
+    private String bookType;//类型 TEXT AUDIO COMIC DOWNLOAD
 
     public BookInfoBean() {
 
     }
 
 
-    @Generated(hash = 1236199332)
-    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl, Long finalRefreshData,
-            String coverUrl, String customCoverPath, String author, String introduce, String origin,
-            String charset) {
+    @Generated(hash = 1261366546)
+    public BookInfoBean(String name, String tag, String noteUrl, String chapterListUrl, Long finalRefreshData,
+                        String coverUrl, String customCoverPath, String author, String introduce, String origin,
+                        String charset, String bookType) {
         this.name = name;
         this.tag = tag;
         this.noteUrl = noteUrl;
-        this.chapterUrl = chapterUrl;
+        this.chapterListUrl = chapterListUrl;
         this.finalRefreshData = finalRefreshData;
         this.coverUrl = coverUrl;
         this.customCoverPath = customCoverPath;
@@ -50,6 +50,7 @@ public class BookInfoBean implements Parcelable {
         this.introduce = introduce;
         this.origin = origin;
         this.charset = charset;
+        this.bookType = bookType;
     }
 
 
@@ -57,7 +58,7 @@ public class BookInfoBean implements Parcelable {
         name = in.readString();
         tag = in.readString();
         noteUrl = in.readString();
-        chapterUrl = in.readString();
+        chapterListUrl = in.readString();
         if (in.readByte() == 0) {
             finalRefreshData = null;
         } else {
@@ -69,6 +70,7 @@ public class BookInfoBean implements Parcelable {
         introduce = in.readString();
         origin = in.readString();
         charset = in.readString();
+        bookType = in.readString();
     }
 
     @Override
@@ -76,7 +78,7 @@ public class BookInfoBean implements Parcelable {
         dest.writeString(name);
         dest.writeString(tag);
         dest.writeString(noteUrl);
-        dest.writeString(chapterUrl);
+        dest.writeString(chapterListUrl);
         if (finalRefreshData == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -89,6 +91,7 @@ public class BookInfoBean implements Parcelable {
         dest.writeString(introduce);
         dest.writeString(origin);
         dest.writeString(charset);
+        dest.writeString(bookType);
     }
 
     @Override
@@ -132,12 +135,12 @@ public class BookInfoBean implements Parcelable {
         this.noteUrl = noteUrl;
     }
 
-    public String getChapterUrl() {
-        return chapterUrl;
+    public String getChapterListUrl() {
+        return chapterListUrl;
     }
 
-    public void setChapterUrl(String chapterUrl) {
-        this.chapterUrl = chapterUrl;
+    public void setChapterListUrl(String chapterListUrl) {
+        this.chapterListUrl = chapterListUrl;
     }
 
     public long getFinalRefreshData() {
@@ -196,18 +199,28 @@ public class BookInfoBean implements Parcelable {
         this.charset = charset;
     }
 
+    public String getBookType() {
+        return bookType == null ? Constant.BookType.TEXT : bookType;
+    }
+
+    public void setBookType(String bookType) {
+        this.bookType = bookType;
+    }
+
     BookInfoBean copy() {
         BookInfoBean bookInfoBean = new BookInfoBean();
         bookInfoBean.name = name;
         bookInfoBean.tag = tag;
         bookInfoBean.noteUrl = noteUrl;
-        bookInfoBean.chapterUrl = chapterUrl;
+        bookInfoBean.finalRefreshData = finalRefreshData;
+        bookInfoBean.chapterListUrl = chapterListUrl;
         bookInfoBean.coverUrl = coverUrl;
         bookInfoBean.customCoverPath = customCoverPath;
         bookInfoBean.author = author;
         bookInfoBean.introduce = introduce;
         bookInfoBean.origin = origin;
         bookInfoBean.charset = charset;
+        bookInfoBean.bookType = bookType;
         return bookInfoBean;
     }
 }

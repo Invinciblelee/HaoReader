@@ -8,6 +8,8 @@ import io.reactivex.annotations.Nullable;
 
 public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean> {
     private String name; //小说名
+    private String author;
+    private String tag;
     private String noteUrl;
     private String coverUrl;
     private int downloadCount;
@@ -20,8 +22,10 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
     public DownloadBookBean() {
     }
 
-    public DownloadBookBean(String name, String noteUrl, String coverUrl, int start, int end) {
+    public DownloadBookBean(String name, String author, String tag, String noteUrl, String coverUrl, int start, int end) {
         this.name = name;
+        this.author = author;
+        this.tag = tag;
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.start = start;
@@ -30,6 +34,8 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
 
     protected DownloadBookBean(Parcel in) {
         name = in.readString();
+        author = in.readString();
+        tag = in.readString();
         noteUrl = in.readString();
         coverUrl = in.readString();
         downloadCount = in.readInt();
@@ -43,6 +49,8 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(author);
+        dest.writeString(tag);
         dest.writeString(noteUrl);
         dest.writeString(coverUrl);
         dest.writeInt(downloadCount);
@@ -76,6 +84,22 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getNoteUrl() {

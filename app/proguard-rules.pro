@@ -19,6 +19,7 @@
 # 对于一些基本指令的添加
 #
 #############################################
+#############################################
 # 代码混淆压缩比，在0~7之间，默认为5，一般不做修改
 -optimizationpasses 5
 
@@ -50,6 +51,7 @@
 # 指定混淆是采用的算法，后面的参数是一个过滤器
 # 这个过滤器是谷歌推荐的算法，一般不做更改
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
+
 
 #############################################
 #
@@ -154,8 +156,6 @@
 #    public static int e(...);
 #}
 
--keep public class javax.**
-
 ### greenDAO 3
 -keep class org.greenrobot.greendao.**{ *; }
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
@@ -190,13 +190,38 @@ public static java.lang.String TABLENAME;
 -keep class freemarker.**{*;}
 -keep class com.gyf.barlibrary.* {*;}
 ##JSOUP
--keep class org.jsoup.**{ *; }
--keep class com.monke.mprogressbar.**{ *; }
+-keep class org.jsoup.**{*;}
+-keep class com.monke.mprogressbar.**{*;}
+
+-keep class org.slf4j.**{*;}
+-dontwarn org.slf4j.**
+
+-keep class org.codehaus.**{*;}
+-dontwarn org.codehaus.**
+-keep class com.jayway.**{*;}
+-dontwarn com.jayway.**
+-keep class com.fasterxml.**{*;}
+
+-keep class javax.swing..**{*;}
+-dontwarn javax.swing.**
+-keep class java.awt.**{*;}
+-dontwarn java.awt.**
+-keep class sun.misc.**{*;}
+-dontwarn sun.misc.**
+-keep class sun.reflect.**{*;}
+-dontwarn sun.reflect.**
+
+## Rhino
+-keep class javax.script.** { *; }
+-keep class com.sun.script.javascript.** { *; }
+-keep class org.mozilla.javascript.** { *; }
+-dontwarn org.mozilla.javascript.**
+-dontwarn sun.**
 
 -keepclassmembers class * {
     public <init> (org.json.JSONObject);
 }
--keep public class com.monke.monkeybook.R$*{
+-keep public class com.kunfei.bookshelf.R$*{
     public static final int *;
 }
 -keepclassmembers enum * {

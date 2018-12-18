@@ -40,8 +40,6 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     private BookSourceBean delBookSource;
     private Snackbar progressSnackBar;
 
-    private boolean hasShown = false;
-
     @Override
     public void saveData(BookSourceBean bookSourceBean) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
@@ -79,11 +77,6 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                     @Override
                     public void onNext(List<BookSourceBean> bookSourceBeans) {
                         mView.resetData(bookSourceBeans);
-
-                        if ((bookSourceBeans == null || bookSourceBeans.isEmpty()) && !hasShown) {
-                            mView.importDefaultSource();
-                            hasShown = true;
-                        }
                     }
 
                     @Override
@@ -197,24 +190,6 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         mView.showLoading("正在导入书源");
         BookSourceManager.getInstance().importSourceFromWww(url)
                 .subscribe(getImportObserver());
-    }
-
-    @Override
-    public void importDefaultSource() {
-        BookSourceManager.getInstance().importDefaultSource(mView.getContext(), new BookSourceManager.OnImportSourceListener() {
-            @Override
-            public void onSuccess() {
-                mView.dismissHUD();
-                mView.showSnackBar("书源导入成功");
-                initData();
-            }
-
-            @Override
-            public void onError() {
-                mView.dismissHUD();
-                mView.showSnackBar("书源导入失败");
-            }
-        });
     }
 
     private SimpleObserver<Boolean> getImportObserver() {

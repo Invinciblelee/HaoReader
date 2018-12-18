@@ -29,27 +29,24 @@
             app:showAsAction="never" />
     </group>
 
-    <group android:id="@+id/menuShow">
-        <item
-            android:id="@+id/add_bookmark"
-            android:icon="@drawable/ic_bookmark_black_24dp"
-            android:title="@string/bookmark_add"
-            app:showAsAction="ifRoom" />
-
-        <item
-            android:id="@+id/action_copy_text"
-            android:icon="@drawable/ic_content_copy_black_24dp"
-            android:title="@string/copy_text"
-            app:showAsAction="ifRoom" />
-    </group>
-
-
     <item
         android:id="@+id/edit_charset"
         android:enabled="false"
         android:icon="@drawable/ic_translate_black_24dp"
         android:title="@string/edit_charset"
         android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/add_bookmark"
+        android:icon="@drawable/ic_bookmark_black_24dp"
+        android:title="@string/bookmark_add"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_copy_text"
+        android:icon="@drawable/ic_content_copy_black_24dp"
+        android:title="@string/copy_text"
         app:showAsAction="never" />
 
     <item

@@ -18,6 +18,8 @@
         android:background="@null"
         android:clickable="false"
         android:focusable="false"
+        android:paddingStart="0dp"
+        android:paddingEnd="4dp"
         android:singleLine="true"
         android:textColor="@color/tv_text_default" />
 
@@ -34,9 +36,9 @@
             android:layout_height="35dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/bg_ib_pre_round"
-            android:gravity="center"
             android:clickable="true"
             android:focusable="true"
+            android:gravity="center"
             android:text="@string/edit"
             android:textColor="@color/tv_text_secondary"
             android:textSize="13sp" />
@@ -45,9 +47,9 @@
             android:id="@+id/iv_del"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:background="@drawable/bg_ib_pre_round"
             android:clickable="true"
             android:focusable="true"
-            android:background="@drawable/bg_ib_pre_round"
             android:gravity="center"
             android:text="@string/delete"
             android:textColor="@color/tv_text_secondary"

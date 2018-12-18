@@ -73,12 +73,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_reset_book_source"
-        android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/refresh_default"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_del_select"
         android:icon="@drawable/ic_clear_all_black_24dp"
         android:title="@string/del_select"

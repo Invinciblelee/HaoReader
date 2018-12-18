@@ -1,15 +1,17 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.model;
 
+import android.text.TextUtils;
+
 import com.monke.monkeybook.bean.BookContentBean;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.model.content.DefaultModelImpl;
+import com.monke.monkeybook.model.content.DefaultModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
-import com.monke.monkeybook.model.source.My716;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class WebBookModelImpl implements IWebBookModel {
         if (bookModel != null) {
             return bookModel.getBookInfo(bookShelfBean);
         } else {
-            return null;
+            return Observable.error(new Throwable(bookShelfBean.getBookInfoBean().getName() + "没有书源"));
         }
     }
 
@@ -59,7 +61,7 @@ public class WebBookModelImpl implements IWebBookModel {
         IStationBookModel bookModel = getBookSourceModel(bookShelfBean.getTag());
         if (bookModel != null) {
             return bookModel.getChapterList(bookShelfBean)
-                    .flatMap((chapterList) -> getChapterList(bookShelfBean, chapterList));
+                    .flatMap((chapterList) -> updateChapterList(bookShelfBean, chapterList));
         } else {
             return Observable.error(new Throwable(bookShelfBean.getBookInfoBean().getName() + "没有书源"));
         }
@@ -71,11 +73,11 @@ public class WebBookModelImpl implements IWebBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(Scheduler scheduler, ChapterListBean chapter) {
+    public Observable<BookContentBean> getBookContent(Scheduler scheduler, BookInfoBean bookInfo, ChapterListBean chapter) {
         IStationBookModel bookModel = getBookSourceModel(chapter.getTag());
         if (bookModel != null) {
-            return bookModel.getBookContent(scheduler, chapter.getDurChapterUrl(), chapter.getDurChapterIndex())
-                    .flatMap(bookContentBean -> saveChapterInfo(chapter, bookContentBean));
+            return bookModel.getBookContent(scheduler, chapter)
+                    .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
         } else
             return Observable.create(e -> {
                 e.onNext(new BookContentBean());
@@ -118,22 +120,18 @@ public class WebBookModelImpl implements IWebBookModel {
 
     //获取book source class
     private IStationBookModel getBookSourceModel(String tag) {
-        switch (tag) {
-            case BookShelfBean.LOCAL_TAG:
-                return null;
-            case My716.TAG:
-                return My716.getInstance();
-            default:
-                return DefaultModelImpl.newInstance(tag);
+        if (TextUtils.equals(tag, BookShelfBean.LOCAL_TAG)) {
+            return null;
+        } else {
+            return DefaultModel.newInstance(tag);
         }
     }
 
-    private Observable<BookShelfBean> getChapterList(BookShelfBean bookShelfBean, List<ChapterListBean> chapterList) {
+    private Observable<BookShelfBean> updateChapterList(BookShelfBean bookShelfBean, List<ChapterListBean> chapterList) {
         return Observable.create(e -> {
             boolean findDurChapter = false;
             for (int i = 0, size = chapterList.size(); i < size; i++) {
                 ChapterListBean chapter = chapterList.get(i);
-                chapter.setBookName(bookShelfBean.getBookInfoBean().getName());
                 chapter.setDurChapterIndex(i);
                 chapter.setTag(bookShelfBean.getTag());
                 chapter.setNoteUrl(bookShelfBean.getNoteUrl());
@@ -150,23 +148,27 @@ public class WebBookModelImpl implements IWebBookModel {
             } else {
                 bookShelfBean.setNewChapters(0);
             }
-            bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-            bookShelfBean.setChapterList(chapterList);
-            bookShelfBean.upChapterListSize();
-            bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize() - 1));
-            bookShelfBean.upDurChapterName();
-            bookShelfBean.upLastChapterName();
+            if (!chapterList.isEmpty()) {
+                bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
+                bookShelfBean.setChapterList(chapterList);
+                bookShelfBean.upChapterListSize();
+                bookShelfBean.upLastChapterName();
+                if (!TextUtils.isEmpty(bookShelfBean.getDurChapterName())) {//已读
+                    bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize() - 1));
+                    bookShelfBean.upDurChapterName();
+                }
+            }
             e.onNext(bookShelfBean);
             e.onComplete();
         });
     }
 
-    private Observable<BookContentBean> saveChapterInfo(ChapterListBean chapter, BookContentBean bookContentBean) {
+    private Observable<BookContentBean> saveChapterInfo(BookInfoBean bookInfo, BookContentBean bookContentBean) {
         return Observable.create(e -> {
             if (bookContentBean.getRight()) {
-                bookContentBean.setNoteUrl(chapter.getNoteUrl());
-                if (BookshelfHelp.saveChapterInfo(BookshelfHelp.getCachePathName(chapter),
-                        BookshelfHelp.getCacheFileName(chapter.getDurChapterIndex(), chapter.getDurChapterName()),
+                bookContentBean.setNoteUrl(bookInfo.getNoteUrl());
+                if (BookshelfHelp.saveChapterInfo(BookshelfHelp.getCacheFolderPath(bookInfo),
+                        BookshelfHelp.getCacheFileName(bookContentBean),
                         bookContentBean.getDurChapterContent())) {
                     e.onNext(bookContentBean);
                     e.onComplete();

@@ -34,11 +34,7 @@
         <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
             android:id="@+id/rfRv_search_books"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:font_color="#767676"
-            app:second_color="#c1c1c1"
-            app:second_max_progress="80dp"
-            app:speed="2dp" />
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

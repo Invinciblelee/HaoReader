@@ -17,7 +17,6 @@ import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -32,33 +31,11 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
     private int page = 1;
     private long startThisSearchTime;
-    private List<BookShelfBean> bookShelfs = new ArrayList<>();   //用来比对搜索的书籍是否已经添加进书架
 
     public ChoiceBookPresenterImpl(final Intent intent) {
         url = intent.getStringExtra("url");
         title = intent.getStringExtra("title");
         tag = intent.getStringExtra("tag");
-        Observable.create((ObservableOnSubscribe<List<BookShelfBean>>) e -> {
-            List<BookShelfBean> temp = DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().queryBuilder().list();
-            if (temp == null)
-                temp = new ArrayList<>();
-            e.onNext(temp);
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<List<BookShelfBean>>() {
-                    @Override
-                    public void onNext(List<BookShelfBean> value) {
-                        bookShelfs.addAll(value);
-                        initPage();
-                        toSearchBooks(null);
-                        mView.startRefreshAnim();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
     }
 
     @Override
@@ -81,7 +58,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     private void searchBook(final long searchTime) {
         WebBookModelImpl.getInstance().findBook(url, page, tag)
                 .subscribeOn(Schedulers.io())
-                .compose(((BaseActivity)mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
                     @Override
@@ -118,7 +95,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                 .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity)mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfResult) {
@@ -137,7 +114,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
         return title;
     }
 
-    private void saveBookToShelf(final BookShelfBean bookShelfBean){
+    private void saveBookToShelf(final BookShelfBean bookShelfBean) {
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().insertOrReplaceInTx(bookShelfBean.getChapterList());
             DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().insertOrReplace(bookShelfBean.getBookInfoBean());
@@ -147,7 +124,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity)mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean value) {

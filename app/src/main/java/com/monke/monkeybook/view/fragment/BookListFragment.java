@@ -2,10 +2,12 @@ package com.monke.monkeybook.view.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,7 +125,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
     public void addAllBookShelf(List<BookShelfBean> bookShelfBeanList) {
         boolean isEmptyBefore = bookListAdapter.getItemCount() == 0;
 
-        bookListAdapter.replaceAll(bookShelfBeanList, mPresenter.getBookshelfPx());
+        bookListAdapter.replaceAll(bookShelfBeanList);
 
         if(!isEmptyBefore) {
             rvBookshelf.scrollToPosition(0);
@@ -219,7 +221,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         updateBookPx(bookPx);
 
         rvBookshelf.setAdapter(bookListAdapter);
-        bookListAdapter.replaceAll(books, bookPx);
+        bookListAdapter.replaceAll(books);
     }
 
     @Override

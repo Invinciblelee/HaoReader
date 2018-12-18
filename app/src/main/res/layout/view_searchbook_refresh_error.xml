@@ -6,10 +6,11 @@
     android:clickable="true"
     android:gravity="center"
     android:focusable="true">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="获取数据失败"
+        android:text="加载失败"
         android:textColor="@color/tv_text_secondary"
         android:textSize="16sp"/>
     <TextView
@@ -17,13 +18,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/selector_tv_first_button"
-        android:text="重试"
+        android:text="点击重试"
         android:gravity="center"
         android:textSize="14sp"
         android:textColor="@color/white" />

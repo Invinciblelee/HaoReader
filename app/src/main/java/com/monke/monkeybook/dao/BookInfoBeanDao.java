@@ -27,7 +27,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         public final static Property Name = new Property(0, String.class, "name", false, "NAME");
         public final static Property Tag = new Property(1, String.class, "tag", false, "TAG");
         public final static Property NoteUrl = new Property(2, String.class, "noteUrl", true, "NOTE_URL");
-        public final static Property ChapterUrl = new Property(3, String.class, "chapterUrl", false, "CHAPTER_URL");
+        public final static Property ChapterListUrl = new Property(3, String.class, "chapterListUrl", false, "CHAPTER_LIST_URL");
         public final static Property FinalRefreshData = new Property(4, Long.class, "finalRefreshData", false, "FINAL_REFRESH_DATA");
         public final static Property CoverUrl = new Property(5, String.class, "coverUrl", false, "COVER_URL");
         public final static Property CustomCoverPath = new Property(6, String.class, "customCoverPath", false, "CUSTOM_COVER_PATH");
@@ -35,6 +35,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         public final static Property Introduce = new Property(8, String.class, "introduce", false, "INTRODUCE");
         public final static Property Origin = new Property(9, String.class, "origin", false, "ORIGIN");
         public final static Property Charset = new Property(10, String.class, "charset", false, "CHARSET");
+        public final static Property BookType = new Property(11, String.class, "bookType", false, "BOOK_TYPE");
     }
 
 
@@ -53,14 +54,15 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
                 "\"NAME\" TEXT," + // 0: name
                 "\"TAG\" TEXT," + // 1: tag
                 "\"NOTE_URL\" TEXT PRIMARY KEY NOT NULL ," + // 2: noteUrl
-                "\"CHAPTER_URL\" TEXT," + // 3: chapterUrl
+                "\"CHAPTER_LIST_URL\" TEXT," + // 3: chapterListUrl
                 "\"FINAL_REFRESH_DATA\" INTEGER," + // 4: finalRefreshData
                 "\"COVER_URL\" TEXT," + // 5: coverUrl
                 "\"CUSTOM_COVER_PATH\" TEXT," + // 6: customCoverPath
                 "\"AUTHOR\" TEXT," + // 7: author
                 "\"INTRODUCE\" TEXT," + // 8: introduce
                 "\"ORIGIN\" TEXT," + // 9: origin
-                "\"CHARSET\" TEXT);"); // 10: charset
+                "\"CHARSET\" TEXT," + // 10: charset
+                "\"BOOK_TYPE\" TEXT);"); // 11: bookType
     }
 
     /** Drops the underlying database table. */
@@ -88,9 +90,9 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
             stmt.bindString(3, noteUrl);
         }
  
-        String chapterUrl = entity.getChapterUrl();
-        if (chapterUrl != null) {
-            stmt.bindString(4, chapterUrl);
+        String chapterListUrl = entity.getChapterListUrl();
+        if (chapterListUrl != null) {
+            stmt.bindString(4, chapterListUrl);
         }
  
         Long finalRefreshData = entity.getFinalRefreshData();
@@ -126,6 +128,11 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         String charset = entity.getCharset();
         if (charset != null) {
             stmt.bindString(11, charset);
+        }
+ 
+        String bookType = entity.getBookType();
+        if (bookType != null) {
+            stmt.bindString(12, bookType);
         }
     }
 
@@ -148,9 +155,9 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
             stmt.bindString(3, noteUrl);
         }
  
-        String chapterUrl = entity.getChapterUrl();
-        if (chapterUrl != null) {
-            stmt.bindString(4, chapterUrl);
+        String chapterListUrl = entity.getChapterListUrl();
+        if (chapterListUrl != null) {
+            stmt.bindString(4, chapterListUrl);
         }
  
         Long finalRefreshData = entity.getFinalRefreshData();
@@ -187,6 +194,11 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         if (charset != null) {
             stmt.bindString(11, charset);
         }
+ 
+        String bookType = entity.getBookType();
+        if (bookType != null) {
+            stmt.bindString(12, bookType);
+        }
     }
 
     @Override
@@ -200,14 +212,15 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // name
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // tag
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // noteUrl
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // chapterUrl
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // chapterListUrl
             cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // finalRefreshData
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // coverUrl
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // customCoverPath
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // author
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // introduce
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // origin
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // charset
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // charset
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11) // bookType
         );
         return entity;
     }
@@ -217,7 +230,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         entity.setName(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setTag(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setNoteUrl(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setChapterUrl(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setChapterListUrl(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setFinalRefreshData(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
         entity.setCoverUrl(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setCustomCoverPath(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
@@ -225,6 +238,7 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         entity.setIntroduce(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setOrigin(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setCharset(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setBookType(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
      }
     
     @Override

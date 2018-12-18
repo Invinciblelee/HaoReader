@@ -45,7 +45,7 @@ public class AppCompat {
         searchText.setTextSize(14f);
         searchText.setPaddingRelative(searchText.getPaddingLeft(), 0, 0, 0);
 
-        final int textSize = (int) (searchText.getTextSize() * 1.25);
+        final int textSize = (int) (searchText.getTextSize() * 1.18f);
         Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
         searchIcon.setBounds(0, 0, textSize, textSize);
         setTint(searchIcon, normalColor);
@@ -164,6 +164,9 @@ public class AppCompat {
             for (Drawable drawable : drawables) {
                 setTintList(drawable, tint);
             }
+            drawables = ((TextView) view).getCompoundDrawablesRelative();
+            setTintList(drawables[0], tint);
+            setTintList(drawables[2], tint);
         }
     }
 
@@ -188,9 +191,8 @@ public class AppCompat {
                 setTint(drawable, color);
             }
             drawables = ((TextView) view).getCompoundDrawablesRelative();
-            for (Drawable drawable : drawables) {
-                setTint(drawable, color);
-            }
+            setTint(drawables[0], color);
+            setTint(drawables[2], color);
         }
     }
 

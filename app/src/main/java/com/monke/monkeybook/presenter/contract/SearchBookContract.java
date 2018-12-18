@@ -22,8 +22,6 @@ public interface SearchBookContract {
 
         void cleanSearchHistory(SearchHistoryBean searchHistoryBean);
 
-        void setUseMy716(boolean useMy716);
-
         void toSearchBooks(String key);
 
         void stopSearch();
@@ -69,8 +67,6 @@ public interface SearchBookContract {
         String getEdtContent();
 
         void showBookSourceEmptyTip();
-
-        void upMenu();
     }
 
 }

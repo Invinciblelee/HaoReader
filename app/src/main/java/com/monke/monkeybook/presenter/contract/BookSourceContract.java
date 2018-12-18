@@ -1,6 +1,5 @@
 package com.monke.monkeybook.presenter.contract;
 
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 
 import com.monke.basemvplib.impl.IPresenter;
@@ -28,16 +27,12 @@ public interface BookSourceContract {
 
         void importBookSource(String url);
 
-        void importDefaultSource();
-
         void checkBookSource();
     }
 
     interface View extends IView {
 
         void refreshBookSource();
-
-        void importDefaultSource();
 
         Snackbar getSnackBar(String msg);
 

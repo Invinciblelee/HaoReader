@@ -10,7 +10,6 @@ import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
-import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
@@ -67,7 +66,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
             BookShelfBean bookShelfBean = null;
             String noteUrl = ReadBookControl.getInstance().getLastNoteUrl();
             if (!TextUtils.isEmpty(noteUrl)) {
-                bookShelfBean = BookshelfHelp.getBookByUrl(noteUrl);
+                bookShelfBean = BookshelfHelp.queryBookByUrl(noteUrl);
             }
             e.onSuccess(bookShelfBean == null ? new BookShelfBean() : bookShelfBean);
         }).compose(RxUtils::toSimpleSingle)

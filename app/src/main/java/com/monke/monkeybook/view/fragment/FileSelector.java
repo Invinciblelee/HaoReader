@@ -143,6 +143,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     @Override
     public void onShow(FileSnapshot snapshot, boolean back) {
         progressBar.hide();
+        adapter.reset();
         if (snapshot == null) {
             adapter.setItems(null);
         } else {
@@ -173,7 +174,6 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     @Override
     public void onItemClick(View view, RipeFile file) {
         if (file.isDirectory()) {
-            adapter.reset();
             mPresenter.push(file, rvFiles.computeVerticalScrollOffset());
             okBth.setText(R.string.ok);
         } else if (!mPresenter.isSingleChoice()) {

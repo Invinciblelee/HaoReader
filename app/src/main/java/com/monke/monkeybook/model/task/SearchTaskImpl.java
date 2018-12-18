@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -10,7 +11,6 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.impl.ISearchTask;
-import com.monke.monkeybook.model.source.My716;
 import com.monke.monkeybook.utils.ListUtil;
 
 import java.util.List;
@@ -69,13 +69,12 @@ public class SearchTaskImpl implements ISearchTask {
                     listener.onSearchComplete(this);
                 }
             } else {
-                long start = System.currentTimeMillis();
                 searchEngine.searchBegin();
                 WebBookModelImpl.getInstance()
                         .searchOtherBook(query, searchEngine.getPage(), searchEngine.getTag())
                         .subscribeOn(scheduler)
                         .flatMap(this::dispatchResult)
-                        .doOnComplete(() -> incrementSourceWeight(searchEngine.getTag(), start))
+                        .doAfterNext(bool -> incrementSourceWeight(searchEngine.getTag(), searchEngine.getStart()))
                         .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<Boolean>() {
@@ -87,8 +86,8 @@ public class SearchTaskImpl implements ISearchTask {
                             }
 
                             @Override
-                            public void onNext(Boolean bool) {
-                                whenNext(searchEngine, bool, query, scheduler);
+                            public void onNext(Boolean hasMore) {
+                                whenNext(searchEngine, hasMore, query, scheduler);
                                 successCount += 1;
                             }
 
@@ -138,10 +137,6 @@ public class SearchTaskImpl implements ISearchTask {
             boolean hasMore = true;
             if (!isDisposed() && searchBookBeans != null && !searchBookBeans.isEmpty()) {
                 listener.onSearchResult(ListUtil.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getName().compareTo(o2.getName())));
-                if (TextUtils.equals(searchBookBeans.get(0).getTag(), My716.TAG)) {
-                    hasMore = false;
-                }
-
                 saveData(searchBookBeans);
             } else {
                 hasMore = false;

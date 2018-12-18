@@ -39,18 +39,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
         android:layout_below="@id/appBar">
 
         <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
             android:id="@+id/rfRv_search_books"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background"
-            app:bg_color="#00000000"
-            app:font_color="#767676"
-            app:second_color="#c1c1c1"
-            app:second_max_progress="80dp"
-            app:speed="2dp" />
+            android:background="@color/background" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -62,13 +58,12 @@
                 android:id="@+id/fabStop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="30dp"
+                android:layout_margin="16dp"
+                android:tint="@color/menu_color_default"
+                app:backgroundTint="@color/card_background"
                 android:src="@drawable/ic_stop_white_24dp"
                 android:visibility="invisible"
-                app:fabCustomSize="45dp" />
+                app:fabCustomSize="50dp" />
 
         </FrameLayout>
 

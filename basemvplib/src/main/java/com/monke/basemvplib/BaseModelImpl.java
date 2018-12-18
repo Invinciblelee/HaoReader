@@ -7,6 +7,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
@@ -47,6 +48,7 @@ public class BaseModelImpl {
             webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setUserAgentString(userAgent);
+            webView.getSettings().setBlockNetworkImage(true);
             webView.addJavascriptInterface(new MyJavaScriptInterface(webView, e), "HTMLOUT");
             webView.setWebViewClient(new MyWebViewClient(e));
             webView.loadUrl(url);

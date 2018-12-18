@@ -4,6 +4,7 @@ package com.monke.monkeybook.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -35,6 +36,7 @@ import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
@@ -67,6 +69,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     Toolbar toolbar;
     @BindView(R.id.bookshelf_search_view)
     BookShelfSearchView drawerRight;
+    @BindView(R.id.book_shelf_menu)
+    BookFloatingActionMenu bookShelfMenu;
 
     private Switch swNightTheme;
     private int group = -1;
@@ -127,6 +131,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        Rect rect = new Rect();
+        bookShelfMenu.getGlobalVisibleRect(rect);
+        if (bookShelfMenu.isExpanded() && !rect.contains((int) ev.getX(), (int) ev.getY())) {
+            bookShelfMenu.collapse();
+            return true;
+        }
         return super.dispatchTouchEvent(ev);
     }
 
@@ -137,6 +147,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         setupActionBar();
         initDrawer();
         upGroup(group);
+
+        bookShelfMenu.setSelection(group);
 
         container.setOnInsetsCallback(insets -> {
             appBar.setPadding(0, insets.top, 0, 0);
@@ -167,6 +179,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     protected void bindEvent() {
         drawerRight.setOnItemClickListener(getAdapterListener());
         drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
+
+        bookShelfMenu.setOnActionMenuClickListener((index, menuView) -> upGroup(index));
 
         versionUpRun();
     }
@@ -245,6 +259,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 break;
             case R.id.action_library:
                 startActivity(new Intent(this, FindBookActivity.class));
+                break;
+            case R.id.action_audio:
+                startActivity(new Intent(this, AudioBookActivity.class));
                 break;
             case R.id.action_add_local:
                 if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
@@ -353,8 +370,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
             this.group = group;
         }
-
-        drawerLeft.getMenu().getItem(group).setChecked(true);
     }
 
     private void showFragment(int group) {
@@ -399,18 +414,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
         drawerLeft.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
-                case R.id.action_group_zg:
-                    new Handler().postDelayed(() -> upGroup(0), 220L);
-                    break;
-                case R.id.action_group_yf:
-                    new Handler().postDelayed(() -> upGroup(1), 220L);
-                    break;
-                case R.id.action_group_sc:
-                    new Handler().postDelayed(() -> upGroup(2), 220L);
-                    break;
-                case R.id.action_group_bd:
-                    new Handler().postDelayed(() -> upGroup(3), 220L);
-                    break;
                 case R.id.action_download:
                     new Handler().postDelayed(() -> DownloadActivity.startThis(this), 220L);
                     break;
@@ -596,7 +599,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             return true;
         } else {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (drawer.isDrawerOpen(GravityCompat.START)
+                if (bookShelfMenu.isExpanded()) {
+                    bookShelfMenu.collapse();
+                    return true;
+                } else if (drawer.isDrawerOpen(GravityCompat.START)
                         || drawer.isDrawerOpen(GravityCompat.END)) {
                     drawer.closeDrawers();
                     return true;
