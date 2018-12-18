@@ -13,7 +13,7 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
 
-public class BookContent {
+class BookContent {
     private boolean isAJAX;
 
     private OutAnalyzer analyzer;
@@ -28,7 +28,7 @@ public class BookContent {
                 .tag(tag).bookSource(bookSourceBean));
     }
 
-    public Observable<BookContentBean> analyzeBookContent(final String s, final ChapterListBean chapter) {
+    Observable<BookContentBean> analyzeBookContent(final String s, final ChapterListBean chapter) {
         return Observable.create(e -> {
             if (TextUtils.isEmpty(s)) {
                 e.onError(new Throwable("内容获取失败"));
@@ -46,7 +46,7 @@ public class BookContent {
     }
 
 
-    public boolean isAJAX() {
+    boolean isAJAX() {
         return isAJAX;
     }
 }

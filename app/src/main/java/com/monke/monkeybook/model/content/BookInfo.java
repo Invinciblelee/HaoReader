@@ -11,7 +11,7 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
 
-public class BookInfo {
+class BookInfo {
     private OutAnalyzer analyzer;
 
     BookInfo(String tag, String name, BookSourceBean bookSourceBean) {
@@ -19,7 +19,7 @@ public class BookInfo {
                 .tag(tag).name(name).bookSource(bookSourceBean));
     }
 
-    public Observable<BookShelfBean> analyzeBookInfo(String s, final BookShelfBean bookShelfBean) {
+    Observable<BookShelfBean> analyzeBookInfo(String s, final BookShelfBean bookShelfBean) {
         return Observable.create(e -> {
             if (TextUtils.isEmpty(s)) {
                 e.onError(new Throwable("书籍信息获取失败"));

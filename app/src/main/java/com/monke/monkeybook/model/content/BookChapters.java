@@ -12,7 +12,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
-public class BookChapters {
+class BookChapters {
 
     private OutAnalyzer analyzer;
 
@@ -21,7 +21,7 @@ public class BookChapters {
                 .tag(tag).bookSource(bookSourceBean));
     }
 
-    public Observable<List<ChapterListBean>> analyzeChapters(final String s, final String chapterListUrl) {
+    Observable<List<ChapterListBean>> analyzeChapters(final String s, final String chapterListUrl) {
         return Observable.create(e -> {
             if (TextUtils.isEmpty(s)) {
                 e.onError(new Throwable("目录获取失败"));

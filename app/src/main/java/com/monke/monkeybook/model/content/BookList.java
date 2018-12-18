@@ -12,7 +12,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
-public class BookList {
+class BookList {
     private OutAnalyzer analyzer;
 
     BookList(String tag, String name, BookSourceBean bookSourceBean) {
@@ -20,7 +20,7 @@ public class BookList {
                 .tag(tag).name(name).bookSource(bookSourceBean));
     }
 
-    public Observable<List<SearchBookBean>> analyzeSearchBook(final Response<String> response) {
+    Observable<List<SearchBookBean>> analyzeSearchBook(final Response<String> response) {
         return Observable.create(e -> {
             try {
                 String baseURL;

@@ -5,7 +5,7 @@ import com.monke.monkeybook.bean.ChapterListBean;
 
 public interface IAudioBookPlayModel {
 
-    void ensureChapterList(BookShelfBean bookShelfBean);
+    void getChapterList(BookShelfBean bookShelfBean);
 
     void ensureChapterUrl(ChapterListBean chapter);
 

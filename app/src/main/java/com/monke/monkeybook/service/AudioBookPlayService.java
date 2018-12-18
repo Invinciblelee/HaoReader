@@ -6,20 +6,12 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.monke.monkeybook.BitIntentDataManager;
-import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.model.WebBookModelImpl;
-import com.monke.monkeybook.model.content.AudioSniffer;
+import com.monke.monkeybook.help.AudioSniffer;
 
 import java.io.IOException;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class AudioBookPlayService extends Service {
 
