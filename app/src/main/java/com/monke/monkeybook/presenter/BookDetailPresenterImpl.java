@@ -2,7 +2,6 @@ package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
@@ -12,7 +11,7 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.BitIntentDataManager;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -23,13 +22,11 @@ import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
-import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContract.View> implements BookDetailContract.Presenter {
@@ -50,7 +47,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         openFrom = intent.getIntExtra("openFrom", FROM_BOOKSHELF);
         if (openFrom == FROM_BOOKSHELF) {
             String key = intent.getStringExtra("data_key");
-            bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+            bookShelf = BitIntentDataManager.getInstance().getData(key, null);
             BitIntentDataManager.getInstance().cleanData(key);
             if (bookShelf == null) {
                 mView.finish();

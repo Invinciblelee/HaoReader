@@ -254,6 +254,10 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
+    public void showSnackBar(@StringRes int msgId){
+        showSnackBar(getString(msgId));
+    }
+
     public void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }

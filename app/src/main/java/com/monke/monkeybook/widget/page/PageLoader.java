@@ -1,6 +1,5 @@
 package com.monke.monkeybook.widget.page;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -74,7 +73,7 @@ public abstract class PageLoader {
     // 阅读器的配置选项
     private ReadBookControl mSettingManager;
 
-    private ChapterProvider chapterProvider;
+    private ChapterProvider mChapterProvider;
 
 
     private Disposable mPreLoadPrevDisposable;
@@ -84,7 +83,7 @@ public abstract class PageLoader {
     // 判断章节列表是否加载完成
     private boolean isChapterListPrepare;
     //展示加载界面
-    private boolean willNotDraw = false;
+    private boolean mWillNotDraw = false;
 
     // 是否打开过章节
     private boolean isFirstOpen = true;
@@ -122,7 +121,7 @@ public abstract class PageLoader {
         mPageView = pageView;
         mContext = pageView.getContext();
 
-        chapterProvider = new ChapterProvider(this);
+        mChapterProvider = new ChapterProvider(this);
 
         // 初始化书籍
         prepareBook(collBook);
@@ -429,7 +428,7 @@ public abstract class PageLoader {
 
         if (mCurChapter.isNotOpened()) {
             // 展示加载界面
-            mPageView.drawCurrentPage(willNotDraw);
+            mPageView.drawCurrentPage(mWillNotDraw);
             // 如果在 display 之前调用过 openChapter 肯定是无法打开的。
             // 所以需要通过 display 再重新调用一次。
             if (!isFirstOpen) {
@@ -889,7 +888,7 @@ public abstract class PageLoader {
     }
 
     void dealLoadChapter(int chapterPos) {
-        mCurChapter = chapterProvider.provideChapter(chapterPos);
+        mCurChapter = mChapterProvider.provideChapter(chapterPos);
         // 回调
         dispatchChapterChangeEvent();
     }
@@ -912,7 +911,7 @@ public abstract class PageLoader {
         }
 
         //调用异步进行预加载加载
-        Single.create((SingleOnSubscribe<TxtChapter>) e -> e.onSuccess(chapterProvider.provideChapter(nextChapter)))
+        Single.create((SingleOnSubscribe<TxtChapter>) e -> e.onSuccess(mChapterProvider.provideChapter(nextChapter)))
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<TxtChapter>() {
                     @Override
@@ -952,7 +951,7 @@ public abstract class PageLoader {
         }
 
         //调用异步进行预加载加载
-        Single.create((SingleOnSubscribe<TxtChapter>) e -> e.onSuccess(chapterProvider.provideChapter(prevChapter)))
+        Single.create((SingleOnSubscribe<TxtChapter>) e -> e.onSuccess(mChapterProvider.provideChapter(prevChapter)))
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<TxtChapter>() {
                     @Override
@@ -1111,8 +1110,8 @@ public abstract class PageLoader {
         return mCurChapterPos;
     }
 
-    void setWillNotDraw(boolean willNotDraw) {
-        this.willNotDraw = willNotDraw;
+    void setmWillNotDraw(boolean mWillNotDraw) {
+        this.mWillNotDraw = mWillNotDraw;
     }
 
     PageView getPageView() {
@@ -1123,8 +1122,8 @@ public abstract class PageLoader {
         return mPageView.getActivity();
     }
 
-    ChapterProvider getChapterProvider() {
-        return chapterProvider;
+    ChapterProvider getmChapterProvider() {
+        return mChapterProvider;
     }
 
     int getPagePosition() {
@@ -1199,7 +1198,7 @@ public abstract class PageLoader {
 
         destroyBgBitmap();
 
-        chapterProvider.close();
+        mChapterProvider.close();
     }
 
 }

@@ -7,9 +7,8 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.AudioSniffer;
+import com.monke.monkeybook.help.BitIntentDataManager;
 
 import java.io.IOException;
 
@@ -48,7 +47,7 @@ public class AudioBookPlayService extends Service {
             switch (intent.getAction()) {
                 case "start":
                     String key = intent.getStringExtra("data_key");
-                    bookShelfBean = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+                    bookShelfBean = BitIntentDataManager.getInstance().getData(key, null);
                     BitIntentDataManager.getInstance().cleanData(key);
                     ensureChapterList();
                     break;
@@ -60,19 +59,6 @@ public class AudioBookPlayService extends Service {
 
 
     private void ensureChapterList() {
-        AudioSniffer sniffer = new AudioSniffer(AudioBookPlayService.this, bookShelfBean.getTag());
-        sniffer.setOnSniffListener(new AudioSniffer.OnSniffListener() {
-            @Override
-            public void onResult(String url) {
-                play(url);
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
-        sniffer.start("http://www.qqjt5.com/py/21161-1-0.html");
 //        WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
 //                .subscribeOn(Schedulers.newThread())
 //                .doOnNext(bookShelfBean -> {

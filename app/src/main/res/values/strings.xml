@@ -258,7 +258,8 @@
     <string name="book_info">书籍信息</string>
     <string name="ps_default_read">默认打开书架</string>
     <string name="pt_default_read">自动跳转最近阅读</string>
-    <string name="use_to">作用于</string>
+    <string name="use_to">作用于，选填书名或书源地址</string>
+    <string name="use_regex">替换规则使用正则表达式</string>
     <string name="menu_action_group">分组</string>
     <string name="aloud_volume_page">朗读时音量键翻页</string>
     <string name="update_search_page_count">搜索结果页数</string>
@@ -283,4 +284,7 @@
     <string name="sort_by_date_desc">按时间(倒序)</string>
     <string name="sort_by_size_desc">按大小(倒序)</string>
     <string name="audio_book">有声小说</string>
+    <string name="source_login">书源登录</string>
+    <string name="open_in_browser">外部浏览器打开</string>
+    <string name="scan_html_code">查看网页源码</string>
 </resources>

@@ -12,7 +12,6 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -22,7 +21,7 @@ import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.BookShelfDataHolder;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
@@ -37,6 +36,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
@@ -44,6 +44,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
     private boolean inBookShelf;
     private BookShelfBean bookShelf;
+    private BookSourceBean bookSource;
 
     private CompositeDisposable changeSourceDisp = new CompositeDisposable();
 
@@ -54,10 +55,10 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void handleIntent(Intent intent) {
         boolean isRecreate = intent.getBooleanExtra("isRecreate", false);
         if (isRecreate && !intent.getBooleanExtra("fromUri", false)) {
-            BookShelfDataHolder holder = BookShelfDataHolder.getInstance();
-            bookShelf = holder.getBookShelf();
+            BitIntentDataManager dataManager = BitIntentDataManager.getInstance();
+            bookShelf = dataManager.getData("bookShelf", null);
             if (bookShelf != null) {
-                inBookShelf = holder.isInBookShelf();
+                inBookShelf = dataManager.getData("inBookShelf", false);
                 mView.prepareDisplay(false);
             } else {
                 mView.finish();
@@ -66,7 +67,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             intent.putExtra("isRecreate", true).putExtra("fromUri", false);
             inBookShelf = intent.getBooleanExtra("inBookShelf", true);
             String key = intent.getStringExtra("data_key");
-            bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+            bookShelf = BitIntentDataManager.getInstance().getData(key, null);
             BitIntentDataManager.getInstance().cleanData(key);
 
             if (bookShelf == null) {
@@ -78,6 +79,14 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 mView.prepareDisplay(true);
             }
         }
+    }
+
+    @Override
+    public BookSourceBean getBookSource() {
+        if(bookSource == null && bookShelf != null){
+            bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelf.getTag());
+        }
+        return bookSource;
     }
 
     /**
@@ -236,6 +245,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doAfterNext(bookShelfBean1 -> {
+                    bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelfBean1.getTag());
+                })
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
                     @Override

@@ -127,7 +127,7 @@ public class AudioSniffer {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             if (!TextUtils.isEmpty(mJavaScript)) {
-                view.loadUrl("javascript:" + mJavaScript);
+                view.evaluateJavascript(mJavaScript, null);
             }
         }
     }

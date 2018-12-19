@@ -1,6 +1,7 @@
 package com.monke.monkeybook.widget.modialog;
 
 import android.content.Context;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,7 @@ public class MoDialogView extends LinearLayout {
         return moDialogHUD;
     }
 
-    public void onAttach(MoDialogHUD moDialogHUD){
+    public void onAttach(MoDialogHUD moDialogHUD) {
         this.moDialogHUD = moDialogHUD;
     }
 

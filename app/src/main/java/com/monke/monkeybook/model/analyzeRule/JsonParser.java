@@ -7,6 +7,8 @@ import com.jayway.jsonpath.ReadContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class JsonParser {
 
@@ -25,14 +27,24 @@ class JsonParser {
     static String optString(@NonNull ReadContext context, String rule) {
         String result = "";
         if (TextUtils.isEmpty(rule)) return result;
-        try {
-            Object object = context.read(rule);
-            if (object instanceof List) {
-                object = ((List) object).get(0);
+        if (!rule.contains("{")) {
+            try {
+                Object object = context.read(rule);
+                if (object instanceof List) {
+                    object = ((List) object).get(0);
+                }
+                result = String.valueOf(object);
+            } catch (Exception ignore) {
             }
-            result = String.valueOf(object);
-        } catch (Exception ignore) {
+            return result;
+        } else {
+            result = rule;
+            Pattern pattern = Pattern.compile("(?<=\\{).+?(?=\\})");
+            Matcher matcher = pattern.matcher(rule);
+            while (matcher.find()) {
+                result = result.replace(String.format("{%s}", matcher.group()), optString(context, matcher.group()));
+            }
+            return result;
         }
-        return result;
     }
 }

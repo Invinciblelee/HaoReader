@@ -19,13 +19,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.fragment.FileSelector;
@@ -125,7 +125,7 @@ public class BookInfoActivity extends MBaseActivity {
     @Override
     protected void initData() {
         String key = getIntent().getStringExtra("data_key");
-        bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+        bookShelf = BitIntentDataManager.getInstance().getData(key, null);
         bookInfo = bookShelf.getBookInfoBean();
         BitIntentDataManager.getInstance().cleanData(key);
 
@@ -218,7 +218,7 @@ public class BookInfoActivity extends MBaseActivity {
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        FileSelector.newInstance(true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelector.newInstance("选择图片",true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 tieCoverUrl.setText(path);

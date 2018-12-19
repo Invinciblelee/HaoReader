@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
@@ -21,6 +23,7 @@ public class EditReplaceRuleView {
     private TextInputEditText tieReplaceRule;
     private TextInputEditText tieReplaceTo;
     private TextInputEditText tieUseTo;
+    private AppCompatCheckBox cbUseRegex;
 
     private MoDialogView moDialogView;
     private OnSaveReplaceRule saveReplaceRule;
@@ -46,9 +49,11 @@ public class EditReplaceRuleView {
             tieReplaceTo.setText(replaceRuleBean.getReplacement());
             tieReplaceRule.setText(replaceRuleBean.getRegex());
             tieUseTo.setText(replaceRuleBean.getUseTo());
+            cbUseRegex.setChecked(replaceRuleBean.getIsRegex());
         } else {
             this.replaceRuleBean = new ReplaceRuleBean();
             this.replaceRuleBean.setEnable(true);
+            this.replaceRuleBean.setIsRegex(true);
         }
     }
 
@@ -71,6 +76,9 @@ public class EditReplaceRuleView {
         tieReplaceSummary = moDialogView.findViewById(R.id.tie_replace_summary);
         tieReplaceTo = moDialogView.findViewById(R.id.tie_replace_to);
         tieUseTo = moDialogView.findViewById(R.id.tie_use_to);
+        cbUseRegex = moDialogView.findViewById(R.id.cb_use_regex);
+
+        cbUseRegex.setOnCheckedChangeListener((buttonView, isChecked) -> replaceRuleBean.setIsRegex(isChecked));
 
         View tvOk = moDialogView.findViewById(R.id.tv_ok);
         tvOk.setOnClickListener(view -> {

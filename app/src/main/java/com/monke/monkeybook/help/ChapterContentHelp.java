@@ -31,7 +31,7 @@ public class ChapterContentHelp {
     /**
      * 替换净化
      */
-    public static String replaceContent(BookShelfBean mBook, String content) {
+    public static String replaceContent(String bookName, String bookTag, String content) {
         String allLine[] = content.split("\n\u3000\u3000");
         //替换
         List<ReplaceRuleBean> enabled = ReplaceRuleManager.getInstance().getEnabled();
@@ -39,9 +39,13 @@ public class ChapterContentHelp {
             StringBuilder contentBuilder = new StringBuilder();
             for (String line : allLine) {
                 for (ReplaceRuleBean replaceRule : enabled) {
-                    if (TextUtils.isEmpty(replaceRule.getUseTo()) || isUseTo(mBook, replaceRule.getUseTo())) {
+                    if (isUseTo(replaceRule.getUseTo(), bookName, bookTag)) {
                         try {
-                            line = line.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
+                            if(replaceRule.getIsRegex()) {
+                                line = line.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
+                            }else {
+                                line = line.replace(replaceRule.getRegex(), replaceRule.getReplacement());
+                            }
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
@@ -57,13 +61,14 @@ public class ChapterContentHelp {
             }
             content = contentBuilder.toString();
             for (ReplaceRuleBean replaceRule : enabled) {
-                if (TextUtils.isEmpty(replaceRule.getUseTo()) || isUseTo(mBook, replaceRule.getUseTo())) {
-                    if (replaceRule.getRegex().contains("\\n")) {
-                        try {
-                            content = content.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
+                if (replaceRule.getIsRegex() || !replaceRule.getRegex().contains("\\n")) {
+                    continue;
+                }
+                if (isUseTo(replaceRule.getUseTo(), bookName, bookTag)) {
+                    try {
+                        content = content.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
                     }
                 }
             }
@@ -71,9 +76,10 @@ public class ChapterContentHelp {
         return toTraditional(ReadBookControl.getInstance().getTextConvert(), content);
     }
 
-    private static boolean isUseTo(BookShelfBean mBook, String useTo) {
-        return useTo.contains(mBook.getTag())
-                || useTo.contains(mBook.getBookInfoBean().getName());
+    private static boolean isUseTo(String useTo, String bookName, String bookTag) {
+        return TextUtils.isEmpty(useTo)
+                || useTo.contains(bookTag)
+                || useTo.contains(bookName);
     }
 
 }

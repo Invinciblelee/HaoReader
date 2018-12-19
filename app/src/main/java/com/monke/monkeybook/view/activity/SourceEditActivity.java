@@ -1,14 +1,10 @@
 package com.monke.monkeybook.view.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.FileProvider;
@@ -23,26 +19,20 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-import com.monke.monkeybook.BitIntentDataManager;
 import com.monke.monkeybook.BuildConfig;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
+import com.monke.monkeybook.bean.WebLoadConfig;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.view.fragment.FileSelector;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -53,6 +43,7 @@ import static android.text.TextUtils.isEmpty;
 
 public class SourceEditActivity extends MBaseActivity<SourceEditContract.Presenter> implements SourceEditContract.View {
     public final static int EDIT_SOURCE = 1101;
+    public final static int QR_SCAN = 1102;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -225,7 +216,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 title = getString(R.string.add_book_source);
             } else {
                 title = getString(R.string.edit_book_source);
-                bookSourceBean = (BookSourceBean) BitIntentDataManager.getInstance().getData(key);
+                bookSourceBean = BitIntentDataManager.getInstance().getData(key, null);
                 serialNumber = bookSourceBean.getSerialNumber();
                 enable = bookSourceBean.getEnable();
                 BitIntentDataManager.getInstance().cleanData(key);
@@ -245,7 +236,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     private void saveBookSource() {
         if (isEmpty(tieBookSourceName.getText()) || isEmpty(tieBookSourceUrl.getText())) {
-            toast("书源名称和URL不能为空");
+            showSnackBar("书源名称和URL不能为空");
             return;
         }
         mPresenter.saveSource(getBookSource(), bookSourceBean);
@@ -274,10 +265,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void scanBookSource() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setCameraId(Camera.CameraInfo.CAMERA_FACING_BACK);
-        integrator.setCaptureActivity(QRCodeScanActivity.class);
-        integrator.initiateScan();
+        Intent intent = new Intent(this, QRCodeScanActivity.class);
+        startActivityForResult(intent, QR_SCAN);
     }
 
     private String trim(CharSequence string) {
@@ -329,11 +318,11 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             return;
         }
         String bookType = trim(bookSourceBean.getBookSourceType());
-        if(!TextUtils.isEmpty(bookType)) {
+        if (!TextUtils.isEmpty(bookType)) {
             tieBookSourceType.setText(bookType);
         }
         String ruleType = trim(bookSourceBean.getBookSourceRuleType());
-        if(!TextUtils.isEmpty(ruleType)){
+        if (!TextUtils.isEmpty(ruleType)) {
             tieBookSourceRuleType.setText(ruleType);
         }
         tieBookSourceName.setText(trim(bookSourceBean.getBookSourceName()));
@@ -397,35 +386,14 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilRuleContentUrlNext.setHint("下一页章节内容URL获取规则");
     }
 
-    @SuppressLint("SetWorldReadable")
-    private void shareBookSource() {
-        Bitmap bitmap = mPresenter.encodeAsBitmap(getBookSourceStr());
-        try {
-            File file = new File(this.getExternalCacheDir(), "bookSource.png");
-            FileOutputStream fOut = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-            fOut.flush();
-            fOut.close();
-            file.setReadable(true, false);
-            Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file);
-            final Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            intent.setType("image/png");
-            startActivity(Intent.createChooser(intent, "分享书源"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @AfterPermissionGranted(MApplication.RESULT__PERMS)
-    private void selectLocalImage() {
-        FileSelector.newInstance(true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
-            @Override
-            public void onSingleChoice(String path) {
-                mPresenter.analyzeBitmap(path);
-            }
-        });
+    @Override
+    public void shareSource(File file) {
+        Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file);
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        intent.setType("image/png");
+        startActivity(Intent.createChooser(intent, "分享书源"));
     }
 
     private void openRuleSummary() {
@@ -434,7 +402,22 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             intent.setData(Uri.parse(getString(R.string.source_rule_url)));
             startActivity(intent);
         } catch (Exception e) {
-            toast(R.string.can_not_open);
+            showSnackBar(R.string.can_not_open);
+        }
+    }
+
+    private void toLoginPage(){
+        String sourceUrl = tieBookSourceUrl.getText().toString();
+        if(TextUtils.isEmpty(sourceUrl)){
+            showSnackBar("书源地址不能为空");
+        }else {
+            String loginUrl = tieLoginUrl.getText().toString();
+            if (!TextUtils.isEmpty(loginUrl)) {
+                String userAgent = tieHttpUserAgent.getText().toString();
+                WebViewActivity.startThis(this, new WebLoadConfig(getString(R.string.source_login), loginUrl, userAgent, sourceUrl));
+            } else {
+                showSnackBar("当前书源没有配置登录地址");
+            }
         }
     }
 
@@ -462,6 +445,9 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             case R.id.action_save:
                 saveBookSource();
                 break;
+            case R.id.action_login:
+                toLoginPage();
+                break;
             case R.id.action_copy_source:
                 mPresenter.copySource(getBookSource());
                 break;
@@ -472,14 +458,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 scanBookSource();
                 break;
             case R.id.action_share_it:
-                shareBookSource();
-                break;
-            case R.id.action_qr_code_image:
-                if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                    selectLocalImage();
-                } else {
-                    EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
-                }
+                mPresenter.handleSourceShare();
                 break;
             case R.id.action_rule_summary:
                 openRuleSummary();
@@ -492,21 +471,13 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                mPresenter.setText(result.getContents());
+        if (requestCode == QR_SCAN && resultCode == RESULT_OK && null != data) {
+            String result = data.getStringExtra("result");
+            if (!TextUtils.isEmpty(result)) {
+                mPresenter.setText(result);
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

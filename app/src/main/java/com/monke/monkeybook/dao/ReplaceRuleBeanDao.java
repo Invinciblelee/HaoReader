@@ -31,6 +31,7 @@ public class ReplaceRuleBeanDao extends AbstractDao<ReplaceRuleBean, Long> {
         public final static Property UseTo = new Property(4, String.class, "useTo", false, "USE_TO");
         public final static Property Enable = new Property(5, Boolean.class, "enable", false, "ENABLE");
         public final static Property SerialNumber = new Property(6, int.class, "serialNumber", false, "SERIAL_NUMBER");
+        public final static Property IsRegex = new Property(7, Boolean.class, "isRegex", false, "IS_REGEX");
     }
 
 
@@ -52,7 +53,8 @@ public class ReplaceRuleBeanDao extends AbstractDao<ReplaceRuleBean, Long> {
                 "\"REPLACEMENT\" TEXT," + // 3: replacement
                 "\"USE_TO\" TEXT," + // 4: useTo
                 "\"ENABLE\" INTEGER," + // 5: enable
-                "\"SERIAL_NUMBER\" INTEGER NOT NULL );"); // 6: serialNumber
+                "\"SERIAL_NUMBER\" INTEGER NOT NULL ," + // 6: serialNumber
+                "\"IS_REGEX\" INTEGER);"); // 7: isRegex
     }
 
     /** Drops the underlying database table. */
@@ -95,6 +97,11 @@ public class ReplaceRuleBeanDao extends AbstractDao<ReplaceRuleBean, Long> {
             stmt.bindLong(6, enable ? 1L: 0L);
         }
         stmt.bindLong(7, entity.getSerialNumber());
+ 
+        Boolean isRegex = entity.getIsRegex();
+        if (isRegex != null) {
+            stmt.bindLong(8, isRegex ? 1L: 0L);
+        }
     }
 
     @Override
@@ -131,6 +138,11 @@ public class ReplaceRuleBeanDao extends AbstractDao<ReplaceRuleBean, Long> {
             stmt.bindLong(6, enable ? 1L: 0L);
         }
         stmt.bindLong(7, entity.getSerialNumber());
+ 
+        Boolean isRegex = entity.getIsRegex();
+        if (isRegex != null) {
+            stmt.bindLong(8, isRegex ? 1L: 0L);
+        }
     }
 
     @Override
@@ -147,7 +159,8 @@ public class ReplaceRuleBeanDao extends AbstractDao<ReplaceRuleBean, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // replacement
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // useTo
             cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // enable
-            cursor.getInt(offset + 6) // serialNumber
+            cursor.getInt(offset + 6), // serialNumber
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // isRegex
         );
         return entity;
     }
@@ -161,6 +174,7 @@ public class ReplaceRuleBeanDao extends AbstractDao<ReplaceRuleBean, Long> {
         entity.setUseTo(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setEnable(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
         entity.setSerialNumber(cursor.getInt(offset + 6));
+        entity.setIsRegex(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
      }
     
     @Override

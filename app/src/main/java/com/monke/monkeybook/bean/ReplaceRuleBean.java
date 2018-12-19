@@ -29,20 +29,22 @@ public class ReplaceRuleBean implements Parcelable {
     private Boolean enable;
     @OrderBy
     private int serialNumber;
+    private Boolean isRegex;
 
     private ReplaceRuleBean(Parcel in) {
-        id  = in.readLong();
+        id = in.readLong();
         regex = in.readString();
         replacement = in.readString();
         replaceSummary = in.readString();
         useTo = in.readString();
         enable = in.readByte() != 0;
         serialNumber = in.readInt();
+        isRegex = in.readByte() != 0;
     }
 
-    @Generated(hash = 91525001)
+    @Generated(hash = 62660570)
     public ReplaceRuleBean(Long id, String replaceSummary, String regex, String replacement,
-                           String useTo, Boolean enable, int serialNumber) {
+            String useTo, Boolean enable, int serialNumber, Boolean isRegex) {
         this.id = id;
         this.replaceSummary = replaceSummary;
         this.regex = regex;
@@ -50,6 +52,7 @@ public class ReplaceRuleBean implements Parcelable {
         this.useTo = useTo;
         this.enable = enable;
         this.serialNumber = serialNumber;
+        this.isRegex = isRegex;
     }
 
     @Generated(hash = 582692869)
@@ -65,6 +68,7 @@ public class ReplaceRuleBean implements Parcelable {
         parcel.writeString(useTo);
         parcel.writeByte((byte) (enable ? 1 : 0));
         parcel.writeInt(serialNumber);
+        parcel.writeByte((byte) (isRegex ? 1 : 0));
     }
 
     @Transient
@@ -144,4 +148,11 @@ public class ReplaceRuleBean implements Parcelable {
         this.useTo = useTo;
     }
 
+    public void setIsRegex(Boolean regex) {
+        isRegex = regex;
+    }
+
+    public Boolean getIsRegex() {
+        return isRegex == null ? false : isRegex;
+    }
 }

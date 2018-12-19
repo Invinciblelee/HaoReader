@@ -51,8 +51,9 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
     private FileSelectorContract.Presenter mPresenter;
 
-    public static FileSelector newInstance(boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
+    public static FileSelector newInstance(String title, boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
         Bundle args = new Bundle();
+        args.putString("title", title);
         args.putBoolean("isSingleChoice", singleChoice);
         args.putBoolean("checkBookAdded", checkBookAdded);
         args.putBoolean("isImage", isImage);
@@ -60,6 +61,10 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
         FileSelector fragment = new FileSelector();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static FileSelector newInstance(boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
+        return newInstance(null, singleChoice, checkBookAdded, isImage, suffixes);
     }
 
     @Override
@@ -89,6 +94,9 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     }
 
     private void initView() {
+        if(mPresenter.getTitle() != null){
+            toolbar.setTitle(mPresenter.getTitle());
+        }
         toolbar.inflateMenu(R.menu.menu_file_selector);
         toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_format_line_spacing_black_24dp));
         AppCompat.setTint(toolbar.getOverflowIcon(), getResources().getColor(R.color.white));

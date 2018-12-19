@@ -118,7 +118,7 @@ class XJsoupContentDelegate implements ContentDelegate {
         int retryCount = 0;
         while (!isEmpty(webChapterBean.nextUrl) && !nextUrls.contains(webChapterBean.nextUrl)) {
             Call<String> call = OkHttpHelper.getInstance().createService(mBookSource.getBookSourceUrl(), IHttpGetApi.class)
-                    .getWebContentCall(webChapterBean.nextUrl, AnalyzeHeaders.getMap(mBookSource.getHttpUserAgent()));
+                    .getWebContentCall(webChapterBean.nextUrl, AnalyzeHeaders.getMap(mBookSource));
             String response = "";
             try {
                 response = call.execute().body();
@@ -166,7 +166,7 @@ class XJsoupContentDelegate implements ContentDelegate {
         int retryCount = 0;
         while (!TextUtils.isEmpty(webContentBean.nextUrl) && !nextUrls.contains(webContentBean.nextUrl)) {
             Call<String> call = OkHttpHelper.getInstance().createService(mBookSource.getBookSourceUrl(), IHttpGetApi.class)
-                    .getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(mBookSource.getHttpUserAgent()));
+                    .getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(mBookSource));
             String response = "";
             try {
                 response = call.execute().body();

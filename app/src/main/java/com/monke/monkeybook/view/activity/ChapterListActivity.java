@@ -18,7 +18,7 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.impl.IPresenter;
-import com.monke.monkeybook.BitIntentDataManager;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -106,7 +106,7 @@ public class ChapterListActivity extends MBaseActivity {
     @Override
     protected void initData() {
         String key = getIntent().getStringExtra("data_key");
-        bookShelf = (BookShelfBean) BitIntentDataManager.getInstance().getData(key);
+        bookShelf = BitIntentDataManager.getInstance().getData(key, null);
         BitIntentDataManager.getInstance().cleanData(key);
 
         isChapterReverse = getPreferences().getBoolean("isChapterReverse", false);

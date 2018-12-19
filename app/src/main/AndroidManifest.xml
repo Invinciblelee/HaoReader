@@ -68,7 +68,7 @@
             android:name=".view.activity.QRCodeScanActivity"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
-            android:theme="@style/zxing_CaptureTheme"
+            android:theme="@style/CAppTheme.Activity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
@@ -177,6 +177,12 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
+
+        <activity android:name=".view.activity.WebViewActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity"/>
 
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />

@@ -31,6 +31,8 @@ public interface FileSelectorContract {
         boolean checkBookAdded();
 
         boolean isImage();
+
+        String getTitle();
     }
 
     interface View extends IView {

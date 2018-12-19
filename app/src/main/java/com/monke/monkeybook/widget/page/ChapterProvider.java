@@ -6,6 +6,7 @@ import android.text.StaticLayout;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
@@ -31,18 +32,18 @@ import io.reactivex.schedulers.Schedulers;
  */
 class ChapterProvider {
 
-    private final List<String> downloadingChapterList = new ArrayList<>();
+    private final List<String> mDownloadingChapterList = new ArrayList<>();
 
-    private PageLoader pageLoader;
+    private PageLoader mPageLoader;
 
-    private ExecutorService executor;
-    private Scheduler scheduler;
+    private ExecutorService mExecutor;
+    private Scheduler mScheduler;
 
     ChapterProvider(PageLoader pageLoader) {
-        this.pageLoader = pageLoader;
+        this.mPageLoader = pageLoader;
 
-        executor = Executors.newFixedThreadPool(6);
-        scheduler = Schedulers.from(executor);
+        mExecutor = Executors.newFixedThreadPool(6);
+        mScheduler = Schedulers.from(mExecutor);
     }
 
     /**
@@ -51,14 +52,14 @@ class ChapterProvider {
     @NonNull
     TxtChapter provideChapter(int chapterPos) {
         // 获取章节
-        ChapterListBean chapter = pageLoader.getCollBook().getChapter(chapterPos);
+        ChapterListBean chapter = mPageLoader.getCollBook().getChapter(chapterPos);
         // 判断章节是否存在
-        if (!pageLoader.hasChapterData(chapter)) {
+        if (!mPageLoader.hasChapterData(chapter)) {
             return new TxtChapter(chapterPos, !NetworkUtil.isNetworkAvailable() ? PageStatus.STATUS_NETWORK_ERROR : PageStatus.STATUS_LOADING);
         }
         // 获取章节的文本流
         try {
-            BufferedReader reader = pageLoader.getChapterReader(chapter);
+            BufferedReader reader = mPageLoader.getChapterReader(chapter);
             return loadChapter(chapter, reader);
         } catch (Exception e) {
             return new TxtChapter(chapterPos, PageStatus.STATUS_UNKNOWN_ERROR);
@@ -77,8 +78,9 @@ class ChapterProvider {
         TxtChapter txtChapter = new TxtChapter(chapter.getDurChapterIndex(), PageStatus.STATUS_FINISH);
         //使用流的方式加载
         List<String> lines = new ArrayList<>();
-        BookShelfBean collBook = pageLoader.getCollBook();
-        int rHeight = pageLoader.getVisibleHeight();
+        BookShelfBean collBook = mPageLoader.getCollBook();
+        BookInfoBean bookInfo = collBook.getBookInfoBean();
+        int rHeight = mPageLoader.getVisibleHeight();
         int titleLinesCount = 0;
         try {
             boolean showTitle = true; // 是否展示标题
@@ -87,7 +89,7 @@ class ChapterProvider {
                 br.readLine();
             }
             while (showTitle || (paragraph = br.readLine()) != null) {
-                paragraph = ChapterContentHelp.replaceContent(collBook, paragraph);
+                paragraph = ChapterContentHelp.replaceContent(bookInfo.getName(), bookInfo.getTag(), paragraph);
                 // 重置段落
                 if (!showTitle) {
                     paragraph = paragraph.replaceAll("\\s", " ").trim();
@@ -100,9 +102,9 @@ class ChapterProvider {
                 while (paragraph.length() > 0) {
                     //当前空间，是否容得下一行文字
                     if (showTitle) {
-                        rHeight -= pageLoader.getTitleTextSize();
+                        rHeight -= mPageLoader.getTitleTextSize();
                     } else {
-                        rHeight -= pageLoader.getTextSize();
+                        rHeight -= mPageLoader.getTextSize();
                     }
                     // 一页已经填充满了，创建 TextPage
                     if (rHeight <= 0) {
@@ -115,17 +117,17 @@ class ChapterProvider {
                         pages.add(page);
                         // 重置Lines
                         lines.clear();
-                        rHeight = pageLoader.getVisibleHeight();
+                        rHeight = mPageLoader.getVisibleHeight();
                         titleLinesCount = 0;
                         continue;
                     }
 
                     //测量一行占用的字节数
                     if (showTitle) {
-                        Layout tempLayout = new StaticLayout(paragraph, pageLoader.getTitlePaint(), pageLoader.getVisibleWidth(), Layout.Alignment.ALIGN_NORMAL, 0, 0, false);
+                        Layout tempLayout = new StaticLayout(paragraph, mPageLoader.getTitlePaint(), mPageLoader.getVisibleWidth(), Layout.Alignment.ALIGN_NORMAL, 0, 0, false);
                         wordCount = tempLayout.getLineEnd(0);
                     } else {
-                        Layout tempLayout = new StaticLayout(paragraph, pageLoader.getTextPaint(), pageLoader.getVisibleWidth(), Layout.Alignment.ALIGN_NORMAL, 0, 0, false);
+                        Layout tempLayout = new StaticLayout(paragraph, mPageLoader.getTextPaint(), mPageLoader.getVisibleWidth(), Layout.Alignment.ALIGN_NORMAL, 0, 0, false);
                         wordCount = tempLayout.getLineEnd(0);
                     }
 
@@ -138,7 +140,7 @@ class ChapterProvider {
                         if (showTitle) {
                             titleLinesCount += 1;
                         }
-                        rHeight -= pageLoader.getTextInterval();
+                        rHeight -= mPageLoader.getTextInterval();
                     }
                     //裁剪
                     paragraph = paragraph.substring(wordCount);
@@ -146,7 +148,7 @@ class ChapterProvider {
 
                 //增加段落的间距
                 if (lines.size() != 0) {
-                    rHeight = rHeight - pageLoader.getTextPara() + pageLoader.getTextInterval();
+                    rHeight = rHeight - mPageLoader.getTextPara() + mPageLoader.getTextInterval();
                 }
 
                 if (showTitle) {
@@ -175,12 +177,12 @@ class ChapterProvider {
     }
 
     void loadChapterContent(int chapterIndex) {
-        final BookShelfBean bookShelf = pageLoader.getCollBook();
+        final BookShelfBean bookShelf = mPageLoader.getCollBook();
         if (NetworkUtil.isNetworkAvailable() && null != bookShelf && !bookShelf.realChapterListEmpty()) {
             final ChapterListBean chapter = bookShelf.getChapter(chapterIndex);
-            if (!pageLoader.hasChapterData(chapter) && addDownloading(chapter.getDurChapterUrl())) {
-                WebBookModelImpl.getInstance().getBookContent(scheduler, bookShelf.getBookInfoBean(), chapter)
-                        .compose(pageLoader.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+            if (!mPageLoader.hasChapterData(chapter) && addDownloading(chapter.getDurChapterUrl())) {
+                WebBookModelImpl.getInstance().getBookContent(mScheduler, bookShelf.getBookInfoBean(), chapter)
+                        .compose(mPageLoader.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                         .timeout(20, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<BookContentBean>() {
@@ -188,16 +190,16 @@ class ChapterProvider {
                             @Override
                             public void onNext(BookContentBean bookContentBean) {
                                 removeDownloading(bookContentBean.getDurChapterUrl());
-                                if (chapterIndex == pageLoader.getChapterPosition()) {
-                                    pageLoader.openChapter(bookShelf.getDurChapterPage());
+                                if (chapterIndex == mPageLoader.getChapterPosition()) {
+                                    mPageLoader.openChapter(bookShelf.getDurChapterPage());
                                 }
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 removeDownloading(chapter.getDurChapterUrl());
-                                if (chapterIndex == pageLoader.getChapterPosition()) {
-                                    pageLoader.setCurrentStatus(NetworkUtil.isNetworkAvailable() ? PageStatus.STATUS_UNKNOWN_ERROR :
+                                if (chapterIndex == mPageLoader.getChapterPosition()) {
+                                    mPageLoader.setCurrentStatus(NetworkUtil.isNetworkAvailable() ? PageStatus.STATUS_UNKNOWN_ERROR :
                                             PageStatus.STATUS_NETWORK_ERROR);
                                 }
                             }
@@ -207,17 +209,17 @@ class ChapterProvider {
     }
 
     private synchronized void removeDownloading(String chapterUrl) {
-        downloadingChapterList.remove(chapterUrl);
+        mDownloadingChapterList.remove(chapterUrl);
     }
 
     private synchronized boolean addDownloading(String chapterUrl) {
-        if (!downloadingChapterList.contains(chapterUrl)) {
-            return downloadingChapterList.add(chapterUrl);
+        if (!mDownloadingChapterList.contains(chapterUrl)) {
+            return mDownloadingChapterList.add(chapterUrl);
         }
         return false;
     }
 
     void close() {
-        executor.shutdown();
+        mExecutor.shutdown();
     }
 }

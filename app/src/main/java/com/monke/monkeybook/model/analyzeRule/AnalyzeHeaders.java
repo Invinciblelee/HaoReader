@@ -1,9 +1,10 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.content.SharedPreferences;
-
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.BookSourceBean;
+import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.CookieHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,16 +17,24 @@ import static android.text.TextUtils.isEmpty;
  */
 
 public class AnalyzeHeaders {
-    private static SharedPreferences preferences = MApplication.getInstance().getSharedPreferences("CONFIG", 0);
 
-    public static Map<String, String> getMap(String userAgent) {
+    public static Map<String, String> getMap(BookSourceBean bookSource) {
         Map<String, String> headerMap = new HashMap<>();
-        if (isEmpty(userAgent)) {
-            headerMap.put("User-Agent", getDefaultUserAgent());
-            return headerMap;
-        } else {
+        String userAgent = bookSource == null ? null : bookSource.getHttpUserAgent();
+        if (!isEmpty(userAgent)) {
             headerMap.put("User-Agent", userAgent);
+        } else {
+            headerMap.put("User-Agent", getDefaultUserAgent());
         }
+
+        String sourceUrl = bookSource == null ? null : bookSource.getBookSourceUrl();
+        if (!isEmpty(sourceUrl)) {
+            String cookie = CookieHelper.get(MApplication.getInstance()).getCookie(sourceUrl);
+            if (!isEmpty(cookie)) {
+                headerMap.put("Cookie", cookie);
+            }
+        }
+
         return headerMap;
     }
 
@@ -38,7 +47,7 @@ public class AnalyzeHeaders {
     }
 
     private static String getDefaultUserAgent() {
-        return preferences.getString(MApplication.getInstance().getString(R.string.pk_user_agent),
+        return AppConfigHelper.get(MApplication.getInstance()).getString(MApplication.getInstance().getString(R.string.pk_user_agent),
                 MApplication.getInstance().getString(R.string.pv_user_agent));
     }
 }

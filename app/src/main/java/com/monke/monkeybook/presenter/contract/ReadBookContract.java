@@ -3,6 +3,7 @@ package com.monke.monkeybook.presenter.contract;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
@@ -48,6 +49,8 @@ public interface ReadBookContract {
         boolean inBookShelf();
 
         BookShelfBean getBookShelf();
+
+        BookSourceBean getBookSource();
 
         void saveProgress();
 

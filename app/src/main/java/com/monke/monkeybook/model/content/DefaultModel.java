@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.content;
 
+import android.util.Log;
+
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -9,6 +11,7 @@ import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeSearchUrl;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
@@ -34,7 +37,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel {
     private String tag;
     private String name;
     private BookSourceBean bookSourceBean;
-    private Map<String, String> headerMap = AnalyzeHeaders.getMap(null);
+    private Map<String, String> headerMap;
 
     private DefaultModel(String tag) {
         this.tag = tag;
@@ -56,7 +59,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel {
                     .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
             if (bookSourceBean != null) {
                 name = bookSourceBean.getBookSourceName();
-                headerMap = AnalyzeHeaders.getMap(bookSourceBean.getHttpUserAgent());
+                headerMap = AnalyzeHeaders.getMap(bookSourceBean);
                 return true;
             } else {
                 return false;

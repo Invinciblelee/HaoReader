@@ -34,6 +34,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     private boolean isSingleChoice;
     private boolean checkBookAdded;
     private boolean isImage;
+    private String title;
 
     private boolean sortChanged;
     private FileSnapshot current;
@@ -47,6 +48,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     public void init(Fragment fragment) {
         Bundle bundle = fragment.getArguments();
         assert bundle != null;
+        title = bundle.getString("title");
         isSingleChoice = bundle.getBoolean("isSingleChoice");
         checkBookAdded = bundle.getBoolean("checkBookAdded");
         isImage = bundle.getBoolean("isImage");
@@ -173,6 +175,11 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     @Override
     public boolean isImage() {
         return isImage;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     @Override

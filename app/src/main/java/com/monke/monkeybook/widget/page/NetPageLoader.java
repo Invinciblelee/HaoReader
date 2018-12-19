@@ -128,7 +128,7 @@ public class NetPageLoader extends PageLoader {
                 setCurrentStatus(STATUS_NETWORK_ERROR, false);
             } else if (getCurrentStatus() != STATUS_FINISH && getCurrentStatus() != STATUS_CONTENT_EMPTY) {
                 setCurrentStatus(STATUS_LOADING, false);
-                getChapterProvider().loadChapterContent(chapterPos);
+                getmChapterProvider().loadChapterContent(chapterPos);
             }
         }
     }
@@ -137,7 +137,7 @@ public class NetPageLoader extends PageLoader {
     void parsePrevChapter() {
         super.parsePrevChapter();
         if (getChapterPosition() >= 1 && shouldRequestChapter(getChapterPosition() - 1)) {
-            getChapterProvider().loadChapterContent(getChapterPosition() - 1);
+            getmChapterProvider().loadChapterContent(getChapterPosition() - 1);
         }
     }
 
@@ -146,7 +146,7 @@ public class NetPageLoader extends PageLoader {
         super.parseCurChapter();
         for (int i = getChapterPosition() >= 1 ? getChapterPosition() - 1 : getChapterPosition(); i < getChapterPosition() + 5; i++) {
             if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
-                getChapterProvider().loadChapterContent(i);
+                getmChapterProvider().loadChapterContent(i);
             }
         }
     }
@@ -156,7 +156,7 @@ public class NetPageLoader extends PageLoader {
         super.parseNextChapter();
         for (int i = getChapterPosition() + 1; i < getChapterPosition() + 5; i++) {
             if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
-                getChapterProvider().loadChapterContent(i);
+                getmChapterProvider().loadChapterContent(i);
             }
         }
     }

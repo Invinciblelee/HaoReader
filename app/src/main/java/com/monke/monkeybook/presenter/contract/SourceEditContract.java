@@ -1,10 +1,10 @@
 package com.monke.monkeybook.presenter.contract;
 
-import android.graphics.Bitmap;
-
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.BookSourceBean;
+
+import java.io.File;
 
 public interface SourceEditContract {
     interface Presenter extends IPresenter {
@@ -17,7 +17,7 @@ public interface SourceEditContract {
 
         void setText(String bookSourceStr);
 
-        Bitmap encodeAsBitmap(String str);
+        void handleSourceShare();
 
         void analyzeBitmap(String path);
     }
@@ -31,5 +31,7 @@ public interface SourceEditContract {
         void saveSuccess();
 
         void showSnackBar(String msg);
+
+        void shareSource(File file);
     }
 }

@@ -44,8 +44,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
         if(mBookSource == null || !TextUtils.equals(mTag, tag) ){
             mTag = tag;
-            mBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
+            mBookSource = BookSourceManager.getInstance().getBookSourceByTag(mTag);
         }
     }
 

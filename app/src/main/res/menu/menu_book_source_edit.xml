@@ -9,9 +9,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_share_it"
-        android:icon="@drawable/ic_share_black_24dp"
-        android:title="@string/share"
+        android:id="@+id/action_login"
+        android:icon="@drawable/ic_login_black_24dp"
+        android:title="@string/source_login"
         app:showAsAction="never" />
 
     <item
@@ -33,15 +33,14 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_qr_code_image"
-        android:icon="@drawable/ic_picture_black_24dp"
-        android:title="@string/scan_image"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_rule_summary"
         android:icon="@drawable/ic_help_outline_black_24dp"
         android:title="@string/rule_summary"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_share_it"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="@string/share"
+        app:showAsAction="never" />
 </menu>

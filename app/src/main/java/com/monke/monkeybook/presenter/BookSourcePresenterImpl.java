@@ -14,6 +14,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.help.DocumentHelper;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
@@ -21,6 +22,7 @@ import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.service.CheckSourceService;
 
 import java.io.File;
+import java.net.CookieManager;
 import java.net.URL;
 import java.util.List;
 
