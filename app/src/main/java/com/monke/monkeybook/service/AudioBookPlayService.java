@@ -6,11 +6,20 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.AudioSniffer;
 import com.monke.monkeybook.help.BitIntentDataManager;
+import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.model.WebBookModelImpl;
 
 import java.io.IOException;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class AudioBookPlayService extends Service {
 
@@ -59,49 +68,48 @@ public class AudioBookPlayService extends Service {
 
 
     private void ensureChapterList() {
-//        WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
-//                .subscribeOn(Schedulers.newThread())
-//                .doOnNext(bookShelfBean -> {
-//                    // 存储章节到数据库
-//                    bookShelfBean.setHasUpdate(false);
-//                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-//                    if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
-//                        BookshelfHelp.saveBookToShelf(bookShelfBean);
-//                    }
-//                })
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new SimpleObserver<BookShelfBean>() {
-//
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(BookShelfBean bookShelfBean) {
-//                        if (!bookShelfBean.realChapterListEmpty()) {
-//                            AudioSniffer sniffer = new AudioSniffer(AudioBookPlayService.this, bookShelfBean.getTag());
-//                            sniffer.setOnSniffListener(new AudioSniffer.OnSniffListener() {
-//                                @Override
-//                                public void onResult(String url) {
-//                                    play(url);
-//                                }
-//
-//                                @Override
-//                                public void onError() {
-//
-//                                }
-//                            });
-//                            Log.e("TAG", bookShelfBean.getChapter(1).getDurChapterUrl());
-//                            sniffer.start(bookShelfBean.getChapter(1).getDurChapterUrl());
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//                });
+        WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
+                .subscribeOn(Schedulers.newThread())
+                .doOnNext(bookShelfBean -> {
+                    // 存储章节到数据库
+                    bookShelfBean.setHasUpdate(false);
+                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
+                    if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<BookShelfBean>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        if (!bookShelfBean.realChapterListEmpty()) {
+                            AudioSniffer sniffer = new AudioSniffer(AudioBookPlayService.this, bookShelfBean.getTag(), null, null);
+                            sniffer.setOnSniffListener(new AudioSniffer.OnSniffListener() {
+                                @Override
+                                public void onResult(String url) {
+                                    play(url);
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            });
+                            sniffer.start(bookShelfBean.getChapter(1).getDurChapterUrl());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
     }
 
 

@@ -2,6 +2,7 @@ package com.monke.monkeybook.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.animation.AnimationUtils;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -65,6 +67,15 @@ public class BookFloatingActionMenu extends LinearLayout {
                 }
             });
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(isExpanded){
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 
     public boolean isExpanded() {

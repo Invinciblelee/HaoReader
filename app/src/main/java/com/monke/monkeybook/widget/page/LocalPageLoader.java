@@ -1,7 +1,6 @@
 package com.monke.monkeybook.widget.page;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.basemvplib.CharsetDetector;
 import com.monke.monkeybook.base.observer.SimpleObserver;

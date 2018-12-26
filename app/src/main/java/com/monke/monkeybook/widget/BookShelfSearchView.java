@@ -145,6 +145,7 @@ public class BookShelfSearchView extends LinearLayout {
 
     public void addBookShelfIfNeed(BookShelfBean bookShelfBean) {
         if (bookShelfBean != null
+                && !TextUtils.isEmpty(searchView.getQuery())
                 && searchView.getQuery().toString().contains(this.query)) {
             adapter.addBook(bookShelfBean);
         }

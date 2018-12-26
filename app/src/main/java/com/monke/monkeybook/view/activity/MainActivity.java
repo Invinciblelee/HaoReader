@@ -131,11 +131,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Rect rect = new Rect();
-        bookShelfMenu.getGlobalVisibleRect(rect);
-        if (bookShelfMenu.isExpanded() && !rect.contains((int) ev.getX(), (int) ev.getY())) {
-            bookShelfMenu.collapse();
-            return true;
+        if (bookShelfMenu.isExpanded()) {
+            Rect rect = new Rect();
+            bookShelfMenu.getGlobalVisibleRect(rect);
+            if (!rect.contains((int) ev.getX(), (int) ev.getY())) {
+                bookShelfMenu.collapse();
+                return true;
+            }
         }
         return super.dispatchTouchEvent(ev);
     }

@@ -147,6 +147,10 @@
         <item name="colorControlNormal">@color/light_gray</item>
     </style>
 
+    <style name="TextAppearance.AppCompat.Tab" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="anim_pop_checkaddshelf">
         <item name="android:windowEnterAnimation">@anim/anim_pop_checkaddshelf_in</item>
         <item name="android:windowExitAnimation">@anim/anim_pop_checkaddshelf_out</item>

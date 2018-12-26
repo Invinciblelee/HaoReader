@@ -45,23 +45,13 @@ public class XPathAnalyzer extends OutAnalyzer<Element, Element> {
             result = getAsString(jxDocument, rulePattern.elementsRule);
         }
 
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        if (!isEmpty(rulePattern.javaScript)) {
-            result = JSParser.evalJS(rulePattern.javaScript, result, getConfig().getBaseURL());
-        }
-
-        return result;
+        return processingResultContent(result, rulePattern);
     }
 
     @Override
     public String getResultUrl(Element source, String rule) {
         String result = getResultContent(source, rule);
-        if(!isEmpty(result)){
-            result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);
-        }
-        return result;
+        return processingResultUrl(result);
     }
 
     @Override
@@ -81,5 +71,4 @@ public class XPathAnalyzer extends OutAnalyzer<Element, Element> {
         JXDocument jxDocument = JXDocument.create(source.children());
         return getAsElements(jxDocument, rule);
     }
-
 }

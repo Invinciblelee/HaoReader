@@ -59,7 +59,6 @@ import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
 
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -189,8 +188,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (savedInstanceState != null) {
             aloudStatus = savedInstanceState.getInt("aloudStatus");
             isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
+            getWindow().setWindowAnimations(isWindowAnimTranslucent ? R.style.Animation_Activity_Translucent : R.style.Animation_Activity);
         } else {
-            if (getIntent().getBooleanExtra("fromDetail", false)) {//解决透明activity没有动画
+            if (getIntent().getBooleanExtra("fromDetail", false)) {
                 getWindow().setWindowAnimations(R.style.Animation_Activity_Translucent);
                 isWindowAnimTranslucent = true;
             } else {
@@ -1066,6 +1066,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     private void openCurrentChapterBrowser() {
+        ensureWindowAnimNotTranslucent();
         String url = atvUrl.getText().toString();
         BookSourceBean bookSource = mPresenter.getBookSource();
         WebViewActivity.startThis(this, new WebLoadConfig(mPresenter.getBookShelf().getBookInfoBean().getName(), url, bookSource == null ? null : bookSource.getHttpUserAgent()));
@@ -1135,10 +1136,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPresenter.getBookShelf() != null) {
             ensureProgressHUD();
             moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
-                if (!Objects.equals(searchBookBean.getNoteUrl(), mPresenter.getBookShelf().getNoteUrl())) {
-                    mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
-                    mPresenter.changeBookSource(searchBookBean);
-                }
+                mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
+                mPresenter.changeBookSource(searchBookBean);
             });
         }
     }

@@ -51,22 +51,13 @@ public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
             result = optString(source, rulePattern.elementsRule);
         }
 
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        if (!isEmpty(rulePattern.javaScript)) {
-            result = JSParser.evalJS(rulePattern.javaScript, result, getConfig().getBaseURL());
-        }
-        return result;
+        return processingResultContent(result, rulePattern);
     }
 
     @Override
     public String getResultUrl(ReadContext source, String rule) {
         String result = getResultContent(source, rule);
-        if (!isEmpty(result)) {
-            result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);
-        }
-        return result;
+        return processingResultUrl(result);
     }
 
     @Override

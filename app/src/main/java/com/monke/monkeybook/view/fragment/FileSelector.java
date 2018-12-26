@@ -176,7 +176,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
     @Override
     public void showBigImage(View shareView, String url) {
-        BigImageActivity.startThis((MBaseActivity) getActivity(), url, shareView);
+        BigImageActivity.startThis((AppCompatActivity) getActivity(), url, shareView);
     }
 
     @Override

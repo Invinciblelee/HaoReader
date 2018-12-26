@@ -1,6 +1,7 @@
 package com.monke.monkeybook.help;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.luhuiguo.chinese.ChineseUtils;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -32,46 +33,33 @@ public class ChapterContentHelp {
      * 替换净化
      */
     public static String replaceContent(String bookName, String bookTag, String content) {
-        String allLine[] = content.split("\n\u3000\u3000");
         //替换
         List<ReplaceRuleBean> enabled = ReplaceRuleManager.getInstance().getEnabled();
-        if (enabled != null && enabled.size() > 0) {
+        if (enabled != null && !enabled.isEmpty()) {
+            String[] paragraphs = content.split("\n\u3000\u3000");
             StringBuilder contentBuilder = new StringBuilder();
-            for (String line : allLine) {
+            for (String paragraph : paragraphs) {
                 for (ReplaceRuleBean replaceRule : enabled) {
                     if (isUseTo(replaceRule.getUseTo(), bookName, bookTag)) {
                         try {
                             if(replaceRule.getIsRegex()) {
-                                line = line.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
+                                paragraph = paragraph.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
                             }else {
-                                line = line.replace(replaceRule.getRegex(), replaceRule.getReplacement());
+                                paragraph = paragraph.replace(replaceRule.getRegex(), replaceRule.getReplacement());
                             }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
+                        } catch (Exception ignore) {
                         }
                     }
                 }
-                if (line.length() > 0) {
+                if (paragraph.length() > 0) {
                     if (contentBuilder.length() == 0) {
-                        contentBuilder.append(line);
+                        contentBuilder.append(paragraph);
                     } else {
-                        contentBuilder.append("\n").append("\u3000\u3000").append(line);
+                        contentBuilder.append("\n").append("\u3000\u3000").append(paragraph);
                     }
                 }
             }
             content = contentBuilder.toString();
-            for (ReplaceRuleBean replaceRule : enabled) {
-                if (replaceRule.getIsRegex() || !replaceRule.getRegex().contains("\\n")) {
-                    continue;
-                }
-                if (isUseTo(replaceRule.getUseTo(), bookName, bookTag)) {
-                    try {
-                        content = content.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
         }
         return toTraditional(ReadBookControl.getInstance().getTextConvert(), content);
     }

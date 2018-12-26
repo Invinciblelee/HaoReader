@@ -4,7 +4,12 @@ package com.monke.monkeybook.view.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +64,8 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
                             .error(R.drawable.img_cover_default))
                     .into(holder.ivCover);
         }
-        holder.tvName.setText(item.getBookInfoBean().getName());
+
+        holder.tvName.setText(getBookName(item.getBookInfoBean().getName(), item.getNewChapters()));
 
         if (!TextUtils.isEmpty(item.getBookInfoBean().getAuthor())) {
             holder.tvAuthor.setText(item.getBookInfoBean().getAuthor());
@@ -110,6 +116,18 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.rotateLoading.setVisibility(View.INVISIBLE);
             holder.rotateLoading.stop();
         }
+    }
+
+    private SpannableStringBuilder getBookName(String name, int newChapters){
+        SpannableStringBuilder sbs = new SpannableStringBuilder(name);
+        if(newChapters == 0){
+            return sbs;
+        }
+        SpannableString chaptersSpan = new SpannableString(String.format(Locale.getDefault(), "(新增%d章)", newChapters));
+        chaptersSpan.setSpan(new RelativeSizeSpan(0.75f), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        chaptersSpan.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.tv_text_secondary)), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sbs.append(chaptersSpan);
+        return sbs;
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

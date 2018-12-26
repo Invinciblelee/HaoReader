@@ -38,7 +38,7 @@
                 app:tabIndicatorColor="@color/colorAccent"
                 app:tabIndicatorHeight="2.0dp"
                 app:tabMode="fixed"
-                app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:tabTextAppearance="@style/TextAppearance.AppCompat.Tab"
                 app:tabSelectedTextColor="@color/colorAccent"
                 app:tabTextColor="@color/menu_color_default">
 

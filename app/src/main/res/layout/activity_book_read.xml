@@ -93,26 +93,27 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:contentDescription="@string/set_timer"
-                    android:src="@drawable/ic_timer_white_24dp"
+                    android:src="@drawable/ic_timer_black_24dp"
                     android:tint="@color/menu_color_default"
                     app:backgroundTint="@color/colorPrimary"
-                    app:elevation="2dp"
-                    app:fabSize="mini"
-                    app:pressedTranslationZ="2dp" />
+                    app:fabSize="mini" />
 
                 <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    app:cardBackgroundColor="@color/colorPrimary">
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardElevation="5dp">
 
                     <TextView
                         android:id="@+id/tv_read_aloud_timer"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:clickable="false"
                         android:focusable="false"
-                        android:padding="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:gravity="center_vertical"
                         android:text="@string/read_aloud_timer"
                         android:textColor="@color/menu_color_default" />
                 </android.support.v7.widget.CardView>
@@ -135,9 +136,7 @@
                     android:src="@drawable/ic_headset_black_24dp"
                     android:tint="@color/menu_color_default"
                     app:backgroundTint="@color/colorPrimary"
-                    app:elevation="2dp"
-                    app:fabSize="mini"
-                    app:pressedTranslationZ="2dp" />
+                    app:fabSize="mini" />
 
                 <Space
                     android:layout_width="0dp"
@@ -153,9 +152,7 @@
                     android:src="@drawable/ic_auto_page_black_24dp"
                     android:tint="@color/menu_color_default"
                     app:backgroundTint="@color/colorPrimary"
-                    app:elevation="2dp"
-                    app:fabSize="mini"
-                    app:pressedTranslationZ="2dp" />
+                    app:fabSize="mini" />
 
                 <Space
                     android:layout_width="0dp"
@@ -171,9 +168,7 @@
                     android:src="@drawable/ic_find_replace_black_24dp"
                     android:tint="@color/menu_color_default"
                     app:backgroundTint="@color/colorPrimary"
-                    app:elevation="2dp"
-                    app:fabSize="mini"
-                    app:pressedTranslationZ="2dp" />
+                    app:fabSize="mini" />
 
                 <Space
                     android:layout_width="0dp"
@@ -189,9 +184,7 @@
                     android:src="@drawable/ic_night_border_black_24dp"
                     android:tint="@color/menu_color_default"
                     app:backgroundTint="@color/colorPrimary"
-                    app:elevation="2dp"
-                    app:fabSize="mini"
-                    app:pressedTranslationZ="2dp" />
+                    app:fabSize="mini" />
 
             </LinearLayout>
 
@@ -209,8 +202,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="30dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/bg_ib_pre_round"
                     android:clickable="true"
@@ -225,12 +218,12 @@
                 <com.monke.mprogressbar.MHorProgressBar
                     android:id="@+id/hpb_read_progress"
                     android:layout_width="wrap_content"
-                    android:layout_toEndOf="@id/tv_pre"
-                    android:layout_toStartOf="@id/tv_next"
+                    android:layout_height="25dp"
                     android:layout_alignTop="@id/tv_pre"
                     android:layout_alignBottom="@id/tv_pre"
-                    android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_toStartOf="@id/tv_next"
+                    android:layout_toEndOf="@id/tv_pre"
                     app:bgdrawable="@color/progress_back_color"
                     app:cantouch="true"
                     app:cursordrawable="@drawable/shape_progress_cursor"
@@ -243,11 +236,11 @@
                     android:id="@+id/tv_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="5dp"
                     android:background="@drawable/bg_ib_pre_round"
                     android:clickable="true"
                     android:enabled="false"
@@ -275,12 +268,12 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="3dp"
-                        android:drawablePadding="1dp"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:background="@drawable/bg_ib_pre_round"
+                        android:clickable="true"
                         android:contentDescription="@string/table_of_contents"
                         android:drawableTop="@drawable/ic_list_black_24dp"
+                        android:drawablePadding="1dp"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:text="@string/table_of_contents"
                         android:textColor="@color/menu_color_default"
@@ -297,12 +290,12 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="3dp"
-                        android:drawablePadding="1dp"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:background="@drawable/bg_ib_pre_round"
+                        android:clickable="true"
                         android:contentDescription="@string/adjust"
                         android:drawableTop="@drawable/ic_tune_black_24dp"
+                        android:drawablePadding="1dp"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:text="@string/adjust"
                         android:textColor="@color/menu_color_default"
@@ -318,12 +311,12 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="3dp"
-                        android:drawablePadding="1dp"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:background="@drawable/bg_ib_pre_round"
+                        android:clickable="true"
                         android:contentDescription="@string/interface_setting"
                         android:drawableTop="@drawable/ic_text_fields_black_24dp"
+                        android:drawablePadding="1dp"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:text="@string/interface_setting"
                         android:textColor="@color/menu_color_default"
@@ -339,12 +332,12 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="3dp"
-                        android:drawablePadding="1dp"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:background="@drawable/bg_ib_pre_round"
+                        android:clickable="true"
                         android:contentDescription="@string/setting"
                         android:drawableTop="@drawable/ic_settings_border_black_24dp"
+                        android:drawablePadding="1dp"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:text="@string/setting"
                         android:textColor="@color/menu_color_default"

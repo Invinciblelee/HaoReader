@@ -65,6 +65,7 @@ public class NetPageLoader extends PageLoader {
                     .doAfterNext(bookShelfBean -> {
                         // 存储章节到数据库
                         bookShelfBean.setHasUpdate(false);
+                        bookShelfBean.setNewChapters(0);
                         bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                         if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
                             BookshelfHelp.saveBookToShelf(bookShelfBean);

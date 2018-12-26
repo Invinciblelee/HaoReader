@@ -4,6 +4,7 @@ package com.monke.monkeybook.presenter;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -293,6 +294,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 bookShelf.setBookmarkList(BookshelfHelp.queryBookmarkList(bookShelf.getBookInfoBean().getName()));
             }
             bookShelf.setHasUpdate(false);
+            bookShelf.setNewChapters(0);
             e.onNext(true);
             e.onComplete();
         }).subscribeOn(Schedulers.single())

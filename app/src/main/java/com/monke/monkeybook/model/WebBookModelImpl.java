@@ -2,6 +2,7 @@
 package com.monke.monkeybook.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -137,18 +138,18 @@ public class WebBookModelImpl implements IWebBookModel {
                 chapter.setNoteUrl(bookShelfBean.getNoteUrl());
                 if (!findDurChapter && Objects.equals(chapter.getDurChapterName(), bookShelfBean.getDurChapterName())) {
                     bookShelfBean.setDurChapter(i);
-                    findDurChapter = true;
+                    findDurChapter = true;//可能有重复章节
                 }
             }
-            if (bookShelfBean.getChapterListSize() < chapterList.size()) {
-                bookShelfBean.setHasUpdate(true);
-                bookShelfBean.setNewChapters(chapterList.size() - bookShelfBean.getChapterListSize());
-                bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-                bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
-            } else {
-                bookShelfBean.setNewChapters(0);
-            }
             if (!chapterList.isEmpty()) {
+                if (bookShelfBean.getChapterListSize() < chapterList.size()) {
+                    bookShelfBean.setHasUpdate(true);
+                    int newChapters = bookShelfBean.getNewChapters() + (chapterList.size() - bookShelfBean.getChapterListSize());
+                    bookShelfBean.setNewChapters(Math.min(newChapters, chapterList.size()));
+                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
+                    bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
+                }
+
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                 bookShelfBean.setChapterList(chapterList);
                 bookShelfBean.upChapterListSize();

@@ -31,6 +31,8 @@ import java.lang.reflect.Field;
 
 public class AppCompat {
 
+    private static final float DRAWABLE_SCALE = 1.05f;
+
     private AppCompat() {
 
     }
@@ -45,7 +47,7 @@ public class AppCompat {
         searchText.setTextSize(14f);
         searchText.setPaddingRelative(searchText.getPaddingLeft(), 0, 0, 0);
 
-        final int textSize = (int) (searchText.getTextSize() * 1.18f);
+        final int textSize = (int) (searchText.getTextSize() * DRAWABLE_SCALE);
         Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
         searchIcon.setBounds(0, 0, textSize, textSize);
         setTint(searchIcon, normalColor);
@@ -98,7 +100,7 @@ public class AppCompat {
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText, boolean showIcon) {
         searchText.setTextColor(searchText.getResources().getColor(R.color.tv_text_default));
         if (showIcon) {
-            final int textSize = (int) (searchText.getTextSize() * 1.25);
+            final int textSize = (int) (searchText.getTextSize() * DRAWABLE_SCALE);
             Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
             mSearchHintIcon.setBounds(0, 0, textSize, textSize);
             setTint(mSearchHintIcon, Color.GRAY);

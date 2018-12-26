@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;

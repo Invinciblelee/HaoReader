@@ -63,7 +63,7 @@
                 app:backgroundTint="@color/card_background"
                 android:src="@drawable/ic_stop_white_24dp"
                 android:visibility="invisible"
-                app:fabCustomSize="50dp" />
+                app:fabSize="normal" />
 
         </FrameLayout>
 

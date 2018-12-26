@@ -62,7 +62,7 @@ public class TextInputSpinner extends android.support.design.widget.TextInputEdi
         mPopup.setAnchorView(this);
         mPopup.setVerticalOffset(-ScreenUtils.dpToPx(5));
         mPopup.setHorizontalOffset(ScreenUtils.dpToPx(4));
-        mPopup.setWidth(getResources().getDisplayMetrics().widthPixels - ScreenUtils.dpToPx(8));
+        mPopup.setWidth(getResources().getDisplayMetrics().widthPixels - ScreenUtils.dpToPx(16));
         mPopup.setModal(true);
 
         setSelection(0);

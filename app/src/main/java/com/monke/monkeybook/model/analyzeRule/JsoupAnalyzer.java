@@ -1,9 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.text.TextUtils;
-
 import com.monke.monkeybook.help.FormatWebText;
-import com.monke.monkeybook.utils.NetworkUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -74,13 +71,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
                 result = content.toString();
             }
         }
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        if (!isEmpty(rulePattern.javaScript)) {
-            result = JSParser.evalJS(rulePattern.javaScript, result, getConfig().getBaseURL());
-        }
-        return result;
+        return processingResultContent(result, rulePattern);
     }
 
     @Override
@@ -92,13 +83,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
         RulePattern rulePattern = splitSourceRule(ruleStr.trim());
         List<String> urlList = getAllResults(element, rulePattern.elementsRule);
         if (urlList.size() > 0) {
-            result = urlList.get(0);
-        }
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        if (!isEmpty(rulePattern.javaScript)) {
-            result = JSParser.evalJS(rulePattern.javaScript, result, getConfig().getBaseURL());
+            result = processingResultContent(urlList.get(0), rulePattern);
         }
         return result;
     }
@@ -142,7 +127,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
             }
             for (String ruleStrX : ruleStrS) {
                 List<String> temp = getResults(element, ruleStrX);
-                if (temp != null) {
+                if (!temp.isEmpty()) {
                     textS.addAll(temp);
                 }
                 if (textS.size() > 0 && !isAnd) {
@@ -169,19 +154,19 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
         }
         Elements elements = new Elements();
         elements.add(element);
-        String[] rules = ruleStr.split("@");
-        for (int i = 0; i < rules.length - 1; i++) {
+        String[] ruleS = ruleStr.split("@");
+        for (int i = 0, length = ruleS.length - 1; i < length; i++) {
             Elements es = new Elements();
             for (Element elt : elements) {
-                es.addAll(getElementsSingle(elt, rules[i]));
+                es.addAll(getElementsSingle(elt, ruleS[i]));
             }
             elements.clear();
-            elements = es;
+            elements.addAll(es);
         }
         if (elements.isEmpty()) {
             return new ArrayList<>();
         }
-        return getLastResult(elements, rules[rules.length - 1]);
+        return getLastResult(elements, ruleS[ruleS.length - 1]);
     }
 
     /**
@@ -244,7 +229,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
                     break;
                 default:
                     for (Element element : elements) {
-                        String url = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), element.attr(lastRule));
+                        String url = processingResultUrl(element.attr(lastRule));
                         if (!isEmpty(url) && !textS.contains(url)) {
                             textS.add(url);
                         }

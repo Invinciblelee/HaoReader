@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.util.Log;
-
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -11,7 +9,6 @@ import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeSearchUrl;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
@@ -155,7 +152,6 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel {
                         .flatMap(bookList::analyzeSearchBook);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return Observable.create(emitter -> {
                 emitter.onNext(new ArrayList<>());
                 emitter.onComplete();

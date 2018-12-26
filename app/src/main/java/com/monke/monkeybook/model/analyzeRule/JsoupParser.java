@@ -13,29 +13,29 @@ import static android.text.TextUtils.isEmpty;
 
 class JsoupParser {
 
-    private JsoupParser(){
+    private JsoupParser() {
 
     }
 
     /**
      * 获取Elements
      */
-    static Elements getElements(Element temp, String rule) {
+    static Elements getElements(Element temp, String rawRule) {
         Elements elements = new Elements();
-        if (temp == null || isEmpty(rule)) {
+        if (temp == null || isEmpty(rawRule)) {
             return elements;
         }
         String elementsType;
         String[] ruleStrS;
-        if (rule.contains("&")) {
+        if (rawRule.contains("&")) {
             elementsType = "&";
-            ruleStrS = rule.split("&+");
-        } else if (rule.contains("%")) {
+            ruleStrS = rawRule.split("&+");
+        } else if (rawRule.contains("%")) {
             elementsType = "%";
-            ruleStrS = rule.split("%+");
+            ruleStrS = rawRule.split("%+");
         } else {
             elementsType = "|";
-            ruleStrS = rule.split("\\|+");
+            ruleStrS = rawRule.split("\\|+");
         }
         List<Elements> elementsList = new ArrayList<>();
         for (String ruleStr : ruleStrS) {
@@ -45,9 +45,9 @@ class JsoupParser {
                 break;
             }
         }
-        if (elementsList.size() > 0) {
+        if (!elementsList.isEmpty()) {
             if (TextUtils.equals(elementsType, "%")) {
-                for (int i = 0; i < elementsList.get(0).size(); i++) {
+                for (int i = 0, size = elementsList.get(0).size(); i < size; i++) {
                     for (Elements es : elementsList) {
                         if (i < es.size()) {
                             elements.add(es.get(i));
@@ -66,22 +66,22 @@ class JsoupParser {
     /**
      * 获取Elements按照一个规则
      */
-    static Elements getElementsSingle(Element temp, String rule) {
+    static Elements getElementsSingle(Element temp, String rawRule) {
         Elements elements = new Elements();
         try {
-            String[] rs = rule.split("@");
-            if (rs.length > 1) {
+            String[] ruleS = rawRule.split("@");
+            if (ruleS.length > 1) {
                 elements.add(temp);
-                for (String rl : rs) {
+                for (String rule : ruleS) {
                     Elements es = new Elements();
                     for (Element et : elements) {
-                        es.addAll(getElements(et, rl));
+                        es.addAll(getElements(et, rule));
                     }
                     elements.clear();
                     elements.addAll(es);
                 }
             } else {
-                String[] rulePcx = rule.split("!");
+                String[] rulePcx = rawRule.split("!");
                 String[] rulePc = rulePcx[0].trim().split(">");
                 String[] rules = rulePc[0].trim().split("\\.");
                 String[] filterRules = ensureFilterRules(rulePc);

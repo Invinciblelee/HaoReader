@@ -52,8 +52,8 @@ public class BookShelfBean implements Parcelable {
 
     @Generated(hash = 1946753255)
     public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate, Boolean hasUpdate, Integer newChapters,
-            String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
-            Integer chapterListSize, Boolean updateOff) {
+                         String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
+                         Integer chapterListSize, Boolean updateOff) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
@@ -300,7 +300,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public int getNewChapters() {
-        return newChapters;
+        return newChapters == null ? 0 : newChapters;
     }
 
     public int getSerialNumber() {

@@ -1,5 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -21,7 +22,7 @@ class JSParser {
         bindings.put("baseUrl", baseUrl);
         try {
             result = EngineHelper.INSTANCE.eval(jsStr, bindings);
-        } catch (ScriptException ignored) {
+        }catch (ScriptException ignore){
         }
         return String.valueOf(result);
     }

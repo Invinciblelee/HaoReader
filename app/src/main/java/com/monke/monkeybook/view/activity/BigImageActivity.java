@@ -1,6 +1,8 @@
 package com.monke.monkeybook.view.activity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,10 +24,11 @@ public class BigImageActivity extends MBaseActivity {
 
     private String imageUrl;
 
-    public static void startThis(MBaseActivity activity, String url, View shareView){
+    public static void startThis(AppCompatActivity activity, String url, View shareView) {
         Intent intent = new Intent(activity, BigImageActivity.class);
         intent.putExtra("image", url);
-        activity.startActivityByAnim(intent, shareView, "big_image");
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, shareView, "big_image");
+        activity.startActivity(intent, options.toBundle());
     }
 
     @Override
@@ -59,6 +62,6 @@ public class BigImageActivity extends MBaseActivity {
                 .transition(new DrawableTransitionOptions().crossFade())
                 .into(bigImage);
 
-        flContent.setOnClickListener(v -> finishByAnim(R.anim.anim_alpha_in, R.anim.anim_alpha_out));
+        flContent.setOnClickListener(v -> supportFinishAfterTransition());
     }
 }

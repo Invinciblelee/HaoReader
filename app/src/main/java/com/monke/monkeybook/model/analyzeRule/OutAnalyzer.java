@@ -2,7 +2,11 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.support.annotation.NonNull;
 
+import com.monke.monkeybook.utils.NetworkUtil;
+
 import java.util.List;
+
+import static android.text.TextUtils.isEmpty;
 
 public abstract class OutAnalyzer<S, R> {
 
@@ -40,7 +44,24 @@ public abstract class OutAnalyzer<S, R> {
 
     public abstract List<R> getRawList(S source, String rule);
 
-    static RulePattern splitSourceRule(String ruleStr) {
+    final String processingResultContent(@NonNull String result, @NonNull RulePattern rulePattern){
+        if (!isEmpty(rulePattern.replaceRegex)) {
+            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
+        }
+        if (!isEmpty(rulePattern.javaScript)) {
+            result = JSParser.evalJS(rulePattern.javaScript, result, getConfig().getBaseURL());
+        }
+        return result;
+    }
+
+    final String processingResultUrl(@NonNull String result){
+        if (!isEmpty(result) && !result.startsWith("http")) {
+            result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);
+        }
+        return result;
+    }
+
+    static RulePattern splitSourceRule(@NonNull String ruleStr) {
         RulePattern rulePattern = new RulePattern();
         //分离js
         String[] ruleStrJ = ruleStr.split("@js:");
