@@ -1,6 +1,6 @@
 package com.monke.basemvplib;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;

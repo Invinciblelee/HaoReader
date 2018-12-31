@@ -1,8 +1,8 @@
 package com.monke.monkeybook.widget.page;
 
-import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.text.StaticLayout;
+import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -14,7 +14,6 @@ import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -23,8 +22,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -33,6 +35,8 @@ import io.reactivex.schedulers.Schedulers;
 class ChapterProvider {
 
     private final List<String> mDownloadingChapterList = new ArrayList<>();
+
+    private CompositeDisposable mCompositeDisposable;
 
     private PageLoader mPageLoader;
 
@@ -182,10 +186,17 @@ class ChapterProvider {
             final ChapterListBean chapter = bookShelf.getChapter(chapterIndex);
             if (!mPageLoader.hasChapterData(chapter) && addDownloading(chapter.getDurChapterUrl())) {
                 WebBookModelImpl.getInstance().getBookContent(mScheduler, bookShelf.getBookInfoBean(), chapter)
-                        .compose(mPageLoader.getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                         .timeout(20, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<BookContentBean>() {
+
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                if(mCompositeDisposable == null || mCompositeDisposable.isDisposed()){
+                                    mCompositeDisposable = new CompositeDisposable();
+                                }
+                                mCompositeDisposable.add(d);
+                            }
 
                             @Override
                             public void onNext(BookContentBean bookContentBean) {
@@ -220,6 +231,10 @@ class ChapterProvider {
     }
 
     void close() {
+        if(mCompositeDisposable != null){
+            mCompositeDisposable.dispose();
+            mCompositeDisposable = null;
+        }
         mExecutor.shutdown();
     }
 }

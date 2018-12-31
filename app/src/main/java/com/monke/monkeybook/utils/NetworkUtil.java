@@ -4,7 +4,6 @@ package com.monke.monkeybook.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.net.ConnectivityManagerCompat;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;

@@ -2,15 +2,12 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
-import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.R;
@@ -30,14 +27,13 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
@@ -84,7 +80,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public BookSourceBean getBookSource() {
-        if(bookSource == null && bookShelf != null){
+        if (bookSource == null && bookShelf != null) {
             bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelf.getTag());
         }
         return bookSource;
@@ -298,7 +294,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             e.onNext(true);
             e.onComplete();
         }).subscribeOn(Schedulers.single())
-                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override

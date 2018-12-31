@@ -1,7 +1,8 @@
 package com.monke.monkeybook.bean;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 public class SearchEngine {
     private String tag;
@@ -27,8 +28,8 @@ public class SearchEngine {
         return hasMore;
     }
 
-    public long getStart() {
-        return start;
+    public long getElapsedTime() {
+        return System.currentTimeMillis() - start;
     }
 
     public int getPage() {

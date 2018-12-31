@@ -1,20 +1,14 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.google.gson.JsonParser;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
-import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
-import static com.monke.monkeybook.model.analyzeRule.JsonParser.optList;
-import static com.monke.monkeybook.model.analyzeRule.JsonParser.optString;
+import static com.monke.monkeybook.model.analyzeRule.JsonParser.getList;
+import static com.monke.monkeybook.model.analyzeRule.JsonParser.getString;
 
 public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
 
@@ -34,7 +28,7 @@ public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
     }
 
     @Override
-    public ReadContext parseSource(Object source){
+    public ReadContext parseSource(Object source) {
         return JsonPath.parse(source);
     }
 
@@ -44,11 +38,11 @@ public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
         if (source == null || isEmpty(rule)) {
             return result;
         }
-        RulePattern rulePattern = splitSourceRule(rule.trim());
+        RulePattern rulePattern = RulePattern.from(rule.trim());
         if (isEmpty(rulePattern.elementsRule)) {
             return result;
         } else {
-            result = optString(source, rulePattern.elementsRule);
+            result = getString(source, rulePattern.elementsRule);
         }
 
         return processingResultContent(result, rulePattern);
@@ -65,7 +59,7 @@ public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
         if (source == null || isEmpty(rule)) {
             return new ArrayList<>();
         }
-        return optList(parseSource(source), rule);
+        return getList(parseSource(source), rule);
     }
 
     @Override
@@ -73,7 +67,7 @@ public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
         if (source == null || isEmpty(rule)) {
             return new ArrayList<>();
         }
-        return optList(source, rule);
+        return getList(source, rule);
     }
 
 }

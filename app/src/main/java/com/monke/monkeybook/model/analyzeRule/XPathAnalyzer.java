@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.utils.NetworkUtil;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,10 +32,10 @@ public class XPathAnalyzer extends OutAnalyzer<Element, Element> {
     @Override
     public String getResultContent(Element source, String rule) {
         String result = "";
-        if(source == null || isEmpty(rule)){
+        if (source == null || isEmpty(rule)) {
             return result;
         }
-        RulePattern rulePattern = splitSourceRule(rule.trim());
+        RulePattern rulePattern = RulePattern.from(rule.trim());
         if (isEmpty(rulePattern.elementsRule)) {
             return result;
         } else {

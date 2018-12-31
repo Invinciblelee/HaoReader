@@ -10,7 +10,6 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.MD5Utils;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -381,7 +380,6 @@ public class LocalPageLoader extends PageLoader {
                             BookshelfHelp.saveBookToShelf(bookShelfBean);
                         }
                     })
-                    .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<BookShelfBean>() {
                         @Override
@@ -391,9 +389,9 @@ public class LocalPageLoader extends PageLoader {
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            if(bookShelfBean.realChapterListEmpty()){
+                            if (bookShelfBean.realChapterListEmpty()) {
                                 setCurrentStatus(STATUS_CATEGORY_EMPTY);
-                            }else {
+                            } else {
                                 setChapterListPrepared();
 
                                 // 加载并显示当前章节
@@ -425,7 +423,7 @@ public class LocalPageLoader extends PageLoader {
         return true;
     }
 
-    public void updateCharset(){
+    public void updateCharset() {
         setCurrentStatus(STATUS_CHANGE_CHARSET);
         refreshChapterList();
     }

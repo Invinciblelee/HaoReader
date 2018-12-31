@@ -6,9 +6,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.design.animation.AnimationUtils;
-import android.support.design.widget.FloatingActionButton;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.animation.AnimationUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;

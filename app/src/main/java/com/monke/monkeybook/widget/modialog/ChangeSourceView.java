@@ -3,7 +3,6 @@ package com.monke.monkeybook.widget.modialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,11 +25,11 @@ import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.activity.BookInfoActivity;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
-import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 import java.util.List;
 import java.util.Objects;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;

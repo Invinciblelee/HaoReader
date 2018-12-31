@@ -2,11 +2,11 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.tabs.TabLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +18,12 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.impl.IPresenter;
-import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
@@ -43,7 +43,7 @@ public class ChapterListActivity extends MBaseActivity {
     @BindView(R.id.rv_list)
     FastScrollRecyclerView rvList;
     @BindView(R.id.toolbar_tab)
-    TabLayout toolbarTab;
+    TabLayout tabLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tv_current_chapter_info)
@@ -124,7 +124,7 @@ public class ChapterListActivity extends MBaseActivity {
 
     @Override
     protected void bindEvent() {
-        toolbarTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 showChapterInfo(tab.getPosition() == 0);
@@ -133,7 +133,6 @@ public class ChapterListActivity extends MBaseActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
@@ -162,10 +161,10 @@ public class ChapterListActivity extends MBaseActivity {
         searchView.setMaxWidth(getResources().getDisplayMetrics().widthPixels);
         searchView.onActionViewCollapsed();
         searchView.setOnCloseListener(() -> {
-            toolbarTab.setVisibility(VISIBLE);
+            tabLayout.setVisibility(VISIBLE);
             return false;
         });
-        searchView.setOnSearchClickListener(view -> toolbarTab.setVisibility(GONE));
+        searchView.setOnSearchClickListener(view -> tabLayout.setVisibility(GONE));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -192,7 +191,7 @@ public class ChapterListActivity extends MBaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (toolbarTab.getVisibility() != VISIBLE) {
+        if (tabLayout.getVisibility() != VISIBLE) {
             searchViewCollapsed();
             return;
         }
@@ -242,7 +241,7 @@ public class ChapterListActivity extends MBaseActivity {
     }
 
     private void updateIndex(int durChapter) {
-        if (toolbarTab.getSelectedTabPosition() == 0) {
+        if (tabLayout.getSelectedTabPosition() == 0) {
             chapterListAdapter.setIndex(durChapter);
         } else {
             chapterListAdapter.notifyDataSetChanged();
@@ -280,7 +279,7 @@ public class ChapterListActivity extends MBaseActivity {
 
     private void searchViewCollapsed() {
         searchView.onActionViewCollapsed();
-        toolbarTab.setVisibility(VISIBLE);
+        tabLayout.setVisibility(VISIBLE);
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CHAPTER_CHANGE)})

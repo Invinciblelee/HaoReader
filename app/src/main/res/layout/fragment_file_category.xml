@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/file_category_rv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never" />
 
 
-    <android.support.v4.widget.ContentLoadingProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/loading_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

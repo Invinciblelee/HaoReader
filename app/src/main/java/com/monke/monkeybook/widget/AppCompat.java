@@ -4,16 +4,17 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.design.internal.NavigationMenuPresenter;
-import android.support.design.internal.NavigationMenuView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+
+import com.google.android.material.internal.NavigationMenuPresenter;
+import com.google.android.material.internal.NavigationMenuView;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -39,7 +40,7 @@ public class AppCompat {
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchHintIcon, boolean showBg) {
         final int normalColor = searchView.getResources().getColor(R.color.menu_color_default);
-        AppCompatImageView search = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        AppCompatImageView search = searchView.findViewById(androidx.appcompat.R.id.search_button);
         search.setImageResource(R.drawable.ic_search_black_24dp);
         setTint(search, normalColor);
 
@@ -69,9 +70,9 @@ public class AppCompat {
 
         if (showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
-            android.support.v4.view.ViewCompat.setBackground(plate, bag);
+            androidx.core.view.ViewCompat.setBackground(plate, bag);
         } else {
-            android.support.v4.view.ViewCompat.setBackground(plate, null);
+            androidx.core.view.ViewCompat.setBackground(plate, null);
         }
 
         setQueryHintForSearchText(searchText, hint, showSearchHintIcon);

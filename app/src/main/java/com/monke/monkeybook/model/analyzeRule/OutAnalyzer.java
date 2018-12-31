@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.utils.NetworkUtil;
 
@@ -32,7 +32,7 @@ public abstract class OutAnalyzer<S, R> {
 
     public abstract S parseSource(String source);
 
-    public S parseSource(Object source){
+    public S parseSource(Object source) {
         return null;
     }
 
@@ -44,7 +44,7 @@ public abstract class OutAnalyzer<S, R> {
 
     public abstract List<R> getRawList(S source, String rule);
 
-    final String processingResultContent(@NonNull String result, @NonNull RulePattern rulePattern){
+    final String processingResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
         if (!isEmpty(rulePattern.replaceRegex)) {
             result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
         }
@@ -54,38 +54,46 @@ public abstract class OutAnalyzer<S, R> {
         return result;
     }
 
-    final String processingResultUrl(@NonNull String result){
+    final String processingResultUrl(@NonNull String result) {
         if (!isEmpty(result) && !result.startsWith("http")) {
             result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);
         }
         return result;
     }
 
-    static RulePattern splitSourceRule(@NonNull String ruleStr) {
-        RulePattern rulePattern = new RulePattern();
-        //分离js
-        String[] ruleStrJ = ruleStr.split("@js:");
-        if (ruleStrJ.length > 1) {
-            ruleStr = ruleStrJ[0];
-            rulePattern.javaScript = ruleStrJ[1];
-        }
-        //分离正则表达式
-        String[] ruleStrS = ruleStr.split("#");
-        rulePattern.elementsRule = ruleStrS[0];
-        if (ruleStrS.length > 1) {
-            rulePattern.replaceRegex = ruleStrS[1];
-        }
-
-        if (ruleStrS.length > 2) {
-            rulePattern.replacement = ruleStrS[2];
-        }
-        return rulePattern;
-    }
-
     static class RulePattern {
-        String elementsRule = "";
-        String replaceRegex = "";
-        String replacement = "";
-        String javaScript = "";
+        String elementsRule;
+        String replaceRegex ;
+        String replacement;
+        String javaScript;
+
+        private RulePattern(@NonNull String ruleStr){
+            //分离js
+            String[] ruleStrJ = ruleStr.split("@js:");
+            if (ruleStrJ.length > 1) {
+                ruleStr = ruleStrJ[0];
+                javaScript = ruleStrJ[1];
+            }else {
+                javaScript = "";
+            }
+            //分离正则表达式
+            String[] ruleStrS = ruleStr.split("#");
+            elementsRule = ruleStrS[0];
+            if (ruleStrS.length > 1) {
+                replaceRegex = ruleStrS[1];
+            }else {
+                replaceRegex = "";
+            }
+
+            if (ruleStrS.length > 2) {
+                replacement = ruleStrS[2];
+            }else {
+                replacement = "";
+            }
+        }
+
+        static RulePattern from(@NonNull String ruleStr){
+            return new RulePattern(ruleStr);
+        }
     }
 }

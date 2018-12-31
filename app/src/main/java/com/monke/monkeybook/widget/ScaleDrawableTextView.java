@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 
 import com.monke.monkeybook.R;
 
-public class ScaleDrawableTextView extends android.support.v7.widget.AppCompatTextView {
+public class ScaleDrawableTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public ScaleDrawableTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);

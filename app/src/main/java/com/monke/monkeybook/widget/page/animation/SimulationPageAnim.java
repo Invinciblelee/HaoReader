@@ -1,32 +1,24 @@
-package com.monke.monkeybook.widget.animation;
+package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
-import android.support.v4.graphics.ColorUtils;
 import android.view.View;
 
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.utils.ScreenUtils;
+import com.monke.monkeybook.widget.page.OnPageChangeListener;
 
 /**
  * Created by newbiechen on 17-7-24.
  */
 
 public class SimulationPageAnim extends HorizonPageAnim {
-
-    private static final String TAG = "SimulationPageAnim";
 
     private int mCornerX = 1; // 拖拽点对应的页脚
     private int mCornerY = 1;
@@ -47,9 +39,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private float mMiddleY;
     private float mDegrees;
     private float mTouchToCornerDis;
-    private ColorMatrixColorFilter mColorMatrixFilter;
-    private Matrix mMatrix;
-    private float[] mMatrixArray = {0, 0, 0, 0, 0, 0, 0, 0, 1.0f};
 
     private boolean mIsRTandLB; // 是否属于右上左下
     private float mMaxLength;
@@ -77,15 +66,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
         mPaint.setStyle(Paint.Style.FILL);
 
         createDrawable();
-
-        ColorMatrix cm = new ColorMatrix();//设置颜色数组
-        float array[] = {1, 0, 0, 0, 0,
-                0, 1, 0, 0, 0,
-                0, 0, 1, 0, 0,
-                0, 0, 0, 1, 0};
-        cm.set(array);
-        mColorMatrixFilter = new ColorMatrixColorFilter(cm);
-        mMatrix = new Matrix();
 
         mTouchX = 0.01f; // 不让x,y为0,否则在点计算时会有问题
         mTouchY = 0.01f;

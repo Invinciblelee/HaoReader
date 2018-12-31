@@ -1,6 +1,6 @@
 package com.monke.monkeybook.bean;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.Constant;

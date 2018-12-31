@@ -121,12 +121,15 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     //support
-    implementation "com.android.support:design:$support_library_version"
-    implementation "com.android.support:cardview-v7:$support_library_version"
-    implementation "com.android.support:support-compat:$support_library_version"
-    implementation "com.android.support:support-media-compat:$support_library_version"
-    implementation "com.android.support:palette-v7:${support_library_version}"
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.core:core:1.1.0-alpha03'
+    implementation 'androidx.media:media:1.1.0-alpha01'
+    implementation 'androidx.palette:palette:1.0.0'
     implementation 'com.google.code.gson:gson:2.8.2'
+
+    //google
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
+    implementation 'com.google.android:flexbox:1.1.0'
 
     //GreenDao
     implementation 'org.greenrobot:greendao:3.2.2'
@@ -157,8 +160,8 @@ dependencies {
     implementation 'com.kyleduo.switchbutton:library:2.0.0'
 
     //bind view
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.jakewharton:butterknife:9.0.0-rc3'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc3'
 
     //动画
     implementation 'com.victor:lib:1.0.4'
@@ -170,19 +173,16 @@ dependencies {
     implementation 'cn.bingoogolapple:bga-qrcode-zxing:1.3.6'
 
     //颜色选择
-    implementation 'com.github.QuadFlask:colorpicker:0.0.13'
+    implementation 'com.jaredrummler:colorpicker:1.0.5'
 
     //简繁转换
     implementation 'com.luhuiguo:chinese-utils:1.0'
     implementation 'com.github.florent37:arclayout:1.0.3'
     implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta05'
-
-    //noinspection GradleDependency
-    implementation 'com.google.android:flexbox:1.0.0'
 }
 
 greendao {
-    schemaVersion 67
+    schemaVersion 68
     daoPackage 'com.monke.monkeybook.dao'
     targetGenDir 'src/main/java'
 }

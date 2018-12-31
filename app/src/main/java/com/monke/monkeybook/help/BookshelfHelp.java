@@ -251,7 +251,7 @@ public class BookshelfHelp {
     public static BookShelfBean getBookFromSearchBook(SearchBookBean searchBookBean) {
         BookShelfBean bookShelfBean = new BookShelfBean();
         bookShelfBean.setTag(searchBookBean.getTag());
-        bookShelfBean.setNoteUrl(searchBookBean.getNoteUrl());
+        bookShelfBean.setNoteUrl(searchBookBean.getRealNoteUrl());
         bookShelfBean.setFinalDate(System.currentTimeMillis());
         bookShelfBean.setLastChapterName(searchBookBean.getLastChapter());
         bookShelfBean.setDurChapter(0);
@@ -259,14 +259,14 @@ public class BookshelfHelp {
         bookShelfBean.setGroup(0);
         BookInfoBean bookInfo = new BookInfoBean();
         bookInfo.setBookType(searchBookBean.getBookType());
-        bookInfo.setNoteUrl(searchBookBean.getNoteUrl());
+        bookInfo.setNoteUrl(searchBookBean.getRealNoteUrl());
         bookInfo.setAuthor(searchBookBean.getAuthor());
         bookInfo.setCoverUrl(searchBookBean.getCoverUrl());
         bookInfo.setName(searchBookBean.getName());
         bookInfo.setTag(searchBookBean.getTag());
         bookInfo.setOrigin(searchBookBean.getOrigin());
         bookInfo.setIntroduce(searchBookBean.getIntroduce());
-        bookInfo.setChapterListUrl(searchBookBean.getChapterUrl());
+        bookInfo.setChapterListUrl(searchBookBean.getChapterListUrl());
         bookShelfBean.setBookInfoBean(bookInfo);
         return bookShelfBean;
     }

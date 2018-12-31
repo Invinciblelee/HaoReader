@@ -1,15 +1,13 @@
 package com.monke.monkeybook.widget.font;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -54,6 +52,8 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
                 }
             });
         } else {
+            holder.ivChecked.setVisibility(View.GONE);
+            holder.tvFont.setSingleLine(false);
             holder.tvFont.setText(R.string.fonts_folder);
         }
     }
@@ -70,7 +70,7 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
                 try {
                     Typeface.createFromFile(file);
                     fileList.add(file);
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

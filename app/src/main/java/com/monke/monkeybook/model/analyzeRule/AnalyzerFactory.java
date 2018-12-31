@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.Constant;

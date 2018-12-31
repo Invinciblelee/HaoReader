@@ -19,7 +19,7 @@ import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
-import com.monke.monkeybook.widget.animation.Direction;
+import com.monke.monkeybook.widget.page.animation.Direction;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;

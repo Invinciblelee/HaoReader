@@ -1,27 +1,25 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
-import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -129,7 +127,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                         RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
                     }
                 })
-                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
@@ -161,7 +158,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 e.onComplete();
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onNext(Boolean value) {
@@ -192,7 +188,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 e.onComplete();
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onNext(Boolean value) {

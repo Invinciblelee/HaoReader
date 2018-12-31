@@ -11,7 +11,7 @@
     android:paddingRight="16dp"
     android:paddingBottom="8dp">
 
-    <android.support.v7.widget.AppCompatCheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/cb_book_source"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/iv_edit_source"
             android:layout_width="35dp"
             android:layout_height="35dp"
@@ -45,7 +45,7 @@
             android:textColor="@color/tv_text_secondary"
             android:textSize="13sp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/iv_del_source"
             android:layout_width="35dp"
             android:layout_height="35dp"
@@ -58,7 +58,7 @@
             android:textColor="@color/tv_text_secondary"
             android:textSize="13sp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/iv_top_source"
             android:layout_width="35dp"
             android:layout_height="35dp"

@@ -17,7 +17,7 @@
         android:layout_width="70dp"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -38,7 +38,7 @@
         android:paddingStart="@dimen/half_card_item_margin"
         android:paddingEnd="12dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="2dp">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_has_new"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

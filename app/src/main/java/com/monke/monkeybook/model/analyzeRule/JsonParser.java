@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.jayway.jsonpath.ReadContext;
@@ -16,7 +16,7 @@ class JsonParser {
 
     }
 
-    static List<Object> optList(@NonNull ReadContext context, String rawRule) {
+    static List<Object> getList(@NonNull ReadContext context, String rawRule) {
         try {
             return context.read(rawRule);
         } catch (Exception ignore) {
@@ -24,7 +24,7 @@ class JsonParser {
         return new ArrayList<>();
     }
 
-    static String optString(@NonNull ReadContext context, String rawRule) {
+    static String getString(@NonNull ReadContext context, String rawRule) {
         String result = "";
         if (TextUtils.isEmpty(rawRule)) return result;
         if (!rawRule.contains("{")) {
@@ -44,7 +44,7 @@ class JsonParser {
             Pattern pattern = Pattern.compile("(?<=\\{).+?(?=\\})");
             Matcher matcher = pattern.matcher(rawRule);
             while (matcher.find()) {
-                result = result.replace(String.format("{%s}", matcher.group()), optString(context, matcher.group()));
+                result = result.replace(String.format("{%s}", matcher.group()), getString(context, matcher.group()));
             }
             return result;
         }

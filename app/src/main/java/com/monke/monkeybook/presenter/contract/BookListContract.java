@@ -1,7 +1,7 @@
 package com.monke.monkeybook.presenter.contract;
 
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;

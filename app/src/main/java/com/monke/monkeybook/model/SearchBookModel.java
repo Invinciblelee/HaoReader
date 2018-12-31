@@ -3,21 +3,19 @@ package com.monke.monkeybook.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
-import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -60,15 +58,15 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchEngineS.clear();
         }
 
+        searchEngineS.add(new SearchEngine(Default716.TAG));
+
         List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
-        if (bookSourceBeans != null) {
-            SearchEngine searchEngine;
+        if (bookSourceBeans != null && !bookSourceBeans.isEmpty()) {
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
-                if(searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)){
+                if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
                     continue;
                 }
-                searchEngine = new SearchEngine(bookSourceBean.getBookSourceUrl());
-                searchEngineS.add(searchEngine);
+                searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
             }
         }
         searchEngineChanged = false;
@@ -105,8 +103,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
     }
 
-    private boolean clearSearch(){
-        if(isLoading()) {
+    private boolean clearSearch() {
+        if (isLoading()) {
             for (ISearchTask searchTask : searchTasks) {
                 searchTask.stopSearch();
             }
@@ -137,12 +135,12 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return this;
     }
 
-    public SearchBookModel listener(SearchListener listener){
+    public SearchBookModel listener(SearchListener listener) {
         this.searchListener = listener;
         return this;
     }
 
-    public SearchBookModel setup(){
+    public SearchBookModel setup() {
         initSearchEngineS();
         return this;
     }

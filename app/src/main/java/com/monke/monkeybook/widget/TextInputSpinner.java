@@ -4,26 +4,20 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.widget.ListPopupWindow;
-import android.support.v7.widget.PopupMenu;
+
+import androidx.appcompat.widget.ListPopupWindow;
+
 import android.text.InputType;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.PopupWindow;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 
-public class TextInputSpinner extends android.support.design.widget.TextInputEditText {
+public class TextInputSpinner extends TextInputEditText {
 
     CharSequence[] mEntities;
     ListPopupWindow mPopup;

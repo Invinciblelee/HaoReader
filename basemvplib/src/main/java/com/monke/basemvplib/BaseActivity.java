@@ -5,9 +5,10 @@ import android.os.Bundle;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
-public abstract class BaseActivity<T extends IPresenter> extends RxAppCompatActivity implements IView {
+import androidx.appcompat.app.AppCompatActivity;
+
+public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivity implements IView {
     protected Bundle savedInstanceState;
     protected T mPresenter;
 

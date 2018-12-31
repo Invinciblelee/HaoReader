@@ -2,11 +2,10 @@ package com.monke.monkeybook.widget.page;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -15,15 +14,14 @@ import android.view.ViewConfiguration;
 
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.ReadBookControl;
-import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
-import com.monke.monkeybook.widget.animation.CoverPageAnim;
-import com.monke.monkeybook.widget.animation.Direction;
-import com.monke.monkeybook.widget.animation.HorizonPageAnim;
-import com.monke.monkeybook.widget.animation.NonePageAnim;
-import com.monke.monkeybook.widget.animation.PageAnimation;
-import com.monke.monkeybook.widget.animation.SimulationPageAnim;
-import com.monke.monkeybook.widget.animation.SlidePageAnim;
+import com.monke.monkeybook.widget.page.animation.CoverPageAnim;
+import com.monke.monkeybook.widget.page.animation.Direction;
+import com.monke.monkeybook.widget.page.animation.HorizonPageAnim;
+import com.monke.monkeybook.widget.page.animation.NonePageAnim;
+import com.monke.monkeybook.widget.page.animation.PageAnimation;
+import com.monke.monkeybook.widget.page.animation.SimulationPageAnim;
+import com.monke.monkeybook.widget.page.animation.SlidePageAnim;
 
 import java.lang.ref.WeakReference;
 

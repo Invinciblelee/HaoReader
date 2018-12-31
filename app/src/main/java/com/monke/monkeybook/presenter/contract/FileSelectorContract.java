@@ -1,15 +1,13 @@
 package com.monke.monkeybook.presenter.contract;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.FileSnapshot;
 import com.monke.monkeybook.bean.RipeFile;
 
-import java.io.File;
 import java.util.Comparator;
-import java.util.List;
 
 public interface FileSelectorContract {
 

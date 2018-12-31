@@ -1,9 +1,6 @@
 package com.monke.basemvplib;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +8,12 @@ import android.view.ViewGroup;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 
-public abstract class BaseFragment<T extends IPresenter> extends com.trello.rxlifecycle2.components.support.RxFragment implements IView {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+public abstract class BaseFragment<T extends IPresenter> extends Fragment implements IView {
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
 
     private boolean isSupportHidden;

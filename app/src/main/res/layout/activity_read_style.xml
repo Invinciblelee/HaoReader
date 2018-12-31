@@ -48,12 +48,6 @@
                 android:text="@string/darkStatusIcon" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:text="@string/long_click_input_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -122,7 +116,7 @@
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"

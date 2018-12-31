@@ -3,7 +3,7 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
+import androidx.cardview.widget.CardView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -333,6 +333,9 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         });
 
         ivRefresh.setOnClickListener(view -> {
+            if(llLoading.isShown()){
+                return;
+            }
             AnimationSet animationSet = new AnimationSet(true);
             RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
                     Animation.RELATIVE_TO_SELF, 0.5f,

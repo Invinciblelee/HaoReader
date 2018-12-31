@@ -8,14 +8,14 @@
     android:fitsSystemWindows="true"
     app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -26,15 +26,15 @@
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <android.support.v7.widget.SearchView
+            <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionSearch" />
 
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true">
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabStop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

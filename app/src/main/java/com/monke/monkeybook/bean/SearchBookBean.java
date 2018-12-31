@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.ChapterHelp;
+import com.monke.monkeybook.model.content.Default716;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -28,7 +29,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     private String desc;
     private String lastChapter;
     private String introduce; //简介
-    private String chapterUrl;//目录URL
+    private String chapterListUrl;//目录URL
     private String bookType;
     private Long addTime;
     @Transient
@@ -51,10 +52,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     }
 
 
-    @Generated(hash = 1546670250)
+    @Generated(hash = 618704762)
     public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag,
-            String kind, String origin, String desc, String lastChapter, String introduce,
-            String chapterUrl, String bookType, Long addTime) {
+                          String kind, String origin, String desc, String lastChapter, String introduce,
+                          String chapterListUrl, String bookType, Long addTime) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -65,7 +66,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.desc = desc;
         this.lastChapter = lastChapter;
         this.introduce = introduce;
-        this.chapterUrl = chapterUrl;
+        this.chapterListUrl = chapterListUrl;
         this.bookType = bookType;
         this.addTime = addTime;
     }
@@ -82,7 +83,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         desc = in.readString();
         lastChapter = in.readString();
         introduce = in.readString();
-        chapterUrl = in.readString();
+        chapterListUrl = in.readString();
         if (in.readByte() == 0) {
             addTime = null;
         } else {
@@ -109,7 +110,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         dest.writeString(desc);
         dest.writeString(lastChapter);
         dest.writeString(introduce);
-        dest.writeString(chapterUrl);
+        dest.writeString(chapterListUrl);
         if (addTime == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -143,6 +144,14 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     };
 
     public String getNoteUrl() {
+        return noteUrl;
+    }
+
+    public String getRealNoteUrl() {
+        if (TextUtils.equals(tag, Default716.TAG)
+                && !TextUtils.isEmpty(noteUrl)) {
+            return noteUrl.substring(5);
+        }
         return noteUrl;
     }
 
@@ -234,13 +243,13 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.origin = origin;
     }
 
-    public void addTag(String origin) {
+    public void addTag(String tag) {
         if (this.tags == null) {
             this.tags = new ArrayList<>();
         }
 
-        if (!this.tags.contains(origin)) {
-            this.tags.add(origin);
+        if (!this.tags.contains(tag)) {
+            this.tags.add(tag);
         }
         originNum = this.tags.size();
     }
@@ -274,12 +283,12 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.introduce = introduce;
     }
 
-    public String getChapterUrl() {
-        return this.chapterUrl;
+    public String getChapterListUrl() {
+        return this.chapterListUrl;
     }
 
-    public void setChapterUrl(String chapterUrl) {
-        this.chapterUrl = chapterUrl;
+    public void setChapterListUrl(String chapterListUrl) {
+        this.chapterListUrl = chapterListUrl;
     }
 
     public String getBookType() {
@@ -320,5 +329,4 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         }
         return Integer.compare(o.getWeight(), this.getWeight());
     }
-
 }

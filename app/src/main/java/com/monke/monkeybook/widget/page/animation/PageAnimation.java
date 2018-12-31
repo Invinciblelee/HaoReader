@@ -1,16 +1,12 @@
-package com.monke.monkeybook.widget.animation;
+package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
-
-import com.monke.monkeybook.help.ReadBookControl;
 
 /**
  * Created by newbiechen on 17-7-24.

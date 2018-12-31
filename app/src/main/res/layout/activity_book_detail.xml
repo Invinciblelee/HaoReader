@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/card_content"
         android:layout_width="match_parent"
         android:layout_height="480dp"
@@ -36,7 +36,7 @@
                 tools:visibility="invisible">
 
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_blur_cover"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -55,7 +55,7 @@
                 android:layout_marginBottom="0dp"
                 android:transitionName="image_cover">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_cover"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -65,7 +65,7 @@
 
             </com.monke.monkeybook.widget.CoverCardView>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_name"
                 style="@style/AppTheme.TextView.Marquee"
                 android:layout_width="wrap_content"
@@ -276,7 +276,7 @@
                             android:textSize="13sp"
                              />
 
-                        <android.support.v7.widget.AppCompatImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_refresh"
                             android:layout_width="@dimen/small_button_height"
                             android:layout_height="@dimen/small_button_height"
@@ -405,6 +405,6 @@
 
             </FrameLayout>
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>

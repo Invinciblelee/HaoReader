@@ -1,10 +1,10 @@
 package com.monke.monkeybook.utils;
 
 import android.graphics.Bitmap;
-import android.support.annotation.ColorInt;
-import android.support.annotation.IntDef;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v7.graphics.Palette;
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
+import androidx.core.graphics.ColorUtils;
+import androidx.palette.graphics.Palette;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

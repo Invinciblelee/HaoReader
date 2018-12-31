@@ -3,11 +3,10 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-import com.gyf.barlibrary.BarHide;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;

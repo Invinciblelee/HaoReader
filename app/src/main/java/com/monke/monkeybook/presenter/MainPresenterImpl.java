@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.presenter;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -9,7 +8,6 @@ import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
-import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.MApplication;
@@ -27,7 +25,6 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.ImportBookModelImpl;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.io.File;
 import java.net.URL;
@@ -35,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
@@ -166,7 +164,6 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 e.onComplete();
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onNext(Boolean value) {
@@ -247,7 +244,6 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     return Observable.just(locBookShelfBean);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new SimpleObserver<LocBookShelfBean>() {
                     @Override
                     public void onNext(LocBookShelfBean value) {

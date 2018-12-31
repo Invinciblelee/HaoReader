@@ -1,7 +1,6 @@
 package com.monke.monkeybook.utils;
 
 import android.os.Build;
-import android.support.v4.text.HtmlCompat;
 import android.text.Html;
 import android.widget.TextView;
 

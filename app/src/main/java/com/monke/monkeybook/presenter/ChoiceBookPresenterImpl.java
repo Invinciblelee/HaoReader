@@ -2,10 +2,8 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 
 import com.hwangjr.rxbus.RxBus;
-import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -15,10 +13,10 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -58,7 +56,6 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     private void searchBook(final long searchTime) {
         WebBookModelImpl.getInstance().findBook(url, page, tag)
                 .subscribeOn(Schedulers.io())
-                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
                     @Override
@@ -86,7 +83,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     @Override
     public void addBookToShelf(final SearchBookBean searchBookBean) {
         final BookShelfBean bookShelfResult = new BookShelfBean();
-        bookShelfResult.setNoteUrl(searchBookBean.getNoteUrl());
+        bookShelfResult.setNoteUrl(searchBookBean.getRealNoteUrl());
         bookShelfResult.setFinalDate(System.currentTimeMillis());
         bookShelfResult.setDurChapter(0);
         bookShelfResult.setDurChapterPage(0);
@@ -95,7 +92,6 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                 .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfResult) {
@@ -124,7 +120,6 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) mView.getContext()).bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean value) {

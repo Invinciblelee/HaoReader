@@ -1,4 +1,4 @@
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cv_root"
     style="@style/AppTheme.CardView"
@@ -19,7 +19,7 @@
             android:layout_margin="5dp"
             android:textColor="@color/tv_text_default" />
 
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
             android:id="@+id/et_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,4 +46,4 @@
             android:textColor="@color/white" />
 
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

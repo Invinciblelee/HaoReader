@@ -10,7 +10,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 
 import static android.text.TextUtils.isEmpty;
 import static com.monke.monkeybook.model.analyzeRule.JsoupParser.getElements;
@@ -48,7 +47,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
             return result;
         }
         //分离正则表达式
-        RulePattern rulePattern = splitSourceRule(ruleStr.trim());
+        RulePattern rulePattern = RulePattern.from(ruleStr.trim());
         if (isEmpty(rulePattern.elementsRule)) {
             result = element.data();
         } else {
@@ -80,12 +79,12 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
         if (element == null || isEmpty(ruleStr)) {
             return result;
         }
-        RulePattern rulePattern = splitSourceRule(ruleStr.trim());
+        RulePattern rulePattern = RulePattern.from(ruleStr.trim());
         List<String> urlList = getAllResults(element, rulePattern.elementsRule);
         if (urlList.size() > 0) {
-            result = processingResultContent(urlList.get(0), rulePattern);
+            result = urlList.get(0);
         }
-        return result;
+        return processingResultUrl(result);
     }
 
     @Override
@@ -107,23 +106,22 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
     /**
      * 获取所有内容列表
      */
-    private List<String> getAllResults(Element element, String ruleStr) {
+    private List<String> getAllResults(Element element, String rawRule) {
         List<String> textS = new ArrayList<>();
-        if (element == null || isEmpty(ruleStr)) {
+        if (element == null) {
             return textS;
         }
-        RulePattern rulePattern = splitSourceRule(ruleStr.trim());
-        if (isEmpty(rulePattern.elementsRule)) {
+        if (isEmpty(rawRule)) {
             textS.add(element.data());
         } else {
             boolean isAnd;
             String ruleStrS[];
-            if (rulePattern.elementsRule.contains("&")) {
+            if (rawRule.contains("&")) {
                 isAnd = true;
-                ruleStrS = rulePattern.elementsRule.split("&+");
+                ruleStrS = rawRule.split("&+");
             } else {
                 isAnd = false;
-                ruleStrS = rulePattern.elementsRule.split("\\|+");
+                ruleStrS = rawRule.split("\\|+");
             }
             for (String ruleStrX : ruleStrS) {
                 List<String> temp = getResults(element, ruleStrX);
@@ -135,38 +133,36 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
                 }
             }
         }
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            ListIterator<String> it = textS.listIterator();
-            while (it.hasNext()) {
-                String text = it.next();
-                it.set(text.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
-            }
-        }
         return textS;
     }
 
     /**
      * 获取内容列表
      */
-    private List<String> getResults(Element element, String ruleStr) {
-        if (element == null || isEmpty(ruleStr)) {
-            return new ArrayList<>();
+    private List<String> getResults(Element element, String rawRule) {
+        List<String> textS = new ArrayList<>();
+        if (element == null) {
+            return textS;
         }
-        Elements elements = new Elements();
-        elements.add(element);
-        String[] ruleS = ruleStr.split("@");
-        for (int i = 0, length = ruleS.length - 1; i < length; i++) {
-            Elements es = new Elements();
-            for (Element elt : elements) {
-                es.addAll(getElementsSingle(elt, ruleS[i]));
+        if (!isEmpty(rawRule)) {
+            Elements elements = new Elements();
+            elements.add(element);
+            String[] ruleS = rawRule.split("@");
+            for (int i = 0, length = ruleS.length - 1; i < length; i++) {
+                Elements es = new Elements();
+                for (Element elt : elements) {
+                    es.addAll(getElementsSingle(elt, ruleS[i]));
+                }
+                elements.clear();
+                elements.addAll(es);
             }
-            elements.clear();
-            elements.addAll(es);
+            if (!elements.isEmpty()) {
+                return getLastResult(elements, ruleS[ruleS.length - 1]);
+            }
+        } else {
+            textS.add(element.data());
         }
-        if (elements.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return getLastResult(elements, ruleS[ruleS.length - 1]);
+        return textS;
     }
 
     /**
@@ -229,7 +225,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
                     break;
                 default:
                     for (Element element : elements) {
-                        String url = processingResultUrl(element.attr(lastRule));
+                        String url = element.attr(lastRule);
                         if (!isEmpty(url) && !textS.contains(url)) {
                             textS.add(url);
                         }

@@ -1,8 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -19,6 +18,7 @@ import org.jsoup.nodes.Element;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
 import retrofit2.Call;
 
@@ -68,7 +68,6 @@ class XJsoupContentDelegate implements ContentDelegate {
 
     @Override
     public BookShelfBean getBook(String source) {
-        Element element = mAnalyzer.parseSource(source);
         BookShelfBean book = mConfig.getExtras().getParcelable("book");
         assert book != null;
         BookInfoBean bookInfoBean = book.getBookInfoBean();
@@ -77,6 +76,8 @@ class XJsoupContentDelegate implements ContentDelegate {
         }
         bookInfoBean.setNoteUrl(mConfig.getBaseURL());   //id
         bookInfoBean.setTag(mConfig.getTag());
+        bookInfoBean.setBookType(mBookSource.getBookSourceType());
+        Element element = mAnalyzer.parseSource(source);
         if (isEmpty(bookInfoBean.getCoverUrl())) {
             bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(element, mBookSource.getRuleCoverUrl()));
         }
@@ -145,6 +146,32 @@ class XJsoupContentDelegate implements ContentDelegate {
         return chapterList;
     }
 
+    private RawResult<List<ChapterListBean>> getRawChaptersResult(String s, String ruleChapterList) {
+        RawResult<List<ChapterListBean>> webChapterBean = new RawResult<>();
+        List<ChapterListBean> chapterBeans = new ArrayList<>();
+        Element doc = mAnalyzer.parseSource(s);
+        if (!isEmpty(mBookSource.getRuleChapterUrlNext())) {
+            webChapterBean.nextUrl = mAnalyzer.getResultUrl(doc, mBookSource.getRuleChapterUrlNext());
+        }
+
+        ListIterator<Element> iterator = mAnalyzer.getRawList(doc, ruleChapterList).listIterator();
+        while (iterator.hasNext()) {
+            Element element = iterator.next();
+            String url = mAnalyzer.getResultUrl(element, mBookSource.getRuleContentUrl());   //id
+            String name = mAnalyzer.getResultContent(element, mBookSource.getRuleChapterName());
+            if (!isEmpty(url) && !isEmpty(name)) {
+                ChapterListBean temp = new ChapterListBean();
+                temp.setDurChapterUrl(url);
+                temp.setDurChapterName(name);
+                temp.setDurChapterIndex(iterator.previousIndex());
+                temp.setTag(mConfig.getTag());
+                chapterBeans.add(temp);
+            }
+        }
+        webChapterBean.result = chapterBeans;
+        return webChapterBean;
+    }
+
     @Override
     public BookContentBean getContent(String source) {
         ChapterListBean chapter = mConfig.getExtras().getParcelable("chapter");
@@ -190,32 +217,6 @@ class XJsoupContentDelegate implements ContentDelegate {
             }
         }
         return bookContentBean;
-    }
-
-    private RawResult<List<ChapterListBean>> getRawChaptersResult(String s, String ruleChapterList) {
-        RawResult<List<ChapterListBean>> webChapterBean = new RawResult<>();
-        List<ChapterListBean> chapterBeans = new ArrayList<>();
-        Element doc = mAnalyzer.parseSource(s);
-        if (!isEmpty(mBookSource.getRuleChapterUrlNext())) {
-            webChapterBean.nextUrl = mAnalyzer.getResultUrl(doc, mBookSource.getRuleChapterUrlNext());
-        }
-        List<Element> elements = mAnalyzer.getRawList(doc, ruleChapterList);
-        int chapterIndex = 0;
-        for (Element element : elements) {
-            ChapterListBean temp = new ChapterListBean();
-            temp.setDurChapterUrl(mAnalyzer.getResultUrl(element, mBookSource.getRuleContentUrl()));   //id
-            temp.setDurChapterName(mAnalyzer.getResultContent(element, mBookSource.getRuleChapterName()));
-            temp.setTag(mConfig.getTag());
-            if (!isEmpty(temp.getDurChapterUrl())
-                    && !isEmpty(temp.getDurChapterName())
-                    && !chapterBeans.contains(temp)) {
-                temp.setDurChapterIndex(chapterIndex);
-                chapterBeans.add(temp);
-                chapterIndex++;
-            }
-        }
-        webChapterBean.result = chapterBeans;
-        return webChapterBean;
     }
 
 

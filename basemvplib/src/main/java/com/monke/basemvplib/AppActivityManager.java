@@ -70,9 +70,9 @@ public class AppActivityManager {
     关闭指定 activity
      */
     public void finishActivity(BaseActivity... activities){
-        for(int i=0;i<activities.length;i++){
-            if(null != activities[i]){
-                activities[i].finish();
+        for (BaseActivity activity : activities) {
+            if (null != activity) {
+                activity.finish();
             }
         }
     }
@@ -83,8 +83,8 @@ public class AppActivityManager {
     public void finishActivity(Class<?>... activityClasses){
         ArrayList<WeakReference<Activity>> waitfinish = new ArrayList<>();
         for(WeakReference<Activity> temp :activities){
-            for(int i=0;i<activityClasses.length;i++){
-                if(null != temp.get() && temp.get().getClass() == activityClasses[i]){
+            for (Class<?> activityClass : activityClasses) {
+                if (null != temp.get() && temp.get().getClass() == activityClass) {
                     waitfinish.add(temp);
                     break;
                 }
@@ -102,9 +102,8 @@ public class AppActivityManager {
      */
     public Boolean isExist(Class<?> activityClass){
         Boolean result = false;
-        for(Iterator<WeakReference<Activity>> iterator = activities.iterator();iterator.hasNext();){
-            WeakReference<Activity> item = iterator.next();
-            if(null != item && null != item.get() && item.get().getClass() == activityClass){
+        for (WeakReference<Activity> item : activities) {
+            if (null != item && null != item.get() && item.get().getClass() == activityClass) {
                 result = true;
                 break;
             }

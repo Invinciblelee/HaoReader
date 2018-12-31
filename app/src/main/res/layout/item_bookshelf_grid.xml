@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/half_card_item_margin">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,7 +31,7 @@
             android:layout_height="26dp"
             android:layout_gravity="end">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_has_new"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -52,7 +52,7 @@
         </FrameLayout>
     </com.monke.monkeybook.widget.CoverCardView>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_name"
         android:layout_width="match_parent"
         android:layout_height="24dp"

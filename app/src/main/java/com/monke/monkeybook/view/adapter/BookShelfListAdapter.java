@@ -2,15 +2,14 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
-import com.monke.mprogressbar.MHorProgressBar;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.List;

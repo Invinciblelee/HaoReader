@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -33,7 +33,6 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;

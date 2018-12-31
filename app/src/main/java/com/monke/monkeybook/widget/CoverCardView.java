@@ -1,7 +1,7 @@
 package com.monke.monkeybook.widget;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
+import androidx.cardview.widget.CardView;
 import android.util.AttributeSet;
 
 public class CoverCardView extends CardView {

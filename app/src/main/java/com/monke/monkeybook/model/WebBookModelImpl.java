@@ -2,7 +2,6 @@
 package com.monke.monkeybook.model;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -11,6 +10,7 @@ import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.content.DefaultModel;
+import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
 
@@ -123,6 +123,8 @@ public class WebBookModelImpl implements IWebBookModel {
     private IStationBookModel getBookSourceModel(String tag) {
         if (TextUtils.equals(tag, BookShelfBean.LOCAL_TAG)) {
             return null;
+        } else if (TextUtils.equals(tag, Default716.TAG)) {
+            return Default716.newInstance();
         } else {
             return DefaultModel.newInstance(tag);
         }

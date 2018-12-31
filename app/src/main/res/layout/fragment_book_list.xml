@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"><!--解决有时候自动滑动-->
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bookshelf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

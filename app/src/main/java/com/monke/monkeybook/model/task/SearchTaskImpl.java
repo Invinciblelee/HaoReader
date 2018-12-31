@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -10,6 +9,7 @@ import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.utils.ListUtil;
 
@@ -74,7 +74,7 @@ public class SearchTaskImpl implements ISearchTask {
                         .searchOtherBook(query, searchEngine.getPage(), searchEngine.getTag())
                         .subscribeOn(scheduler)
                         .flatMap(this::dispatchResult)
-                        .doAfterNext(bool -> incrementSourceWeight(searchEngine.getTag(), searchEngine.getStart()))
+                        .doAfterNext(bool -> incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime()))
                         .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<Boolean>() {
@@ -138,6 +138,10 @@ public class SearchTaskImpl implements ISearchTask {
             if (!isDisposed() && searchBookBeans != null && !searchBookBeans.isEmpty()) {
                 listener.onSearchResult(ListUtil.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getName().compareTo(o2.getName())));
                 saveData(searchBookBeans);
+
+                if(TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)){
+                    hasMore = false;
+                }
             } else {
                 hasMore = false;
             }
@@ -149,12 +153,11 @@ public class SearchTaskImpl implements ISearchTask {
         return disposables == null || disposables.isDisposed();
     }
 
-    private static void incrementSourceWeight(String tag, long startTime) {
+    private static void incrementSourceWeight(String tag, long elapsedTime) {
         Schedulers.single().createWorker().schedule(() -> {
-            int searchTime = (int) (System.currentTimeMillis() - startTime);
             BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
-            if (bookSourceBean != null && searchTime < 10000) {
-                bookSourceBean.increaseWeight(10000 / (1000 + searchTime));
+            if (bookSourceBean != null && elapsedTime < 10000) {
+                bookSourceBean.increaseWeight((int) (10000 / (1000 + elapsedTime)));
                 BookSourceManager.getInstance().saveBookSource(bookSourceBean);
             }
         });
@@ -171,11 +174,8 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     private static void saveData(List<SearchBookBean> searchBookBeans) {
-        Schedulers.single().createWorker().schedule(() -> {
-            if (searchBookBeans != null) {
-                DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplaceInTx(searchBookBeans);
-            }
-        });
+        Schedulers.single().createWorker().schedule(() ->
+                DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().insertOrReplaceInTx(searchBookBeans));
     }
 
 }

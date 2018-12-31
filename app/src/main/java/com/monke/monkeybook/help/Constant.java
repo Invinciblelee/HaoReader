@@ -1,16 +1,12 @@
 package com.monke.monkeybook.help;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import static com.monke.monkeybook.help.Constant.RuleType.DEFAULT;
 
 /**
  * Created by newbiechen on 17-4-16.

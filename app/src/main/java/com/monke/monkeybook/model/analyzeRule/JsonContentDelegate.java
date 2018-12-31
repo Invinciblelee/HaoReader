@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.jayway.jsonpath.ReadContext;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -69,6 +69,7 @@ public class JsonContentDelegate implements ContentDelegate {
         }
         bookInfoBean.setNoteUrl(mConfig.getBaseURL());   //id
         bookInfoBean.setTag(mConfig.getTag());
+        bookInfoBean.setBookType(mBookSource.getBookSourceType());
         if (isEmpty(bookInfoBean.getCoverUrl())) {
             bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(element, mBookSource.getRuleCoverUrl()));
         }

@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

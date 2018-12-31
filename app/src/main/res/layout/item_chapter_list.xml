@@ -18,7 +18,7 @@
         android:paddingRight="15dp"
         android:paddingBottom="12dp">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_indicator"
             android:layout_width="12sp"
             android:layout_height="12sp"

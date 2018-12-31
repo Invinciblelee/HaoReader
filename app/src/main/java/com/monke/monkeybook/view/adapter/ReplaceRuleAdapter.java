@@ -1,18 +1,16 @@
 package com.monke.monkeybook.view.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.view.activity.ReplaceRuleActivity;
-import com.monke.monkeybook.widget.AppCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;

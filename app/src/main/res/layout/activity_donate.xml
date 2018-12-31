@@ -7,14 +7,14 @@
     android:fitsSystemWindows="true"
     app:appInsetForeground="@color/colorPrimary">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -22,7 +22,7 @@
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             android:paddingTop="@dimen/half_card_item_margin"
             android:paddingBottom="@dimen/half_card_item_margin">
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -55,9 +55,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_zfb_hb_kl"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -80,9 +80,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_zfb_hb_ssm"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -105,9 +105,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_zfb_tz"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -130,9 +130,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_zfb_hb"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -155,9 +155,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_zfb_rwm"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -180,9 +180,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_wx_rwm"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -205,9 +205,9 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/vw_qq_rwm"
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
@@ -230,7 +230,7 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

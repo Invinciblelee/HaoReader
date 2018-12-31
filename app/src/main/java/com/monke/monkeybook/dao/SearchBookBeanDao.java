@@ -34,7 +34,7 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
         public final static Property Desc = new Property(7, String.class, "desc", false, "DESC");
         public final static Property LastChapter = new Property(8, String.class, "lastChapter", false, "LAST_CHAPTER");
         public final static Property Introduce = new Property(9, String.class, "introduce", false, "INTRODUCE");
-        public final static Property ChapterUrl = new Property(10, String.class, "chapterUrl", false, "CHAPTER_URL");
+        public final static Property ChapterListUrl = new Property(10, String.class, "chapterListUrl", false, "CHAPTER_LIST_URL");
         public final static Property BookType = new Property(11, String.class, "bookType", false, "BOOK_TYPE");
         public final static Property AddTime = new Property(12, Long.class, "addTime", false, "ADD_TIME");
     }
@@ -62,7 +62,7 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
                 "\"DESC\" TEXT," + // 7: desc
                 "\"LAST_CHAPTER\" TEXT," + // 8: lastChapter
                 "\"INTRODUCE\" TEXT," + // 9: introduce
-                "\"CHAPTER_URL\" TEXT," + // 10: chapterUrl
+                "\"CHAPTER_LIST_URL\" TEXT," + // 10: chapterListUrl
                 "\"BOOK_TYPE\" TEXT," + // 11: bookType
                 "\"ADD_TIME\" INTEGER);"); // 12: addTime
     }
@@ -127,9 +127,9 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
             stmt.bindString(10, introduce);
         }
  
-        String chapterUrl = entity.getChapterUrl();
-        if (chapterUrl != null) {
-            stmt.bindString(11, chapterUrl);
+        String chapterListUrl = entity.getChapterListUrl();
+        if (chapterListUrl != null) {
+            stmt.bindString(11, chapterListUrl);
         }
  
         String bookType = entity.getBookType();
@@ -197,9 +197,9 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
             stmt.bindString(10, introduce);
         }
  
-        String chapterUrl = entity.getChapterUrl();
-        if (chapterUrl != null) {
-            stmt.bindString(11, chapterUrl);
+        String chapterListUrl = entity.getChapterListUrl();
+        if (chapterListUrl != null) {
+            stmt.bindString(11, chapterListUrl);
         }
  
         String bookType = entity.getBookType();
@@ -231,7 +231,7 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // desc
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // lastChapter
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // introduce
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // chapterUrl
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // chapterListUrl
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // bookType
             cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12) // addTime
         );
@@ -250,7 +250,7 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
         entity.setDesc(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setLastChapter(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setIntroduce(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setChapterUrl(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setChapterListUrl(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setBookType(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setAddTime(cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12));
      }

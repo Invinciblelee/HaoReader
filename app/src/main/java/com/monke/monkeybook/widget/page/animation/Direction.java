@@ -1,4 +1,4 @@
-package com.monke.monkeybook.widget.animation;
+package com.monke.monkeybook.widget.page.animation;
 
 public enum Direction {
     NONE(true), NEXT(true), PREV(true), UP(false), DOWN(false);

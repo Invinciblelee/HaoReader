@@ -6,7 +6,6 @@ import com.monke.monkeybook.bean.ChapterListBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.utils.NetworkUtil;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -72,7 +71,6 @@ public class NetPageLoader extends PageLoader {
                         }
                     })
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new SimpleObserver<BookShelfBean>() {
 
                         @Override
