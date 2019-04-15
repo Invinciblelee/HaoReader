@@ -28,23 +28,23 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
         super(context);
     }
 
-    public void upChapter(int position) {
+    public synchronized void upChapter(int position) {
         if (mBook != null && mBook.getChapterList().size() > position) {
             notifyItemChanged(position, 0);
         }
     }
 
-    public void upChapterIndex(int index) {
+    public synchronized void upChapterIndex(int index) {
         if (this.mIndex != index) {
             if (this.mIndex != -1) {
-                notifyItemChanged(this.mIndex, 1);
+                notifyItemChanged(this.mIndex, 0);
             }
             this.mIndex = index;
-            notifyItemChanged(index, 2);
+            notifyItemChanged(index, 0);
         }
     }
 
-    public void setBook(BookShelfBean book) {
+    public synchronized void setBook(BookShelfBean book) {
         if (book != null) {
             boolean changed = mBook == null || !TextUtils.equals(mBook.getTag(), book.getTag());
             this.mBook = book;
@@ -58,28 +58,24 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
     public void onBindViewHolder(@NonNull ThisViewHolder holder, int position, @NonNull List<Object> payloads) {
         final int realPosition = holder.getLayoutPosition();
         final ChapterBean chapterBean = getItem(realPosition);
+        if (payloads.size() > 0) {
+            if (isCached(chapterBean)) {
+                setBoldText(holder, true);
+            }
+
+            if (this.mIndex == chapterBean.getDurChapterIndex()) {
+                setTextTint(holder, R.color.colorAccent);
+            } else {
+                setTextTint(holder, R.color.color_chapter_item);
+            }
+            return;
+        }
         if (realPosition == getItemCount() - 1) {
             holder.line.setVisibility(View.GONE);
         } else {
             holder.line.setVisibility(View.VISIBLE);
         }
-        if (payloads.size() > 0) {
-            int type = (int) payloads.get(0);
-            if (type == 0) {
-                setBoldText(holder, true);
-            } else if (type == 1) {
-                setTextTint(holder, R.color.color_chapter_item);
-                if (isCached(chapterBean)) {
-                    setBoldText(holder, true);
-                }
-            } else if (type == 2) {
-                setTextTint(holder, R.color.colorAccent);
-                if (isCached(chapterBean)) {
-                    setBoldText(holder, true);
-                }
-            }
-            return;
-        }
+
         holder.tvName.setText(FormatWebText.trim(chapterBean.getDurChapterName()));
 
         if (chapterBean.getDurChapterIndex() == mIndex) {

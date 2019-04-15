@@ -98,14 +98,10 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
         super.onDestroy();
     }
 
-    private void updateIndex() {
-        final int durChapter = bookShelf.getDurChapter();
-        getAdapter().upChapterIndex(durChapter);
-        getLayoutManager().scrollToPositionWithOffset(durChapter, 0);
-    }
-
     private void updateChapterInfo() {
         if (bookShelf != null) {
+            final int durChapter = bookShelf.getDurChapter();
+            getAdapter().upChapterIndex(durChapter);
             String durChapterName = ChapterHelp.getFormatChapterName(bookShelf.getDurChapterName());
             if (getAdapter().getItemCount() == 0) {
                 tvChapterInfo.setText(durChapterName);
@@ -126,16 +122,15 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
     public void updateBookShelf(BookShelfBean bookShelfBean) {
         getAdapter().setBook(bookShelfBean);
 
-        rvList.post(() -> {
-            updateIndex();
-            updateChapterInfo();
-        });
+        scrollToTarget();
+
+        rvList.postDelayed(this::updateChapterInfo, 50L);
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CHAPTER_CHANGE)})
     public void chapterChange(BookContentBean bookContentBean) {
-        if (bookShelf != null && bookShelf.getNoteUrl().equals(bookContentBean.getNoteUrl())) {
-            rvList.post(() -> getAdapter().upChapter(bookContentBean.getDurChapterIndex()));
+        if (bookShelf != null && bookShelf.getTag().equals(bookContentBean.getTag())) {
+            getAdapter().upChapter(bookContentBean.getDurChapterIndex());
         }
     }
 }

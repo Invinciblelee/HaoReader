@@ -195,7 +195,7 @@ class ChapterProvider {
             if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
                 WebBookModelImpl.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
                         .subscribeOn(mScheduler)
-                        .doOnNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
+                        .doAfterNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
                         .timeout(30, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<BookContentBean>() {
