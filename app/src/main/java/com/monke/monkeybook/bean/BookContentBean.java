@@ -108,15 +108,24 @@ public class BookContentBean implements Parcelable {
         return isRight;
     }
 
-    public void setRight(Boolean right) {
-        isRight = right;
-    }
-
     public String getNoteUrl() {
         return this.noteUrl;
     }
 
     public void setNoteUrl(String noteUrl) {
         this.noteUrl = noteUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "BookContentBean{" +
+                "noteUrl='" + noteUrl + '\'' +
+                ", durChapterUrl='" + durChapterUrl + '\'' +
+                ", durChapterIndex=" + durChapterIndex +
+                ", durChapterName='" + durChapterName + '\'' +
+                ", durChapterContent='" + durChapterContent + '\'' +
+                ", tag='" + tag + '\'' +
+                ", isRight=" + isRight +
+                '}';
     }
 }

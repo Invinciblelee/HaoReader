@@ -27,6 +27,12 @@
             android:icon="@drawable/ic_forbid_black_24dp"
             android:title="@string/disable_book_source"
             app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_clean_cache"
+            android:icon="@drawable/ic_clean_cache_black_24dp"
+            android:title="@string/clean_caches"
+            app:showAsAction="never" />
     </group>
 
     <item
@@ -35,12 +41,6 @@
         android:icon="@drawable/ic_translate_black_24dp"
         android:title="@string/edit_charset"
         android:visible="false"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_login"
-        android:icon="@drawable/ic_login_black_24dp"
-        android:title="@string/source_login"
         app:showAsAction="never" />
 
     <item

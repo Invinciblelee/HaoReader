@@ -68,7 +68,7 @@ public class EditBookmarkView {
         tilReplaceTo.setHint(context.getString(R.string.content));
         tvChapterName = moDialogView.findViewById(R.id.tvChapterName);
         tvChapterName.setOnClickListener(view -> {
-            bookmarkClick.openChapter(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex());
+            bookmarkClick.openBookmark(bookmarkBean);
             dismiss();
         });
         tvContent = moDialogView.findViewById(R.id.tie_content);
@@ -109,6 +109,6 @@ public class EditBookmarkView {
 
         void delBookmark(BookmarkBean bookmarkBean);
 
-        void openChapter(int chapterIndex, int pageIndex);
+        void openBookmark(BookmarkBean bookmarkBean);
     }
 }

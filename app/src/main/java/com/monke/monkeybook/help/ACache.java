@@ -394,11 +394,7 @@ public class ACache {
 	 *            保存的时间，单位：秒
 	 */
 	public void put(String key, Serializable value, int saveTime) {
-		ByteArrayOutputStream baos = null;
-		ObjectOutputStream oos = null;
-		try {
-			baos = new ByteArrayOutputStream();
-			oos = new ObjectOutputStream(baos);
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)) {
 			oos.writeObject(value);
 			byte[] data = baos.toByteArray();
 			if (saveTime != -1) {
@@ -408,11 +404,6 @@ public class ACache {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				oos.close();
-			} catch (IOException e) {
-			}
 		}
 	}
 
@@ -430,8 +421,7 @@ public class ACache {
 			try {
 				bais = new ByteArrayInputStream(data);
 				ois = new ObjectInputStream(bais);
-				Object reObject = ois.readObject();
-				return reObject;
+				return ois.readObject();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

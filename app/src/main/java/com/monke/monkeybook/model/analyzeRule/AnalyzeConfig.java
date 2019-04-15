@@ -1,14 +1,19 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.monke.monkeybook.bean.BookSourceBean;
+import com.monke.monkeybook.bean.VariableStore;
+
+import java.io.Serializable;
 
 public class AnalyzeConfig {
     private String tag;
     private String name;
     private String baseURL;
     private BookSourceBean bookSource;
+    private VariableStore variableStore;
     private Bundle extras;
 
     public AnalyzeConfig newConfig() {
@@ -40,8 +45,44 @@ public class AnalyzeConfig {
         return this;
     }
 
+    public AnalyzeConfig variableStore(VariableStore variableStore){
+        this.variableStore = variableStore;
+        return this;
+    }
+
     public AnalyzeConfig extras(Bundle extras){
         this.extras = extras;
+        return this;
+    }
+
+    public AnalyzeConfig extra(String key, String value){
+        if(this.extras == null){
+            this.extras = new Bundle();
+        }
+        this.extras.putString(key, value);
+        return this;
+    }
+    public AnalyzeConfig extra(String key, int value){
+        if(this.extras == null){
+            this.extras = new Bundle();
+        }
+        this.extras.putInt(key, value);
+        return this;
+    }
+
+    public AnalyzeConfig extra(String key, Serializable value){
+        if(this.extras == null){
+            this.extras = new Bundle();
+        }
+        this.extras.putSerializable(key, value);
+        return this;
+    }
+
+    public AnalyzeConfig extra(String key, Parcelable value){
+        if(this.extras == null){
+            this.extras = new Bundle();
+        }
+        this.extras.putParcelable(key, value);
         return this;
     }
 
@@ -63,5 +104,9 @@ public class AnalyzeConfig {
 
     public final BookSourceBean getBookSource() {
         return bookSource;
+    }
+
+    public VariableStore getVariableStore() {
+        return variableStore;
     }
 }

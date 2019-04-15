@@ -3,10 +3,13 @@ package com.monke.monkeybook.widget.page.animation;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.monke.monkeybook.help.ReadBookControl;
+import com.monke.monkeybook.widget.page.PageMode;
+import com.monke.monkeybook.widget.page.PageView;
+
+import androidx.annotation.CallSuper;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -29,10 +32,18 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
+    private boolean lockPage = false;
+
     private int mTouchSlop;
 
-    HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
+    HorizonPageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
         super(w, h, view, listener);
+    }
+
+    @CallSuper
+    @Override
+    public void init(int w, int h, PageView view, OnPageChangeListener listener) {
+        super.init(w, h, view, listener);
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
@@ -43,7 +54,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
     /**
      * 转换页面，在显示下一章的时候，必须首先调用此方法
      */
-    public void changePage() {
+    private void changePage() {
         Bitmap bitmap = mCurBitmap;
         mCurBitmap = mNextBitmap;
         mNextBitmap = bitmap;
@@ -76,7 +87,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 isCancel = false;
                 //设置起始位置的触摸点
                 setStartPoint(x, y);
-                //取消动画
                 abortAnim();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -86,6 +96,11 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 }
 
                 if (isMove) {
+                    if (!lockPage) {
+                        changePage();
+                        lockPage = true;
+                    }
+
                     //判断是否是准备移动的状态(将要移动但是还没有移动)
                     if (mMoveX == 0 && mMoveY == 0) {
                         //判断翻得是上一页还是下一页
@@ -121,12 +136,15 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     mMoveX = x;
                     mMoveY = y;
                     isRunning = true;
-                    mView.invalidate();
+                    mView.postInvalidate();
                 }
+
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isMove) {
-                    isNext = x > mScreenWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
+                    isNext = x > mViewWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
+
+                    changePage();
 
                     if (isNext) {
                         //判断是否下一页存在
@@ -143,8 +161,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             return true;
                         }
                     }
-                } else {
-                    isCancel = Math.abs(mLastX - mStartX) < mTouchSlop * 3 || isCancel;
                 }
 
                 // 是否取消翻页
@@ -156,15 +172,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 if (!noNext) {
                     startAnim();
                 }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                isCancel = true;
-                mListener.pageCancel();
 
-                // 开启翻页效果
-                if (!noNext) {
-                    startAnim();
-                }
                 break;
         }
         return true;
@@ -210,12 +218,56 @@ public abstract class HorizonPageAnim extends PageAnimation {
     }
 
     @Override
-    public Bitmap getBgBitmap() {
+    public void resetAnim() {
+        super.resetAnim();
+        lockPage = false;
+    }
+
+    @Override
+    public void startAnim(Direction direction) {
+        if (isStarted) return;
+        changePage();
+        if (direction == Direction.NEXT) {
+            int x = mViewWidth;
+            int y = mViewHeight;
+            if (getPageMode() == PageMode.SIMULATION) {
+                y = y * 2 / 3;
+            }
+            //初始化动画
+            setStartPoint(x, y);
+            //设置点击点
+            setTouchPoint(x, y);
+            //设置方向
+            boolean hasNext = mView.hasNextPage();
+
+            setDirection(direction);
+            if (!hasNext) {
+                return;
+            }
+        } else {
+            int x = 0;
+            int y = mViewHeight;
+            //初始化动画
+            setStartPoint(x, y);
+            //设置点击点
+            setTouchPoint(x, y);
+            setDirection(direction);
+            //设置方向方向
+            boolean hashPrev = mView.hasPrevPage();
+            if (!hashPrev) {
+                return;
+            }
+        }
+        startAnim();
+    }
+
+    @Override
+    public Bitmap getNextBitmap() {
         return mNextBitmap;
     }
 
     @Override
-    public Bitmap getContentBitmap() {
-        return mNextBitmap;
+    public Bitmap getCurrentBitmap() {
+        return mCurBitmap;
     }
 }

@@ -28,12 +28,19 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <WebView
-        android:id="@+id/webView"
+    <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appBar"
-        android:background="@color/background" />
+        android:background="@color/background">
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
 
 
     <FrameLayout
@@ -63,11 +70,11 @@
 
         <ProgressBar
             android:id="@+id/text_progress"
+            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:visibility="gone" />
     </FrameLayout>
 
 
@@ -76,10 +83,10 @@
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:progressBackgroundTint="@color/transparent"
         android:elevation="3dp"
         android:max="100"
         android:maxHeight="3dp"
-        android:minHeight="3dp" />
+        android:minHeight="3dp"
+        android:progressBackgroundTint="@color/transparent" />
 
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

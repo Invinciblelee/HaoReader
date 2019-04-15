@@ -25,6 +25,8 @@ public interface SearchBookContract {
         void toSearchBooks(String key);
 
         void stopSearch();
+
+        void useMy716(Boolean bool);
     }
 
     interface View extends IView {
@@ -67,6 +69,7 @@ public interface SearchBookContract {
         String getEdtContent();
 
         void showBookSourceEmptyTip();
+
     }
 
 }

@@ -22,6 +22,7 @@
     <color name="light_red">#EC4A48</color>
     <color name="light_blue">#039BE5</color>
     <color name="light_translucent">#23000000</color>
+    <color name="dark_translucent">#66000000</color>
     <color name="common_gray">#EEEEEE</color>
     <color name="dark_white">#f3f3f3</color>
 
@@ -34,9 +35,17 @@
     <color name="colorAccent">#199589</color>
     <color name="colorAccentTranslucent">#66199589</color>
 
+    <color name="colorReadBar">#ffffff</color>
+    <color name="colorReadBarText">#4a4a4a</color>
+    <color name="colorReadProgressThumb">#737373</color>
+    <color name="colorReadProgressBack">#c9c9c9</color>
+
     <color name="btn_bg_press">#dddddd</color>
     <color name="btn_bg_press_2">#cfcfcf</color>
     <color name="btn_bg_press_tp">#66000000</color>
+
+    <color name="tv_tag_nor">#e1e1e1</color>
+    <color name="tv_tag_press">#36000000</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#adadad</color>

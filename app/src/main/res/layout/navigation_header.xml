@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/na_top"
     android:layout_width="match_parent"
-    android:layout_height="115dp"
-    android:gravity="bottom"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:tint="@color/colorAccent"
+        android:contentDescription="@string/app_name"
+        android:paddingStart="0dp"
+        android:paddingEnd="48dp"
         android:src="@drawable/ic_read"
-        android:contentDescription="@string/app_name" />
+        android:tint="@color/colorAccent" />
 
     <TextView
         android:id="@+id/tv_user"
@@ -27,11 +27,9 @@
         android:textColor="@color/menu_color_default"
         android:textSize="14sp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="?android:attr/listDivider"/>
+    <include layout="@layout/view_navigation_divider" />
 
 </LinearLayout>
+
 
 

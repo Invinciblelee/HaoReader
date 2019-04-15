@@ -12,7 +12,8 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.bean.CookieBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
@@ -21,7 +22,8 @@ import com.monke.monkeybook.dao.BookInfoBeanDao;
 import com.monke.monkeybook.dao.BookmarkBeanDao;
 import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
-import com.monke.monkeybook.dao.ChapterListBeanDao;
+import com.monke.monkeybook.dao.ChapterBeanDao;
+import com.monke.monkeybook.dao.CookieBeanDao;
 import com.monke.monkeybook.dao.ReplaceRuleBeanDao;
 import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
@@ -39,7 +41,8 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig bookmarkBeanDaoConfig;
     private final DaoConfig bookShelfBeanDaoConfig;
     private final DaoConfig bookSourceBeanDaoConfig;
-    private final DaoConfig chapterListBeanDaoConfig;
+    private final DaoConfig chapterBeanDaoConfig;
+    private final DaoConfig cookieBeanDaoConfig;
     private final DaoConfig replaceRuleBeanDaoConfig;
     private final DaoConfig searchBookBeanDaoConfig;
     private final DaoConfig searchHistoryBeanDaoConfig;
@@ -48,7 +51,8 @@ public class DaoSession extends AbstractDaoSession {
     private final BookmarkBeanDao bookmarkBeanDao;
     private final BookShelfBeanDao bookShelfBeanDao;
     private final BookSourceBeanDao bookSourceBeanDao;
-    private final ChapterListBeanDao chapterListBeanDao;
+    private final ChapterBeanDao chapterBeanDao;
+    private final CookieBeanDao cookieBeanDao;
     private final ReplaceRuleBeanDao replaceRuleBeanDao;
     private final SearchBookBeanDao searchBookBeanDao;
     private final SearchHistoryBeanDao searchHistoryBeanDao;
@@ -69,8 +73,11 @@ public class DaoSession extends AbstractDaoSession {
         bookSourceBeanDaoConfig = daoConfigMap.get(BookSourceBeanDao.class).clone();
         bookSourceBeanDaoConfig.initIdentityScope(type);
 
-        chapterListBeanDaoConfig = daoConfigMap.get(ChapterListBeanDao.class).clone();
-        chapterListBeanDaoConfig.initIdentityScope(type);
+        chapterBeanDaoConfig = daoConfigMap.get(ChapterBeanDao.class).clone();
+        chapterBeanDaoConfig.initIdentityScope(type);
+
+        cookieBeanDaoConfig = daoConfigMap.get(CookieBeanDao.class).clone();
+        cookieBeanDaoConfig.initIdentityScope(type);
 
         replaceRuleBeanDaoConfig = daoConfigMap.get(ReplaceRuleBeanDao.class).clone();
         replaceRuleBeanDaoConfig.initIdentityScope(type);
@@ -85,7 +92,8 @@ public class DaoSession extends AbstractDaoSession {
         bookmarkBeanDao = new BookmarkBeanDao(bookmarkBeanDaoConfig, this);
         bookShelfBeanDao = new BookShelfBeanDao(bookShelfBeanDaoConfig, this);
         bookSourceBeanDao = new BookSourceBeanDao(bookSourceBeanDaoConfig, this);
-        chapterListBeanDao = new ChapterListBeanDao(chapterListBeanDaoConfig, this);
+        chapterBeanDao = new ChapterBeanDao(chapterBeanDaoConfig, this);
+        cookieBeanDao = new CookieBeanDao(cookieBeanDaoConfig, this);
         replaceRuleBeanDao = new ReplaceRuleBeanDao(replaceRuleBeanDaoConfig, this);
         searchBookBeanDao = new SearchBookBeanDao(searchBookBeanDaoConfig, this);
         searchHistoryBeanDao = new SearchHistoryBeanDao(searchHistoryBeanDaoConfig, this);
@@ -94,7 +102,8 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(BookmarkBean.class, bookmarkBeanDao);
         registerDao(BookShelfBean.class, bookShelfBeanDao);
         registerDao(BookSourceBean.class, bookSourceBeanDao);
-        registerDao(ChapterListBean.class, chapterListBeanDao);
+        registerDao(ChapterBean.class, chapterBeanDao);
+        registerDao(CookieBean.class, cookieBeanDao);
         registerDao(ReplaceRuleBean.class, replaceRuleBeanDao);
         registerDao(SearchBookBean.class, searchBookBeanDao);
         registerDao(SearchHistoryBean.class, searchHistoryBeanDao);
@@ -105,7 +114,8 @@ public class DaoSession extends AbstractDaoSession {
         bookmarkBeanDaoConfig.clearIdentityScope();
         bookShelfBeanDaoConfig.clearIdentityScope();
         bookSourceBeanDaoConfig.clearIdentityScope();
-        chapterListBeanDaoConfig.clearIdentityScope();
+        chapterBeanDaoConfig.clearIdentityScope();
+        cookieBeanDaoConfig.clearIdentityScope();
         replaceRuleBeanDaoConfig.clearIdentityScope();
         searchBookBeanDaoConfig.clearIdentityScope();
         searchHistoryBeanDaoConfig.clearIdentityScope();
@@ -127,8 +137,12 @@ public class DaoSession extends AbstractDaoSession {
         return bookSourceBeanDao;
     }
 
-    public ChapterListBeanDao getChapterListBeanDao() {
-        return chapterListBeanDao;
+    public ChapterBeanDao getChapterBeanDao() {
+        return chapterBeanDao;
+    }
+
+    public CookieBeanDao getCookieBeanDao() {
+        return cookieBeanDao;
     }
 
     public ReplaceRuleBeanDao getReplaceRuleBeanDao() {

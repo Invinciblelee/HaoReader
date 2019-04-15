@@ -18,9 +18,9 @@ public interface FileSelectorContract {
 
         void startLoad();
 
-        boolean pop();
+        void pop();
 
-        boolean push(RipeFile folder, int offset);
+        void push(RipeFile folder, int offset);
 
         boolean canGoBack();
 
@@ -40,6 +40,8 @@ public interface FileSelectorContract {
         void hideLoading();
 
         void showSubtitle(String subtitle);
+
+        int getScrollOffset();
 
         void onShow(FileSnapshot snapshot, boolean back);
 

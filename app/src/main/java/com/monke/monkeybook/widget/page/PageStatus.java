@@ -16,12 +16,12 @@ public class PageStatus {
     public static final int STATUS_HY = 11;            // 换源
     public static final int STATUS_HY_ERROR = 12;      // 换源失败
     public static final int STATUS_CHANGE_CHARSET = 13; //设置编码
+    public static final int STATUS_ERROR_OTHER = 14;//其他错误
 
     private PageStatus() {
-
     }
 
-    static String getStatusPrompt(int status) {
+    static String getStatusPrompt(int status, String errorMsg) {
         String tip;
         switch (status) {
             case STATUS_UNKNOWN_ERROR:
@@ -57,9 +57,16 @@ public class PageStatus {
             case STATUS_CHANGE_CHARSET:
                 tip = "正在设置编码...";
                 break;
+            case STATUS_ERROR_OTHER:
+                tip = String.format("加载失败\n%s", errorMsg == null ? "出现未知错误" : errorMsg);
+                break;
             default:
                 tip = "正在拼命加载中...";
         }
         return tip;
+    }
+
+    static String getStatusPrompt(int status) {
+        return getStatusPrompt(status, null);
     }
 }

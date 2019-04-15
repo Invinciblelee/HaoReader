@@ -72,12 +72,16 @@ public class TextInputSpinner extends TextInputEditText {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean touch = super.onTouchEvent(event);
+        post(() -> {
+            TextInputSpinner.this.requestFocus();
+            KeyboardUtil.hideKeyboard(TextInputSpinner.this);
+        });
+
         if(event.getAction()== MotionEvent.ACTION_DOWN){
             if (!mPopup.isShowing()) {
                 mPopup.show();
             }
         }
-        post(() -> KeyboardUtil.hideKeyboard(TextInputSpinner.this));
         return touch;
     }
 }

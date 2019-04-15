@@ -6,18 +6,18 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <View
-        style="@style/Style.Shadow.Bottom" />
+    <View style="@style/Style.Shadow.Bottom" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorReadBar"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="72dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
@@ -36,7 +36,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/brightness"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp" />
 
                 <TextView
@@ -46,7 +46,7 @@
                     android:layout_marginLeft="7dp"
                     android:layout_marginRight="7dp"
                     android:text="@string/flow_sys"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp" />
 
                 <com.monke.monkeybook.widget.checkbox.SmoothCheckBox
@@ -68,18 +68,16 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
+                app:bgdrawable="@color/colorReadProgressBack"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
+                app:cursordrawable="@drawable/shape_read_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
+                app:fontdrawable="@color/colorReadProgressThumb"
                 app:maxprogress="255"
                 app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
-
-        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,7 +100,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/read_aloud_speed"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp" />
 
                 <TextView
@@ -112,7 +110,7 @@
                     android:layout_marginLeft="7dp"
                     android:layout_marginRight="7dp"
                     android:text="@string/flow_sys"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp" />
 
                 <com.monke.monkeybook.widget.checkbox.SmoothCheckBox
@@ -134,18 +132,16 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
+                app:bgdrawable="@color/colorReadProgressBack"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
+                app:cursordrawable="@drawable/shape_read_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
+                app:fontdrawable="@color/colorReadProgressThumb"
                 app:maxprogress="20"
                 app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
-
-        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -168,7 +164,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/auto_next_page_speed"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp" />
 
                 <TextView
@@ -177,7 +173,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="%dS"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp"
                     tools:ignore="HardcodedText" />
 
@@ -190,18 +186,17 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
+                app:bgdrawable="@color/colorReadProgressBack"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
+                app:cursordrawable="@drawable/shape_read_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
+                app:fontdrawable="@color/colorReadProgressThumb"
                 app:maxprogress="180"
                 app:progresswidth="@dimen/progress_bar_height" />
 
         </LinearLayout>
 
-        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -224,7 +219,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/page_anim_duration"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp" />
 
                 <TextView
@@ -233,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="%dMS"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorReadBarText"
                     android:textSize="14sp"
                     tools:ignore="HardcodedText" />
 
@@ -246,12 +241,12 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
+                app:bgdrawable="@color/colorReadProgressBack"
                 app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
+                app:cursordrawable="@drawable/shape_read_progress_cursor"
                 app:cursordrawable_height="13dp"
                 app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
+                app:fontdrawable="@color/colorReadProgressThumb"
                 app:maxprogress="800"
                 app:progresswidth="@dimen/progress_bar_height" />
 

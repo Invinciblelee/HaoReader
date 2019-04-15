@@ -3,9 +3,10 @@ package com.monke.monkeybook.widget.page.animation;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
-import android.view.View;
 
 import com.monke.monkeybook.help.ReadBookControl;
+import com.monke.monkeybook.widget.page.PageMode;
+import com.monke.monkeybook.widget.page.PageView;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -16,8 +17,13 @@ public class CoverPageAnim extends HorizonPageAnim {
     private Rect mSrcRect, mDestRect;
     private GradientDrawable mBackShadowDrawableLR;
 
-    public CoverPageAnim(int w, int h, View view, OnPageChangeListener listener) {
+    public CoverPageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
         super(w, h, view, listener);
+    }
+
+    @Override
+    public void init(int w, int h, PageView view, OnPageChangeListener listener) {
+        super.init(w, h, view, listener);
         mSrcRect = new Rect(0, 0, mViewWidth, mViewHeight);
         mDestRect = new Rect(0, 0, mViewWidth, mViewHeight);
         int[] mBackShadowColors = new int[]{0x66111111, 0x00000000};
@@ -59,7 +65,7 @@ public class CoverPageAnim extends HorizonPageAnim {
 
     //添加阴影
     private void addShadow(int left, Canvas canvas) {
-        mBackShadowDrawableLR.setBounds(left, 0, left + 30, mScreenHeight);
+        mBackShadowDrawableLR.setBounds(left, 0, left + 30, mViewHeight);
         mBackShadowDrawableLR.draw(canvas);
     }
 
@@ -92,5 +98,10 @@ public class CoverPageAnim extends HorizonPageAnim {
         int duration = (animationSpeed * Math.abs(dx)) / mViewWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);
         super.startAnim();
+    }
+
+    @Override
+    public PageMode getPageMode() {
+        return PageMode.COVER;
     }
 }

@@ -6,6 +6,9 @@ import com.monke.monkeybook.bean.BookShelfBean;
 
 import java.util.List;
 
+import androidx.annotation.StringDef;
+import androidx.annotation.StringRes;
+
 public interface MainContract {
 
     interface View extends IView {
@@ -45,6 +48,8 @@ public interface MainContract {
         void addSuccess(BookShelfBean bookShelfBean);
 
         void toast(String msg);
+
+        void toast(@StringRes int msgId);
     }
 
     interface Presenter extends IPresenter {

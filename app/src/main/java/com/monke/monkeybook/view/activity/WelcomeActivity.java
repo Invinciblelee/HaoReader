@@ -3,9 +3,7 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Handler;
-import androidx.annotation.NonNull;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
@@ -14,6 +12,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.presenter.WelcomePresenterImpl;
 import com.monke.monkeybook.presenter.contract.WelcomeContract;
 
+import androidx.annotation.NonNull;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -63,7 +62,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
         if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
             mPresenter.openBookFromUri(this);
         } else {
-            Toast.makeText(this, "未获取到权限", Toast.LENGTH_SHORT).show();
+            toast("未获取到权限");
         }
     }
 
@@ -109,7 +108,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             return true;
         }
         return super.onKeyDown(keyCode, event);

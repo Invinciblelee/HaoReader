@@ -10,7 +10,7 @@ import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.OrderBy;
 
 @Entity
-public class BookmarkBean implements Parcelable {
+public class BookmarkBean implements Parcelable, FilterBean {
 
     @Id
     private Long id = System.currentTimeMillis();
@@ -143,5 +143,10 @@ public class BookmarkBean implements Parcelable {
 
     public void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
+    }
+
+    @Override
+    public String[] getFilters() {
+        return new String[]{chapterName, content};
     }
 }

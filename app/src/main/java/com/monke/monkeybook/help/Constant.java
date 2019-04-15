@@ -1,12 +1,15 @@
 package com.monke.monkeybook.help;
 
-import androidx.annotation.StringDef;
-
+import com.google.gson.reflect.TypeToken;
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Type;
+import java.util.Map;
+
+import androidx.annotation.StringDef;
 
 /**
  * Created by newbiechen on 17-4-16.
@@ -59,4 +62,8 @@ public class Constant {
     public static final String[] RULE_TYPES = {
             RuleType.DEFAULT, RuleType.XPATH, RuleType.JSON
     };
+
+
+    public static final Type STRING_MAP = new TypeToken<Map<String, String>>() {
+    }.getType();
 }

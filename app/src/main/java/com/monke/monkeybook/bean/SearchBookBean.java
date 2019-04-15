@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.model.content.Default716;
 
@@ -14,10 +15,14 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.monke.monkeybook.help.Constant.STRING_MAP;
 
 @Entity
-public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
+public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, VariableStore {
     @Id
     private String noteUrl;
     private String coverUrl;//封面URL
@@ -29,33 +34,31 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
     private String desc;
     private String lastChapter;
     private String introduce; //简介
-    private String chapterListUrl;//目录URL
     private String bookType;
+    private String variableString;
     private Long addTime;
     @Transient
     private int weight;
     @Transient
     private int lastChapterNum;
     @Transient
-    private long words;
-    @Transient
-    private String state;
-    @Transient
     private boolean isCurrentSource = false;
     @Transient
     private int originNum = 1;
     @Transient
     private List<String> tags;
+    @Transient
+    private Map<String, String> variableMap;
 
     public SearchBookBean() {
 
     }
 
 
-    @Generated(hash = 618704762)
+    @Generated(hash = 995325559)
     public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag,
                           String kind, String origin, String desc, String lastChapter, String introduce,
-                          String chapterListUrl, String bookType, Long addTime) {
+                          String bookType, String variableString, Long addTime) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -66,8 +69,8 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.desc = desc;
         this.lastChapter = lastChapter;
         this.introduce = introduce;
-        this.chapterListUrl = chapterListUrl;
         this.bookType = bookType;
+        this.variableString = variableString;
         this.addTime = addTime;
     }
 
@@ -83,19 +86,18 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         desc = in.readString();
         lastChapter = in.readString();
         introduce = in.readString();
-        chapterListUrl = in.readString();
+        bookType = in.readString();
+        variableString = in.readString();
         if (in.readByte() == 0) {
             addTime = null;
         } else {
             addTime = in.readLong();
         }
         weight = in.readInt();
-        words = in.readLong();
-        state = in.readString();
+        lastChapterNum = in.readInt();
         isCurrentSource = in.readByte() != 0;
         originNum = in.readInt();
         tags = in.createStringArrayList();
-        bookType = in.readString();
     }
 
     @Override
@@ -110,7 +112,8 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         dest.writeString(desc);
         dest.writeString(lastChapter);
         dest.writeString(introduce);
-        dest.writeString(chapterListUrl);
+        dest.writeString(bookType);
+        dest.writeString(variableString);
         if (addTime == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -118,12 +121,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
             dest.writeLong(addTime);
         }
         dest.writeInt(weight);
-        dest.writeLong(words);
-        dest.writeString(state);
+        dest.writeInt(lastChapterNum);
         dest.writeByte((byte) (isCurrentSource ? 1 : 0));
         dest.writeInt(originNum);
         dest.writeStringList(tags);
-        dest.writeString(bookType);
     }
 
     @Override
@@ -181,22 +182,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public long getWords() {
-        return words;
-    }
-
-    public void setWords(long words) {
-        this.words = words;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public String getLastChapter() {
@@ -283,14 +268,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
         this.introduce = introduce;
     }
 
-    public String getChapterListUrl() {
-        return this.chapterListUrl;
-    }
-
-    public void setChapterListUrl(String chapterListUrl) {
-        this.chapterListUrl = chapterListUrl;
-    }
-
     public String getBookType() {
         return bookType;
     }
@@ -328,5 +305,48 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean> {
             return result;
         }
         return Integer.compare(o.getWeight(), this.getWeight());
+    }
+
+    @Override
+    public String getVariableString() {
+        return this.variableString;
+    }
+
+    @Override
+    public void setVariableString(String variableString) {
+        this.variableString = variableString;
+    }
+
+    public Map<String, String> getVariableMap() {
+        return variableMap;
+    }
+
+    @Override
+    public void putVariableMap(Map<String, String> variableMap) {
+        if (variableMap != null && !variableMap.isEmpty()) {
+            final Gson gson = new Gson();
+            if (this.variableMap == null) {
+                try {
+                    this.variableMap = gson.fromJson(variableString, STRING_MAP);
+                } catch (Exception ignore) {
+                }
+            }
+            if (this.variableMap == null) {
+                this.variableMap = new HashMap<>();
+            }
+            this.variableMap.putAll(variableMap);
+            this.variableString = gson.toJson(this.variableMap);
+        }
+    }
+
+    @Override
+    public String getVariable(String key) {
+        if (this.variableMap == null) {
+            try {
+                this.variableMap = new Gson().fromJson(variableString, STRING_MAP);
+            } catch (Exception ignore) {
+            }
+        }
+        return (this.variableMap != null && !this.variableMap.isEmpty()) ? this.variableMap.get(key) : null;
     }
 }

@@ -2,9 +2,10 @@ package com.monke.monkeybook.widget.page;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.io.BufferedReader;
@@ -95,10 +96,12 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onError(Throwable e) {
-                            if (NetworkUtil.isNetworkAvailable()) {
-                                setCurrentStatus(STATUS_CATEGORY_ERROR);
-                            } else {
+                            if (!NetworkUtil.isNetworkAvailable()) {
                                 setCurrentStatus(STATUS_NETWORK_ERROR);
+                            } else if (e instanceof BookException) {
+                                setCurrentErrorMsg(e.getMessage());
+                            } else {
+                                setCurrentStatus(STATUS_CATEGORY_ERROR);
                             }
                         }
                     });
@@ -106,7 +109,14 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    BufferedReader getChapterReader(ChapterListBean chapter) throws Exception {
+    public void stopRefreshChapterList() {
+        if (mChapterDisp != null) {
+            mChapterDisp.dispose();
+        }
+    }
+
+    @Override
+    BufferedReader getChapterReader(ChapterBean chapter) throws Exception {
         File file = BookshelfHelp.getBookFile(BookshelfHelp.getCacheFolderPath(getCollBook().getBookInfoBean()),
                 BookshelfHelp.getCacheFileName(chapter));
         if (!file.exists()) return null;
@@ -115,53 +125,58 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    boolean hasChapterData(ChapterListBean chapter) {
-        return BookshelfHelp.isChapterCached(getCollBook().getBookInfoBean(), chapter);
+    boolean chapterNotCached(ChapterBean chapter) {
+        return !BookshelfHelp.isChapterCached(getCollBook().getBookInfoBean(), chapter);
     }
 
     @Override
-    void dealLoadChapter(int chapterPos) {
-        super.dealLoadChapter(chapterPos);
-        if (getCurrentChapter().isEmpty()) {
-            if (!NetworkUtil.isNetworkAvailable()) {
-                setCurrentStatus(STATUS_NETWORK_ERROR, false);
-            } else if (getCurrentStatus() != STATUS_FINISH && getCurrentStatus() != STATUS_CONTENT_EMPTY) {
-                setCurrentStatus(STATUS_LOADING, false);
-                getmChapterProvider().loadChapterContent(chapterPos);
+    void dealLoadChapter(int chapterPos, OnChapterPreparedCallback callback) {
+        super.dealLoadChapter(chapterPos, () -> {
+            if (callback != null) {
+                callback.onChapterPrepared();
             }
-        }
+
+            if (getCurrentChapter().isEmpty()) {
+                if (!NetworkUtil.isNetworkAvailable()) {
+                    setCurrentStatus(STATUS_NETWORK_ERROR, false);
+                } else if (getCurrentStatus() != STATUS_FINISH && getCurrentStatus() != STATUS_CONTENT_EMPTY) {
+                    setCurrentStatus(STATUS_LOADING, false);
+                    getChapterProvider().loadChapterContent(chapterPos);
+                }
+            }
+        });
     }
 
     @Override
-    void parsePrevChapter() {
-        super.parsePrevChapter();
+    void parsePrevChapter(OnChapterPreparedCallback callback) {
+        super.parsePrevChapter(callback);
         if (getChapterPosition() >= 1 && shouldRequestChapter(getChapterPosition() - 1)) {
-            getmChapterProvider().loadChapterContent(getChapterPosition() - 1);
+            getChapterProvider().loadChapterContent(getChapterPosition() - 1);
         }
     }
 
     @Override
-    void parseCurChapter() {
-        super.parseCurChapter();
-        for (int i = getChapterPosition() >= 1 ? getChapterPosition() - 1 : getChapterPosition(); i < getChapterPosition() + 5; i++) {
+    void parseCurChapter(OnChapterPreparedCallback callback) {
+        super.parseCurChapter(callback);
+        for (int i = getChapterPosition() >= 1 ? getChapterPosition() - 1 : getChapterPosition(); i < getChapterPosition() + 3; i++) {
             if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
-                getmChapterProvider().loadChapterContent(i);
+                getChapterProvider().loadChapterContent(i);
             }
         }
     }
 
     @Override
-    void parseNextChapter() {
-        super.parseNextChapter();
-        for (int i = getChapterPosition() + 1; i < getChapterPosition() + 5; i++) {
+    void parseNextChapter(OnChapterPreparedCallback callback) {
+        super.parseNextChapter(callback);
+        for (int i = getChapterPosition() + 1; i < getChapterPosition() + 3; i++) {
             if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
-                getmChapterProvider().loadChapterContent(i);
+                getChapterProvider().loadChapterContent(i);
             }
         }
     }
 
     private boolean shouldRequestChapter(Integer chapterIndex) {
-        return !hasChapterData(getCollBook().getChapter(chapterIndex));
+        return chapterNotCached(getCollBook().getChapter(chapterIndex));
     }
 }
 

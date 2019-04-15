@@ -3,7 +3,6 @@ package com.monke.monkeybook.view.popupwindow;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -59,6 +59,14 @@ public class MoreSettingPop extends PopupWindow {
     View llswReadAloudKey;
     @BindView(R.id.sw_read_aloud_key)
     Switch swReadAloudKey;
+    @BindView(R.id.ll_sb_showBatteryNumber)
+    View llswShowBatteryNumber;
+    @BindView(R.id.sb_showBatteryNumber)
+    Switch swShowBatteryNumber;
+    @BindView(R.id.ll_sb_showDividerLine)
+    View llswShowDividerLine;
+    @BindView(R.id.sb_showDividerLine)
+    Switch swShowDividerLine;
 
     private ReadBookActivity activity;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
@@ -67,6 +75,8 @@ public class MoreSettingPop extends PopupWindow {
         void keepScreenOnChange(int keepScreenOn);
 
         void refresh();
+
+        void refreshStatusBar();
     }
 
     private OnChangeProListener changeProListener;
@@ -123,7 +133,22 @@ public class MoreSettingPop extends PopupWindow {
             boolean isChecked = sbShowTimeBattery.isChecked();
             sbShowTimeBattery.setChecked(!isChecked);
             readBookControl.setShowTimeBattery(!isChecked);
-            changeProListener.refresh();
+            changeProListener.refreshStatusBar();
+            upView();
+        });
+
+        llswShowBatteryNumber.setOnClickListener(v -> {
+            boolean isChecked = swShowBatteryNumber.isChecked();
+            swShowBatteryNumber.setChecked(!isChecked);
+            readBookControl.setShowBatteryNumber(!isChecked);
+            changeProListener.refreshStatusBar();
+        });
+
+        llswShowDividerLine.setOnClickListener(v -> {
+            boolean isChecked = swShowDividerLine.isChecked();
+            swShowDividerLine.setChecked(!isChecked);
+            readBookControl.setShowBottomLine(!isChecked);
+            changeProListener.refreshStatusBar();
         });
 
         llsbImmersionBar.setOnClickListener(v -> {
@@ -170,20 +195,25 @@ public class MoreSettingPop extends PopupWindow {
         sbClickAllNext.setChecked(readBookControl.getClickAllNext());
         sbShowTimeBattery.setChecked(readBookControl.getShowTimeBattery());
         sbImmersionBar.setChecked(readBookControl.getImmersionStatusBar());
+        swShowBatteryNumber.setChecked(readBookControl.getShowBatteryNumber());
+        swShowDividerLine.setChecked(readBookControl.getShowBottomLine());
         upView();
     }
 
     private void upView() {
         if (readBookControl.getHideStatusBar()) {
             llsbShowTimeBattery.setVisibility(View.VISIBLE);
+            llswShowBatteryNumber.setVisibility(readBookControl.getShowTimeBattery() ? View.VISIBLE : View.GONE);
         } else {
             llsbShowTimeBattery.setVisibility(View.GONE);
+            llswShowBatteryNumber.setVisibility(View.GONE);
         }
         if (readBookControl.getCanKeyTurn()) {
             llswReadAloudKey.setVisibility(View.VISIBLE);
         } else {
             llswReadAloudKey.setVisibility(View.GONE);
         }
+
     }
 
     private void upScreenTimeOut(int screenTimeOut) {

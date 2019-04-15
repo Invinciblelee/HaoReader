@@ -1,6 +1,8 @@
 package com.monke.monkeybook.presenter;
 
 import androidx.annotation.NonNull;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -43,7 +45,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     @Override
     public void saveData(BookSourceBean bookSourceBean) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
+            DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
         }).subscribeOn(Schedulers.newThread())
@@ -57,7 +59,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             for (int i = 1; i <= bookSourceBeans.size(); i++) {
                 bookSourceBeans.get(i - 1).setSerialNumber(i);
             }
-            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(bookSourceBeans);
+            DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(bookSourceBeans);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
         }).subscribeOn(Schedulers.newThread())
@@ -90,15 +92,17 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     public void delData(BookSourceBean bookSourceBean) {
         this.delBookSource = bookSourceBean;
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().delete(bookSourceBean);
+            DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(bookSourceBean);
+            BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
+                        mView.refreshBookSource();
                         mView.getSnackBar(delBookSource.getBookSourceName() + "已删除")
-                                .setDuration(Snackbar.LENGTH_LONG)
+                                .setDuration(BaseTransientBottomBar.LENGTH_LONG)
                                 .setAction("恢复", view -> restoreBookSource(delBookSource))
                                 .show();
                     }
@@ -120,7 +124,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         mView.showLoading("正在删除选中书源");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             for (BookSourceBean sourceBean : bookSourceBeans) {
-                DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().delete(sourceBean);
+                DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(sourceBean);
             }
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
@@ -246,7 +250,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             mView.showSnackBar("校验完成");
         } else {
             if (progressSnackBar == null) {
-                progressSnackBar = mView.getSnackBar(getProgressStr(state)).setDuration(Snackbar.LENGTH_INDEFINITE);
+                progressSnackBar = mView.getSnackBar(getProgressStr(state)).setDuration(BaseTransientBottomBar.LENGTH_INDEFINITE);
                 progressSnackBar.setAction(mView.getContext().getString(R.string.cancel), view -> CheckSourceService.stop(mView.getContext()));
             } else {
                 progressSnackBar.setText(getProgressStr(state));

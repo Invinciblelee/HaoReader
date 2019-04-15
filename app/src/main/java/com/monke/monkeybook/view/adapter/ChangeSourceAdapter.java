@@ -1,8 +1,10 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
 
     public synchronized void addAllSourceAdapter(List<SearchBookBean> value) {
         searchBookBeans.addAll(value);
+        searchBookBeans = ListUtils.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getTag().compareTo(o2.getTag()));
         Collections.sort(searchBookBeans);
         notifyDataSetChanged();
     }

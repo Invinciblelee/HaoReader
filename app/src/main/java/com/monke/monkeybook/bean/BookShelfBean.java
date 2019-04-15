@@ -4,20 +4,26 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.monke.monkeybook.help.Constant.STRING_MAP;
 
 /**
  * 书架item Bean
  */
 
 @Entity
-public class BookShelfBean implements Parcelable {
+public class BookShelfBean implements Parcelable, VariableStore {
     @Transient
     public static final String LOCAL_TAG = "loc_book";
     @Transient
@@ -38,11 +44,14 @@ public class BookShelfBean implements Parcelable {
     private String lastChapterName;
     private Integer chapterListSize = 0;
     private Boolean updateOff = false; //禁止更新
+    private String variableString;
 
+    @Transient
+    private Map<String, String> variableMap;
     @Transient
     private BookInfoBean bookInfoBean = new BookInfoBean();
     @Transient
-    private List<ChapterListBean> chapterList = new ArrayList<>();    //章节列表
+    private List<ChapterBean> chapterList = new ArrayList<>();    //章节列表
     @Transient
     private List<BookmarkBean> bookmarkList = new ArrayList<>();    //书签列表
 
@@ -50,10 +59,10 @@ public class BookShelfBean implements Parcelable {
     }
 
 
-    @Generated(hash = 1946753255)
+    @Generated(hash = 228430457)
     public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate, Boolean hasUpdate, Integer newChapters,
                          String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,
-                         Integer chapterListSize, Boolean updateOff) {
+                         Integer chapterListSize, Boolean updateOff, String variableString) {
         this.noteUrl = noteUrl;
         this.durChapter = durChapter;
         this.durChapterPage = durChapterPage;
@@ -68,6 +77,7 @@ public class BookShelfBean implements Parcelable {
         this.lastChapterName = lastChapterName;
         this.chapterListSize = chapterListSize;
         this.updateOff = updateOff;
+        this.variableString = variableString;
     }
 
 
@@ -121,8 +131,9 @@ public class BookShelfBean implements Parcelable {
         }
         byte tmpUpdateOff = in.readByte();
         updateOff = tmpUpdateOff == 0 ? null : tmpUpdateOff == 1;
+        variableString = in.readString();
         bookInfoBean = in.readParcelable(BookInfoBean.class.getClassLoader());
-        chapterList = in.createTypedArrayList(ChapterListBean.CREATOR);
+        chapterList = in.createTypedArrayList(ChapterBean.CREATOR);
         bookmarkList = in.createTypedArrayList(BookmarkBean.CREATOR);
     }
 
@@ -183,6 +194,7 @@ public class BookShelfBean implements Parcelable {
             dest.writeInt(chapterListSize);
         }
         dest.writeByte((byte) (updateOff == null ? 0 : updateOff ? 1 : 2));
+        dest.writeString(variableString);
         dest.writeParcelable(bookInfoBean, flags);
         dest.writeTypedList(chapterList);
         dest.writeTypedList(bookmarkList);
@@ -221,9 +233,10 @@ public class BookShelfBean implements Parcelable {
         bookShelfBean.lastChapterName = lastChapterName;
         bookShelfBean.chapterListSize = chapterListSize;
         bookShelfBean.updateOff = updateOff;
+        bookShelfBean.variableString = variableString;
         bookShelfBean.bookInfoBean = bookInfoBean.copy();
         if (chapterList != null) {
-            for (ChapterListBean aChapterList : chapterList) {
+            for (ChapterBean aChapterList : chapterList) {
                 bookShelfBean.chapterList.add(aChapterList.copy());
             }
         }
@@ -244,20 +257,16 @@ public class BookShelfBean implements Parcelable {
     }
 
     public int getDurChapter() {
-        return (durChapter == null || durChapter < 0) ? 0 : durChapter;
+        return this.durChapter == null ? 0 : this.durChapter;
     }
 
-    public ChapterListBean getChapter(int index) {
+    public ChapterBean getChapter(int index) {
         if (realChapterListEmpty() || index < 0) {
-            ChapterListBean chapterListBean = new ChapterListBean();
-            chapterListBean.setDurChapterName("暂无");
-            chapterListBean.setDurChapterUrl("暂无");
-            return chapterListBean;
+            return new ChapterBean();
         } else if (index < getChapterList().size()) {
             return getChapterList().get(index);
         } else {
-            durChapter = getChapterList().size() - 1;
-            return getChapterList().get(durChapter);
+            return getChapterList().get(getChapterList().size() - 1);
         }
     }
 
@@ -285,6 +294,10 @@ public class BookShelfBean implements Parcelable {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public boolean isLocalBook() {
+        return LOCAL_TAG.equals(tag);
     }
 
     public BookInfoBean getBookInfoBean() {
@@ -320,7 +333,7 @@ public class BookShelfBean implements Parcelable {
     }
 
     public int getGroup() {
-        return this.group == null ? -1 : this.group;
+        return this.group == null ? 0 : this.group;
     }
 
     public void setDurChapter(int durChapter) {
@@ -363,21 +376,6 @@ public class BookShelfBean implements Parcelable {
         this.durChapterName = durChapterName;
     }
 
-    public void upDurChapterName() {
-        if (realChapterListEmpty()) {
-            return;
-        }
-        if (getChapterListSize() > 0) {
-            if (durChapter < getChapterListSize()) {
-                durChapterName = getChapterList().get(durChapter).getDurChapterName();
-            } else {
-                durChapterName = getChapterList().get(getChapterListSize() - 1).getDurChapterName();
-            }
-        } else {
-            durChapterName = "";
-        }
-    }
-
     public String getLastChapterName() {
         return this.lastChapterName;
     }
@@ -386,15 +384,21 @@ public class BookShelfBean implements Parcelable {
         this.lastChapterName = lastChapterName;
     }
 
-    public void upLastChapterName() {
-        if (realChapterListEmpty()) {
-            return;
-        }
-
-        if (getChapterListSize() > 0) {
-            lastChapterName = getChapterList().get(getChapterListSize() - 1).getDurChapterName();
+    public void upDurChapterName() {
+        this.durChapter = Math.max(0, this.durChapter);
+        if (!realChapterListEmpty()) {
+            this.durChapter = Math.min(this.durChapter, getChapterList().size() - 1);
+            this.durChapterName = getChapterList().get(this.durChapter).getDurChapterName();
         } else {
-            lastChapterName = "";
+            this.durChapterName = "";
+        }
+    }
+
+    public void upLastChapterName() {
+        if (!realChapterListEmpty()) {
+            this.lastChapterName = getChapterList().get(getChapterList().size() - 1).getDurChapterName();
+        } else {
+            this.lastChapterName = "";
         }
     }
 
@@ -402,19 +406,25 @@ public class BookShelfBean implements Parcelable {
         return chapterListSize == null ? 0 : chapterListSize;
     }
 
-    public void setChapterList(List<ChapterListBean> chapterList) {
+    public void setChapterList(List<ChapterBean> chapterList) {
         this.chapterList = chapterList;
-    }
-
-    public void upChapterListSize() {
-        chapterListSize = getChapterList().size();
-    }
-
-    public List<ChapterListBean> getChapterList() {
-        if (chapterList != null) {
-            return chapterList;
+        if (!realChapterListEmpty()) {
+            this.chapterListSize = getChapterList().size();
         }
-        return new ArrayList<>();
+    }
+
+    public void setChapterList(List<ChapterBean> chapterList, boolean updateSize) {
+        this.chapterList = chapterList;
+        if (updateSize) {
+            this.chapterListSize = getChapterList().size();
+        }
+    }
+
+    public List<ChapterBean> getChapterList() {
+        if (chapterList == null) {
+            chapterList = new ArrayList<>();
+        }
+        return chapterList;
     }
 
     public void setBookmarkList(List<BookmarkBean> markList) {
@@ -422,10 +432,10 @@ public class BookShelfBean implements Parcelable {
     }
 
     public List<BookmarkBean> getBookmarkList() {
-        if (bookmarkList != null) {
-            return bookmarkList;
+        if (bookmarkList == null) {
+            bookmarkList = new ArrayList<>();
         }
-        return new ArrayList<>();
+        return bookmarkList;
     }
 
     public int getBookmarkListSize() {
@@ -462,4 +472,46 @@ public class BookShelfBean implements Parcelable {
         this.durChapterPage = durChapterPage;
     }
 
+    @Override
+    public String getVariableString() {
+        return this.variableString;
+    }
+
+    @Override
+    public void setVariableString(String variableString) {
+        this.variableString = variableString;
+    }
+
+    public Map<String, String> getVariableMap() {
+        return variableMap;
+    }
+
+    @Override
+    public void putVariableMap(Map<String, String> variableMap) {
+        if (variableMap != null && !variableMap.isEmpty()) {
+            final Gson gson = new Gson();
+            if (this.variableMap == null) {
+                try {
+                    this.variableMap = gson.fromJson(variableString, STRING_MAP);
+                } catch (Exception ignore) {
+                }
+            }
+            if (this.variableMap == null) {
+                this.variableMap = new HashMap<>();
+            }
+            this.variableMap.putAll(variableMap);
+            this.variableString = gson.toJson(this.variableMap);
+        }
+    }
+
+    @Override
+    public String getVariable(String key) {
+        if (this.variableMap == null) {
+            try {
+                this.variableMap = new Gson().fromJson(variableString, STRING_MAP);
+            } catch (Exception ignore) {
+            }
+        }
+        return (this.variableMap != null && !this.variableMap.isEmpty()) ? this.variableMap.get(key) : null;
+    }
 }

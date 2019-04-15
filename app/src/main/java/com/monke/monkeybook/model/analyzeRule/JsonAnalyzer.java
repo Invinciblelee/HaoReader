@@ -1,18 +1,28 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.text.TextUtils.isEmpty;
-import static com.monke.monkeybook.model.analyzeRule.JsonParser.getList;
-import static com.monke.monkeybook.model.analyzeRule.JsonParser.getString;
 
 public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
 
+    private JsonParser mParser;
+    private JsonPresenter mPresenter;
     private JsonContentDelegate mDelegate;
+
+    @Override
+    SourceParser<ReadContext, Object> getParser() {
+        if(mParser== null){
+            mParser = new JsonParser();
+        }
+        return mParser;
+    }
+
+    @Override
+    IAnalyzerPresenter getPresenter() {
+        if(mPresenter == null){
+            mPresenter = new JsonPresenter(this);
+        }
+        return mPresenter;
+    }
 
     @Override
     public ContentDelegate getDelegate() {
@@ -22,52 +32,9 @@ public class JsonAnalyzer extends OutAnalyzer<ReadContext, Object> {
         return mDelegate;
     }
 
-    @Override
-    public ReadContext parseSource(String source) {
-        return JsonPath.parse(source);
-    }
-
-    @Override
-    public ReadContext parseSource(Object source) {
-        return JsonPath.parse(source);
-    }
-
-    @Override
-    public String getResultContent(ReadContext source, String rule) {
-        String result = "";
-        if (source == null || isEmpty(rule)) {
-            return result;
+    private static class JsonPresenter extends AnalyzerPresenter<ReadContext, Object>{
+        private JsonPresenter(OutAnalyzer<ReadContext, Object> analyzer) {
+            super(analyzer);
         }
-        RulePattern rulePattern = RulePattern.from(rule.trim());
-        if (isEmpty(rulePattern.elementsRule)) {
-            return result;
-        } else {
-            result = getString(source, rulePattern.elementsRule);
-        }
-
-        return processingResultContent(result, rulePattern);
     }
-
-    @Override
-    public String getResultUrl(ReadContext source, String rule) {
-        String result = getResultContent(source, rule);
-        return processingResultUrl(result);
-    }
-
-    @Override
-    public List<Object> getRawList(String source, String rule) {
-        if (source == null || isEmpty(rule)) {
-            return new ArrayList<>();
-        }
-        return getList(parseSource(source), rule);
-    }
-
-    @Override
-    public List<Object> getRawList(ReadContext source, String rule) {
-        if (source == null || isEmpty(rule)) {
-            return new ArrayList<>();
-        }
-        return getList(source, rule);
-    }
-
 }

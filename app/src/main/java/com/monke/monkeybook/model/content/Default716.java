@@ -10,7 +10,7 @@ import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
@@ -20,17 +20,16 @@ import com.monke.monkeybook.model.impl.IStationBookModel;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import retrofit2.Call;
 import retrofit2.Response;
 
 public class Default716 extends BaseModelImpl implements IStationBookModel {
-    public static final String TAG = "Default716";
+    public static final String TAG = "My716";
 
     public static Default716 newInstance() {
         return new Default716();
@@ -64,9 +63,8 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
             JsonObject root = new JsonParser().parse(Objects.requireNonNull(response.body())).getAsJsonObject();
             if (root.get("ok").getAsBoolean()) {
                 JsonArray bookArray = root.get("books").getAsJsonArray();
-                for (int i = 0; i < bookArray.size(); i++) {
+                for (int i = 0, size = bookArray.size(); i < size; i++) {
                     JsonObject book = bookArray.get(i).getAsJsonObject();
-
                     SearchBookBean searchBookBean = new SearchBookBean();
                     searchBookBean.setTag(TAG);
                     searchBookBean.setOrigin(TAG);
@@ -79,30 +77,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                     searchBookBean.setLastChapter(book.get("lastChapter").getAsString().replaceAll("^\\s*正文[卷：\\s]+", ""));
                     searchBookBean.setCoverUrl("http://statics.zhuishushenqi.com" + book.get("cover").getAsString());
                     searchBookBean.setIntroduce(book.get("shortIntro").getAsString());
-
-                    Call<String> call = OkHttpHelper.getInstance().createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
-                            .getWebContentCall(searchBookBean.getRealNoteUrl(), AnalyzeHeaders.getMap(null));
-                    String s = "";
-                    try {
-                        s = call.execute().body();
-                    } catch (Exception exception) {
-                        if (!e.isDisposed()) {
-                            e.onError(exception);
-                        }
-                    }
-                    if (!TextUtils.isEmpty(s)) {
-                        JsonArray sourceArray = new JsonParser().parse(s).getAsJsonArray();
-                        for (int j = 0; j < sourceArray.size(); j++) {
-                            JsonObject source = sourceArray.get(j).getAsJsonObject();
-                            String name = source.get("source").getAsString();
-                            if (name.equals("my176")) {
-                                searchBookBean.setLastChapter(source.get("lastChapter").getAsString());
-                                searchBookBean.setChapterListUrl("http://api.zhuishushenqi.com/atoc/" + source.get("_id").getAsString() + "?view=chapters");
-                                searchBookList.add(searchBookBean);
-                                break;
-                            }
-                        }
-                    }
+                    searchBookList.add(searchBookBean);
                 }
             }
             e.onNext(searchBookList);
@@ -129,23 +104,34 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
             }
 
             JsonArray sourceArray = new JsonParser().parse(s).getAsJsonArray();
-            for (int i = 0; i < sourceArray.size(); i++) {
+            HashMap<String, JsonObject> sourceMap = new HashMap<>();
+            for (int i = 0, size = sourceArray.size(); i < size; i++) {
                 JsonObject source = sourceArray.get(i).getAsJsonObject();
                 String name = source.get("source").getAsString();
-                if (name.equals("my176")) {
-                    bookShelfBean.setLastChapterName(source.get("lastChapter").getAsString());
-                    BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
-                    bookInfoBean.setBookType(Constant.BookType.TEXT);
-                    bookInfoBean.setNoteUrl(bookShelfBean.getNoteUrl());
-                    bookInfoBean.setTag(bookShelfBean.getTag());
-                    bookInfoBean.setChapterListUrl("http://api.zhuishushenqi.com/atoc/" + source.get("_id").getAsString() + "?view=chapters");
-
-                    e.onNext(bookShelfBean);
-                    e.onComplete();
-                    return;
-                }
+                sourceMap.put(name, source);
             }
-            e.onError(new Throwable("书籍信息获取失败"));
+
+            JsonObject targetSource = null;
+            if (sourceMap.containsKey("my176")) {
+                targetSource = sourceMap.get("my176");
+            } else if (sourceMap.containsKey("zhuishuvip")) {
+                targetSource = sourceMap.get("zhuishuvip");
+            } else if (sourceMap.size() > 0) {
+                Iterator<String> it = sourceMap.keySet().iterator();
+                targetSource = sourceMap.get(it.next());
+            }
+
+            if (targetSource != null) {
+                bookShelfBean.setLastChapterName(targetSource.get("lastChapter").getAsString());
+                BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
+                bookInfoBean.setBookType(Constant.BookType.TEXT);
+                bookInfoBean.setNoteUrl(bookShelfBean.getNoteUrl());
+                bookInfoBean.setTag(bookShelfBean.getTag());
+                bookInfoBean.setChapterListUrl("http://api.zhuishushenqi.com/atoc/" + targetSource.get("_id").getAsString() + "?view=chapters");
+                e.onNext(bookShelfBean);
+            } else {
+                e.onError(new Throwable("书籍信息获取失败"));
+            }
             e.onComplete();
         });
     }
@@ -154,28 +140,26 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
      * 网络解析图书目录
      */
     @Override
-    public Observable<List<ChapterListBean>> getChapterList(BookShelfBean bookShelfBean) {
+    public Observable<List<ChapterBean>> getChapterList(BookShelfBean bookShelfBean) {
         return OkHttpHelper.getInstance().createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getBookInfoBean().getChapterListUrl(), AnalyzeHeaders.getMap(null))
                 .flatMap(response -> analyzeChapterList(response.body(), bookShelfBean));
     }
 
-    private Observable<List<ChapterListBean>> analyzeChapterList(String s, BookShelfBean bookShelfBean) {
+    private Observable<List<ChapterBean>> analyzeChapterList(String s, BookShelfBean bookShelfBean) {
         return Observable.create(e -> {
-            List<ChapterListBean> chapterList = new ArrayList<>();
+            List<ChapterBean> chapterList = new ArrayList<>();
             JsonObject root = new JsonParser().parse(s).getAsJsonObject();
             JsonArray chapterArray = root.get("chapters").getAsJsonArray();
-            for (int i = 0; i < chapterArray.size(); i++) {
+            for (int i = 0, size = chapterArray.size(); i < size; i++) {
                 JsonObject chapter = chapterArray.get(i).getAsJsonObject();
-
-                ChapterListBean chapterListBean = new ChapterListBean();
-                chapterListBean.setDurChapterIndex(i);
-                chapterListBean.setNoteUrl(bookShelfBean.getNoteUrl());
-                chapterListBean.setTag(bookShelfBean.getTag());
-                chapterListBean.setDurChapterName(chapter.get("title").getAsString());
-                chapterListBean.setDurChapterUrl("http://chapterup.zhuishushenqi.com/chapter/" + URLEncoder.encode(chapter.get("link").getAsString(), "UTF-8"));
-
-                chapterList.add(chapterListBean);
+                ChapterBean chapterBean = new ChapterBean();
+                chapterBean.setDurChapterIndex(i);
+                chapterBean.setNoteUrl(bookShelfBean.getNoteUrl());
+                chapterBean.setTag(bookShelfBean.getTag());
+                chapterBean.setDurChapterName(chapter.get("title").getAsString());
+                chapterBean.setDurChapterUrl("http://chapterup.zhuishushenqi.com/chapter/" + URLEncoder.encode(chapter.get("link").getAsString(), "UTF-8"));
+                chapterList.add(chapterBean);
             }
             e.onNext(chapterList);
             e.onComplete();
@@ -186,27 +170,34 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(Scheduler scheduler, ChapterListBean chapterBean) {
+    public Observable<BookContentBean> getBookContent(ChapterBean chapterBean) {
         return OkHttpHelper.getInstance().createService("http://chapterup.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(chapterBean.getDurChapterUrl(), AnalyzeHeaders.getMap(null))
-                .subscribeOn(scheduler)
                 .flatMap(response -> analyzeBookContent(response.body(), chapterBean));
     }
 
-    private Observable<BookContentBean> analyzeBookContent(String s, ChapterListBean chapterBean) {
+    private Observable<BookContentBean> analyzeBookContent(String s, ChapterBean chapterBean) {
         return Observable.create(e -> {
             BookContentBean bookContentBean = new BookContentBean();
             JsonObject root = new JsonParser().parse(s).getAsJsonObject();
             if (root.get("ok").getAsBoolean()) {
-                JsonObject chapter = root.get("chapter").getAsJsonObject();
+                JsonObject chapterJson = root.get("chapter").getAsJsonObject();
 
                 bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
                 bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
                 bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
-                bookContentBean.setDurChapterContent(chapter.get("body").getAsString());
+                if (chapterJson.has("isVip")) {
+                    if (chapterJson.get("isVip").getAsBoolean()) {
+                        bookContentBean.setDurChapterContent("当前章节为VIP章节，暂时无法查看");
+                    } else {
+                        bookContentBean.setDurChapterContent(chapterJson.get("cpContent").getAsString());
+                    }
+                } else {
+                    bookContentBean.setDurChapterContent(chapterJson.get("body").getAsString());
+                }
                 e.onNext(bookContentBean);
             } else {
-                e.onError(new Throwable("获取失败"));
+                e.onError(new BookException("正文获取失败"));
             }
             e.onComplete();
         });

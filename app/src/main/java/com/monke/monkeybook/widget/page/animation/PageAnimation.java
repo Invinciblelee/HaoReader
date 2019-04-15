@@ -2,11 +2,17 @@ package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import android.view.MotionEvent;
-import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
+
+import com.monke.monkeybook.widget.page.PageMode;
+import com.monke.monkeybook.widget.page.PageView;
+
+import androidx.annotation.CallSuper;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -15,7 +21,7 @@ import android.widget.Scroller;
 
 public abstract class PageAnimation {
     //正在使用的View
-    protected View mView;
+    protected PageView mView;
     //滑动装置
     protected Scroller mScroller;
     //监听器
@@ -28,13 +34,6 @@ public abstract class PageAnimation {
     protected boolean isRunning = false;
     protected boolean isStarted = false;
 
-    //屏幕的尺寸
-    protected int mScreenWidth;
-    protected int mScreenHeight;
-    //屏幕的间距
-    protected int mMarginWidth;
-    protected int mMarginTop;
-    protected int mMarginBottom;
     //视图的尺寸
     protected int mViewWidth;
     protected int mViewHeight;
@@ -48,25 +47,19 @@ public abstract class PageAnimation {
     protected float mLastX;
     protected float mLastY;
 
-    PageAnimation(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, 0, 0, 0, view, listener);
+    PageAnimation(int w, int h, PageView view, OnPageChangeListener listener) {
+        init(w, h, view, listener);
     }
 
-    PageAnimation(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener) {
-        mScreenWidth = w;
-        mScreenHeight = h;
-
-        mMarginWidth = marginWidth;
-        mMarginTop = marginTop;
-        mMarginBottom = marginBottom;
-
-        mViewWidth = mScreenWidth - mMarginWidth * 2;
-        mViewHeight = mScreenHeight - mMarginTop - mMarginBottom;
+    @CallSuper
+    public void init(int w, int h, PageView view, OnPageChangeListener listener) {
+        mViewWidth = w;
+        mViewHeight = h;
 
         mView = view;
         mListener = listener;
 
-        mScroller = new Scroller(mView.getContext(), new LinearOutSlowInInterpolator());
+        mScroller = new Scroller(mView.getContext(), new FastOutLinearInInterpolator());
     }
 
     public Scroller getScroller() {
@@ -110,7 +103,7 @@ public abstract class PageAnimation {
     public void startAnim() {
         isStarted = true;
         isRunning = true;
-        mView.invalidate();
+        mView.postInvalidate();
     }
 
     public Direction getDirection() {
@@ -124,6 +117,8 @@ public abstract class PageAnimation {
     public void clear() {
         mView = null;
     }
+
+    public abstract PageMode getPageMode();
 
     /**
      * 点击事件的处理
@@ -147,14 +142,16 @@ public abstract class PageAnimation {
     public abstract void abortAnim();
 
     /**
-     * 获取背景板
+     * 自动加载动画
      */
-    public abstract Bitmap getBgBitmap();
+    public abstract void startAnim(Direction direction);
 
     /**
      * 获取内容显示版面
      */
-    public abstract Bitmap getContentBitmap();
+    public abstract Bitmap getNextBitmap();
+
+    public abstract Bitmap getCurrentBitmap();
 
     public interface OnPageChangeListener {
         boolean hasPrev();

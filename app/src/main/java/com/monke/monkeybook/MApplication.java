@@ -8,8 +8,12 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import com.monke.monkeybook.help.AppConfigHelper;
+
 import androidx.annotation.RequiresApi;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import io.reactivex.plugins.RxJavaPlugins;
 
 public class MApplication extends Application {
@@ -58,6 +62,9 @@ public class MApplication extends Application {
         if (!DEBUG) {
             CrashHandler.getInstance().init(this);
         }
+
+        boolean nightTheme = AppConfigHelper.get().getPreferences().getBoolean("nightTheme", false);
+        AppCompatDelegate.setDefaultNightMode(nightTheme?AppCompatDelegate.MODE_NIGHT_YES:AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

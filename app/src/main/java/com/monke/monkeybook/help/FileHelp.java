@@ -40,6 +40,16 @@ public class FileHelp {
         return file;
     }
 
+    //获取文件夹
+    public static File getFolder(String filePath, String subPath) {
+        File file = new File(filePath, subPath);
+        //如果文件夹不存在，就创建它
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file;
+    }
+
     //获取文件
     public static synchronized File getFile(String filePath) {
         File file = new File(filePath);

@@ -14,16 +14,16 @@ public class AppActivityManager {
 
     private static List<WeakReference<Activity>> activities;
 
-    private AppActivityManager(){
+    private AppActivityManager() {
         activities = new ArrayList<>();
     }
 
     private static volatile AppActivityManager instance;
 
-    public static AppActivityManager getInstance(){
-        if(null == instance){
-            synchronized (AppActivityManager.class){
-                if(null == instance){
+    public static AppActivityManager getInstance() {
+        if (null == instance) {
+            synchronized (AppActivityManager.class) {
+                if (null == instance) {
                     instance = new AppActivityManager();
                 }
             }
@@ -38,16 +38,16 @@ public class AppActivityManager {
     /*
     添加Activity
      */
-    public void add(Activity activity){
+    public void add(Activity activity) {
         activities.add(new WeakReference<Activity>(activity));
     }
 
     /*
     移除Activity
      */
-    public void remove(Activity activity){
-        for(WeakReference<Activity> temp :activities){
-            if(null != temp.get() && temp.get() == activity){
+    public void remove(Activity activity) {
+        for (WeakReference<Activity> temp : activities) {
+            if (null != temp.get() && temp.get() == activity) {
                 activities.remove(temp);
                 break;
             }
@@ -57,10 +57,10 @@ public class AppActivityManager {
     /*
     移除Activity
      */
-    public void remove(Class<?> activityClass){
-        for(Iterator<WeakReference<Activity>> iterator = activities.iterator();iterator.hasNext();){
+    public void remove(Class<?> activityClass) {
+        for (Iterator<WeakReference<Activity>> iterator = activities.iterator(); iterator.hasNext(); ) {
             WeakReference<Activity> item = iterator.next();
-            if(null != item && null != item.get() && item.get().getClass() == activityClass){
+            if (null != item && null != item.get() && item.get().getClass() == activityClass) {
                 iterator.remove();
             }
         }
@@ -69,7 +69,7 @@ public class AppActivityManager {
     /*
     关闭指定 activity
      */
-    public void finishActivity(BaseActivity... activities){
+    public void finishActivity(BaseActivity... activities) {
         for (BaseActivity activity : activities) {
             if (null != activity) {
                 activity.finish();
@@ -80,9 +80,9 @@ public class AppActivityManager {
     /*
     关闭指定 activity(class)
      */
-    public void finishActivity(Class<?>... activityClasses){
+    public void finishActivity(Class<?>... activityClasses) {
         ArrayList<WeakReference<Activity>> waitfinish = new ArrayList<>();
-        for(WeakReference<Activity> temp :activities){
+        for (WeakReference<Activity> temp : activities) {
             for (Class<?> activityClass : activityClasses) {
                 if (null != temp.get() && temp.get().getClass() == activityClass) {
                     waitfinish.add(temp);
@@ -90,8 +90,8 @@ public class AppActivityManager {
                 }
             }
         }
-        for(WeakReference<Activity> activityWeakReference:waitfinish){
-            if(null != activityWeakReference.get()){
+        for (WeakReference<Activity> activityWeakReference : waitfinish) {
+            if (null != activityWeakReference.get()) {
                 activityWeakReference.get().finish();
             }
         }
@@ -100,7 +100,7 @@ public class AppActivityManager {
     /*
     判断指定Activity是否存在
      */
-    public Boolean isExist(Class<?> activityClass){
+    public Boolean isExist(Class<?> activityClass) {
         Boolean result = false;
         for (WeakReference<Activity> item : activities) {
             if (null != item && null != item.get() && item.get().getClass() == activityClass) {
@@ -109,5 +109,13 @@ public class AppActivityManager {
             }
         }
         return result;
+    }
+
+    public Boolean isEmpty() {
+        return activities == null || activities.isEmpty();
+    }
+
+    public int size() {
+        return activities == null ? 0 : activities.size();
     }
 }

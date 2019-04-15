@@ -2,15 +2,15 @@ package com.monke.monkeybook.widget.page;
 
 import android.text.Layout;
 import android.text.StaticLayout;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
@@ -29,9 +29,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-/**
- * loadChapter 待优化，效率低
- */
 class ChapterProvider {
 
     private final List<String> mDownloadingChapterList = new ArrayList<>();
@@ -46,7 +43,7 @@ class ChapterProvider {
     ChapterProvider(PageLoader pageLoader) {
         this.mPageLoader = pageLoader;
 
-        mExecutor = Executors.newFixedThreadPool(6);
+        mExecutor = Executors.newFixedThreadPool(4);
         mScheduler = Schedulers.from(mExecutor);
     }
 
@@ -56,11 +53,12 @@ class ChapterProvider {
     @NonNull
     TxtChapter provideChapter(int chapterPos) {
         // 获取章节
-        ChapterListBean chapter = mPageLoader.getCollBook().getChapter(chapterPos);
+        ChapterBean chapter = mPageLoader.getCollBook().getChapter(chapterPos);
         // 判断章节是否存在
-        if (!mPageLoader.hasChapterData(chapter)) {
+        if (mPageLoader.chapterNotCached(chapter)) {
             return new TxtChapter(chapterPos, !NetworkUtil.isNetworkAvailable() ? PageStatus.STATUS_NETWORK_ERROR : PageStatus.STATUS_LOADING);
         }
+
         // 获取章节的文本流
         try {
             BufferedReader reader = mPageLoader.getChapterReader(chapter);
@@ -76,7 +74,7 @@ class ChapterProvider {
      * @param chapter：章节信息
      * @param br：章节的文本流
      */
-    private TxtChapter loadChapter(ChapterListBean chapter, BufferedReader br) {
+    private TxtChapter loadChapter(ChapterBean chapter, BufferedReader br) {
         //生成的页面
         List<TxtPage> pages = new ArrayList<>();
         TxtChapter txtChapter = new TxtChapter(chapter.getDurChapterIndex(), PageStatus.STATUS_FINISH);
@@ -183,16 +181,24 @@ class ChapterProvider {
     void loadChapterContent(int chapterIndex) {
         final BookShelfBean bookShelf = mPageLoader.getCollBook();
         if (NetworkUtil.isNetworkAvailable() && null != bookShelf && !bookShelf.realChapterListEmpty()) {
-            final ChapterListBean chapter = bookShelf.getChapter(chapterIndex);
-            if (!mPageLoader.hasChapterData(chapter) && addDownloading(chapter.getDurChapterUrl())) {
-                WebBookModelImpl.getInstance().getBookContent(mScheduler, bookShelf.getBookInfoBean(), chapter)
-                        .timeout(20, TimeUnit.SECONDS)
+            final ChapterBean chapter = bookShelf.getChapter(chapterIndex);
+            final ChapterBean nextChapter;
+            if (chapterIndex < bookShelf.getChapterList().size() - 1) {
+                nextChapter = bookShelf.getChapter(chapterIndex + 1);
+            } else {
+                nextChapter = null;
+            }
+            chapter.setNextChapterUrl(nextChapter == null ? null : nextChapter.getDurChapterUrl());
+            if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
+                WebBookModelImpl.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
+                        .subscribeOn(mScheduler)
+                        .timeout(30, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<BookContentBean>() {
 
                             @Override
                             public void onSubscribe(Disposable d) {
-                                if(mCompositeDisposable == null || mCompositeDisposable.isDisposed()){
+                                if (mCompositeDisposable == null || mCompositeDisposable.isDisposed()) {
                                     mCompositeDisposable = new CompositeDisposable();
                                 }
                                 mCompositeDisposable.add(d);
@@ -202,7 +208,7 @@ class ChapterProvider {
                             public void onNext(BookContentBean bookContentBean) {
                                 removeDownloading(bookContentBean.getDurChapterUrl());
                                 if (chapterIndex == mPageLoader.getChapterPosition()) {
-                                    mPageLoader.openChapter(bookShelf.getDurChapterPage());
+                                    mPageLoader.openChapterPage(bookShelf.getDurChapterPage());
                                 }
                             }
 
@@ -210,8 +216,13 @@ class ChapterProvider {
                             public void onError(Throwable e) {
                                 removeDownloading(chapter.getDurChapterUrl());
                                 if (chapterIndex == mPageLoader.getChapterPosition()) {
-                                    mPageLoader.setCurrentStatus(NetworkUtil.isNetworkAvailable() ? PageStatus.STATUS_UNKNOWN_ERROR :
-                                            PageStatus.STATUS_NETWORK_ERROR);
+                                    if (!NetworkUtil.isNetworkAvailable()) {
+                                        mPageLoader.setCurrentStatus(PageStatus.STATUS_NETWORK_ERROR);
+                                    } else if (e instanceof BookException) {
+                                        mPageLoader.setCurrentErrorMsg(e.getMessage());
+                                    } else {
+                                        mPageLoader.setCurrentStatus(PageStatus.STATUS_UNKNOWN_ERROR);
+                                    }
                                 }
                             }
                         });
@@ -231,7 +242,7 @@ class ChapterProvider {
     }
 
     void close() {
-        if(mCompositeDisposable != null){
+        if (mCompositeDisposable != null) {
             mCompositeDisposable.dispose();
             mCompositeDisposable = null;
         }

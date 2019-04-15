@@ -5,19 +5,24 @@ import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.BookmarkBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 
 public interface ReadBookContract {
     interface View extends IView {
 
+        void stopRefreshChapterList();
+
         void changeSourceFinish(boolean success);
 
-        void prepareDisplay(boolean check);
+        void prepareDisplay();
 
         void showLoading(String msg);
 
         void dismissHUD();
+
+        void upMenu();
 
         /**
          * 开始加载
@@ -29,6 +34,14 @@ public interface ReadBookContract {
         void toast(String msg);
 
         void updateTitle(String title);
+
+        void showBookmark(BookmarkBean bookmarkBean);
+
+        void openChapter(ChapterBean chapterBean);
+
+        void openBookmark(BookmarkBean bookmarkBean);
+
+        void updateBookmark(BookShelfBean bookShelfBean);
 
         /**
          * 更新朗读状态
@@ -73,6 +86,8 @@ public interface ReadBookContract {
         void delBookmark(BookmarkBean bookmarkBean);
 
         void disableDurBookSource();
+
+        void cleanCache();
     }
 
 }

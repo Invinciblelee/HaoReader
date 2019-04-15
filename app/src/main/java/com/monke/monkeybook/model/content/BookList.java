@@ -13,7 +13,7 @@ import io.reactivex.Observable;
 import retrofit2.Response;
 
 class BookList {
-    private OutAnalyzer analyzer;
+    private OutAnalyzer<?, ?> analyzer;
 
     BookList(String tag, String name, BookSourceBean bookSourceBean) {
         this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
@@ -33,7 +33,7 @@ class BookList {
 
                 analyzer.apply(analyzer.newConfig().baseURL(baseURL));
 
-                e.onNext(analyzer.getDelegate().getSearchBooks(response.body()));
+                e.onNext(analyzer.getSearchBooks(response.body()));
             } catch (Exception ex) {
                 ex.printStackTrace();
                 e.onNext(new ArrayList<>());

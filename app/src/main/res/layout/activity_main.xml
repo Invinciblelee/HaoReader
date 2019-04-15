@@ -20,9 +20,10 @@
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
-            android:layout_width="230dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            app:headerLayout="@layout/navigation_header"
             app:itemTextAppearance="@style/CAppTheme.Navigation.Text"
             app:itemTextColor="@color/navigation_color"
             app:itemIconTint="@color/navigation_icon_color"

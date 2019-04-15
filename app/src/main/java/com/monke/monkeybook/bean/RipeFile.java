@@ -8,8 +8,9 @@ import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.File;
+import java.io.Serializable;
 
-public class RipeFile {
+public class RipeFile implements Serializable {
 
     private boolean isSelected;
     private File file;
@@ -38,6 +39,10 @@ public class RipeFile {
     public void setFile(File file) {
         this.file = file;
         this.path = file.getAbsolutePath();
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getName() {

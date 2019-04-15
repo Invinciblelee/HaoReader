@@ -32,9 +32,9 @@ public class DbHelper {
                             DaoMaster.dropAllTables(db, ifExists);
                         }
                     },
-                    BookShelfBeanDao.class, BookInfoBeanDao.class, ChapterListBeanDao.class,
+                    BookShelfBeanDao.class, BookInfoBeanDao.class, ChapterBeanDao.class,
                     SearchHistoryBeanDao.class, BookSourceBeanDao.class,
-                    ReplaceRuleBeanDao.class, BookmarkBeanDao.class
+                    ReplaceRuleBeanDao.class, BookmarkBeanDao.class, CookieBeanDao.class
             );
         }
     }
@@ -60,7 +60,7 @@ public class DbHelper {
         return instance;
     }
 
-    public DaoSession getmDaoSession() {
+    public DaoSession getDaoSession() {
         return mDaoSession;
     }
 

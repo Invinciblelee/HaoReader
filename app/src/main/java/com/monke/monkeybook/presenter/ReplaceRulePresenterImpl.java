@@ -1,5 +1,6 @@
 package com.monke.monkeybook.presenter;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -65,7 +66,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                     public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
                         mView.refresh();
                         mView.getSnackBar(replaceRuleBean.getReplaceSummary() + "已删除")
-                                .setDuration(Snackbar.LENGTH_LONG)
+                                .setDuration(BaseTransientBottomBar.LENGTH_LONG)
                                 .setAction("恢复", view -> restoreData(replaceRuleBean))
                                 .show();
                     }

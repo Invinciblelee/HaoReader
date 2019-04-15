@@ -3,13 +3,12 @@ package com.monke.monkeybook.model.impl;
 
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 
 public interface IStationBookModel {
 
@@ -31,12 +30,12 @@ public interface IStationBookModel {
     /**
      * 网络解析图书目录
      */
-    Observable<List<ChapterListBean>> getChapterList(BookShelfBean bookShelfBean);
+    Observable<List<ChapterBean>> getChapterList(BookShelfBean bookShelfBean);
 
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(Scheduler scheduler, ChapterListBean chapter);
+    Observable<BookContentBean> getBookContent(ChapterBean chapter);
 
 
 }

@@ -2,10 +2,10 @@ package com.monke.monkeybook.widget.page;
 
 import android.text.TextUtils;
 
-import com.monke.basemvplib.CharsetDetector;
+import com.monke.basemvplib.EncodingDetect;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.utils.IOUtils;
@@ -81,7 +81,7 @@ public class LocalPageLoader extends PageLoader {
      *
      * @throws IOException
      */
-    private List<ChapterListBean> loadChapters() throws IOException {
+    private List<ChapterBean> loadChapters() throws IOException {
         List<SubChapter> chapters = new ArrayList<>();
         //获取文件流
         RandomAccessFile bookStream = new RandomAccessFile(mBookFile, "r");
@@ -246,10 +246,10 @@ public class LocalPageLoader extends PageLoader {
             }
         }
 
-        List<ChapterListBean> chapterList = new ArrayList<>();
+        List<ChapterBean> chapterList = new ArrayList<>();
         for (int i = 0, size = chapters.size(); i < size; i++) {
             SubChapter chapter = chapters.get(i);
-            ChapterListBean bean = new ChapterListBean();
+            ChapterBean bean = new ChapterBean();
             bean.setDurChapterIndex(i);
             bean.setNoteUrl(getCollBook().getNoteUrl());
             bean.setDurChapterUrl(MD5Utils.strToMd5By16(mBookFile.getAbsolutePath() + i + chapter.title));
@@ -283,7 +283,7 @@ public class LocalPageLoader extends PageLoader {
     /**
      * 从文件中提取一章的内容
      */
-    private byte[] getChapterContent(ChapterListBean chapter) {
+    private byte[] getChapterContent(ChapterBean chapter) {
         RandomAccessFile bookStream = null;
         try {
             bookStream = new RandomAccessFile(mBookFile, "r");
@@ -345,7 +345,7 @@ public class LocalPageLoader extends PageLoader {
         //获取文件编码
         String charsetName = getCollBook().getBookInfoBean().getCharset();
         if (TextUtils.isEmpty(charsetName)) {
-            charsetName = CharsetDetector.detectCharset(mBookFile);
+            charsetName = EncodingDetect.getJavaEncode(mBookFile);
             mCharset = Charset.forName(charsetName);
             getCollBook().getBookInfoBean().setCharset(charsetName);
         } else {
@@ -362,14 +362,13 @@ public class LocalPageLoader extends PageLoader {
             dispatchCategoryFinishEvent(getCollBook().getChapterList());
         } else {
             // 通过RxJava异步处理分章事件
-            Observable.create((ObservableOnSubscribe<List<ChapterListBean>>) e -> {
-                List<ChapterListBean> chapterList = loadChapters();
+            Observable.create((ObservableOnSubscribe<List<ChapterBean>>) e -> {
+                List<ChapterBean> chapterList = loadChapters();
                 e.onNext(chapterList);
                 e.onComplete();
             }).subscribeOn(Schedulers.single())
                     .flatMap(chapterList -> {
-                        getCollBook().setChapterList(chapterList);
-                        getCollBook().upChapterListSize();
+                        getCollBook().setChapterList(chapterList, true);
                         return Observable.just(getCollBook());
                     })
                     .doAfterNext(bookShelfBean -> {
@@ -411,7 +410,7 @@ public class LocalPageLoader extends PageLoader {
     }
 
     @Override
-    protected BufferedReader getChapterReader(ChapterListBean chapter) throws Exception {
+    protected BufferedReader getChapterReader(ChapterBean chapter) throws Exception {
         //从文件中获取数据
         byte[] content = getChapterContent(chapter);
         ByteArrayInputStream bais = new ByteArrayInputStream(content);
@@ -419,8 +418,8 @@ public class LocalPageLoader extends PageLoader {
     }
 
     @Override
-    protected boolean hasChapterData(ChapterListBean chapter) {
-        return true;
+    protected boolean chapterNotCached(ChapterBean chapter) {
+        return false;
     }
 
     public void updateCharset() {

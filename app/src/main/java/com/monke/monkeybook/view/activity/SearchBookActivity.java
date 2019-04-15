@@ -4,12 +4,6 @@ package com.monke.monkeybook.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -25,16 +20,22 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
+import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.explosion_field.ExplosionField;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import tyrantgit.explosionfield.ExplosionField;
 
 public class SearchBookActivity extends MBaseActivity<SearchBookContract.Presenter> implements SearchBookContract.View {
 
@@ -59,6 +60,22 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     private MoDialogHUD moDialogHUD;
 
+    private final Handler mHandler = new Handler();
+
+    private final Runnable mShowRunnable = new Runnable() {
+        @Override
+        public void run() {
+            fabStop.show();
+        }
+    };
+
+    private final Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            fabStop.hide();
+        }
+    };
+
     private final View.OnClickListener historyItemClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -68,8 +85,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     };
 
     private final View.OnLongClickListener historyItemLongClick = v -> {
-        SearchHistoryBean searchHistoryBean = (SearchHistoryBean) v.getTag();
         explosionField.explode(v);
+        SearchHistoryBean searchHistoryBean = (SearchHistoryBean) v.getTag();
         mPresenter.cleanSearchHistory(searchHistoryBean);
         return false;
     };
@@ -111,12 +128,15 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         mPresenter.fromIntentSearch(intent);
+        if (AppActivityManager.getInstance().isExist(BookDetailActivity.class)) {
+            AppActivityManager.getInstance().finishActivity(BookDetailActivity.class);
+        }
     }
 
     @Override
     protected void initData() {
         explosionField = ExplosionField.attach2Window(this);
-        searchBookAdapter = new SearchBookAdapter(this);
+        searchBookAdapter = new SearchBookAdapter(this, false);
     }
 
     @SuppressLint("InflateParams")
@@ -148,7 +168,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
         fabStop.setOnClickListener(view -> {
             mPresenter.stopSearch();
-            fabStop.hide();
+            hideFabButton();
         });
 
         searchBookAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -178,6 +198,15 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem my716 = menu.findItem(R.id.action_book_my716);
+        if (my716 != null) {
+            my716.setChecked(getPreferences().getBoolean("useMy716", true));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     //菜单
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -185,6 +214,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         switch (id) {
             case R.id.action_book_source_manage:
                 BookSourceActivity.startThis(this);
+                break;
+            case R.id.action_book_my716:
+                item.setChecked(!item.isChecked());
+                getPreferences().edit().putBoolean("useMy716", item.isChecked()).apply();
+                mPresenter.useMy716(item.isChecked());
                 break;
             case android.R.id.home:
                 finish();
@@ -195,8 +229,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void finish() {
-        if (!AppActivityManager.getInstance().isExist(MainActivity.class)
-                && !AppActivityManager.getInstance().isExist(ReadBookActivity.class)) {
+        if (AppActivityManager.getInstance().size() == 1) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
         }
@@ -235,7 +268,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     protected void bindEvent() {
-        tvSearchHistoryClean.setOnClickListener(v -> mPresenter.cleanSearchHistory());
+        tvSearchHistoryClean.setOnClickListener(v -> {
+            explosionField.explode(tflSearchHistory);
+            mPresenter.cleanSearchHistory();
+        });
     }
 
     @Override
@@ -305,6 +341,18 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         }
     }
 
+    private void showFabButton(long delay) {
+        mHandler.removeCallbacks(mHideRunnable);
+        mHandler.removeCallbacks(mShowRunnable);
+        mHandler.postDelayed(mShowRunnable, delay);
+    }
+
+    private void hideFabButton() {
+        mHandler.removeCallbacks(mHideRunnable);
+        mHandler.removeCallbacks(mShowRunnable);
+        mHandler.post(mHideRunnable);
+    }
+
     @Override
     public void insertSearchHistorySuccess(SearchHistoryBean searchHistoryBean) {
         //搜索历史插入或者修改成功
@@ -325,29 +373,25 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void resetSearchBook() {
-        fabStop.postDelayed(() -> {
-            if (fabStop.isOrWillBeHidden()) {
-                fabStop.show();
-            }
-        }, 200L);
+        showFabButton(200L);
         searchBookAdapter.clearAll();
     }
 
     @Override
     public void refreshFinish() {
-        if (fabStop.isOrWillBeShown()) {
-            fabStop.hide();
-        }
+        hideFabButton();
         rfRvSearchBooks.finishRefresh(true, false);
     }
 
 
     @Override
     public void searchBookError() {
-        if (fabStop.isOrWillBeShown()) {
-            fabStop.hide();
+        hideFabButton();
+        if (!NetworkUtil.isNetworkAvailable()) {
+            rfRvSearchBooks.refreshError("网络不可用");
+        } else {
+            rfRvSearchBooks.refreshError();
         }
-        rfRvSearchBooks.refreshError();
     }
 
     @Override

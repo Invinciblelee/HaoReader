@@ -1,12 +1,16 @@
 package com.monke.basemvplib;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.ConnectionSpec;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -15,27 +19,20 @@ public class OkHttpHelper {
 
     private OkHttpClient okHttpClient;
 
-
     private OkHttpHelper() {
-        okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.createTrustAllManager())
-                .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
-                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE))
-                .addInterceptor(getHeaderInterceptor())
-                .addInterceptor(new RetryInterceptor(1)).build();
     }
 
-    private static class InstanceHolder {
-        private static final OkHttpHelper SINGLETON = new OkHttpHelper();
-    }
+    private volatile static OkHttpHelper mInstance;
 
     public static OkHttpHelper getInstance() {
-        return InstanceHolder.SINGLETON;
+        if(mInstance == null){
+            synchronized (OkHttpHelper.class){
+                if(mInstance == null){
+                    mInstance = new OkHttpHelper();
+                }
+            }
+        }
+        return mInstance;
     }
 
     private Retrofit getRetrofitString(String url) {
@@ -44,7 +41,7 @@ public class OkHttpHelper {
                 .addConverterFactory(EncodeConverter.create())
                 //增加返回值为Observable<T>的支持
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClient)
+                .client(getOkHttpClient())
                 .build();
     }
 
@@ -54,7 +51,7 @@ public class OkHttpHelper {
                 .addConverterFactory(EncodeConverter.create(encode))
                 //增加返回值为Observable<T>的支持
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClient)
+                .client(getOkHttpClient())
                 .build();
     }
 
@@ -66,7 +63,39 @@ public class OkHttpHelper {
         return getRetrofitString(url, encode).create(tClass);
     }
 
-    private static Interceptor getHeaderInterceptor() {
+    public OkHttpClient getOkHttpClient(){
+        if(okHttpClient == null){
+
+            ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .build();
+
+            List<ConnectionSpec> specs = new ArrayList<>();
+            specs.add(cs);
+            specs.add(ConnectionSpec.COMPATIBLE_TLS);
+            specs.add(ConnectionSpec.CLEARTEXT);
+
+            SSLHelper.SSLParams sslParams = SSLHelper.getSslSocketFactory();
+            okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager)
+                    .hostnameVerifier(SSLHelper.UnSafeHostnameVerifier)
+                    .connectionSpecs(specs)
+                    .followRedirects(true)
+                    .followSslRedirects(true)
+                    .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                    .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE))
+                    .addInterceptor(getHeaderInterceptor())
+                    .addInterceptor(new RetryInterceptor(1))
+                    .build();
+        }
+        return okHttpClient;
+    }
+
+    private Interceptor getHeaderInterceptor() {
         return chain -> {
             Request request = chain.request()
                     .newBuilder()
@@ -77,5 +106,4 @@ public class OkHttpHelper {
             return chain.proceed(request);
         };
     }
-
 }

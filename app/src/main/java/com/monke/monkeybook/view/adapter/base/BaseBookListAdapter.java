@@ -23,7 +23,6 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
     private Context context;
     private OnBookItemClickListenerTwo itemClickListener;
 
-    protected int animationIndex = -1;
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override

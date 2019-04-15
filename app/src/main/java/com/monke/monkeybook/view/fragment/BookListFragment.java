@@ -2,18 +2,12 @@ package com.monke.monkeybook.view.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Toast;
 
 import com.monke.basemvplib.BaseFragment;
 import com.monke.monkeybook.R;
@@ -21,13 +15,20 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.presenter.BookListPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookListContract;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 
 import java.util.List;
+import java.util.Objects;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -231,12 +232,12 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public void refreshError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        toast(error);
     }
 
     @Override
     public void toast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+        ToastUtils.toast(Objects.requireNonNull(getContext()), msg);
     }
 
     @Override

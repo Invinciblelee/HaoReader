@@ -1,9 +1,10 @@
 package com.monke.monkeybook.utils;
 
-import androidx.annotation.StringRes;
+import android.util.Base64;
 
 import com.monke.monkeybook.MApplication;
 
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import androidx.annotation.StringRes;
 
 /**
  * Created by newbiechen on 17-4-22.
@@ -232,5 +238,114 @@ public class StringUtils {
             }
         }
         return tmp.toString();
+    }
+
+    /**
+     * delimiter 分隔符
+     * elements 需要连接的字符数组
+     */
+    public static String join(CharSequence delimiter, CharSequence... elements) {
+        // 空指针判断
+        Objects.requireNonNull(delimiter);
+        Objects.requireNonNull(elements);
+
+
+        // Number of elements not likely worth Arrays.stream overhead.
+        // 此处用到了StringJoiner(JDK 8引入的类）
+        // 先构造一个以参数delimiter为分隔符的StringJoiner对象
+        StringJoiner joiner = new StringJoiner(delimiter);
+        for (CharSequence cs : elements) {
+            // 拼接字符
+            joiner.add(cs);
+        }
+        return joiner.toString();
+    }
+
+    public static String join(CharSequence delimiter, Iterable<? extends CharSequence> elements) {
+        Objects.requireNonNull(delimiter);
+        Objects.requireNonNull(elements);
+        StringJoiner joiner = new StringJoiner(delimiter);
+        for (CharSequence cs : elements) {
+            joiner.add(cs);
+        }
+        return joiner.toString();
+    }
+
+    public static boolean isEmpty(CharSequence charSequence) {
+        if (charSequence == null) {
+            return true;
+        }
+        return charSequence.toString().trim().length() == 0;
+    }
+
+    public static boolean isContainNumber(String company) {
+        Pattern p = Pattern.compile("[0-9]");
+        Matcher m = p.matcher(company);
+        return m.find();
+    }
+
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        return isNum.matches();
+    }
+
+    public static String base64Decode(String str) {
+        byte[] bytes = Base64.decode(str, Base64.DEFAULT);
+        try {
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return new String(bytes);
+        }
+    }
+
+    public static String getBaseUrl(String url) {
+        if (url == null) return null;
+        int index = url.indexOf("/", 9);
+        if (index == -1) {
+            return url;
+        }
+        return url.substring(0, index);
+    }
+
+    public static String valueOf(Object object) {
+        return object == null ? "" : object.toString();
+    }
+
+    public static boolean startWithIgnoreCase(String src, String obj) {
+        if (src == null || obj == null) return false;
+        if (obj.length() > src.length()) return false;
+        return src.substring(0, obj.length()).equalsIgnoreCase(obj);
+    }
+
+    public static boolean isJsonType(String str) {
+        boolean result = false;
+        if (!isEmpty(str)) {
+            str = str.trim();
+            if (str.startsWith("{") && str.endsWith("}")) {
+                result = true;
+            } else if (str.startsWith("[") && str.endsWith("]")) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public static boolean isTrimEmpty(String text) {
+        if (text == null) return true;
+        if (text.length() == 0) return true;
+        return text.trim().length() == 0;
+    }
+
+    public static String trim(String string) {
+        return string == null ? "" : string.trim();
+    }
+
+    public static boolean containsIgnoreCase(String base, String constraint) {
+        if (base == null) {
+            return false;
+        }
+
+        return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
 }

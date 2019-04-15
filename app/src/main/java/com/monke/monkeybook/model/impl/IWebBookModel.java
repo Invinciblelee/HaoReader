@@ -4,14 +4,12 @@ package com.monke.monkeybook.model.impl;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 
 public interface IWebBookModel {
     /**
@@ -27,7 +25,7 @@ public interface IWebBookModel {
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(Scheduler scheduler, BookInfoBean bookInfo, ChapterListBean chapter);
+    Observable<BookContentBean> getBookContent(BookInfoBean bookInfo, ChapterBean chapter);
 
     /**
      * 其他站点资源整合搜索
@@ -38,4 +36,9 @@ public interface IWebBookModel {
      * 发现
      */
     Observable<List<SearchBookBean>> findBook(String url, int page, String tag);
+
+    /**
+     * 听书章节
+     */
+    Observable<ChapterBean> processAudioChapter(String tag, ChapterBean chapter);
 }

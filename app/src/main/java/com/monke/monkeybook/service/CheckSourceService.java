@@ -56,7 +56,7 @@ public class CheckSourceService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        threadsNum = AppConfigHelper.get(this).getInt(this.getString(R.string.pk_threads_num), 6);
+        threadsNum = AppConfigHelper.get().getInt(this.getString(R.string.pk_threads_num), 6);
         executorService = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executorService);
         compositeDisposable = new CompositeDisposable();

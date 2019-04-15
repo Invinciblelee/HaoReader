@@ -3,20 +3,22 @@ package com.monke.monkeybook.view.activity;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.ViewTreeObserver;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.monke.monkeybook.BuildConfig;
@@ -28,9 +30,16 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
+import com.monke.monkeybook.utils.ScreenUtils;
+import com.monke.monkeybook.view.popupwindow.KeyboardToolPop;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -45,10 +54,12 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     public final static int EDIT_SOURCE = 1101;
     public final static int QR_SCAN = 1102;
 
+    public static final int POP_TOOL_HEIGHT = 100;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.rl_content)
-    RelativeLayout rlContent;
+    @BindView(R.id.ll_content)
+    LinearLayout llContent;
     @BindView(R.id.tie_book_source_type)
     TextInputEditText tieBookSourceType;
     @BindView(R.id.til_book_source_type)
@@ -97,6 +108,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieRuleSearchNoteUrl;
     @BindView(R.id.til_ruleSearchNoteUrl)
     TextInputLayout tilRuleSearchNoteUrl;
+    @BindView(R.id.tie_rulePersistedVariables)
+    TextInputEditText tiePersistedVariables;
+    @BindView(R.id.til_rulePersistedVariables)
+    TextInputLayout tilRulePersistedVariables;
     @BindView(R.id.tie_ruleBookName)
     TextInputEditText tieRuleBookName;
     @BindView(R.id.til_ruleBookName)
@@ -153,10 +168,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieCheckUrl;
     @BindView(R.id.til_checkUrl)
     TextInputLayout tilCheckUrl;
-    @BindView(R.id.til_loginUrl)
-    TextInputLayout tilLoginUrl;
-    @BindView(R.id.tie_loginUrl)
-    TextInputEditText tieLoginUrl;
+    @BindView(R.id.til_loginCookieKey)
+    TextInputLayout tilLoginCookieKey;
+    @BindView(R.id.tie_loginCookieKey)
+    TextInputEditText tieLoginCookieKey;
     @BindView(R.id.tie_ruleChapterUrlNext)
     TextInputEditText tieRuleChapterUrlNext;
     @BindView(R.id.til_ruleChapterUrlNext)
@@ -165,11 +180,16 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieRuleContentUrlNext;
     @BindView(R.id.til_ruleContentUrlNext)
     TextInputLayout tilRuleContentUrlNext;
+    @BindView(R.id.scroll_view)
+    ScrollView scrollContent;
 
     private BookSourceBean bookSourceBean;
     private int serialNumber;
+    private int weight;
     private boolean enable;
     private String title;
+    private KeyboardToolPop mSoftKeyboardTool;
+    private boolean mIsSoftKeyBoardShowing = false;
 
     public static void startThis(Activity activity, BookSourceBean sourceBean) {
         Intent intent = new Intent(activity, SourceEditActivity.class);
@@ -195,11 +215,16 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("title", title);
         outState.putInt("serialNumber", serialNumber);
         outState.putBoolean("enable", enable);
+        if (bookSourceBean != null) {
+            String key = String.valueOf(System.currentTimeMillis());
+            getIntent().putExtra("data_key", key);
+            BitIntentDataManager.getInstance().putData(key, bookSourceBean);
+        }
     }
 
     @Override
@@ -210,15 +235,16 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @Override
     protected void initData() {
-        String key = this.getIntent().getStringExtra("data_key");
-        if (title == null) {
-            if (isEmpty(key)) {
-                title = getString(R.string.add_book_source);
-            } else {
-                title = getString(R.string.edit_book_source);
-                bookSourceBean = BitIntentDataManager.getInstance().getData(key, null);
+        String key = getIntent().getStringExtra("data_key");
+        if (isEmpty(key)) {
+            title = getString(R.string.add_book_source);
+        } else {
+            title = getString(R.string.edit_book_source);
+            bookSourceBean = BitIntentDataManager.getInstance().getData(key, null);
+            if (bookSourceBean != null) {
                 serialNumber = bookSourceBean.getSerialNumber();
                 enable = bookSourceBean.getEnable();
+                weight = bookSourceBean.getWeight();
                 BitIntentDataManager.getInstance().cleanData(key);
             }
         }
@@ -232,6 +258,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
         setHint();
         setText(bookSourceBean);
+        mSoftKeyboardTool = new KeyboardToolPop(this, this::insertTextToEditText);
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new KeyboardOnGlobalChangeListener());
     }
 
     private void saveBookSource() {
@@ -284,9 +312,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText()));
         bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText()));
         bookSourceBeanN.setCheckUrl(trim(tieCheckUrl.getText()));
-        bookSourceBeanN.setLoginUrl(trim(tieLoginUrl.getText()));
+        bookSourceBeanN.setLoginCookieKey(trim(tieLoginCookieKey.getText()));
         bookSourceBeanN.setRuleBookAuthor(trim(tieRuleBookAuthor.getText()));
         bookSourceBeanN.setRuleBookContent(trim(tieRuleBookContent.getText()));
+        bookSourceBeanN.setRulePersistedVariables(trim(tiePersistedVariables.getText()));
         bookSourceBeanN.setRuleBookName(trim(tieRuleBookName.getText()));
         bookSourceBeanN.setRuleLastChapter(trim(tieRuleLastChapter.getText()));
         bookSourceBeanN.setRuleChapterList(trim(tieRuleChapterList.getText()));
@@ -309,6 +338,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText()));
         bookSourceBeanN.setEnable(enable);
         bookSourceBeanN.setSerialNumber(serialNumber);
+        bookSourceBeanN.setWeight(weight);
         return bookSourceBeanN;
     }
 
@@ -329,9 +359,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieBookSourceUrl.setText(trim(bookSourceBean.getBookSourceUrl()));
         tieBookSourceGroup.setText(trim(bookSourceBean.getBookSourceGroup()));
         tieCheckUrl.setText(trim(bookSourceBean.getCheckUrl()));
-        tieLoginUrl.setText(trim(bookSourceBean.getLoginUrl()));
+        tieLoginCookieKey.setText(trim(bookSourceBean.getLoginCookieKey()));
         tieRuleBookAuthor.setText(trim(bookSourceBean.getRuleBookAuthor()));
         tieRuleBookContent.setText(trim(bookSourceBean.getRuleBookContent()));
+        tiePersistedVariables.setText(trim(bookSourceBean.getRulePersistedVariables()));
         tieRuleBookName.setText(trim(bookSourceBean.getRuleBookName()));
         tieRuleLastChapter.setText(trim(bookSourceBean.getRuleLastChapter()));
         tieRuleChapterList.setText(trim(bookSourceBean.getRuleChapterList()));
@@ -355,35 +386,36 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void setHint() {
-        tilBookSourceType.setHint("书源类型");
-        tilBookSourceRuleType.setHint("书源规则类型");
-        tilBookSourceName.setHint("书源名称");
-        tilBookSourceUrl.setHint("书源URL");
-        tilBookSourceGroup.setHint("书源分组");
-        tilCheckUrl.setHint("书源校验URL");
-        tilLoginUrl.setHint("书源登录URL");
-        tilRuleBookAuthor.setHint("作者获取规则");
-        tilRuleBookContent.setHint("章节内容获取规则");
-        tilRuleBookName.setHint("书名获取规则");
-        tilRuleLastChapter.setHint("最新章节获取规则");
-        tilRuleChapterList.setHint("目录列表获取规则");
-        tilRuleChapterName.setHint("章节名称获取规则");
-        tilRuleChapterUrl.setHint("目录URL获取规则");
-        tilRuleChapterUrlNext.setHint("下一页目录URL获取规则");
-        tilRuleContentUrl.setHint("章节内容URL获取规则");
-        tilRuleCoverUrl.setHint("封面URL获取规则");
-        tilRuleIntroduce.setHint("简介获取规则");
-        tilRuleSearchAuthor.setHint("搜索结果作者获取规则");
-        tilRuleSearchCoverUrl.setHint("搜索结果封面获取规则");
-        tilRuleSearchKind.setHint("搜索分类获取规则");
-        tilRuleSearchLastChapter.setHint("搜索最新章节获取规则");
-        tilRuleSearchList.setHint("搜索结果列表获取规则");
-        tilRuleSearchName.setHint("搜索结果书名获取规则");
-        tilRuleSearchNoteUrl.setHint("搜索结果书籍URL获取规则");
-        tilRuleSearchUrl.setHint("搜索URL");
-        tilHttpUserAgent.setHint("用户代理");
-        tilRuleFindUrl.setHint("发现获取规则");
-        tilRuleContentUrlNext.setHint("下一页章节内容URL获取规则");
+        tilBookSourceType.setHint("书源类型(BookSourceType)");
+        tilBookSourceRuleType.setHint("书源规则类型(BookSourceRuleType)");
+        tilBookSourceName.setHint("书源名称(BookSourceName)");
+        tilBookSourceUrl.setHint("书源URL(BookSourceUrl)");
+        tilBookSourceGroup.setHint("书源分组(BookSourceGroup)");
+        tilCheckUrl.setHint("书源校验URL(CheckUrl)");
+        tilLoginCookieKey.setHint("登录Cookie标识(LoginCookieKey)");
+        tilRuleBookAuthor.setHint("作者获取规则(RuleBookAuthor)");
+        tilRuleBookContent.setHint("章节内容获取规则(RuleBookContent)");
+        tilRuleBookName.setHint("书名获取规则(RuleBookName)");
+        tilRuleLastChapter.setHint("最新章节获取规则(RuleBookLastChapter)");
+        tilRuleChapterList.setHint("目录列表获取规则(RuleChapterList)");
+        tilRuleChapterName.setHint("章节名称获取规则(RuleChapterName)");
+        tilRuleChapterUrl.setHint("目录URL获取规则(RuleChapterUrl)");
+        tilRuleChapterUrlNext.setHint("下一页目录URL获取规则(RuleChapterUrlNext)");
+        tilRuleContentUrl.setHint("章节内容URL获取规则(RuleContentUrl)");
+        tilRuleCoverUrl.setHint("封面URL获取规则(RuleCoverUrl)");
+        tilRuleIntroduce.setHint("简介获取规则(RuleIntroduce)");
+        tilRuleSearchAuthor.setHint("搜索结果作者获取规则(RuleSearchAuthor)");
+        tilRuleSearchCoverUrl.setHint("搜索结果封面获取规则(RuleSearchCoverUrl)");
+        tilRuleSearchKind.setHint("搜索分类获取规则(RuleSearchKind)");
+        tilRuleSearchLastChapter.setHint("搜索最新章节获取规则(RuleSearchLastChapter)");
+        tilRuleSearchList.setHint("搜索结果列表获取规则(RuleSearchList)");
+        tilRuleSearchName.setHint("搜索结果书名获取规则(RuleSearchName)");
+        tilRuleSearchNoteUrl.setHint("搜索结果书籍URL获取规则(RuleSearchNoteUrl)");
+        tilRuleSearchUrl.setHint("搜索URL(SearchUrl)");
+        tilRulePersistedVariables.setHint("持久化变量(RulePersistedVariables)");
+        tilHttpUserAgent.setHint("用户代理(HttpUserAgent)");
+        tilRuleFindUrl.setHint("发现获取规则(RuleFinalUrl)");
+        tilRuleContentUrlNext.setHint("下一页章节内容URL获取规则(RuleContentUrlNext)");
     }
 
     @Override
@@ -403,21 +435,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             startActivity(intent);
         } catch (Exception e) {
             showSnackBar(R.string.can_not_open);
-        }
-    }
-
-    private void toLoginPage(){
-        String sourceUrl = tieBookSourceUrl.getText().toString();
-        if(TextUtils.isEmpty(sourceUrl)){
-            showSnackBar("书源地址不能为空");
-        }else {
-            String loginUrl = tieLoginUrl.getText().toString();
-            if (!TextUtils.isEmpty(loginUrl)) {
-                String userAgent = tieHttpUserAgent.getText().toString();
-                WebViewActivity.startThis(this, new WebLoadConfig(getString(R.string.source_login), loginUrl, userAgent, sourceUrl));
-            } else {
-                showSnackBar("当前书源没有配置登录地址");
-            }
         }
     }
 
@@ -445,9 +462,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             case R.id.action_save:
                 saveBookSource();
                 break;
-            case R.id.action_login:
-                toLoginPage();
-                break;
             case R.id.action_copy_source:
                 mPresenter.copySource(getBookSource());
                 break;
@@ -459,6 +473,16 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 break;
             case R.id.action_share_it:
                 mPresenter.handleSourceShare();
+                break;
+            case R.id.action_open:
+                String url = trim(tieBookSourceUrl.getText());
+                if (isEmpty(url)) {
+                    toast("请先配置书源URL");
+                } else {
+                    WebLoadConfig config = new WebLoadConfig(url, trim(tieHttpUserAgent.getText()));
+                    config.setCookieKey(trim(tieLoginCookieKey.getText()));
+                    WebViewActivity.startThis(this, config);
+                }
                 break;
             case R.id.action_rule_summary:
                 openRuleSummary();
@@ -486,6 +510,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (bookSourceBean == null) {
             bookSourceBean = new BookSourceBean();
         }
+
         if (!getBookSource().equals(bookSourceBean)) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.exit))
@@ -503,5 +528,72 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     public void finish() {
         KeyboardUtil.hideKeyboard(this);
         super.finish();
+    }
+
+    private void insertTextToEditText(String txt) {
+        if (TextUtils.isEmpty(txt)) return;
+        View view = getWindow().getDecorView().findFocus();
+        if (view instanceof EditText) {
+            EditText editText = (EditText) view;
+            int start = editText.getSelectionStart();
+            int end = editText.getSelectionEnd();
+            Editable edit = editText.getEditableText();//获取EditText的文字
+            if (start < 0 || start >= edit.length()) {
+                edit.append(txt);
+            } else {
+                edit.replace(start, end, txt);//光标所在位置插入文字
+            }
+        }
+    }
+
+    private void showKeyboardTopPopupWindow() {
+        if (isFinishing()) {
+            return;
+        }
+
+        if (mSoftKeyboardTool != null && mSoftKeyboardTool.isShowing()) {
+            return;
+        }
+        if (mSoftKeyboardTool != null) {
+            mSoftKeyboardTool.showAtLocation(llContent, Gravity.BOTTOM, 0, 0);
+        }
+    }
+
+    private void closePopupWindow() {
+        if (mSoftKeyboardTool != null && mSoftKeyboardTool.isShowing()) {
+            mSoftKeyboardTool.dismiss();
+        }
+    }
+
+    private class KeyboardOnGlobalChangeListener implements ViewTreeObserver.OnGlobalLayoutListener {
+        @Override
+        public void onGlobalLayout() {
+            Rect rect = new Rect();
+            // 获取当前页面窗口的显示范围
+            getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            int screenHeight = ScreenUtils.getScreenHeight(SourceEditActivity.this);
+            int keyboardHeight = screenHeight - rect.bottom; // 输入法的高度
+            boolean preShowing = mIsSoftKeyBoardShowing;
+            if (Math.abs(keyboardHeight) > screenHeight / 5) {
+                mIsSoftKeyBoardShowing = true; // 超过
+                scrollContent.setPadding(0, 0, 0, POP_TOOL_HEIGHT);
+                showKeyboardTopPopupWindow();
+                if (!preShowing) {
+                    scrollContent.post(() -> scrollContent.scrollBy(0, POP_TOOL_HEIGHT));
+                }
+            } else {
+                mIsSoftKeyBoardShowing = false;
+                scrollContent.setPadding(0, 0, 0, 0);
+                if (preShowing) {
+                    closePopupWindow();
+                    scrollContent.post(() -> {
+                        View contentView = scrollContent.getChildAt(0);
+                        if (contentView.getMeasuredHeight() - POP_TOOL_HEIGHT > scrollContent.getScrollY() + scrollContent.getHeight()) {
+                            scrollContent.scrollBy(0, -POP_TOOL_HEIGHT);
+                        }
+                    });
+                }
+            }
+        }
     }
 }

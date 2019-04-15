@@ -6,9 +6,17 @@
     <color name="colorPrimary">#363636</color>
     <color name="colorPrimaryDark">#363636</color>
 
+    <color name="colorReadBar">#363636</color>
+    <color name="colorReadBarText">#f3f3f3</color>
+    <color name="colorReadProgressThumb">#ffffff</color>
+    <color name="colorReadProgressBack">#5f5b5a</color>
+
     <color name="btn_bg_press">#454545</color>
     <color name="btn_bg_press_2">#303030</color>
-    <color name="btn_bg_press_tp">#66000000</color>
+    <color name="btn_bg_press_tp">#66454545</color>
+
+    <color name="tv_tag_nor">#515151</color>
+    <color name="tv_tag_press">#66454545</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#565656</color>

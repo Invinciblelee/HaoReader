@@ -8,10 +8,14 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -37,7 +41,7 @@ public class ReadBottomStatusBar extends FrameLayout {
     @BindView(R.id.ll_battery_time)
     LinearLayout batteryTimeView;
     @BindView(R.id.batteryProgress)
-    ProgressBar batteryProgress;
+    BatteryView batteryProgress;
     @BindView(R.id.tv_time)
     TextView tvTime;
     @BindView(R.id.tv_title)
@@ -46,6 +50,8 @@ public class ReadBottomStatusBar extends FrameLayout {
     TextView tvTitleLeft;
     @BindView(R.id.tv_chapter_index)
     TextView tvChapterIndex;
+    @BindView(R.id.line)
+    View lineView;
 
     private boolean showTimeBattery;
 
@@ -57,18 +63,12 @@ public class ReadBottomStatusBar extends FrameLayout {
     private int durChapter;
     private int chapterSize;
 
+    private final Runnable updatePaddingRunnable = this::updateTitlePadding;
 
     public ReadBottomStatusBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (!isInEditMode()) {
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(ScreenUtils.getStatusBarHeight(), MeasureSpec.EXACTLY);
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
 
     @Override
     protected void onFinishInflate() {
@@ -130,16 +130,13 @@ public class ReadBottomStatusBar extends FrameLayout {
     }
 
     public void updateTime() {
-        if (tvTime.getVisibility() == VISIBLE) {
-            String time = StringUtils.dateConvert(System.currentTimeMillis(), Constant.FORMAT_TIME);
-            tvTime.setText(time);
-        }
+        String time = StringUtils.dateConvert(System.currentTimeMillis(), Constant.FORMAT_TIME);
+        tvTime.setText(time);
     }
 
     public void updateBattery(int batteryLevel) {
-        this.batteryLevel = batteryLevel;
-
-        if (batteryProgress.getVisibility() == VISIBLE) {
+        if(batteryLevel != 0) {
+            this.batteryLevel = batteryLevel;
             batteryProgress.setProgress(batteryLevel);
         }
     }
@@ -150,11 +147,11 @@ public class ReadBottomStatusBar extends FrameLayout {
         this.durPage = durPage;
         this.pageSize = durPageSize;
 
-        if (showTimeBattery) {
-            tvTitle.setText(formatTitle(durChapterName, durPage, durPageSize));
-        } else {
-            tvTitleLeft.setText(formatTitle(durChapterName, durPage, durPageSize));
-        }
+        tvTitle.setText(formatTitle(durChapterName, durPage, durPageSize));
+        tvTitleLeft.setText(tvTitle.getText());
+
+        removeCallbacks(updatePaddingRunnable);
+        post(updatePaddingRunnable);
     }
 
     public void updateChapterIndex(int durChapter, int durChapterSize) {
@@ -162,6 +159,9 @@ public class ReadBottomStatusBar extends FrameLayout {
         this.chapterSize = durChapterSize;
 
         tvChapterIndex.setText(String.format(Locale.getDefault(), "%d/%d章", durChapter, durChapterSize));
+
+        removeCallbacks(updatePaddingRunnable);
+        post(updatePaddingRunnable);
     }
 
     public void updateTextColor(int color) {
@@ -169,16 +169,11 @@ public class ReadBottomStatusBar extends FrameLayout {
         tvTitle.setTextColor(color);
         tvTitleLeft.setTextColor(color);
         tvChapterIndex.setTextColor(color);
+        lineView.setBackgroundColor(color);
     }
 
     public void updateBatteryColor(int color) {
-        AppCompat.setTint(batteryProgress.getBackground(), color);
-
-        LayerDrawable drawable = (LayerDrawable) batteryProgress.getProgressDrawable();
-        GradientDrawable background = (GradientDrawable) drawable.findDrawableByLayerId(android.R.id.background);
-        background.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-        ClipDrawable progressDrawable = (ClipDrawable) drawable.findDrawableByLayerId(android.R.id.progress);
-        progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        batteryProgress.setColor(color);
     }
 
     public void updateTextTypeface(String fontPath, boolean bold) {
@@ -215,11 +210,22 @@ public class ReadBottomStatusBar extends FrameLayout {
         updateTextTypeface(readConfig.getFontPath(), readConfig.getTextBold());
         setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
         updateBatteryColor(readConfig.getTextColor());
+        batteryProgress.setShowBatteryNumber(readConfig.getShowBatteryNumber());
+        lineView.setVisibility(readConfig.getShowBottomLine() ? View.VISIBLE : View.GONE);
     }
 
     public void updatePadding() {
         ReadBookControl readConfig = ReadBookControl.getInstance();
         setPadding(ScreenUtils.dpToPx(readConfig.getPaddingLeft()), 0, ScreenUtils.dpToPx(readConfig.getPaddingRight()), 0);
+    }
+
+    private void updateTitlePadding() {
+        final int extraOffset = ScreenUtils.dpToPx(16);
+        int left = batteryTimeView.getWidth();
+        int right = tvChapterIndex.getWidth();
+        final int horPadding = Math.max(left, right) + extraOffset;
+        tvTitle.setPaddingRelative(horPadding, 0, horPadding, 0);
+        tvTitleLeft.setPaddingRelative(0, 0, right + extraOffset, 0);
     }
 
     public void updateChapterInfo(BookShelfBean bookShelfBean, int durPageSize) {
@@ -239,24 +245,6 @@ public class ReadBottomStatusBar extends FrameLayout {
         if (TextUtils.isEmpty(titleStr)) {
             return "";
         }
-
-        int maxLength = 14;
-        ReadBookControl readBookControl = ReadBookControl.getInstance();
-        if (!showTimeBattery) {
-            maxLength = 16;
-        } else if (readBookControl.getPaddingLeft() > 30 || readBookControl.getPaddingRight() > 30) {
-            maxLength = 10;
-        }
-
-        StringBuilder title = new StringBuilder();
-        if (titleStr.length() > maxLength) {
-            title.append(titleStr.substring(0, maxLength / 2))
-                    .append("\u2026")
-                    .append(titleStr.substring(titleStr.length() - maxLength / 2, titleStr.length()));
-        } else {
-            title.append(titleStr);
-        }
-        title.append(String.format(Locale.getDefault(), " (%d/%d)", durPageSize == 0 ? 1 : durPage, durPageSize == 0 ? 1 : durPageSize));
-        return title.toString();
+        return titleStr + String.format(Locale.getDefault(), " (%d/%d)", durPageSize == 0 ? 1 : durPage, durPageSize == 0 ? 1 : durPageSize);
     }
 }

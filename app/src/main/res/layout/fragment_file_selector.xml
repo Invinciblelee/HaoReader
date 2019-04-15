@@ -25,6 +25,7 @@
             app:logo="@drawable/ic_directory_parent"
             app:popupTheme="@style/AppTheme.PopupMenu"
             app:title="选择文件"
+            app:subtitle="/"
             app:titleMarginStart="25dp"/>
 
         <Space

@@ -1,40 +1,62 @@
 package com.monke.monkeybook.help;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import com.monke.basemvplib.CookieStore;
+import com.monke.monkeybook.bean.CookieBean;
+import com.monke.monkeybook.dao.CookieBeanDao;
+import com.monke.monkeybook.dao.DbHelper;
 
-public class CookieHelper {
+public class CookieHelper implements CookieStore {
     private volatile static CookieHelper mInstance;
-    private SharedPreferences preferences;
 
-    private CookieHelper(Context context) {
-        preferences = context.getSharedPreferences("COOKIES", 0);
+    private CookieHelper() {
     }
 
-    public static CookieHelper get(Context context) {
+    public static CookieHelper get() {
         if (mInstance == null) {
             synchronized (AppConfigHelper.class) {
                 if (mInstance == null) {
-                    mInstance = new CookieHelper(context);
+                    mInstance = new CookieHelper();
                 }
             }
         }
         return mInstance;
     }
 
+    @Override
     public void setCookie(String url, String cookie) {
-        preferences.edit().putString(url, cookie).apply();
+        try {
+            CookieBean cookieBean = new CookieBean(url, cookie);
+            DbHelper.getInstance().getDaoSession().getCookieBeanDao().insertOrReplace(cookieBean);
+        }catch (Exception ignore){
+        }
     }
 
+    @Override
     public String getCookie(String url) {
-        return preferences.getString(url, "");
+        try {
+            CookieBean cookieBean = DbHelper.getInstance().getDaoSession().getCookieBeanDao().load(url);
+            return cookieBean == null ? "" : cookieBean.getCookie();
+        }catch (Exception ignore){
+        }
+        return "";
     }
 
+    @Override
     public void removeCookie(String url) {
-        preferences.edit().remove(url).apply();
+        try {
+            DbHelper.getInstance().getDaoSession().queryBuilder(CookieBean.class)
+                    .where(CookieBeanDao.Properties.Url.eq(url))
+                    .buildDelete();
+        }catch (Exception ignore){
+        }
     }
 
+    @Override
     public void clearCookies() {
-        preferences.edit().clear().apply();
+        try {
+            DbHelper.getInstance().getDaoSession().delete(CookieBean.class);
+        }catch (Exception ignore){
+
+        }
     }
 }

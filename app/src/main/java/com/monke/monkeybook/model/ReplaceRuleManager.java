@@ -6,7 +6,6 @@ import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.ReplaceRuleBeanDao;
-import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 
@@ -30,17 +29,22 @@ public class ReplaceRuleManager extends BaseModelImpl {
 
     }
 
-    private static class InstanceHolder {
-        private static final ReplaceRuleManager SINGLETON = new ReplaceRuleManager();
-    }
+    private volatile static ReplaceRuleManager mInstance;
 
-    public static ReplaceRuleManager getInstance() {
-        return InstanceHolder.SINGLETON;
+    public static ReplaceRuleManager getInstance(){
+        if(mInstance == null){
+            synchronized (ReplaceRuleManager.class){
+                if(mInstance == null){
+                    mInstance = new ReplaceRuleManager();
+                }
+            }
+        }
+        return mInstance;
     }
 
     public List<ReplaceRuleBean> getEnabled() {
         if (replaceRuleBeansEnabled == null) {
-            replaceRuleBeansEnabled = DbHelper.getInstance().getmDaoSession()
+            replaceRuleBeansEnabled = DbHelper.getInstance().getDaoSession()
                     .getReplaceRuleBeanDao().queryBuilder()
                     .where(ReplaceRuleBeanDao.Properties.Enable.eq(true))
                     .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
@@ -51,7 +55,7 @@ public class ReplaceRuleManager extends BaseModelImpl {
 
     public List<ReplaceRuleBean> getAll() {
         if (replaceRuleBeansAll == null) {
-            replaceRuleBeansAll = DbHelper.getInstance().getmDaoSession()
+            replaceRuleBeansAll = DbHelper.getInstance().getDaoSession()
                     .getReplaceRuleBeanDao().queryBuilder()
                     .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                     .list();
@@ -63,36 +67,36 @@ public class ReplaceRuleManager extends BaseModelImpl {
         if (replaceRuleBean.getSerialNumber() == 0) {
             replaceRuleBean.setSerialNumber(replaceRuleBeansAll.size() + 1);
         }
-        DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().insertOrReplace(replaceRuleBean);
+        DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().insertOrReplace(replaceRuleBean);
         refreshDataS();
     }
 
     public void delData(ReplaceRuleBean replaceRuleBean) {
-        DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
+        DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
         refreshDataS();
     }
 
     public void saveDataS(List<ReplaceRuleBean> replaceRuleBeans) {
         if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
-            DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().insertOrReplaceInTx(replaceRuleBeans);
+            DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().insertOrReplaceInTx(replaceRuleBeans);
             refreshDataS();
         }
     }
 
     public void delDataS(List<ReplaceRuleBean> replaceRuleBeans) {
         for (ReplaceRuleBean replaceRuleBean : replaceRuleBeans) {
-            DbHelper.getInstance().getmDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
+            DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
         }
         refreshDataS();
     }
 
     private void refreshDataS() {
-        replaceRuleBeansEnabled = DbHelper.getInstance().getmDaoSession()
+        replaceRuleBeansEnabled = DbHelper.getInstance().getDaoSession()
                 .getReplaceRuleBeanDao().queryBuilder()
                 .where(ReplaceRuleBeanDao.Properties.Enable.eq(true))
                 .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                 .list();
-        replaceRuleBeansAll = DbHelper.getInstance().getmDaoSession()
+        replaceRuleBeansAll = DbHelper.getInstance().getDaoSession()
                 .getReplaceRuleBeanDao().queryBuilder()
                 .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                 .list();

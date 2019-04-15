@@ -3,7 +3,7 @@ package com.monke.monkeybook.presenter;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
@@ -17,6 +17,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
@@ -24,6 +25,7 @@ import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,6 +41,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         //搜索引擎初始化
         searchBookModel = new SearchBookModel(context)
                 .listener(this)
+                .useMy716(AppConfigHelper.get().getBoolean("useMy716", true))
                 .setup();
     }
 
@@ -61,6 +64,13 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                     }
                 }
             }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && keyWord == null && Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
+                String type = intent.getType();
+                if ("text/plain".equals(type)) {
+                    keyWord = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
+                }
+            }
         }
 
         mView.searchBook(keyWord);
@@ -71,7 +81,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         final int type = SearchBookPresenterImpl.BOOK;
         final String content = mView.getEdtContent();
         Observable.create((ObservableOnSubscribe<SearchHistoryBean>) e -> {
-            List<SearchHistoryBean> data = DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao()
+            List<SearchHistoryBean> data = DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao()
                     .queryBuilder()
                     .where(SearchHistoryBeanDao.Properties.Type.eq(type), SearchHistoryBeanDao.Properties.Content.eq(content))
                     .limit(1)
@@ -80,10 +90,10 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             if (null != data && data.size() > 0) {
                 searchHistoryBean = data.get(0);
                 searchHistoryBean.setDate(System.currentTimeMillis());
-                DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao().update(searchHistoryBean);
+                DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().update(searchHistoryBean);
             } else {
                 searchHistoryBean = new SearchHistoryBean(type, content, System.currentTimeMillis());
-                DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao().insert(searchHistoryBean);
+                DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().insert(searchHistoryBean);
             }
             e.onNext(searchHistoryBean);
         }).subscribeOn(Schedulers.io())
@@ -129,7 +139,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Override
     public void cleanSearchHistory(SearchHistoryBean searchHistoryBean) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao().delete(searchHistoryBean);
+            DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().delete(searchHistoryBean);
             e.onNext(true);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -152,7 +162,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Override
     public void querySearchHistory(String query) {
         Observable.create((ObservableOnSubscribe<List<SearchHistoryBean>>) e -> {
-            List<SearchHistoryBean> data = DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao()
+            List<SearchHistoryBean> data = DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao()
                     .queryBuilder()
                     .where(SearchHistoryBeanDao.Properties.Type.eq(SearchBookPresenterImpl.BOOK), SearchHistoryBeanDao.Properties.Content.like("%" + query + "%"))
                     .orderDesc(SearchHistoryBeanDao.Properties.Date)
@@ -199,6 +209,12 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     }
 
     @Override
+    public void useMy716(Boolean bool) {
+        searchBookModel.useMy716(bool);
+        searchBookModel.notifySearchEngineChanged();
+    }
+
+    @Override
     public void searchSourceEmpty() {
         mView.showBookSourceEmptyTip();
     }
@@ -241,6 +257,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     public void searchBook(String searchKey) {
         mView.searchBook(searchKey);
     }
+
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
     public void sourceListChange(Boolean change) {
