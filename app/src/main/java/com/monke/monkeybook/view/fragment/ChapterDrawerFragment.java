@@ -118,9 +118,11 @@ public class ChapterDrawerFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = fragments[tab.getPosition()];
-                if (fragment instanceof ChapterListFragment) {
-                    ((ChapterListFragment) fragment).scrollToTarget();
+                if (tab.getPosition() == 0) {
+                    Fragment fragment = fragments[0];
+                    if (fragment instanceof ChapterListFragment) {
+                        ((ChapterListFragment) fragment).scrollToTarget();
+                    }
                 }
             }
         });

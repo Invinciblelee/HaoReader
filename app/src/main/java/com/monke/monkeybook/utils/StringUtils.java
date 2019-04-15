@@ -4,6 +4,8 @@ import android.util.Base64;
 
 import com.monke.monkeybook.MApplication;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -301,11 +303,13 @@ public class StringUtils {
 
     public static String getBaseUrl(String url) {
         if (url == null) return null;
-        int index = url.indexOf("/", 9);
-        if (index == -1) {
-            return url;
+        URI uri = URI.create(url);
+        URI effectiveURI = null;
+        try {
+            effectiveURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
+        } catch (URISyntaxException ignore) {
         }
-        return url.substring(0, index);
+        return effectiveURI == null ? null : effectiveURI.toString();
     }
 
     public static String valueOf(Object object) {
@@ -316,19 +320,6 @@ public class StringUtils {
         if (src == null || obj == null) return false;
         if (obj.length() > src.length()) return false;
         return src.substring(0, obj.length()).equalsIgnoreCase(obj);
-    }
-
-    public static boolean isJsonType(String str) {
-        boolean result = false;
-        if (!isEmpty(str)) {
-            str = str.trim();
-            if (str.startsWith("{") && str.endsWith("}")) {
-                result = true;
-            } else if (str.startsWith("[") && str.endsWith("]")) {
-                result = true;
-            }
-        }
-        return result;
     }
 
     public static boolean isTrimEmpty(String text) {

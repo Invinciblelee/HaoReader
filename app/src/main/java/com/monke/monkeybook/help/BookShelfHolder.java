@@ -41,6 +41,14 @@ public class BookShelfHolder {
         return mBook;
     }
 
+    public void clear() {
+        mBook = null;
+        if (mListeners != null) {
+            mListeners.clear();
+            mListeners = null;
+        }
+    }
+
     public void observe(Object object, OnDataChangedListener listener) {
         if (mListeners == null) {
             mListeners = new HashMap<>();

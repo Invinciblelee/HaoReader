@@ -3,12 +3,14 @@ package com.monke.monkeybook.widget.page;
 import android.text.Layout;
 import android.text.StaticLayout;
 
+import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
+import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.IOUtils;
@@ -27,6 +29,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 class ChapterProvider {
@@ -192,6 +195,7 @@ class ChapterProvider {
             if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
                 WebBookModelImpl.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
                         .subscribeOn(mScheduler)
+                        .doOnNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
                         .timeout(30, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<BookContentBean>() {

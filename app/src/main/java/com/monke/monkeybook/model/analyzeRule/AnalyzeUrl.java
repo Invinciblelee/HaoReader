@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.monke.monkeybook.utils.StringUtils;
@@ -36,19 +37,20 @@ public class AnalyzeUrl {
     private String charCode;
     private UrlMode urlMode = UrlMode.DEFAULT;
 
-    AnalyzeUrl(String urlRule) throws Exception {
-        this(urlRule, null, null, null);
+    AnalyzeUrl(String urlRule, String baseUrl) throws Exception {
+        this(urlRule, null, null, null, baseUrl);
     }
 
-    public AnalyzeUrl(String ruleUrl, Map<String, String> headerMap) throws Exception {
-        this(ruleUrl, null, null, headerMap);
+    public AnalyzeUrl(String ruleUrl, Map<String, String> headerMap, String baseUrl) throws Exception {
+        this(ruleUrl, null, null, headerMap, baseUrl);
     }
 
-    public AnalyzeUrl(String ruleUrl, Integer page, Map<String, String> headerMap) throws Exception {
-        this(ruleUrl, "", page, headerMap);
+    public AnalyzeUrl(String ruleUrl, Integer page, Map<String, String> headerMap, String baseUrl) throws Exception {
+        this(ruleUrl, "", page, headerMap, baseUrl);
     }
 
-    public AnalyzeUrl(String ruleUrl, String key, Integer page, Map<String, String> headerMap) throws Exception {
+    public AnalyzeUrl(String ruleUrl, String key, Integer page, Map<String, String> headerMap, String baseUrl) throws Exception {
+        this.hostUrl = baseUrl;
         //解析Header
         ruleUrl = analyzeHeader(ruleUrl, headerMap);
         //替换关键字
@@ -171,9 +173,13 @@ public class AnalyzeUrl {
             urlPath = ruleUrl;
         } else {
             url = ruleUrl;
-            hostUrl = StringUtils.getBaseUrl(ruleUrl);
-            urlPath = ruleUrl.substring(hostUrl.length());
+            hostUrl = baseUrl;
+            if (hostUrl != null) {
+                urlPath = ruleUrl.substring(hostUrl.length());
+            }
         }
+
+        Log.e("TAG", toString());
     }
 
     public String getHost() {

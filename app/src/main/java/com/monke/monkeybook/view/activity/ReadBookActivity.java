@@ -764,6 +764,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mPresenter.getBookShelf().upDurChapterName();
         mPresenter.getBookShelf().upLastChapterName();
         showHideUrlViews();
+        BookShelfHolder.get().post(mPresenter.getBookShelf());
     }
 
     @Override
@@ -779,7 +780,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mPresenter.getBookShelf().setDurChapterPage(pageIndex);
         mPresenter.getBookShelf().upDurChapterName();
         mPresenter.saveProgress();
-        BookShelfHolder.get().post(mPresenter.getBookShelf());
 
         readStatusBar.updateChapterInfo(mPresenter.getBookShelf(), pageSize);
 
@@ -910,6 +910,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 if (chapterFragment != null && !drawerLayout.isDrawerOpen(GravityCompat.START) && newState == DrawerLayout.STATE_SETTLING) {
                     boolean hideStatusBar = readBookControl.getHideStatusBar();
                     chapterFragment.setPaddingTop(hideStatusBar ? 0 : ScreenUtils.getStatusBarHeight());
+                    BookShelfHolder.get().post(mPresenter.getBookShelf());
                 }
             }
         });
@@ -1437,7 +1438,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Boolean mo = moDialogHUD == null ? false : moDialogHUD.onKeyDown(keyCode, event);
+        boolean mo = moDialogHUD == null ? false : moDialogHUD.onKeyDown(keyCode, event);
         if (mo) {
             return true;
         } else {
@@ -1571,6 +1572,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             mPageLoader.closeBook();
             mPageLoader = null;
         }
+
+        BookShelfHolder.get().clear();
     }
 
     /**
