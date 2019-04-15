@@ -4,7 +4,6 @@ package com.monke.monkeybook.view.adapter;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.monke.monkeybook.R;
@@ -23,6 +22,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
     private BookShelfBean mBook;
     private int mIndex = -1;
+
 
     public ChapterListAdapter(Context context) {
         super(context);
@@ -46,9 +46,9 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
     public void setBook(BookShelfBean book) {
         if (book != null) {
+            boolean changed = mBook == null || !TextUtils.equals(mBook.getTag(), book.getTag());
             this.mBook = book;
-
-            if (getItemCount() == 0) {
+            if (changed) {
                 setDataList(mBook.getChapterList());
             }
         }
@@ -69,23 +69,37 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
                 setBoldText(holder, true);
             } else if (type == 1) {
                 setTextTint(holder, R.color.color_chapter_item);
+                if (isCached(chapterBean)) {
+                    setBoldText(holder, true);
+                }
             } else if (type == 2) {
                 setTextTint(holder, R.color.colorAccent);
+                if (isCached(chapterBean)) {
+                    setBoldText(holder, true);
+                }
             }
             return;
         }
+        holder.tvName.setText(FormatWebText.trim(chapterBean.getDurChapterName()));
+
         if (chapterBean.getDurChapterIndex() == mIndex) {
             setTextTint(holder, R.color.colorAccent);
         } else {
             setTextTint(holder, R.color.color_chapter_item);
         }
-        holder.tvName.setText(FormatWebText.trim(chapterBean.getDurChapterName()));
-        if (TextUtils.equals(mBook.getTag(), BookShelfBean.LOCAL_TAG) || chapterBean.getHasCache(mBook.getBookInfoBean())) {
+        if (isCached(chapterBean)) {
             setBoldText(holder, true);
         } else {
             setBoldText(holder, false);
         }
         holder.llName.setOnClickListener(v -> callOnItemClickListener(chapterBean));
+    }
+
+    private boolean isCached(ChapterBean chapterBean) {
+        if (chapterBean == null) {
+            return false;
+        }
+        return TextUtils.equals(mBook.getTag(), BookShelfBean.LOCAL_TAG) || chapterBean.getHasCache(mBook.getBookInfoBean());
     }
 
     private void setBoldText(ThisViewHolder holder, boolean bold) {

@@ -135,7 +135,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CHAPTER_CHANGE)})
     public void chapterChange(BookContentBean bookContentBean) {
         if (bookShelf != null && bookShelf.getNoteUrl().equals(bookContentBean.getNoteUrl())) {
-            getAdapter().upChapter(bookContentBean.getDurChapterIndex());
+            rvList.post(() -> getAdapter().upChapter(bookContentBean.getDurChapterIndex()));
         }
     }
 }

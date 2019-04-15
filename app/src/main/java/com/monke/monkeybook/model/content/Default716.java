@@ -186,6 +186,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
                 bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
                 bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
+                bookContentBean.setTag(chapterBean.getTag());
                 if (chapterJson.has("isVip")) {
                     if (chapterJson.get("isVip").getAsBoolean()) {
                         bookContentBean.setDurChapterContent("当前章节为VIP章节，暂时无法查看");

@@ -50,7 +50,7 @@ public abstract class PageLoader {
     // 默认的显示参数配置
     private static final int DEFAULT_TIP_SIZE = 18;
     private static final int DEFAULT_TIP_INTERVAL = 8;
-    private static final int EXTRA_VERTICAL_SPACING = 4;
+    private static final int EXTRA_VERTICAL_SPACING = 8;
     private static final int BOTTOM_STATUS_HEIGHT = 24;
 
     private final Context mContext;
@@ -652,7 +652,7 @@ public abstract class PageLoader {
 
         drawBackground(canvas);
 
-        if (mCurChapter.isEmpty()) {
+        if (getCurrentStatus() != STATUS_FINISH) {
             //绘制字体
             String tip = mCurChapter.getErrorMsg();
             //将提示语句放到正中间
@@ -856,7 +856,6 @@ public abstract class PageLoader {
             if (callback != null) {
                 callback.onChapterPrepared();
             }
-
             preload();
         } else {
             setCurrentStatus(STATUS_LOADING);

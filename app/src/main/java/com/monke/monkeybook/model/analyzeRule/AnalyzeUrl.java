@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.monke.monkeybook.utils.StringUtils;
@@ -178,8 +177,6 @@ public class AnalyzeUrl {
                 urlPath = ruleUrl.substring(hostUrl.length());
             }
         }
-
-        Log.e("TAG", toString());
     }
 
     public String getHost() {

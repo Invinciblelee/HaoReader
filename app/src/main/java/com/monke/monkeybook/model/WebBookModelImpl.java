@@ -22,7 +22,6 @@ import java.util.ListIterator;
 import java.util.Objects;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
 
 public class WebBookModelImpl implements IWebBookModel {
 
@@ -81,13 +80,7 @@ public class WebBookModelImpl implements IWebBookModel {
         IStationBookModel bookModel = getBookSourceModel(chapter.getTag());
         if (bookModel != null) {
             return bookModel.getBookContent(chapter)
-                    .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean))
-                    .doOnError(new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
-                            throwable.printStackTrace();
-                        }
-                    });
+                    .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
         } else
             return Observable.create(e -> {
                 e.onNext(new BookContentBean());
@@ -133,7 +126,7 @@ public class WebBookModelImpl implements IWebBookModel {
         IStationBookModel bookModel = getBookSourceModel(tag);
         if (bookModel instanceof IAudioBookChapterModel) {
             return ((IAudioBookChapterModel) bookModel).processAudioChapter(chapter);
-        }else {
+        } else {
             return Observable.error(new IllegalAccessException("the model is not IAudioBookChapterModel."));
         }
     }

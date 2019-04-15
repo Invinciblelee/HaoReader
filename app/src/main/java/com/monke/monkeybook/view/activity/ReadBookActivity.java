@@ -1248,8 +1248,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPresenter.getBookShelf() != null) {
             ensureProgressHUD();
             moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
-                mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
-                mPresenter.changeBookSource(searchBookBean);
+                mHandler.post(() -> {
+                    mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
+                    mPresenter.changeBookSource(searchBookBean);
+                });
             });
         }
     }
