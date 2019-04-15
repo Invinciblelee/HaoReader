@@ -72,12 +72,6 @@
 -keep public class com.android.vending.licensing.ILicensingService
 
 
-# 保留androidx下的所有类及其内部类
--keep class androidx.** {*;}
-
-# 保留继承的
--keep public class * extends androidx.**
-
 # 保留R下面的资源
 -keep class **.R$* {*;}
 
@@ -153,6 +147,14 @@
 #    public static int d(...);
 #    public static int e(...);
 #}
+### androidx
+-keep class com.google.android.material.** {*;}
+-keep class androidx.** {*;}
+-keep public class * extends androidx.**
+-keep interface androidx.** {*;}
+-dontwarn com.google.android.material.**
+-dontnote com.google.android.material.**
+-dontwarn androidx.**
 
 ### greenDAO 3
 -keep class org.greenrobot.greendao.**{ *; }
@@ -209,20 +211,9 @@ public static java.lang.String TABLENAME;
 -keep class sun.reflect.**{*;}
 -dontwarn sun.reflect.**
 
-## Rhino
--keep class javax.script.** { *; }
--keep class com.sun.script.javascript.** { *; }
--keep class org.mozilla.javascript.** { *; }
--dontwarn org.mozilla.javascript.**
--dontwarn sun.**
+## J2V8
+-keep class com.eclipsesource.v8.**{*;}
+-dontwarn com.eclipsesource.v8.**
 
--keepclassmembers class * {
-    public <init> (org.json.JSONObject);
-}
--keep public class com.kunfei.bookshelf.R$*{
-    public static final int *;
-}
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
+-keep class com.monke.monkeybook.model.**{*;}
+-dontwarn com.monke.monkeybook.model.**

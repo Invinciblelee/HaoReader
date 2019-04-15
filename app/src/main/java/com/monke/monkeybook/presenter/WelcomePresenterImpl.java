@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.monke.basemvplib.BasePresenterImpl;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -118,7 +116,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(MApplication.getInstance(), "文本打开失败！", Toast.LENGTH_SHORT).show();
+                        mView.toast("文本打开失败");
                         mView.finish();
                     }
                 });

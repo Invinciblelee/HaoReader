@@ -29,7 +29,7 @@ public class AnalyzeHeaders {
 
         String sourceUrl = bookSource == null ? null : bookSource.getBookSourceUrl();
         if (!isEmpty(sourceUrl)) {
-            String cookie = CookieHelper.get(MApplication.getInstance()).getCookie(sourceUrl);
+            String cookie = CookieHelper.get().getCookie(sourceUrl);
             if (!isEmpty(cookie)) {
                 headerMap.put("Cookie", cookie);
             }
@@ -47,7 +47,7 @@ public class AnalyzeHeaders {
     }
 
     private static String getDefaultUserAgent() {
-        return AppConfigHelper.get(MApplication.getInstance()).getString(MApplication.getInstance().getString(R.string.pk_user_agent),
+        return AppConfigHelper.get().getString(MApplication.getInstance().getString(R.string.pk_user_agent),
                 MApplication.getInstance().getString(R.string.pv_user_agent));
     }
 }

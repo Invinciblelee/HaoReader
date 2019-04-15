@@ -1,23 +1,12 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,6 +14,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Switch;
 
+import com.google.android.material.navigation.NavigationView;
+import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -41,10 +32,23 @@ import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
+import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -106,6 +110,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         } else {
             showFragment(this.group);
         }
+
     }
 
     @Override
@@ -182,7 +187,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerRight.setOnItemClickListener(getAdapterListener());
         drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
 
-        bookShelfMenu.setOnActionMenuClickListener((index, menuView) -> upGroup(index));
+        bookShelfMenu.setOnActionMenuClickListener((index, menuView) -> {
+            bookShelfMenu.postDelayed(() -> upGroup(index), 400L);
+        });
 
         versionUpRun();
     }
@@ -389,13 +396,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
 
         if (!to.isAdded()) {
-            transaction.add(R.id.book_list_frame, to, getString(BOOK_GROUPS[group]))
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .add(R.id.book_list_frame, to, getString(BOOK_GROUPS[group]))
                     .show(to)
                     .commitAllowingStateLoss();
-        }
-
-        if (to.isSupportHidden()) {
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        }else if (to.isSupportHidden()) {
+            transaction.setTransition(this.group > group ? FragmentTransaction.TRANSIT_FRAGMENT_OPEN : FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(to)
                     .commitAllowingStateLoss();
         }
@@ -403,9 +409,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     //侧边栏按钮
     private void setUpNavigationView() {
-        AppCompat.setNavigationViewLineStyle(drawerLeft, getResources().getColor(R.color.bg_divider_line), getResources().getDimensionPixelSize(R.dimen.line_height));
-        @SuppressLint("InflateParams") View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header, null);
-        drawerLeft.addHeaderView(headerView);
+        AppCompat.useCustomNavigationViewDivider(drawerLeft);
         Menu drawerMenu = drawerLeft.getMenu();
         swNightTheme = drawerMenu.findItem(R.id.action_night_theme).getActionView().findViewById(R.id.sw_night_theme);
         swNightTheme.setChecked(isNightTheme());
@@ -492,7 +496,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @AfterPermissionGranted(FILE_SELECT_RESULT)
     private void fileSelectResult() {
-        FileSelector.newInstance(false, true, false, new String[]{"txt"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelector.newInstance("选择文件", false, true, false, new String[]{"txt"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override
             public void onMultiplyChoice(List<String> paths) {
                 mPresenter.importBooks(paths);
@@ -566,6 +570,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         if (fragment != null) {
             fragment.addBookShelf(bookShelfBean);
         }
+        upGroup(bookShelfBean.getGroup());
+        bookShelfMenu.setSelection(this.group);
     }
 
     @Override

@@ -24,16 +24,14 @@ android {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.12'
     //support
-    api 'androidx.core:core:1.1.0-alpha03'
-    api 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    api 'androidx.core:core:1.1.0-alpha05'
+    api 'androidx.appcompat:appcompat:1.1.0-alpha04'
     //RxAndroid
     api 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    api 'io.reactivex.rxjava2:rxjava:2.2.4'
+    api 'io.reactivex.rxjava2:rxjava:2.2.6'
     //Retrofit
-    api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.14.0'
     api 'com.squareup.retrofit2:retrofit:2.5.0'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
     api 'com.squareup.retrofit2:converter-scalars:2.5.0'
@@ -43,9 +41,6 @@ dependencies {
     }
     //J_SOUP
     api 'org.jsoup:jsoup:1.11.3'
-    api 'cn.wanghaomiao:JsoupXpath:2.2'
+    api 'cn.wanghaomiao:JsoupXpath:2.3.2'
     api 'com.jayway.jsonpath:json-path:2.4.0'
-    api('io.apisense:rhino-android:1.0') {
-        exclude group: 'org.mozilla'
-    }
 }

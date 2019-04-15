@@ -2,7 +2,6 @@
 package com.monke.monkeybook.presenter;
 
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -10,7 +9,6 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -97,17 +95,17 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(Boolean value) {
                         if (value) {
                             mView.restoreSuccess();
-                            Toast.makeText(mView.getContext(), R.string.restore_success, Toast.LENGTH_LONG).show();
+                            mView.toast(R.string.restore_success);
                         } else {
                             mView.dismissHUD();
-                            Toast.makeText(mView.getContext(), R.string.restore_fail, Toast.LENGTH_LONG).show();
+                            mView.toast(R.string.restore_fail);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        Toast.makeText(mView.getContext(), R.string.restore_fail, Toast.LENGTH_LONG).show();
+                        mView.toast(R.string.restore_fail);
                     }
                 });
     }
@@ -117,7 +115,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
         if (TextUtils.isEmpty(bookUrl.trim())) return;
         mView.showLoading("正在添加书籍");
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
-            BookInfoBean temp = DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().queryBuilder()
+            BookInfoBean temp = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
                     .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookUrl)).build().unique();
             if (temp != null) {
                 //onNext不能为null
@@ -125,6 +123,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             } else {
                 URL url = new URL(bookUrl);
                 BookShelfBean bookShelfBean = new BookShelfBean();
+                bookShelfBean.setGroup(0);
                 bookShelfBean.setTag(String.format("%s://%s", url.getProtocol(), url.getHost()));
                 bookShelfBean.setNoteUrl(url.toString());
                 bookShelfBean.setDurChapter(0);
@@ -143,14 +142,14 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                             getBook(bookShelfBean);
                         } else {
                             mView.dismissHUD();
-                            Toast.makeText(mView.getContext(), "已在书架中", Toast.LENGTH_SHORT).show();
+                            mView.toast("该书已在书架中");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        Toast.makeText(mView.getContext(), "网址格式错误", Toast.LENGTH_SHORT).show();
+                        mView.toast("网址格式错误");
                     }
                 });
     }
@@ -170,13 +169,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
                             } else {
-                                Toast.makeText(MApplication.getInstance(), "移出书架失败!", Toast.LENGTH_SHORT).show();
+                                mView.toast("移出书架失败");
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(MApplication.getInstance(), "移出书架失败!", Toast.LENGTH_SHORT).show();
+                            mView.toast("移出书架失败");
                         }
                     });
         }
@@ -200,7 +199,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(mView.getContext(), "书架清空失败", Toast.LENGTH_SHORT).show();
+                        mView.toast("书架清空失败");
                         mView.dismissHUD();
                     }
                 });
@@ -218,13 +217,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
-                        Toast.makeText(mView.getContext(), "缓存清除成功", Toast.LENGTH_SHORT).show();
+                        mView.toast("缓存清除成功");
                         mView.dismissHUD();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(mView.getContext(), "缓存清除失败", Toast.LENGTH_SHORT).show();
+                        mView.toast("缓存清除失败");
                         mView.dismissHUD();
                     }
                 });
@@ -273,18 +272,18 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(BookShelfBean value) {
                         mView.dismissHUD();
                         if (value.getBookInfoBean().getChapterListUrl() == null) {
-                            Toast.makeText(mView.getContext(), "添加书籍失败", Toast.LENGTH_SHORT).show();
+                            mView.toast("添加书籍失败");
                         } else {
                             //成功   //发送RxBus
                             RxBus.get().post(RxBusTag.HAD_ADD_BOOK, value);
-                            Toast.makeText(mView.getContext(), "添加书籍成功", Toast.LENGTH_SHORT).show();
+                            mView.toast("添加书籍成功");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        Toast.makeText(mView.getContext(), "添加书籍失败", Toast.LENGTH_SHORT).show();
+                        mView.toast("添加书籍失败");
                     }
                 });
     }

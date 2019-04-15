@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.impl;
 
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
 
 import io.reactivex.Scheduler;
@@ -23,7 +23,7 @@ public interface IDownloadTask {
 
     void onDownloadPrepared(DownloadBookBean downloadBook);
 
-    void onDownloadProgress(String bookName, ChapterListBean chapterBean);
+    void onDownloadProgress(String bookName, ChapterBean chapterBean);
 
     void onDownloadChange(DownloadBookBean downloadBook);
 

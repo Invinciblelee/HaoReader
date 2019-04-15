@@ -11,9 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.utils.BitmapUtil;
-import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.widget.page.PageMode;
 
 import java.util.ArrayList;
@@ -21,10 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+
 public class ReadBookControl {
     private static final int DEFAULT_BG = 1;
 
-    private List<Map<String, Integer>> textDrawable;
+    private final List<Map<String, Integer>> textDrawables;
+    private final List<Map<String, Integer>> pageSpaces;
     private int animSpeed;
     private int speechRate;
     private boolean speechRateFollowSys;
@@ -52,11 +53,89 @@ public class ReadBookControl {
     private Boolean showTimeBattery;
     private String lastNoteUrl;
     private Boolean darkStatusIcon;
+    private Boolean showBatteryNumber;
+    private Boolean showBottomLine;
+    private int spaceModeIndex;
     private int screenTimeOut;
     private int paddingLeft;
     private int paddingTop;
     private int paddingRight;
     private int paddingBottom;
+
+    {
+        textDrawables = new ArrayList<>();
+        Map<String, Integer> temp1 = new HashMap<>();
+        temp1.put("textColor", Color.parseColor("#3E3D3B"));
+        temp1.put("bgIsColor", 1);
+        temp1.put("textBackground", Color.parseColor("#F3F3F3"));
+        temp1.put("darkStatusIcon", 1);
+        textDrawables.add(temp1);
+
+        Map<String, Integer> temp2 = new HashMap<>();
+        temp2.put("textColor", Color.parseColor("#5E432E"));
+        temp2.put("bgIsColor", 1);
+        temp2.put("textBackground", Color.parseColor("#C6BAA1"));
+        temp2.put("darkStatusIcon", 1);
+        textDrawables.add(temp2);
+
+        Map<String, Integer> temp3 = new HashMap<>();
+        temp3.put("textColor", Color.parseColor("#22482C"));
+        temp3.put("bgIsColor", 1);
+        temp3.put("textBackground", Color.parseColor("#E1F1DA"));
+        temp3.put("darkStatusIcon", 1);
+        textDrawables.add(temp3);
+
+        Map<String, Integer> temp4 = new HashMap<>();
+        temp4.put("textColor", Color.parseColor("#FFFFFF"));
+        temp4.put("bgIsColor", 1);
+        temp4.put("textBackground", Color.parseColor("#015A86"));
+        temp4.put("darkStatusIcon", 0);
+        textDrawables.add(temp4);
+
+        Map<String, Integer> temp5 = new HashMap<>();
+        temp5.put("textColor", Color.parseColor("#a3a3a3"));
+        temp5.put("bgIsColor", 1);
+        temp5.put("textBackground", Color.parseColor("#2a2a2a"));
+        temp5.put("darkStatusIcon", 0);
+        textDrawables.add(temp5);
+
+        pageSpaces = new ArrayList<>();
+        Map<String, Integer> temp6 = new HashMap<>();
+        temp6.put("lineSpacing", 4);
+        temp6.put("paragraphSpacing", 8);
+        temp6.put("paddingLeft", 24);
+        temp6.put("paddingTop", 0);
+        temp6.put("paddingRight", 24);
+        temp6.put("paddingBottom", 0);
+        pageSpaces.add(temp6);
+
+        Map<String, Integer> temp7 = new HashMap<>();
+        temp7.put("lineSpacing", 8);
+        temp7.put("paragraphSpacing", 12);
+        temp7.put("paddingLeft", 24);
+        temp7.put("paddingTop", 0);
+        temp7.put("paddingRight", 24);
+        temp7.put("paddingBottom", 0);
+        pageSpaces.add(temp7);
+
+        Map<String, Integer> temp8 = new HashMap<>();
+        temp8.put("lineSpacing", 12);
+        temp8.put("paragraphSpacing", 24);
+        temp8.put("paddingLeft", 24);
+        temp8.put("paddingTop", 0);
+        temp8.put("paddingRight", 24);
+        temp8.put("paddingBottom", 0);
+        pageSpaces.add(temp8);
+
+        Map<String, Integer> temp9 = new HashMap<>();
+        temp9.put("lineSpacing", 6);
+        temp9.put("paragraphSpacing", 16);
+        temp9.put("paddingLeft", 24);
+        temp9.put("paddingTop", 0);
+        temp9.put("paddingRight", 24);
+        temp9.put("paddingBottom", 0);
+        pageSpaces.add(temp9);
+    }
 
     private SharedPreferences readPreference;
 
@@ -74,8 +153,7 @@ public class ReadBookControl {
     }
 
     private ReadBookControl() {
-        initTextDrawable();
-        readPreference = AppConfigHelper.get(MApplication.getInstance()).getPreferences();
+        readPreference = AppConfigHelper.get().getPreferences();
         this.hideStatusBar = readPreference.getBoolean("hide_status_bar", false);
         this.textSize = readPreference.getInt("textSize", 18);
         this.canClickTurn = readPreference.getBoolean("canClickTurn", true);
@@ -95,6 +173,8 @@ public class ReadBookControl {
         this.speechRate = readPreference.getInt("speechRate", 10);
         this.speechRateFollowSys = readPreference.getBoolean("speechRateFollowSys", true);
         this.showTimeBattery = readPreference.getBoolean("showTimeBattery", true);
+        this.showBatteryNumber = readPreference.getBoolean("showBatteryNumber", false);
+        this.showBottomLine = readPreference.getBoolean("showBottomLine", false);
         this.lastNoteUrl = readPreference.getString("lastNoteUrl", "");
         this.screenTimeOut = readPreference.getInt("screenTimeOut", 0);
         this.paddingLeft = readPreference.getInt("paddingLeft", 24);
@@ -102,49 +182,9 @@ public class ReadBookControl {
         this.paddingRight = readPreference.getInt("paddingRight", 24);
         this.paddingBottom = readPreference.getInt("paddingBottom", 0);
         this.pageMode = readPreference.getInt("pageMode", 0);
+        this.spaceModeIndex = readPreference.getInt("spaceModeIndex", 3);
 
         initPageConfiguration();
-    }
-
-    //阅读背景
-    private void initTextDrawable() {
-        if (null == textDrawable) {
-            textDrawable = new ArrayList<>();
-            Map<String, Integer> temp1 = new HashMap<>();
-            temp1.put("textColor", Color.parseColor("#3E3D3B"));
-            temp1.put("bgIsColor", 1);
-            temp1.put("textBackground", Color.parseColor("#F3F3F3"));
-            temp1.put("darkStatusIcon", 1);
-            textDrawable.add(temp1);
-
-            Map<String, Integer> temp2 = new HashMap<>();
-            temp2.put("textColor", Color.parseColor("#5E432E"));
-            temp2.put("bgIsColor", 1);
-            temp2.put("textBackground", Color.parseColor("#C6BAA1"));
-            temp2.put("darkStatusIcon", 1);
-            textDrawable.add(temp2);
-
-            Map<String, Integer> temp3 = new HashMap<>();
-            temp3.put("textColor", Color.parseColor("#22482C"));
-            temp3.put("bgIsColor", 1);
-            temp3.put("textBackground", Color.parseColor("#E1F1DA"));
-            temp3.put("darkStatusIcon", 1);
-            textDrawable.add(temp3);
-
-            Map<String, Integer> temp4 = new HashMap<>();
-            temp4.put("textColor", Color.parseColor("#FFFFFF"));
-            temp4.put("bgIsColor", 1);
-            temp4.put("textBackground", Color.parseColor("#015A86"));
-            temp4.put("darkStatusIcon", 0);
-            textDrawable.add(temp4);
-
-            Map<String, Integer> temp5 = new HashMap<>();
-            temp5.put("textColor", Color.parseColor("#a3a3a3"));
-            temp5.put("bgIsColor", 1);
-            temp5.put("textBackground", Color.parseColor("#2a2a2a"));
-            temp5.put("darkStatusIcon", 0);
-            textDrawable.add(temp5);
-        }
     }
 
     public void initPageConfiguration() {
@@ -163,21 +203,21 @@ public class ReadBookControl {
 
     private void setPageStyle() {
         try {
-            bgColor = textDrawable.get(textDrawableIndex).get("textBackground");
+            bgColor = getConfigValue(textDrawableIndex, "textBackground");
             if (getBgCustom(textDrawableIndex) == 2 && getBgPath(textDrawableIndex) != null) {
                 bgIsColor = false;
                 bgPath = getBgPath(textDrawableIndex);
-                bgBitmap = BitmapFactory.decodeFile(bgPath);
+                bgBitmap = resetBgBitmap();
             } else if (getBgCustom(textDrawableIndex) == 1) {
                 bgIsColor = true;
                 bgColor = getBgColor(textDrawableIndex);
             } else {
                 bgIsColor = true;
-                bgColor = textDrawable.get(textDrawableIndex).get("textBackground");
+                bgColor = getConfigValue(textDrawableIndex, "textBackground");
             }
         } catch (Exception e) {
             bgIsColor = true;
-            bgColor = textDrawable.get(textDrawableIndex).get("textBackground");
+            bgColor = getConfigValue(textDrawableIndex, "textBackground");
         }
     }
 
@@ -187,11 +227,7 @@ public class ReadBookControl {
     }
 
     public int getTextColor(int textDrawableIndex) {
-        if (readPreference.getInt("textColor" + textDrawableIndex, 0) != 0) {
-            return readPreference.getInt("textColor" + textDrawableIndex, 0);
-        } else {
-            return getDefaultTextColor(textDrawableIndex);
-        }
+        return readPreference.getInt("textColor" + textDrawableIndex, getDefaultTextColor(textDrawableIndex));
     }
 
     public void setTextColor(int textDrawableIndex, int textColor) {
@@ -212,14 +248,14 @@ public class ReadBookControl {
                 case 1:
                     return new ColorDrawable(getBgColor(textDrawableIndex));
             }
-            if (textDrawable.get(textDrawableIndex).get("bgIsColor") != 0) {
-                return new ColorDrawable(textDrawable.get(textDrawableIndex).get("textBackground"));
+            if (getConfigValue(textDrawableIndex, "bgIsColor") != 0) {
+                return new ColorDrawable(getConfigValue(textDrawableIndex, "textBackground"));
             } else {
                 return getDefaultBgDrawable(textDrawableIndex, context);
             }
         } catch (Exception e) {
-            if (textDrawable.get(textDrawableIndex).get("bgIsColor") != 0) {
-                return new ColorDrawable(textDrawable.get(textDrawableIndex).get("textBackground"));
+            if (getConfigValue(textDrawableIndex, "bgIsColor") != 0) {
+                return new ColorDrawable(getConfigValue(textDrawableIndex, "textBackground"));
             } else {
                 return getDefaultBgDrawable(textDrawableIndex, context);
             }
@@ -227,10 +263,10 @@ public class ReadBookControl {
     }
 
     public Drawable getDefaultBgDrawable(int textDrawableIndex, Context context) {
-        if (textDrawable.get(textDrawableIndex).get("bgIsColor") != 0) {
-            return new ColorDrawable(textDrawable.get(textDrawableIndex).get("textBackground"));
+        if (getConfigValue(textDrawableIndex, "bgIsColor") != 0) {
+            return new ColorDrawable(getConfigValue(textDrawableIndex, "textBackground"));
         } else {
-            return context.getResources().getDrawable(getDefaultBg(textDrawableIndex));
+            return context.getResources().getDrawable(getDefaultBgColor(textDrawableIndex));
         }
     }
 
@@ -259,21 +295,55 @@ public class ReadBookControl {
     }
 
     public int getDefaultTextColor(int textDrawableIndex) {
-        return textDrawable.get(textDrawableIndex).get("textColor");
+        return getConfigValue(textDrawableIndex, "textColor");
     }
 
-    private int getDefaultBg(int textDrawableIndex) {
-        return textDrawable.get(textDrawableIndex).get("textBackground");
+    public int getDefaultBgColor(int textDrawableIndex) {
+        return getConfigValue(textDrawableIndex, "textBackground");
     }
 
     public int getBgColor(int index) {
-        return readPreference.getInt("bgColor" + index, Color.parseColor("#C6BAA1"));
+        return readPreference.getInt("bgColor" + index, getDefaultBgColor(index));
     }
 
     public void setBgColor(int index, int bgColor) {
         SharedPreferences.Editor editor = readPreference.edit();
         editor.putInt("bgColor" + index, bgColor);
         editor.apply();
+    }
+
+    public void setPageSpaceMode(int index) {
+        if (index >= 0 && index < pageSpaces.size()) {
+            Map<String, Integer> temp = pageSpaces.get(index);
+            Integer value = temp.get("lineSpacing");
+            lineSpacing = value == null ? 6 : value;
+            value = temp.get("paragraphSpacing");
+            paragraphSpacing = value == null ? 16 : value;
+            value = temp.get("paddingTop");
+            paddingTop = value == null ? 0 : value;
+            value = temp.get("paddingLeft");
+            paddingLeft = value == null ? 24 : value;
+            value = temp.get("paddingRight");
+            paddingRight = value == null ? 24 : value;
+            value = temp.get("paddingBottom");
+            paddingBottom = value == null ? 0 : value;
+            readPreference.edit().putInt("lineSpacing", lineSpacing)
+                    .putInt("paragraphSpacing", paragraphSpacing)
+                    .putInt("paddingTop", paddingTop)
+                    .putInt("paddingLeft", paddingLeft)
+                    .putInt("paddingRight", paddingRight)
+                    .putInt("paddingBottom", paddingBottom)
+                    .putInt("spaceModeIndex", index)
+                    .apply();
+        }
+    }
+
+    public int getPageSpaceMode() {
+        return spaceModeIndex;
+    }
+
+    public int getSpacingByKey(String key){
+        return readPreference.getInt(key, 0);
     }
 
     public boolean getIsNightTheme() {
@@ -323,6 +393,30 @@ public class ReadBookControl {
         editor.apply();
     }
 
+    public int smallerTextSize() {
+        if (this.textSize <= 10) {
+            this.textSize = 10;
+        } else {
+            this.textSize -= 1;
+        }
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putInt("textSize", textSize);
+        editor.apply();
+        return this.textSize;
+    }
+
+    public int largerTextSize() {
+        if (this.textSize >= 40) {
+            this.textSize = 40;
+        } else {
+            this.textSize += 1;
+        }
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putInt("textSize", textSize);
+        editor.apply();
+        return this.textSize;
+    }
+
     public int getTextColor() {
         return textColor;
     }
@@ -332,7 +426,7 @@ public class ReadBookControl {
     }
 
     public int getDefaultBgColor() {
-        return getDefaultBg(textDrawableIndex);
+        return getDefaultBgColor(textDrawableIndex);
     }
 
     public int getBgColor() {
@@ -345,12 +439,16 @@ public class ReadBookControl {
 
     public Bitmap getBgBitmap() {
         if (bgBitmap == null || bgBitmap.isRecycled()) {
-            if(!TextUtils.isEmpty(bgPath)){
-                bgBitmap = BitmapFactory.decodeFile(bgPath);
-            }
-            return null;
+            bgBitmap = resetBgBitmap();
         }
-        return bgBitmap.copy(Bitmap.Config.RGB_565, true);
+        return bgBitmap;
+    }
+
+    private Bitmap resetBgBitmap() {
+        if (!TextUtils.isEmpty(bgPath)) {
+            return BitmapUtil.getBitmap(bgPath, 1080, 1920);
+        }
+        return null;
     }
 
     public int getTextDrawableIndex() {
@@ -400,10 +498,6 @@ public class ReadBookControl {
 
     public Boolean getTextBold() {
         return textBold;
-    }
-
-    public List<Map<String, Integer>> getTextDrawable() {
-        return textDrawable;
     }
 
     public Boolean getCanKeyTurn(Boolean isPlay) {
@@ -456,7 +550,7 @@ public class ReadBookControl {
     public void setLineSpacing(int lineSpacing) {
         this.lineSpacing = lineSpacing;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putInt("lineSpacing", lineSpacing);
+        editor.putInt("lineSpacing", lineSpacing).putInt("spaceModeIndex", spaceModeIndex = 4);
         editor.apply();
     }
 
@@ -467,7 +561,7 @@ public class ReadBookControl {
     public void setParagraphSpacing(int paragraphSpacing) {
         this.paragraphSpacing = paragraphSpacing;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putInt("paragraphSpacing", paragraphSpacing);
+        editor.putInt("paragraphSpacing", paragraphSpacing).putInt("spaceModeIndex", spaceModeIndex = 4);
         editor.apply();
     }
 
@@ -526,6 +620,28 @@ public class ReadBookControl {
         editor.apply();
     }
 
+    public Boolean getShowBatteryNumber() {
+        return showBatteryNumber;
+    }
+
+    public void setShowBatteryNumber(Boolean showBatteryNumber) {
+        this.showBatteryNumber = showBatteryNumber;
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putBoolean("setShowBatteryNumber", showBatteryNumber);
+        editor.apply();
+    }
+
+    public Boolean getShowBottomLine() {
+        return showBottomLine;
+    }
+
+    public void setShowBottomLine(Boolean showBottomLine) {
+        this.showBottomLine = showBottomLine;
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putBoolean("showBottomLine", showBottomLine);
+        editor.apply();
+    }
+
     public Boolean getHideStatusBar() {
         return hideStatusBar;
     }
@@ -542,7 +658,7 @@ public class ReadBookControl {
     }
 
     public boolean getDarkStatusIcon(int textDrawableIndex) {
-        return readPreference.getBoolean("darkStatusIcon" + textDrawableIndex, textDrawable.get(textDrawableIndex).get("darkStatusIcon") != 0);
+        return readPreference.getBoolean("darkStatusIcon" + textDrawableIndex, getConfigValue(textDrawableIndex, "darkStatusIcon") != 0);
     }
 
     public void setDarkStatusIcon(int textDrawableIndex, Boolean darkStatusIcon) {
@@ -569,7 +685,7 @@ public class ReadBookControl {
     public void setPaddingLeft(int paddingLeft) {
         this.paddingLeft = paddingLeft;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putInt("paddingLeft", paddingLeft);
+        editor.putInt("paddingLeft", paddingLeft).putInt("spaceModeIndex", spaceModeIndex = 4);
         editor.apply();
     }
 
@@ -580,7 +696,7 @@ public class ReadBookControl {
     public void setPaddingTop(int paddingTop) {
         this.paddingTop = paddingTop;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putInt("paddingTop", paddingTop);
+        editor.putInt("paddingTop", paddingTop).putInt("spaceModeIndex", spaceModeIndex = 4);
         editor.apply();
     }
 
@@ -591,7 +707,7 @@ public class ReadBookControl {
     public void setPaddingRight(int paddingRight) {
         this.paddingRight = paddingRight;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putInt("paddingRight", paddingRight);
+        editor.putInt("paddingRight", paddingRight).putInt("spaceModeIndex", spaceModeIndex = 4);
         editor.apply();
     }
 
@@ -602,7 +718,7 @@ public class ReadBookControl {
     public void setPaddingBottom(int paddingBottom) {
         this.paddingBottom = paddingBottom;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putInt("paddingBottom", paddingBottom);
+        editor.putInt("paddingBottom", paddingBottom).putInt("spaceModeIndex", spaceModeIndex = 4);
         editor.apply();
     }
 
@@ -646,5 +762,15 @@ public class ReadBookControl {
 
     public boolean getLightIsFollowSys() {
         return readPreference.getBoolean("isfollowsys", true);
+    }
+
+    @NonNull
+    private Integer getConfigValue(int index, String key) {
+        Map<String, Integer> configMap = textDrawables.get(index);
+        if (key != null) {
+            Integer value = configMap.get(key);
+            return value == null ? 0 : value;
+        }
+        return 0;
     }
 }

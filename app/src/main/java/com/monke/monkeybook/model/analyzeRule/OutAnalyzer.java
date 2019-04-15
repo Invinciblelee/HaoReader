@@ -1,99 +1,122 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import androidx.annotation.NonNull;
-
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.bean.BookContentBean;
+import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.bean.SearchBookBean;
 
 import java.util.List;
+import java.util.Map;
 
-import static android.text.TextUtils.isEmpty;
+import androidx.annotation.NonNull;
 
-public abstract class OutAnalyzer<S, R> {
+public abstract class OutAnalyzer<S, T> implements IAnalyzerPresenter, ContentDelegate {
 
-    private AnalyzeConfig config;
+    private final JSParser mJSParser = new JSParser();
+
+    private AnalyzeConfig mConfig;
 
     public final AnalyzeConfig getConfig() {
-        return config;
+        return mConfig;
+    }
+
+    public final JSParser getJSParser() {
+        return mJSParser;
     }
 
     public final AnalyzeConfig newConfig() {
-        if (config == null) {
+        if (mConfig == null) {
             return new AnalyzeConfig();
         } else {
-            return config.newConfig();
+            return mConfig.newConfig();
         }
     }
 
     public final void apply(@NonNull AnalyzeConfig config) {
-        this.config = config;
+        this.mConfig = config;
     }
 
-    public abstract ContentDelegate getDelegate();
-
-    public abstract S parseSource(String source);
-
-    public S parseSource(Object source) {
-        return null;
+    public void setContent(String source) {
+        getParser().setContent(source);
     }
 
-    public abstract String getResultContent(S source, String rule);
-
-    public abstract String getResultUrl(S source, String rule);
-
-    public abstract List<R> getRawList(String source, String rule);
-
-    public abstract List<R> getRawList(S source, String rule);
-
-    final String processingResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        if (!isEmpty(rulePattern.javaScript)) {
-            result = JSParser.evalJS(rulePattern.javaScript, result, getConfig().getBaseURL());
-        }
-        return result;
+    public void setContent(T source) {
+        getParser().setContent(source);
     }
 
-    final String processingResultUrl(@NonNull String result) {
-        if (!isEmpty(result) && !result.startsWith("http")) {
-            result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);
-        }
-        return result;
+    public void beginExecute() {
+        mJSParser.start();
     }
 
-    static class RulePattern {
-        String elementsRule;
-        String replaceRegex ;
-        String replacement;
-        String javaScript;
+    public void endExecute() {
+        mJSParser.stop();
+    }
 
-        private RulePattern(@NonNull String ruleStr){
-            //分离js
-            String[] ruleStrJ = ruleStr.split("@js:");
-            if (ruleStrJ.length > 1) {
-                ruleStr = ruleStrJ[0];
-                javaScript = ruleStrJ[1];
-            }else {
-                javaScript = "";
-            }
-            //分离正则表达式
-            String[] ruleStrS = ruleStr.split("#");
-            elementsRule = ruleStrS[0];
-            if (ruleStrS.length > 1) {
-                replaceRegex = ruleStrS[1];
-            }else {
-                replaceRegex = "";
-            }
+    abstract SourceParser<S, T> getParser();
 
-            if (ruleStrS.length > 2) {
-                replacement = ruleStrS[2];
-            }else {
-                replacement = "";
-            }
-        }
+    abstract IAnalyzerPresenter getPresenter();
 
-        static RulePattern from(@NonNull String ruleStr){
-            return new RulePattern(ruleStr);
-        }
+    abstract ContentDelegate getDelegate();
+
+    @Override
+    public String getResultContent(String rule) {
+        return getPresenter().getResultContent(rule);
+    }
+
+    @Override
+    public String getResultUrl(String rule) {
+        return getPresenter().getResultUrl(rule);
+    }
+
+    @Override
+    public List<String> getResultContents(String rule) {
+        return getPresenter().getResultContents(rule);
+    }
+
+    @Override
+    public Map<String, String> getVariableMap(String rule) {
+        return getPresenter().getVariableMap(rule);
+    }
+
+    @Override
+    public AnalyzeCollection getRawCollection(String rule) {
+        return getPresenter().getRawCollection(rule);
+    }
+
+    @Override
+    public String parseResultContent(String source, String rule) {
+        return getPresenter().parseResultContent(source, rule);
+    }
+
+    @Override
+    public String parseResultUrl(String source, String rule) {
+        return getPresenter().parseResultUrl(source, rule);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public List<SearchBookBean> getSearchBooks(String source) {
+        return getDelegate().getSearchBooks(source);
+    }
+
+    @Override
+    public BookShelfBean getBook(String source) {
+        return getDelegate().getBook(source);
+    }
+
+    @Override
+    public List<ChapterBean> getChapters(String source) {
+        return getDelegate().getChapters(source);
+    }
+
+    @Override
+    public BookContentBean getContent(String source) {
+        return getDelegate().getContent(source);
+    }
+
+    @Override
+    public String getAudioLink(String source) {
+        return getDelegate().getAudioLink(source);
     }
 }

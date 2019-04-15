@@ -45,7 +45,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     public void initData() {
         Observable.create((ObservableOnSubscribe<List<FindKindGroupBean>>) e -> {
             List<BookSourceBean> bookSourceBeans;
-            if (AppConfigHelper.get(mView.getContext()).getBoolean(mView.getContext().getString(R.string.pk_show_all_find), true)) {
+            if (AppConfigHelper.get().getBoolean(mView.getContext().getString(R.string.pk_show_all_find), true)) {
                 bookSourceBeans = BookSourceManager.getInstance().getAllBookSource();
             } else {
                 bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();

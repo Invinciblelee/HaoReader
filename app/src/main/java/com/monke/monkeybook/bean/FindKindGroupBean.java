@@ -7,6 +7,15 @@ public class FindKindGroupBean {
     private String tag;
     private int childrenCount;
     private List<FindKindBean> children;
+    private boolean isExpand;
+
+    public boolean isExpand() {
+        return isExpand;
+    }
+
+    public void setExpand(boolean expand) {
+        isExpand = expand;
+    }
 
     public String getGroupName() {
         return groupName;

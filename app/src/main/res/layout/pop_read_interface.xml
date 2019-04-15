@@ -11,369 +11,394 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorReadBar"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:paddingLeft="15dp"
-            android:paddingTop="5dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="5dp">
+            android:layout_marginTop="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-            <TextView
-                android:id="@+id/fl_text_Bold"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_font_smaller"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="4"
-                android:background="@drawable/selector_pop_font_bg"
+                android:layout_weight="1.2"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:text="@string/font_smaller"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_font_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
+                android:minWidth="40dp"
+                android:text="16"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_font_larger"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.2"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:text="@string/font_larger"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_text_bold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
                 android:text="@string/text_bold"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorReadBarText"
                 android:textSize="14sp" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/fl_text_font"
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_text_font"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="4"
-                android:background="@drawable/selector_pop_font_bg"
-                android:gravity="center"
-                android:text="@string/custom_font"
-                android:textColor="@color/tv_text_default"
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:text="@string/select_font"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/view_page_anim_mode"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_page_cover"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:tag="0"
+                android:text="@string/page_anim_cover"
+                android:textColor="@color/colorReadBarText"
                 android:textSize="14sp" />
 
-            <View
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_page_simulation"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:tag="1"
+                android:text="@string/page_anim_simulation"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tvPageMode"
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_page_slide"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="6"
-                android:background="@drawable/selector_pop_font_bg"
-                android:gravity="center"
-                android:text="@string/page_mode"
-                android:textColor="@color/tv_text_default"
-                android:textSize="14sp"
-                tools:ignore="HardcodedText" />
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:tag="2"
+                android:text="@string/page_anim_slide"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="14sp" />
 
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_page_none"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:tag="3"
+                android:text="@string/page_anim_none"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="14sp" />
         </LinearLayout>
 
-        <View style="@style/Style.Line" />
 
         <LinearLayout
+            android:id="@+id/view_page_space"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:paddingLeft="15dp"
-            android:paddingTop="5dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="5dp">
+            android:layout_marginTop="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/text_size"
-                android:textColor="@color/tv_text_default" />
-
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbTextSize"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_read_space1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:src="@drawable/b4_space1"
+                android:tag="0"
+                android:tint="@color/colorReadBarText"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:gravity="center_vertical"
-                android:text="@string/line_size"
-                android:textColor="@color/tv_text_default"
-                tools:ignore="RtlHardcoded" />
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
 
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbLineSize"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_read_space2"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:src="@drawable/b4_space2"
+                android:tag="1"
+                android:tint="@color/colorReadBarText"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:gravity="center_vertical"
-                android:text="@string/paragraph_size"
-                android:textColor="@color/tv_text_default"
-                tools:ignore="RtlHardcoded" />
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
 
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbParagraphSize"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_read_space3"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:src="@drawable/b4_space3"
+                android:tag="2"
+                android:tint="@color/colorReadBarText"/>
 
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_read_space_none"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:minWidth="0dp"
+                android:tag="3"
+                android:text="@string/page_read_space_default"
+                android:textColor="@color/colorReadBarText"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_read_space_custom"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/select_pop_round_button_bg"
+                android:tag="4"
+                android:tint="@color/colorReadBarText"
+                app:srcCompat="@drawable/ic_add_black_24dp" />
         </LinearLayout>
-
-        <View style="@style/Style.Line" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:paddingLeft="15dp"
-            android:paddingTop="5dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/padding"
-                android:textColor="@color/tv_text_default" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/top"
-                android:textColor="@color/tv_text_default" />
-
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbPaddingTop"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:gravity="center"
-                android:text="@string/bottom"
-                android:textColor="@color/tv_text_default"
-                tools:ignore="RtlHardcoded" />
-
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbPaddingBottom"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:gravity="center"
-                android:text="@string/left"
-                android:textColor="@color/tv_text_default"
-                tools:ignore="RtlHardcoded" />
-
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbPaddingLeft"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:gravity="center"
-                android:text="@string/right"
-                android:textColor="@color/tv_text_default"
-                tools:ignore="RtlHardcoded" />
-
-            <com.monke.monkeybook.widget.number.NumberButton
-                android:id="@+id/nbPaddingRight"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3" />
-
-        </LinearLayout>
-
-        <View style="@style/Style.Line" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:layout_gravity="center"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/civ_bg_white"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="背景1"
+                    android:src="@color/background"
+                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_width="1dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+            </FrameLayout>
+
+
+            <Space
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="@string/text_bg_style"
-                android:textColor="@color/tv_text_default" />
+                android:layout_weight="1" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/civ_bg_yellow"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="背景2"
+                    android:src="@color/background"
+                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_width="1dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+            </FrameLayout>
+
+            <Space
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:paddingStart="10dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="10dp">
+                android:layout_weight="1" />
 
-                <FrameLayout
-                    android:layout_width="0dp"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/civ_bg_green"
+                    android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_weight="1">
+                    android:layout_gravity="center"
+                    android:contentDescription="背景3"
+                    android:src="@color/background"
+                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_width="1dp"
+                    tools:ignore="HardcodedText" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/civ_bg_white"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="背景1"
-                        android:src="@color/background"
-                        app:civ_border_color="@color/tv_text_default"
-                        app:civ_border_width="1dp"
-                        tools:ignore="HardcodedText" />
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
 
-                    <TextView
-                        android:id="@+id/tv0"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/text"
-                        android:textColor="@color/tv_text_default"
-                        android:textSize="12sp" />
+            </FrameLayout>
 
-                </FrameLayout>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
 
-                <FrameLayout
-                    android:layout_width="0dp"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/civ_bg_blue"
+                    android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_weight="1">
+                    android:layout_gravity="center"
+                    android:contentDescription="背景4"
+                    android:src="@color/background"
+                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_width="1dp"
+                    tools:ignore="HardcodedText" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/civ_bg_yellow"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="背景2"
-                        android:src="@color/background"
-                        app:civ_border_color="@color/tv_text_default"
-                        app:civ_border_width="1dp"
-                        tools:ignore="HardcodedText" />
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
 
-                    <TextView
-                        android:id="@+id/tv1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/text"
-                        android:textColor="@color/tv_text_default"
-                        android:textSize="12sp" />
+            </FrameLayout>
 
-                </FrameLayout>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
-                <FrameLayout
-                    android:layout_width="0dp"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/civ_bg_black"
+                    android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_weight="1">
+                    android:layout_gravity="center"
+                    android:contentDescription="背景5"
+                    android:src="@color/background"
+                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_width="1dp"
+                    tools:ignore="HardcodedText" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/civ_bg_green"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="背景3"
-                        android:src="@color/background"
-                        app:civ_border_color="@color/tv_text_default"
-                        app:civ_border_width="1dp"
-                        tools:ignore="HardcodedText" />
+                <TextView
+                    android:id="@+id/tv4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
 
-                    <TextView
-                        android:id="@+id/tv2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/text"
-                        android:textColor="@color/tv_text_default"
-                        android:textSize="12sp" />
+            </FrameLayout>
 
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/civ_bg_blue"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="背景4"
-                        android:src="@color/background"
-                        app:civ_border_color="@color/tv_text_default"
-                        app:civ_border_width="1dp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/tv3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/text"
-                        android:textColor="@color/tv_text_default"
-                        android:textSize="12sp" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/civ_bg_black"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="背景5"
-                        android:src="@color/background"
-                        app:civ_border_color="@color/tv_text_default"
-                        app:civ_border_width="1dp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/tv4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/text"
-                        android:textColor="@color/tv_text_default"
-                        android:textSize="12sp" />
-
-                </FrameLayout>
-
-            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
+
+
 </LinearLayout>
+
+

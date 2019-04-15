@@ -64,18 +64,18 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
 
     @Override
     public boolean getNeedAnim() {
-        return AppConfigHelper.get(mView.getContext()).getBoolean(mView.getContext().getString(R.string.pk_bookshelf_anim), false);
+        return AppConfigHelper.get().getBoolean(mView.getContext().getString(R.string.pk_bookshelf_anim), false);
     }
 
     @Override
     public int getBookshelfPx() {
-        String bookPx = AppConfigHelper.get(mView.getContext()).getString(mView.getContext().getString(R.string.pk_bookshelf_px), "0");
+        String bookPx = AppConfigHelper.get().getString(mView.getContext().getString(R.string.pk_bookshelf_px), "0");
         return bookPx == null ? 0 : Integer.parseInt(bookPx);
     }
 
 
     private boolean haveRefresh() {
-        return !hasUpdated && AppConfigHelper.get(mView.getContext()).getBoolean(mView.getContext().getString(R.string.pk_auto_refresh), false);
+        return !hasUpdated && AppConfigHelper.get().getBoolean(mView.getContext().getString(R.string.pk_auto_refresh), false);
     }
 
     @Override

@@ -3,26 +3,18 @@ package com.monke.monkeybook.view.fragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FileSnapshot;
 import com.monke.monkeybook.bean.RipeFile;
 import com.monke.monkeybook.presenter.FileSelectorPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BigImageActivity;
 import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
 import com.monke.monkeybook.widget.AppCompat;
@@ -32,6 +24,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class FileSelector extends AppCompatDialogFragment implements FileSelectorContract.View,
         View.OnClickListener, Toolbar.OnMenuItemClickListener, FileSelectorAdapter.OnItemClickListener {
@@ -62,10 +63,6 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
         return fragment;
     }
 
-    public static FileSelector newInstance(boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
-        return newInstance(null, singleChoice, checkBookAdded, isImage, suffixes);
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +90,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     }
 
     private void initView() {
-        if(mPresenter.getTitle() != null){
+        if (mPresenter.getTitle() != null) {
             toolbar.setTitle(mPresenter.getTitle());
         }
         toolbar.inflateMenu(R.menu.menu_file_selector);
@@ -122,6 +119,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
         super.onStart();
         if (!isShowing) {
             AlertDialog dialog = (AlertDialog) getDialog();
+            assert dialog != null;
             okBth = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             backBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             backBtn.setVisibility(View.INVISIBLE);
@@ -130,6 +128,12 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
             okBth.setOnClickListener(this);
             isShowing = true;
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        mPresenter.detachView();
+        super.onDestroyView();
     }
 
     @Override
@@ -148,9 +152,13 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     }
 
     @Override
+    public int getScrollOffset() {
+        return rvFiles == null ? 0 : rvFiles.computeVerticalScrollOffset();
+    }
+
+    @Override
     public void onShow(FileSnapshot snapshot, boolean back) {
         progressBar.hide();
-        adapter.reset();
         if (snapshot == null) {
             adapter.setItems(null);
         } else {
@@ -161,16 +169,13 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
             if (back) {
                 int oldScrollOffset = rvFiles.computeVerticalScrollOffset();
                 rvFiles.scrollBy(0, snapshot.getScrollOffset() - oldScrollOffset);
-                if (!mPresenter.canGoBack()) {
-                    backBtn.setVisibility(View.INVISIBLE);
-                }
             } else {
                 rvFiles.scrollToPosition(0);
-                if (backBtn != null && mPresenter.canGoBack()) {
-                    backBtn.setVisibility(View.VISIBLE);
-                }
             }
         }
+
+        backBtn.setVisibility(mPresenter.canGoBack() ? View.VISIBLE : View.INVISIBLE);
+        okBth.setText(R.string.ok);
     }
 
     @Override
@@ -218,7 +223,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
             }
 
             if (!haveSelected) {
-                Toast.makeText(getContext(), "请选择文件", Toast.LENGTH_SHORT).show();
+                ToastUtils.toast(Objects.requireNonNull(getContext()), "请选择文件");
             }
         }
     }

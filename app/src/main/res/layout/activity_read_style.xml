@@ -68,6 +68,7 @@
                 android:singleLine="true"
                 android:text="文字颜色"
                 android:textSize="14sp"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -83,6 +84,7 @@
                 android:singleLine="true"
                 android:text="背景颜色"
                 android:textSize="14sp"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -98,6 +100,7 @@
                 android:singleLine="true"
                 android:text="背景图片"
                 android:textSize="14sp"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -113,6 +116,7 @@
                 android:singleLine="true"
                 android:text="恢复默认"
                 android:textSize="14sp"
+                android:textColor="@color/tv_text_default"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 

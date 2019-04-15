@@ -62,7 +62,6 @@ public abstract class BaseChapterListFragment<ADT extends BaseChapterListAdapter
         rvList.setAdapter(adapter = createAdapter());
         initView();
 
-
         BookShelfHolder.get().observe(this, bookShelfBean -> {
             bookShelf = bookShelfBean;
             updateBookShelf(bookShelfBean);
@@ -95,6 +94,4 @@ public abstract class BaseChapterListFragment<ADT extends BaseChapterListAdapter
     public void updateBookShelf(BookShelfBean bookShelfBean) {
 
     }
-
-
 }

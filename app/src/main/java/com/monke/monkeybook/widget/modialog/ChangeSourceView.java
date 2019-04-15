@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.monke.basemvplib.BaseActivity;
 import com.monke.monkeybook.R;
@@ -20,8 +19,9 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
-import com.monke.monkeybook.utils.ListUtil;
+import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BookInfoActivity;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
@@ -88,7 +88,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
 
     @Override
     public void searchSourceEmpty() {
-        Toast.makeText(context, "没有选中任何书源", Toast.LENGTH_SHORT).show();
+        ToastUtils.toast(context, "没有选中任何书源");
         ibtStop.setVisibility(View.INVISIBLE);
         rvSource.finishRefresh(true, false);
     }
@@ -147,11 +147,11 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
 
     private void getSearchBookInDb() {
         Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
-            List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().queryBuilder()
+            List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().queryBuilder()
                     .where(SearchBookBeanDao.Properties.BookType.eq(bookInfo.getBookType()),
                             SearchBookBeanDao.Properties.Name.eq(bookInfo.getName()),
                             SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
-            e.onNext(ListUtil.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getTag().compareTo(o2.getTag())));
+            e.onNext(searchBookBeans);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -183,14 +183,14 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     }
 
     private void reSearchBook() {
-        DbHelper.getInstance().getmDaoSession().getSearchBookBeanDao().deleteInTx(adapter.getSearchBookBeans());
+        DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().deleteInTx(adapter.getSearchBookBeans());
         adapter.reSetSourceAdapter();
         handler.removeCallbacks(searchTask);
         handler.post(searchTask);
     }
 
     private synchronized void addSearchBook(List<SearchBookBean> searchBookBeans) {
-        final List<SearchBookBean> newDataS = ListUtil.filter(searchBookBeans, searchBookBean -> ChangeSourceView.this.test(searchBookBean, bookInfo));
+        final List<SearchBookBean> newDataS = ListUtils.filter(searchBookBeans, searchBookBean -> ChangeSourceView.this.test(searchBookBean, bookInfo));
         if (!newDataS.isEmpty()) {
             for (SearchBookBean searchBookBean : newDataS) {
                 if (TextUtils.equals(searchBookBean.getTag(), bookInfo.getTag())) {

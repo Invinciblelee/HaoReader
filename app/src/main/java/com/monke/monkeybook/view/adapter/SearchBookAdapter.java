@@ -3,7 +3,6 @@ package com.monke.monkeybook.view.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +14,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.BookKindBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.lang.ref.WeakReference;
@@ -24,6 +25,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
     private WeakReference<Activity> activityRef;
@@ -35,10 +38,14 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
 
     private OnItemClickListener itemClickListener;
 
-    public SearchBookAdapter(Activity activity) {
-        super(true);
+    public SearchBookAdapter(Activity activity, boolean needLoadMore) {
+        super(needLoadMore);
         this.activityRef = new WeakReference<>(activity);
         searchBooks = new ArrayList<>();
+    }
+
+    public SearchBookAdapter(Activity activity) {
+        this(activity, true);
     }
 
     @Override
@@ -66,57 +73,52 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
 
         StringBuilder builder = new StringBuilder(item.getName());
         String bookType = item.getBookType();
-        if(TextUtils.equals(bookType, Constant.BookType.AUDIO)){
+        if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
             builder.insert(0, activity.getString(R.string.book_audio));
-        }else if(TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)){
+        } else if (TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)) {
             builder.insert(0, activity.getString(R.string.book_download));
         }
         myViewHolder.tvName.setText(builder.toString());
 
-        if (!TextUtils.isEmpty(item.getAuthor())) {
+        if (!StringUtils.isEmpty(item.getAuthor())) {
             myViewHolder.tvAuthor.setText(item.getAuthor());
         } else {
             myViewHolder.tvAuthor.setText(R.string.author_unknown);
         }
 
-        String state = item.getState();
-        if (TextUtils.isEmpty(state)) {
+        BookKindBean kindBean = new BookKindBean(item.getKind());
+        String state = kindBean.getState();
+        if (StringUtils.isEmpty(state)) {
             myViewHolder.tvState.setVisibility(View.GONE);
         } else {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
             myViewHolder.tvState.setText(state);
         }
-        long words = item.getWords();
-        if (words <= 0) {
+        String words = kindBean.getWordsS();
+        if (StringUtils.isEmpty(words)) {
             myViewHolder.tvWords.setVisibility(View.INVISIBLE);
         } else {
-            String wordsS = Long.toString(words) + "字";
-            if (words > 10000) {
-                DecimalFormat df = new DecimalFormat("#.#");
-                wordsS = df.format(words * 1.0f / 10000f) + "万字";
-            }
             myViewHolder.tvWords.setVisibility(View.VISIBLE);
-            myViewHolder.tvWords.setText(wordsS);
+            myViewHolder.tvWords.setText(words);
         }
-        String kind = item.getKind();
-        if (TextUtils.isEmpty(kind)) {
+        String kind = kindBean.getKind();
+        if (StringUtils.isEmpty(kind)) {
             myViewHolder.tvKind.setVisibility(View.GONE);
         } else {
             myViewHolder.tvKind.setVisibility(View.VISIBLE);
             myViewHolder.tvKind.setText(kind);
         }
 
-        String desc = !TextUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
-                : !TextUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
+        String desc = !StringUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
+                : !StringUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
         myViewHolder.tvLasted.setText(desc);
 
-        if (!TextUtils.isEmpty(item.getOrigin())) {
+        if (!StringUtils.isEmpty(item.getOrigin())) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
-            myViewHolder.tvOrigin.setText(item.getOrigin());
+            myViewHolder.tvOrigin.setText(String.format("%s  共%d个源", item.getOrigin(), item.getOriginNum()));
         } else {
             myViewHolder.tvOrigin.setVisibility(View.INVISIBLE);
         }
-        myViewHolder.tvOriginNum.setText(String.format("共%d个源", item.getOriginNum()));
 
         myViewHolder.itemView.setOnClickListener(v -> {
             if (itemClickListener != null)
@@ -143,7 +145,6 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvKind;
         TextView tvLasted;
         TextView tvOrigin;
-        TextView tvOriginNum;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -155,7 +156,6 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             tvLasted = itemView.findViewById(R.id.tv_lasted);
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
-            tvOriginNum = itemView.findViewById(R.id.tv_origin_num);
         }
     }
 

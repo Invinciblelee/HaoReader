@@ -2,40 +2,47 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
+import android.webkit.CookieManager;
+
+import com.monke.monkeybook.help.CookieHelper;
 
 public class WebLoadConfig implements Parcelable {
 
     private String title;
     private String url;
+    private String tag;
     private String userAgent;
-    private String loginTag;
+    private String cookieKey;
 
-    public WebLoadConfig(String title, String url, String userAgent, String loginTag) {
+    public WebLoadConfig(String title, String url, String tag, String userAgent) {
         this.title = title;
         this.url = url;
+        this.tag = tag;
         this.userAgent = userAgent;
-        this.loginTag = loginTag;
     }
 
-    public WebLoadConfig(String title, String url, String userAgent) {
-        this.title = title;
+    public WebLoadConfig(String url, String userAgent) {
         this.url = url;
         this.userAgent = userAgent;
     }
+
 
     protected WebLoadConfig(Parcel in) {
         title = in.readString();
         url = in.readString();
+        tag = in.readString();
+        cookieKey = in.readString();
         userAgent = in.readString();
-        loginTag = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(url);
+        dest.writeString(tag);
+        dest.writeString(cookieKey);
         dest.writeString(userAgent);
-        dest.writeString(loginTag);
     }
 
     @Override
@@ -71,6 +78,23 @@ public class WebLoadConfig implements Parcelable {
         this.url = url;
     }
 
+    public void setCookieKey(String cookieKey) {
+        this.cookieKey = cookieKey;
+    }
+
+    public String getCookieKey() {
+        return cookieKey;
+    }
+
+    public String getTag() {
+        return tag == null ? url : tag;
+    }
+
+    public void setTag(String loginTag) {
+        this.tag = loginTag;
+    }
+
+
     public String getUserAgent() {
         return userAgent;
     }
@@ -79,11 +103,40 @@ public class WebLoadConfig implements Parcelable {
         this.userAgent = userAgent;
     }
 
-    public String getLoginTag() {
-        return loginTag;
-    }
+    public void setCookie(String url) {
+        if (!TextUtils.isEmpty(tag)) {
+            CookieManager cookieManager = CookieManager.getInstance();
+            String cookie = cookieManager.getCookie(url);
+            if (TextUtils.isEmpty(cookieKey)) {
+                CookieHelper.get().setCookie(tag, cookie);
+            } else if (!TextUtils.isEmpty(cookie)) {
+                try {
+                    final String type;
+                    if (cookieKey.contains("&&")) {
+                        type = "&&";
+                    } else {
+                        type = "\\|\\|";
+                    }
+                    final String[] keys = cookieKey.split(type);
+                    final String[] arr = cookie.split(";");
 
-    public void setLoginTag(String loginTag) {
-        this.loginTag = loginTag;
+                    int tryCount = 0;
+                    for (String key : keys) {
+                        for (String string : arr) {
+                            String[] pair = string.split("=");
+                            if (pair.length > 1 && key.equals(pair[0].trim()) && !TextUtils.isEmpty(pair[1].trim())) {
+                                tryCount += 1;
+                            }
+                        }
+                    }
+
+                    if ((type.equals("&&") && tryCount == keys.length) || (type.equals("\\|\\|") && tryCount == 1)) {
+                        CookieHelper.get().setCookie(tag, cookie);
+                    }
+                } catch (Exception e) {
+                    CookieHelper.get().setCookie(tag, cookie);
+                }
+            }
+        }
     }
 }

@@ -6,20 +6,22 @@ import android.text.TextUtils;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.model.content.DefaultModel;
 import com.monke.monkeybook.model.content.Default716;
+import com.monke.monkeybook.model.content.DefaultModel;
+import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 
 public class WebBookModelImpl implements IWebBookModel {
 
@@ -74,10 +76,10 @@ public class WebBookModelImpl implements IWebBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(Scheduler scheduler, BookInfoBean bookInfo, ChapterListBean chapter) {
+    public Observable<BookContentBean> getBookContent(BookInfoBean bookInfo, ChapterBean chapter) {
         IStationBookModel bookModel = getBookSourceModel(chapter.getTag());
         if (bookModel != null) {
-            return bookModel.getBookContent(scheduler, chapter)
+            return bookModel.getBookContent(chapter)
                     .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
         } else
             return Observable.create(e -> {
@@ -119,6 +121,17 @@ public class WebBookModelImpl implements IWebBookModel {
         }
     }
 
+    @Override
+    public Observable<ChapterBean> processAudioChapter(String tag, ChapterBean chapter) {
+        IStationBookModel bookModel = getBookSourceModel(tag);
+        if (bookModel instanceof IAudioBookChapterModel) {
+            return ((IAudioBookChapterModel) bookModel).processAudioChapter(chapter);
+        } else {
+            return Observable.error(new IllegalAccessException("the model is not IAudioBookChapterModel."));
+        }
+    }
+
+
     //获取book source class
     private IStationBookModel getBookSourceModel(String tag) {
         if (TextUtils.equals(tag, BookShelfBean.LOCAL_TAG)) {
@@ -130,34 +143,28 @@ public class WebBookModelImpl implements IWebBookModel {
         }
     }
 
-    private Observable<BookShelfBean> updateChapterList(BookShelfBean bookShelfBean, List<ChapterListBean> chapterList) {
+    private Observable<BookShelfBean> updateChapterList(BookShelfBean bookShelfBean, List<ChapterBean> chapterList) {
         return Observable.create(e -> {
-            boolean findDurChapter = false;
-            for (int i = 0, size = chapterList.size(); i < size; i++) {
-                ChapterListBean chapter = chapterList.get(i);
-                chapter.setDurChapterIndex(i);
-                chapter.setTag(bookShelfBean.getTag());
-                chapter.setNoteUrl(bookShelfBean.getNoteUrl());
-                if (!findDurChapter && Objects.equals(chapter.getDurChapterName(), bookShelfBean.getDurChapterName())) {
-                    bookShelfBean.setDurChapter(i);
-                    findDurChapter = true;//可能有重复章节
+            for (ListIterator<ChapterBean> it = chapterList.listIterator(); it.hasNext(); ) {
+                ChapterBean chapter = it.next();
+                chapter.setDurChapterIndex(it.previousIndex());
+                if (Objects.equals(chapter.getDurChapterName(), bookShelfBean.getDurChapterName())) {
+                    bookShelfBean.setDurChapter(chapter.getDurChapterIndex());
                 }
             }
-            if (!chapterList.isEmpty()) {
-                if (bookShelfBean.getChapterListSize() < chapterList.size()) {
-                    bookShelfBean.setHasUpdate(true);
-                    int newChapters = bookShelfBean.getNewChapters() + (chapterList.size() - bookShelfBean.getChapterListSize());
-                    bookShelfBean.setNewChapters(Math.min(newChapters, chapterList.size()));
-                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-                    bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
-                }
 
+            if (bookShelfBean.getChapterListSize() < chapterList.size()) {
+                int newChapters = bookShelfBean.getNewChapters() + (chapterList.size() - bookShelfBean.getChapterListSize());
+                bookShelfBean.setNewChapters(Math.min(newChapters, chapterList.size()));
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-                bookShelfBean.setChapterList(chapterList);
-                bookShelfBean.upChapterListSize();
+                bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());
+                bookShelfBean.setHasUpdate(true);
+            }
+
+            if (!chapterList.isEmpty()) {
+                bookShelfBean.setChapterList(chapterList, true);
                 bookShelfBean.upLastChapterName();
-                if (!TextUtils.isEmpty(bookShelfBean.getDurChapterName())) {//已读
-                    bookShelfBean.setDurChapter(Math.min(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize() - 1));
+                if (!StringUtils.isEmpty(bookShelfBean.getDurChapterName())) {
                     bookShelfBean.upDurChapterName();
                 }
             }
@@ -169,7 +176,6 @@ public class WebBookModelImpl implements IWebBookModel {
     private Observable<BookContentBean> saveChapterInfo(BookInfoBean bookInfo, BookContentBean bookContentBean) {
         return Observable.create(e -> {
             if (bookContentBean.getRight()) {
-                bookContentBean.setNoteUrl(bookInfo.getNoteUrl());
                 if (BookshelfHelp.saveChapterInfo(BookshelfHelp.getCacheFolderPath(bookInfo),
                         BookshelfHelp.getCacheFileName(bookContentBean),
                         bookContentBean.getDurChapterContent())) {

@@ -3,7 +3,10 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -124,6 +126,16 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mPresenter.getBookShelf() != null){
+            String key = String.valueOf(System.currentTimeMillis());
+            getIntent().putExtra("data_key", key);
+            BitIntentDataManager.getInstance().putData(key, mPresenter.getBookShelf());
+        }
+    }
+
+    @Override
     protected void initData() {
         mPresenter.initData(getIntent());
         animShowInfo = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
@@ -158,7 +170,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     public void getBookShelfError(boolean refresh) {
         llLoading.setVisibility(View.VISIBLE);
-        tvLoadingMsg.setText("加载失败,点击重试");
+        tvLoadingMsg.setText("加载失败，点击重试");
         progressBar.setVisibility(View.GONE);
         progressBar.stop();
         llLoading.setEnabled(true);
@@ -166,11 +178,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             showLoading(true);
             mPresenter.loadBookShelfInfo(refresh);
         });
-    }
-
-    @Override
-    public void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -258,7 +265,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
             if (mPresenter.inBookShelf()) {
                 if (rgGroup.getVisibility() == View.VISIBLE) {
-                    ((RadioButton) rgGroup.getChildAt(mPresenter.getBookShelf().getGroup())).setChecked(true);
+                    int index = mPresenter.getBookShelf().getGroup();
+                    ((RadioButton) rgGroup.getChildAt(Math.max(0, index))).setChecked(true);
                 }
                 llBookRecent.setVisibility(View.VISIBLE);
                 String durChapterName = mPresenter.getBookShelf().getDurChapterName();
@@ -299,7 +307,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
             showCoverImage(coverImage);
         }
-        if(stopLoading) {
+        if (stopLoading) {
             showLoading(false);
         }
     }
@@ -333,7 +341,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         });
 
         ivRefresh.setOnClickListener(view -> {
-            if(llLoading.isShown()){
+            if (llLoading.isShown()) {
                 return;
             }
             AnimationSet animationSet = new AnimationSet(true);
@@ -374,7 +382,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         });
     }
 
-    private void showHideViews(String bookType){
+    private void showHideViews(String bookType) {
         if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
             tvRead.setText(R.string.start_listen);
             rgGroup.setVisibility(View.GONE);
@@ -433,7 +441,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     private void changeSource() {
         if (!isNetworkAvailable()) {
-            Toast.makeText(this, "网络不可用，无法换源", Toast.LENGTH_SHORT).show();
+            toast("网络不可用，无法换源");
             return;
         }
         moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(),

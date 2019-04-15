@@ -10,17 +10,18 @@ import com.monke.monkeybook.help.ChapterHelp;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.OrderBy;
-import org.greenrobot.greendao.annotation.Unique;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Objects;
+
+import androidx.core.util.ObjectsCompat;
 
 /**
  * 章节列表
  */
 @Entity
-public class ChapterListBean implements Parcelable {
+public class ChapterBean implements Parcelable, FilterBean {
 
     private String noteUrl; //对应BookInfoBean noteUrl;
     @OrderBy
@@ -28,30 +29,35 @@ public class ChapterListBean implements Parcelable {
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址
     private String durChapterName;  //当前章节名称
+    private String durChapterPlayUrl; //听书章节播放地址
     private String tag;
     //章节内容在文章中的起始位置(本地)
     private Integer start;
     //章节内容在文章中的终止位置(本地)
     private Integer end;
 
+    @Transient
+    private String nextChapterUrl;
 
-    @Generated(hash = 1930034204)
-    public ChapterListBean(String noteUrl, Integer durChapterIndex, String durChapterUrl,
-            String durChapterName, String tag, Integer start, Integer end) {
+
+    @Generated(hash = 1104052855)
+    public ChapterBean(String noteUrl, Integer durChapterIndex, String durChapterUrl,
+                       String durChapterName, String durChapterPlayUrl, String tag, Integer start,
+                       Integer end) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
         this.durChapterName = durChapterName;
+        this.durChapterPlayUrl = durChapterPlayUrl;
         this.tag = tag;
         this.start = start;
         this.end = end;
     }
 
-    @Generated(hash = 1096893365)
-    public ChapterListBean() {
+    public ChapterBean() {
     }
 
-    protected ChapterListBean(Parcel in) {
+    protected ChapterBean(Parcel in) {
         noteUrl = in.readString();
         if (in.readByte() == 0) {
             durChapterIndex = null;
@@ -59,6 +65,7 @@ public class ChapterListBean implements Parcelable {
             durChapterIndex = in.readInt();
         }
         durChapterUrl = in.readString();
+        durChapterPlayUrl = in.readString();
         durChapterName = in.readString();
         tag = in.readString();
         if (in.readByte() == 0) {
@@ -83,6 +90,7 @@ public class ChapterListBean implements Parcelable {
             dest.writeInt(durChapterIndex);
         }
         dest.writeString(durChapterUrl);
+        dest.writeString(durChapterPlayUrl);
         dest.writeString(durChapterName);
         dest.writeString(tag);
         if (start == null) {
@@ -104,38 +112,45 @@ public class ChapterListBean implements Parcelable {
         return 0;
     }
 
-    public static final Creator<ChapterListBean> CREATOR = new Creator<ChapterListBean>() {
+    public static final Creator<ChapterBean> CREATOR = new Creator<ChapterBean>() {
         @Override
-        public ChapterListBean createFromParcel(Parcel in) {
-            return new ChapterListBean(in);
+        public ChapterBean createFromParcel(Parcel in) {
+            return new ChapterBean(in);
         }
 
         @Override
-        public ChapterListBean[] newArray(int size) {
-            return new ChapterListBean[size];
+        public ChapterBean[] newArray(int size) {
+            return new ChapterBean[size];
         }
     };
 
-    protected ChapterListBean copy() {
-        ChapterListBean chapterListBean = new ChapterListBean();
-        chapterListBean.noteUrl = noteUrl;
-        chapterListBean.durChapterIndex = durChapterIndex;
-        chapterListBean.durChapterUrl = durChapterUrl;
-        chapterListBean.durChapterName = durChapterName;
-        chapterListBean.tag = tag;
-        chapterListBean.start = start;
-        chapterListBean.end = end;
-        return chapterListBean;
+    protected ChapterBean copy() {
+        ChapterBean chapterBean = new ChapterBean();
+        chapterBean.noteUrl = noteUrl;
+        chapterBean.durChapterIndex = durChapterIndex;
+        chapterBean.durChapterUrl = durChapterUrl;
+        chapterBean.durChapterPlayUrl = durChapterPlayUrl;
+        chapterBean.nextChapterUrl = nextChapterUrl;
+        chapterBean.durChapterName = durChapterName;
+        chapterBean.tag = tag;
+        chapterBean.start = start;
+        chapterBean.end = end;
+        return chapterBean;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ChapterListBean) {
-            ChapterListBean chapterListBean = (ChapterListBean) obj;
-            return Objects.equals(chapterListBean.durChapterUrl, durChapterUrl);
+        if (obj instanceof ChapterBean) {
+            ChapterBean chapterBean = (ChapterBean) obj;
+            return Objects.equals(chapterBean.durChapterUrl, durChapterUrl);
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectsCompat.hashCode(durChapterUrl);
     }
 
     public Boolean getHasCache(BookInfoBean bookInfoBean) {
@@ -162,16 +177,20 @@ public class ChapterListBean implements Parcelable {
         return this.durChapterUrl;
     }
 
+    public String getDurChapterPlayUrl() {
+        return durChapterPlayUrl;
+    }
+
+    public void setDurChapterPlayUrl(String durChapterPlayUrl) {
+        this.durChapterPlayUrl = durChapterPlayUrl;
+    }
+
     public void setDurChapterUrl(String durChapterUrl) {
         this.durChapterUrl = durChapterUrl;
     }
 
     public int getDurChapterIndex() {
         return this.durChapterIndex == null ? 0 : this.durChapterIndex;
-    }
-
-    public void setDurChapterIndex(int durChapterIndex) {
-        this.durChapterIndex = durChapterIndex;
     }
 
     public String getNoteUrl() {
@@ -202,4 +221,16 @@ public class ChapterListBean implements Parcelable {
         this.end = end;
     }
 
+    public String getNextChapterUrl() {
+        return nextChapterUrl;
+    }
+
+    public void setNextChapterUrl(String nextChapterUrl) {
+        this.nextChapterUrl = nextChapterUrl;
+    }
+
+    @Override
+    public String[] getFilters() {
+        return new String[]{durChapterName};
+    }
 }

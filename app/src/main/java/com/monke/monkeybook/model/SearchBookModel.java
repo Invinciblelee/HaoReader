@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model;
 
 import android.content.Context;
+import android.icu.text.SearchIterator;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.R;
@@ -33,6 +34,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private String searchBookType;
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
+    private boolean useMy716 = true;
 
     private ExecutorService executor;
     private Scheduler scheduler;
@@ -43,9 +45,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private SearchIterator searchIterator;
 
     public SearchBookModel(Context context) {
-        AppConfigHelper helper = AppConfigHelper.get(context);
-        threadsNum = helper.getInt(context.getString(R.string.pk_threads_num), 6);
-        searchPageCount = helper.getInt(context.getString(R.string.pk_search_page_count), 1);
+        AppConfigHelper configHelper = AppConfigHelper.get();
+        threadsNum = configHelper.getInt(context.getString(R.string.pk_threads_num), 6);
+        searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
     }
@@ -58,7 +60,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchEngineS.clear();
         }
 
-        searchEngineS.add(new SearchEngine(Default716.TAG));
+        if(useMy716) {
+            searchEngineS.add(new SearchEngine(Default716.TAG));
+        }
 
         List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
         if (bookSourceBeans != null && !bookSourceBeans.isEmpty()) {
@@ -137,6 +141,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     public SearchBookModel listener(SearchListener listener) {
         this.searchListener = listener;
+        return this;
+    }
+
+    public SearchBookModel useMy716(boolean useMy716){
+        this.useMy716 = useMy716;
         return this;
     }
 

@@ -90,7 +90,11 @@ abstract class BaseAnalyzerPresenter<S, T> implements IAnalyzerPresenter {
     @SuppressWarnings("unused")
     public final String ajax(String urlStr) {
         try {
+<<<<<<< HEAD
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(urlStr);
+=======
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(urlStr, getConfig().getBaseURL());
+>>>>>>> 3c2c4a986d97feb3f36c665e7701c2c1d0411ad8
             Response<String> response = SimpleModel.getResponse(analyzeUrl)
                     .blockingFirst();
             return response.body();

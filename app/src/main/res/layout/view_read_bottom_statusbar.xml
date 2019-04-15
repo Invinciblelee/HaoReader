@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/read_statusbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="24dp"
     android:layout_gravity="bottom"
     android:visibility="invisible">
 
@@ -19,23 +19,20 @@
             android:id="@+id/tv_title_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="middle"
             android:includeFontPadding="false"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:visibility="gone"
-             />
+            tools:ignore="SmallSp" />
 
-        <ProgressBar
+        <com.monke.monkeybook.widget.BatteryView
             android:id="@+id/batteryProgress"
             style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="22sp"
-            android:layout_height="12sp"
-            android:background="@drawable/battery_bg"
-            android:indeterminate="false"
-            android:max="100"
-            android:progress="100"
-            android:progressDrawable="@drawable/battery_level_progress"
-            android:visibility="gone"
-             />
+            android:layout_width="18sp"
+            android:layout_height="9sp"
+            tools:ignore="SmallSp"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_time"
@@ -44,20 +41,22 @@
             android:includeFontPadding="false"
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
-            android:textSize="12sp"
-            android:visibility="gone"
-             />
+            android:textSize="10sp"
+            tools:ignore="SmallSp"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:singleLine="true"
+        android:gravity="center"
+        android:ellipsize="middle"
         android:includeFontPadding="false"
-        android:maxLines="1"
-        android:textSize="12sp"
-         />
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
 
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -66,6 +65,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
         android:includeFontPadding="false"
-        android:textSize="12sp"
-         />
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        />
 </com.monke.monkeybook.widget.ReadBottomStatusBar>

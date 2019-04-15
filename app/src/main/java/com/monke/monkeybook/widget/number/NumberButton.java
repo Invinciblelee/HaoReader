@@ -3,6 +3,11 @@ package com.monke.monkeybook.widget.number;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.text.DecimalFormat;
 
@@ -32,20 +38,32 @@ public class NumberButton extends FrameLayout implements View.OnClickListener {
 
     public NumberButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
-    private void init(Context context) {
+    private void init(Context context, AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.view_number_buttom, this);
 
         TextView addButton = findViewById(R.id.button_add);
         addButton.setOnClickListener(this);
         TextView subButton = findViewById(R.id.button_sub);
         subButton.setOnClickListener(this);
-
         tvNumber = findViewById(R.id.tv_number);
         tvNumber.setOnClickListener(this);
 
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.NumberButton, 0, 0);
+        if(a.hasValue(R.styleable.NumberButton_themeColor)){
+            int themeColor = a.getColor(R.styleable.NumberButton_themeColor, context.getResources().getColor(R.color.tv_text_default));
+            addButton.setTextColor(themeColor);
+            subButton.setTextColor(themeColor);
+            tvNumber.setTextColor(themeColor);
+        }
+        if(a.hasValue(R.styleable.NumberButton_android_background)){
+            ViewCompat.setBackground(this, null);
+            ViewCompat.setBackground(getChildAt(0), a.getDrawable(R.styleable.NumberButton_android_background));
+        }
+        a.recycle();
     }
 
     public NumberButton setTitle(@NonNull String title) {

@@ -4,9 +4,7 @@ import android.text.TextUtils;
 
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.bean.ChapterListBean;
-import com.monke.monkeybook.dao.BookSourceBeanDao;
-import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.AudioSniffer;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 
@@ -25,11 +23,13 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     @Override
-    public void ensureChapterUrl(ChapterListBean chapter) {
+    public void ensureChapterUrl(ChapterBean chapter) {
         ensureBookSource(chapter.getTag());
         if(mBookSource == null){
             return;
         }
+
+
     }
 
     @Override
@@ -62,7 +62,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 } else if (ruleBookContent.startsWith("$")) {
                     isAJAX = true;
 
-                    String[] rules = ruleBookContent.split("@js:");
+                    String[] rules = ruleBookContent.split("(?i)@js:");
                     if (rules.length > 1) {
                         this.audioType = rules[0].substring(1);
                         this.javaScript = rules[1];

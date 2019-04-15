@@ -8,44 +8,52 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.gyf.barlibrary.ImmersionBar;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.AppCompat;
 
 import java.lang.reflect.Method;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.Toolbar;
+
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
+
     protected ImmersionBar mImmersionBar;
     private SharedPreferences preferences;
 
+    private boolean mDayNight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        preferences = AppConfigHelper.get(this).getPreferences();
-        initNightTheme();
+        preferences = AppConfigHelper.get().getPreferences();
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getWindow().getDecorView().setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
         }
-        mImmersionBar = ImmersionBar.with(this);
-        initImmersionBar();
         initToolbarColors();
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mImmersionBar = ImmersionBar.with(this);
+        initImmersionBar();
+    }
 
     private void initToolbarColors() {
         Toolbar toolbar = findToolbar();
@@ -82,16 +90,19 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && mDayNight != isNightTheme()) {
+            applyNightTheme();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mImmersionBar != null) {
             mImmersionBar.destroy();  //在BaseActivity里销毁}
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -123,7 +134,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     public boolean onCreateOptionsMenu(Menu menu) {
         if (menu != null) {
             for (int i = 0; i < menu.size(); i++) {
-                MenuItem item = menu.getItem(i);
+                MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
                 AppCompat.setTint(item, getResources().getColor(R.color.menu_color_default));
             }
         }
@@ -185,7 +196,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("nightTheme", isNightTheme);
         editor.apply();
-        initNightTheme();
+        applyNightTheme();
     }
 
     public void setOrientation(int screenDirection) {
@@ -205,12 +216,14 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-    public void initNightTheme() {
-        if (isNightTheme()) {
-            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+    public void applyNightTheme() {
+        mDayNight = isNightTheme();
+        if (mDayNight) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
-            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+        getDelegate().applyDayNight();
     }
 
     public void startActivityByAnim(Intent intent, int animIn, int animExit) {
@@ -254,15 +267,16 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-    public void showSnackBar(@StringRes int msgId){
+    public void showSnackBar(@StringRes int msgId) {
         showSnackBar(getString(msgId));
     }
 
     public void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        ToastUtils.toast(this, msg);
     }
 
     public void toast(@StringRes int resId) {
-        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
+        ToastUtils.toast(this, resId);
     }
+
 }

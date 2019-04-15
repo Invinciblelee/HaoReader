@@ -217,7 +217,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     @AfterPermissionGranted(RESULT_IMPORT_PERMS)
     private void resultImportPerms() {
-        FileSelector.newInstance(true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelector.newInstance("选择文件",true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 mPresenter.importDataS(new File(path));

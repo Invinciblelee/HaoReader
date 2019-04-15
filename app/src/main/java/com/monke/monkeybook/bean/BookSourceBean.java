@@ -2,18 +2,15 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.monke.monkeybook.help.Constant;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
-import org.greenrobot.greendao.annotation.Transient;
-
-import java.util.Objects;
-
-import static android.text.TextUtils.isEmpty;
 
 /**
  * Created by GKF on 2017/12/14.
@@ -28,7 +25,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String bookSourceType = Constant.BookType.TEXT;
     private String bookSourceRuleType = Constant.RuleType.DEFAULT;
     private String checkUrl;
-    private String loginUrl;
+    private String loginCookieKey;
     @OrderBy
     private int serialNumber;
     @OrderBy
@@ -43,6 +40,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleSearchLastChapter;
     private String ruleSearchCoverUrl;
     private String ruleSearchNoteUrl;
+    private String rulePersistedVariables;
     private String ruleBookName;
     private String ruleBookAuthor;
     private String ruleLastChapter;
@@ -57,18 +55,18 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleBookContent;
     private String httpUserAgent;
 
-    @Generated(hash = 732891766)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, String loginUrl, int serialNumber, int weight,
-            boolean enable, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter,
-            String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl,
-            String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+    @Generated(hash = 1989712022)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, String loginCookieKey, int serialNumber, int weight, boolean enable,
+            String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl,
+            String rulePersistedVariables, String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList,
+            String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
         this.bookSourceType = bookSourceType;
         this.bookSourceRuleType = bookSourceRuleType;
         this.checkUrl = checkUrl;
-        this.loginUrl = loginUrl;
+        this.loginCookieKey = loginCookieKey;
         this.serialNumber = serialNumber;
         this.weight = weight;
         this.enable = enable;
@@ -81,6 +79,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchLastChapter = ruleSearchLastChapter;
         this.ruleSearchCoverUrl = ruleSearchCoverUrl;
         this.ruleSearchNoteUrl = ruleSearchNoteUrl;
+        this.rulePersistedVariables = rulePersistedVariables;
         this.ruleBookName = ruleBookName;
         this.ruleBookAuthor = ruleBookAuthor;
         this.ruleLastChapter = ruleLastChapter;
@@ -107,7 +106,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         bookSourceType = in.readString();
         bookSourceRuleType = in.readString();
         checkUrl = in.readString();
-        loginUrl = in.readString();
+        loginCookieKey = in.readString();
         serialNumber = in.readInt();
         weight = in.readInt();
         enable = in.readByte() != 0;
@@ -116,13 +115,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
         ruleSearchList = in.readString();
         ruleSearchName = in.readString();
         ruleSearchAuthor = in.readString();
-        ruleLastChapter = in.readString();
         ruleSearchKind = in.readString();
         ruleSearchLastChapter = in.readString();
         ruleSearchCoverUrl = in.readString();
         ruleSearchNoteUrl = in.readString();
+        rulePersistedVariables = in.readString();
         ruleBookName = in.readString();
         ruleBookAuthor = in.readString();
+        ruleLastChapter = in.readString();
         ruleChapterUrl = in.readString();
         ruleChapterUrlNext = in.readString();
         ruleCoverUrl = in.readString();
@@ -143,7 +143,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(bookSourceType);
         dest.writeString(bookSourceRuleType);
         dest.writeString(checkUrl);
-        dest.writeString(loginUrl);
+        dest.writeString(loginCookieKey);
         dest.writeInt(serialNumber);
         dest.writeInt(weight);
         dest.writeByte((byte) (enable ? 1 : 0));
@@ -152,13 +152,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(ruleSearchList);
         dest.writeString(ruleSearchName);
         dest.writeString(ruleSearchAuthor);
-        dest.writeString(ruleLastChapter);
         dest.writeString(ruleSearchKind);
         dest.writeString(ruleSearchLastChapter);
         dest.writeString(ruleSearchCoverUrl);
         dest.writeString(ruleSearchNoteUrl);
+        dest.writeString(rulePersistedVariables);
         dest.writeString(ruleBookName);
         dest.writeString(ruleBookAuthor);
+        dest.writeString(ruleLastChapter);
         dest.writeString(ruleChapterUrl);
         dest.writeString(ruleChapterUrlNext);
         dest.writeString(ruleCoverUrl);
@@ -220,20 +221,23 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(ruleSearchNoteUrl, bs.ruleSearchNoteUrl)
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
                     && stringEquals(checkUrl, bs.checkUrl)
-                    && stringEquals(loginUrl, bs.loginUrl);
+                    && stringEquals(loginCookieKey, bs.loginCookieKey)
+                    && stringEquals(rulePersistedVariables, bs.rulePersistedVariables);
         }
         return false;
     }
 
     private Boolean stringEquals(String str1, String str2) {
-        return Objects.equals(str1, str2) || (isEmpty(str1) && isEmpty(str2));
+        return (TextUtils.isEmpty(str1) && TextUtils.isEmpty(str2)) || TextUtils.equals(str1, str2);
     }
 
     @Override
     public BookSourceBean clone() {
         try {
-            return (BookSourceBean) super.clone();
-        } catch (CloneNotSupportedException e) {
+            Gson gson = new Gson();
+            String json = gson.toJson(this);
+            return gson.fromJson(json, BookSourceBean.class);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return this;
@@ -248,7 +252,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getBookSourceType() {
-        return bookSourceType == null ? Constant.BookType.TEXT : bookSourceType;
+        return bookSourceType;
     }
 
     public void setBookSourceType(@Constant.BookType String bookSourceType) {
@@ -256,7 +260,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getBookSourceRuleType() {
-        return bookSourceRuleType == null ? Constant.RuleType.DEFAULT : bookSourceRuleType;
+        return bookSourceRuleType;
     }
 
     public void setBookSourceRuleType(@Constant.RuleType String bookSourceRuleType) {
@@ -463,12 +467,12 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.checkUrl = checkUrl;
     }
 
-    public String getLoginUrl() {
-        return loginUrl;
+    public String getLoginCookieKey() {
+        return loginCookieKey;
     }
 
-    public void setLoginUrl(String loginUrl) {
-        this.loginUrl = loginUrl;
+    public void setLoginCookieKey(String loginCookieKey) {
+        this.loginCookieKey = loginCookieKey;
     }
 
     public String getRuleChapterUrlNext() {
@@ -487,6 +491,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleContentUrlNext = ruleContentUrlNext;
     }
 
+    public String getRulePersistedVariables() {
+        return rulePersistedVariables;
+    }
+
+    public void setRulePersistedVariables(String rulePersistedVariables) {
+        this.rulePersistedVariables = rulePersistedVariables;
+    }
+
     public int getWeight() {
         return weight;
     }
@@ -502,5 +514,44 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    @Override
+    public String toString() {
+        return "BookSourceBean{" +
+                "bookSourceUrl='" + bookSourceUrl + '\'' +
+                ", bookSourceName='" + bookSourceName + '\'' +
+                ", bookSourceGroup='" + bookSourceGroup + '\'' +
+                ", bookSourceType='" + bookSourceType + '\'' +
+                ", bookSourceRuleType='" + bookSourceRuleType + '\'' +
+                ", checkUrl='" + checkUrl + '\'' +
+                ", loginCookieKey='" + loginCookieKey + '\'' +
+                ", serialNumber=" + serialNumber +
+                ", weight=" + weight +
+                ", enable=" + enable +
+                ", ruleFindUrl='" + ruleFindUrl + '\'' +
+                ", ruleSearchUrl='" + ruleSearchUrl + '\'' +
+                ", ruleSearchList='" + ruleSearchList + '\'' +
+                ", ruleSearchName='" + ruleSearchName + '\'' +
+                ", ruleSearchAuthor='" + ruleSearchAuthor + '\'' +
+                ", ruleSearchKind='" + ruleSearchKind + '\'' +
+                ", ruleSearchLastChapter='" + ruleSearchLastChapter + '\'' +
+                ", ruleSearchCoverUrl='" + ruleSearchCoverUrl + '\'' +
+                ", ruleSearchNoteUrl='" + ruleSearchNoteUrl + '\'' +
+                ", rulePersistedVariables='" + rulePersistedVariables + '\'' +
+                ", ruleBookName='" + ruleBookName + '\'' +
+                ", ruleBookAuthor='" + ruleBookAuthor + '\'' +
+                ", ruleLastChapter='" + ruleLastChapter + '\'' +
+                ", ruleChapterUrl='" + ruleChapterUrl + '\'' +
+                ", ruleChapterUrlNext='" + ruleChapterUrlNext + '\'' +
+                ", ruleCoverUrl='" + ruleCoverUrl + '\'' +
+                ", ruleIntroduce='" + ruleIntroduce + '\'' +
+                ", ruleChapterList='" + ruleChapterList + '\'' +
+                ", ruleChapterName='" + ruleChapterName + '\'' +
+                ", ruleContentUrl='" + ruleContentUrl + '\'' +
+                ", ruleContentUrlNext='" + ruleContentUrlNext + '\'' +
+                ", ruleBookContent='" + ruleBookContent + '\'' +
+                ", httpUserAgent='" + httpUserAgent + '\'' +
+                '}';
     }
 }

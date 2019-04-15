@@ -6,15 +6,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -28,21 +23,27 @@ import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.WebLoadConfig;
-import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.schedulers.Schedulers;
 
-public class WebViewActivity extends MBaseActivity {
+public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.rl_content)
     ScrimInsetsRelativeLayout rlContent;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refreshLayout;
     @BindView(R.id.appBar)
     View appBar;
     @BindView(R.id.toolbar)
@@ -92,34 +93,46 @@ public class WebViewActivity extends MBaseActivity {
 
         rlContent.setOnInsetsCallback(insets -> appBar.setPadding(0, insets.top, 0, 0));
 
+        refreshLayout.setOnRefreshListener(this);
+
         WebSettings settings = webView.getSettings();
         settings.setSupportZoom(true);
         settings.setBuiltInZoomControls(true);
-        settings.setUseWideViewPort(true);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
         settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
         settings.setUserAgentString(AnalyzeHeaders.getUserAgent(mConfig.getUserAgent()));
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        webView.addJavascriptInterface(new MJavaScriptInterface(this), "HTMLOUT");
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
                 if (newProgress < 100) {
                     if (progressBar.getVisibility() != View.VISIBLE)
                         progressBar.setVisibility(View.VISIBLE);
                     progressBar.setProgress(newProgress);
                 } else if (progressBar.getVisibility() == View.VISIBLE) {
                     progressBar.setVisibility(View.INVISIBLE);
+                    refreshLayout.stopRefreshing();
+                }
+            }
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                if (TextUtils.isEmpty(mConfig.getTitle())) {
+                    setTitle(title);
                 }
             }
         });
-        webView.setWebViewClient(new MWebClient(this, mConfig.getUrl()));
+        webView.setWebViewClient(new MWebClient(this));
 
-        webView.loadUrl(mConfig.getUrl());
+        getWindow().getDecorView().post(() -> {
+            if (webView != null) {
+                webView.loadUrl(mConfig.getUrl());
+            }
+        });
+
     }
 
     @Override
@@ -162,6 +175,15 @@ public class WebViewActivity extends MBaseActivity {
         super.onBackPressed();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (webView != null) {
+            webView.destroy();
+            webView = null;
+        }
+    }
+
     private void setupActionBar() {
         setSupportActionBar(toolbar);
 
@@ -172,6 +194,20 @@ public class WebViewActivity extends MBaseActivity {
         }
     }
 
+    @Override
+    public void setTitle(CharSequence title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        webView.reload();
+    }
+
+
     private void openInBrowser() {
         try {
             String url = webView.getUrl();
@@ -180,7 +216,7 @@ public class WebViewActivity extends MBaseActivity {
             startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            toast(getString(R.string.can_not_open));
+            toast(R.string.can_not_open);
         }
     }
 
@@ -203,9 +239,9 @@ public class WebViewActivity extends MBaseActivity {
 
     private static class MWebClient extends WebViewClient {
 
-        private WeakReference<WebViewActivity> actRef;
+        private final WeakReference<WebViewActivity> actRef;
 
-        private MWebClient(WebViewActivity activity, String url) {
+        private MWebClient(WebViewActivity activity) {
             this.actRef = new WeakReference<>(activity);
         }
 
@@ -226,35 +262,18 @@ public class WebViewActivity extends MBaseActivity {
         public void onPageFinished(WebView view, String url) {
             if (actRef.get() != null) {
                 WebLoadConfig config = actRef.get().mConfig;
-                if(config.getLoginTag() != null) {
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    String cookie = cookieManager.getCookie(url);
-                    if(!TextUtils.isEmpty(cookie)) {
-                        Log.e("TAG", config.getLoginTag() + "\n" + cookie);
-                        CookieHelper.get(actRef.get()).setCookie(config.getLoginTag(), cookie);
-                    }
+                if (config != null) {
+                    config.setCookie(url);
                 }
             }
             super.onPageFinished(view, url);
 
-            view.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+            view.evaluateJavascript("document.documentElement.outerHTML", value -> {
+                if (actRef.get() != null) {
+                    actRef.get().setHtmlCode(StringEscapeUtils.unescapeJson(value));
+                }
+            });
         }
     }
 
-    private static class MJavaScriptInterface {
-
-        private WeakReference<WebViewActivity> actRef;
-
-        private MJavaScriptInterface(WebViewActivity activity) {
-            actRef = new WeakReference<>(activity);
-        }
-
-        @JavascriptInterface
-        @SuppressWarnings("unused")
-        public void processHTML(String html) {
-            if (actRef.get() != null) {
-                actRef.get().setHtmlCode(html);
-            }
-        }
-    }
 }

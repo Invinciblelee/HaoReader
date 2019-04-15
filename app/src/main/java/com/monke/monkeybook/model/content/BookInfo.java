@@ -1,6 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -27,10 +26,8 @@ class BookInfo {
                 return;
             }
             bookShelfBean.setTag(analyzer.getConfig().getTag());
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("book", bookShelfBean);
-            analyzer.apply(analyzer.newConfig().baseURL(bookShelfBean.getNoteUrl()).extras(bundle));
-            e.onNext(analyzer.getDelegate().getBook(s));
+            analyzer.apply(analyzer.newConfig().baseURL(bookShelfBean.getNoteUrl()).variableStore(bookShelfBean));
+            e.onNext(analyzer.getBook(s));
             e.onComplete();
         });
     }

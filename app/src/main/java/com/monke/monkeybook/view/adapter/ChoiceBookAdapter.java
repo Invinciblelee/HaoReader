@@ -2,8 +2,6 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.app.Activity;
-import androidx.recyclerview.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +11,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.BookKindBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.utils.ScreenUtils;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     private Activity activity;
@@ -60,44 +62,40 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         }
         myViewHolder.tvName.setText(item.getName());
 
-        if (!TextUtils.isEmpty(item.getAuthor())) {
+        if (!StringUtils.isEmpty(item.getAuthor())) {
             myViewHolder.tvAuthor.setText(item.getAuthor());
         } else {
             myViewHolder.tvAuthor.setText(R.string.author_unknown);
         }
 
-        String state = item.getState();
-        if (TextUtils.isEmpty(state)) {
+        BookKindBean kindBean = new BookKindBean(item.getKind());
+        String state = kindBean.getState();
+        if (StringUtils.isEmpty(state)) {
             myViewHolder.tvState.setVisibility(View.GONE);
         } else {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
             myViewHolder.tvState.setText(state);
         }
-        long words = item.getWords();
-        if (words <= 0) {
+        String words = kindBean.getWordsS();
+        if (StringUtils.isEmpty(words)) {
             myViewHolder.tvWords.setVisibility(View.INVISIBLE);
         } else {
-            String wordsS = Long.toString(words) + "字";
-            if (words > 10000) {
-                DecimalFormat df = new DecimalFormat("#.#");
-                wordsS = df.format(words * 1.0f / 10000f) + "万字";
-            }
             myViewHolder.tvWords.setVisibility(View.VISIBLE);
-            myViewHolder.tvWords.setText(wordsS);
+            myViewHolder.tvWords.setText(words);
         }
-        String kind = item.getKind();
-        if (TextUtils.isEmpty(kind)) {
+        String kind = kindBean.getKind();
+        if (StringUtils.isEmpty(kind)) {
             myViewHolder.tvKind.setVisibility(View.GONE);
         } else {
             myViewHolder.tvKind.setVisibility(View.VISIBLE);
             myViewHolder.tvKind.setText(kind);
         }
 
-        String desc = !TextUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
-                : !TextUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
+        String desc = !StringUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
+                : !StringUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
         myViewHolder.tvLasted.setText(desc);
 
-        if (!TextUtils.isEmpty(item.getOrigin())) {
+        if (!StringUtils.isEmpty(item.getOrigin())) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
             myViewHolder.tvOrigin.setText(item.getOrigin());
         } else {
@@ -113,7 +111,6 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
                 itemClickListener.clickToSearch(myViewHolder.tvAddShelf, realPosition, item);
         });
 
-        myViewHolder.originView.setPadding(0, 0, ScreenUtils.dpToPx(72), 0);
     }
 
     @Override
@@ -136,7 +133,6 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvLasted;
         TextView tvAddShelf;
         TextView tvOrigin;
-        View originView;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -149,8 +145,9 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             tvAddShelf = itemView.findViewById(R.id.btn_search_book);
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
-            originView = itemView.findViewById(R.id.ll_origin);
             tvAddShelf.setVisibility(View.VISIBLE);
+
+            tvOrigin.setPadding(0, 0, ScreenUtils.dpToPx(72), 0);
         }
     }
 

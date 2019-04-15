@@ -1,6 +1,7 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,10 +75,11 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
         if (files != null && !files.isEmpty()) {
             this.files.addAll(files);
         }
+        reset();
         notifyDataSetChanged();
     }
 
-    public void reset() {
+    private void reset() {
         lastSelectedFile = null;
         for (RipeFile file : files) {
             file.setSelected(false);

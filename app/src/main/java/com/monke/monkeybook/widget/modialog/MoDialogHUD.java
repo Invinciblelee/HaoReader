@@ -124,7 +124,7 @@ public class MoDialogHUD {
         );
         rootView.setLayoutParams(layoutParams);
         rootView.setClickable(true);
-        rootView.setBackgroundColor(context.getResources().getColor(R.color.btn_bg_press_tp));
+        rootView.setBackgroundColor(context.getResources().getColor(R.color.dark_translucent));
 
         mSharedView = new MoDialogView(context);
         mSharedView.onAttach(this);

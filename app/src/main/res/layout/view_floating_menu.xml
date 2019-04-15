@@ -47,7 +47,7 @@
             android:layout_marginBottom="8dp"
             android:tint="@color/menu_color_default"
             app:backgroundTint="@color/card_background"
-            app:fabSize="mini"
+            app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_assignment_black_24dp" />
     </LinearLayout>
 
@@ -90,7 +90,7 @@
             android:layout_marginBottom="8dp"
             android:tint="@color/menu_color_default"
             app:backgroundTint="@color/card_background"
-            app:fabSize="mini"
+            app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_book_black_24dp" />
 
     </LinearLayout>
@@ -135,7 +135,7 @@
             android:layout_marginBottom="8dp"
             android:tint="@color/menu_color_default"
             app:backgroundTint="@color/card_background"
-            app:fabSize="mini"
+            app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_assignment_turned_in_black_24dp" />
 
     </LinearLayout>
@@ -179,7 +179,7 @@
             android:layout_marginBottom="8dp"
             android:tint="@color/menu_color_default"
             app:backgroundTint="@color/card_background"
-            app:fabSize="mini"
+            app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_folder_black_24dp" />
 
     </LinearLayout>
@@ -195,9 +195,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+        app:fabCustomSize="56dp"
         android:tint="@color/menu_color_default"
         app:backgroundTint="@color/card_background"
-        app:fabSize="normal"
         app:srcCompat="@drawable/ic_library_books_black_24dp" />
 
 

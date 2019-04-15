@@ -211,7 +211,7 @@ public class BookInfoActivity extends MBaseActivity {
         bookInfo.setIntroduce(getTextString(tieBookJj));
         bookInfo.setCustomCoverPath(getTextString(tieCoverUrl));
         bookShelf.setBookInfoBean(bookInfo);
-        DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().insertOrReplace(bookInfo);
+        DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().insertOrReplace(bookInfo);
         RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, bookShelf);
         finishByTransition();
     }

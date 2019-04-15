@@ -4,17 +4,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.internal.NavigationMenuPresenter;
-import com.google.android.material.internal.NavigationMenuView;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -25,10 +14,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.internal.NavigationMenuPresenter;
+import com.google.android.material.internal.NavigationMenuView;
+import com.google.android.material.navigation.NavigationView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.ScreenUtils;
 
 import java.lang.reflect.Field;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class AppCompat {
 
@@ -114,32 +114,29 @@ public class AppCompat {
         }
     }
 
-    public static void setNavigationViewLineStyle(NavigationView navigationView, @ColorInt final int color, final int height) {
+    public static void useCustomNavigationViewDivider(NavigationView navigationView) {
         try {
-            Field fieldByPressenter = navigationView.getClass().getDeclaredField("presenter");
-            fieldByPressenter.setAccessible(true);
-            NavigationMenuPresenter menuPresenter = (NavigationMenuPresenter) fieldByPressenter.get(navigationView);
+            Field fieldByPresenter = navigationView.getClass().getDeclaredField("presenter");
+            fieldByPresenter.setAccessible(true);
+            NavigationMenuPresenter menuPresenter = (NavigationMenuPresenter) fieldByPresenter.get(navigationView);
             Field fieldByMenuView = menuPresenter.getClass().getDeclaredField("menuView");
             fieldByMenuView.setAccessible(true);
             final NavigationMenuView mMenuView = (NavigationMenuView) fieldByMenuView.get(menuPresenter);
             mMenuView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
                 @Override
-                public void onChildViewAttachedToWindow(View view) {
+                public void onChildViewAttachedToWindow(@NonNull View view) {
                     RecyclerView.ViewHolder viewHolder = mMenuView.getChildViewHolder(view);
                     if (viewHolder != null && "SeparatorViewHolder".equals(viewHolder.getClass().getSimpleName())) {
                         if (viewHolder.itemView instanceof FrameLayout) {
                             FrameLayout frameLayout = (FrameLayout) viewHolder.itemView;
-                            View line = frameLayout.getChildAt(0);
-                            line.setBackgroundColor(color);
-                            line.getLayoutParams().height = height;
-                            line.setLayoutParams(line.getLayoutParams());
+                            frameLayout.removeAllViews();
+                            View.inflate(view.getContext(), R.layout.view_navigation_divider, frameLayout);
                         }
                     }
                 }
 
                 @Override
-                public void onChildViewDetachedFromWindow(View view) {
-
+                public void onChildViewDetachedFromWindow(@NonNull View view) {
                 }
             });
         } catch (Throwable e) {
@@ -149,7 +146,8 @@ public class AppCompat {
 
     public static void setTintList(Drawable drawable, ColorStateList tint, @NonNull PorterDuff.Mode tintMode) {
         if (drawable == null) return;
-        final Drawable wrappedDrawable = DrawableCompat.wrap(drawable.mutate());
+        final Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
+        wrappedDrawable.mutate();
         DrawableCompat.setTintList(wrappedDrawable, tint);
         DrawableCompat.setTintMode(wrappedDrawable, tintMode);
     }
@@ -175,7 +173,8 @@ public class AppCompat {
 
     public static void setTint(Drawable drawable, @ColorInt int tint, @NonNull PorterDuff.Mode tintMode) {
         if (drawable == null) return;
-        final Drawable wrappedDrawable = DrawableCompat.wrap(drawable.mutate());
+        final Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
+        wrappedDrawable.mutate();
         DrawableCompat.setTint(wrappedDrawable, tint);
         DrawableCompat.setTintMode(wrappedDrawable, tintMode);
     }

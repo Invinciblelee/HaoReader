@@ -45,12 +45,12 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public boolean viewIsList() {
-        return AppConfigHelper.get(MApplication.getInstance()).getBoolean("bookshelfIsList", true);
+        return AppConfigHelper.get().getBoolean("bookshelfIsList", true);
     }
 
     @Override
     public int getBookshelfPx() {
-        String bookPx = AppConfigHelper.get(MApplication.getInstance()).getString(MApplication.getInstance().getString(R.string.pk_bookshelf_px), "0");
+        String bookPx = AppConfigHelper.get().getString(MApplication.getInstance().getString(R.string.pk_bookshelf_px), "0");
         return bookPx == null ? 0 : Integer.parseInt(bookPx);
     }
 
@@ -61,7 +61,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public boolean getNeedAnim() {
-        return AppConfigHelper.get(MApplication.getInstance()).getBoolean(MApplication.getInstance().getString(R.string.pk_bookshelf_anim), false);
+        return AppConfigHelper.get().getBoolean(MApplication.getInstance().getString(R.string.pk_bookshelf_anim), false);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
                     }
                 }
                 if (!temp.isEmpty()) {
-                    DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplaceInTx(temp);
+                    DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplaceInTx(temp);
                 }
                 e.onNext(true);
                 e.onComplete();

@@ -1,6 +1,6 @@
 package com.monke.monkeybook.widget.page;
 
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface OnPageChangeListener {
      *
      * @param chapters：返回章节目录
      */
-    void onCategoryFinish(List<ChapterListBean> chapters);
+    void onCategoryFinish(List<ChapterBean> chapters);
 
     /**
      * 作用：章节页码数量改变之后的回调。==> 字体大小的调整，或者是否关闭虚拟按钮功能都会改变页面的数量。

@@ -21,20 +21,24 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:transitionName="sharedView"
+            app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ExpandableListView
-        android:id="@+id/expandable_list"
+    <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:clipToPadding="false"
         android:layout_below="@id/appBar"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
+        app:showBubble="true"
+        app:bubbleColor="@color/tv_text_button_deep_pre"
+        app:handleColor="@color/tv_text_button_pre"
+        app:trackColor="@color/scroller_track_color"/>
 
     <TextView
         android:id="@+id/tv_empty"

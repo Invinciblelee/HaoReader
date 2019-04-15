@@ -7,20 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import android.text.TextUtils;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.impl.IDownloadTask;
 import com.monke.monkeybook.model.task.DownloadTaskImpl;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.DownloadActivity;
 
 import java.util.ArrayList;
@@ -29,6 +26,9 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
@@ -39,9 +39,7 @@ public class DownloadService extends Service {
     public static final String progressDownloadAction = "progressDownloadAction";
     public static final String obtainDownloadListAction = "obtainDownloadListAction";
     public static final String finishDownloadAction = "finishDownloadAction";
-    private int notificationId = 19931118;
     private NotificationManagerCompat managerCompat;
-    private long currentTime;
 
     public static boolean isRunning = false;
 
@@ -56,7 +54,7 @@ public class DownloadService extends Service {
         super.onCreate();
         isRunning = true;
         managerCompat = NotificationManagerCompat.from(this);
-        threadsNum = AppConfigHelper.get(this).getInt(this.getString(R.string.pk_threads_num), 4);
+        threadsNum = AppConfigHelper.get().getInt(this.getString(R.string.pk_threads_num), 4);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
     }
@@ -108,10 +106,10 @@ public class DownloadService extends Service {
 
     private void addDownload(DownloadBookBean downloadBook) {
         if (checkDownloadTaskExist(downloadBook)) {
-            Toast.makeText(this, "下载任务已存在", Toast.LENGTH_SHORT).show();
+            toast("下载任务已存在");
             return;
         }
-        new DownloadTaskImpl(notificationId, downloadBook) {
+        new DownloadTaskImpl(downloadBook) {
             @Override
             public void onDownloadPrepared(DownloadBookBean downloadBook) {
                 if (canStartNextTask()) {
@@ -119,11 +117,11 @@ public class DownloadService extends Service {
                 }
                 downloadTasks.put(getId(), this);
                 sendUpDownloadBook(addDownloadAction, downloadBook);
-                toast(String.format(Locale.getDefault(), "%s：下载任务添加成功", downloadBook.getName()));
+                longToast(String.format(Locale.getDefault(), "%s：下载任务添加成功", downloadBook.getName()));
             }
 
             @Override
-            public void onDownloadProgress(String bookName, ChapterListBean chapterBean) {
+            public void onDownloadProgress(String bookName, ChapterBean chapterBean) {
                 isProgress(getId(), getWhen(), bookName, chapterBean);
             }
 
@@ -135,8 +133,8 @@ public class DownloadService extends Service {
             @Override
             public void onDownloadError(DownloadBookBean downloadBook) {
                 if (downloadTasks.indexOfValue(this) >= 0) {
-                    managerCompat.cancel(getId());
                     downloadTasks.remove(getId());
+                    managerCompat.cancel(getId());
                 }
 
                 toast(String.format(Locale.getDefault(), "%s：下载失败", downloadBook.getName()));
@@ -147,12 +145,13 @@ public class DownloadService extends Service {
             @Override
             public void onDownloadComplete(DownloadBookBean downloadBook) {
                 if (downloadTasks.indexOfValue(this) >= 0) {
-                    managerCompat.cancel(getId());
                     downloadTasks.remove(getId());
+                    managerCompat.cancel(getId());
+
                     if (downloadBook.getSuccessCount() == 0) {
                         toast(String.format(Locale.getDefault(), "%s：无章节可下载", downloadBook.getName()));
                     } else {
-                        toast(String.format(Locale.getDefault(), "%s：共下载%d章", downloadBook.getName(), downloadBook.getSuccessCount()));
+                        longToast(String.format(Locale.getDefault(), "%s：共下载%d章", downloadBook.getName(), downloadBook.getSuccessCount()));
                     }
                 } else if (!downloadBook.isValid()) {
                     toast(String.format(Locale.getDefault(), "%s：所有章节已缓存，无需重复下载", downloadBook.getName()));
@@ -160,7 +159,6 @@ public class DownloadService extends Service {
                 startNextTaskAfterRemove(downloadBook);
             }
         };
-        notificationId += 1;
     }
 
     private void cancelDownload() {
@@ -259,26 +257,24 @@ public class DownloadService extends Service {
     }
 
     private void toast(String msg) {
-        Toast.makeText(DownloadService.this, msg, Toast.LENGTH_LONG).show();
+        ToastUtils.toast(this, msg);
     }
 
-    private PendingIntent getRemovePendingIntent(String noteUrl) {
+    private void longToast(String msg) {
+        ToastUtils.longToast(this, msg);
+    }
+
+    private PendingIntent getRemovePendingIntent(int notificationId, String noteUrl) {
         Intent intent = new Intent(this, DownloadService.class);
         intent.setAction(DownloadService.removeDownloadAction);
         intent.putExtra("noteUrl", noteUrl);
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(this, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private void isProgress(int notificationId, long when, String bookName, ChapterListBean downloadChapterBean) {
+    private void isProgress(int notificationId, long when, String bookName, ChapterBean downloadChapterBean) {
         if (!isRunning) {
             return;
         }
-
-        if (System.currentTimeMillis() - currentTime < 1000) {//更新太快无法取消
-            return;
-        }
-
-        currentTime = System.currentTimeMillis();
 
         Intent mainIntent = new Intent(this, DownloadActivity.class);
         PendingIntent mainPendingIntent = PendingIntent.getActivity(this, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -294,7 +290,7 @@ public class DownloadService extends Service {
                 .setContentTitle("正在下载：" + bookName)
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);
-        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(downloadChapterBean.getNoteUrl()));
+        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(notificationId, downloadChapterBean.getNoteUrl()));
         //发送通知
         managerCompat.notify(notificationId, builder.build());
     }

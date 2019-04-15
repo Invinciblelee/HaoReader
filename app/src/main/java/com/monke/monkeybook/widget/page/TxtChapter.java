@@ -84,10 +84,13 @@ public class TxtChapter {
     }
 
     void setStatus(int status) {
-        if (this.status != status) {
-            this.status = status;
-            this.errorMsg = PageStatus.getStatusPrompt(status);
-        }
+        this.status = status;
+        this.errorMsg = PageStatus.getStatusPrompt(status);
+    }
+
+    void setErrorMsg(String errorMsg) {
+        this.status = PageStatus.STATUS_ERROR_OTHER;
+        this.errorMsg = PageStatus.getStatusPrompt(status, errorMsg);
     }
 
     int getStatus() {
@@ -98,10 +101,6 @@ public class TxtChapter {
         return errorMsg;
     }
 
-    void setOpened() {
-        isOpened = true;
-    }
-
     boolean isNotOpened() {
         return !isOpened;
     }
@@ -110,12 +109,12 @@ public class TxtChapter {
         return currentPage;
     }
 
-    TxtPage getLastPage() {
-        return lastPage;
-    }
-
-    void pageCancel() {
-        currentPage = lastPage;
+    boolean pageCancel() {
+        if (lastPage != null) {
+            currentPage = lastPage;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -172,5 +171,25 @@ public class TxtChapter {
 
     boolean hasNext() {
         return getPosition() + 1 < size();
+    }
+
+    void reset() {
+        if (txtPages != null) {
+            txtPages.clear();
+            txtPages = null;
+        }
+        currentPage = null;
+        lastPage = null;
+        isOpened = false;
+        setStatus(PageStatus.STATUS_LOADING);
+    }
+
+    void rewind() {
+        isOpened = false;
+        setStatus(PageStatus.STATUS_LOADING);
+    }
+
+    void open() {
+        isOpened = true;
     }
 }

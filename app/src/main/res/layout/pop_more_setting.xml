@@ -10,14 +10,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="256dp"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorReadBar">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:divider="?android:attr/listDivider"
-            app:showDividers="middle">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llScreenTimeOut"
@@ -34,7 +32,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="@string/keep_light"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
                 <TextView
                     android:id="@+id/tv_screen_time_out"
@@ -42,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/keep_light"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
             </LinearLayout>
 
@@ -62,7 +60,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="@string/jf_convert"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
                 <TextView
                     android:id="@+id/tvJFConvert"
@@ -70,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/jf_convert"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
             </LinearLayout>
 
@@ -89,7 +87,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/ps_hide_status_bar"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -117,7 +115,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/immersion_status_bar"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -144,7 +142,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/volume_open_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -172,7 +170,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/aloud_volume_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -200,7 +198,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/click_open_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -227,7 +225,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/click_all_next_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -254,7 +252,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/showTimeBattery"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorReadBarText" />
 
 
                 <Switch
@@ -267,6 +265,60 @@
                     android:padding="15dp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_sb_showBatteryNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/showBatteryNumber"
+                    android:textColor="@color/colorReadBarText" />
+
+
+                <Switch
+                    android:id="@+id/sb_showBatteryNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:padding="15dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_sb_showDividerLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/showLine"
+                    android:textColor="@color/colorReadBarText" />
+
+
+                <Switch
+                    android:id="@+id/sb_showDividerLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:padding="15dp" />
+            </LinearLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </ScrollView>

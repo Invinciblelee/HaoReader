@@ -58,7 +58,7 @@ public abstract class BaseFragment<T extends IPresenter> extends Fragment implem
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
+    public final View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
         this.savedInstanceState = savedInstanceState;
         initSDK();
         view = createView(inflater, container);

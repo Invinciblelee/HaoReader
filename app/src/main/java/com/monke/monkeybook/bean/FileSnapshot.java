@@ -1,8 +1,9 @@
 package com.monke.monkeybook.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FileSnapshot {
+public class FileSnapshot implements Serializable {
     private RipeFile parent;
     private List<RipeFile> files;
     private int scrollOffset;
@@ -30,4 +31,5 @@ public class FileSnapshot {
     public void setScrollOffset(int scrollOffset) {
         this.scrollOffset = scrollOffset;
     }
+
 }

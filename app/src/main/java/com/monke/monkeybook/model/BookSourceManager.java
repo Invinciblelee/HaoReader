@@ -40,17 +40,22 @@ public class BookSourceManager extends BaseModelImpl {
 
     }
 
-    private static class InstanceHolder {
-        private static final BookSourceManager SINGLETON = new BookSourceManager();
-    }
+    private volatile static BookSourceManager mInstance;
 
-    public static BookSourceManager getInstance() {
-        return InstanceHolder.SINGLETON;
+    public static BookSourceManager getInstance(){
+        if(mInstance == null){
+            synchronized (BookSourceManager.class){
+                if(mInstance == null){
+                    mInstance = new BookSourceManager();
+                }
+            }
+        }
+        return mInstance;
     }
 
     public List<BookSourceBean> getSelectedBookSource() {
         if (selectedBookSource == null) {
-            selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+            selectedBookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                     .where(BookSourceBeanDao.Properties.Enable.eq(true))
                     .orderRaw(getBookSourceSort())
                     .list();
@@ -60,7 +65,7 @@ public class BookSourceManager extends BaseModelImpl {
 
     public List<BookSourceBean> getAllBookSource() {
         if (allBookSource == null) {
-            allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+            allBookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                     .orderRaw(getBookSourceSort())
                     .list();
             upGroupList();
@@ -73,11 +78,11 @@ public class BookSourceManager extends BaseModelImpl {
     }
 
     public boolean isEmpty() {
-        return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().count() == 0;
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().count() == 0;
     }
 
     public void refreshBookSource() {
-        allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+        allBookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                 .orderRaw(getBookSourceSort())
                 .list();
 
@@ -94,7 +99,7 @@ public class BookSourceManager extends BaseModelImpl {
     }
 
     public String getBookSourceSort() {
-        int sourceSort = AppConfigHelper.get(MApplication.getInstance()).getInt("SourceSort", 0);
+        int sourceSort = AppConfigHelper.get().getInt("SourceSort", 0);
         switch (sourceSort) {
             case 1:
                 return BookSourceBeanDao.Properties.Weight.columnName + " DESC";
@@ -118,7 +123,7 @@ public class BookSourceManager extends BaseModelImpl {
             bookSourceBean.setBookSourceUrl(bookSourceBean.getBookSourceUrl().substring(0, bookSourceBean.getBookSourceUrl().lastIndexOf("/")));
         }
 
-        BookSourceBean temp = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+        BookSourceBean temp = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl())).unique();
         if (temp != null) {
             bookSourceBean.setSerialNumber(temp.getSerialNumber());
@@ -138,19 +143,17 @@ public class BookSourceManager extends BaseModelImpl {
         if (bookSourceBean.getSerialNumber() == 0) {
             bookSourceBean.setSerialNumber(allBookSource.size() + 1);
         }
-        DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
+        DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
     }
 
     public BookSourceBean getBookSourceByTag(String tag) {
-        if (tag == null)
-            return null;
-        return DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
     }
 
     public void saveBookSource(BookSourceBean sourceBean) {
         if (sourceBean != null) {
-            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
+            DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);
         }
     }
 
@@ -180,7 +183,7 @@ public class BookSourceManager extends BaseModelImpl {
                 int index = 0;
                 for (BookSourceBean bookSourceBean : bookSourceBeans) {
                     if (Objects.equals(bookSourceBean.getBookSourceGroup(), "删除")) {
-                        DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                        DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl()))
                                 .buildDelete().executeDeleteWithoutDetachingEntities();
                     } else {
@@ -189,7 +192,7 @@ public class BookSourceManager extends BaseModelImpl {
                             bookSourceBean.setSerialNumber(++index);
                             addBookSource(bookSourceBean);
                         } catch (Exception exception) {
-                            DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                            DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                                     .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl()))
                                     .buildDelete().executeDeleteWithoutDetachingEntities();
                         }

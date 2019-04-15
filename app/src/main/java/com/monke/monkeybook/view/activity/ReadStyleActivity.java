@@ -10,6 +10,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -157,7 +159,7 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
         tvDefault.setOnClickListener(view -> {
             bgCustom = 0;
             textColor = readBookControl.getDefaultTextColor(textDrawableIndex);
-            bgColor = readBookControl.getBgColor(textDrawableIndex);
+            bgColor = readBookControl.getDefaultBgColor(textDrawableIndex);
             bgDrawable = readBookControl.getDefaultBgDrawable(textDrawableIndex, this);
             upText();
             upBg();

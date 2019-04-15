@@ -1,7 +1,8 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.widget.Toast;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -9,7 +10,6 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
@@ -19,12 +19,16 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
 
+import java.util.concurrent.TimeUnit;
+
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContract.View> implements BookDetailContract.Presenter {
@@ -122,7 +126,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     return Observable.just(bookShelfBean);
                 })
                 .doAfterNext(bookShelfBean -> {
-                    if (inBookShelf && bookShelfBean.getHasUpdate()) {
+                    if (inBookShelf) {
                         BookshelfHelp.saveBookToShelf(bookShelfBean);
                         RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
                     }
@@ -143,6 +147,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.getBookShelfError(refresh);
                     }
                 });
@@ -223,12 +228,12 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                             public void onNext(Boolean aBoolean) {
                                 RxBus.get().post(RxBusTag.UPDATE_BOOK_INFO, bookShelf);
                                 mView.changeUpdateSwitch(off);
-                                Toast.makeText(MApplication.getInstance(), off ? "已禁用更新" : "已启用更新", Toast.LENGTH_SHORT).show();
+                                mView.toast(off ? "已禁用更新" : "已启用更新");
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(MApplication.getInstance(), "操作失败", Toast.LENGTH_SHORT).show();
+                                mView.toast(off ? "禁用更新失败" : "启用更新失败");
                             }
                         });
             } else {
@@ -258,9 +263,11 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     }
                     return Observable.just(bookShelfBean1);
                 })
+                .timeout(30, TimeUnit.SECONDS)
                 .map(bookShelfBean1 -> {
                     bookShelfBean1.setGroup(bookShelf.getGroup());
                     bookShelfBean1.setUpdateOff(bookShelf.getUpdateOff());
+                    bookShelfBean1.setNewChapters(0);
                     return bookShelfBean1;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -283,8 +290,9 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.updateView(true);
-                        Toast.makeText(MApplication.getInstance(), "书源更换失败", Toast.LENGTH_SHORT).show();
+                        mView.toast("书源更换失败");
                     }
                 });
     }
@@ -316,7 +324,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     @Override
                     public void onError(Throwable e) {
                         mView.updateView(true);
-                        Toast.makeText(MApplication.getInstance(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        mView.toast("书源更换失败");
                     }
                 });
     }

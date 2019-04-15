@@ -14,8 +14,10 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.model.BookSourceManager;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookSourceActivity;
 import com.monke.monkeybook.view.activity.SourceEditActivity;
+import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +28,7 @@ import java.util.List;
  * 书源Adapter
  */
 
-public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.MyViewHolder> {
+public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.MyViewHolder> implements FastScroller.SectionIndexer {
     private List<BookSourceBean> dataList;
     private List<BookSourceBean> allDataList;
     private BookSourceActivity activity;
@@ -144,7 +146,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             allDataList(BookSourceManager.getInstance().getAllBookSource());
 
             BookSourceBean moveData = dataList.get(realPosition);
-            int maxWeight = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+            int maxWeight = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                     .orderDesc(BookSourceBeanDao.Properties.Weight).limit(1).unique().getWeight();
             moveData.setWeight(maxWeight + 1);
             BookSourceManager.getInstance().saveBookSource(moveData);
@@ -175,6 +177,12 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     @Override
     public int getItemCount() {
         return dataList.size();
+    }
+
+    @Override
+    public String getSectionText(int position) {
+        String groupName = dataList.get(position % dataList.size()).getBookSourceName();
+        return (dataList == null || StringUtils.isEmpty(groupName)) ? null : groupName.substring(0, 1);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

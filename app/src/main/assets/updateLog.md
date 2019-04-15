@@ -2,6 +2,10 @@
 ## 更新日志
 #### 彩蛋,领支付宝红包有惊喜
 **2018/12/31**
+* 支持最新版书源规则
+* 添加一个书源规则rulePersistedVariables 和{key:value,key:value}用于保存变量 可用@get:{key}获取
+
+**2018/12/31**
 * 迁移到androidx
 * 重新加上内置716，更名为Default716(用了json书源的换下源就行了)
 * 修复一些bug

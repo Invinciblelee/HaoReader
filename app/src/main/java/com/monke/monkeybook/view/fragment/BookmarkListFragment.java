@@ -50,8 +50,6 @@ public class BookmarkListFragment extends BaseChapterListFragment<BookmarkListAd
 
     @Override
     public void updateBookShelf(BookShelfBean bookShelfBean) {
-        if (bookShelf != null) {
-            getAdapter().setDataList(bookShelf.getBookmarkList());
-        }
+            getAdapter().setDataList(bookShelfBean.getBookmarkList());
     }
 }

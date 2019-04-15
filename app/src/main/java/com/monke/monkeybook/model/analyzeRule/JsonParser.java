@@ -1,72 +1,199 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.utils.ListUtils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class JsonParser {
+final class JsonParser extends SourceParser<ReadContext, Object> {
 
-    private JsonParser() {
+    private static final String TAG = "JSON";
 
+    private static final Pattern PATTERN_JSON = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})");
+
+
+    JsonParser() {
     }
 
-    static List<Object> getList(@NonNull ReadContext context, String rawRule) {
-        try {
-            return context.read(rawRule);
-        } catch (Exception ignore) {
+    @Override
+    String sourceToString(Object source) {
+        if (source == null) {
+            return "";
         }
-        return new ArrayList<>();
-    }
 
-    static String getString(@NonNull ReadContext context, String rawRule) {
-        String result = "";
-        if (TextUtils.isEmpty(rawRule)) return result;
-        if (!rawRule.contains("{")) {
-            String[] rules;
-            boolean isAnd;
-            if(rawRule.contains("&")){
-                rules = rawRule.split("&+");
-                isAnd = true;
-            }else {
-                rules = rawRule.split("\\|+");
-                isAnd = false;
-            }
-            result = readAll(context, rules, isAnd);
-            return result;
+        if (source instanceof String) {
+            return (String) source;
+        }
+
+        final ReadContext context;
+        if (source instanceof ReadContext) {
+            context = (ReadContext) source;
         } else {
-            result = rawRule;
-            Pattern pattern = Pattern.compile("(?<=\\{).+?(?=\\})");
-            Matcher matcher = pattern.matcher(rawRule);
+            context = fromSource(source);
+        }
+
+        Object json = context.json();
+        if (json instanceof List || json instanceof Map) {
+            return context.jsonString();
+        }
+        return json.toString();
+    }
+
+    @Override
+    ReadContext fromSource(String source) {
+        return JsonPath.parse(source);
+    }
+
+    @Override
+    ReadContext fromSource(Object source) {
+        return JsonPath.parse(source);
+    }
+
+    @Override
+    List<Object> getList(String rawRule) {
+        return parseList(getSource(), rawRule);
+    }
+
+    @Override
+    List<Object> parseList(String source, String rawRule) {
+        return parseList(fromSource(source), rawRule);
+    }
+
+    private List<Object> parseList(ReadContext source, String rawRule) {
+        if (TextUtils.isEmpty(rawRule)) {
+            return Collections.emptyList();
+        }
+
+        try {
+            return source.read(rawRule);
+        } catch (Exception e) {
+            Logger.e(TAG, rawRule, e);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    String getString(String rawRule) {
+        if (TextUtils.isEmpty(rawRule)) {
+            return "";
+        }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return getStringSource();
+        }
+
+        return parseString(getSource(), rawRule);
+    }
+
+    @Override
+    String parseString(String source, String rawRule) {
+        if (TextUtils.isEmpty(rawRule)) {
+            return "";
+        }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return source;
+        }
+
+        return parseString(fromSource(source), rawRule);
+    }
+
+    private String parseString(ReadContext source, String rawRule) {
+        if (!rawRule.contains("{$.")) {
+            final StringBuilder content = new StringBuilder();
+            try {
+                Object object = source.read(rawRule);
+                if (object instanceof List) {
+                    for (Object o : (List) object) {
+                        content.append(StringUtils.valueOf(o)).append("\n");
+                    }
+                } else {
+                    content.append(StringUtils.valueOf(object));
+                }
+            } catch (Exception e) {
+                Logger.e(TAG, rawRule, e);
+            }
+            return content.toString();
+        } else {
+            String result = rawRule;
+            Matcher matcher = PATTERN_JSON.matcher(rawRule);
             while (matcher.find()) {
-                result = result.replace(String.format("{%s}", matcher.group()), getString(context, matcher.group()));
+                Object object = null;
+                try {
+                    object = source.read(matcher.group());
+                } catch (Exception e) {
+                    Logger.e(TAG, rawRule, e);
+                }
+                result = result.replace(String.format("{%s}", matcher.group()), StringUtils.valueOf(object));
             }
             return result;
         }
     }
 
-    private static String readAll(@NonNull ReadContext context, String[] rules, boolean isAnd){
-        StringBuilder result = new StringBuilder();
-        for (String rule : rules) {
-            Object object = null;
-            try {
-                object = context.read(rule);
-                if (object instanceof List) {
-                    object = ((List) object).get(0);
-                }
-            } catch (Exception ignore) {
-            }
-            if (object != null) {
-                result.append(String.valueOf(object));
 
-                if(!isAnd) break;
-            }
+    @Override
+    List<String> getStringList(String rawRule) {
+        if (TextUtils.isEmpty(rawRule)) {
+            return Collections.emptyList();
         }
-        return result.toString();
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return ListUtils.mutableList(getStringSource());
+        }
+
+        return parseStringList(getSource(), rawRule);
     }
+
+    @Override
+    List<String> parseStringList(String source, String rawRule) {
+        if (TextUtils.isEmpty(rawRule)) {
+            return Collections.emptyList();
+        }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return ListUtils.mutableList(source);
+        }
+
+        return parseStringList(fromSource(source), rawRule);
+    }
+
+    private List<String> parseStringList(ReadContext source, String rawRule) {
+        final List<String> resultList = new ArrayList<>();
+
+        if (!rawRule.contains("{$.")) {
+            try {
+                Object object = source.read(rawRule);
+                if (object instanceof List) {
+                    for (Object o : (List) object)
+                        resultList.add(StringUtils.valueOf(o));
+                } else {
+                    resultList.add(StringUtils.valueOf(object));
+                }
+            } catch (Exception e) {
+                Logger.e(TAG, rawRule, e);
+            }
+            return resultList;
+        } else {
+            Matcher matcher = PATTERN_JSON.matcher(rawRule);
+            while (matcher.find()) {
+                List<String> stringList = parseStringList(source, matcher.group());
+                for (String string : stringList) {
+                    resultList.add(rawRule.replace(String.format("{%s}", matcher.group()), string));
+                }
+            }
+            return resultList;
+        }
+    }
+
+
 }

@@ -88,10 +88,6 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
      */
     protected abstract void initData();
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     protected void onDestroy() {

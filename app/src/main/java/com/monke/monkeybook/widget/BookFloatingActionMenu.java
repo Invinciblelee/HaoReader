@@ -6,17 +6,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-
-import com.google.android.material.animation.AnimationUtils;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.google.android.material.animation.AnimationUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.monkeybook.R;
+
+import androidx.annotation.Nullable;
 
 public class BookFloatingActionMenu extends LinearLayout {
 
@@ -47,7 +47,13 @@ public class BookFloatingActionMenu extends LinearLayout {
             }
         });
 
-        for (int i = 0; i <= 3; i++) {
+        initFloatingActionMenu();
+    }
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initFloatingActionMenu() {
+        for (int i = 0; i <= getChildCount() - 2; i++) {
             final int index = i;
             ViewGroup childGroup = (ViewGroup) getChildAt(index);
             childGroup.setVisibility(INVISIBLE);
@@ -55,11 +61,14 @@ public class BookFloatingActionMenu extends LinearLayout {
             labelView.setVisibility(INVISIBLE);
             FloatingActionButton btnView = (FloatingActionButton) childGroup.getChildAt(1);
             btnView.setTag(btnView.getDrawable());
-            if(mLastIndex == index){
+            if (mLastIndex == index) {
                 btnView.setImageResource(R.drawable.ic_check_black_24dp);
             }
-            post(btnView::hide);
             labelView.setOnClickListener(v -> btnView.callOnClick());
+            labelView.setOnTouchListener((v, event) -> {
+                btnView.onTouchEvent(event);
+                return false;
+            });
             btnView.setOnClickListener(v -> {
                 setSelection(index);
                 collapse();
@@ -67,13 +76,18 @@ public class BookFloatingActionMenu extends LinearLayout {
                     mMenuClickListener.onMenuClick(index, v);
                 }
             });
+            btnView.setOnTouchListener((v, event) -> {
+                labelView.onTouchEvent(event);
+                return false;
+            });
+            btnView.post(btnView::hide);
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(isExpanded){
+        if (isExpanded) {
             return true;
         }
         return super.onTouchEvent(event);
@@ -83,15 +97,15 @@ public class BookFloatingActionMenu extends LinearLayout {
         return isExpanded;
     }
 
-    public void setSelection(int index){
+    public void setSelection(int index) {
         ViewGroup childLast = (ViewGroup) getChildAt(mLastIndex);
-        if(childLast != null) {
+        if (childLast != null) {
             FloatingActionButton lastBtn = (FloatingActionButton) childLast.getChildAt(1);
             lastBtn.setImageDrawable((Drawable) lastBtn.getTag());
         }
 
         ViewGroup child = (ViewGroup) getChildAt(index);
-        if(child != null) {
+        if (child != null) {
             FloatingActionButton lastBtn = (FloatingActionButton) child.getChildAt(1);
             lastBtn.setImageResource(R.drawable.ic_check_black_24dp);
         }
@@ -104,7 +118,7 @@ public class BookFloatingActionMenu extends LinearLayout {
             isExpanded = true;
 
             int index = 0;
-            for (int i = 3; i >= 0; i--) {
+            for (int i = getChildCount() - 2; i >= 0; i--) {
                 ViewGroup childGroup = (ViewGroup) getChildAt(i);
                 if (childGroup.getVisibility() != VISIBLE) {
                     childGroup.setVisibility(VISIBLE);
@@ -125,7 +139,7 @@ public class BookFloatingActionMenu extends LinearLayout {
             isExpanded = false;
 
             int index = 0;
-            for (int i = 0; i <= 3; i++) {
+            for (int i = 0; i <= getChildCount() - 2; i++) {
                 ViewGroup childGroup = (ViewGroup) getChildAt(i);
                 View labelView = childGroup.getChildAt(0);
                 FloatingActionButton btnView = (FloatingActionButton) childGroup.getChildAt(1);
@@ -142,7 +156,7 @@ public class BookFloatingActionMenu extends LinearLayout {
     private void animateShowLabelView(View labelView) {
         labelView.animate().cancel();
         if (labelView.getVisibility() != VISIBLE) {
-            labelView.setTranslationX(labelView.getWidth() / 2);
+            labelView.setTranslationX(1.0f * labelView.getWidth() / 2);
             labelView.setAlpha(0f);
         }
         labelView.animate().translationX(0f).alpha(1f)
@@ -159,7 +173,7 @@ public class BookFloatingActionMenu extends LinearLayout {
 
     private void animateHideLabelView(View labelView) {
         labelView.animate().cancel();
-        labelView.animate().translationX(labelView.getWidth() / 2).alpha(0f)
+        labelView.animate().translationX(1.0f * labelView.getWidth() / 2).alpha(0f)
                 .setDuration(200L)
                 .setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR)
                 .setListener(new AnimatorListenerAdapter() {

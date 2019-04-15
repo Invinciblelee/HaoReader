@@ -1,10 +1,12 @@
 package com.monke.monkeybook.utils;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.monke.monkeybook.MApplication;
 
@@ -60,6 +62,20 @@ public class ScreenUtils {
         size[0] = decorView.getWidth();
         size[1] = decorView.getHeight();
         return size;
+    }
+
+    public static int getScreenHeight(Activity activity) {
+        WindowManager manager = (activity).getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.heightPixels;
+    }
+
+    public static int getScreenWidth(Activity activity) {
+        WindowManager manager = (activity).getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.widthPixels;
     }
 
     /**

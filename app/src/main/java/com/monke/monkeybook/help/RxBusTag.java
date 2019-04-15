@@ -20,4 +20,7 @@ public class RxBusTag {
     public final static String SEARCH_BOOK = "search_book";
     public final static String SOURCE_LIST_CHANGE = "sourceListChange";
     public final static String GET_ZFB_Hb = "getZfbHb";
+    public final static String SHOW_BOOKMARK = "showBookmark";
+    public final static String OPEN_BOOKMARK = "openBookmark";
+    public final static String OPEN_CHAPTER = "openChapter";
 }

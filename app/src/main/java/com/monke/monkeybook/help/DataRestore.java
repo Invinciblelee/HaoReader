@@ -33,7 +33,7 @@ public class DataRestore {
     }
 
     public Boolean run() throws Exception {
-        String dirPath = FileUtil.getSdCardPath() + "/YueDu";
+        String dirPath = FileUtil.getSdCardPath() + "/YueDu/backups";
         restoreConfig(dirPath);
         restoreBookSource(dirPath);
         restoreBookShelf(dirPath);
@@ -69,10 +69,10 @@ public class DataRestore {
             }.getType());
             for (BookShelfBean bookshelf : bookShelfList) {
                 if (bookshelf.getNoteUrl() != null) {
-                    DbHelper.getInstance().getmDaoSession().getBookShelfBeanDao().insertOrReplace(bookshelf);
+                    DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookshelf);
                 }
                 if (bookshelf.getBookInfoBean().getNoteUrl() != null) {
-                    DbHelper.getInstance().getmDaoSession().getBookInfoBeanDao().insertOrReplace(bookshelf.getBookInfoBean());
+                    DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().insertOrReplace(bookshelf.getBookInfoBean());
                 }
             }
         }
@@ -96,7 +96,7 @@ public class DataRestore {
             List<SearchHistoryBean> searchHistoryBeans = new Gson().fromJson(json, new TypeToken<List<SearchHistoryBean>>() {
             }.getType());
             if (searchHistoryBeans != null && searchHistoryBeans.size() > 0) {
-                DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao().insertOrReplaceInTx(searchHistoryBeans);
+                DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().insertOrReplaceInTx(searchHistoryBeans);
             }
         }
     }

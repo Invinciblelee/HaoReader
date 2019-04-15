@@ -20,6 +20,8 @@ public interface WelcomeContract {
 
         SharedPreferences getPreferences();
 
+        void toast(String msg);
+
         void finish();
     }
 

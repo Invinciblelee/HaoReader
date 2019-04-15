@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.monke.monkeybook.R;
 
@@ -97,7 +98,7 @@ public class RefreshRecyclerView extends FrameLayout {
         return refreshErrorView;
     }
 
-    public void refreshError() {
+    public void refreshError(String message) {
         refreshLayout.stopRefreshing();
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter instanceof RefreshRecyclerViewAdapter) {
@@ -117,10 +118,22 @@ public class RefreshRecyclerView extends FrameLayout {
                     itemCount = adapter.getItemCount();
                 }
                 refreshErrorView.setVisibility(itemCount > 0 ? GONE : VISIBLE);
+                TextView textView = refreshErrorView.findViewById(R.id.tv_error_message);
+                if(textView != null){
+                    if(message != null) {
+                        textView.setText(message);
+                    }else {
+                        textView.setText("加载失败");
+                    }
+                }
             }else {
                 refreshErrorView.setVisibility(VISIBLE);
             }
         }
+    }
+
+    public void refreshError(){
+        refreshError(null);
     }
 
     public void startRefresh(boolean callEvent) {

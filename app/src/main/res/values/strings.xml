@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">阅读</string>
+    <string name="search_label">阅读·搜索</string>
     <string name="last_read">最后阅读</string>
     <string name="read_summary">让阅读成为一种习惯。</string>
     <string name="update_log">更新日志</string>
@@ -13,6 +14,7 @@
     <string name="book_library">书城</string>
     <string name="book_local">添加本地</string>
     <string name="book_source_manage">书源管理</string>
+    <string name="book_inner_source">内置书源</string>
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="donate">捐赠</string>
@@ -169,6 +171,7 @@
     <string name="refresh_default">书源同步</string>
     <string name="no_last_chapter">无最新章节信息</string>
     <string name="showTimeBattery">显示时间和电量</string>
+    <string name="showBatteryNumber">显示电量数字</string>
     <string name="showLine">显示分隔线</string>
     <string name="darkStatusIcon">深色状态栏图标</string>
     <string name="content">内容</string>
@@ -202,6 +205,7 @@
     <string name="delete_bookshelf_not_exist_s">此书籍文件已被删除，是否将这本书移出书架？</string>
     <string name="clean_caches">清除缓存</string>
     <string name="clean_caches_s">这将会清空所有缓存，是否继续？</string>
+    <string name="clean_book_cache_s">这将会清空本书缓存，是否继续？</string>
     <string name="clear_bookshelf">清空书架</string>
     <string name="refresh_bookshelf">更新书架</string>
     <string name="clear_bookshelf_s">这将会删除所有书籍，请谨慎操作。</string>
@@ -213,12 +217,9 @@
     <string name="text_bold">加粗</string>
     <string name="custom_font">字体</string>
     <string name="text">文字</string>
+    <string name="font_larger">A+</string>
+    <string name="font_smaller">A-</string>
     <string name="home_page">软件主页</string>
-    <string name="right">右</string>
-    <string name="left">左</string>
-    <string name="bottom">下</string>
-    <string name="top">上</string>
-    <string name="padding">边距:</string>
     <string name="padding_top">上边距</string>
     <string name="padding_bottom">下边距</string>
     <string name="padding_left">左边距</string>
@@ -238,10 +239,12 @@
     <string name="nb_file_add_succeed">成功添加%1$d本书</string>
     <string name="fonts_folder">请将字体文件放到YueDu/Fonts文件夹下重新选择</string>
     <string name="default_font">默认字体</string>
-    <string name="select_font">选择字体</string>
+    <string name="select_font">字体</string>
+    <string name="title_select_font">选择字体</string>
     <string name="text_size">字号</string>
-    <string name="line_size">行距</string>
-    <string name="paragraph_size">段距</string>
+    <string name="line_size">行间距</string>
+    <string name="paragraph_size">段间距</string>
+    <string name="custom_space">自定义间距</string>
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
     <string name="to_top">置顶</string>
@@ -255,6 +258,11 @@
     <string name="auto_next_page_stop">停止自动翻页</string>
     <string name="auto_next_page_speed">自动翻页间隔</string>
     <string name="page_anim_duration">翻页动画时间</string>
+    <string name="page_anim_cover">覆盖</string>
+    <string name="page_anim_simulation">仿真</string>
+    <string name="page_anim_slide">滑动</string>
+    <string name="page_anim_none">无</string>
+    <string name="page_read_space_default">默认</string>
     <string name="book_info">书籍信息</string>
     <string name="ps_default_read">默认打开书架</string>
     <string name="pt_default_read">自动跳转最近阅读</string>
@@ -284,7 +292,7 @@
     <string name="sort_by_date_desc">按时间(倒序)</string>
     <string name="sort_by_size_desc">按大小(倒序)</string>
     <string name="audio_book">有声小说</string>
-    <string name="source_login">书源登录</string>
+    <string name="open_url">打开网址</string>
     <string name="open_in_browser">外部浏览器打开</string>
     <string name="scan_html_code">查看网页源码</string>
 </resources>

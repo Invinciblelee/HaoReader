@@ -26,7 +26,7 @@ public class FontSelector {
         @SuppressLint("InflateParams") View view = LayoutInflater.from(context).inflate(R.layout.view_recycler_font, null);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         builder.setView(view);
-        builder.setTitle(R.string.select_font);
+        builder.setTitle(R.string.title_select_font);
         builder.setNegativeButton(R.string.cancel, null);
         fontPath = FileUtil.getSdCardPath() + "/YueDu/Fonts";
         adapter = new FontAdapter(context, selectPath,

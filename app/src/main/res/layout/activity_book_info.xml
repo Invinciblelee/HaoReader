@@ -117,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/selector_pop_font_bg"
                 android:padding="5dp"
+                android:textColor="@color/tv_text_default"
                 android:text="选择本地图片" />
 
             <TextView
@@ -124,6 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:textColor="@color/tv_text_default"
                 android:background="@drawable/selector_pop_font_bg"
                 android:padding="5dp"
                 android:text="封面换源" />
@@ -133,6 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:textColor="@color/tv_text_default"
                 android:background="@drawable/selector_pop_font_bg"
                 android:padding="5dp"
                 android:text="刷新封面" />

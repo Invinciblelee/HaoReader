@@ -1,7 +1,9 @@
 package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Canvas;
-import android.view.View;
+
+import com.monke.monkeybook.widget.page.PageMode;
+import com.monke.monkeybook.widget.page.PageView;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -9,7 +11,7 @@ import android.view.View;
 
 public class NonePageAnim extends HorizonPageAnim {
 
-    public NonePageAnim(int w, int h, View view, OnPageChangeListener listener) {
+    public NonePageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
         super(w, h, view, listener);
     }
 
@@ -22,5 +24,10 @@ public class NonePageAnim extends HorizonPageAnim {
     public void startAnim() {
         super.startAnim();
         isRunning = false;
+    }
+
+    @Override
+    public PageMode getPageMode() {
+        return PageMode.NONE;
     }
 }

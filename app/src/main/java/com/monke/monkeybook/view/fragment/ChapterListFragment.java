@@ -116,7 +116,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
     }
 
     void scrollToTarget() {
-        if (bookShelf != null) {
+        if (bookShelf != null && getLayoutManager() != null) {
             final int durChapter = bookShelf.getDurChapter();
             rvList.post(() -> getLayoutManager().scrollToPositionWithOffset(durChapter, 0));
         }
@@ -135,7 +135,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CHAPTER_CHANGE)})
     public void chapterChange(BookContentBean bookContentBean) {
         if (bookShelf != null && bookShelf.getNoteUrl().equals(bookContentBean.getNoteUrl())) {
-            getAdapter().upChapter(bookContentBean.getDurChapterIndex());
+            rvList.post(() -> getAdapter().upChapter(bookContentBean.getDurChapterIndex()));
         }
     }
 }

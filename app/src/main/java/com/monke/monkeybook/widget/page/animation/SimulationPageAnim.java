@@ -2,17 +2,16 @@ package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
-import android.view.View;
 
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.utils.ScreenUtils;
-import com.monke.monkeybook.widget.page.OnPageChangeListener;
+import com.monke.monkeybook.widget.page.PageMode;
+import com.monke.monkeybook.widget.page.PageView;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -54,16 +53,17 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private GradientDrawable mFrontShadowDrawableVLR;
     private GradientDrawable mFrontShadowDrawableVRL;
 
-    private Paint mPaint;
 
-    public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
+    public SimulationPageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
         super(w, h, view, listener);
+    }
+
+    @Override
+    public void init(int w, int h, PageView view, OnPageChangeListener listener) {
+        super.init(w, h, view, listener);
         mPath0 = new Path();
         mPath1 = new Path();
-        mMaxLength = (float) Math.hypot(mScreenWidth, mScreenHeight);
-        mPaint = new Paint();
-
-        mPaint.setStyle(Paint.Style.FILL);
+        mMaxLength = (float) Math.hypot(mViewWidth, mViewHeight);
 
         createDrawable();
 
@@ -99,28 +99,28 @@ public class SimulationPageAnim extends HorizonPageAnim {
         if (isCancel) {
 
             if (mCornerX > 0 && mDirection.equals(Direction.NEXT)) {
-                dx = (int) (mScreenWidth - mTouchX);
+                dx = (int) (mViewWidth - mTouchX);
             } else {
                 dx = -(int) mTouchX;
             }
 
             if (!mDirection.equals(Direction.NEXT)) {
-                dx = (int) -(mScreenWidth + mTouchX);
+                dx = (int) -(mViewWidth + mTouchX);
             }
 
             if (mCornerY > 0) {
-                dy = (int) (mScreenHeight - mTouchY);
+                dy = (int) (mViewHeight - mTouchY);
             } else {
                 dy = -(int) mTouchY; // 防止mTouchY最终变为0
             }
         } else {
             if (mCornerX > 0 && mDirection.equals(Direction.NEXT)) {
-                dx = -(int) (mScreenWidth + mTouchX);
+                dx = -(int) (mViewWidth + mTouchX);
             } else {
-                dx = (int) (mScreenWidth - mTouchX + mScreenWidth);
+                dx = (int) (mViewWidth - mTouchX + mViewWidth);
             }
             if (mCornerY > 0) {
-                dy = (int) (mScreenHeight - mTouchY);
+                dy = (int) (mViewHeight - mTouchY);
             } else {
                 dy = (int) (1 - mTouchY); // 防止mTouchY最终变为0
             }
@@ -137,18 +137,23 @@ public class SimulationPageAnim extends HorizonPageAnim {
         switch (direction) {
             case PREV:
                 //上一页滑动不出现对角
-                if (mStartX > mScreenWidth / 2) {
-                    calcCornerXY(mStartX, mScreenHeight);
+                if (mStartX > mViewWidth / 2) {
+                    calcCornerXY(mStartX, mViewHeight);
                 } else {
-                    calcCornerXY(mScreenWidth - mStartX, mScreenHeight);
+                    calcCornerXY(mViewWidth - mStartX, mViewHeight);
                 }
                 break;
             case NEXT:
-                if (mScreenWidth / 2 > mStartX) {
-                    calcCornerXY(mScreenWidth - mStartX, mStartY);
+                if (mViewWidth / 2 > mStartX) {
+                    calcCornerXY(mViewWidth - mStartX, mStartY);
                 }
                 break;
         }
+    }
+
+    @Override
+    public PageMode getPageMode() {
+        return PageMode.SIMULATION;
     }
 
     @Override
@@ -161,11 +166,11 @@ public class SimulationPageAnim extends HorizonPageAnim {
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
         //触摸y中间位置吧y变成屏幕高度
-        if ((mStartY > mScreenHeight / 3 && mStartY < mScreenHeight * 2 / 3) || mDirection.equals(Direction.PREV)) {
-            mTouchY = mScreenHeight;
+        if ((mStartY > mViewHeight / 3 && mStartY < mViewHeight * 2 / 3) || mDirection.equals(Direction.PREV)) {
+            mTouchY = mViewHeight;
         }
 
-        if (mStartY > mScreenHeight / 3 && mStartY < mScreenHeight / 2 && mDirection.equals(Direction.NEXT)) {
+        if (mStartY > mViewHeight / 3 && mStartY < mViewHeight / 2 && mDirection.equals(Direction.NEXT)) {
             mTouchY = 1;
         }
     }
@@ -219,7 +224,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
      * 是否能够拖动过去
      */
     public boolean canDragOver() {
-        return mTouchToCornerDis > mScreenWidth / 10;
+        return mTouchToCornerDis > mViewWidth / 10;
     }
 
     public boolean right() {
@@ -375,7 +380,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y);
         float temp;
         if (mBezierControl2.y < 0)
-            temp = mBezierControl2.y - mScreenHeight;
+            temp = mBezierControl2.y - mViewHeight;
         else
             temp = mBezierControl2.y;
 
@@ -467,19 +472,19 @@ public class SimulationPageAnim extends HorizonPageAnim {
      * 计算拖拽点对应的拖拽脚
      */
     private void calcCornerXY(float x, float y) {
-        if (x <= mScreenWidth / 2) {
+        if (x <= mViewWidth / 2) {
             mCornerX = 0;
         } else {
-            mCornerX = mScreenWidth;
+            mCornerX = mViewWidth;
         }
-        if (y <= mScreenHeight / 2) {
+        if (y <= mViewHeight / 2) {
             mCornerY = 0;
         } else {
-            mCornerY = mScreenHeight;
+            mCornerY = mViewHeight;
         }
 
-        mIsRTandLB = (mCornerX == 0 && mCornerY == mScreenHeight)
-                || (mCornerX == mScreenWidth && mCornerY == 0);
+        mIsRTandLB = (mCornerX == 0 && mCornerY == mViewHeight)
+                || (mCornerX == mViewWidth && mCornerY == 0);
 
     }
 
@@ -506,13 +511,13 @@ public class SimulationPageAnim extends HorizonPageAnim {
 
         // 当mBezierStart1.x < 0或者mBezierStart1.x > 480时
         // 如果继续翻页，会出现BUG故在此限制
-        if (mTouchX > 0 && mTouchX < mScreenWidth) {
-            if (mBezierStart1.x < 0 || mBezierStart1.x > mScreenWidth) {
+        if (mTouchX > 0 && mTouchX < mViewWidth) {
+            if (mBezierStart1.x < 0 || mBezierStart1.x > mViewWidth) {
                 if (mBezierStart1.x < 0)
-                    mBezierStart1.x = mScreenWidth - mBezierStart1.x;
+                    mBezierStart1.x = mViewWidth - mBezierStart1.x;
 
                 float f1 = Math.abs(mCornerX - mTouchX);
-                float f2 = mScreenWidth * f1 / mBezierStart1.x;
+                float f2 = mViewWidth * f1 / mBezierStart1.x;
                 mTouchX = Math.abs(mCornerX - f2);
 
                 float f3 = Math.abs(mCornerX - mTouchX)

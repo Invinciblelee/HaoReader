@@ -1,73 +1,225 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.text.TextUtils;
+import com.monke.monkeybook.help.FormatWebText;
+import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.utils.ListUtils;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 
-class JsoupParser {
+final class JsoupParser extends SourceParser<Element, Element> {
 
-    private JsoupParser() {
+    private static final String TAG = "JSOUP";
+
+    JsoupParser() {
 
     }
 
-    /**
-     * 获取Elements
-     */
-    static Elements getElements(Element temp, String rawRule) {
-        Elements elements = new Elements();
-        if (temp == null || isEmpty(rawRule)) {
-            return elements;
+    @Override
+    String sourceToString(Element source) {
+        if (source == null) {
+            return "";
         }
-        String elementsType;
-        String[] ruleStrS;
-        if (rawRule.contains("&")) {
-            elementsType = "&";
-            ruleStrS = rawRule.split("&+");
-        } else if (rawRule.contains("%")) {
-            elementsType = "%";
-            ruleStrS = rawRule.split("%+");
-        } else {
-            elementsType = "|";
-            ruleStrS = rawRule.split("\\|+");
+
+        return source.toString();
+    }
+
+    @Override
+    Element fromSource(String source) {
+        return Jsoup.parse(source);
+    }
+
+    @Override
+    Element fromSource(Element source) {
+        return source;
+    }
+
+    @Override
+    List<Element> getList(String rule) {
+        return parseList(getSource(), rule);
+    }
+
+    @Override
+    List<Element> parseList(String source, String rawRule) {
+        return parseList(fromSource(source), rawRule);
+    }
+
+    @Override
+    String getString(String rawRule) {
+        if (isEmpty(rawRule)) {
+            return "";
         }
-        List<Elements> elementsList = new ArrayList<>();
-        for (String ruleStr : ruleStrS) {
-            Elements tempS = getElementsSingle(temp, ruleStr);
-            elementsList.add(tempS);
-            if (elements.size() > 0 && elementsType.equals("|")) {
-                break;
-            }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return getStringSource();
         }
-        if (!elementsList.isEmpty()) {
-            if (TextUtils.equals(elementsType, "%")) {
-                for (int i = 0, size = elementsList.get(0).size(); i < size; i++) {
-                    for (Elements es : elementsList) {
-                        if (i < es.size()) {
-                            elements.add(es.get(i));
-                        }
+
+        return parseString(getSource(), rawRule);
+    }
+
+    @Override
+    String parseString(String source, String rawRule) {
+        if (isEmpty(rawRule)) {
+            return "";
+        }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return source;
+        }
+
+        return parseString(fromSource(source), rawRule);
+    }
+
+    private String parseString(Element source, String rawRule) {
+        final List<String> textS = parseStringList(source, rawRule);
+        final StringBuilder content = new StringBuilder();
+        for (String text : textS) {
+            if (textS.size() > 1) {
+                if (text.length() > 0) {
+                    if (content.length() > 0) {
+                        content.append("\n");
                     }
+                    content.append("\u3000\u3000").append(text);
                 }
             } else {
-                for (Elements es : elementsList) {
-                    elements.addAll(es);
-                }
+                content.append(text);
             }
         }
-        return elements;
+        return content.toString();
+    }
+
+    @Override
+    List<String> getStringList(String rawRule) {
+        if (isEmpty(rawRule)) {
+            return Collections.emptyList();
+        }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return ListUtils.mutableList(getStringSource());
+        }
+
+        return parseStringList(getSource(), rawRule);
+    }
+
+
+    @Override
+    List<String> parseStringList(String source, String rawRule) {
+        if (isEmpty(rawRule)) {
+            return Collections.emptyList();
+        }
+
+        if (rawRule.equals(OUTER_BODY)) {
+            return ListUtils.mutableList(source);
+        }
+
+        return parseStringList(fromSource(source), rawRule);
+    }
+
+    private List<String> parseStringList(Element element, String rawRule) {
+        final List<String> textS = new ArrayList<>();
+        Elements elements = new Elements();
+        elements.add(element);
+        String[] ruleS = rawRule.split("@");
+        for (int i = 0, length = ruleS.length - 1; i < length; i++) {
+            Elements es = new Elements();
+            for (Element elt : elements) {
+                es.addAll(parseList(elt, ruleS[i]));
+            }
+            elements.clear();
+            elements.addAll(es);
+        }
+        if (!elements.isEmpty()) {
+            return parseLastResult(elements, ruleS[ruleS.length - 1]);
+        }
+        return textS;
+    }
+
+    /**
+     * 根据最后一个规则获取内容
+     */
+    private List<String> parseLastResult(Elements elements, String lastRule) {
+        final List<String> textS = new ArrayList<>();
+        try {
+            switch (lastRule) {
+                case "text":
+                    for (Element element : elements) {
+                        String text = element.text();
+                        if (!isEmpty(text)) {
+                            textS.add(text);
+                        }
+                    }
+                    break;
+                case "ownText":
+                    List<String> keptTags = Arrays.asList("br", "b", "em", "strong");
+                    for (Element element : elements) {
+                        Element ele = element.clone();
+                        for (Element child : ele.children()) {
+                            if (!keptTags.contains(child.tagName())) {
+                                child.remove();
+                            }
+                        }
+                        String[] htmlS = ele.html().replaceAll("(?i)<br[\\s/]*>", "\n")
+                                .replaceAll("<.*?>", "").split("\n");
+                        for (String temp : htmlS) {
+                            temp = FormatWebText.getContent(temp);
+                            if (!isEmpty(temp)) {
+                                textS.add(temp);
+                            }
+                        }
+                    }
+                    break;
+                case "textNodes":
+                    for (Element element : elements) {
+                        List<TextNode> contentEs = element.textNodes();
+                        for (int i = 0; i < contentEs.size(); i++) {
+                            String temp = contentEs.get(i).text().trim();
+                            temp = FormatWebText.getContent(temp);
+                            if (!isEmpty(temp)) {
+                                textS.add(temp);
+                            }
+                        }
+                    }
+                    break;
+                case "html":
+                    elements.select("script").remove();
+                    String[] htmlS = elements.html().replaceAll("(?i)<(br[\\\\s/]*|p.*?|div.*?|/p|/div)>", "\n")
+                            .replaceAll("<.*?>", "")
+                            .split("\n");
+                    for (String temp : htmlS) {
+                        temp = FormatWebText.getContent(temp);
+                        if (!isEmpty(temp)) {
+                            textS.add(temp);
+                        }
+                    }
+                    break;
+                default:
+                    for (Element element : elements) {
+                        String url = element.attr(lastRule);
+                        if (!isEmpty(url) && !textS.contains(url)) {
+                            textS.add(url);
+                        }
+                    }
+            }
+        } catch (Exception e) {
+            Logger.e(TAG, lastRule, e);
+        }
+        return textS;
     }
 
     /**
      * 获取Elements按照一个规则
      */
-    static Elements getElementsSingle(Element temp, String rawRule) {
-        Elements elements = new Elements();
+    private Elements parseList(Element temp, String rawRule) {
+        final Elements elements = new Elements();
         try {
             String[] ruleS = rawRule.split("@");
             if (ruleS.length > 1) {
@@ -75,7 +227,7 @@ class JsoupParser {
                 for (String rule : ruleS) {
                     Elements es = new Elements();
                     for (Element et : elements) {
-                        es.addAll(getElements(et, rule));
+                        es.addAll(parseList(et, rule));
                     }
                     elements.clear();
                     elements.addAll(es);
@@ -152,27 +304,31 @@ class JsoupParser {
                     elements.removeAll(removes);
                 }
             }
-        } catch (Exception ignore) {
+
+        } catch (Exception e) {
+            Logger.e(TAG, rawRule, e);
         }
         return elements;
     }
 
-    private static String[] ensureFilterRules(String[] rawRules) {
-        String[] filterRules = null;
-        boolean valid = rawRules.length > 1 && !isEmpty(rawRules[1]);
+    private String[] ensureFilterRules(String[] rawRules) {
+        final String[] filterRules;
+        final boolean valid = rawRules.length > 1 && !isEmpty(rawRules[1]);
         if (valid) {
             filterRules = rawRules[1].split("\\.");
             List<String> validKeys = Arrays.asList("class", "id", "tag", "text");
             if (filterRules.length < 2 || !validKeys.contains(filterRules[0]) || isEmpty(filterRules[1])) {
                 return null;
             }
+        } else {
+            filterRules = null;
         }
         return filterRules;
     }
 
-    private static Elements filterElements(Elements elements, String[] rules) {
+    private Elements filterElements(Elements elements, String[] rules) {
         if (rules == null || rules.length < 2) return elements;
-        Elements selectedEls = new Elements();
+        final Elements selectedEls = new Elements();
         for (Element ele : elements) {
             boolean isOk = false;
             switch (rules[0]) {

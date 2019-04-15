@@ -2,8 +2,6 @@ package com.monke.monkeybook.help;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.documentfile.provider.DocumentFile;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,9 +16,12 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.utils.FileUtil;
+import com.monke.monkeybook.utils.ToastUtils;
 
+import java.io.File;
 import java.util.List;
 
+import androidx.documentfile.provider.DocumentFile;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,8 +40,8 @@ public class DataBackup {
 
     public void run() {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            DocumentHelper.createDirIfNotExist(FileUtil.getSdCardPath(), "YueDu");
-            String dirPath = FileUtil.getSdCardPath() + "/YueDu";
+            File dir = FileHelp.getFolder(FileUtil.getSdCardPath(), "YueDu/backups");
+            String dirPath = dir.getAbsolutePath();
             backupBookShelf(dirPath);
             backupBookSource(dirPath);
             backupSearchHistory(dirPath);
@@ -54,16 +55,16 @@ public class DataBackup {
                     @Override
                     public void onNext(Boolean value) {
                         if (value) {
-                            Toast.makeText(MApplication.getInstance(), R.string.backup_success, Toast.LENGTH_LONG).show();
+                            ToastUtils.longToast(MApplication.getInstance(), R.string.backup_success);
                         } else {
-                            Toast.makeText(MApplication.getInstance(), R.string.backup_fail, Toast.LENGTH_LONG).show();
+                            ToastUtils.longToast(MApplication.getInstance(), R.string.backup_fail);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        Toast.makeText(MApplication.getInstance(), R.string.backup_fail, Toast.LENGTH_LONG).show();
+                        ToastUtils.longToast(MApplication.getInstance(), R.string.backup_fail);
                     }
                 });
     }
@@ -72,7 +73,7 @@ public class DataBackup {
         List<BookShelfBean> bookShelfList = BookshelfHelp.queryAllBook();
         if (bookShelfList != null && bookShelfList.size() > 0) {
             for (BookShelfBean bookshelf : bookShelfList) {
-                bookshelf.setChapterList(null);
+                bookshelf.setChapterList(null, false);
             }
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
@@ -99,7 +100,7 @@ public class DataBackup {
     }
 
     private void backupSearchHistory(String file) {
-        List<SearchHistoryBean> searchHistoryBeans = DbHelper.getInstance().getmDaoSession().getSearchHistoryBeanDao()
+        List<SearchHistoryBean> searchHistoryBeans = DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao()
                 .queryBuilder().list();
         if (searchHistoryBeans != null && searchHistoryBeans.size() > 0) {
             Gson gson = new GsonBuilder()
