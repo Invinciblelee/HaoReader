@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
+
+    <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_chapter_base_info"
+        android:overScrollMode="never"
+        app:bubbleColor="@color/tv_text_button_deep_pre"
+        app:handleColor="@color/tv_text_button_pre"
+        app:trackColor="@color/scroller_track_color" />
+
+    <LinearLayout
+        android:id="@+id/ll_chapter_base_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:outlineProvider="background"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_current_chapter_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:ellipsize="middle"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:textColor="@color/tv_text_default"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chapter_sort"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/bg_ib_pre_round"
+            android:contentDescription="@string/swap_vert"
+            android:padding="2dp"
+            android:src="@drawable/ic_swap_vert_black_24dp"
+            app:tint="@color/tv_text_default" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_above="@id/ll_chapter_base_info"
+        android:background="@color/bg_divider_line" />
+</RelativeLayout>
