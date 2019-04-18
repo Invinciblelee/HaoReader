@@ -208,6 +208,11 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             return Observable.error(new BookException("没有找到书源"));
         }
 
+        if (isEmpty(bookSourceBean.getRuleBookContent())) {
+            chapter.setDurChapterPlayUrl(chapter.getDurChapterUrl());
+            return Observable.just(chapter);
+        }
+
         AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);

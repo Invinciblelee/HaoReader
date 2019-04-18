@@ -335,4 +335,5 @@ public class StringUtils {
 
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
+
 }

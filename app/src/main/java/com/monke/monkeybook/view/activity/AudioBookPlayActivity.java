@@ -67,7 +67,7 @@ public class AudioBookPlayActivity extends MBaseActivity {
 
     @Override
     protected void firstRequest() {
-//        startRotationAnim();
+        startRotationAnim();
     }
 
     private void startRotationAnim() {
@@ -75,7 +75,7 @@ public class AudioBookPlayActivity extends MBaseActivity {
         animator.addUpdateListener(animation -> ivCover.setRotation((Float) animation.getAnimatedValue()));
         animator.setDuration(30000);
         animator.setInterpolator(new LinearInterpolator());
-        animator.setRepeatCount(Integer.MAX_VALUE);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setStartDelay(1000);
         animator.start();
     }

@@ -25,7 +25,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String bookSourceType = Constant.BookType.TEXT;
     private String bookSourceRuleType = Constant.RuleType.DEFAULT;
     private String checkUrl;
-    private String loginCookieKey;
     @OrderBy
     private int serialNumber;
     @OrderBy
@@ -55,18 +54,17 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleBookContent;
     private String httpUserAgent;
 
-    @Generated(hash = 1989712022)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, String loginCookieKey, int serialNumber, int weight, boolean enable,
-            String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl,
-            String rulePersistedVariables, String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList,
-            String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+    @Generated()
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, boolean enable,
+                          String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl,
+                          String rulePersistedVariables, String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList,
+                          String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
         this.bookSourceType = bookSourceType;
         this.bookSourceRuleType = bookSourceRuleType;
         this.checkUrl = checkUrl;
-        this.loginCookieKey = loginCookieKey;
         this.serialNumber = serialNumber;
         this.weight = weight;
         this.enable = enable;
@@ -106,7 +104,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
         bookSourceType = in.readString();
         bookSourceRuleType = in.readString();
         checkUrl = in.readString();
-        loginCookieKey = in.readString();
         serialNumber = in.readInt();
         weight = in.readInt();
         enable = in.readByte() != 0;
@@ -143,7 +140,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(bookSourceType);
         dest.writeString(bookSourceRuleType);
         dest.writeString(checkUrl);
-        dest.writeString(loginCookieKey);
         dest.writeInt(serialNumber);
         dest.writeInt(weight);
         dest.writeByte((byte) (enable ? 1 : 0));
@@ -221,7 +217,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(ruleSearchNoteUrl, bs.ruleSearchNoteUrl)
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
                     && stringEquals(checkUrl, bs.checkUrl)
-                    && stringEquals(loginCookieKey, bs.loginCookieKey)
                     && stringEquals(rulePersistedVariables, bs.rulePersistedVariables);
         }
         return false;
@@ -467,14 +462,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.checkUrl = checkUrl;
     }
 
-    public String getLoginCookieKey() {
-        return loginCookieKey;
-    }
-
-    public void setLoginCookieKey(String loginCookieKey) {
-        this.loginCookieKey = loginCookieKey;
-    }
-
     public String getRuleChapterUrlNext() {
         return this.ruleChapterUrlNext;
     }
@@ -525,7 +512,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
                 ", bookSourceType='" + bookSourceType + '\'' +
                 ", bookSourceRuleType='" + bookSourceRuleType + '\'' +
                 ", checkUrl='" + checkUrl + '\'' +
-                ", loginCookieKey='" + loginCookieKey + '\'' +
                 ", serialNumber=" + serialNumber +
                 ", weight=" + weight +
                 ", enable=" + enable +

@@ -4,6 +4,10 @@ import com.monke.basemvplib.CookieStore;
 import com.monke.monkeybook.bean.CookieBean;
 import com.monke.monkeybook.dao.CookieBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.utils.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CookieHelper implements CookieStore {
     private volatile static CookieHelper mInstance;
@@ -27,7 +31,7 @@ public class CookieHelper implements CookieStore {
         try {
             CookieBean cookieBean = new CookieBean(url, cookie);
             DbHelper.getInstance().getDaoSession().getCookieBeanDao().insertOrReplace(cookieBean);
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
         }
     }
 
@@ -36,7 +40,7 @@ public class CookieHelper implements CookieStore {
         try {
             CookieBean cookieBean = DbHelper.getInstance().getDaoSession().getCookieBeanDao().load(url);
             return cookieBean == null ? "" : cookieBean.getCookie();
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
         }
         return "";
     }
@@ -47,7 +51,7 @@ public class CookieHelper implements CookieStore {
             DbHelper.getInstance().getDaoSession().queryBuilder(CookieBean.class)
                     .where(CookieBeanDao.Properties.Url.eq(url))
                     .buildDelete();
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
         }
     }
 
@@ -55,8 +59,25 @@ public class CookieHelper implements CookieStore {
     public void clearCookies() {
         try {
             DbHelper.getInstance().getDaoSession().delete(CookieBean.class);
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
 
         }
+    }
+
+    public static Map<String, String> cookieToMap(String cookie) {
+        Map<String, String> cookieMap = new HashMap<>();
+        if (StringUtils.isTrimEmpty(cookie)) {
+            return cookieMap;
+        }
+        String[] pairArray = cookie.split(";");
+        for (String pair : pairArray) {
+            String[] pairs = pair.split("=");
+            String key = pairs[0].trim();
+            String value = pairs[1];
+            if (!StringUtils.isTrimEmpty(value) || value.trim().equals("null")) {
+                cookieMap.put(key, value.trim());
+            }
+        }
+        return cookieMap;
     }
 }

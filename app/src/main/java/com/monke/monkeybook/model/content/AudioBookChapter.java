@@ -35,7 +35,7 @@ public class AudioBookChapter {
     Observable<ChapterBean> analyzeAudioChapter(final String s, final ChapterBean chapter) {
         return Observable.create(e -> {
             if (TextUtils.isEmpty(s)) {
-                e.onError(new Throwable("内容获取失败"));
+                e.onError(new Throwable("播放链接获取失败"));
                 e.onComplete();
                 return;
             }
