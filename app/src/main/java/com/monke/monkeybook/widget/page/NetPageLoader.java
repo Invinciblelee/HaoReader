@@ -96,6 +96,7 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onError(Throwable e) {
+                            e.printStackTrace();
                             if (!NetworkUtil.isNetworkAvailable()) {
                                 setCurrentStatus(STATUS_NETWORK_ERROR);
                             } else if (e instanceof BookException) {

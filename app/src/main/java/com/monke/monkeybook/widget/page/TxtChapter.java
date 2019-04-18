@@ -186,7 +186,7 @@ public class TxtChapter {
 
     void rewind() {
         isOpened = false;
-        setStatus(PageStatus.STATUS_LOADING);
+        setStatus(PageStatus.STATUS_FINISH);
     }
 
     void open() {

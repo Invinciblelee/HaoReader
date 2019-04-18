@@ -158,6 +158,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean));
         } catch (Exception e) {
+            Logger.e(TAG, "目录获取失败", e);
             return Observable.error(new BookException("目录获取失败"));
         }
     }
@@ -195,6 +196,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         .flatMap(response -> bookContent.analyzeBookContent(response.body(), chapter));
             }
         } catch (Exception e) {
+            Logger.e(TAG, "正文获取失败", e);
             return Observable.error(new BookException("正文获取失败"));
         }
 

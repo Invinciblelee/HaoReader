@@ -4,8 +4,6 @@ import android.util.Base64;
 
 import com.monke.monkeybook.MApplication;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -302,14 +300,12 @@ public class StringUtils {
     }
 
     public static String getBaseUrl(String url) {
-        if (url == null) return null;
-        URI uri = URI.create(url);
-        URI effectiveURI = null;
-        try {
-            effectiveURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
-        } catch (URISyntaxException ignore) {
+        if (url == null || !url.startsWith("http")) return null;
+        int index = url.indexOf("/", 9);
+        if (index == -1) {
+            return url;
         }
-        return effectiveURI == null ? null : effectiveURI.toString();
+        return url.substring(0, index);
     }
 
     public static String valueOf(Object object) {
