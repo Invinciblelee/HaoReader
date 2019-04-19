@@ -11,6 +11,18 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
 
+
+/**
+ * 模拟点击网页
+ * <p>
+ * 方法一：$('#clickId').trigger("click");    'p' 标签选择器 ‘.class’ 类选择器 ‘#id’ id选择器
+ * <p>
+ * 方法二：var e = document.createEvent("MouseEvents");
+ * e.initEvent("click", true, true);
+ * document.getElementsByClassName("clickClass")[0].dispatchEvent(e);
+ * <p>
+ * 方法三：document.getElementById("clickId").click();
+ */
 public class AudioBookChapter {
 
     private final String tag;
