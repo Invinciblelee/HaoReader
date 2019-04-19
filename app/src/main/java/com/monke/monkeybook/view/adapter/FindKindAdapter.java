@@ -7,8 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.monke.monkeybook.R;
@@ -20,9 +23,6 @@ import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GKF on 2017/12/22.
@@ -64,7 +64,7 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         FindKindGroupBean item = dataList.get(position);
         holder.tvTitle.setText(item.getGroupName());
-        holder.groupView.setOnLongClickListener(v -> {
+        holder.itemView.setOnLongClickListener(v -> {
             if (groupItemLongClickListener != null) {
                 groupItemLongClickListener.onGroupItemLongClick(item);
             }
@@ -77,7 +77,7 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
             }
         };
         holder.mTagBox.setVisibility(item.isExpand() ? View.VISIBLE : View.GONE);
-        holder.expandBtn.setSelected(item.isExpand());
+        holder.expandView.setSelected(item.isExpand());
 
         if (item.isExpand()) {
             holder.mTagBox.removeAllViews();
@@ -89,8 +89,8 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
         }
 
         final View.OnClickListener expandClickListener = v -> {
-            holder.expandBtn.setSelected(!holder.expandBtn.isSelected());
-            item.setExpand(holder.expandBtn.isSelected());
+            holder.expandView.setSelected(!holder.expandView.isSelected());
+            item.setExpand(holder.expandView.isSelected());
             if (holder.mTagBox.isShown()) {
                 expandTags.remove(item.getTag());
                 holder.mTagBox.setVisibility(View.GONE);
@@ -107,8 +107,7 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
                 mParent.post(() -> mParent.smoothScrollToPosition(holder.getLayoutPosition()));
             }
         };
-        holder.expandBtn.setOnClickListener(expandClickListener);
-        holder.groupView.setOnClickListener(expandClickListener);
+        holder.itemView.setOnClickListener(expandClickListener);
     }
 
     @Override
@@ -180,15 +179,13 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
     static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         FlexboxLayout mTagBox;
-        View groupView;
-        ImageButton expandBtn;
+        ImageView expandView;
 
         private ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_kind_name);
             mTagBox = itemView.findViewById(R.id.flex_box_tag);
-            groupView = itemView.findViewById(R.id.view_find_group);
-            expandBtn = itemView.findViewById(R.id.btn_expander);
+            expandView = itemView.findViewById(R.id.btn_expander);
         }
     }
 

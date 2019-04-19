@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
     android:layout_marginTop="4dp"
+    android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
-    android:orientation="vertical">
+    android:background="@drawable/bg_find_group"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    app:divider="@drawable/bg_list_divider"
+    app:showDividers="middle">
 
     <FrameLayout
         android:id="@+id/view_find_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tv_kind_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_find_group"
             android:paddingStart="10dp"
             android:paddingTop="10dp"
             android:paddingEnd="58dp"
@@ -28,14 +32,13 @@
             android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_expander"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="@drawable/bg_find_group_drop"
-            android:minHeight="0dp"
-            android:outlineProvider="none"
+            android:layout_marginEnd="6dp"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_group_expander"
             android:tint="@color/menu_color_default" />
     </FrameLayout>
@@ -45,10 +48,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
+        android:paddingBottom="10dp"
         app:dividerDrawable="@drawable/shape_space_divider"
         app:flexDirection="row"
         app:flexWrap="wrap"
         app:showDivider="middle" />
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
