@@ -287,7 +287,6 @@ class XJsoupContentDelegate implements ContentDelegate {
                 webContentBean.nextUrl = mAnalyzer.getResultUrl(mBookSource.getRuleContentUrlNext());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             webContentBean.result = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + " : " + ex.getMessage();
         }
         return webContentBean;
