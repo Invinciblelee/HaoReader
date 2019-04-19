@@ -83,7 +83,7 @@ public class ChapterDrawerFragment extends BaseFragment {
 
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container) {
-        return inflater.inflate(R.layout.fragment_chapterlist, container, false);
+        return inflater.inflate(R.layout.fragment_tab_chapterlist, container, false);
     }
 
     @Override

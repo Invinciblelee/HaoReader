@@ -301,6 +301,9 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
     public BookInfoBean getBookInfoBean() {
+        if (bookInfoBean == null) {
+            bookInfoBean = new BookInfoBean();
+        }
         return bookInfoBean;
     }
 

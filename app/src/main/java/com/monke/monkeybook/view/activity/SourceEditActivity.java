@@ -191,6 +191,9 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private KeyboardToolPop mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
 
+
+    private KeyboardOnGlobalChangeListener mKeyboardListener;
+
     public static void startThis(Activity activity, BookSourceBean sourceBean) {
         Intent intent = new Intent(activity, SourceEditActivity.class);
         String key = String.valueOf(System.currentTimeMillis());
@@ -259,7 +262,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         setHint();
         setText(bookSourceBean);
         mSoftKeyboardTool = new KeyboardToolPop(this, this::insertTextToEditText);
-        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new KeyboardOnGlobalChangeListener());
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(mKeyboardListener = new KeyboardOnGlobalChangeListener());
     }
 
     private void saveBookSource() {
@@ -525,6 +528,12 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     public void finish() {
         KeyboardUtil.hideKeyboard(this);
         super.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        getWindow().getDecorView().getViewTreeObserver().removeOnGlobalLayoutListener(mKeyboardListener);
+        super.onDestroy();
     }
 
     private void insertTextToEditText(String txt) {

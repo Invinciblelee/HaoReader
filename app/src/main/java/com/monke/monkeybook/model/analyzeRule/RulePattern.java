@@ -2,6 +2,9 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.monke.monkeybook.bean.VariableStore;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 final class RulePattern {
     private static final Pattern PATTERN_GET = Pattern.compile("@get:\\{.+?\\}", Pattern.CASE_INSENSITIVE);

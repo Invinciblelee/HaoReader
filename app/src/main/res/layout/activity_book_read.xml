@@ -58,17 +58,38 @@
                         android:layout_height="0.5dp"
                         android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/atv_url"
+                    <LinearLayout
+                        android:id="@+id/atv_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:gravity="center_vertical"
-                        android:includeFontPadding="false"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:singleLine="true"
-                        android:textColor="@color/colorReadBarText"
-                        android:visibility="gone" />
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/atv_url"
+                            android:layout_width="0dp"
+                            android:layout_height="30dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="center_vertical"
+                            android:includeFontPadding="false"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="4dp"
+                            android:singleLine="true"
+                            android:textColor="@color/colorReadBarText"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/atv_source_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:includeFontPadding="false"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="10dp"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -214,10 +235,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="12dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="5dp"
                         android:background="@drawable/bg_ib_pre_round"
                         android:clickable="true"
                         android:enabled="false"
@@ -251,9 +271,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="24dp"
                         android:background="@drawable/bg_ib_pre_round"
                         android:clickable="true"
                         android:enabled="false"
@@ -267,8 +286,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_marginTop="16dp"
                         android:layout_below="@id/hpb_read_progress"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="12dp"
                         android:baselineAligned="false"
                         android:orientation="horizontal">
 

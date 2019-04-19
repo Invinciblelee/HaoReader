@@ -127,6 +127,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 bookInfoBean.setBookType(Constant.BookType.TEXT);
                 bookInfoBean.setNoteUrl(bookShelfBean.getNoteUrl());
                 bookInfoBean.setTag(bookShelfBean.getTag());
+                bookInfoBean.setOrigin(bookShelfBean.getTag());
                 bookInfoBean.setChapterListUrl("http://api.zhuishushenqi.com/atoc/" + targetSource.get("_id").getAsString() + "?view=chapters");
                 e.onNext(bookShelfBean);
             } else {

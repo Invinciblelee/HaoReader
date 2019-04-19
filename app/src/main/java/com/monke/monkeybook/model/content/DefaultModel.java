@@ -19,8 +19,6 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,12 +43,6 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
     private DefaultModel(String tag) {
         this.tag = tag;
-        try {
-            URL url = new URL(tag);
-            name = url.getHost();
-        } catch (MalformedURLException e) {
-            name = tag;
-        }
     }
 
     public static DefaultModel newInstance(String tag) {
@@ -84,7 +76,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 emitter.onComplete();
             });
         }
-        BookList bookList = new BookList(tag, name, bookSourceBean);
+        final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, page, headerMap, tag);
             if (analyzeUrl.getHost() == null) {
@@ -112,7 +104,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 emitter.onComplete();
             });
         }
-        BookList bookList = new BookList(tag, name, bookSourceBean);
+        final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookSourceBean.getRuleSearchUrl(), content, page, headerMap, tag);
             if (analyzeUrl.getHost() == null) {
@@ -134,7 +126,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         if (!initBookSourceBean()) {
             return Observable.error(new BookException("没有找到当前书源"));
         }
-        BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
+        final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), headerMap, tag);
             return toObservable(analyzeUrl)
@@ -152,7 +144,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         if (!initBookSourceBean()) {
             return Observable.error(new BookException("没有找到当前书源"));
         }
-        BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
+        final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap, tag);
             return toObservable(analyzeUrl)
@@ -172,7 +164,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             return Observable.error(new BookException("没有找到当前书源"));
         }
 
-        BookContent bookContent = new BookContent(tag, bookSourceBean);
+        final BookContent bookContent = new BookContent(tag, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);
             if (bookContent.isAJAX()) {
@@ -213,7 +205,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             return Observable.just(chapter);
         }
 
-        AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
+        final AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);
             if (audioBookChapter.isAJAX()) {
@@ -251,7 +243,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     private Observable<Response<String>> setCookie(Response<String> response, String tag) {
         return Observable.create(e -> {
             if (!response.raw().headers("Set-Cookie").isEmpty()) {
-                StringBuilder cookieBuilder = new StringBuilder();
+                final StringBuilder cookieBuilder = new StringBuilder();
                 for (String s : response.raw().headers("Set-Cookie")) {
                     String[] x = s.split(";");
                     for (String y : x) {

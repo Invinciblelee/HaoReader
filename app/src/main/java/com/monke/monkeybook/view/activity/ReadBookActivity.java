@@ -117,8 +117,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     Toolbar toolbar;
     @BindView(R.id.atv_divider)
     View atvDivider;
+    @BindView(R.id.atv_layout)
+    View atvLayout;
     @BindView(R.id.atv_url)
     TextView atvUrl;
+    @BindView(R.id.atv_source_name)
+    TextView atvSourceName;
     @BindView(R.id.ll_menu_top)
     LinearLayout llMenuTop;
     @BindView(R.id.appBar)
@@ -459,12 +463,13 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 || mPresenter.getBookShelf().realChapterListEmpty()
                 || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
             atvDivider.setVisibility(View.GONE);
-            atvUrl.setVisibility(View.GONE);
+            atvLayout.setVisibility(View.GONE);
         } else {
             atvDivider.setVisibility(View.VISIBLE);
-            atvUrl.setVisibility(View.VISIBLE);
+            atvLayout.setVisibility(View.VISIBLE);
             int chapterIndex = mPresenter.getBookShelf().getDurChapter();
             atvUrl.setText(mPresenter.getBookShelf().getChapter(chapterIndex).getDurChapterUrl());
+            atvSourceName.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
         }
     }
 
@@ -810,7 +815,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void bindEvent() {
         //打开URL
-        atvUrl.setOnClickListener(this);
+        atvLayout.setOnClickListener(this);
 
         //朗读定时
         fabReadAloudTimer.setOnClickListener(this);
@@ -923,7 +928,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.controls_frame:
                 popMenuOut();
                 break;
-            case R.id.atv_url:
+            case R.id.atv_layout:
                 openCurrentChapterBrowser();
                 break;
             case R.id.fab_read_aloud_timer:
