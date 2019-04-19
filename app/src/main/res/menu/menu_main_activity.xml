@@ -20,8 +20,6 @@
         android:id="@+id/action_audio"
         android:icon="@drawable/ic_audio_book_black_24dp"
         android:title="@string/audio_book"
-        android:visible="false"
-        android:enabled="false"
         app:showAsAction="always" />
 
     <item

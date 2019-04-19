@@ -286,7 +286,7 @@ public class DownloadService extends Service {
                 .setOngoing(true)
                 //点击通知后自动清除
                 .setAutoCancel(false)
-                .setWhen(when)//位置不会更换
+                .setWhen(when)//保持位置不变
                 .setContentTitle("正在下载：" + bookName)
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);

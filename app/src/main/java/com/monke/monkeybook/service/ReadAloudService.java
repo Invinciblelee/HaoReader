@@ -471,6 +471,17 @@ public class ReadAloudService extends Service {
                         .build());
     }
 
+    private void toTTSSetting() {
+        //跳转到文字转语音设置界面
+        try {
+            Intent intent = new Intent();
+            intent.setAction("com.android.settings.TTS_SETTINGS");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (Exception ignored) {
+        }
+    }
+
     public class MyBinder extends Binder {
         public ReadAloudService getService() {
             return ReadAloudService.this;
@@ -484,13 +495,17 @@ public class ReadAloudService extends Service {
                 int result = textToSpeech.setLanguage(Locale.CHINA);
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     RxBus.get().post(RxBusTag.ALOUD_MSG, getString(R.string.tts_fix));
+                    //先停止朗读服务方便用户设置好后的重试
+                    ReadAloudService.stop(ReadAloudService.this);
+                    //跳转到文字转语音设置界面
+                    toTTSSetting();
                 } else {
                     textToSpeech.setOnUtteranceProgressListener(new ttsUtteranceListener());
                     ttsInitSuccess = true;
                     playTTS();
                 }
             } else {
-                RxBus.get().post(RxBusTag.ALOUD_MSG, "TTS初始化失败");
+                RxBus.get().post(RxBusTag.ALOUD_MSG, getString(R.string.tts_init_failed));
                 doneService();
             }
         }
@@ -535,7 +550,6 @@ public class ReadAloudService extends Service {
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:
                     // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
-                    break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
                     if (!pause) {

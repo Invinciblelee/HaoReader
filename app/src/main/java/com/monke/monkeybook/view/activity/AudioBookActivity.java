@@ -1,16 +1,22 @@
 package com.monke.monkeybook.view.activity;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -74,6 +80,8 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
 
         rvBookshelf.setAdapter(bookListAdapter);
         refreshLayout.setOnRefreshListener(this);
+
+        showCoverImage("dfa");
     }
 
     @Override
@@ -172,4 +180,12 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         }
     }
 
+    private void showCoverImage(String image) {
+        Glide.with(this).load(R.drawable.img_cover_default)
+                .apply(new RequestOptions().dontAnimate().centerCrop()
+                        .transforms(new CenterCrop(), new CircleCrop())
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .placeholder(R.drawable.shape_bg_circle_image)
+                        .error(R.drawable.shape_bg_circle_image)).into(ivCover);
+    }
 }
