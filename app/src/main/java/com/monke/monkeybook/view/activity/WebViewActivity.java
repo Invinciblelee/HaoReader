@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -19,10 +20,14 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.WebLoadConfig;
+import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
@@ -32,8 +37,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.schedulers.Schedulers;
@@ -59,7 +62,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     @BindView(R.id.web_html_code)
     ScrollView codeView;
 
-    private String mHtmlCode;
+    private String mOuterHtml;
 
     private WebLoadConfig mConfig;
 
@@ -149,10 +152,10 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
                 openInBrowser();
                 break;
             case R.id.action_code:
-                if (mHtmlCode == null) {
+                if (mOuterHtml == null) {
                     toast("网页正在加载，请稍候...");
                 } else if (!codeView.isShown()) {
-                    showText(mHtmlCode);
+                    showText(mOuterHtml);
                 }
                 break;
             case android.R.id.home:
@@ -233,8 +236,8 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
                 }), 400L, TimeUnit.MILLISECONDS);
     }
 
-    private void setHtmlCode(String html) {
-        mHtmlCode = html;
+    private void setHtmlText(String html) {
+        mOuterHtml = html;
     }
 
     private static class MWebClient extends WebViewClient {
@@ -249,7 +252,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             if (actRef.get() != null) {
-                actRef.get().setHtmlCode(null);
+                actRef.get().setHtmlText(null);
             }
         }
 
@@ -263,14 +266,15 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
             if (actRef.get() != null) {
                 WebLoadConfig config = actRef.get().mConfig;
                 if (config != null) {
-                    config.setCookie(url);
+                    CookieManager cookieManager = CookieManager.getInstance();
+                    CookieHelper.get().setCookie(config.getTag(), cookieManager.getCookie(url));
                 }
             }
             super.onPageFinished(view, url);
 
             view.evaluateJavascript("document.documentElement.outerHTML", value -> {
                 if (actRef.get() != null) {
-                    actRef.get().setHtmlCode(StringEscapeUtils.unescapeJson(value));
+                    actRef.get().setHtmlText(StringEscapeUtils.unescapeJson(value));
                 }
             });
         }

@@ -262,7 +262,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 }
                 String cookie = cookieBuilder.toString();
                 if (!TextUtils.isEmpty(cookie)) {
-                    CookieHelper.get().setCookie(tag, cookie);
+                    CookieHelper.get().replaceCookie(tag, cookie);
                 }
             }
             e.onNext(response);

@@ -54,11 +54,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleBookContent;
     private String httpUserAgent;
 
-    @Generated()
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, boolean enable,
-                          String ruleFindUrl, String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl,
-                          String rulePersistedVariables, String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList,
-                          String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+    @Generated(hash = 1863804992)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl,
+            String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables,
+            String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl,
+            String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;

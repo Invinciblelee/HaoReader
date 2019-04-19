@@ -312,7 +312,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText()));
         bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText()));
         bookSourceBeanN.setCheckUrl(trim(tieCheckUrl.getText()));
-        bookSourceBeanN.setLoginCookieKey(trim(tieLoginCookieKey.getText()));
         bookSourceBeanN.setRuleBookAuthor(trim(tieRuleBookAuthor.getText()));
         bookSourceBeanN.setRuleBookContent(trim(tieRuleBookContent.getText()));
         bookSourceBeanN.setRulePersistedVariables(trim(tiePersistedVariables.getText()));
@@ -359,7 +358,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieBookSourceUrl.setText(trim(bookSourceBean.getBookSourceUrl()));
         tieBookSourceGroup.setText(trim(bookSourceBean.getBookSourceGroup()));
         tieCheckUrl.setText(trim(bookSourceBean.getCheckUrl()));
-        tieLoginCookieKey.setText(trim(bookSourceBean.getLoginCookieKey()));
         tieRuleBookAuthor.setText(trim(bookSourceBean.getRuleBookAuthor()));
         tieRuleBookContent.setText(trim(bookSourceBean.getRuleBookContent()));
         tiePersistedVariables.setText(trim(bookSourceBean.getRulePersistedVariables()));
@@ -480,7 +478,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                     toast("请先配置书源URL");
                 } else {
                     WebLoadConfig config = new WebLoadConfig(url, trim(tieHttpUserAgent.getText()));
-                    config.setCookieKey(trim(tieLoginCookieKey.getText()));
                     WebViewActivity.startThis(this, config);
                 }
                 break;

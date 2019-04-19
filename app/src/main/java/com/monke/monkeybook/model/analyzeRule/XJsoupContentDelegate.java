@@ -1,7 +1,8 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -21,7 +22,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import retrofit2.Call;
 
 import static android.text.TextUtils.isEmpty;
@@ -73,12 +73,12 @@ class XJsoupContentDelegate implements ContentDelegate {
                 if (!isEmpty(item.getName())) {
                     books.add(item);
                 }
-            }catch (Exception ignore){
+            } catch (Exception ignore) {
             }
         }
         mAnalyzer.endExecute();
 
-        if(reverse){
+        if (reverse) {
             Collections.reverse(books);
         }
 
@@ -282,7 +282,6 @@ class XJsoupContentDelegate implements ContentDelegate {
         RawResult<String> webContentBean = new RawResult<>();
         try {
             mAnalyzer.setContent(s);
-            System.out.println(s);
             webContentBean.result = mAnalyzer.getResultContent(ruleContent);
             if (!TextUtils.isEmpty(mBookSource.getRuleContentUrlNext())) {
                 webContentBean.nextUrl = mAnalyzer.getResultUrl(mBookSource.getRuleContentUrlNext());

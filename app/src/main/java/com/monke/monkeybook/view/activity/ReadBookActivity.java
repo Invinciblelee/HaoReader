@@ -22,6 +22,14 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.gyf.barlibrary.BarHide;
 import com.monke.basemvplib.AppActivityManager;
@@ -62,13 +70,6 @@ import com.monke.mprogressbar.OnProgressListener;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -1144,9 +1145,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         BookSourceBean bookSource = mPresenter.getBookSource();
         final String title = mPresenter.getBookShelf().getBookInfoBean().getName();
         WebLoadConfig config = new WebLoadConfig(title, url, bookSource == null ? null : bookSource.getBookSourceUrl(), bookSource == null ? null : bookSource.getHttpUserAgent());
-        if (bookSource != null) {
-            config.setCookieKey(bookSource.getLoginCookieKey());
-        }
         WebViewActivity.startThis(this, config);
     }
 

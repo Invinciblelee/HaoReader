@@ -1,5 +1,7 @@
 package com.monke.monkeybook.help;
 
+import android.text.TextUtils;
+
 import com.monke.basemvplib.CookieStore;
 import com.monke.monkeybook.bean.CookieBean;
 import com.monke.monkeybook.dao.CookieBeanDao;
@@ -10,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CookieHelper implements CookieStore {
+
+    private static final String TAG = CookieHelper.class.getSimpleName();
+
     private volatile static CookieHelper mInstance;
 
     private CookieHelper() {
@@ -31,7 +36,26 @@ public class CookieHelper implements CookieStore {
         try {
             CookieBean cookieBean = new CookieBean(url, cookie);
             DbHelper.getInstance().getDaoSession().getCookieBeanDao().insertOrReplace(cookieBean);
+            Logger.d(TAG, "setCookie: " + url + " --> " + cookie);
         } catch (Exception ignore) {
+        }
+    }
+
+    @Override
+    public void replaceCookie(String url, String cookie) {
+        if (TextUtils.isEmpty(url) || TextUtils.isEmpty(cookie)) {
+            return;
+        }
+        String oldCookie = getCookie(url);
+        Logger.d(TAG, "replaceCookie from: " + url + " --> " + cookie);
+        if (TextUtils.isEmpty(oldCookie)) {
+            setCookie(url, cookie);
+        } else {
+            final Map<String, String> cookieMap = cookieToMap(oldCookie);
+            cookieMap.putAll(CookieHelper.cookieToMap(cookie));
+            String newCookie = mapToCookie(cookieMap);
+            Logger.d(TAG, "replaceCookie to: " + url + " --> " + newCookie);
+            CookieHelper.get().setCookie(url, newCookie);
         }
     }
 
@@ -60,18 +84,20 @@ public class CookieHelper implements CookieStore {
         try {
             DbHelper.getInstance().getDaoSession().delete(CookieBean.class);
         } catch (Exception ignore) {
-
         }
     }
 
-    public static Map<String, String> cookieToMap(String cookie) {
-        Map<String, String> cookieMap = new HashMap<>();
+    private static Map<String, String> cookieToMap(String cookie) {
+        final Map<String, String> cookieMap = new HashMap<>();
         if (StringUtils.isTrimEmpty(cookie)) {
             return cookieMap;
         }
         String[] pairArray = cookie.split(";");
         for (String pair : pairArray) {
             String[] pairs = pair.split("=");
+            if (pairs.length == 1) {
+                continue;
+            }
             String key = pairs[0].trim();
             String value = pairs[1];
             if (!StringUtils.isTrimEmpty(value) || value.trim().equals("null")) {
@@ -79,5 +105,22 @@ public class CookieHelper implements CookieStore {
             }
         }
         return cookieMap;
+    }
+
+    private static String mapToCookie(Map<String, String> cookieMap) {
+        if (cookieMap == null || cookieMap.isEmpty()) {
+            return null;
+        }
+        final StringBuilder builder = new StringBuilder();
+        for (String key : cookieMap.keySet()) {
+            String value = cookieMap.get(key);
+            if (!StringUtils.isTrimEmpty(value)) {
+                builder.append(key)
+                        .append("=")
+                        .append(value)
+                        .append(";");
+            }
+        }
+        return builder.deleteCharAt(builder.lastIndexOf(";")).toString();
     }
 }
