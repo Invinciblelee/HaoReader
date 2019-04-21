@@ -357,7 +357,7 @@ public class AudioBookPlayService extends Service {
 
     private void resetPlay() {
         if (mModel != null) {
-            mModel.destory();
+            mModel.destroy();
         }
 
         isPrepared = false;
@@ -600,12 +600,14 @@ public class AudioBookPlayService extends Service {
     public void onDestroy() {
         super.onDestroy();
         RxBus.get().unregister(this);
-        mModel.destory();
         running = false;
         cancelProgressTimer();
         cancelAlarmTimer();
         mediaPlayer.stop();
         mediaPlayer.release();
+        if(mModel != null){
+            mModel.destroy();
+        }
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,

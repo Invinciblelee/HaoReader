@@ -311,7 +311,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 });
     }
 
-    public void destory() {
+    public void destroy() {
         disposables.dispose();
     }
 
