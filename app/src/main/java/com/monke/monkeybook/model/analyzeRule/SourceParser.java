@@ -1,12 +1,8 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.utils.StringUtils;
-
 import java.util.List;
 
 abstract class SourceParser<S, T> {
-
-    static final String OUTER_BODY = "outerBody";
 
     private S mSource;
     private String mStringSource;

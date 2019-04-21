@@ -41,6 +41,7 @@
     </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
 
     <FrameLayout
+        android:id="@+id/view_audio_running"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
@@ -60,22 +61,21 @@
             android:background="@drawable/shape_bg_circle_image" />
 
         <com.monke.monkeybook.widget.CircleProgressBar
+            android:id="@+id/audio_progress"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="6dp"
-            app:maxProgress="100"
-            app:progress="100"
             app:strokeColor="@color/light_red"
             app:strokeWidth="2dp" />
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:id="@+id/btn_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="2dp"
             android:contentDescription="@string/pause"
-            android:src="@drawable/ic_pause_round_black_24dp"
+            android:src="@drawable/ic_play_white_24dp"
             android:tint="@color/light_red" />
     </FrameLayout>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

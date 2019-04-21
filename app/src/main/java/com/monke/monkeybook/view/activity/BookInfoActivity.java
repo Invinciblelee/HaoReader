@@ -2,12 +2,6 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,8 +9,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.MApplication;
@@ -133,11 +133,7 @@ public class BookInfoActivity extends MBaseActivity {
             tieBookName.setText(bookInfo.getName());
             tieBookAuthor.setText(bookInfo.getAuthor());
             tieBookJj.setText(bookInfo.getIntroduce());
-            if (TextUtils.isEmpty(bookInfo.getCustomCoverPath())) {
-                tieCoverUrl.setText(bookInfo.getCoverUrl());
-            } else {
-                tieCoverUrl.setText(bookInfo.getCustomCoverPath());
-            }
+            tieCoverUrl.setText(bookInfo.getRealCoverUrl());
         }
         initCover(getTextString(tieCoverUrl));
     }
@@ -218,7 +214,7 @@ public class BookInfoActivity extends MBaseActivity {
 
     @AfterPermissionGranted(MApplication.RESULT__PERMS)
     private void imageSelectorResult() {
-        FileSelector.newInstance("选择图片",true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelector.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 tieCoverUrl.setText(path);

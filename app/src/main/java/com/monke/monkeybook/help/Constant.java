@@ -1,15 +1,10 @@
 package com.monke.monkeybook.help;
 
-import com.google.gson.reflect.TypeToken;
+import com.monke.monkeybook.model.annotation.BookType;
+import com.monke.monkeybook.model.annotation.RuleType;
 import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Type;
-import java.util.Map;
-
-import androidx.annotation.StringDef;
 
 /**
  * Created by newbiechen on 17-4-16.
@@ -28,42 +23,19 @@ public class Constant {
     public static String APP_CRASH_PATH = FileUtil.getSdCardPath() + File.separator
             + "YueDu" + File.separator + "crashes" + File.separator;
 
-    //BookType
-    @StringDef({
-            BookType.TEXT,
-            BookType.AUDIO,
-            BookType.DOWNLOAD,
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface BookType {
-        String TEXT = "TEXT";
-        String AUDIO = "AUDIO";
-        String DOWNLOAD = "DOWNLOAD";
-    }
 
     public static final String[] BOOK_TYPES = {
             BookType.TEXT, BookType.AUDIO, BookType.DOWNLOAD
     };
 
 
-    //BookType
-    @StringDef({
-            RuleType.DEFAULT,
-            RuleType.XPATH,
-            RuleType.JSON
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface RuleType {
-        String DEFAULT = "DEFAULT";
-        String XPATH = "XPATH";
-        String JSON = "JSON";
-    }
-
     public static final String[] RULE_TYPES = {
             RuleType.DEFAULT, RuleType.XPATH, RuleType.JSON
     };
 
-
-    public static final Type STRING_MAP = new TypeToken<Map<String, String>>() {
-    }.getType();
+    public static final int GROUP_ZHUIGENG = 0;
+    public static final int GROUP_YANGFEI = 1;
+    public static final int GROUP_WANJIE = 2;
+    public static final int GROUP_BENDI = 3;
+    public static final int GROUP_AUDIO = 4;
 }

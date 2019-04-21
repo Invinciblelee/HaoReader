@@ -5,26 +5,22 @@ import android.text.TextUtils;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
 import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
 
-class BookContent {
+final class BookContent {
+    private final OutAnalyzer<?, ?> analyzer;
+
     private boolean isAJAX;
 
-    private OutAnalyzer<?, ?> analyzer;
-
     BookContent(String tag, BookSourceBean bookSourceBean) {
-        String ruleBookContent = bookSourceBean.getRuleBookContent();
-        if (!TextUtils.equals(Constant.RuleType.JSON, bookSourceBean.getBookSourceRuleType()) && ruleBookContent.startsWith("$")) {
-            isAJAX = true;
-        }
-
         analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
                 .tag(tag).bookSource(bookSourceBean));
+
+        isAJAX = bookSourceBean.ajaxRuleBookContent();
     }
 
     Observable<BookContentBean> analyzeBookContent(final String s, final ChapterBean chapter) {

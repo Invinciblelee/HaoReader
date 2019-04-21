@@ -4,6 +4,9 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.core.util.ObjectsCompat;
+
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ChapterHelp;
 
@@ -15,16 +18,13 @@ import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Objects;
 
-import androidx.core.util.ObjectsCompat;
-
 /**
  * 章节列表
  */
 @Entity
-public class ChapterBean implements Parcelable, FilterBean {
+public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBean> {
 
     private String noteUrl; //对应BookInfoBean noteUrl;
-    @OrderBy
     private Integer durChapterIndex;  //当前章节数
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址
@@ -42,8 +42,7 @@ public class ChapterBean implements Parcelable, FilterBean {
 
     @Generated(hash = 1104052855)
     public ChapterBean(String noteUrl, Integer durChapterIndex, String durChapterUrl,
-                       String durChapterName, String durChapterPlayUrl, String tag, Integer start,
-                       Integer end) {
+            String durChapterName, String durChapterPlayUrl, String tag, Integer start, Integer end) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
@@ -232,5 +231,26 @@ public class ChapterBean implements Parcelable, FilterBean {
     @Override
     public String[] getFilters() {
         return new String[]{durChapterName};
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "ChapterBean{" +
+                "noteUrl='" + noteUrl + '\'' +
+                ", durChapterIndex=" + durChapterIndex +
+                ", durChapterUrl='" + durChapterUrl + '\'' +
+                ", durChapterName='" + durChapterName + '\'' +
+                ", durChapterPlayUrl='" + durChapterPlayUrl + '\'' +
+                ", tag='" + tag + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", nextChapterUrl='" + nextChapterUrl + '\'' +
+                '}';
+    }
+
+    @Override
+    public int compareTo(ChapterBean o) {
+        return Integer.compare(durChapterIndex, o.durChapterIndex);
     }
 }

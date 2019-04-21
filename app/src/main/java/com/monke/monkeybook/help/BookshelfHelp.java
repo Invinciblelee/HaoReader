@@ -1,6 +1,6 @@
 package com.monke.monkeybook.help;
 
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -15,6 +15,7 @@ import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.BookmarkBeanDao;
 import com.monke.monkeybook.dao.ChapterBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.service.DownloadService;
 
 import java.io.BufferedWriter;
@@ -146,22 +147,6 @@ public class BookshelfHelp {
         return bookShelfList;
     }
 
-    public static List<BookShelfBean> queryBooksByType(String bookType) {
-        List<BookInfoBean> bookInfoBeans = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
-                .where(BookInfoBeanDao.Properties.BookType.eq(bookType))
-                .list();
-        List<BookShelfBean> bookShelfBeans = new ArrayList<>();
-        if (bookInfoBeans != null) {
-            for (BookInfoBean bookInfoBean : bookInfoBeans) {
-                BookShelfBean bookShelfBean = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
-                        .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookInfoBean.getNoteUrl())).build().unique();
-                bookShelfBean.setBookInfoBean(bookInfoBean);
-                bookShelfBeans.add(bookShelfBean);
-            }
-        }
-        return bookShelfBeans;
-    }
-
     public static List<BookShelfBean> queryBooks(String query) {
         List<BookInfoBean> bookInfoBeans = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
                 .whereOr(BookInfoBeanDao.Properties.Name.like("%" + query + "%"),
@@ -236,6 +221,9 @@ public class BookshelfHelp {
     }
 
     public static void saveBookToShelf(BookShelfBean bookShelfBean) {
+        if (TextUtils.equals(bookShelfBean.getBookInfoBean().getBookType(), BookType.AUDIO)) {
+            bookShelfBean.setGroup(Constant.GROUP_AUDIO);
+        }
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().insertOrReplace(bookShelfBean.getBookInfoBean());
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelfBean);
         if (!bookShelfBean.realChapterListEmpty()) {

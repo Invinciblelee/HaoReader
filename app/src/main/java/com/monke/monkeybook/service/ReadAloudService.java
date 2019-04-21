@@ -9,35 +9,48 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestFutureTarget;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.transition.Transition;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.RunMediaPlayer;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static android.text.TextUtils.isEmpty;
 import static com.monke.monkeybook.MApplication.DEBUG;
@@ -74,9 +87,9 @@ public class ReadAloudService extends Service {
     private Boolean pause = false;
     private List<String> contentList = new ArrayList<>();
     private int nowSpeak;
-    private int timeMinute = 0;
+    private int timerMinute = 0;
     private boolean timerEnable = false;
-    private Timer mTimer;
+    private ScheduledExecutorService mTimer;
     private AudioManager audioManager;
     private MediaSessionCompat mediaSessionCompat;
     private AudioFocusChangeListener audioFocusChangeListener;
@@ -84,14 +97,16 @@ public class ReadAloudService extends Service {
     private BroadcastReceiver broadcastReceiver;
     private SharedPreferences preference;
     private int speechRate;
+    private String title;
     private String text;
+    private String cover;
 
-    public ReadAloudService() {
-    }
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate() {
         super.onCreate();
+        running = true;
         preference = this.getSharedPreferences("CONFIG", 0);
         textToSpeech = new TextToSpeech(this, new TTSListener());
         audioFocusChangeListener = new AudioFocusChangeListener();
@@ -105,6 +120,8 @@ public class ReadAloudService extends Service {
         mediaSessionCompat.setActive(true);
         updateMediaSessionPlaybackState();
         updateNotification();
+
+        AudioBookPlayService.stop(this);
     }
 
     @Override
@@ -129,7 +146,8 @@ public class ReadAloudService extends Service {
                         newReadAloud(intent.getStringExtra("content"),
                                 intent.getBooleanExtra("aloudButton", false),
                                 intent.getStringExtra("title"),
-                                intent.getStringExtra("text"));
+                                intent.getStringExtra("text")
+                                , intent.getStringExtra("cover"));
                         break;
                 }
             }
@@ -137,12 +155,14 @@ public class ReadAloudService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void newReadAloud(String content, Boolean aloudButton, String title, String text) {
+    private void newReadAloud(String content, Boolean aloudButton, String title, String text, String cover) {
         if (content == null) {
             stopSelf();
             return;
         }
-        this.text = String.format("%s(%s)", title, text);
+        this.cover = cover;
+        this.title = title;
+        this.text = text;
         nowSpeak = 0;
         contentList.clear();
         String[] splitSpeech = content.split("\n");
@@ -200,13 +220,14 @@ public class ReadAloudService extends Service {
     /**
      * 朗读
      */
-    public static void play(Context context, Boolean aloudButton, String content, String title, String text) {
+    public static void play(Context context, Boolean aloudButton, String content, String title, String text, String cover) {
         Intent readAloudIntent = new Intent(context, ReadAloudService.class);
         readAloudIntent.setAction(ActionNewReadAloud);
         readAloudIntent.putExtra("aloudButton", aloudButton);
         readAloudIntent.putExtra("content", content);
         readAloudIntent.putExtra("title", title);
         readAloudIntent.putExtra("text", text);
+        readAloudIntent.putExtra("cover", cover);
         context.startService(readAloudIntent);
     }
 
@@ -226,24 +247,30 @@ public class ReadAloudService extends Service {
      * @param context 暂停
      */
     public static void pause(Context context) {
-        Intent intent = new Intent(context, ReadAloudService.class);
-        intent.setAction(ActionPauseService);
-        context.startService(intent);
+        if (running) {
+            Intent intent = new Intent(context, ReadAloudService.class);
+            intent.setAction(ActionPauseService);
+            context.startService(intent);
+        }
     }
 
     /**
      * @param context 继续
      */
     public static void resume(Context context) {
-        Intent intent = new Intent(context, ReadAloudService.class);
-        intent.setAction(ActionResumeService);
-        context.startService(intent);
+        if (running) {
+            Intent intent = new Intent(context, ReadAloudService.class);
+            intent.setAction(ActionResumeService);
+            context.startService(intent);
+        }
     }
 
     public static void setTimer(Context context) {
-        Intent intent = new Intent(context, ReadAloudService.class);
-        intent.setAction(ActionSetTimer);
-        context.startService(intent);
+        if (running) {
+            Intent intent = new Intent(context, ReadAloudService.class);
+            intent.setAction(ActionSetTimer);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -277,14 +304,18 @@ public class ReadAloudService extends Service {
     }
 
     private void updateTimer(int minute) {
-        timeMinute = timeMinute + minute;
+        if (pause) {
+            return;
+        }
+
+        timerMinute = timerMinute + minute;
         int maxTimeMinute = 60;
-        if (timeMinute > maxTimeMinute) {
+        if (timerMinute > maxTimeMinute) {
             timerEnable = false;
             cancelTimer();
-            timeMinute = 0;
+            timerMinute = 0;
             updateNotification();
-        } else if (timeMinute <= 0) {
+        } else if (timerMinute <= 0) {
             if (timerEnable) {
                 cancelTimer();
                 doneService();
@@ -297,25 +328,22 @@ public class ReadAloudService extends Service {
     }
 
     private void setTimer() {
-        if (mTimer == null) {
-            mTimer = new Timer();
-            mTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (!pause) {
-                        Intent setTimerIntent = new Intent(getApplicationContext(), ReadAloudService.class);
-                        setTimerIntent.setAction(ActionSetTimer);
-                        setTimerIntent.putExtra("minute", -1);
-                        startService(setTimerIntent);
-                    }
+        if (mTimer == null || mTimer.isShutdown()) {
+            mTimer = Executors.newSingleThreadScheduledExecutor();
+            mTimer.scheduleAtFixedRate(() -> {
+                if (!pause) {
+                    Intent setTimerIntent = new Intent(getApplicationContext(), ReadAloudService.class);
+                    setTimerIntent.setAction(ActionSetTimer);
+                    setTimerIntent.putExtra("minute", -1);
+                    startService(setTimerIntent);
                 }
-            }, 60000, 60000);
+            }, 60000, 60000, TimeUnit.MILLISECONDS);
         }
     }
 
     private void cancelTimer() {
         if (mTimer != null) {
-            mTimer.cancel();
+            mTimer.shutdown();
         }
     }
 
@@ -335,36 +363,22 @@ public class ReadAloudService extends Service {
      * 更新通知
      */
     private void updateNotification() {
-        if (text == null)
-            text = getString(R.string.read_aloud_s);
-        String title;
-        if (pause) {
-            title = getString(R.string.read_aloud_pause);
-        } else if (timeMinute > 0 && timeMinute <= 60) {
-            title = getString(R.string.read_aloud_timer, timeMinute);
-        } else {
-            title = getString(R.string.read_aloud_t);
-        }
-        RxBus.get().post(RxBusTag.ALOUD_TIMER, title);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdReadAloud)
-                .setSmallIcon(R.drawable.ic_volume_up_black_24dp)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setOngoing(true)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setContentIntent(getReadBookActivityPendingIntent(ActionReadActivity));
-        if (pause) {
-            builder.addAction(R.drawable.ic_play_white_24dp, getString(R.string.resume), getThisServicePendingIntent(ActionResumeService));
-        } else {
-            builder.addAction(R.drawable.ic_pause_white_24dp, getString(R.string.pause), getThisServicePendingIntent(ActionPauseService));
-        }
-        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.stop), getThisServicePendingIntent(ActionDoneService));
-        builder.addAction(R.drawable.ic_time_add_white_24dp, getString(R.string.set_timer), getThisServicePendingIntent(ActionSetTimer));
-        builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat.getSessionToken()).setShowActionsInCompactView(0, 1, 2));
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        Notification notification = builder.build();
-        startForeground(notificationId, notification);
+        int size = DensityUtil.dp2px(this, 128);
+        Glide.with(this)
+                .asBitmap()
+                .apply(new RequestOptions())
+                .load(cover)
+                .into(new RequestFutureTarget<Bitmap>(handler, size, size) {
+                    @Override
+                    public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        showNotification(resource);
+                    }
+
+                    @Override
+                    public synchronized void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        showNotification(BitmapFactory.decodeResource(getResources(), R.drawable.img_cover_default));
+                    }
+                });
     }
 
     @Nullable
@@ -380,6 +394,55 @@ public class ReadAloudService extends Service {
         clearTTS();
         unRegisterMediaButton();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    private void showNotification(Bitmap cover) {
+        updateTimer();
+        final String contentTitle;
+        if (timerMinute > 0 && timerMinute <= 60) {
+            contentTitle = String.format(Locale.getDefault(), "(%d分钟)%s", timerMinute, this.title);
+        } else {
+            contentTitle = this.title;
+        }
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.layout_aloud_notification);
+        remoteViews.setTextViewText(R.id.tv_title, contentTitle);
+        remoteViews.setTextViewText(R.id.tv_content, text);
+        if (pause) {
+            remoteViews.setImageViewResource(R.id.btn_pause, R.drawable.ic_play_white_24dp);
+            remoteViews.setOnClickPendingIntent(R.id.btn_pause, getThisServicePendingIntent(ActionResumeService));
+        } else {
+            remoteViews.setImageViewResource(R.id.btn_pause, R.drawable.ic_pause_white_24dp);
+            remoteViews.setOnClickPendingIntent(R.id.btn_pause, getThisServicePendingIntent(ActionPauseService));
+        }
+
+        remoteViews.setOnClickPendingIntent(R.id.btn_stop, getThisServicePendingIntent(ActionDoneService));
+        remoteViews.setOnClickPendingIntent(R.id.btn_timer, getThisServicePendingIntent(ActionSetTimer));
+
+        remoteViews.setImageViewBitmap(R.id.iv_cover, cover);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdReadAloud)
+                .setSmallIcon(R.drawable.ic_volume_up_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setContentTitle(contentTitle)
+                .setContentText(text)
+                .setOngoing(true)
+                .setCustomBigContentView(remoteViews)
+                .setContentIntent(getReadBookActivityPendingIntent(ActionReadActivity));
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        Notification notification = builder.build();
+        startForeground(notificationId, notification);
+    }
+
+    private void updateTimer() {
+        String timerDesc;
+        if (pause) {
+            timerDesc = getString(R.string.read_aloud_pause);
+        } else if (timerMinute > 0 && timerMinute <= 60) {
+            timerDesc = getString(R.string.read_aloud_timer, timerMinute);
+        } else {
+            timerDesc = getString(R.string.read_aloud_t);
+        }
+        RxBus.get().post(RxBusTag.ALOUD_TIMER, timerDesc);
     }
 
     private void clearTTS() {

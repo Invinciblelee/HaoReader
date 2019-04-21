@@ -5,13 +5,13 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
+import com.monke.monkeybook.model.annotation.BookType;
+import com.monke.monkeybook.model.annotation.RuleType;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 
 import java.net.URL;
@@ -24,6 +24,9 @@ import java.util.Objects;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.monke.monkeybook.help.Constant.BOOK_TYPES;
+import static com.monke.monkeybook.help.Constant.RULE_TYPES;
 
 /**
  * Created by GKF on 2017/12/15.
@@ -132,12 +135,12 @@ public class BookSourceManager extends BaseModelImpl {
             bookSourceBean.setEnable(true);
         }
 
-        if (!Arrays.asList(Constant.BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
-            bookSourceBean.setBookSourceType(Constant.BookType.TEXT);
+        if (!Arrays.asList(BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
+            bookSourceBean.setBookSourceType(BookType.TEXT);
         }
 
-        if(!Arrays.asList(Constant.RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())){
-            bookSourceBean.setBookSourceRuleType(Constant.RuleType.DEFAULT);
+        if(!Arrays.asList(RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())){
+            bookSourceBean.setBookSourceRuleType(RuleType.DEFAULT);
         }
 
         if (bookSourceBean.getSerialNumber() == 0) {

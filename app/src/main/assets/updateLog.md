@@ -1,6 +1,26 @@
 ## 本软件为开源软件,没有上架Google Play,没有在任何地方售卖,如果想支持我请通过软件里的捐赠,不要在任何地方购买!
 ## 更新日志
 #### 彩蛋,领支付宝红包有惊喜
+**2019/04/21**
+* 听书功能上线（尚有不完善的地方），
+* 书源bookType请选择AUDIO 
+* ruleBookContent 变化， 四种情况：
+     1.不写规则，表示目录url可直接播放
+     2.和普通书源规则一样，表示可以在播放页面获取到播放链接
+     3.$动态获取
+     4.$$.mp4 播放页面嗅探mp4文件，进入播放页面自动播放（可其他后缀，可能有些格式不能播放）；
+       需要点击播放按钮才能播放的情况：后面接@operate: + js
+       
+       模拟点击网页示例：
+       方法一：
+       $('#clickId').trigger("click");    'p' 标签选择器 ‘.class’ 类选择器 ‘#id’ id选择器
+       方法二：
+       var e = document.createEvent("MouseEvents");
+       e.initEvent("click", true, true);
+       document.getElementsByClassName("clickClass")[0].dispatchEvent(e);
+       方法三：
+       document.getElementById("clickId").click();
+
 **2018/12/31**
 * 支持最新版书源规则
 * 添加一个书源规则rulePersistedVariables 和{key:value,key:value}用于保存变量 可用@get:{key}获取

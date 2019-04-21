@@ -1,8 +1,8 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -21,14 +21,11 @@ import com.monke.monkeybook.presenter.contract.BookDetailContract;
 
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContract.View> implements BookDetailContract.Presenter {
@@ -39,8 +36,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     private SearchBookBean searchBook;
     private BookShelfBean bookShelf;
     private Boolean inBookShelf = false;
-
-    private int loadFlag = -1;
 
     private CompositeDisposable disposables = new CompositeDisposable();
 

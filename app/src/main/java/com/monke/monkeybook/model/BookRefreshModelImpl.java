@@ -81,38 +81,6 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                 });
     }
 
-    @Override
-    public void queryBooks(String bookType, boolean refresh) {
-        Single.create((SingleOnSubscribe<List<BookShelfBean>>) e -> {
-            List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooksByType(bookType);
-            e.onSuccess(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
-        }).compose(RxUtils::toSimpleSingle)
-                .map(ensureNotLoading())
-                .subscribe(new SingleObserver<List<BookShelfBean>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<BookShelfBean> value) {
-                        dispatchResultEvent(value);
-                        if (refresh) {
-                            if (!NetworkUtil.isNetworkAvailable()) {
-                                dispatchErrorEvent("无网络，请打开网络后再试");
-                            } else {
-                                bookShelfBeans = value;
-                                startRefreshBook();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        dispatchErrorEvent(NetworkUtil.getErrorTip(NetworkUtil.ERROR_CODE_ANALY));
-                    }
-                });
-    }
 
     @Override
     public void startRefreshBook() {
@@ -134,10 +102,10 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         refreshingDisps = null;
     }
 
-    private Function<List<BookShelfBean>, List<BookShelfBean>> ensureNotLoading(){
+    private Function<List<BookShelfBean>, List<BookShelfBean>> ensureNotLoading() {
         return bookShelfBeans -> {
-            for (BookShelfBean bookShelfBean: bookShelfBeans){
-                if(bookShelfBean.isLoading()){
+            for (BookShelfBean bookShelfBean : bookShelfBeans) {
+                if (bookShelfBean.isLoading()) {
                     bookShelfBean.setLoading(false);
                 }
             }

@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import android.util.Log;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,7 +18,8 @@ final class AnalyzeCollection {
     @SuppressWarnings("unchecked")
     boolean hasNext() {
         if (mIterator.hasNext()) {
-            mAnalyzer.setContent(mIterator.next());
+            Object o = mIterator.next();
+            mAnalyzer.setContent(o);
             return true;
         }
         return false;

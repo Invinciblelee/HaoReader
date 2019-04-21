@@ -124,8 +124,6 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
 
     private void addTagView(FindKindBean kindBean, ViewGroup parent, View.OnClickListener clickListener) {
         TextView tagView = (TextView) mInflater.inflate(R.layout.item_search_history, parent, false);
-//        tagView.setBackgroundResource(R.drawable.selector_find_kind_tag);
-//        tagView.setTextColor(tagView.getResources().getColor(R.color.tv_text_default));
         tagView.setTag(kindBean);
         tagView.setText(kindBean.getKindName());
         tagView.setOnClickListener(clickListener);

@@ -21,6 +21,7 @@ public class MApplication extends Application {
     public final static boolean DEBUG = BuildConfig.DEBUG;
     public final static String channelIdDownload = "channel_download";
     public final static String channelIdReadAloud = "channel_read_aloud";
+    public final static String channelIdAudioBook = "channel_audio_book";
     public final static String[] PerList = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     public final static int RESULT__PERMS = 263;
     private static MApplication instance;
@@ -56,6 +57,7 @@ public class MApplication extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannelIdDownload();
             createChannelIdReadAloud();
+            createChannelIdAudioBook();
         }
 
         RxJavaPlugins.setErrorHandler(Throwable::printStackTrace);
@@ -72,7 +74,7 @@ public class MApplication extends Application {
         //用唯一的ID创建渠道对象
         NotificationChannel firstChannel = new NotificationChannel(channelIdDownload,
                 getString(R.string.download_offline),
-                NotificationManager.IMPORTANCE_LOW);
+                NotificationManager.IMPORTANCE_DEFAULT);
         //初始化channel
         firstChannel.enableLights(false);
         firstChannel.enableVibration(false);
@@ -89,7 +91,24 @@ public class MApplication extends Application {
         //用唯一的ID创建渠道对象
         NotificationChannel firstChannel = new NotificationChannel(channelIdReadAloud,
                 getString(R.string.read_aloud),
-                NotificationManager.IMPORTANCE_LOW);
+                NotificationManager.IMPORTANCE_DEFAULT);
+        //初始化channel
+        firstChannel.enableLights(false);
+        firstChannel.enableVibration(false);
+        firstChannel.setSound(null, null);
+        //向notification manager 提交channel
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(firstChannel);
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannelIdAudioBook() {
+        //用唯一的ID创建渠道对象
+        NotificationChannel firstChannel = new NotificationChannel(channelIdAudioBook,
+                getString(R.string.audio_book),
+                NotificationManager.IMPORTANCE_DEFAULT);
         //初始化channel
         firstChannel.enableLights(false);
         firstChannel.enableVibration(false);

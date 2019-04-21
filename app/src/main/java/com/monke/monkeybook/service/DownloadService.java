@@ -10,6 +10,10 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -26,9 +30,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
@@ -290,6 +291,7 @@ public class DownloadService extends Service {
                 .setContentTitle("正在下载：" + bookName)
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(notificationId, downloadChapterBean.getNoteUrl()));
         //发送通知
         managerCompat.notify(notificationId, builder.build());

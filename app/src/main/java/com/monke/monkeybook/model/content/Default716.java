@@ -12,8 +12,8 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
@@ -68,7 +68,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                     SearchBookBean searchBookBean = new SearchBookBean();
                     searchBookBean.setTag(TAG);
                     searchBookBean.setOrigin(TAG);
-                    searchBookBean.setBookType(Constant.BookType.TEXT);
+                    searchBookBean.setBookType(BookType.TEXT);
                     searchBookBean.setWeight(Integer.MAX_VALUE);
                     searchBookBean.setKind(book.get("cat").getAsString());
                     searchBookBean.setName(book.get("title").getAsString());
@@ -124,7 +124,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
             if (targetSource != null) {
                 bookShelfBean.setLastChapterName(targetSource.get("lastChapter").getAsString());
                 BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
-                bookInfoBean.setBookType(Constant.BookType.TEXT);
+                bookInfoBean.setBookType(BookType.TEXT);
                 bookInfoBean.setNoteUrl(bookShelfBean.getNoteUrl());
                 bookInfoBean.setTag(bookShelfBean.getTag());
                 bookInfoBean.setOrigin(bookShelfBean.getTag());

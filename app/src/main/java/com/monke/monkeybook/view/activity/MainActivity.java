@@ -30,6 +30,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
+import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
@@ -204,7 +205,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                             getString(R.string.cancel),
                             v -> moDialogHUD.dismiss());
                 } else {
-                    ReadBookActivity.startThis(MainActivity.this, bookShelf.copy(), true);
+                    ReadBookActivity.startThis(MainActivity.this, bookShelf, true);
                 }
             }
 
@@ -515,6 +516,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void clearBookshelf() {
+        AudioBookPlayService.stop(this);
         drawerRight.clear();
 
         for (BookListFragment fragment : fragments) {
@@ -627,6 +629,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             showSnackBar("再按一次退出程序");
             exitTime = System.currentTimeMillis();
         } else {
+            AudioBookPlayService.stop(this);
             finish();
         }
     }

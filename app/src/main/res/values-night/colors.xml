@@ -16,6 +16,7 @@
     <color name="btn_bg_press_tp">#66454545</color>
 
     <color name="tv_tag_nor">#515151</color>
+    <color name="tv_tag_nor_dark">#4a4a4a</color>
     <color name="tv_tag_press">#66454545</color>
 
     <color name="tv_btn_normal_black">#737373</color>

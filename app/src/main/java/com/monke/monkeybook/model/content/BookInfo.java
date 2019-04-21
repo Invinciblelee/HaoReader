@@ -10,8 +10,8 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
 
-class BookInfo {
-    private OutAnalyzer analyzer;
+final class BookInfo {
+    private final OutAnalyzer analyzer;
 
     BookInfo(String tag, String name, BookSourceBean bookSourceBean) {
         this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()

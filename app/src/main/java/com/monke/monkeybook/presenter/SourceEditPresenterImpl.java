@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -28,8 +29,9 @@ import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.BookSourceManager;
+import com.monke.monkeybook.model.annotation.BookType;
+import com.monke.monkeybook.model.annotation.RuleType;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.BitmapUtil;
 import com.monke.monkeybook.utils.RxUtils;
@@ -48,6 +50,9 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.monke.monkeybook.help.Constant.BOOK_TYPES;
+import static com.monke.monkeybook.help.Constant.RULE_TYPES;
 
 /**
  * Created by GKF on 2018/1/28.
@@ -105,12 +110,12 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
         try {
             BookSourceBean bookSourceBean = gson.fromJson(bookSourceStr, BookSourceBean.class);
 
-            if (!Arrays.asList(Constant.BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
-                bookSourceBean.setBookSourceType(Constant.BookType.TEXT);
+            if (!Arrays.asList(BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
+                bookSourceBean.setBookSourceType(BookType.TEXT);
             }
 
-            if (!Arrays.asList(Constant.RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())) {
-                bookSourceBean.setBookSourceRuleType(Constant.RuleType.DEFAULT);
+            if (!Arrays.asList(RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())) {
+                bookSourceBean.setBookSourceRuleType(RuleType.DEFAULT);
             }
 
             mView.setText(bookSourceBean);

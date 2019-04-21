@@ -797,7 +797,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             if (content != null) {
                 ReadAloudService.play(ReadBookActivity.this, false, content,
                         mPresenter.getBookShelf().getBookInfoBean().getName(),
-                        mPresenter.getChapterTitle(chapterIndex)
+                        mPresenter.getChapterTitle(chapterIndex),
+                        mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl()
                 );
             }
             return;
@@ -1529,10 +1530,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             default:
                 popMenuOut();
                 if (mPresenter.getBookShelf() != null && mPageLoader != null) {
-                    ReadAloudService.play(this, true, mPageLoader.getCurrentContent(),
+                    controlsView.postDelayed(() -> ReadAloudService.play(ReadBookActivity.this, true, mPageLoader.getCurrentContent(),
                             mPresenter.getBookShelf().getBookInfoBean().getName(),
-                            mPresenter.getChapterTitle(mPageLoader.getChapterPosition())
-                    );
+                            mPresenter.getChapterTitle(mPageLoader.getChapterPosition()),
+                            mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl()
+                    ), DELAY_SHORT);
                 }
         }
     }

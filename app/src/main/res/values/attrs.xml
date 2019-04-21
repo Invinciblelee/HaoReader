@@ -11,12 +11,12 @@
     </declare-styleable>
 
     <declare-styleable name="SmoothCheckBox">
-        <attr name="duration" format="integer"/>
-        <attr name="stroke_width" format="dimension"/>
-        <attr name="color_tick" format="color"/>
-        <attr name="color_checked" format="color"/>
-        <attr name="color_unchecked" format="color"/>
-        <attr name="color_unchecked_stroke" format="color"/>
+        <attr name="duration" format="integer" />
+        <attr name="stroke_width" format="dimension" />
+        <attr name="color_tick" format="color" />
+        <attr name="color_checked" format="color" />
+        <attr name="color_unchecked" format="color" />
+        <attr name="color_unchecked_stroke" format="color" />
     </declare-styleable>
 
     <declare-styleable name="NumberPickerPreference">
@@ -35,43 +35,50 @@
         <attr name="bubbleTextColor" format="color" />
     </declare-styleable>
 
-    <attr name="appInsetForeground" format="reference"/>
-    <attr name="appConsumeInsets" format="boolean"/>
+    <attr name="appInsetForeground" format="reference" />
+    <attr name="appConsumeInsets" format="boolean" />
 
     <declare-styleable name="ScrimInsetsFrameLayout">
-        <attr name="appInsetForeground"/>
-        <attr name="appConsumeInsets"/>
+        <attr name="appInsetForeground" />
+        <attr name="appConsumeInsets" />
     </declare-styleable>
 
     <declare-styleable name="ScrimInsetsLinearLayout">
-        <attr name="appInsetForeground"/>
-        <attr name="appConsumeInsets"/>
+        <attr name="appInsetForeground" />
+        <attr name="appConsumeInsets" />
     </declare-styleable>
 
     <declare-styleable name="ScrimInsetsRelativeLayout">
-        <attr name="appInsetForeground"/>
-        <attr name="appConsumeInsets"/>
+        <attr name="appInsetForeground" />
+        <attr name="appConsumeInsets" />
     </declare-styleable>
 
     <declare-styleable name="ScaleDrawableTextView">
-        <attr name="drawableScale" format="reference|float"/>
-        <attr name="drawableColor" format="reference"/>
-        <attr name="drawableSize" format="reference|dimension"/>
+        <attr name="drawableScale" format="reference|float" />
+        <attr name="drawableColor" format="reference" />
+        <attr name="drawableSize" format="reference|dimension" />
     </declare-styleable>
 
     <declare-styleable name="CircleProgressBar">
-        <attr name="strokeWidth" format="dimension|reference"/>
-        <attr name="strokeColor" format="color|reference"/>
-        <attr name="maxProgress" format="float|reference"/>
-        <attr name="progress" format="float|reference"/>
+        <attr name="strokeWidth" format="dimension|reference" />
+        <attr name="strokeColor" format="color|reference" />
+        <attr name="maxProgress" format="float|reference" />
+        <attr name="progress" format="float|reference" />
     </declare-styleable>
 
     <declare-styleable name="TextInputSpinner">
-        <attr name="android:entries"/>
+        <attr name="android:entries" />
     </declare-styleable>
 
-    <declare-styleable name="NumberButton">
-        <attr name="themeColor" format="color|reference"/>
-        <attr name="android:background"/>
+    <declare-styleable name="AbsRoundImageView">
+        <attr name="borderWidth" format="dimension|reference" />
+        <attr name="borderColor" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="RoundImageView">
+        <attr name="leftTopRadius" format="dimension|reference" />
+        <attr name="rightTopRadius" format="dimension|reference" />
+        <attr name="rightBottomRadius" format="dimension|reference" />
+        <attr name="leftBottomRadius" format="dimension|reference" />
     </declare-styleable>
 </resources>

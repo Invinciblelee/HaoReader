@@ -5,12 +5,15 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.annotation.BookType;
+import com.monke.monkeybook.model.annotation.RuleType;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
+import org.greenrobot.greendao.annotation.Transient;
 
 /**
  * Created by GKF on 2017/12/14.
@@ -22,8 +25,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String bookSourceUrl;
     private String bookSourceName;
     private String bookSourceGroup;
-    private String bookSourceType = Constant.BookType.TEXT;
-    private String bookSourceRuleType = Constant.RuleType.DEFAULT;
+    private String bookSourceType = BookType.TEXT;
+    private String bookSourceRuleType = RuleType.DEFAULT;
     private String checkUrl;
     @OrderBy
     private int serialNumber;
@@ -54,11 +57,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String ruleBookContent;
     private String httpUserAgent;
 
+    @Transient
+    private String ajaxJavaScript;
+
     @Generated(hash = 1863804992)
     public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl,
-            String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables,
-            String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl,
-            String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+                          String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables,
+                          String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl,
+                          String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -250,7 +256,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         return bookSourceType;
     }
 
-    public void setBookSourceType(@Constant.BookType String bookSourceType) {
+    public void setBookSourceType(@BookType String bookSourceType) {
         this.bookSourceType = bookSourceType;
     }
 
@@ -258,7 +264,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         return bookSourceRuleType;
     }
 
-    public void setBookSourceRuleType(@Constant.RuleType String bookSourceRuleType) {
+    public void setBookSourceRuleType(@RuleType String bookSourceRuleType) {
         this.bookSourceRuleType = bookSourceRuleType;
     }
 
@@ -338,6 +344,36 @@ public class BookSourceBean implements Parcelable, Cloneable {
         return this.ruleBookContent;
     }
 
+    public String getRealRuleBookContent() {
+        if (ajaxRuleBookContent()) {
+            int start = ruleBookContent.lastIndexOf(Patterns.RULE_AJAX) + 1;
+            String[] rules = ruleBookContent.split(Patterns.REGEX_OPERATOR);
+            if (rules.length > 1) {
+                return rules[0].substring(start);
+            }
+            return ruleBookContent.substring(start);
+        }
+        return ruleBookContent;
+    }
+
+    public String getAjaxJavaScript() {
+        if (ajaxJavaScript == null) {
+            String[] rules = ruleBookContent.split(Patterns.REGEX_OPERATOR);
+            if (rules.length > 1) {
+                ajaxJavaScript = rules[1];
+            }
+        }
+        return ajaxJavaScript;
+    }
+
+    public boolean ajaxRuleBookContent() {
+        return !TextUtils.equals(bookSourceRuleType, RuleType.JSON) && !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_AJAX);
+    }
+
+    public boolean sniffRuleBookContent() {
+        return !TextUtils.equals(bookSourceRuleType, RuleType.JSON) && !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_SNIFF);
+    }
+
     public void setRuleBookContent(String ruleBookContent) {
         this.ruleBookContent = ruleBookContent;
     }
@@ -410,12 +446,28 @@ public class BookSourceBean implements Parcelable, Cloneable {
         return this.ruleSearchList;
     }
 
+    public String getRealRuleSearchList() {
+        return reverseSearchList() ? ruleSearchList.substring(1) : ruleSearchList;
+    }
+
+    public boolean reverseSearchList() {
+        return !TextUtils.isEmpty(ruleSearchList) && ruleSearchList.startsWith(Patterns.RULE_REVERSE);
+    }
+
     public void setRuleSearchList(String ruleSearchList) {
         this.ruleSearchList = ruleSearchList;
     }
 
     public String getRuleChapterList() {
         return this.ruleChapterList;
+    }
+
+    public String getRealRuleChapterList() {
+        return reverseChapterList() ? ruleChapterList.substring(1) : ruleChapterList;
+    }
+
+    public boolean reverseChapterList() {
+        return !TextUtils.isEmpty(ruleChapterList) && ruleChapterList.startsWith(Patterns.RULE_REVERSE);
     }
 
     public void setRuleChapterList(String ruleChapterList) {
@@ -503,41 +555,4 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.weight = weight;
     }
 
-    @Override
-    public String toString() {
-        return "BookSourceBean{" +
-                "bookSourceUrl='" + bookSourceUrl + '\'' +
-                ", bookSourceName='" + bookSourceName + '\'' +
-                ", bookSourceGroup='" + bookSourceGroup + '\'' +
-                ", bookSourceType='" + bookSourceType + '\'' +
-                ", bookSourceRuleType='" + bookSourceRuleType + '\'' +
-                ", checkUrl='" + checkUrl + '\'' +
-                ", serialNumber=" + serialNumber +
-                ", weight=" + weight +
-                ", enable=" + enable +
-                ", ruleFindUrl='" + ruleFindUrl + '\'' +
-                ", ruleSearchUrl='" + ruleSearchUrl + '\'' +
-                ", ruleSearchList='" + ruleSearchList + '\'' +
-                ", ruleSearchName='" + ruleSearchName + '\'' +
-                ", ruleSearchAuthor='" + ruleSearchAuthor + '\'' +
-                ", ruleSearchKind='" + ruleSearchKind + '\'' +
-                ", ruleSearchLastChapter='" + ruleSearchLastChapter + '\'' +
-                ", ruleSearchCoverUrl='" + ruleSearchCoverUrl + '\'' +
-                ", ruleSearchNoteUrl='" + ruleSearchNoteUrl + '\'' +
-                ", rulePersistedVariables='" + rulePersistedVariables + '\'' +
-                ", ruleBookName='" + ruleBookName + '\'' +
-                ", ruleBookAuthor='" + ruleBookAuthor + '\'' +
-                ", ruleLastChapter='" + ruleLastChapter + '\'' +
-                ", ruleChapterUrl='" + ruleChapterUrl + '\'' +
-                ", ruleChapterUrlNext='" + ruleChapterUrlNext + '\'' +
-                ", ruleCoverUrl='" + ruleCoverUrl + '\'' +
-                ", ruleIntroduce='" + ruleIntroduce + '\'' +
-                ", ruleChapterList='" + ruleChapterList + '\'' +
-                ", ruleChapterName='" + ruleChapterName + '\'' +
-                ", ruleContentUrl='" + ruleContentUrl + '\'' +
-                ", ruleContentUrlNext='" + ruleContentUrlNext + '\'' +
-                ", ruleBookContent='" + ruleBookContent + '\'' +
-                ", httpUserAgent='" + httpUserAgent + '\'' +
-                '}';
-    }
 }

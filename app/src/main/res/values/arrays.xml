@@ -23,6 +23,32 @@
         <item>-1</item>
     </integer-array>
 
+    <string-array name="audio_timer_s">
+        <item>不开启</item>
+        <item>10分钟</item>
+        <item>20分钟</item>
+        <item>30分钟</item>
+        <item>40分钟</item>
+        <item>50分钟</item>
+        <item>60分钟</item>
+        <item>70分钟</item>
+        <item>80分钟</item>
+        <item>90分钟</item>
+    </string-array>
+
+    <integer-array name="audio_timer_value">
+        <item>-1</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+    </integer-array>
+
     <string-array name="bookshelf_px_title">
         <item>@string/bookshelf_px_0</item>
         <item>@string/bookshelf_px_1</item>

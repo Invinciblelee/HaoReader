@@ -3,10 +3,6 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,18 +16,21 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.AppActivityManager;
-import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
@@ -128,7 +127,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mPresenter.getBookShelf() != null){
+        if (mPresenter.getBookShelf() != null) {
             String key = String.valueOf(System.currentTimeMillis());
             getIntent().putExtra("data_key", key);
             BitIntentDataManager.getInstance().putData(key, mPresenter.getBookShelf());
@@ -273,7 +272,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 if (!TextUtils.isEmpty(durChapterName)) {
                     tvChapter.setText(durChapterName);
                 } else {
-                    tvChapter.setText(getString(TextUtils.equals(bookType, Constant.BookType.AUDIO) ?
+                    tvChapter.setText(getString(TextUtils.equals(bookType, BookType.AUDIO) ?
                             R.string.play_dur_progress : R.string.read_dur_progress, getString(R.string.text_placeholder)));
                 }
                 tvRemoveShelf.setText(R.string.remove_shelf);
@@ -301,11 +300,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 tvIntro.startAnimation(animShowInfo);
             }
 
-            String coverImage = mPresenter.getBookShelf().getBookInfoBean().getCustomCoverPath();
-            if (TextUtils.isEmpty(coverImage)) {
-                coverImage = mPresenter.getBookShelf().getBookInfoBean().getCoverUrl();
-            }
-            showCoverImage(coverImage);
+            showCoverImage(mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl());
         }
         if (stopLoading) {
             showLoading(false);
@@ -383,22 +378,23 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     private void showHideViews(String bookType) {
-        if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
+        if (TextUtils.equals(bookType, BookType.AUDIO)) {
             tvRead.setText(R.string.start_listen);
             rgGroup.setVisibility(View.GONE);
-        } else if (TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)) {
+        } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
 
         }
     }
 
     private void startForBookType(String bookType) {
-        if (TextUtils.equals(bookType, Constant.BookType.TEXT)) {
+        if (TextUtils.equals(bookType, BookType.TEXT)) {
             //进入阅读
-            ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf().copy(), mPresenter.inBookShelf());
+            ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf(), mPresenter.inBookShelf());
             finish();
-        } else if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
-
-        } else if (TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)) {
+        } else if (TextUtils.equals(bookType, BookType.AUDIO)) {
+            AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf(), mPresenter.inBookShelf());
+            finish();
+        } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
 
         }
     }

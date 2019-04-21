@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.content;
 
 import android.text.TextUtils;
 
+import com.monke.basemvplib.AjaxWebView;
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -168,7 +169,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);
             if (bookContent.isAJAX()) {
-                final AjaxParams params = new AjaxParams(MApplication.getInstance(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
                         .cookieStore(CookieHelper.get())
                         .userAgent(analyzeUrl.getUserAgent());
                 switch (analyzeUrl.getUrlMode()) {
@@ -181,7 +182,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                     default:
                         params.url(analyzeUrl.getUrl()).headerMap(analyzeUrl.getHeaderMap());
                 }
-                return getAjaxHtml(params).subscribeOn(AndroidSchedulers.mainThread())
+                return ajax(params).subscribeOn(AndroidSchedulers.mainThread())
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             } else {
                 return toObservable(analyzeUrl)
@@ -209,10 +210,11 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);
             if (audioBookChapter.isAJAX()) {
-                final AjaxParams params = new AjaxParams(MApplication.getInstance(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
                         .suffix(audioBookChapter.getSuffix())
                         .cookieStore(CookieHelper.get())
-                        .userAgent(analyzeUrl.getUserAgent());
+                        .userAgent(analyzeUrl.getUserAgent())
+                        .javaScript(audioBookChapter.getJavaScript());
                 switch (analyzeUrl.getUrlMode()) {
                     case POST:
                         params.url(analyzeUrl.getUrl()).postData(analyzeUrl.getPostData());
@@ -223,7 +225,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                     default:
                         params.url(analyzeUrl.getUrl()).headerMap(analyzeUrl.getHeaderMap());
                 }
-                return sniffAudio(params).subscribeOn(AndroidSchedulers.mainThread())
+                return sniff(params).subscribeOn(AndroidSchedulers.mainThread())
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             } else {
                 return toObservable(analyzeUrl)

@@ -74,7 +74,7 @@
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
                             android:paddingStart="10dp"
-                            android:paddingEnd="4dp"
+                            android:paddingEnd="3dp"
                             android:singleLine="true"
                             android:textColor="@color/colorReadBarText"
                             android:textSize="12sp" />
@@ -85,7 +85,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:includeFontPadding="false"
-                            android:paddingStart="4dp"
+                            android:paddingStart="3dp"
                             android:paddingEnd="10dp"
                             android:textSize="12sp" />
 

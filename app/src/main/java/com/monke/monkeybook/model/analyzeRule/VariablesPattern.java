@@ -7,7 +7,8 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 
-import static com.monke.monkeybook.help.Constant.STRING_MAP;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
+
 
 final class VariablesPattern {
 

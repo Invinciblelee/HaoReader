@@ -2,6 +2,8 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
@@ -11,11 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
-
-import static com.monke.monkeybook.help.Constant.STRING_MAP;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_HEADER;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_PAGE;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 /**
  * Created by GKF on 2018/1/24.
@@ -23,8 +24,6 @@ import static com.monke.monkeybook.help.Constant.STRING_MAP;
  */
 
 public class AnalyzeUrl {
-    private static final Pattern PATTERN_HEADER = Pattern.compile("@header:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PATTERN_PAGE = Pattern.compile("(?<=\\{).+?(?=\\})");
 
     private String url;
     private String hostUrl;

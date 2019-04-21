@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.ListUtils;
 
 import org.jsoup.Jsoup;
@@ -59,7 +60,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return "";
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return getStringSource();
         }
 
@@ -72,7 +73,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return "";
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return source;
         }
 
@@ -103,7 +104,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -117,7 +118,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return ListUtils.mutableList(source);
         }
 

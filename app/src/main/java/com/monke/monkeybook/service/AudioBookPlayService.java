@@ -1,40 +1,165 @@
 package com.monke.monkeybook.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.widget.RemoteViews;
 
-import com.monke.monkeybook.base.observer.SimpleObserver;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestFutureTarget;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.transition.Transition;
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
+import com.hwangjr.rxbus.thread.EventThread;
+import com.monke.monkeybook.MApplication;
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.AudioSniffer;
+import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
-import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.AudioBookPlayModelImpl;
+import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
+import com.monke.monkeybook.utils.DensityUtil;
+import com.monke.monkeybook.utils.ToastUtils;
+import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 
 import java.io.IOException;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AudioBookPlayService extends Service {
 
-    private final MediaPlayer mediaPlayer = new MediaPlayer();
+    private static final String TAG = AudioBookPlayService.class.getSimpleName();
+
+    public static final String ACTION_ATTACH = "ACTION_ATTACH";
+    public static final String ACTION_START = "ACTION_START";
+    public static final String ACTION_PULL = "ACTION_PULL";
+    public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
+    public static final String ACTION_PLAY = "ACTION_PLAY";
+    public static final String ACTION_NEXT = "ACTION_NEXT";
+    public static final String ACTION_PAUSE = "ACTION_PAUSE";
+    public static final String ACTION_RESUME = "ACTION_RESUME";
+    public static final String ACTION_STOP = "ACTION_STOP";
+    public static final String ACTION_PREPARE = "ACTION_PREPARE";
+    public static final String ACTION_PROGRESS = "ACTION_PROGRESS";
+    public static final String ACTION_LOADING = "ACTION_LOADING";
+    public static final String ACTION_TIMER = "ACTION_TIMER";
+    public static final String ACTION_TIMER_PROGRESS = "ACTION_TIMER_PROGRESS";
+
+    private static final int notificationId = 3444;
+
+    public static boolean running;
 
     private BookShelfBean bookShelfBean;
 
+    private final MediaPlayer mediaPlayer = new MediaPlayer();
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private boolean isPrepared;
+    private boolean isPause;
+    private int targetPosition;
+
+    private int timerMinute;
+    private int timerUntilFinish;
+
+    private AudioBookPlayModelImpl mModel;
+
+    private ScheduledExecutorService mTimer;
+    private ScheduledExecutorService mAlertTimer;
+
     public static void start(Context context, BookShelfBean bookShelfBean) {
         Intent intent = new Intent(context, AudioBookPlayService.class);
-        intent.setAction("start");
+        intent.setAction(ACTION_START);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
-        BitIntentDataManager.getInstance().putData(key, bookShelfBean.copy());
+        BitIntentDataManager.getInstance().putData(key, bookShelfBean == null ? null : bookShelfBean.copy());
         context.startService(intent);
     }
 
+    public static void play(Context context, ChapterBean chapterBean) {
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_PLAY);
+        intent.putExtra("chapter", chapterBean);
+        context.startService(intent);
+    }
+
+    public static void pull(Context context) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_PULL);
+        context.startService(intent);
+    }
+
+    public static void pause(Context context) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_PAUSE);
+        context.startService(intent);
+    }
+
+    public static void resume(Context context) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_RESUME);
+        context.startService(intent);
+    }
+
+    public static void next(Context context) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_NEXT);
+        context.startService(intent);
+    }
+
+    public static void previous(Context context) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_PREVIOUS);
+        context.startService(intent);
+    }
+
+    public static void seek(Context context, int progress) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_PROGRESS);
+        intent.putExtra("position", progress);
+        context.startService(intent);
+    }
+
+    public static void timer(Context context, int timerMinute) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_TIMER);
+        intent.putExtra("minute", timerMinute);
+        context.startService(intent);
+    }
+
+    public static void stop(Context context) {
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_STOP);
+        context.startService(intent);
+    }
 
     @Nullable
     @Override
@@ -45,7 +170,9 @@ public class AudioBookPlayService extends Service {
 
     @Override
     public void onCreate() {
-
+        RxBus.get().register(this);
+        running = true;
+        initMediaPlayer();
     }
 
     @Override
@@ -53,11 +180,67 @@ public class AudioBookPlayService extends Service {
         String action = intent.getAction();
         if (action != null) {
             switch (intent.getAction()) {
-                case "start":
+                case ACTION_START:
                     String key = intent.getStringExtra("data_key");
-                    bookShelfBean = BitIntentDataManager.getInstance().getData(key, null);
+                    BookShelfBean bookShelf = BitIntentDataManager.getInstance().getData(key, null);
                     BitIntentDataManager.getInstance().cleanData(key);
-                    ensureChapterList();
+                    if (bookShelf != null) {
+                        if (bookShelfBean != null) {
+                            if (TextUtils.equals(bookShelf.getNoteUrl(), bookShelfBean.getNoteUrl())) {
+                                restart();
+                                break;
+                            }
+                            bookShelfBean = bookShelf;
+                            initModel();
+                        } else {
+                            bookShelfBean = bookShelf;
+                            initModel();
+                        }
+                    } else {
+                        restart();
+                    }
+                    break;
+                case ACTION_PULL:
+                    pullAudioInfo();
+                    break;
+                case ACTION_PLAY:
+                    ChapterBean chapterBean = intent.getParcelableExtra("chapter");
+                    if (mModel != null) {
+                        mediaPlayer.reset();
+                        mModel.playChapter(chapterBean, true);
+                    }
+                    break;
+                case ACTION_NEXT:
+                    nextPlay();
+                    break;
+                case ACTION_PREVIOUS:
+                    previousPlay();
+                    break;
+                case ACTION_PAUSE:
+                    pausePlay();
+                    break;
+                case ACTION_RESUME:
+                    resumePlay();
+                    break;
+                case ACTION_PROGRESS:
+                    int position = intent.getIntExtra("position", 0);
+                    seekTo(position);
+                    break;
+                case ACTION_TIMER:
+                    timerMinute = intent.getIntExtra("minute", -1);
+                    timerUntilFinish = timerMinute;
+                    if (timerMinute == -1) {
+                        cancelAlarmTimer();
+                    } else {
+                        setAlarmTimer();
+                    }
+                    break;
+                case ACTION_TIMER_PROGRESS:
+                    int minute = intent.getIntExtra("minute", -1);
+                    updateAlarmTimer(minute);
+                    break;
+                case ACTION_STOP:
+                    stopPlay();
                     break;
             }
 
@@ -65,79 +248,380 @@ public class AudioBookPlayService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    private void initModel() {
+        resetPlay();
 
-    private void ensureChapterList() {
-        WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
-                .subscribeOn(Schedulers.newThread())
-                .doOnNext(bookShelfBean -> {
-                    // 存储章节到数据库
-                    bookShelfBean.setHasUpdate(false);
-                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-                    if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
-                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+        mModel = createModel(bookShelfBean);
+        mModel.registerPlayCallback(new IAudioBookPlayModel.PlayCallback() {
+
+            @Override
+            public void onStart() {
+                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(true));
+            }
+
+            @Override
+            public void onPrepare(ChapterBean chapterBean) {
+                updateNotification();
+                sendBroadcast(ACTION_PREPARE, AudioPlayInfo.start(chapterBean));
+            }
+
+            @Override
+            public void onPlay(ChapterBean chapterBean) {
+                updateNotification();
+                startPlay(chapterBean.getDurChapterPlayUrl());
+                targetPosition = chapterBean.getStart();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+                ToastUtils.toast(AudioBookPlayService.this, "播放失败，无法获取播放链接");
+            }
+        });
+
+        mModel.ensureChapterList(new IAudioBookPlayModel.Callback<BookShelfBean>() {
+            @Override
+            public void onSuccess(BookShelfBean data) {
+                sendBroadcast(ACTION_START, AudioPlayInfo.start(timerMinute, data.getBookInfoBean().getRealCoverUrl(), data.getDurChapter(), data.getChapterList()));
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+                ToastUtils.toast(AudioBookPlayService.this, "播放目录获取失败");
+            }
+        });
+    }
+
+    private void initMediaPlayer() {
+        mediaPlayer.setOnPreparedListener(mp -> {
+            isPrepared = true;
+
+            if (targetPosition != 0) {
+                mp.seekTo(targetPosition);
+                targetPosition = 0;
+            }
+
+
+            mp.start();
+
+            if (isPause) {
+                isPause = false;
+                sendBroadcast(ACTION_RESUME, AudioPlayInfo.play(false));
+            }
+
+            cancelProgressTimer();
+            setProgressTimer();
+            sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+        });
+        mediaPlayer.setOnCompletionListener(mp -> {
+            if (isPrepared) {
+                nextPlay();
+            }
+        });
+
+        mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+            Logger.d(TAG, "audio error --> " + what + "  " + extra);
+            if (mModel.retryPlay()) {
+                isPrepared = false;
+                ToastUtils.toast(AudioBookPlayService.this, "播放失败，正在刷新");
+            } else {
+                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+                ToastUtils.toast(AudioBookPlayService.this, "播放失败");
+            }
+            return false;
+        });
+    }
+
+    private void restart() {
+        if (bookShelfBean == null) return;
+        Logger.d(TAG, "audio --> restart");
+        sendBroadcast(ACTION_ATTACH, AudioPlayInfo.attach(bookShelfBean.getBookInfoBean().getName(), bookShelfBean.getBookInfoBean().getRealCoverUrl()));
+        resumePlay();
+        pullAudioInfo();
+    }
+
+    private void pullAudioInfo() {
+        if (bookShelfBean != null && !bookShelfBean.realChapterListEmpty()) {
+            Logger.d(TAG, "audio --> pullAudioInfo");
+            AudioPlayInfo info = AudioPlayInfo.pull(timerMinute, timerUntilFinish, bookShelfBean.getDurChapterName(), bookShelfBean.getBookInfoBean().getRealCoverUrl(), bookShelfBean.getChapterList());
+            info.setPause(isPause);
+            if (isPrepared) {
+                info.setProgress(mediaPlayer.getCurrentPosition());
+                info.setDuration(mediaPlayer.getDuration());
+            }
+            info.setDurChapterIndex(bookShelfBean.getDurChapter());
+            sendBroadcast(ACTION_PULL, info);
+        }
+    }
+
+    private void resetPlay() {
+        if (mModel != null) {
+            mModel.destory();
+        }
+
+        isPrepared = false;
+        isPause = false;
+        mediaPlayer.reset();
+        sendBroadcast(ACTION_ATTACH, AudioPlayInfo.attach(bookShelfBean.getBookInfoBean().getName(), bookShelfBean.getBookInfoBean().getRealCoverUrl()));
+    }
+
+    private void nextPlay() {
+        if (isPrepared) {
+            mediaPlayer.reset();
+            isPrepared = false;
+        }
+
+        if (isPause) {
+            isPause = false;
+            sendBroadcast(ACTION_RESUME, AudioPlayInfo.play(false));
+        }
+
+        if (mModel != null) {
+            if (!mModel.hasNext()) {
+                ToastUtils.toast(this, "没有上下一章了");
+            } else {
+                Logger.d(TAG, "audio --> nextPlay");
+                mModel.playNext();
+            }
+        }
+    }
+
+    private void previousPlay() {
+        if (isPrepared) {
+            mediaPlayer.reset();
+            isPrepared = false;
+        }
+
+        if (isPause) {
+            isPause = false;
+            sendBroadcast(ACTION_RESUME, AudioPlayInfo.play(false));
+        }
+
+
+        if (mModel != null) {
+            if (!mModel.hasPrevious()) {
+                ToastUtils.toast(this, "没有上一章了");
+            } else {
+                Logger.d(TAG, "audio --> previousPlay");
+                mModel.playPrevious();
+            }
+        }
+    }
+
+    private void pausePlay() {
+        if (!isPrepared) return;
+
+        if (!isPause) {
+            isPause = true;
+            mediaPlayer.pause();
+            sendBroadcast(ACTION_PAUSE, AudioPlayInfo.play(isPause));
+        }
+        updateNotification();
+    }
+
+    private void resumePlay() {
+        if (!isPrepared) return;
+
+        if (isPause) {
+            isPause = false;
+            mediaPlayer.start();
+            sendBroadcast(ACTION_RESUME, AudioPlayInfo.play(isPause));
+        }
+        updateNotification();
+    }
+
+    private void seekTo(int position) {
+        if (!isPrepared) return;
+
+        mediaPlayer.seekTo(position);
+    }
+
+    private void startPlay(String url) {
+        try {
+            Logger.d(TAG, "audio --> play: " + url);
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            ToastUtils.toast(this, "播放失败");
+        }
+    }
+
+    private void stopPlay() {
+        stopSelf();
+        sendBroadcast(ACTION_STOP, AudioPlayInfo.play(isPause));
+
+        running = false;
+    }
+
+    private void setProgressTimer() {
+        if (mTimer == null || mTimer.isShutdown()) {
+            mTimer = Executors.newSingleThreadScheduledExecutor();
+            mTimer.scheduleAtFixedRate(() -> {
+                if (mediaPlayer.isPlaying()) {
+                    int duration = mediaPlayer.getDuration();
+                    int progress = mediaPlayer.getCurrentPosition();
+                    sendBroadcast(ACTION_PROGRESS, AudioPlayInfo.play(progress, duration));
+                    mModel.saveProgress(progress, duration);
+                }
+            }, 0, 1000, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void cancelProgressTimer() {
+        if (mTimer != null) {
+            mTimer.shutdown();
+        }
+    }
+
+    private void setAlarmTimer() {
+        if (mAlertTimer == null || mAlertTimer.isShutdown()) {
+            mAlertTimer = Executors.newSingleThreadScheduledExecutor();
+        }
+
+        mAlertTimer.scheduleAtFixedRate(() -> {
+            Intent intent = new Intent(AudioBookPlayService.this, AudioBookPlayService.class);
+            intent.setAction(ACTION_TIMER_PROGRESS);
+            intent.putExtra("minute", -1);
+            startService(intent);
+
+        }, 60 * 1000, 60 * 1000, TimeUnit.MILLISECONDS);
+
+        sendBroadcast(ACTION_TIMER_PROGRESS, AudioPlayInfo.timerDown(timerUntilFinish));
+        updateNotification();
+    }
+
+    private void updateAlarmTimer(int minute) {
+        timerUntilFinish = timerMinute + minute;
+        int maxTimeMinute = 60;
+        if (timerUntilFinish > maxTimeMinute) {
+            cancelAlarmTimer();
+            timerUntilFinish = 0;
+        } else if (timerUntilFinish <= 0) {
+            stopPlay();
+        } else {
+            setAlarmTimer();
+        }
+    }
+
+    private void cancelAlarmTimer() {
+        if (mAlertTimer != null) {
+            mAlertTimer.shutdown();
+        }
+        updateNotification();
+    }
+
+    private void updateNotification() {
+        if (mModel == null || !mModel.isPrepared()) {
+            return;
+        }
+
+        int size = DensityUtil.dp2px(this, 128);
+        Glide.with(this)
+                .asBitmap()
+                .apply(new RequestOptions())
+                .load(bookShelfBean.getBookInfoBean().getRealCoverUrl())
+                .into(new RequestFutureTarget<Bitmap>(handler, size, size) {
+                    @Override
+                    public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        showNotification(resource);
                     }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<BookShelfBean>() {
 
                     @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(BookShelfBean bookShelfBean) {
-                        if (!bookShelfBean.realChapterListEmpty()) {
-                            AudioSniffer sniffer = new AudioSniffer(AudioBookPlayService.this, bookShelfBean.getTag(), null, null);
-                            sniffer.setOnSniffListener(new AudioSniffer.OnSniffListener() {
-                                @Override
-                                public void onResult(String url) {
-                                    play(url);
-                                }
-
-                                @Override
-                                public void onError() {
-
-                                }
-                            });
-                            sniffer.start(bookShelfBean.getChapter(1).getDurChapterUrl());
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
+                    public synchronized void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        showNotification(BitmapFactory.decodeResource(getResources(), R.drawable.img_cover_default));
                     }
                 });
     }
 
+    private void showNotification(Bitmap cover) {
+        final String contentTitle;
+        if (timerUntilFinish > 0) {
+            contentTitle = String.format(Locale.getDefault(), "(%d分钟)%s", timerUntilFinish, bookShelfBean.getBookInfoBean().getName());
+        } else {
+            contentTitle = bookShelfBean.getBookInfoBean().getName();
+        }
+        final String contentText = bookShelfBean.getDurChapterName();
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.layout_audio_notification);
+        remoteViews.setTextViewText(R.id.tv_title, contentTitle);
+        remoteViews.setTextViewText(R.id.tv_content, contentText);
+        if (isPause) {
+            remoteViews.setImageViewResource(R.id.btn_pause, R.drawable.ic_play_white_24dp);
+            remoteViews.setOnClickPendingIntent(R.id.btn_pause, getThisServicePendingIntent(ACTION_RESUME));
+        } else {
+            remoteViews.setImageViewResource(R.id.btn_pause, R.drawable.ic_pause_white_24dp);
+            remoteViews.setOnClickPendingIntent(R.id.btn_pause, getThisServicePendingIntent(ACTION_PAUSE));
+        }
 
-    private void play(String url) {
-        try {
-            mediaPlayer.reset();
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mediaPlayer.start();
-                }
-            });
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    stopSelf();
-                }
-            });
-            mediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
+        remoteViews.setOnClickPendingIntent(R.id.btn_previous, getThisServicePendingIntent(ACTION_PREVIOUS));
+        remoteViews.setOnClickPendingIntent(R.id.btn_next, getThisServicePendingIntent(ACTION_NEXT));
+        remoteViews.setOnClickPendingIntent(R.id.btn_timer, getAudioActivityPendingIntent(true));
+
+        remoteViews.setImageViewBitmap(R.id.iv_cover, cover);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdAudioBook)
+                .setSmallIcon(R.drawable.ic_volume_up_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setContentTitle(contentTitle)
+                .setContentText(contentText)
+                .setOngoing(true)
+                .setCustomBigContentView(remoteViews)
+                .setContentIntent(getAudioActivityPendingIntent(false));
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        Notification notification = builder.build();
+        startForeground(notificationId, notification);
+    }
+
+    private PendingIntent getThisServicePendingIntent(String actionStr) {
+        Intent intent = new Intent(this, this.getClass());
+        intent.setAction(actionStr);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private PendingIntent getAudioActivityPendingIntent(boolean showTimer) {
+        Intent intent = new Intent(this, AudioBookPlayActivity.class);
+        intent.putExtra("showTimer", showTimer);
+        return PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private AudioBookPlayModelImpl createModel(BookShelfBean bookShelfBean) {
+        return new AudioBookPlayModelImpl(bookShelfBean);
+    }
+
+    private void sendBroadcast(String action, AudioPlayInfo info) {
+        if (info != null) {
+            info.setAction(action);
+            RxBus.get().post(RxBusTag.AUDIO_PLAY, info);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        RxBus.get().unregister(this);
+        mModel.destory();
+        running = false;
+        cancelProgressTimer();
+        cancelAlarmTimer();
         mediaPlayer.stop();
         mediaPlayer.release();
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.HAD_REMOVE_BOOK)})
+    public void removeBookShelf(BookShelfBean bookShelf) {
+        if (bookShelfBean != null && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
+            stopPlay();
+        }
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.UPDATE_BOOK_SHELF)})
+    public void updateBookShelf(BookShelfBean bookShelf) {
+        if (bookShelfBean != null && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
+            bookShelfBean = bookShelf;
+            mModel.updateBookShelf(bookShelfBean);
+        }
     }
 }

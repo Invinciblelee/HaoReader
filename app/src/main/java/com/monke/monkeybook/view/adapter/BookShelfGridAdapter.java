@@ -43,19 +43,11 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         final BookShelfBean item = getItem(holder.getLayoutPosition());
         assert item != null;
         holder.tvName.setText(item.getBookInfoBean().getName());
-        if (TextUtils.isEmpty(item.getBookInfoBean().getCustomCoverPath())) {
-            Glide.with(getContext()).load(item.getBookInfoBean().getCoverUrl())
-                    .apply(new RequestOptions().dontAnimate()
-                            .centerCrop().placeholder(R.drawable.img_cover_default)
-                            .error(R.drawable.img_cover_default))
-                    .into(holder.ivCover);
-        } else {
-            Glide.with(getContext()).load(item.getBookInfoBean().getCustomCoverPath())
-                    .apply(new RequestOptions().dontAnimate()
-                            .centerCrop().placeholder(R.drawable.img_cover_default)
-                            .error(R.drawable.img_cover_default))
-                    .into(holder.ivCover);
-        }
+        Glide.with(getContext()).load(item.getBookInfoBean().getRealCoverUrl())
+                .apply(new RequestOptions().dontAnimate()
+                        .centerCrop().placeholder(R.drawable.img_cover_default)
+                        .error(R.drawable.img_cover_default))
+                .into(holder.ivCover);
         if (item.getHasUpdate()) {
             holder.ivHasNew.setVisibility(View.VISIBLE);
         } else {

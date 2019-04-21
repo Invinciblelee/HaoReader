@@ -7,9 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.OkHttpHelper;

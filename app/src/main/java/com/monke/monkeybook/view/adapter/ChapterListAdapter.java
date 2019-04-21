@@ -54,6 +54,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
         }
     }
 
+    public int getIndex() {
+        return mIndex;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ThisViewHolder holder, int position, @NonNull List<Object> payloads) {
         final int realPosition = holder.getLayoutPosition();
@@ -92,7 +96,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
     }
 
     private boolean isCached(ChapterBean chapterBean) {
-        if (chapterBean == null) {
+        if (chapterBean == null || mBook == null) {
             return false;
         }
         return TextUtils.equals(mBook.getTag(), BookShelfBean.LOCAL_TAG) || chapterBean.getHasCache(mBook.getBookInfoBean());

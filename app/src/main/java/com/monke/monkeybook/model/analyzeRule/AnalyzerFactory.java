@@ -3,6 +3,7 @@ package com.monke.monkeybook.model.analyzeRule;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.annotation.RuleType;
 
 import androidx.annotation.NonNull;
 
@@ -12,19 +13,19 @@ public class AnalyzerFactory {
 
     }
 
-    public static OutAnalyzer create(@Constant.RuleType String ruleType) {
+    public static OutAnalyzer create(@RuleType String ruleType) {
         OutAnalyzer analyzer;
         if (TextUtils.isEmpty(ruleType)) {
             analyzer = new JsoupAnalyzer();
         } else {
             switch (ruleType) {
-                case Constant.RuleType.XPATH:
+                case RuleType.XPATH:
                     analyzer = new XPathAnalyzer();
                     break;
-                case Constant.RuleType.JSON:
+                case RuleType.JSON:
                     analyzer = new JsonAnalyzer();
                     break;
-                case Constant.RuleType.DEFAULT:
+                case RuleType.DEFAULT:
                 default:
                     analyzer = new JsoupAnalyzer();
             }
@@ -32,7 +33,7 @@ public class AnalyzerFactory {
         return analyzer;
     }
 
-    public static OutAnalyzer create(@Constant.RuleType String ruleType, @NonNull AnalyzeConfig config) {
+    public static OutAnalyzer create(@RuleType String ruleType, @NonNull AnalyzeConfig config) {
         OutAnalyzer analyzer = create(ruleType);
         analyzer.apply(config);
         return analyzer;

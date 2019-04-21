@@ -3,6 +3,7 @@ package com.monke.monkeybook.model.analyzeRule;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -85,7 +86,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -98,7 +99,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return ListUtils.mutableList(source);
         }
 
@@ -129,7 +130,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return "";
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return getStringSource();
         }
 
@@ -143,7 +144,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return "";
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return source;
         }
 

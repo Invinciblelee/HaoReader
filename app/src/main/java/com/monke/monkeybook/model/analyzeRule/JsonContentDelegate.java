@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.util.Log;
+import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -9,6 +9,7 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.FormatWebText;
+import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -16,11 +17,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 import static android.text.TextUtils.isEmpty;
 
 public class JsonContentDelegate implements ContentDelegate {
+
+    private static final String TAG = JsonContentDelegate.class.getSimpleName();
 
     private JsonAnalyzer mAnalyzer;
     private AnalyzeConfig mConfig;
@@ -37,14 +38,7 @@ public class JsonContentDelegate implements ContentDelegate {
         mAnalyzer.beginExecute();
         mAnalyzer.setContent(source);
 
-        boolean reverse = false;
-        String ruleChapterList = mBookSource.getRuleSearchList();
-        if (ruleChapterList != null && ruleChapterList.startsWith("-")) {
-            reverse = true;
-            ruleChapterList = ruleChapterList.substring(1);
-        }
-
-        AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
+        AnalyzeCollection collection = mAnalyzer.getRawCollection(mBookSource.getRealRuleSearchList());
         List<SearchBookBean> books = new ArrayList<>();
         while (collection.hasNext()) {
             try {
@@ -66,13 +60,13 @@ public class JsonContentDelegate implements ContentDelegate {
                 if (!isEmpty(item.getName())) {
                     books.add(item);
                 }
-            }catch (Exception ignore){
-                ignore.printStackTrace();
+            }catch (Exception e){
+                Logger.e(TAG, "getSearchBooks", e);
             }
         }
         mAnalyzer.endExecute();
 
-        if(reverse){
+        if(mBookSource.reverseSearchList()){
             Collections.reverse(books);
         }
 
@@ -128,12 +122,7 @@ public class JsonContentDelegate implements ContentDelegate {
 
     @Override
     public List<ChapterBean> getChapters(String source) {
-        boolean reverse = false;
-        String ruleChapterList = mBookSource.getRuleChapterList();
-        if (ruleChapterList != null && ruleChapterList.startsWith("-")) {
-            reverse = true;
-            ruleChapterList = ruleChapterList.substring(1);
-        }
+        final String ruleChapterList = mBookSource.getRealRuleChapterList();
 
         String noteUrl = mConfig.getExtras().getString("noteUrl");
 
@@ -154,7 +143,7 @@ public class JsonContentDelegate implements ContentDelegate {
             }
         }
         mAnalyzer.endExecute();
-        if (!reverse) {
+        if (!mBookSource.reverseChapterList()) {
             Collections.reverse(chapterList);
         }
         LinkedHashSet<ChapterBean> lh = new LinkedHashSet<>(chapterList);
@@ -180,7 +169,7 @@ public class JsonContentDelegate implements ContentDelegate {
             mAnalyzer.setContent(source);
             content = mAnalyzer.getResultContent(mBookSource.getRuleBookContent());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.e(TAG, "getBookContent", ex);
             String chapterUrl = bookContentBean.getDurChapterUrl();
             content = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + " : " + ex.getMessage();
         }

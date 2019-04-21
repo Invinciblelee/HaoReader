@@ -6,17 +6,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.bean.VariableStore;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_GET;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JS;
 
 final class RulePattern {
-    private static final Pattern PATTERN_GET = Pattern.compile("@get:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PATTERN_JS = Pattern.compile("(<js>[\\w\\W]*?</js>|@js:[\\w\\W]*$)", Pattern.CASE_INSENSITIVE);
 
     final String elementsRule;
 
@@ -42,17 +43,17 @@ final class RulePattern {
             }
         }
 
-        isKeep = ruleStr.startsWith("^");
+        isKeep = ruleStr.startsWith(Patterns.RULE_KEEP);
         if (isKeep) {
             ruleStr = ruleStr.substring(1);
         }
 
-        isRedirect = ruleStr.startsWith("?");
-        String[] rules = ruleStr.split("(?i)@redirect:");
+        isRedirect = ruleStr.startsWith(Patterns.RULE_REDIRECT);
+        String[] rules = ruleStr.split(Patterns.REGEX_REDIRECT);
         String rawRule = rules[0];
 
         //分离正则表达式
-        String[] ruleStrS = rawRule.split("#");
+        String[] ruleStrS = rawRule.split(Patterns.RULE_REGEX);
         rawRule = ruleStrS[0];
         if (ruleStrS.length > 1) {
             replaceRegex = ruleStrS[1];

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -13,13 +14,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JSON;
 
 final class JsonParser extends SourceParser<ReadContext, Object> {
 
     private static final String TAG = "JSON";
-
-    private static final Pattern PATTERN_JSON = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})");
 
 
     JsonParser() {
@@ -88,7 +88,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return "";
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return getStringSource();
         }
 
@@ -101,7 +101,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return "";
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return source;
         }
 
@@ -147,7 +147,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -160,7 +160,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(OUTER_BODY)) {
+        if (rawRule.equals(Patterns.RULE_BODY)) {
             return ListUtils.mutableList(source);
         }
 

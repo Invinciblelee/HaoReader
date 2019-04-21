@@ -10,23 +10,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookKindBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
 import java.lang.ref.WeakReference;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
     private WeakReference<Activity> activityRef;
@@ -73,9 +72,9 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
 
         StringBuilder builder = new StringBuilder(item.getName());
         String bookType = item.getBookType();
-        if (TextUtils.equals(bookType, Constant.BookType.AUDIO)) {
+        if (TextUtils.equals(bookType, BookType.AUDIO)) {
             builder.insert(0, activity.getString(R.string.book_audio));
-        } else if (TextUtils.equals(bookType, Constant.BookType.DOWNLOAD)) {
+        } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
             builder.insert(0, activity.getString(R.string.book_download));
         }
         myViewHolder.tvName.setText(builder.toString());

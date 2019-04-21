@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.monke.monkeybook.help.Constant.STRING_MAP;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 @Entity
 public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, VariableStore {

@@ -9,64 +9,61 @@
         android:id="@+id/iv_blur_cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:foreground="@color/light_translucent" />
-
+        android:foreground="@color/light_translucent"
+        android:scaleType="centerCrop" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
         android:gravity="center_horizontal"
         android:padding="16dp"
-        android:layout_marginTop="80dp"
-        android:text="赘婿-224章"
-        android:textSize="18sp"
         android:textColor="@color/dark_white"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <com.monke.monkeybook.widget.SquareImageView
         android:id="@+id/iv_circle_cover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
-        android:transitionName="image_cover"
         android:layout_below="@id/tv_title"
         android:layout_marginLeft="64dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="64dp"
-        android:outlineProvider="background"
         android:background="@drawable/shape_bg_circle_image_tp"
         android:elevation="4dp"
-        android:padding="8dp" />
+        android:outlineProvider="background"
+        android:padding="8dp"
+        android:scaleType="centerCrop"
+        android:transitionName="image_cover" />
 
     <LinearLayout
         android:id="@+id/ll_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:layout_below="@id/iv_circle_cover"
         android:layout_above="@id/ll_controls"
+        android:layout_below="@id/iv_circle_cover"
+        android:gravity="bottom"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_current_progress"
+            android:id="@+id/tv_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00"
             android:textColor="@color/dark_white" />
 
         <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:thumb="@drawable/shape_thumb"
-            android:max="100"
-            android:progress="50"
             android:progressBackgroundTint="@color/dark_white"
             android:progressTint="@color/colorAccentTranslucent"
-            android:layout_height="wrap_content" />
+            android:thumb="@drawable/shape_thumb" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_duration"
@@ -83,8 +80,8 @@
         android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="24dp"
         android:paddingLeft="16dp"
+        android:paddingTop="24dp"
         android:paddingRight="16dp"
         android:paddingBottom="24dp">
 
@@ -94,8 +91,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_timer_white_24dp"
-            android:gravity="center_horizontal"
             android:drawablePadding="2dp"
+            android:gravity="center_horizontal"
             android:text="@string/set_timer"
             android:textColor="@color/dark_white"
             android:textSize="12sp"
@@ -119,12 +116,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <com.monke.monkeybook.widget.SquareImageView
-            android:id="@+id/btn_pause"
-            android:layout_width="68dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_pause_circle_outline_black_24dp"
-            app:tint="@color/dark_white" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <com.monke.monkeybook.widget.SquareImageView
+                android:id="@+id/btn_pause"
+                android:layout_width="68dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_circle_outline_black_24dp"
+                app:tint="@color/dark_white" />
+
+            <ProgressBar
+                android:id="@+id/loading_progress"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:visibility="invisible"/>
+        </FrameLayout>
+
 
         <Space
             android:layout_width="0dp"
@@ -144,12 +153,12 @@
             android:layout_weight="1" />
 
         <com.monke.monkeybook.widget.ScaleDrawableTextView
-            android:id="@+id/btn_category"
+            android:id="@+id/btn_catalog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_format_list_bulleted_black_24dp"
-            android:gravity="center_horizontal"
             android:drawablePadding="1dp"
+            android:gravity="center_horizontal"
             android:text="@string/category"
             android:textColor="@color/dark_white"
             android:textSize="12sp"

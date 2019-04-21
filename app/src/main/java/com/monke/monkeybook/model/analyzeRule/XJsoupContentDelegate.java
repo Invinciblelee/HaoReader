@@ -12,6 +12,7 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.FormatWebText;
+import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -28,9 +29,11 @@ import static android.text.TextUtils.isEmpty;
 
 class XJsoupContentDelegate implements ContentDelegate {
 
-    private OutAnalyzer<?, Element> mAnalyzer;
-    private AnalyzeConfig mConfig;
-    private BookSourceBean mBookSource;
+    private static final String TAG = XJsoupContentDelegate.class.getSimpleName();
+
+    private final OutAnalyzer<?, Element> mAnalyzer;
+    private final AnalyzeConfig mConfig;
+    private final BookSourceBean mBookSource;
 
     XJsoupContentDelegate(@NonNull OutAnalyzer<?, Element> mAnalyzer) {
         this.mAnalyzer = mAnalyzer;
@@ -43,15 +46,7 @@ class XJsoupContentDelegate implements ContentDelegate {
         mAnalyzer.beginExecute();
         mAnalyzer.setContent(source);
 
-        boolean reverse = false;
-        String ruleChapterList = mBookSource.getRuleSearchList();
-        if (ruleChapterList != null && ruleChapterList.startsWith("-")) {
-            reverse = true;
-            ruleChapterList = ruleChapterList.substring(1);
-        }
-
-
-        AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
+        final AnalyzeCollection collection = mAnalyzer.getRawCollection(mBookSource.getRealRuleSearchList());
         List<SearchBookBean> books = new ArrayList<>();
         while (collection.hasNext()) {
             try {
@@ -73,12 +68,13 @@ class XJsoupContentDelegate implements ContentDelegate {
                 if (!isEmpty(item.getName())) {
                     books.add(item);
                 }
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                Logger.e(TAG, "getSearchBooks", e);
             }
         }
         mAnalyzer.endExecute();
 
-        if (reverse) {
+        if (mBookSource.reverseSearchList()) {
             Collections.reverse(books);
         }
 
@@ -136,12 +132,7 @@ class XJsoupContentDelegate implements ContentDelegate {
     public List<ChapterBean> getChapters(String source) {
         String noteUrl = mConfig.getExtras().getString("noteUrl");
 
-        boolean reverse = false;
-        String ruleChapterList = mBookSource.getRuleChapterList();
-        if (ruleChapterList != null && ruleChapterList.startsWith("-")) {
-            reverse = true;
-            ruleChapterList = ruleChapterList.substring(1);
-        }
+        final String ruleChapterList = mBookSource.getRealRuleChapterList();
 
         mAnalyzer.beginExecute();
 
@@ -172,9 +163,9 @@ class XJsoupContentDelegate implements ContentDelegate {
             webChapterBean = getRawChaptersResult(response, ruleChapterList, noteUrl);
             chapterList.addAll(webChapterBean.result);
         }
-
         mAnalyzer.endExecute();
-        if (!reverse) {
+
+        if (!mBookSource.reverseChapterList()) {
             Collections.reverse(chapterList);
         }
         LinkedHashSet<ChapterBean> lh = new LinkedHashSet<>(chapterList);
@@ -190,7 +181,7 @@ class XJsoupContentDelegate implements ContentDelegate {
         if (!isEmpty(mBookSource.getRuleChapterUrlNext())) {
             webChapterBean.nextUrl = mAnalyzer.getResultUrl(mBookSource.getRuleChapterUrlNext());
         }
-        AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
+        final AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
         while (collection.hasNext()) {
             String url = collection.mutable().getResultUrl(mBookSource.getRuleContentUrl());   //id
             String name = collection.mutable().getResultContent(mBookSource.getRuleChapterName());
@@ -218,10 +209,7 @@ class XJsoupContentDelegate implements ContentDelegate {
         bookContentBean.setDurChapterUrl(chapter.getDurChapterUrl());
         bookContentBean.setTag(chapter.getTag());
 
-        String ruleBookContent = mBookSource.getRuleBookContent();
-        if (ruleBookContent.startsWith("$")) {
-            ruleBookContent = ruleBookContent.substring(1);
-        }
+        final String ruleBookContent = mBookSource.getRealRuleBookContent();
 
         mAnalyzer.beginExecute();
 
@@ -269,7 +257,7 @@ class XJsoupContentDelegate implements ContentDelegate {
 
     @Override
     public String getAudioLink(String source) {
-        String ruleBookContent = mBookSource.getRuleBookContent();
+        final String ruleBookContent = mBookSource.getRealRuleBookContent();
         mAnalyzer.beginExecute();
         mAnalyzer.setContent(source);
         String url = mAnalyzer.getResultUrl(ruleBookContent);
@@ -287,6 +275,7 @@ class XJsoupContentDelegate implements ContentDelegate {
                 webContentBean.nextUrl = mAnalyzer.getResultUrl(mBookSource.getRuleContentUrlNext());
             }
         } catch (Exception ex) {
+            Logger.e(TAG, "getBookContent", ex);
             webContentBean.result = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + " : " + ex.getMessage();
         }
         return webContentBean;

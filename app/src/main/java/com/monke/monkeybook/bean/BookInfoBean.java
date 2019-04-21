@@ -3,8 +3,10 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.annotation.BookType;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -167,6 +169,13 @@ public class BookInfoBean implements Parcelable {
         this.customCoverPath = customCoverPath;
     }
 
+    public String getRealCoverUrl(){
+        if(!TextUtils.isEmpty(customCoverPath)){
+            return customCoverPath;
+        }
+        return coverUrl;
+    }
+
     public String getAuthor() {
         return author == null ? "" : author;
     }
@@ -200,7 +209,7 @@ public class BookInfoBean implements Parcelable {
     }
 
     public String getBookType() {
-        return bookType == null ? Constant.BookType.TEXT : bookType;
+        return bookType == null ? BookType.TEXT : bookType;
     }
 
     public void setBookType(String bookType) {

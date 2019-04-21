@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
 import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
@@ -23,13 +22,15 @@ import io.reactivex.Observable;
  * <p>
  * 方法三：document.getElementById("clickId").click();
  */
-public class AudioBookChapter {
+final class AudioBookChapter {
 
     private final String tag;
     private final BookSourceBean bookSourceBean;
 
     private boolean isAJAX;
+    private boolean isSniff;
     private String suffix;
+    private String javaScript;
 
     private OutAnalyzer analyzer;
 
@@ -37,10 +38,12 @@ public class AudioBookChapter {
         this.tag = tag;
         this.bookSourceBean = bookSourceBean;
 
-        String ruleBookContent = bookSourceBean.getRuleBookContent();
-        if (!TextUtils.equals(Constant.RuleType.JSON, bookSourceBean.getBookSourceRuleType()) && ruleBookContent.startsWith("$")) {
-            isAJAX = true;
-            suffix = ruleBookContent.substring(1);
+        this.isAJAX = bookSourceBean.ajaxRuleBookContent();
+        this.javaScript = bookSourceBean.getAjaxJavaScript();
+
+        if (bookSourceBean.sniffRuleBookContent()) {
+            isSniff = true;
+            suffix = bookSourceBean.getRealRuleBookContent();
         }
     }
 
@@ -52,7 +55,7 @@ public class AudioBookChapter {
                 return;
             }
 
-            if (isAJAX) {
+            if (isSniff) {
                 chapter.setDurChapterPlayUrl(s);
             } else {
                 if (analyzer == null) {
@@ -74,7 +77,12 @@ public class AudioBookChapter {
         return suffix;
     }
 
+
     boolean isAJAX() {
         return isAJAX;
+    }
+
+    String getJavaScript() {
+        return javaScript;
     }
 }

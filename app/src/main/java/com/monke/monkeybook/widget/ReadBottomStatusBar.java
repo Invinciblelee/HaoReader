@@ -1,25 +1,18 @@
 package com.monke.monkeybook.widget;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -135,7 +128,7 @@ public class ReadBottomStatusBar extends FrameLayout {
     }
 
     public void updateBattery(int batteryLevel) {
-        if(batteryLevel != 0) {
+        if (batteryLevel != 0) {
             this.batteryLevel = batteryLevel;
             batteryProgress.setProgress(batteryLevel);
         }
@@ -152,6 +145,10 @@ public class ReadBottomStatusBar extends FrameLayout {
 
         removeCallbacks(updatePaddingRunnable);
         post(updatePaddingRunnable);
+
+        if (!TextUtils.isEmpty(tvTitle.getText()) && getVisibility() != VISIBLE) {
+            setVisibility(VISIBLE);
+        }
     }
 
     public void updateChapterIndex(int durChapter, int durChapterSize) {
@@ -235,10 +232,6 @@ public class ReadBottomStatusBar extends FrameLayout {
 
         updatePageIndex(bookShelfBean.getDurChapterName(), bookShelfBean.getDurChapterPage() + 1, durPageSize);
         updateChapterIndex(bookShelfBean.getDurChapter() + 1, bookShelfBean.getChapterListSize());
-
-        if (getVisibility() != VISIBLE) {
-            setVisibility(VISIBLE);
-        }
     }
 
     private String formatTitle(String titleStr, int durPage, int durPageSize) {

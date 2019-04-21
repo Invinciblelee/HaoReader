@@ -2,8 +2,6 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -16,12 +14,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FormatWebText;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.victor.loading.rotate.RotateLoading;
 
@@ -49,19 +50,11 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final BookShelfBean item = getItem(holder.getLayoutPosition());
         assert item != null;
-        if (TextUtils.isEmpty(item.getBookInfoBean().getCustomCoverPath())) {
-            Glide.with(getContext()).load(item.getBookInfoBean().getCoverUrl())
-                    .apply(new RequestOptions().dontAnimate()
-                            .centerCrop().placeholder(R.drawable.img_cover_default)
-                            .error(R.drawable.img_cover_default))
-                    .into(holder.ivCover);
-        } else {
-            Glide.with(getContext()).load(item.getBookInfoBean().getCustomCoverPath())
-                    .apply(new RequestOptions().dontAnimate()
-                            .centerCrop().placeholder(R.drawable.img_cover_default)
-                            .error(R.drawable.img_cover_default))
-                    .into(holder.ivCover);
-        }
+        Glide.with(getContext()).load(item.getBookInfoBean().getRealCoverUrl())
+                .apply(new RequestOptions().dontAnimate()
+                        .centerCrop().placeholder(R.drawable.img_cover_default)
+                        .error(R.drawable.img_cover_default))
+                .into(holder.ivCover);
 
         holder.tvName.setText(getBookName(item.getBookInfoBean().getName(), item.getNewChapters()));
 
@@ -74,7 +67,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         String durChapterName = item.getDurChapterName();
         if (TextUtils.isEmpty(durChapterName)) {
             String bookType = item.getBookInfoBean().getBookType();
-            holder.tvRead.setText(getContext().getString(TextUtils.equals(bookType, Constant.BookType.AUDIO) ?
+            holder.tvRead.setText(getContext().getString(TextUtils.equals(bookType, BookType.AUDIO) ?
                     R.string.play_dur_progress : R.string.read_dur_progress, getContext().getString(R.string.text_placeholder)));
         } else {
             holder.tvRead.setText(FormatWebText.trim(durChapterName));

@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model;
 
 import android.content.Context;
-import android.icu.text.SearchIterator;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.R;
@@ -9,7 +8,7 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
@@ -134,7 +133,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return this;
     }
 
-    public SearchBookModel setSearchBookType(@Constant.BookType String searchBookType) {
+    public SearchBookModel setSearchBookType(@BookType String searchBookType) {
         this.searchBookType = searchBookType;
         return this;
     }

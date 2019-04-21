@@ -12,11 +12,12 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.monke.monkeybook.help.Constant.STRING_MAP;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 /**
  * 书架item Bean
@@ -410,14 +411,14 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
     public void setChapterList(List<ChapterBean> chapterList) {
-        this.chapterList = chapterList;
-        if (!realChapterListEmpty()) {
-            this.chapterListSize = getChapterList().size();
-        }
+        setChapterList(chapterList, true);
     }
 
     public void setChapterList(List<ChapterBean> chapterList, boolean updateSize) {
         this.chapterList = chapterList;
+        if (!realChapterListEmpty()) {
+            Collections.sort(this.chapterList);
+        }
         if (updateSize) {
             this.chapterListSize = getChapterList().size();
         }

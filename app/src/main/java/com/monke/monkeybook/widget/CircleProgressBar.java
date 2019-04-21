@@ -32,7 +32,7 @@ public class CircleProgressBar extends View {
         mStrokeWidth = typeArray.getDimension(R.styleable.CircleProgressBar_strokeWidth, 10);
         mStrokeColor = typeArray.getColor(R.styleable.CircleProgressBar_strokeColor, 0xFFFFFFFF);
         mMaxProgress = typeArray.getFloat(R.styleable.CircleProgressBar_maxProgress, 100f);
-        mProgress = typeArray.getFloat(R.styleable.CircleProgressBar_progress, 50f);
+        mProgress = typeArray.getFloat(R.styleable.CircleProgressBar_progress, 0f);
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.STROKE);

@@ -55,6 +55,7 @@
             android:name=".view.activity.ReadBookActivity"
             android:configChanges="locale|keyboardHidden"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/CAppTheme.Activity.Read"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
