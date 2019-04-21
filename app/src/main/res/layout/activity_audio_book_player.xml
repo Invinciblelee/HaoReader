@@ -124,7 +124,7 @@
                 android:layout_width="68dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_play_circle_outline_black_24dp"
+                android:src="@drawable/ic_pause_circle_outline_black_24dp"
                 app:tint="@color/dark_white" />
 
             <ProgressBar

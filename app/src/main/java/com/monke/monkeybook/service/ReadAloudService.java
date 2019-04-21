@@ -363,12 +363,12 @@ public class ReadAloudService extends Service {
      * 更新通知
      */
     private void updateNotification() {
-        int size = DensityUtil.dp2px(this, 128);
+        final int dimen = DensityUtil.dp2px(this, 128);
         Glide.with(this)
                 .asBitmap()
                 .apply(new RequestOptions())
                 .load(cover)
-                .into(new RequestFutureTarget<Bitmap>(handler, size, size) {
+                .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
                     @Override
                     public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         showNotification(resource);

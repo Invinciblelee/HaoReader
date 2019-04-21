@@ -517,12 +517,12 @@ public class AudioBookPlayService extends Service {
             return;
         }
 
-        int size = DensityUtil.dp2px(this, 128);
+        final int dimen = DensityUtil.dp2px(this, 128);
         Glide.with(this)
                 .asBitmap()
                 .apply(new RequestOptions())
                 .load(bookShelfBean.getBookInfoBean().getRealCoverUrl())
-                .into(new RequestFutureTarget<Bitmap>(handler, size, size) {
+                .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
                     @Override
                     public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         showNotification(resource);

@@ -37,6 +37,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
 
@@ -365,10 +366,13 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     private void setCoverImage(String image) {
-        ivCover.post(() -> Glide.with(AudioBookPlayActivity.this).load(image)
+        final int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        final int dimen = screenWidth - DensityUtil.dp2px(this, 128);
+        Glide.with(AudioBookPlayActivity.this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
                         .transforms(new CenterCrop(), new CircleCrop())
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(new RequestFutureTarget<Drawable>(handler, ivCover.getWidth(), ivCover.getHeight()) {
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                .into(new RequestFutureTarget<Drawable>(handler, dimen, dimen) {
 
                     @Override
                     public synchronized void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
@@ -384,7 +388,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                                 .into(ivCover);
                     }
-                }));
+                });
 
         Glide.with(this).load(image)
                 .apply(new RequestOptions()

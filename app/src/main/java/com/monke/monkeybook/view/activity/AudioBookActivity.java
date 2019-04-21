@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
@@ -39,6 +40,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.AudioBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.AudioBookContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.widget.CircleProgressBar;
@@ -121,7 +123,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         bookListAdapter.setItemClickListener(new OnBookItemClickListenerTwo() {
             @Override
             public void onClick(View view, BookShelfBean bookShelf) {
-                AudioBookPlayActivity.startThis(AudioBookActivity.this, ivCover,  bookShelf,true);
+                AudioBookPlayActivity.startThis(AudioBookActivity.this, ivCover, bookShelf, true);
             }
 
             @Override
@@ -299,10 +301,12 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     }
 
     private void setCoverImage(String image) {
-        ivCover.post(() -> Glide.with(AudioBookActivity.this).load(image)
+        int dimen = DensityUtil.dp2px(this, 48);
+        Glide.with(AudioBookActivity.this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
                         .transforms(new CenterCrop(), new CircleCrop())
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(new RequestFutureTarget<Drawable>(handler, ivCover.getWidth(), ivCover.getHeight()) {
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                .into(new RequestFutureTarget<Drawable>(handler, dimen, dimen) {
 
                     @Override
                     public synchronized void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
@@ -318,6 +322,6 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
                                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                                 .into(ivCover);
                     }
-                }));
+                });
     }
 }

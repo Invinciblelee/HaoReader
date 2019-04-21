@@ -70,6 +70,11 @@
         <attr name="android:entries" />
     </declare-styleable>
 
+    <declare-styleable name="NumberButton">
+        <attr name="themeColor" format="color|reference"/>
+        <attr name="android:background"/>
+    </declare-styleable>
+
     <declare-styleable name="AbsRoundImageView">
         <attr name="borderWidth" format="dimension|reference" />
         <attr name="borderColor" format="color|reference" />

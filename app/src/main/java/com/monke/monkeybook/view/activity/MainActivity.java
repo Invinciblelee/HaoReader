@@ -620,6 +620,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AudioBookPlayService.stop(this);
+    }
+
+    @Override
     public void recreate() {
         super.recreate();
     }
@@ -629,7 +635,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             showSnackBar("再按一次退出程序");
             exitTime = System.currentTimeMillis();
         } else {
-            AudioBookPlayService.stop(this);
             finish();
         }
     }
