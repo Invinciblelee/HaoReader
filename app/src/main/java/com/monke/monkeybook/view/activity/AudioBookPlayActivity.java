@@ -1,5 +1,7 @@
 package com.monke.monkeybook.view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Handler;
@@ -239,7 +241,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             case AudioBookPlayService.ACTION_PULL:
                 setTitle(info.getName());
                 setAlarmTimer(info.getTimerMinute());
-                updateAlarmTimerProgress(info.getTimerMinuteUntilFinish());
                 setCoverImage(info.getCover());
                 setChapters(info.getChapterBeans(), info.getDurChapterIndex());
                 setButtonEnabled(true);
@@ -252,7 +253,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 }
                 break;
             case AudioBookPlayService.ACTION_LOADING:
-                progressBar.setVisibility(info.isLoading() ? View.VISIBLE : View.INVISIBLE);
+                showProgress(info.isLoading());
                 break;
             case AudioBookPlayService.ACTION_START:
                 setCoverImage(info.getCover());
@@ -274,9 +275,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 break;
             case AudioBookPlayService.ACTION_PROGRESS:
                 setProgress(info.getProgress(), info.getDuration());
-                break;
-            case AudioBookPlayService.ACTION_TIMER_PROGRESS:
-                updateAlarmTimerProgress(info.getTimerMinuteUntilFinish());
                 break;
             case AudioBookPlayService.ACTION_STOP:
                 finish();
@@ -310,10 +308,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         audioTimerPop.upIndexByValue(timer);
     }
 
-    private void updateAlarmTimerProgress(int timeUntilFinish) {
-
-    }
-
     private void setPause() {
         btnPause.setSelected(false);
         btnPause.setImageResource(R.drawable.ic_play_circle_outline_black_24dp);
@@ -336,6 +330,28 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         btnPause.setEnabled(enabled);
         btnNext.setEnabled(enabled);
         seekBar.setEnabled(enabled);
+    }
+
+    private void showProgress(boolean showProgress) {
+        if (showProgress) {
+            if (progressBar.isShown()) {
+                return;
+            }
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setAlpha(0.0f);
+            progressBar.animate().alpha(1.0f).start();
+        } else {
+            if (!progressBar.isShown()) {
+                return;
+            }
+            progressBar.animate().alpha(0.0f)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    }).start();
+        }
     }
 
     private void startRotationAnim() {

@@ -13,14 +13,14 @@ final class JSParser {
 
     void start() {
         stop();
-        try {
-            JSV8 = V8.createV8Runtime();
-        } catch (Exception ignore) {
-        }
+        JSV8 = V8.createV8Runtime();
     }
 
     String evalJS(String jsStr, Object java, String result, String baseUrl) {
         try {
+            if (JSV8 == null) {
+                throw new NullPointerException("please start the JSParser");
+            }
             JSV8.add("result", result);
             JSV8.add("baseUrl", baseUrl);
             if (java != null) {
@@ -38,10 +38,7 @@ final class JSParser {
 
     void stop() {
         if (JSV8 != null) {
-            try {
-                JSV8.release(true);
-            } catch (Exception ignore) {
-            }
+            JSV8.release();
         }
     }
 

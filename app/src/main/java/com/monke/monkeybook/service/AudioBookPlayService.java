@@ -316,7 +316,8 @@ public class AudioBookPlayService extends Service {
         });
         mediaPlayer.setOnCompletionListener(mp -> {
             if (isPrepared) {
-                nextPlay();
+                //有时无法自动播放下一章，稍微延迟一下
+                handler.postDelayed(this::nextPlay, 100L);
             }
         });
 
