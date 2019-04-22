@@ -284,8 +284,19 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             mImmersionBar.navigationBarDarkIcon(false);
         }
 
-        if (isMenuShowing() || isPopShowing()) {
-            mImmersionBar.statusBarDarkFont(false);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            if(isNightTheme()){
+                mImmersionBar.statusBarDarkFont(false);
+            }else {
+                mImmersionBar.statusBarDarkFont(true, 0.2f);
+            }
+
+            if (readBookControl.getHideStatusBar()) {
+                mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
+            } else {
+                mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+            }
+        }if (isMenuShowing() || isPopShowing()) {
             if (isImmersionBarEnabled() && !isNightTheme()) {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
             } else {
@@ -904,12 +915,13 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+                initImmersionBar();
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
+                initImmersionBar();
             }
 
             @Override
@@ -968,6 +980,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 }
                 break;
             case R.id.btn_catalog:
+                isOrWillShow = true;
                 popMenuOut();
                 if (mPresenter.getBookShelf() != null && !mPresenter.getBookShelf().realChapterListEmpty()) {
                     controlsView.postDelayed(() -> drawerLayout.openDrawer(GravityCompat.START), DELAY_SHORT);

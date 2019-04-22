@@ -17,6 +17,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
@@ -35,11 +41,6 @@ import com.monke.monkeybook.view.popupwindow.KeyboardToolPop;
 
 import java.io.File;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -534,6 +535,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     protected void onDestroy() {
         getWindow().getDecorView().getViewTreeObserver().removeOnGlobalLayoutListener(mKeyboardListener);
         super.onDestroy();
+        closePopupWindow();
     }
 
     private void insertTextToEditText(String txt) {
