@@ -106,7 +106,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         } else {
             showFragment(this.group);
         }
-
     }
 
     @Override
@@ -165,7 +164,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected void firstRequest() {
         if (!EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            ActivityCompat.requestPermissions(this, MApplication.PerList, MApplication.RESULT__PERMS);
+            ActivityCompat.requestPermissions(this, MApplication.PerList, MApplication.RESULT_PERMS);
         }
     }
 

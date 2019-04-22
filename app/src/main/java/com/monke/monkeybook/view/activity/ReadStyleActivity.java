@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -152,7 +151,7 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
             if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
                 imageSelectorResult();
             } else {
-                EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
+                EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT_PERMS, MApplication.PerList);
             }
         });
         //恢复默认
@@ -203,7 +202,7 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
-    @AfterPermissionGranted(MApplication.RESULT__PERMS)
+    @AfterPermissionGranted(MApplication.RESULT_PERMS)
     private void imageSelectorResult() {
         FileSelector.newInstance("选择图片",true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override

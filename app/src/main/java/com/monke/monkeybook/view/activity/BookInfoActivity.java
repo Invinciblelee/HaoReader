@@ -148,7 +148,7 @@ public class BookInfoActivity extends MBaseActivity {
             if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
                 imageSelectorResult();
             } else {
-                EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
+                EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT_PERMS, MApplication.PerList);
             }
         });
         tvChangeCover.setOnClickListener(view -> moDialogHUD.showChangeSource(this, bookInfo, searchBookBean -> {
@@ -212,7 +212,7 @@ public class BookInfoActivity extends MBaseActivity {
         finishByTransition();
     }
 
-    @AfterPermissionGranted(MApplication.RESULT__PERMS)
+    @AfterPermissionGranted(MApplication.RESULT_PERMS)
     private void imageSelectorResult() {
         FileSelector.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override

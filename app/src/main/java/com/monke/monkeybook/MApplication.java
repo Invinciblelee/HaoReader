@@ -9,11 +9,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import com.monke.monkeybook.help.AppConfigHelper;
-
 import androidx.annotation.RequiresApi;
-
 import androidx.appcompat.app.AppCompatDelegate;
+
+import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.Constant;
+import com.tencent.bugly.crashreport.CrashReport;
+
 import io.reactivex.plugins.RxJavaPlugins;
 
 public class MApplication extends Application {
@@ -23,7 +25,8 @@ public class MApplication extends Application {
     public final static String channelIdReadAloud = "channel_read_aloud";
     public final static String channelIdAudioBook = "channel_audio_book";
     public final static String[] PerList = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-    public final static int RESULT__PERMS = 263;
+    public final static int RESULT_PERMS = 263;
+
     private static MApplication instance;
     private static String versionName;
     private static int versionCode;
@@ -60,13 +63,16 @@ public class MApplication extends Application {
             createChannelIdAudioBook();
         }
 
-        RxJavaPlugins.setErrorHandler(Throwable::printStackTrace);
-        if (!DEBUG) {
-            CrashHandler.getInstance().init(this);
-        }
+        RxJavaPlugins.setErrorHandler(throwable -> {
+            if (DEBUG) {
+                throwable.printStackTrace();
+            }
+        });
+
+        CrashReport.initCrashReport(getApplicationContext(), Constant.BUGLY_APP_ID, DEBUG);
 
         boolean nightTheme = AppConfigHelper.get().getPreferences().getBoolean("nightTheme", false);
-        AppCompatDelegate.setDefaultNightMode(nightTheme?AppCompatDelegate.MODE_NIGHT_YES:AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(nightTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

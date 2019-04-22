@@ -129,6 +129,8 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     public void playNext() {
         if (!isPrepared) return;
 
+        mRetryCount = 0;
+
         if (hasNext()) {
             mPlayIndex += 1;
             ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
@@ -140,6 +142,8 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     @Override
     public void playPrevious() {
         if (!isPrepared) return;
+
+        mRetryCount = 0;
 
         if (hasPrevious()) {
             mPlayIndex -= 1;
@@ -180,8 +184,6 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             mPlayCallback.onStart();
         }
 
-        mRetryCount = 0;
-
         if (mPlayDisposable != null) {
             disposables.remove(mPlayDisposable);
         }
@@ -211,7 +213,9 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     return WebBookModelImpl.getInstance().processAudioChapter(bookShelfBean.getTag(), chapterBean);
                 }).doOnNext(chapterBean -> {
                     try {
-                        DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
+                        if(BookshelfHelp.isInBookShelf(chapterBean.getNoteUrl())){
+                            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
+                        }
                         bookShelfBean.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
                     } catch (Exception ignore) {
                     }
@@ -258,10 +262,12 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     @Override
     public void saveProgress(int progress, int duration) {
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
-            chapterBean.setStart(progress);
-            chapterBean.setEnd(duration);
-            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
+            if(BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+                ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
+                chapterBean.setStart(progress);
+                chapterBean.setEnd(duration);
+                DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
+            }
             emitter.onNext(true);
             emitter.onComplete();
         }).subscribeOn(Schedulers.single())
@@ -286,7 +292,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             }
             emitter.onNext(bookShelfBean);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(Schedulers.io())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {

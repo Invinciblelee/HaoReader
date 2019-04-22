@@ -54,8 +54,6 @@
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@id/ll_chapter_base_info"
-        android:background="@color/bg_divider_line" />
+       style="@style/Style.Line"
+        android:layout_above="@id/ll_chapter_base_info"/>
 </RelativeLayout>

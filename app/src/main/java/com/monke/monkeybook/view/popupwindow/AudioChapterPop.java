@@ -43,22 +43,21 @@ public class AudioChapterPop extends PopupWindow {
 
 
     public AudioChapterPop(Context context, OnChapterSelectListener listener) {
-        super(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.dp2px(context, 450));
+        super(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.dp2px(context, 550));
         this.context = context;
         this.listener = listener;
+
+        setBackgroundDrawable(context.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
+        setFocusable(true);
+        setTouchable(true);
+        setAnimationStyle(R.style.anim_pop_windowslide);
 
         View contentView = LayoutInflater.from(context).inflate(R.layout.pop_audio_chapter, null);
         setContentView(contentView);
         ButterKnife.bind(this, contentView);
 
         init();
-
-        setBackgroundDrawable(context.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
-        setFocusable(true);
-        setTouchable(true);
-        setAnimationStyle(R.style.anim_pop_windowslide);
     }
-
 
     private void init() {
         adapter = new ChapterListAdapter(context);

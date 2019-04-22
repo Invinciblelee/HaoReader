@@ -150,7 +150,7 @@ public class ReadInterfacePop extends PopupWindow {
                         .create()
                         .show();
             } else {
-                EasyPermissions.requestPermissions(activity, "读取字体需要存储权限", MApplication.RESULT__PERMS, MApplication.PerList);
+                EasyPermissions.requestPermissions(activity, "读取字体需要存储权限", MApplication.RESULT_PERMS, MApplication.PerList);
             }
         });
 

@@ -6,17 +6,16 @@ import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
-import com.monke.monkeybook.widget.AppCompat;
 
 import java.util.List;
-
-import androidx.annotation.ColorRes;
-import androidx.annotation.NonNull;
 
 public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
@@ -104,14 +103,12 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
     private void setBoldText(ThisViewHolder holder, boolean bold) {
         holder.tvName.setSelected(bold);
-        holder.indicator.setSelected(bold);
         holder.tvName.getPaint().setFakeBoldText(bold);
     }
 
     private void setTextTint(ThisViewHolder holder, @ColorRes int tint) {
-        ColorStateList color = holder.indicator.getResources().getColorStateList(tint);
+        ColorStateList color = holder.tvName.getResources().getColorStateList(tint);
         holder.tvName.setTextColor(color);
-        AppCompat.setTintList(holder.indicator, color);
     }
 
 }

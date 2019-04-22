@@ -44,7 +44,6 @@ if (keystoreFilepath) {
 }
 
 
-
 android {
     compileSdkVersion compile_sdk_version
 
@@ -68,6 +67,12 @@ android {
         versionName currentVersionName
         project.ext.set("archivesBaseName", name + "_" + version)
         multiDexEnabled true
+
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
     }
 
     lintOptions {
@@ -162,6 +167,8 @@ dependencies {
     implementation 'com.luhuiguo:chinese-utils:1.0'
     implementation 'com.github.florent37:arclayout:1.0.3'
     implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta05'
+    //Bugly
+    implementation 'com.tencent.bugly:crashreport:2.8.6'
 }
 
 greendao {

@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_timer_white_24dp"
-            android:drawablePadding="2dp"
+            android:drawablePadding="1dp"
             android:gravity="center_horizontal"
             android:text="@string/set_timer"
             android:textColor="@color/dark_white"
@@ -104,10 +104,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <com.monke.monkeybook.widget.SquareImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_previous"
             android:layout_width="48dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:src="@drawable/ic_skip_previous_black_24dp"
             app:tint="@color/dark_white" />
 
@@ -119,10 +119,11 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <com.monke.monkeybook.widget.SquareImageView
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/btn_pause"
                 android:layout_width="68dp"
-                android:layout_height="wrap_content"
+                android:layout_height="68dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_pause_circle_outline_black_24dp"
                 app:tint="@color/dark_white" />
@@ -131,7 +132,7 @@
                 android:id="@+id/loading_progress"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
         </FrameLayout>
 
 
@@ -140,10 +141,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <com.monke.monkeybook.widget.SquareImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_next"
             android:layout_width="48dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:src="@drawable/ic_skip_next_black_24dp"
             app:tint="@color/dark_white" />
 

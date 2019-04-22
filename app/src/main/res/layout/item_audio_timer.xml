@@ -14,7 +14,7 @@
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:textColor="@color/tv_text_default"
-        android:textSize="14sp" />
+        android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checker_timer"

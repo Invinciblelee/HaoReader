@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
@@ -7,7 +9,6 @@ import com.monke.monkeybook.utils.StringUtils;
 import java.util.List;
 import java.util.ListIterator;
 
-import androidx.annotation.NonNull;
 import retrofit2.Response;
 
 import static android.text.TextUtils.isEmpty;

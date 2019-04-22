@@ -322,8 +322,8 @@ public class AudioBookPlayService extends Service {
 
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
             Logger.d(TAG, "audio error --> " + what + "  " + extra);
+            isPrepared = false;
             if (mModel.retryPlay()) {
-                isPrepared = false;
                 ToastUtils.toast(AudioBookPlayService.this, "播放失败，正在刷新");
             } else {
                 sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
@@ -605,7 +605,7 @@ public class AudioBookPlayService extends Service {
         cancelAlarmTimer();
         mediaPlayer.stop();
         mediaPlayer.release();
-        if(mModel != null){
+        if (mModel != null) {
             mModel.destroy();
         }
     }
@@ -624,6 +624,18 @@ public class AudioBookPlayService extends Service {
         if (bookShelfBean != null && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
             bookShelfBean = bookShelf;
             mModel.updateBookShelf(bookShelfBean);
+        }
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.MEDIA_BUTTON)})
+    public void onMediaButton(String command) {
+        if (isPrepared) {
+            if (isPause) {
+                resumePlay();
+            } else {
+                pausePlay();
+            }
         }
     }
 }

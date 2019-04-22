@@ -53,11 +53,11 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
             mPresenter.openBookFromUri(this);
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.open_from_other),
-                    MApplication.RESULT__PERMS, MApplication.PerList);
+                    MApplication.RESULT_PERMS, MApplication.PerList);
         }
     }
 
-    @AfterPermissionGranted(MApplication.RESULT__PERMS)
+    @AfterPermissionGranted(MApplication.RESULT_PERMS)
     private void onResultOpenOtherPerms() {
         if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
             mPresenter.openBookFromUri(this);

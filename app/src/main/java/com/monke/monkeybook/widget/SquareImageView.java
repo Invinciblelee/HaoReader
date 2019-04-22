@@ -4,7 +4,9 @@ import android.content.Context;
 import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
-public class SquareImageView extends AppCompatImageView {
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class SquareImageView extends CircleImageView {
 
     public SquareImageView(Context context, AttributeSet attrs) {
         super(context, attrs);

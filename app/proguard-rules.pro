@@ -217,3 +217,7 @@ public static java.lang.String TABLENAME;
 
 -keep class com.monke.monkeybook.model.**{*;}
 -dontwarn com.monke.monkeybook.model.**
+
+## Bugly
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

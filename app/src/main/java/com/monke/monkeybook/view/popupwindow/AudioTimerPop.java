@@ -30,7 +30,7 @@ public class AudioTimerPop extends PopupWindow implements AudioTimerAdapter.OnIt
 
 
     public AudioTimerPop(Context context, OnTimeSelectListener listener) {
-        super(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.dp2px(context, 450));
+        super(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.dp2px(context, 550));
         this.context = context;
         this.listener = listener;
 

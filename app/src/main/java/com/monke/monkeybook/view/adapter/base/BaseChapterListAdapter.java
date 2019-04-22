@@ -9,15 +9,15 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FilterBean;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class BaseChapterListAdapter<T extends FilterBean> extends RecyclerView.Adapter<BaseChapterListAdapter.ThisViewHolder> implements Filterable {
 
@@ -56,19 +56,19 @@ public abstract class BaseChapterListAdapter<T extends FilterBean> extends Recyc
     }
 
     public void setDataList(List<T> dataList) {
-        synchronized (lock){
+        synchronized (lock) {
             this.originalList = null;
             this.dataList = dataList;
             getFilter().filter();
         }
     }
 
-    public void removeData(T data){
-        synchronized (lock){
+    public void removeData(T data) {
+        synchronized (lock) {
             this.originalList = null;
-            if(this.dataList != null){
+            if (this.dataList != null) {
                 int index = this.dataList.indexOf(data);
-                if(index >= 0){
+                if (index >= 0) {
                     this.dataList.remove(index);
                     notifyItemRemoved(index);
                 }
@@ -107,23 +107,21 @@ public abstract class BaseChapterListAdapter<T extends FilterBean> extends Recyc
         public TextView tvName;
         public View line;
         public View llName;
-        public View indicator;
 
         ThisViewHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             line = itemView.findViewById(R.id.v_line);
             llName = itemView.findViewById(R.id.ll_name);
-            indicator = itemView.findViewById(R.id.iv_indicator);
         }
     }
 
     public abstract static class OnItemClickListener<T> {
-        public void itemClick(T item){
+        public void itemClick(T item) {
 
         }
 
-        public void itemLongClick(T item){
+        public void itemLongClick(T item) {
 
         }
     }

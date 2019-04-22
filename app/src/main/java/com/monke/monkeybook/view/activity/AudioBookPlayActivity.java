@@ -2,7 +2,6 @@ package com.monke.monkeybook.view.activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -13,16 +12,11 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestFutureTarget;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.transition.Transition;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -37,7 +31,6 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
-import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
 
@@ -366,29 +359,13 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     private void setCoverImage(String image) {
-        final int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        final int dimen = screenWidth - DensityUtil.dp2px(this, 128);
         Glide.with(AudioBookPlayActivity.this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
                         .transforms(new CenterCrop(), new CircleCrop())
+                        .error(R.drawable.img_cover_default)
+                        .placeholder(R.drawable.img_cover_default)
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                .into(new RequestFutureTarget<Drawable>(handler, dimen, dimen) {
-
-                    @Override
-                    public synchronized void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        ivCover.setImageDrawable(resource);
-                    }
-
-                    @Override
-                    public synchronized void onLoadFailed(@Nullable Drawable errorDrawable) {
-                        Glide.with(AudioBookPlayActivity.this)
-                                .load(R.drawable.img_cover_default)
-                                .apply(new RequestOptions().dontAnimate().centerCrop()
-                                        .transforms(new CenterCrop(), new CircleCrop())
-                                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                                .into(ivCover);
-                    }
-                });
+                .into(ivCover);
 
         Glide.with(this).load(image)
                 .apply(new RequestOptions()

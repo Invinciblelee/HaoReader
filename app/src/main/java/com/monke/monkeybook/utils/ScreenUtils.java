@@ -128,10 +128,9 @@ public class ScreenUtils {
     }
 
     public static DisplayMetrics getDisplayMetrics(){
-        DisplayMetrics metrics = MApplication
+        return MApplication
                 .getInstance()
                 .getResources()
                 .getDisplayMetrics();
-        return metrics;
     }
 }

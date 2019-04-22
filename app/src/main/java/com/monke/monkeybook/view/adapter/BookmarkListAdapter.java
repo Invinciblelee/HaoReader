@@ -3,14 +3,12 @@ package com.monke.monkeybook.view.adapter;
 import android.content.Context;
 import android.view.View;
 
-import com.monke.monkeybook.R;
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
-import com.monke.monkeybook.widget.AppCompat;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 public class BookmarkListAdapter extends BaseChapterListAdapter<BookmarkBean> {
 
@@ -26,8 +24,6 @@ public class BookmarkListAdapter extends BaseChapterListAdapter<BookmarkBean> {
         } else {
             holder.line.setVisibility(View.VISIBLE);
         }
-        int color = holder.indicator.getResources().getColor(R.color.tv_chapter_color_normal);
-        AppCompat.setTint(holder.indicator, color);
         BookmarkBean bookmarkBean = getItem(realPosition);
         holder.tvName.setText(bookmarkBean.getContent());
         holder.llName.setOnClickListener(v -> callOnItemClickListener(bookmarkBean));

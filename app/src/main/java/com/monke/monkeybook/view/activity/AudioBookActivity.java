@@ -1,19 +1,15 @@
 package com.monke.monkeybook.view.activity;
 
 import android.animation.ValueAnimator;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -24,9 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestFutureTarget;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.transition.Transition;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -40,7 +34,6 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.AudioBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.AudioBookContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
-import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.widget.CircleProgressBar;
@@ -301,27 +294,12 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     }
 
     private void setCoverImage(String image) {
-        int dimen = DensityUtil.dp2px(this, 48);
         Glide.with(AudioBookActivity.this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
                         .transforms(new CenterCrop(), new CircleCrop())
+                        .error(R.drawable.img_cover_default)
+                        .placeholder(R.drawable.img_cover_default)
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                .into(new RequestFutureTarget<Drawable>(handler, dimen, dimen) {
-
-                    @Override
-                    public synchronized void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        ivCover.setImageDrawable(resource);
-                    }
-
-                    @Override
-                    public synchronized void onLoadFailed(@Nullable Drawable errorDrawable) {
-                        Glide.with(AudioBookActivity.this)
-                                .load(R.drawable.img_cover_default)
-                                .apply(new RequestOptions().dontAnimate().centerCrop()
-                                        .transforms(new CenterCrop(), new CircleCrop())
-                                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                                .into(ivCover);
-                    }
-                });
+                .into(ivCover);
     }
 }

@@ -80,7 +80,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
     public boolean onOptionsItemSelected(MenuItem item) {
         if (TextUtils.equals(item.getTitle(), "选择图片")) {
             if (!EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                EasyPermissions.requestPermissions(this, "图片选择需要储存权限", MApplication.RESULT__PERMS, MApplication.PerList);
+                EasyPermissions.requestPermissions(this, "图片选择需要储存权限", MApplication.RESULT_PERMS, MApplication.PerList);
             } else {
                 requestImagePer();
             }
@@ -160,7 +160,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
         zxingview.startSpotAndShowRect(); // 显示扫描框，并开始识别
     }
 
-    @AfterPermissionGranted(MApplication.RESULT__PERMS)
+    @AfterPermissionGranted(MApplication.RESULT_PERMS)
     public void requestImagePer() {
         FileSelector.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
             @Override
