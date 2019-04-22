@@ -3,10 +3,10 @@ package com.monke.basemvplib;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivity implements IView {
     protected Bundle savedInstanceState;

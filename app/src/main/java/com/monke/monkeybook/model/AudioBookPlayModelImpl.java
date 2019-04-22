@@ -87,7 +87,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
                         @Override
                         public void onSubscribe(Disposable d) {
-                            disposables.add(mPlayDisposable = d);
+                            disposables.add(d);
                         }
 
                         @Override
@@ -193,7 +193,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         }
 
         Observable.just(chapter)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .map(chapterBean -> {
                     if (reset) {
                         chapterBean.setStart(0);
@@ -210,24 +210,26 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     if (!TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
                         return Observable.just(chapterBean);
                     }
-                    return WebBookModelImpl.getInstance().processAudioChapter(bookShelfBean.getTag(), chapterBean);
-                }).doOnNext(chapterBean -> {
-                    try {
-                        if(BookshelfHelp.isInBookShelf(chapterBean.getNoteUrl())){
-                            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
-                        }
-                        bookShelfBean.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
-                    } catch (Exception ignore) {
-                    }
+                    return WebBookModelImpl.getInstance()
+                            .processAudioChapter(bookShelfBean.getTag(), chapterBean);
                 })
                 .timeout(15, TimeUnit.SECONDS)
                 .filter(chapterBean -> !TextUtils.isEmpty(chapter.getDurChapterPlayUrl()))
+                .doAfterNext(chapterBean -> {
+                    try {
+                        bookShelfBean.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
+                        if (BookshelfHelp.isInBookShelf(chapterBean.getNoteUrl())) {
+                            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
+                        }
+                    } catch (Exception ignore) {
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<ChapterBean>() {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        disposables.add(d);
+                        disposables.add(mPlayDisposable = d);
                     }
 
                     @Override
@@ -262,7 +264,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     @Override
     public void saveProgress(int progress, int duration) {
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            if(BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+            if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
                 ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
                 chapterBean.setStart(progress);
                 chapterBean.setEnd(duration);

@@ -12,7 +12,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_content"
         android:layout_width="match_parent"
-        android:layout_height="480dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="30dp"
         android:clickable="true"

@@ -24,7 +24,7 @@ public class BaseModelImpl {
     }
 
 
-    public static class AjaxCallback extends AjaxWebView.Callback{
+    public static class AjaxCallback extends AjaxWebView.Callback {
 
         private final ObservableEmitter<String> emitter;
 
@@ -34,17 +34,23 @@ public class BaseModelImpl {
 
         @Override
         public void onResult(String result) {
-            emitter.onNext(result);
+            if (!emitter.isDisposed()) {
+                emitter.onNext(result);
+            }
         }
 
         @Override
         public void onError(Throwable error) {
-            emitter.onError(error);
+            if (!emitter.isDisposed()) {
+                emitter.onError(error);
+            }
         }
 
         @Override
         public void onComplete() {
-            emitter.onComplete();
+            if (!emitter.isDisposed()) {
+                emitter.onComplete();
+            }
         }
     }
 

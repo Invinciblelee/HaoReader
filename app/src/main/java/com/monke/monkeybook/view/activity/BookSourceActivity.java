@@ -102,8 +102,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     protected void onDestroy() {
-        RxBus.get().post(RxBusTag.SOURCE_LIST_CHANGE, true);
         super.onDestroy();
+        RxBus.get().post(RxBusTag.SOURCE_LIST_CHANGE, true);
     }
 
     @Override

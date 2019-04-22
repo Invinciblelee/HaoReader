@@ -55,7 +55,7 @@ public class CookieHelper implements CookieStore {
             cookieMap.putAll(CookieHelper.cookieToMap(cookie));
             String newCookie = mapToCookie(cookieMap);
             Logger.d(TAG, "replaceCookie to: " + url + " --> " + newCookie);
-            CookieHelper.get().setCookie(url, newCookie);
+            setCookie(url, newCookie);
         }
     }
 

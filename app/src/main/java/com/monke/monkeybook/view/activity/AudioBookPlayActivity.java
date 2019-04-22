@@ -1,7 +1,5 @@
 package com.monke.monkeybook.view.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Handler;
@@ -333,25 +331,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     private void showProgress(boolean showProgress) {
-        if (showProgress) {
-            if (progressBar.isShown()) {
-                return;
-            }
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setAlpha(0.0f);
-            progressBar.animate().alpha(1.0f).start();
-        } else {
-            if (!progressBar.isShown()) {
-                return;
-            }
-            progressBar.animate().alpha(0.0f)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    }).start();
-        }
+        progressBar.setVisibility(showProgress ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void startRotationAnim() {

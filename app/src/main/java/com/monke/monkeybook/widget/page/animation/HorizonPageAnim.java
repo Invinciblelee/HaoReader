@@ -5,11 +5,11 @@ import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
+import androidx.annotation.CallSuper;
+
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.widget.page.PageMode;
 import com.monke.monkeybook.widget.page.PageView;
-
-import androidx.annotation.CallSuper;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -32,8 +32,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
-    private boolean lockPage = false;
-
     private int mTouchSlop;
 
     HorizonPageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
@@ -54,7 +52,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
     /**
      * 转换页面，在显示下一章的时候，必须首先调用此方法
      */
-    private void changePage() {
+    public void changePage() {
         Bitmap bitmap = mCurBitmap;
         mCurBitmap = mNextBitmap;
         mNextBitmap = bitmap;
@@ -96,11 +94,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 }
 
                 if (isMove) {
-                    if (!lockPage) {
-                        changePage();
-                        lockPage = true;
-                    }
-
                     //判断是否是准备移动的状态(将要移动但是还没有移动)
                     if (mMoveX == 0 && mMoveY == 0) {
                         //判断翻得是上一页还是下一页
@@ -144,8 +137,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 if (!isMove) {
                     isNext = x > mViewWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
 
-                    changePage();
-
                     if (isNext) {
                         //判断是否下一页存在
                         boolean hasNext = mListener.hasNext();
@@ -161,18 +152,19 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             return true;
                         }
                     }
-                }
 
-                // 是否取消翻页
-                if (isCancel) {
-                    mListener.pageCancel();
-                }
-
-                // 开启翻页效果
-                if (!noNext) {
                     startAnim();
-                }
+                } else {
+                    // 是否取消翻页
+                    if (isCancel) {
+                        mListener.pageCancel();
+                    }
 
+                    // 开启翻页效果
+                    if (!noNext) {
+                        startAnim();
+                    }
+                }
                 break;
         }
         return true;
@@ -217,16 +209,10 @@ public abstract class HorizonPageAnim extends PageAnimation {
         }
     }
 
-    @Override
-    public void resetAnim() {
-        super.resetAnim();
-        lockPage = false;
-    }
 
     @Override
     public void startAnim(Direction direction) {
         if (isStarted) return;
-        changePage();
         if (direction == Direction.NEXT) {
             int x = mViewWidth;
             int y = mViewHeight;

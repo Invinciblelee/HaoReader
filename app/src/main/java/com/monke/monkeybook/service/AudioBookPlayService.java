@@ -38,6 +38,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.AudioBookPlayModelImpl;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import com.monke.monkeybook.utils.DensityUtil;
+import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 
@@ -79,6 +80,9 @@ public class AudioBookPlayService extends Service {
     private boolean isPrepared;
     private boolean isPause;
     private int targetPosition;
+
+    private int progress;
+    private int duration;
 
     private int timerMinute;
     private int timerUntilFinish;
@@ -267,15 +271,19 @@ public class AudioBookPlayService extends Service {
 
             @Override
             public void onPlay(ChapterBean chapterBean) {
-                updateNotification();
-                startPlay(chapterBean.getDurChapterPlayUrl());
                 targetPosition = chapterBean.getStart();
+                startPlay(chapterBean.getDurChapterPlayUrl());
+                updateNotification();
             }
 
             @Override
             public void onError(Throwable throwable) {
                 sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
-                ToastUtils.toast(AudioBookPlayService.this, "播放失败，无法获取播放链接");
+                if (NetworkUtil.isNetworkAvailable()) {
+                    ToastUtils.toast(AudioBookPlayService.this, "播放失败，无法获取播放链接");
+                } else {
+                    ToastUtils.toast(AudioBookPlayService.this, "网络连接失败");
+                }
             }
         });
 
@@ -288,7 +296,11 @@ public class AudioBookPlayService extends Service {
             @Override
             public void onError(Throwable error) {
                 sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
-                ToastUtils.toast(AudioBookPlayService.this, "播放目录获取失败");
+                if (NetworkUtil.isNetworkAvailable()) {
+                    ToastUtils.toast(AudioBookPlayService.this, "播放目录获取失败");
+                } else {
+                    ToastUtils.toast(AudioBookPlayService.this, "网络连接失败");
+                }
             }
         });
     }
@@ -302,7 +314,6 @@ public class AudioBookPlayService extends Service {
                 targetPosition = 0;
             }
 
-
             mp.start();
 
             if (isPause) {
@@ -312,6 +323,7 @@ public class AudioBookPlayService extends Service {
 
             cancelProgressTimer();
             setProgressTimer();
+
             sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
         });
         mediaPlayer.setOnCompletionListener(mp -> {
@@ -319,6 +331,15 @@ public class AudioBookPlayService extends Service {
                 //有时无法自动播放下一章，稍微延迟一下
                 handler.postDelayed(this::nextPlay, 100L);
             }
+        });
+
+        mediaPlayer.setOnInfoListener((mp, what, extra) -> {
+            if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(true));
+            } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+            }
+            return false;
         });
 
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
@@ -347,11 +368,11 @@ public class AudioBookPlayService extends Service {
             Logger.d(TAG, "audio --> pullAudioInfo");
             AudioPlayInfo info = AudioPlayInfo.pull(timerMinute, timerUntilFinish, bookShelfBean.getDurChapterName(), bookShelfBean.getBookInfoBean().getRealCoverUrl(), bookShelfBean.getChapterList());
             info.setPause(isPause);
+            info.setDurChapterIndex(bookShelfBean.getDurChapter());
             if (isPrepared) {
                 info.setProgress(mediaPlayer.getCurrentPosition());
                 info.setDuration(mediaPlayer.getDuration());
             }
-            info.setDurChapterIndex(bookShelfBean.getDurChapter());
             sendBroadcast(ACTION_PULL, info);
         }
     }
@@ -450,8 +471,9 @@ public class AudioBookPlayService extends Service {
     }
 
     private void stopPlay() {
-        stopSelf();
+        mModel.saveProgress(progress, duration);
         sendBroadcast(ACTION_STOP, AudioPlayInfo.play(isPause));
+        stopSelf();
 
         running = false;
     }
@@ -461,10 +483,9 @@ public class AudioBookPlayService extends Service {
             mTimer = Executors.newSingleThreadScheduledExecutor();
             mTimer.scheduleAtFixedRate(() -> {
                 if (mediaPlayer.isPlaying()) {
-                    int duration = mediaPlayer.getDuration();
-                    int progress = mediaPlayer.getCurrentPosition();
+                    duration = mediaPlayer.getDuration();
+                    progress = mediaPlayer.getCurrentPosition();
                     sendBroadcast(ACTION_PROGRESS, AudioPlayInfo.play(progress, duration));
-                    mModel.saveProgress(progress, duration);
                 }
             }, 0, 1000, TimeUnit.MILLISECONDS);
         }

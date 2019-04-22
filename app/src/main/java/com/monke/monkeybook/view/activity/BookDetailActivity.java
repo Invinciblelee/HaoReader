@@ -193,6 +193,11 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         //弹窗
         moDialogHUD = new MoDialogHUD(this);
 
+        final int screenHeight = getResources().getDisplayMetrics().heightPixels;
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) cardView.getLayoutParams();
+        params.height = screenHeight * 3/ 4;
+        cardView.setLayoutParams(params);
+
         if (mPresenter.getOpenFrom() == FROM_BOOKSHELF) {
             if (mPresenter.getBookShelf() == null) return;
             updateView(true);

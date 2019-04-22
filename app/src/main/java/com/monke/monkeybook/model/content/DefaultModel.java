@@ -21,6 +21,7 @@ import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,18 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
     }
 
+    private Map<String, String> getHeaderMap(boolean withCookie) {
+        if (headerMap == null) {
+            return null;
+        }
+
+        final Map<String, String> map = new HashMap<>(headerMap);
+        if (!withCookie) {
+            map.remove("Cookie");
+        }
+        return map;
+    }
+
     /**
      * 发现
      */
@@ -79,7 +92,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, page, headerMap, tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, page, getHeaderMap(false), tag);
             if (analyzeUrl.getHost() == null) {
                 return Observable.create(emitter -> {
                     emitter.onNext(new ArrayList<>());
@@ -107,7 +120,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookSourceBean.getRuleSearchUrl(), content, page, headerMap, tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookSourceBean.getRuleSearchUrl(), content, page, getHeaderMap(false), tag);
             if (analyzeUrl.getHost() == null) {
                 return Observable.just(new ArrayList<>());
             }
@@ -129,7 +142,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), headerMap, tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), getHeaderMap(false), tag);
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookInfo.analyzeBookInfo(response.body(), bookShelfBean));
         } catch (Exception e) {
@@ -147,7 +160,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap, tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), getHeaderMap(false), tag);
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean));
         } catch (Exception e) {
@@ -167,7 +180,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
         final BookContent bookContent = new BookContent(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), getHeaderMap(true), tag);
             if (bookContent.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
                         .cookieStore(CookieHelper.get())
@@ -208,7 +221,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
         final AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap, tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), getHeaderMap(true), tag);
             if (audioBookChapter.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
                         .suffix(audioBookChapter.getSuffix())

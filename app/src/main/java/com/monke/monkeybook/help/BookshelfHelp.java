@@ -184,26 +184,6 @@ public class BookshelfHelp {
                 .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookUrl)).build().unique();
     }
 
-    public static BookShelfBean queryBookByName(String name, String author) {
-        List<BookInfoBean> temp = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
-                .where(BookInfoBeanDao.Properties.Name.eq(name),
-                        BookInfoBeanDao.Properties.Author.eq(author),
-                        BookInfoBeanDao.Properties.Tag.notEq(BookShelfBean.LOCAL_TAG)).list();
-        if (temp != null && temp.size() > 0) {
-            BookInfoBean bookInfoBean = temp.get(0);
-            BookShelfBean bookShelfBean = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
-                    .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookInfoBean.getNoteUrl())).build().unique();
-
-            if (bookShelfBean != null) {
-                bookShelfBean.setBookInfoBean(bookInfoBean);
-                bookShelfBean.setChapterList(queryChapterList(bookInfoBean.getNoteUrl()));
-                bookShelfBean.setBookmarkList(queryBookmarkList(bookInfoBean.getName()));
-                return bookShelfBean;
-            }
-        }
-        return null;
-    }
-
     public static void removeFromBookShelf(BookShelfBean bookShelfBean) {
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().deleteByKey(bookShelfBean.getNoteUrl());
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().deleteByKey(bookShelfBean.getBookInfoBean().getNoteUrl());

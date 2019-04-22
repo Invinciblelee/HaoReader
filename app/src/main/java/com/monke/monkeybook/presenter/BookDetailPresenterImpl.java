@@ -96,7 +96,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
             if (openFrom == FROM_BOOKSHELF) {
                 bookShelfBean = BookshelfHelp.queryBookByUrl(bookShelf.getNoteUrl());
             } else {//来自搜索页面
-                bookShelfBean = BookshelfHelp.queryBookByName(searchBook.getName(), searchBook.getAuthor());
+                bookShelfBean = BookshelfHelp.queryBookByUrl(searchBook.getNoteUrl());
             }
 
             if (bookShelfBean != null) {

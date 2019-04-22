@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -66,7 +65,6 @@ class XJsoupContentDelegate implements ContentDelegate {
                     item.setNoteUrl(mConfig.getBaseURL());
                 }
                 item.setCoverUrl(collection.mutable().getResultUrl(mBookSource.getRuleSearchCoverUrl()));
-                Log.e("TAG", item.getCoverUrl());
                 if (!isEmpty(item.getName())) {
                     books.add(item);
                 }

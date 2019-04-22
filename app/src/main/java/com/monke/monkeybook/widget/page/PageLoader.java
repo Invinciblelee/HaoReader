@@ -517,6 +517,8 @@ public abstract class PageLoader {
     private void reloadCurrentChapter() {
         if (mCurChapter.isEmpty()) {
             mPageView.drawPage();
+
+            preload();
         } else {
             cancelPreload();
             // 将上一章的缓存设置为null
@@ -746,7 +748,7 @@ public abstract class PageLoader {
         if (getCurrentStatus() == STATUS_FINISH) {
             // 先查看是否存在上一页
             if (mCurChapter.prevPage()) {
-                mPageView.drawPage();
+                mPageView.drawPage(true);
                 return true;
             }
         }
@@ -754,6 +756,8 @@ public abstract class PageLoader {
         if (isFirstChapter()) {
             return false;
         }
+
+        mPageView.changePage();
 
         parsePrevChapter(mPageView::drawPage);
         return true;
@@ -778,7 +782,7 @@ public abstract class PageLoader {
         if (getCurrentStatus() == STATUS_FINISH) {
             // 先查看是否存在下一页
             if (mCurChapter.nextPage()) {
-                mPageView.drawPage();
+                mPageView.drawPage(true);
                 return true;
             }
         }
@@ -786,6 +790,8 @@ public abstract class PageLoader {
         if (!hasNextChapter()) {
             return false;
         }
+
+        mPageView.changePage();
 
         // 解析下一章数据
         parseNextChapter(mPageView::drawPage);

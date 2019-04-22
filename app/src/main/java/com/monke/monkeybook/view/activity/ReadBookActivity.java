@@ -272,6 +272,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     protected void initImmersionBar() {
         mImmersionBar.fullScreen(true);
 
+
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();
         } else {
@@ -284,19 +285,18 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             mImmersionBar.navigationBarDarkIcon(false);
         }
 
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
-            if(isNightTheme()){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            if (isNightTheme()) {
                 mImmersionBar.statusBarDarkFont(false);
-            }else {
+            } else {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
             }
-
             if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
-        }if (isMenuShowing() || isPopShowing()) {
+        } else if (isMenuShowing() || isPopShowing()) {
             if (isImmersionBarEnabled() && !isNightTheme()) {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
             } else {

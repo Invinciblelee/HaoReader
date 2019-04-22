@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -18,6 +17,7 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.widget.page.animation.CoverPageAnim;
 import com.monke.monkeybook.widget.page.animation.Direction;
+import com.monke.monkeybook.widget.page.animation.HorizonPageAnim;
 import com.monke.monkeybook.widget.page.animation.NonePageAnim;
 import com.monke.monkeybook.widget.page.animation.PageAnimation;
 import com.monke.monkeybook.widget.page.animation.SimulationPageAnim;
@@ -281,7 +281,7 @@ public class PageView extends View {
 
     private void drawPageComputeScroll() {
         if (drawAfterComputeScroll) {
-            drawPage();
+            drawPage(true);
             drawAfterComputeScroll = false;
         }
     }
@@ -323,9 +323,22 @@ public class PageView extends View {
     }
 
 
-    public void drawPage() {
+    public void changePage() {
+        if (mPageAnim instanceof HorizonPageAnim) {
+            ((HorizonPageAnim) mPageAnim).changePage();
+        }
+    }
+
+    public void drawPage(){
+        drawPage(false);
+    }
+
+    public void drawPage(boolean changePage) {
         if (!isLayoutPrepared) return;
         if (mPageLoader != null) {
+            if (changePage) {
+                changePage();
+            }
             mPageLoader.drawPage(getNextBitmap());
         }
     }
