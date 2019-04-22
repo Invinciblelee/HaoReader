@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
@@ -32,6 +31,7 @@ public class AjaxWebView {
             WebView webView = createAjaxWebView(params.context, params.userAgent);
             webView.setWebViewClient(new HtmlWebViewClient(params, callback));
             applyAjaxParams(webView, params);
+            webView.postDelayed(() -> clearWebView(webView), 30 * 1000L);
         });
     }
 
@@ -44,6 +44,7 @@ public class AjaxWebView {
                 webView.setWebViewClient(new HtmlWebViewClient(params, callback));
             }
             applyAjaxParams(webView, params);
+            webView.postDelayed(() -> clearWebView(webView), 15 * 1000L);
         });
     }
 
@@ -54,6 +55,15 @@ public class AjaxWebView {
             webView.loadUrl(params.url, params.headerMap);
         } else {
             webView.loadUrl(params.url);
+        }
+    }
+
+    private static void clearWebView(WebView webView) {
+        if (webView != null) {
+            webView.stopLoading();
+            webView.getSettings().setJavaScriptEnabled(false);
+            webView.clearHistory();
+            webView.destroy();
         }
     }
 
