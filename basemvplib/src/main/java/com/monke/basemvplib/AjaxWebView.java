@@ -2,10 +2,8 @@ package com.monke.basemvplib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
@@ -32,7 +30,6 @@ public class AjaxWebView {
             WebView webView = createAjaxWebView(params.context, params.userAgent);
             webView.setWebViewClient(new HtmlWebViewClient(params, callback));
             applyAjaxParams(webView, params);
-            new Handler().postDelayed(() -> clearWebView(webView), 30 * 1000L);
         });
     }
 
@@ -45,7 +42,6 @@ public class AjaxWebView {
                 webView.setWebViewClient(new HtmlWebViewClient(params, callback));
             }
             applyAjaxParams(webView, params);
-            new Handler().postDelayed(() -> clearWebView(webView), 15 * 1000L);
         });
     }
 
@@ -144,6 +140,10 @@ public class AjaxWebView {
         private boolean hasJavaScript() {
             return !TextUtils.isEmpty(javaScript);
         }
+
+        private void clearJavaScript() {
+            javaScript = null;
+        }
     }
 
 
@@ -158,11 +158,6 @@ public class AjaxWebView {
         }
 
         @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-        }
-
-        @Override
         public void onPageFinished(WebView view, String url) {
             String cookie = CookieManager.getInstance().getCookie(url);
             params.setCookie(cookie);
@@ -172,7 +167,7 @@ public class AjaxWebView {
             view.evaluateJavascript("document.documentElement.outerHTML", value -> {
                 callback.onResult(StringEscapeUtils.unescapeJson(value));
                 callback.onComplete();
-                view.destroy();
+                clearWebView(view);
             });
         }
 
@@ -181,7 +176,7 @@ public class AjaxWebView {
             super.onReceivedError(view, errorCode, description, failingUrl);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 callback.onError(new Exception(description));
-                view.destroy();
+                clearWebView(view);
             }
         }
 
@@ -190,7 +185,7 @@ public class AjaxWebView {
             super.onReceivedError(view, request, error);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 callback.onError(new Exception(error.getDescription().toString()));
-                view.destroy();
+                clearWebView(view);
             }
         }
 
@@ -227,7 +222,7 @@ public class AjaxWebView {
             super.onReceivedError(view, errorCode, description, failingUrl);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 callback.onError(new Exception(description));
-                view.destroy();
+                clearWebView(view);
             }
         }
 
@@ -236,7 +231,7 @@ public class AjaxWebView {
             super.onReceivedError(view, request, error);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 callback.onError(new Exception(error.getDescription().toString()));
-                view.destroy();
+                clearWebView(view);
             }
         }
 
@@ -252,6 +247,9 @@ public class AjaxWebView {
             super.onPageFinished(view, url);
             if (params.hasJavaScript()) {
                 view.evaluateJavascript(params.javaScript, null);
+                params.clearJavaScript();
+            } else {
+                clearWebView(view);
             }
         }
     }
