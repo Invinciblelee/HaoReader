@@ -7,6 +7,7 @@ import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.seimicrawler.xpath.JXDocument;
@@ -36,14 +37,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
 
     @Override
     JXDocument fromSource(String source) {
-        // 给表格标签添加完整的框架结构,否则会丢失表格标签;html标准不允许表格标签独立在table之外
-        if (source.endsWith("</td>")) {
-            source = "<tr>" + source + "</tr>";
-        }
-        if (source.endsWith("</tr>") || source.endsWith("</tbody>")) {
-            source = "<table>" + source + "</table>";
-        }
-        return JXDocument.create(source);
+        return JXDocument.create(ensureTableNode(source));
     }
 
     @Override
@@ -54,11 +48,19 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
 
     @Override
     List<Element> getList(String rawRule) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
+            Element element = Jsoup.parse(ensureTableNode(getStringSource()));
+            return Collections.singletonList(element);
+        }
         return parseList(getSource(), rawRule);
     }
 
     @Override
     List<Element> parseList(String source, String rawRule) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
+            Element element = Jsoup.parse(ensureTableNode(source));
+            return Collections.singletonList(element);
+        }
         return parseList(fromSource(source), rawRule);
     }
 
@@ -86,7 +88,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -99,7 +101,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return ListUtils.mutableList(source);
         }
 
@@ -130,7 +132,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return "";
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return getStringSource();
         }
 
@@ -144,7 +146,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return "";
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return source;
         }
 
@@ -170,5 +172,16 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
         return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
                 .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
                 .replaceAll("\\s*\\n+\\s*", "\n　　");                   // 移除空行,并增加段前缩进2个汉字
+    }
+
+    private String ensureTableNode(String source) {
+        // 给表格标签添加完整的框架结构,否则会丢失表格标签;html标准不允许表格标签独立在table之外
+        if (source.endsWith("</td>")) {
+            source = "<tr>" + source + "</tr>";
+        }
+        if (source.endsWith("</tr>") || source.endsWith("</tbody>")) {
+            source = "<table>" + source + "</table>";
+        }
+        return source;
     }
 }

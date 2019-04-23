@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.OkHttpHelper;

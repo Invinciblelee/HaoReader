@@ -61,11 +61,17 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
 
     @Override
     List<Object> getList(String rawRule) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
+            return Collections.singletonList(getStringSource());
+        }
         return parseList(getSource(), rawRule);
     }
 
     @Override
     List<Object> parseList(String source, String rawRule) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
+            return Collections.singletonList(source);
+        }
         return parseList(fromSource(source), rawRule);
     }
 
@@ -88,7 +94,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return "";
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return getStringSource();
         }
 
@@ -101,7 +107,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return "";
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return source;
         }
 
@@ -147,7 +153,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -160,7 +166,7 @@ final class JsonParser extends SourceParser<ReadContext, Object> {
             return Collections.emptyList();
         }
 
-        if (rawRule.equals(Patterns.RULE_BODY)) {
+        if (Patterns.RULE_BODY.equals(rawRule)) {
             return ListUtils.mutableList(source);
         }
 

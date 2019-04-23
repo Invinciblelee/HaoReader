@@ -134,7 +134,7 @@ public class AudioPlayInfo {
         return info;
     }
 
-    public static AudioPlayInfo loading(boolean loading){
+    public static AudioPlayInfo loading(boolean loading) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setLoading(loading);
         return info;
@@ -164,12 +164,6 @@ public class AudioPlayInfo {
         return info;
     }
 
-    public static AudioPlayInfo play(boolean pause) {
-        AudioPlayInfo info = new AudioPlayInfo();
-        info.setPause(pause);
-        return info;
-    }
-
     public static AudioPlayInfo timer(int timerMinute) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setTimerMinute(timerMinute);
@@ -180,5 +174,9 @@ public class AudioPlayInfo {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setTimerMinuteUntilFinish(timerMinuteUntilFinish);
         return info;
+    }
+
+    public static AudioPlayInfo empty() {
+        return new AudioPlayInfo();
     }
 }

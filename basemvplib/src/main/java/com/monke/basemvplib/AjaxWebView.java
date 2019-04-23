@@ -163,7 +163,6 @@ public class AjaxWebView {
             params.setCookie(cookie);
             super.onPageFinished(view, url);
 
-
             view.evaluateJavascript("document.documentElement.outerHTML", value -> {
                 callback.onResult(StringEscapeUtils.unescapeJson(value));
                 callback.onComplete();

@@ -13,21 +13,25 @@ public class SimpleModel {
 
 
     public static Observable<Response<String>> getResponse(AnalyzeUrl analyzeUrl) {
-        switch (analyzeUrl.getUrlMode()) {
-            case POST:
-                return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpPostApi.class)
-                        .searchBook(analyzeUrl.getPath(),
-                                analyzeUrl.getQueryMap(),
-                                analyzeUrl.getHeaderMap());
-            case GET:
-                return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpGetApi.class)
-                        .searchBook(analyzeUrl.getPath(),
-                                analyzeUrl.getQueryMap(),
-                                analyzeUrl.getHeaderMap());
-            default:
-                return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpGetApi.class)
-                        .getWebContent(analyzeUrl.getPath(),
-                                analyzeUrl.getHeaderMap());
+        try {
+            switch (analyzeUrl.getUrlMode()) {
+                case POST:
+                    return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpPostApi.class)
+                            .searchBook(analyzeUrl.getPath(),
+                                    analyzeUrl.getQueryMap(),
+                                    analyzeUrl.getHeaderMap());
+                case GET:
+                    return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpGetApi.class)
+                            .searchBook(analyzeUrl.getPath(),
+                                    analyzeUrl.getQueryMap(),
+                                    analyzeUrl.getHeaderMap());
+                default:
+                    return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpGetApi.class)
+                            .getWebContent(analyzeUrl.getPath(),
+                                    analyzeUrl.getHeaderMap());
+            }
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 }

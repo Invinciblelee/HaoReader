@@ -13,6 +13,7 @@ import android.util.SparseArray;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
@@ -42,7 +43,7 @@ public class DownloadService extends Service {
     public static final String finishDownloadAction = "finishDownloadAction";
     private NotificationManagerCompat managerCompat;
 
-    public static boolean isRunning = false;
+    public static boolean running = false;
 
     private ExecutorService executor;
     private Scheduler scheduler;
@@ -53,17 +54,17 @@ public class DownloadService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        isRunning = true;
-        managerCompat = NotificationManagerCompat.from(this);
+        running = true;
         threadsNum = AppConfigHelper.get().getInt(this.getString(R.string.pk_threads_num), 4);
         executor = Executors.newFixedThreadPool(threadsNum);
         scheduler = Schedulers.from(executor);
+        managerCompat = NotificationManagerCompat.from(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        isRunning = false;
+        running = false;
         executor.shutdown();
         managerCompat.cancelAll();
     }
@@ -77,6 +78,7 @@ public class DownloadService extends Service {
             } else {
                 switch (action) {
                     case addDownloadAction:
+                        running = true;
                         DownloadBookBean downloadBook = intent.getParcelableExtra("downloadBook");
                         if (downloadBook != null) {
                             addDownload(downloadBook);
@@ -273,7 +275,7 @@ public class DownloadService extends Service {
     }
 
     private void isProgress(int notificationId, long when, String bookName, ChapterBean downloadChapterBean) {
-        if (!isRunning) {
+        if (!running) {
             return;
         }
 
@@ -313,7 +315,7 @@ public class DownloadService extends Service {
     }
 
     public static void removeDownload(Context context, String noteUrl) {
-        if (noteUrl == null || !isRunning) {
+        if (noteUrl == null || !running) {
             return;
         }
         Intent intent = new Intent(context, DownloadService.class);
@@ -323,7 +325,7 @@ public class DownloadService extends Service {
     }
 
     public static void cancelDownload(Context context) {
-        if (!isRunning) {
+        if (!running) {
             return;
         }
         Intent intent = new Intent(context, DownloadService.class);
@@ -332,7 +334,7 @@ public class DownloadService extends Service {
     }
 
     public static void obtainDownloadList(Context context) {
-        if (!isRunning) {
+        if (!running) {
             return;
         }
         Intent intent = new Intent(context, DownloadService.class);

@@ -1,8 +1,6 @@
 package com.monke.monkeybook.view.activity;
 
 import android.animation.ValueAnimator;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -63,8 +61,6 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     private ValueAnimator animator;
 
     private BookShelfListAdapter bookListAdapter;
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected AudioBookContract.Presenter initInjector() {

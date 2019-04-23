@@ -214,7 +214,15 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                             .processAudioChapter(bookShelfBean.getTag(), chapterBean);
                 })
                 .timeout(15, TimeUnit.SECONDS)
-                .filter(chapterBean -> !TextUtils.isEmpty(chapter.getDurChapterPlayUrl()))
+                .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
+                    if (!TextUtils.isEmpty(chapterBean.getDurChapterPlayUrl())) {
+                        return Observable.create(emitter -> {
+                            emitter.onNext(chapterBean);
+                            emitter.onComplete();
+                        });
+                    }
+                    return Observable.error(new NullPointerException("play url is null"));
+                })
                 .doAfterNext(chapterBean -> {
                     try {
                         bookShelfBean.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
@@ -251,6 +259,8 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
     @Override
     public boolean retryPlay() {
+        if (!isPrepared) return false;
+
         ChapterBean chapterBean = getDurChapter();
         if (chapterBean != null && mRetryCount < 2) {
             mRetryCount += 1;
