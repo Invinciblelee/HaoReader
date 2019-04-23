@@ -80,7 +80,7 @@ final class JSParser {
     }
 
     void stop() {
-        if (JSV8 != null && JSV8.isWeak()) {
+        if (JSV8 != null) {
             JSV8.release();
             JSV8 = null;
         }
