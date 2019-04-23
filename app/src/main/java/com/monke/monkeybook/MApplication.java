@@ -103,7 +103,7 @@ public class MApplication extends Application {
         //用唯一的ID创建渠道对象
         NotificationChannel firstChannel = new NotificationChannel(channelIdReadAloud,
                 getString(R.string.read_aloud),
-                NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager.IMPORTANCE_HIGH);
         //初始化channel
         firstChannel.enableLights(false);
         firstChannel.enableVibration(false);
@@ -120,7 +120,7 @@ public class MApplication extends Application {
         //用唯一的ID创建渠道对象
         NotificationChannel firstChannel = new NotificationChannel(channelIdAudioBook,
                 getString(R.string.audio_book),
-                NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager.IMPORTANCE_HIGH);
         //初始化channel
         firstChannel.enableLights(false);
         firstChannel.enableVibration(false);

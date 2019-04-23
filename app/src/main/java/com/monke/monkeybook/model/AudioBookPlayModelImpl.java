@@ -15,6 +15,7 @@ import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -26,6 +27,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
+
+    private static final int RETRY_COUNT = 3;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -214,6 +217,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                             .processAudioChapter(bookShelfBean.getTag(), chapterBean);
                 })
                 .timeout(15, TimeUnit.SECONDS)
+                .retry(RETRY_COUNT, throwable -> throwable instanceof TimeoutException)
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (!TextUtils.isEmpty(chapterBean.getDurChapterPlayUrl())) {
                         return Observable.create(emitter -> {
@@ -262,7 +266,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         if (!isPrepared) return false;
 
         ChapterBean chapterBean = getDurChapter();
-        if (chapterBean != null && mRetryCount < 2) {
+        if (chapterBean != null && mRetryCount < RETRY_COUNT) {
             mRetryCount += 1;
             chapterBean.setDurChapterPlayUrl(null);
             playChapter(chapterBean, true);

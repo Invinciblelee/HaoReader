@@ -237,8 +237,8 @@ public class AudioBookPlayService extends Service {
 
     private void onActionStart(Intent intent) {
         running = true;
-        String key = intent.getStringExtra("data_key");
-        BookShelfBean bookShelf = BitIntentDataManager.getInstance().getData(key, null);
+        final String key = intent.getStringExtra("data_key");
+        final BookShelfBean bookShelf = BitIntentDataManager.getInstance().getData(key, null);
         BitIntentDataManager.getInstance().cleanData(key);
         if (bookShelf != null) {
             if (bookShelfBean != null) {
@@ -357,10 +357,10 @@ public class AudioBookPlayService extends Service {
             Logger.d(TAG, "audio error --> " + what + "  " + extra);
             isPrepared = false;
             if (mModel != null && mModel.retryPlay()) {
-                ToastUtils.toast(AudioBookPlayService.this, "播放失败，正在刷新");
+                ToastUtils.toast(AudioBookPlayService.this, "播放失败，正在重试");
             } else {
-                sendWhenError();
                 ToastUtils.toast(AudioBookPlayService.this, "播放失败");
+                sendWhenError();
             }
             return false;
         });
@@ -370,8 +370,8 @@ public class AudioBookPlayService extends Service {
         if (bookShelfBean == null) return;
         Logger.d(TAG, "audio --> restart");
         sendBroadcast(ACTION_ATTACH, AudioPlayInfo.attach(bookShelfBean.getBookInfoBean().getName(), bookShelfBean.getBookInfoBean().getRealCoverUrl()));
-        resumePlay();
         pullAudioInfo();
+        resumePlay();
     }
 
     private void pullAudioInfo() {
@@ -390,6 +390,7 @@ public class AudioBookPlayService extends Service {
 
     private void sendWhenError() {
         isError = true;
+        isPause = true;
         sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
         sendBroadcast(ACTION_PAUSE, AudioPlayInfo.empty());
     }

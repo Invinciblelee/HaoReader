@@ -167,6 +167,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         switch (info.getAction()) {
             case AudioBookPlayService.ACTION_ATTACH:
                 setCoverImage(info.getCover());
+                runningView.setVisibility(View.VISIBLE);
                 break;
             case AudioBookPlayService.ACTION_PULL:
                 setProgress(info.getProgress(), info.getDuration());
@@ -178,7 +179,6 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
                 }
                 break;
             case AudioBookPlayService.ACTION_START:
-                runningView.setVisibility(View.VISIBLE);
                 setCoverImage(info.getCover());
                 setResume();
                 break;
