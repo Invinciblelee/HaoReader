@@ -186,7 +186,6 @@
         <item name="android:windowExitAnimation">@anim/anim_pop_windowslide_out</item>
     </style>
 
-
     <style name="anim_dialog">
         <item name="android:windowEnterAnimation">@anim/moprogress_in</item>
         <item name="android:windowExitAnimation">@anim/moprogress_out</item>

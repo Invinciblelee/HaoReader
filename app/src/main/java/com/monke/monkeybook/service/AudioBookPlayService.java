@@ -18,11 +18,9 @@ import android.widget.RemoteViews;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestFutureTarget;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.Transition;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -581,7 +579,6 @@ public class AudioBookPlayService extends Service {
         final int dimen = DensityUtil.dp2px(this, 128);
         Glide.with(this)
                 .asBitmap()
-                .apply(new RequestOptions())
                 .load(bookShelfBean.getBookInfoBean().getRealCoverUrl())
                 .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
                     @Override

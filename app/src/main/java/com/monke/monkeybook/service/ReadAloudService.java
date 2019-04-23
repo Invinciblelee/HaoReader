@@ -367,7 +367,6 @@ public class ReadAloudService extends Service {
         final int dimen = DensityUtil.dp2px(this, 128);
         Glide.with(this)
                 .asBitmap()
-                .apply(new RequestOptions())
                 .load(cover)
                 .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
                     @Override
