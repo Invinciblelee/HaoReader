@@ -46,7 +46,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
 
     @Override
     List<Element> getList(String rawRule) {
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return Collections.singletonList(getSource());
         }
         return parseList(getSource(), rawRule);
@@ -54,7 +54,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
 
     @Override
     List<Element> parseList(String source, String rawRule) {
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return Collections.singletonList(fromSource(source));
         }
         return parseList(fromSource(source), rawRule);
@@ -66,7 +66,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return "";
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return getStringSource();
         }
 
@@ -79,7 +79,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return "";
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return source;
         }
 
@@ -110,7 +110,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return Collections.emptyList();
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -124,7 +124,7 @@ final class JsoupParser extends SourceParser<Element, Element> {
             return Collections.emptyList();
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return ListUtils.mutableList(source);
         }
 

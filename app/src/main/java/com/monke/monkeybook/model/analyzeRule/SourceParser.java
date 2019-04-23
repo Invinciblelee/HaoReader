@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+
 import java.util.List;
 
 abstract class SourceParser<S, T> {
@@ -7,12 +9,12 @@ abstract class SourceParser<S, T> {
     private S mSource;
     private String mStringSource;
 
-    final void setContent(String source){
+    final void setContent(String source) {
         mStringSource = source;
         mSource = fromSource(source);
     }
 
-    final void setContent(T source){
+    final void setContent(T source) {
         mStringSource = sourceToString(source);
         mSource = fromSource(source);
     }
@@ -21,12 +23,16 @@ abstract class SourceParser<S, T> {
         return mSource;
     }
 
-    final String getStringSource(){
+    final String getStringSource() {
         return mStringSource;
     }
 
-    final boolean empty(){
+    final boolean empty() {
         return mSource == null;
+    }
+
+    final boolean isOuterBody(String rule) {
+        return Patterns.RULE_BODY.endsWith(rule);
     }
 
     abstract String sourceToString(T source);

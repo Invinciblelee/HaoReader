@@ -48,7 +48,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
 
     @Override
     List<Element> getList(String rawRule) {
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             Element element = Jsoup.parse(ensureTableNode(getStringSource()));
             return Collections.singletonList(element);
         }
@@ -57,7 +57,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
 
     @Override
     List<Element> parseList(String source, String rawRule) {
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             Element element = Jsoup.parse(ensureTableNode(source));
             return Collections.singletonList(element);
         }
@@ -88,7 +88,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return Collections.emptyList();
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return ListUtils.mutableList(getStringSource());
         }
 
@@ -101,7 +101,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return Collections.emptyList();
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return ListUtils.mutableList(source);
         }
 
@@ -132,7 +132,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return "";
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return getStringSource();
         }
 
@@ -146,7 +146,7 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
             return "";
         }
 
-        if (Patterns.RULE_BODY.equals(rawRule)) {
+        if (isOuterBody(rawRule)) {
             return source;
         }
 
