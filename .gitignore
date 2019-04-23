@@ -1,5 +1,6 @@
 *.jks
 *.iml
+myBookSource.json
 /.gradle
 /.idea
 .DS_Store
