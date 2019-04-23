@@ -59,16 +59,14 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         final MyViewHolder myViewHolder = (MyViewHolder) holder;
         final SearchBookBean item = searchBooks.get(realPosition);
         Activity activity = activityRef.get();
-        if (!activity.isFinishing()) {
-            Glide.with(activity)
-                    .load(item.getCoverUrl())
-                    .apply(new RequestOptions()
-                            .centerCrop()
-                            .dontAnimate().placeholder(R.drawable.img_cover_default)
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .error(R.drawable.img_cover_default))
-                    .into(myViewHolder.ivCover);
-        }
+        Glide.with(activity)
+                .load(item.getCoverUrl())
+                .apply(new RequestOptions()
+                        .centerCrop()
+                        .dontAnimate().placeholder(R.drawable.img_cover_default)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .error(R.drawable.img_cover_default))
+                .into(myViewHolder.ivCover);
 
         StringBuilder builder = new StringBuilder(item.getName());
         String bookType = item.getBookType();
@@ -172,7 +170,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             } else {
                 //存在
                 for (SearchBookBean temp : newDataS) {
-                    Boolean hasSame = false;
+                    boolean hasSame = false;
                     for (int i = 0, size = copyDataS.size(); i < size; i++) {
                         SearchBookBean searchBook = copyDataS.get(i);
                         if (TextUtils.equals(temp.getBookType(), searchBook.getBookType())
@@ -226,6 +224,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             }
         }
     }
+
 
     public void clearAll() {
         if (searchBooks == null || searchBooks.isEmpty()) {

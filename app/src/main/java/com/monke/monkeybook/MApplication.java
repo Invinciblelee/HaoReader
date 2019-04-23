@@ -2,18 +2,22 @@
 package com.monke.monkeybook;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.view.activity.MainActivity;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import io.reactivex.plugins.RxJavaPlugins;
@@ -73,6 +77,8 @@ public class MApplication extends Application {
 
         boolean nightTheme = AppConfigHelper.get().getPreferences().getBoolean("nightTheme", false);
         AppCompatDelegate.setDefaultNightMode(nightTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+
+        registerActivityCallback();
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -124,5 +130,46 @@ public class MApplication extends Application {
         if (notificationManager != null) {
             notificationManager.createNotificationChannel(firstChannel);
         }
+    }
+
+    private void registerActivityCallback() {
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                if (activity instanceof MainActivity) {
+                    AudioBookPlayService.stop(activity);
+                }
+            }
+        });
     }
 }

@@ -87,4 +87,14 @@
         <item>XPATH</item>
         <item>JSON</item>
     </string-array>
+
+    <string-array name="js_engine_px_title">
+        <item>J2V8-速度</item>
+        <item>Rhino-兼容</item>
+    </string-array>
+
+    <string-array name="js_engine_px_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>

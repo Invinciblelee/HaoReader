@@ -59,7 +59,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchEngineS.clear();
         }
 
-        if(useMy716) {
+        if (useMy716) {
             searchEngineS.add(new SearchEngine(Default716.TAG));
         }
 
@@ -143,7 +143,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return this;
     }
 
-    public SearchBookModel useMy716(boolean useMy716){
+    public SearchBookModel useMy716(boolean useMy716) {
         this.useMy716 = useMy716;
         return this;
     }

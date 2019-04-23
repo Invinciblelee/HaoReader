@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

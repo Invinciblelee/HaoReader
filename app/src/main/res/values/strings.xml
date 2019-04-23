@@ -299,4 +299,5 @@
     <string name="audio_timer">定时关闭</string>
     <string name="close">关闭</string>
     <string name="audio_refresh">刷新</string>
+    <string name="js_engine">JavaScript引擎</string>
 </resources>

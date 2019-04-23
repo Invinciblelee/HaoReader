@@ -5,9 +5,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.model.content.Default716;
+import com.monke.monkeybook.utils.ObjectsCompat;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -290,6 +293,22 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     public void setAddTime(Long addTime) {
         this.addTime = addTime;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof SearchBookBean) {
+            SearchBookBean compare = (SearchBookBean) obj;
+            return TextUtils.equals(compare.bookType, bookType)
+                    && TextUtils.equals(compare.name, name)
+                    && TextUtils.equals(compare.author, author);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectsCompat.hashCode(name) + ObjectsCompat.hashCode(author);
     }
 
     @Override

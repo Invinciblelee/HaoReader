@@ -29,8 +29,8 @@ public class ListUtils {
     }
 
 
-    public static <T> List<T> mutableList(T...a){
-        if(a == null) {
+    public static <T> List<T> mutableList(T... a) {
+        if (a == null) {
             return Collections.emptyList();
         }
         return new ArrayList<>(Arrays.asList(a));

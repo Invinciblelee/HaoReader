@@ -619,12 +619,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        AudioBookPlayService.stop(this);
-    }
-
-    @Override
     public void recreate() {
         super.recreate();
     }
