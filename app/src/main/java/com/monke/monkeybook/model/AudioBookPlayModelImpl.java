@@ -217,7 +217,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                             .processAudioChapter(bookShelfBean.getTag(), chapterBean);
                 })
                 .timeout(15, TimeUnit.SECONDS)
-                .retry(RETRY_COUNT, throwable -> throwable instanceof TimeoutException)
+                .retry(RETRY_COUNT)
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (!TextUtils.isEmpty(chapterBean.getDurChapterPlayUrl())) {
                         return Observable.create(emitter -> {

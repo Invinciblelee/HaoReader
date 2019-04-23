@@ -7,6 +7,7 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -167,7 +168,10 @@ public class MApplication extends Application {
             @Override
             public void onActivityDestroyed(Activity activity) {
                 if (activity instanceof MainActivity) {
-                    AudioBookPlayService.stop(activity);
+                    Intent intent = activity.getIntent();
+                    if(intent != null && !intent.getBooleanExtra("isRecreate", false)) {
+                        AudioBookPlayService.stop(activity);
+                    }
                 }
             }
         });

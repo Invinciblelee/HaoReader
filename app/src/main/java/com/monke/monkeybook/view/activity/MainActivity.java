@@ -126,7 +126,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
         group = getPreferences().getInt("shelfGroup", 0);
         isRecreate = getIntent().getBooleanExtra("isRecreate", false);
-        getIntent().putExtra("isRecreate", true);
+        getIntent().putExtra("isRecreate", false);
     }
 
     @Override
@@ -440,6 +440,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                     restore();
                     break;
                 case R.id.action_night_theme:
+                    getIntent().putExtra("isRecreate", true);
                     swNightTheme.setChecked(!isNightTheme());
                     setNightTheme(!isNightTheme());
                     break;

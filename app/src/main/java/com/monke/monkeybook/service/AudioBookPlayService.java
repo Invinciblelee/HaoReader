@@ -160,6 +160,7 @@ public class AudioBookPlayService extends Service {
     }
 
     public static void stop(Context context) {
+        if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_STOP);
         context.startService(intent);
@@ -682,6 +683,16 @@ public class AudioBookPlayService extends Service {
         if (bookShelfBean != null && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
             bookShelfBean = bookShelf;
             mModel.updateBookShelf(bookShelfBean);
+        }
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.UPDATE_BOOK_INFO)})
+    public void updateBookInfo(BookShelfBean bookShelf) {
+        if (bookShelfBean != null && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
+            bookShelfBean.setBookInfoBean(bookShelf.getBookInfoBean());
+            mModel.updateBookShelf(bookShelfBean);
+            sendBroadcast(ACTION_ATTACH, AudioPlayInfo.attach(bookShelfBean.getDurChapterName(), bookShelfBean.getBookInfoBean().getRealCoverUrl()));
         }
     }
 
