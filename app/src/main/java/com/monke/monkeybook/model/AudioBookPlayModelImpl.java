@@ -230,7 +230,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     return WebBookModelImpl.getInstance()
                             .processAudioChapter(bookShelfBean.getTag(), chapterBean);
                 })
-                .timeout(15, TimeUnit.SECONDS)
+                .timeout(20, TimeUnit.SECONDS)
                 .retry(RETRY_COUNT)
                 .doAfterNext(chapterBean -> {
                     try {

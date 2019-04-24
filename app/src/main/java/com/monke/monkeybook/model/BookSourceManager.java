@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -89,14 +90,10 @@ public class BookSourceManager extends BaseModelImpl {
                 .orderRaw(getBookSourceSort())
                 .list();
 
-        selectedBookSource = new ArrayList<>();
-        if (allBookSource != null) {
-            for (BookSourceBean bookSourceBean : allBookSource) {
-                if (bookSourceBean.getEnable()) {
-                    selectedBookSource.add(bookSourceBean);
-                }
-            }
-        }
+        selectedBookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .where(BookSourceBeanDao.Properties.Enable.eq(true))
+                .orderRaw(getBookSourceSort())
+                .list();
 
         upGroupList();
     }
@@ -183,35 +180,33 @@ public class BookSourceManager extends BaseModelImpl {
     }
 
     public Observable<Boolean> importBookSourceO(String json) {
-        return Observable.create(e -> {
-            try {
-                List<BookSourceBean> bookSourceBeans = new Gson().fromJson(json, new TypeToken<List<BookSourceBean>>() {
-                }.getType());
-                int index = 0;
-                for (BookSourceBean bookSourceBean : bookSourceBeans) {
-                    if (Objects.equals(bookSourceBean.getBookSourceGroup(), "删除")) {
+        return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            List<BookSourceBean> bookSourceBeans = new Gson().fromJson(json, new TypeToken<List<BookSourceBean>>() {
+            }.getType());
+            int index = 0;
+            for (BookSourceBean bookSourceBean : bookSourceBeans) {
+                if (Objects.equals(bookSourceBean.getBookSourceGroup(), "删除")) {
+                    DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                            .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl()))
+                            .buildDelete().executeDeleteWithoutDetachingEntities();
+                } else {
+                    try {
+                        new URL(bookSourceBean.getBookSourceUrl());
+                        bookSourceBean.setSerialNumber(++index);
+                        addBookSource(bookSourceBean);
+                    } catch (Exception exception) {
                         DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                                 .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl()))
                                 .buildDelete().executeDeleteWithoutDetachingEntities();
-                    } else {
-                        try {
-                            new URL(bookSourceBean.getBookSourceUrl());
-                            bookSourceBean.setSerialNumber(++index);
-                            addBookSource(bookSourceBean);
-                        } catch (Exception exception) {
-                            DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                                    .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl()))
-                                    .buildDelete().executeDeleteWithoutDetachingEntities();
-                        }
                     }
                 }
-                refreshBookSource();
-                e.onNext(index > 0);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                e.onNext(false);
             }
+            e.onNext(index > 0);
             e.onComplete();
+        }).doOnNext(aBoolean -> {
+            if (aBoolean) {
+                refreshBookSource();
+            }
         });
     }
 }
