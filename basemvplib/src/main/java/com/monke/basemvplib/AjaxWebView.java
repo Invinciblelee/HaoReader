@@ -248,6 +248,7 @@ public class AjaxWebView {
                 view.evaluateJavascript(params.javaScript, null);
                 params.clearJavaScript();
             } else {
+                callback.onError(new NullPointerException("JavaScript can not be null"));
                 clearWebView(view);
             }
         }

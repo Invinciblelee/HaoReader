@@ -1,7 +1,8 @@
 package com.monke.monkeybook.bean;
 
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FileHelp;
@@ -90,7 +91,8 @@ public class RipeFile implements Serializable {
 
     public int getChildCount() {
         if (childCount == null) {
-            childCount = file.list().length;
+            String[] files = file.list();
+            childCount = files == null ? 0 : files.length;
         }
         return childCount;
     }

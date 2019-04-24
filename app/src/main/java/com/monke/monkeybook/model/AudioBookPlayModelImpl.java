@@ -15,7 +15,6 @@ import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -28,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
-    private static final int RETRY_COUNT = 3;
+    private static final int RETRY_COUNT = 2;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -129,6 +128,21 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     @Override
+    public void addToShelf() {
+        if (bookShelfBean != null) {
+            saveBookShelf(bookShelfBean, true);
+        }
+    }
+
+    @Override
+    public boolean inBookShelf() {
+        if (bookShelfBean == null) {
+            return false;
+        }
+        return BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl());
+    }
+
+    @Override
     public void playNext() {
         if (!isPrepared) return;
 
@@ -218,15 +232,6 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 })
                 .timeout(15, TimeUnit.SECONDS)
                 .retry(RETRY_COUNT)
-                .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
-                    if (!TextUtils.isEmpty(chapterBean.getDurChapterPlayUrl())) {
-                        return Observable.create(emitter -> {
-                            emitter.onNext(chapterBean);
-                            emitter.onComplete();
-                        });
-                    }
-                    return Observable.error(new NullPointerException("play url is null"));
-                })
                 .doAfterNext(chapterBean -> {
                     try {
                         bookShelfBean.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
@@ -300,10 +305,14 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     private void saveBookShelf(BookShelfBean bookShelfBean) {
+        saveBookShelf(bookShelfBean, false);
+    }
+
+    private void saveBookShelf(BookShelfBean bookShelfBean, boolean forceAdd) {
         Observable.create((ObservableOnSubscribe<BookShelfBean>) emitter -> {
             bookShelfBean.setFinalDate(System.currentTimeMillis());
             bookShelfBean.setHasUpdate(false);
-            if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+            if (forceAdd || BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
                 BookshelfHelp.saveBookToShelf(bookShelfBean);
             }
             emitter.onNext(bookShelfBean);

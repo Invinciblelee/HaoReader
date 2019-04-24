@@ -25,16 +25,16 @@ public class ReplaceRuleManager extends BaseModelImpl {
     private List<ReplaceRuleBean> replaceRuleBeansEnabled;
     private List<ReplaceRuleBean> replaceRuleBeansAll;
 
-    private ReplaceRuleManager(){
+    private ReplaceRuleManager() {
 
     }
 
     private volatile static ReplaceRuleManager mInstance;
 
-    public static ReplaceRuleManager getInstance(){
-        if(mInstance == null){
-            synchronized (ReplaceRuleManager.class){
-                if(mInstance == null){
+    public static ReplaceRuleManager getInstance() {
+        if (mInstance == null) {
+            synchronized (ReplaceRuleManager.class) {
+                if (mInstance == null) {
                     mInstance = new ReplaceRuleManager();
                 }
             }
@@ -103,11 +103,15 @@ public class ReplaceRuleManager extends BaseModelImpl {
     }
 
     public Observable<Boolean> importReplaceRuleFromWww(URL url) {
-        return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
-                .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
-                .flatMap(rsp -> importReplaceRuleO(rsp.body()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        try {
+            return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
+                    .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
+                    .flatMap(rsp -> importReplaceRuleO(rsp.body()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread());
+        } catch (Exception e) {
+            return Observable.error(e);
+        }
     }
 
     private Observable<Boolean> importReplaceRuleO(String json) {

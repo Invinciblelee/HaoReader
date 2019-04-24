@@ -31,11 +31,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestFutureTarget;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.Transition;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
@@ -73,7 +71,7 @@ public class ReadAloudService extends Service {
     private static final String TAG = ReadAloudService.class.getSimpleName();
     private static final String ActionReadActivity = "readActivity";
     private static final String ActionSetTimer = "updateTimer";
-    private static final int notificationId = 3222;
+    private static final int notificationId = 19901144;
     private static final long MEDIA_SESSION_ACTIONS = PlaybackStateCompat.ACTION_PLAY
             | PlaybackStateCompat.ACTION_PAUSE
             | PlaybackStateCompat.ACTION_PLAY_PAUSE
@@ -426,6 +424,7 @@ public class ReadAloudService extends Service {
                 .setContentTitle(contentTitle)
                 .setContentText(text)
                 .setOngoing(true)
+                .setWhen(System.currentTimeMillis())
                 .setCustomBigContentView(remoteViews)
                 .setContentIntent(getReadBookActivityPendingIntent(ActionReadActivity));
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);

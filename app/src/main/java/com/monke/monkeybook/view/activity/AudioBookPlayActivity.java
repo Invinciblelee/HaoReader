@@ -29,10 +29,12 @@ import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
+import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
+import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,14 +78,14 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
     private ValueAnimator animator;
 
-    private boolean inBookShelf;
-
     private AudioChapterPop audioChapterPop;
     private AudioTimerPop audioTimerPop;
+    private CheckAddShelfPop checkAddShelfPop;
 
-    public static void startThis(MBaseActivity activity, View transitionView, BookShelfBean bookShelf, boolean inBookShelf) {
+    private String noteUrl;
+
+    public static void startThis(MBaseActivity activity, View transitionView, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, AudioBookPlayActivity.class);
-        intent.putExtra("inBookShelf", inBookShelf);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf == null ? null : bookShelf.copy());
@@ -119,7 +121,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
     @Override
     protected void initData() {
-        inBookShelf = getIntent().getBooleanExtra("inBookShelf", true);
     }
 
     @Override
@@ -177,13 +178,18 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         super.onDestroy();
         stopRotationAnim();
         RxBus.get().unregister(this);
-        if (!inBookShelf) {
-            AudioBookPlayService.stop(this);
-        }
+        AudioBookPlayService.stopIfNotShelfBook(this);
     }
 
     @Override
     public void onBackPressed() {
+        if (noteUrl != null) {
+            if (!BookshelfHelp.isInBookShelf(noteUrl)) {
+                showAddShelfPop(tvTitle.getText().toString());
+                return;
+            }
+        }
+
         if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
             supportFinishAfterTransition();
         } else {
@@ -233,6 +239,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         String action = info.getAction();
         switch (action) {
             case AudioBookPlayService.ACTION_ATTACH:
+                noteUrl = info.getNoteUrl();
                 setTitle(info.getName());
                 setCoverImage(info.getCover());
                 break;
@@ -374,6 +381,26 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 .into(ivBlurCover);
     }
 
+    private void showAddShelfPop(String bookName) {
+        if (checkAddShelfPop == null) {
+            checkAddShelfPop = new CheckAddShelfPop(this, bookName,
+                    new CheckAddShelfPop.OnItemClickListener() {
+                        @Override
+                        public void clickExit() {
+                            finish();
+                        }
+
+                        @Override
+                        public void clickAddShelf() {
+                            AudioBookPlayService.addShelf(AudioBookPlayActivity.this);
+                            checkAddShelfPop.dismiss();
+                        }
+                    }, true);
+        }
+        if (!checkAddShelfPop.isShowing()) {
+            checkAddShelfPop.showAtLocation(ivBlurCover, Gravity.CENTER, 0, 0);
+        }
+    }
 
     private void fromIntent(Intent intent) {
         boolean showTimer = intent.getBooleanExtra("showTimer", false);

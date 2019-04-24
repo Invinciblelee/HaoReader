@@ -64,8 +64,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:progress="50"
             android:progressBackgroundTint="@color/dark_white"
-            android:progressTint="@color/colorAccentTranslucent"
+            android:progressTint="@color/colorPrimaryTranslucent"
             android:thumb="@drawable/shape_thumb" />
 
         <androidx.appcompat.widget.AppCompatTextView

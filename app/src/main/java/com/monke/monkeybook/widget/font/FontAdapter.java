@@ -2,23 +2,26 @@ package com.monke.monkeybook.widget.font;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.ToastUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
-    private List<File> fileList = new ArrayList<>();
+    private final List<File> fileList = new ArrayList<>();
     private FontSelector.OnThisListener thisListener;
     private Context context;
     private String selectPath;
@@ -38,17 +41,26 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         if (fileList.size() > 0) {
-            Typeface typeface = Typeface.createFromFile(fileList.get(position));
+            final int realPosition = holder.getLayoutPosition();
+            final File file = fileList.get(realPosition);
+            if (fileNotExists(file, realPosition)) {
+                return;
+            }
+            Typeface typeface = Typeface.createFromFile(file);
             holder.tvFont.setTypeface(typeface);
             holder.tvFont.setText(fileList.get(position).getName());
-            if (fileList.get(position).getAbsolutePath().equals(selectPath)) {
+            if (TextUtils.equals(file.getAbsolutePath(), selectPath)) {
                 holder.ivChecked.setChecked(true);
             } else {
                 holder.ivChecked.setChecked(false);
             }
             holder.itemView.setOnClickListener(view -> {
+                if (fileNotExists(file, realPosition)) {
+                    ToastUtils.toast(context, "字体文件不存在");
+                    return;
+                }
                 if (thisListener != null) {
-                    thisListener.setFontPath(fileList.get(position).getAbsolutePath());
+                    thisListener.setFontPath(file.getAbsolutePath());
                 }
             });
         } else {
@@ -61,6 +73,15 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
     @Override
     public int getItemCount() {
         return fileList.size() == 0 ? 1 : fileList.size();
+    }
+
+    private boolean fileNotExists(File file, int position) {
+        if (!file.exists()) {
+            fileList.remove(file);
+            notifyItemRemoved(position);
+            return true;
+        }
+        return false;
     }
 
     public void upData(File[] files) {

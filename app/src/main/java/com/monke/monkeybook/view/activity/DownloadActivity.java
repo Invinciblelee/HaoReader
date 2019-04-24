@@ -1,27 +1,27 @@
 package com.monke.monkeybook.view.activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
+import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
-import com.monke.monkeybook.bean.DownloadBookBean;
+import com.monke.monkeybook.bean.DownloadInfo;
+import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.DownloadService;
 import com.monke.monkeybook.view.adapter.DownloadAdapter;
 import com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,8 +41,6 @@ public class DownloadActivity extends MBaseActivity {
 
     private DownloadAdapter adapter;
 
-    private DownloadReceiver receiver;
-
     public static void startThis(Context context) {
         context.startActivity(new Intent(context, DownloadActivity.class));
     }
@@ -56,10 +54,8 @@ public class DownloadActivity extends MBaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-        }
         super.onDestroy();
+        RxBus.get().unregister(this);
     }
 
     /**
@@ -79,15 +75,6 @@ public class DownloadActivity extends MBaseActivity {
         ButterKnife.bind(this);
         this.setSupportActionBar(toolbar);
         setupActionBar();
-
-        receiver = new DownloadReceiver(this);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(addDownloadAction);
-        filter.addAction(removeDownloadAction);
-        filter.addAction(progressDownloadAction);
-        filter.addAction(obtainDownloadListAction);
-        filter.addAction(finishDownloadAction);
-        registerReceiver(receiver, filter);
     }
 
     /**
@@ -104,8 +91,6 @@ public class DownloadActivity extends MBaseActivity {
         adapter = new DownloadAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(null);
-
-        DownloadService.obtainDownloadList(this);
     }
 
     //设置ToolBar
@@ -115,6 +100,13 @@ public class DownloadActivity extends MBaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.download_offline);
         }
+    }
+
+    @Override
+    protected void firstRequest() {
+        RxBus.get().register(this);
+
+        DownloadService.obtainDownloadList(this);
     }
 
     // 添加菜单
@@ -139,45 +131,27 @@ public class DownloadActivity extends MBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static class DownloadReceiver extends BroadcastReceiver {
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.BOOK_DOWNLOAD)})
+    public void onDownloadEvent(DownloadInfo downloadInfo) {
+        String action = downloadInfo.getAction();
+        switch (action) {
+            case addDownloadAction:
+                adapter.addData(downloadInfo.getDownloadBookBean());
+                break;
+            case removeDownloadAction:
+                adapter.removeData(downloadInfo.getDownloadBookBean());
+                break;
+            case progressDownloadAction:
+                adapter.upData(downloadInfo.getDownloadBookBean());
+                break;
+            case finishDownloadAction:
+                adapter.upDataS(null);
+                break;
+            case obtainDownloadListAction:
+                adapter.upDataS(downloadInfo.getDownloadBookBeans());
+                break;
 
-        WeakReference<DownloadActivity> ref;
-
-        public DownloadReceiver(DownloadActivity activity) {
-            this.ref = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            DownloadAdapter adapter = ref.get().adapter;
-            if (adapter == null || intent == null) {
-                return;
-            }
-            String action = intent.getAction();
-            if (action != null) {
-                switch (action) {
-                    case addDownloadAction:
-                        DownloadBookBean downloadBook = intent.getParcelableExtra("downloadBook");
-                        adapter.addData(downloadBook);
-                        break;
-                    case removeDownloadAction:
-                        downloadBook = intent.getParcelableExtra("downloadBook");
-                        adapter.removeData(downloadBook);
-                        break;
-                    case progressDownloadAction:
-                        downloadBook = intent.getParcelableExtra("downloadBook");
-                        adapter.upData(downloadBook);
-                        break;
-                    case finishDownloadAction:
-                        adapter.upDataS(null);
-                        break;
-                    case obtainDownloadListAction:
-                        ArrayList<DownloadBookBean> downloadBooks = intent.getParcelableArrayListExtra("downloadBooks");
-                        adapter.upDataS(downloadBooks);
-                        break;
-
-                }
-            }
         }
     }
+
 }

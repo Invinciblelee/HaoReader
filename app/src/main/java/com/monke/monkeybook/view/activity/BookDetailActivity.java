@@ -397,7 +397,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf(), mPresenter.inBookShelf());
             finish();
         } else if (TextUtils.equals(bookType, BookType.AUDIO)) {
-            AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf(), mPresenter.inBookShelf());
+            AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf());
             finish();
         } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
 

@@ -2,12 +2,13 @@
 package com.monke.monkeybook.view.popupwindow;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.ScreenUtils;
@@ -15,6 +16,7 @@ import com.monke.monkeybook.utils.ScreenUtils;
 public class CheckAddShelfPop extends PopupWindow {
     private Context mContext;
     private View view;
+    private boolean isAudioBook;
 
     public interface OnItemClickListener {
         void clickExit();
@@ -25,9 +27,10 @@ public class CheckAddShelfPop extends PopupWindow {
     private OnItemClickListener itemClick;
     private String bookName;
 
-    public CheckAddShelfPop(Context context, @NonNull String bookName, @NonNull OnItemClickListener itemClick) {
+    public CheckAddShelfPop(Context context, @NonNull String bookName, @NonNull OnItemClickListener itemClick, boolean isAudioBook) {
         super(ScreenUtils.dpToPx(300f), ViewGroup.LayoutParams.WRAP_CONTENT);
         mContext = context;
+        this.isAudioBook = isAudioBook;
         this.bookName = bookName;
         this.itemClick = itemClick;
         view = LayoutInflater.from(mContext).inflate(R.layout.moprogress_dialog_two, null);
@@ -44,7 +47,7 @@ public class CheckAddShelfPop extends PopupWindow {
         TextView tvBookName = view.findViewById(R.id.tv_msg);
         tvBookName.setText(mContext.getString(R.string.check_add_bookshelf, bookName));
         TextView tvExit = view.findViewById(R.id.tv_cancel);
-        tvExit.setText("退出阅读");
+        tvExit.setText(isAudioBook ? "退出听书" : "退出阅读");
         tvExit.setOnClickListener(v -> {
             dismiss();
             itemClick.clickExit();

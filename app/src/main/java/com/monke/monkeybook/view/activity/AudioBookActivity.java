@@ -102,17 +102,17 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
 
     @Override
     protected void bindEvent() {
-        ivCover.setOnClickListener(v -> AudioBookPlayActivity.startThis(AudioBookActivity.this, v, null, true));
+        ivCover.setOnClickListener(v -> AudioBookPlayActivity.startThis(AudioBookActivity.this, v, null));
 
 
         btnPause.setOnClickListener(v -> {
-            AudioBookPlayActivity.startThis(this, ivCover, null, true);
+            AudioBookPlayActivity.startThis(this, ivCover, null);
         });
 
         bookListAdapter.setItemClickListener(new OnBookItemClickListenerTwo() {
             @Override
             public void onClick(View view, BookShelfBean bookShelf) {
-                AudioBookPlayActivity.startThis(AudioBookActivity.this, ivCover, bookShelf, true);
+                AudioBookPlayActivity.startThis(AudioBookActivity.this, ivCover, bookShelf);
             }
 
             @Override

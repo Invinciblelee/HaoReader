@@ -45,10 +45,10 @@ public class BookSourceManager extends BaseModelImpl {
 
     private volatile static BookSourceManager mInstance;
 
-    public static BookSourceManager getInstance(){
-        if(mInstance == null){
-            synchronized (BookSourceManager.class){
-                if(mInstance == null){
+    public static BookSourceManager getInstance() {
+        if (mInstance == null) {
+            synchronized (BookSourceManager.class) {
+                if (mInstance == null) {
                     mInstance = new BookSourceManager();
                 }
             }
@@ -139,7 +139,7 @@ public class BookSourceManager extends BaseModelImpl {
             bookSourceBean.setBookSourceType(BookType.TEXT);
         }
 
-        if(!Arrays.asList(RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())){
+        if (!Arrays.asList(RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())) {
             bookSourceBean.setBookSourceRuleType(RuleType.DEFAULT);
         }
 
@@ -171,11 +171,15 @@ public class BookSourceManager extends BaseModelImpl {
     }
 
     public Observable<Boolean> importSourceFromWww(URL url) {
-        return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
-                .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
-                .flatMap(rsp -> importBookSourceO(rsp.body()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        try {
+            return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
+                    .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
+                    .flatMap(rsp -> importBookSourceO(rsp.body()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread());
+        } catch (Exception e) {
+            return Observable.error(e);
+        }
     }
 
     public Observable<Boolean> importBookSourceO(String json) {

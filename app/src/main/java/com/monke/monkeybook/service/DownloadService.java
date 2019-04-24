@@ -13,13 +13,15 @@ import android.util.SparseArray;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 
+import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
+import com.monke.monkeybook.bean.DownloadInfo;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.impl.IDownloadTask;
 import com.monke.monkeybook.model.task.DownloadTaskImpl;
 import com.monke.monkeybook.utils.ToastUtils;
@@ -248,15 +250,13 @@ public class DownloadService extends Service {
 
 
     private void sendUpDownloadBook(String action, DownloadBookBean downloadBook) {
-        Intent intent = new Intent(action);
-        intent.putExtra("downloadBook", downloadBook);
-        sendBroadcast(intent);
+        DownloadInfo downloadInfo = new DownloadInfo(action, downloadBook);
+        RxBus.get().post(RxBusTag.BOOK_DOWNLOAD, downloadInfo);
     }
 
     private void sendUpDownloadBooks(ArrayList<DownloadBookBean> downloadBooks) {
-        Intent intent = new Intent(obtainDownloadListAction);
-        intent.putParcelableArrayListExtra("downloadBooks", downloadBooks);
-        sendBroadcast(intent);
+        DownloadInfo downloadInfo = new DownloadInfo(obtainDownloadListAction, downloadBooks);
+        RxBus.get().post(RxBusTag.BOOK_DOWNLOAD, downloadInfo);
     }
 
     private void toast(String msg) {
@@ -293,14 +293,13 @@ public class DownloadService extends Service {
                 .setContentTitle("正在下载：" + bookName)
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(notificationId, downloadChapterBean.getNoteUrl()));
         //发送通知
         managerCompat.notify(notificationId, builder.build());
     }
 
     private void finishSelf() {
-        sendBroadcast(new Intent(finishDownloadAction));
+        RxBus.get().post(RxBusTag.BOOK_DOWNLOAD, new DownloadInfo(finishDownloadAction));
         stopSelf();
     }
 

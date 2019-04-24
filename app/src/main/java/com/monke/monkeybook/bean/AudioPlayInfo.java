@@ -15,6 +15,7 @@ public class AudioPlayInfo {
     private ChapterBean durChapter;
     private String name;
     private String cover;
+    private String noteUrl;
     private List<ChapterBean> chapterBeans;
 
     private boolean loading;
@@ -110,6 +111,14 @@ public class AudioPlayInfo {
         this.name = name;
     }
 
+    public String getNoteUrl() {
+        return noteUrl;
+    }
+
+    public void setNoteUrl(String noteUrl) {
+        this.noteUrl = noteUrl;
+    }
+
     public boolean isLoading() {
         return loading;
     }
@@ -118,10 +127,11 @@ public class AudioPlayInfo {
         this.loading = loading;
     }
 
-    public static AudioPlayInfo attach(String name, String cover) {
+    public static AudioPlayInfo attach(String name, String cover, String noteUrl) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setName(name);
         info.setCover(cover);
+        info.setNoteUrl(noteUrl);
         return info;
     }
 

@@ -43,7 +43,7 @@ import io.reactivex.schedulers.Schedulers;
 import static com.monke.monkeybook.help.RxBusTag.CHECK_SOURCE_STATE;
 
 public class CheckSourceService extends Service {
-    private static final int notificationId = 3333;
+    private static final int notificationId = 19901133;
     public static final String ActionStartService = "startService";
     public static final String ActionDoneService = "doneService";
     private static final String ActionOpenActivity = "openActivity";
@@ -131,7 +131,6 @@ public class CheckSourceService extends Service {
                 .setContentIntent(getActivityPendingIntent(ActionOpenActivity));
         builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getThisServicePendingIntent(ActionDoneService));
         builder.setProgress(bookSourceBeanList.size(), state, false);
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         Notification notification = builder.build();
         startForeground(notificationId, notification);
     }

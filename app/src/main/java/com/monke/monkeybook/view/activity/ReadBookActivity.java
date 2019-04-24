@@ -1432,7 +1432,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                                 mPresenter.addToShelf(null);
                                 checkAddShelfPop.dismiss();
                             }
-                        });
+                        }, false);
             }
             if (!checkAddShelfPop.isShowing()) {
                 checkAddShelfPop.showAtLocation(flContent, Gravity.CENTER, 0, 0);

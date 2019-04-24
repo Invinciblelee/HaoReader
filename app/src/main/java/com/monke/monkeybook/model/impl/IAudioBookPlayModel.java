@@ -11,6 +11,10 @@ public interface IAudioBookPlayModel {
 
     void updateBookShelf(BookShelfBean bookShelfBean);
 
+    void addToShelf();
+
+    boolean inBookShelf();
+
     void playChapter(ChapterBean chapter, boolean reset);
 
     boolean retryPlay();
