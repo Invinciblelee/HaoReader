@@ -72,6 +72,7 @@ public class AjaxWebView {
         settings.setUserAgentString(userAgent);
         settings.setBlockNetworkImage(true);
         settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         return webView;
     }
@@ -204,6 +205,7 @@ public class AjaxWebView {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed();
+            super.onReceivedSslError(view, handler, error);
         }
     }
 
@@ -252,6 +254,7 @@ public class AjaxWebView {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed();
+            super.onReceivedSslError(view, handler, error);
         }
 
         @Override

@@ -433,6 +433,7 @@ public class AudioBookPlayService extends Service {
 
     private void resetPlay() {
         if (mModel != null) {
+            mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
 
@@ -543,7 +544,9 @@ public class AudioBookPlayService extends Service {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
+            Logger.e(TAG, "startPlay", e);
             ToastUtils.toast(this, "播放失败");
+            sendWhenError();
         }
     }
 
