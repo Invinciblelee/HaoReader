@@ -7,7 +7,7 @@ public class XPathAnalyzer extends OutAnalyzer<JXDocument, Element> {
 
     private XPathParser mParser;
     private XPathPresenter mPresenter;
-    private XJsoupContentDelegate mDelegate;
+    private ContentDelegate mDelegate;
 
 
     @Override
@@ -29,7 +29,7 @@ public class XPathAnalyzer extends OutAnalyzer<JXDocument, Element> {
     @Override
     public ContentDelegate getDelegate() {
         if (mDelegate == null) {
-            mDelegate = new XJsoupContentDelegate(this);
+            mDelegate = new ContentDelegateImpl(this);
         }
         return mDelegate;
     }

@@ -25,4 +25,5 @@ public class RxBusTag {
     public final static String OPEN_CHAPTER = "openChapter";
     public final static String AUDIO_PLAY = "audioPlay";
     public final static String BOOK_DOWNLOAD = "bookDownload";
+    public final static String CLEAN_BOOK_CACHE = "CLEAN_BOOK_CACHE";
 }

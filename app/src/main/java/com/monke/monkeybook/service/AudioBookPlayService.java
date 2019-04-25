@@ -2,15 +2,21 @@ package com.monke.monkeybook.service;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
@@ -67,6 +73,14 @@ public class AudioBookPlayService extends Service {
     public static final String ACTION_ADD_SHELF = "ACTION_ADD_SHELF";
     public static final String ACTION_STOP_NOT_IN_SHELF = "ACTION_STOP_NOT_IN_SHELF";
 
+    private static final long MEDIA_SESSION_ACTIONS = PlaybackStateCompat.ACTION_PLAY
+            | PlaybackStateCompat.ACTION_PAUSE
+            | PlaybackStateCompat.ACTION_PLAY_PAUSE
+            | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+            | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+            | PlaybackStateCompat.ACTION_STOP
+            | PlaybackStateCompat.ACTION_SEEK_TO;
+
     private static final int notificationId = 19901122;
 
     public static boolean running;
@@ -76,6 +90,9 @@ public class AudioBookPlayService extends Service {
     private final MediaPlayer mediaPlayer = new MediaPlayer();
 
     private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private MediaSessionCompat mediaSessionCompat;
+    private BroadcastReceiver broadcastReceiver;
 
     private boolean isPrepared;
     private boolean isPause;
@@ -170,8 +187,7 @@ public class AudioBookPlayService extends Service {
     public static void stop(Context context) {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
-        intent.setAction(ACTION_STOP);
-        context.startService(intent);
+        context.stopService(intent);
     }
 
     public static void stopIfNotShelfBook(Context context) {
@@ -193,6 +209,10 @@ public class AudioBookPlayService extends Service {
         RxBus.get().register(this);
         running = true;
         initMediaPlayer();
+        initMediaSession();
+        initBroadcastReceiver();
+        updateMediaSessionPlaybackState();
+        updateNotification();
     }
 
     @Override
@@ -272,7 +292,7 @@ public class AudioBookPlayService extends Service {
         BitIntentDataManager.getInstance().cleanData(key);
         if (bookShelf != null) {
             if (bookShelfBean != null) {
-                if (TextUtils.equals(bookShelf.getNoteUrl(), bookShelfBean.getNoteUrl())) {
+                if (!bookShelfBean.realChapterListEmpty() && TextUtils.equals(bookShelf.getNoteUrl(), bookShelfBean.getNoteUrl())) {
                     restart();
                     return;
                 }
@@ -364,7 +384,6 @@ public class AudioBookPlayService extends Service {
 
             cancelProgressTimer();
             setProgressTimer();
-
             sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
         });
         mediaPlayer.setOnCompletionListener(mp -> {
@@ -394,6 +413,52 @@ public class AudioBookPlayService extends Service {
             }
             return false;
         });
+    }
+
+    /**
+     * 初始化MediaSession
+     */
+    private void initMediaSession() {
+        ComponentName mComponent = new ComponentName(getPackageName(), MediaButtonIntentReceiver.class.getName());
+        Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        mediaButtonIntent.setComponent(mComponent);
+        PendingIntent mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(this, 0,
+                mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        mediaSessionCompat = new MediaSessionCompat(this, TAG, mComponent, mediaButtonReceiverPendingIntent);
+        mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+                | MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
+        mediaSessionCompat.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+                return MediaButtonIntentReceiver.handleIntent(mediaButtonEvent);
+            }
+        });
+        mediaSessionCompat.setMediaButtonReceiver(mediaButtonReceiverPendingIntent);
+        mediaSessionCompat.setActive(true);
+    }
+
+    private void initBroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(action)) {
+                    pausePlay();
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    private void updateMediaSessionPlaybackState() {
+        mediaSessionCompat.setPlaybackState(
+                new PlaybackStateCompat.Builder()
+                        .setActions(MEDIA_SESSION_ACTIONS)
+                        .setState(isPause ? PlaybackStateCompat.STATE_PAUSED : PlaybackStateCompat.STATE_PLAYING,
+                                progress, 1)
+                        .build());
     }
 
     private void restart() {
@@ -489,6 +554,7 @@ public class AudioBookPlayService extends Service {
             sendBroadcast(ACTION_RESUME, AudioPlayInfo.empty());
         }
         updateNotification();
+        updateMediaSessionPlaybackState();
     }
 
     private void pausePlay() {
@@ -548,10 +614,6 @@ public class AudioBookPlayService extends Service {
     }
 
     private void stopPlay() {
-        if (mModel != null) {
-            mModel.saveProgress(progress, duration);
-        }
-        sendBroadcast(ACTION_STOP, AudioPlayInfo.empty());
         stopSelf();
 
         running = false;
@@ -614,14 +676,11 @@ public class AudioBookPlayService extends Service {
     }
 
     private void updateNotification() {
-        if (bookShelfBean == null) {
-            return;
-        }
-
+        final String coverUrl = bookShelfBean == null ? null : bookShelfBean.getBookInfoBean().getRealCoverUrl();
         final int dimen = DensityUtil.dp2px(this, 128);
         Glide.with(this)
                 .asBitmap()
-                .load(bookShelfBean.getBookInfoBean().getRealCoverUrl())
+                .load(coverUrl)
                 .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
                     @Override
                     public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -638,12 +697,13 @@ public class AudioBookPlayService extends Service {
 
     private synchronized void showNotification(Bitmap cover) {
         final String contentTitle;
+        final String name = bookShelfBean == null ? getString(R.string.app_name) : bookShelfBean.getBookInfoBean().getName();
         if (timerUntilFinish > 0) {
-            contentTitle = String.format(Locale.getDefault(), "(%d分钟)%s", timerUntilFinish, bookShelfBean.getBookInfoBean().getName());
+            contentTitle = String.format(Locale.getDefault(), "(%d分钟)%s", timerUntilFinish, name);
         } else {
-            contentTitle = bookShelfBean.getBookInfoBean().getName();
+            contentTitle = name;
         }
-        final String contentText = bookShelfBean.getDurChapterName();
+        final String contentText = bookShelfBean == null ? null : bookShelfBean.getDurChapterName();
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.layout_audio_notification);
         remoteViews.setTextViewText(R.id.tv_title, contentTitle);
         remoteViews.setTextViewText(R.id.tv_content, TextUtils.isEmpty(contentText) ? "即将为您播放" : contentText);
@@ -657,7 +717,7 @@ public class AudioBookPlayService extends Service {
 
         remoteViews.setOnClickPendingIntent(R.id.btn_previous, getThisServicePendingIntent(ACTION_PREVIOUS));
         remoteViews.setOnClickPendingIntent(R.id.btn_next, getThisServicePendingIntent(ACTION_NEXT));
-        remoteViews.setOnClickPendingIntent(R.id.btn_timer, getAudioActivityPendingIntent(true));
+        remoteViews.setOnClickPendingIntent(R.id.btn_stop, getThisServicePendingIntent(ACTION_STOP));
 
         remoteViews.setImageViewBitmap(R.id.iv_cover, cover);
 
@@ -669,7 +729,7 @@ public class AudioBookPlayService extends Service {
                 .setOngoing(true)
                 .setWhen(System.currentTimeMillis())
                 .setCustomBigContentView(remoteViews)
-                .setContentIntent(getAudioActivityPendingIntent(false));
+                .setContentIntent(getAudioActivityPendingIntent());
         startForeground(notificationId, builder.build());
     }
 
@@ -679,9 +739,8 @@ public class AudioBookPlayService extends Service {
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private PendingIntent getAudioActivityPendingIntent(boolean showTimer) {
+    private PendingIntent getAudioActivityPendingIntent() {
         Intent intent = new Intent(this, AudioBookPlayActivity.class);
-        intent.putExtra("showTimer", showTimer);
         return PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -696,6 +755,14 @@ public class AudioBookPlayService extends Service {
         }
     }
 
+    private void unregisterMediaButton() {
+        if (mediaSessionCompat != null) {
+            mediaSessionCompat.setCallback(null);
+            mediaSessionCompat.setActive(false);
+            mediaSessionCompat.release();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -705,8 +772,14 @@ public class AudioBookPlayService extends Service {
         cancelAlarmTimer();
         mediaPlayer.release();
         if (mModel != null) {
+            mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
+        sendBroadcast(ACTION_STOP, AudioPlayInfo.empty());
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+        }
+        unregisterMediaButton();
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,

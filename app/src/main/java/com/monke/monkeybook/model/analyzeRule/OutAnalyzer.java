@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -7,8 +9,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 public abstract class OutAnalyzer<S, T> implements IAnalyzerPresenter, ContentDelegate {
 
@@ -81,16 +81,6 @@ public abstract class OutAnalyzer<S, T> implements IAnalyzerPresenter, ContentDe
     @Override
     public AnalyzeCollection getRawCollection(String rule) {
         return getPresenter().getRawCollection(rule);
-    }
-
-    @Override
-    public String parseResultContent(String source, String rule) {
-        return getPresenter().parseResultContent(source, rule);
-    }
-
-    @Override
-    public String parseResultUrl(String source, String rule) {
-        return getPresenter().parseResultUrl(source, rule);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////

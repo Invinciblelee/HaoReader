@@ -21,6 +21,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
+import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
@@ -124,7 +125,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         }
 
         Single.create((SingleOnSubscribe<Boolean>) emitter -> {
-            BookshelfHelp.removeFromBookShelf(bookShelf);
+            BookshelfHelp.cleanBookCache(bookShelf);
             emitter.onSuccess(true);
         }).compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<Boolean>() {
@@ -135,6 +136,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                     @Override
                     public void onSuccess(Boolean aBoolean) {
+                        RxBus.get().post(RxBusTag.CLEAN_BOOK_CACHE, true);
                         mView.toast("缓存清除成功");
                         mView.dismissHUD();
                     }

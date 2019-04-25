@@ -8,11 +8,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.hwangjr.rxbus.RxBus;
-import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.BuildConfig;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
-import com.monke.monkeybook.view.activity.ReadBookActivity;
 
 /**
  * Created by GKF on 2018/1/6.
@@ -23,7 +20,7 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
     public static final String TAG = MediaButtonIntentReceiver.class.getSimpleName();
     private static final boolean DEBUG = BuildConfig.DEBUG;
 
-    public static boolean handleIntent(final Context context, final Intent intent) {
+    public static boolean handleIntent(final Intent intent) {
         if (DEBUG) Log.d(TAG, "Received intent: " + intent);
         final String intentAction = intent.getAction();
         if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
@@ -49,7 +46,7 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
             }
             if (command != null) {
                 if (action == KeyEvent.ACTION_DOWN) {
-                    readAloud(context, command);
+                    RxBus.get().post(RxBusTag.MEDIA_BUTTON, command);
                     return true;
                 }
             }
@@ -57,23 +54,10 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
         return false;
     }
 
-    private static void readAloud(final Context context, String command) {
-        if (!AppActivityManager.getInstance().isExist(ReadBookActivity.class)) {
-            Intent intent = new Intent(context, ReadBookActivity.class);
-            intent.putExtra("readAloud", true);
-            try {
-                context.startActivity(intent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            RxBus.get().post(RxBusTag.MEDIA_BUTTON, command);
-        }
-    }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        if (handleIntent(context, intent) && isOrderedBroadcast()) {
+        if (handleIntent(intent) && isOrderedBroadcast()) {
             abortBroadcast();
         }
     }

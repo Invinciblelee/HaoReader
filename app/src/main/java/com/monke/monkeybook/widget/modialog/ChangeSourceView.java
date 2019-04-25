@@ -160,7 +160,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
                     public void onNext(List<SearchBookBean> searchBookBeans) {
                         if (!searchBookBeans.isEmpty()) {
                             for (SearchBookBean searchBookBean : searchBookBeans) {
-                                if (Objects.equals(searchBookBean.getTag(), bookInfo.getTag())) {
+                                if (Objects.equals(searchBookBean.getNoteUrl(), bookInfo.getNoteUrl())) {
                                     searchBookBean.setIsCurrentSource(true);
                                 } else {
                                     searchBookBean.setIsCurrentSource(false);

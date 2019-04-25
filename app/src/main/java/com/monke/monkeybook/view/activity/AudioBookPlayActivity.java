@@ -2,15 +2,18 @@ package com.monke.monkeybook.view.activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -45,8 +48,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
+import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
+
 public class AudioBookPlayActivity extends MBaseActivity implements View.OnClickListener, AudioChapterPop.OnChapterSelectListener, AudioTimerPop.OnTimeSelectListener {
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.iv_blur_cover)
@@ -73,8 +80,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     ProgressBar progressBar;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private ValueAnimator animator;
 
@@ -114,18 +119,17 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        fromIntent(intent);
-    }
-
-    @Override
     protected void initData() {
     }
 
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
         setCoverImage(null);
         setButtonEnabled(false);
         setMediaButtonEnabled(false);
@@ -169,8 +173,22 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         String key = getIntent().getStringExtra("data_key");
         BookShelfBean bookShelfBean = BitIntentDataManager.getInstance().getData(key, null);
         AudioBookPlayService.start(this, bookShelfBean);
+    }
 
-        fromIntent(getIntent());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_book_source_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else if (item.getItemId() == R.id.action_change_source) {
+            changeSource();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -402,10 +420,14 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         }
     }
 
-    private void fromIntent(Intent intent) {
-        boolean showTimer = intent.getBooleanExtra("showTimer", false);
-        if (showTimer) {
-            handler.postDelayed(() -> audioTimerPop.showAtLocation(ivBlurCover, Gravity.BOTTOM, 0, 0), 100L);
+    /**
+     * 换源
+     */
+    private void changeSource() {
+        if (!isNetworkAvailable()) {
+            toast("网络不可用，无法换源");
+            return;
         }
+
     }
 }

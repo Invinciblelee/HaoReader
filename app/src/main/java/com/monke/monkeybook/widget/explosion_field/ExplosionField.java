@@ -97,6 +97,9 @@ public class ExplosionField extends View {
     }
 
     public void explode(Bitmap bitmap, Rect bound, long startDelay, final View view) {
+        if(bitmap == null || bitmap.isRecycled()){
+            return;
+        }
         long currentDuration = customDuration;
         final ExplosionAnimator explosion = new ExplosionAnimator(this, bitmap, bound);
         explosion.addListener(new AnimatorListenerAdapter() {

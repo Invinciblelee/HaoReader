@@ -1134,8 +1134,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 moDialogHUD.showTwoButton(getString(R.string.clean_book_cache_s),
                         getString(R.string.ok),
                         v -> mPresenter.cleanCache(),
-                        getString(R.string.cancel),
-                        v -> moDialogHUD.dismiss());
+                        getString(R.string.cancel), null);
                 break;
             case R.id.action_book_info:
                 ensureWindowAnimNotTranslucent();
@@ -1529,7 +1528,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void onMediaButton() {
         if (!ReadAloudService.running) {
-            aloudStatus = ReadAloudService.STOP;
+            return;
         }
         switch (aloudStatus) {
             case PAUSE:

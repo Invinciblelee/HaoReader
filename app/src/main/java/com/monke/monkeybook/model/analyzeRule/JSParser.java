@@ -8,6 +8,9 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.JavaScriptEngine;
 import com.monke.monkeybook.help.Logger;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.script.SimpleBindings;
 
 final class JSParser {
@@ -23,15 +26,31 @@ final class JSParser {
         engineType = getEngineType();
     }
 
-    String evalJS(String jsStr, Object java, String result, String baseUrl) {
+    String evalStringScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
         if (engineType == 0) {
-            return evalScriptByV8(jsStr, java, result, baseUrl);
+            return evalStringScriptByV8(jsStr, java, result, baseUrl);
         } else {
-            return evalScriptByRhino(jsStr, java, result, baseUrl);
+            return evalStringScriptByRhino(jsStr, java, result, baseUrl);
         }
     }
 
-    private String evalScriptByRhino(String jsStr, Object java, String result, String baseUrl) {
+    @SuppressWarnings("unchecked")
+    List<Object> evalArrayScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
+        try {
+            SimpleBindings bindings = new SimpleBindings();
+            bindings.put("java", java);
+            bindings.put("result", result);
+            bindings.put("baseUrl", baseUrl);
+            jsStr = jsStr.replace("parseResultContents", "java.parseResultContents")
+                    .replace("parseList", "java.parseList");
+            return (List<Object>) JavaScriptEngine.getEngine().eval(jsStr, bindings);
+        } catch (Exception e) {
+            Logger.e("Rhino", jsStr, e);
+        }
+        return Collections.emptyList();
+    }
+
+    private String evalStringScriptByRhino(String jsStr, JavaExecutor java, String result, String baseUrl) {
         try {
             SimpleBindings bindings = new SimpleBindings();
             bindings.put("java", java);
@@ -41,7 +60,8 @@ final class JSParser {
                     .replace("base64Decode", "java.base64Decode")
                     .replace("parseResultContent", "java.parseResultContent")
                     .replace("parseResultUrl", "java.parseResultUrl")
-                    .replace("formatResultContent", "java.formatResultContent");
+                    .replace("formatResultContent", "java.formatResultContent")
+                    .replace("formatResultUrl", "java.formatResultUrl");
             return (String) JavaScriptEngine.getEngine().eval(jsStr, bindings);
         } catch (Exception e) {
             Logger.e("Rhino", jsStr, e);
@@ -49,7 +69,7 @@ final class JSParser {
         return "";
     }
 
-    private String evalScriptByV8(String jsStr, Object java, String result, String baseUrl) {
+    private String evalStringScriptByV8(String jsStr, JavaExecutor java, String result, String baseUrl) {
         try {
             ensureV8Engine();
             JSV8.add("result", result);
@@ -60,6 +80,7 @@ final class JSParser {
                 JSV8.registerJavaMethod(java, "parseResultContent", "parseResultContent", new Class[]{String.class, String.class});
                 JSV8.registerJavaMethod(java, "parseResultUrl", "parseResultUrl", new Class[]{String.class, String.class});
                 JSV8.registerJavaMethod(java, "formatResultContent", "formatResultContent", new Class[]{String.class});
+                JSV8.registerJavaMethod(java, "formatResultUrl", "formatResultUrl", new Class[]{String.class});
             }
             return JSV8.executeStringScript(jsStr);
         } catch (Exception e) {
@@ -67,6 +88,7 @@ final class JSParser {
         }
         return "";
     }
+
 
     private int getEngineType() {
         String type = AppConfigHelper.get().getString(MApplication.getInstance().getString(R.string.pk_js_engine), "0");

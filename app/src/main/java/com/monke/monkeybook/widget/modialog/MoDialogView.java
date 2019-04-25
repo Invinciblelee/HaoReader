@@ -1,7 +1,6 @@
 package com.monke.monkeybook.widget.modialog;
 
 import android.content.Context;
-import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,9 +92,23 @@ public class MoDialogView extends LinearLayout {
         TextView tvDone = findViewById(R.id.tv_done);
         tvMsg.setText(msg);
         tvCancel.setText(b_f);
-        tvCancel.setOnClickListener(c_f);
+        tvCancel.setOnClickListener(v -> {
+            moDialogHUD.dismiss();
+            post(() -> {
+                if (c_f != null) {
+                    c_f.onClick(v);
+                }
+            });
+        });
         tvDone.setText(b_s);
-        tvDone.setOnClickListener(c_s);
+        tvDone.setOnClickListener(v -> {
+            moDialogHUD.dismiss();
+            post(() -> {
+                if (c_s != null) {
+                    c_s.onClick(v);
+                }
+            });
+        });
     }
 
     /**

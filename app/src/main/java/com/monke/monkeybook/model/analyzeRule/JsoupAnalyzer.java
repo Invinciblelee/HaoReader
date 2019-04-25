@@ -11,7 +11,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
 
     private JsoupParser mParser;
     private JsoupPresenter mPresenter;
-    private XJsoupContentDelegate mDelegate;
+    private ContentDelegate mDelegate;
 
     @Override
     SourceParser<Element, Element> getParser() {
@@ -32,7 +32,7 @@ public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
     @Override
     public ContentDelegate getDelegate() {
         if (mDelegate == null) {
-            mDelegate = new XJsoupContentDelegate(this);
+            mDelegate = new ContentDelegateImpl(this);
         }
         return mDelegate;
     }

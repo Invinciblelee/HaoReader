@@ -237,8 +237,7 @@ public class ReadAloudService extends Service {
         if (running) {
             running = false;
             Intent intent = new Intent(context, ReadAloudService.class);
-            intent.setAction(ActionDoneService);
-            context.startService(intent);
+            context.stopService(intent);
         }
     }
 
@@ -390,8 +389,10 @@ public class ReadAloudService extends Service {
         super.onDestroy();
         running = false;
         clearTTS();
-        unRegisterMediaButton();
-        unregisterReceiver(broadcastReceiver);
+        unregisterMediaButton();
+        if(broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+        }
     }
 
     private void showNotification(Bitmap cover) {
@@ -452,7 +453,7 @@ public class ReadAloudService extends Service {
         }
     }
 
-    private void unRegisterMediaButton() {
+    private void unregisterMediaButton() {
         if (mediaSessionCompat != null) {
             mediaSessionCompat.setCallback(null);
             mediaSessionCompat.setActive(false);
@@ -504,7 +505,7 @@ public class ReadAloudService extends Service {
         mediaSessionCompat.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-                return MediaButtonIntentReceiver.handleIntent(ReadAloudService.this, mediaButtonEvent);
+                return MediaButtonIntentReceiver.handleIntent(mediaButtonEvent);
             }
         });
         mediaSessionCompat.setMediaButtonReceiver(mediaButtonReceiverPendingIntent);

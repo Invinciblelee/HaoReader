@@ -108,8 +108,7 @@ public class CheckSourceService extends Service {
      */
     public static void stop(Context context) {
         Intent intent = new Intent(context, CheckSourceService.class);
-        intent.setAction(ActionDoneService);
-        context.startService(intent);
+        context.stopService(intent);
     }
 
     private void doneService() {
@@ -122,7 +121,7 @@ public class CheckSourceService extends Service {
      * 更新通知
      */
     private void updateNotification(int state) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdReadAloud)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdDownload)
                 .setSmallIcon(R.drawable.ic_network_check_white_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setOngoing(true)

@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -22,7 +24,6 @@ import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
 import java.util.Locale;
 
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 
 public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdapter> {
@@ -99,7 +100,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
     }
 
     private void updateChapterInfo() {
-        if (bookShelf != null) {
+        if (bookShelf != null && tvChapterInfo != null) {
             final int durChapter = bookShelf.getDurChapter();
             getAdapter().upChapterIndex(durChapter);
             String durChapterName = ChapterHelp.getFormatChapterName(bookShelf.getDurChapterName());
@@ -125,6 +126,11 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
         scrollToTarget();
 
         rvList.postDelayed(this::updateChapterInfo, 50L);
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CLEAN_BOOK_CACHE)})
+    public void cleanCache(Boolean bool) {
+        getAdapter().notifyDataSetChanged();
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.CHAPTER_CHANGE)})

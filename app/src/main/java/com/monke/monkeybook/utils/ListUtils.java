@@ -28,6 +28,12 @@ public class ListUtils {
         return new ArrayList<>(set);
     }
 
+    public static <T> List<Object> toObjectList(List<T> list) {
+        if (list == null) {
+            return null;
+        }
+        return new ArrayList<>(list);
+    }
 
     public static <T> List<T> mutableList(T... a) {
         if (a == null) {

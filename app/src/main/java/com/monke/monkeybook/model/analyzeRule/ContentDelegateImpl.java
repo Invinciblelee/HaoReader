@@ -27,15 +27,15 @@ import retrofit2.Call;
 
 import static android.text.TextUtils.isEmpty;
 
-class XJsoupContentDelegate implements ContentDelegate {
+class ContentDelegateImpl implements ContentDelegate {
 
-    private static final String TAG = XJsoupContentDelegate.class.getSimpleName();
+    private static final String TAG = ContentDelegateImpl.class.getSimpleName();
 
-    private final OutAnalyzer<?, Element> mAnalyzer;
+    private final OutAnalyzer<?, ?> mAnalyzer;
     private final AnalyzeConfig mConfig;
     private final BookSourceBean mBookSource;
 
-    XJsoupContentDelegate(@NonNull OutAnalyzer<?, Element> mAnalyzer) {
+    ContentDelegateImpl(@NonNull OutAnalyzer<?, ?> mAnalyzer) {
         this.mAnalyzer = mAnalyzer;
         this.mConfig = mAnalyzer.getConfig();
         this.mBookSource = mConfig.getBookSource();
@@ -130,6 +130,45 @@ class XJsoupContentDelegate implements ContentDelegate {
 
     @Override
     public List<ChapterBean> getChapters(String source) {
+        if (mAnalyzer instanceof JsonAnalyzer) {
+            return getChaptersFromJson(source);
+        } else {
+            return getChaptersXJsoup(source);
+        }
+    }
+
+    private List<ChapterBean> getChaptersFromJson(String source) {
+        final String ruleChapterList = mBookSource.getRealRuleChapterList();
+
+        String noteUrl = mConfig.getExtras().getString("noteUrl");
+
+        mAnalyzer.beginExecute();
+        mAnalyzer.setContent(source);
+        AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
+        List<ChapterBean> chapterList = new ArrayList<>();
+        while (collection.hasNext()) {
+            String url = collection.mutable().getResultUrl(mBookSource.getRuleContentUrl());   //id
+            String name = collection.mutable().getResultContent(mBookSource.getRuleChapterName());
+            if (!isEmpty(url) && !isEmpty(name)) {
+                ChapterBean chapterBean = new ChapterBean();
+                chapterBean.setDurChapterUrl(url);
+                chapterBean.setDurChapterName(name);
+                chapterBean.setTag(mConfig.getTag());
+                chapterBean.setNoteUrl(noteUrl);
+                chapterList.add(chapterBean);
+            }
+        }
+        mAnalyzer.endExecute();
+        if (!mBookSource.reverseChapterList()) {
+            Collections.reverse(chapterList);
+        }
+        LinkedHashSet<ChapterBean> lh = new LinkedHashSet<>(chapterList);
+        chapterList = new ArrayList<>(lh);
+        Collections.reverse(chapterList);
+        return chapterList;
+    }
+
+    private List<ChapterBean> getChaptersXJsoup(String source) {
         String noteUrl = mConfig.getExtras().getString("noteUrl");
 
         final String ruleChapterList = mBookSource.getRealRuleChapterList();
@@ -201,6 +240,41 @@ class XJsoupContentDelegate implements ContentDelegate {
 
     @Override
     public BookContentBean getContent(String source) {
+        if (mAnalyzer instanceof JsonAnalyzer) {
+            return getContentFromJson(source);
+        } else {
+            return getContentFromXJsoup(source);
+        }
+    }
+
+    private BookContentBean getContentFromJson(String source) {
+        ChapterBean chapter = mConfig.getExtras().getParcelable("chapter");
+        assert chapter != null;
+        BookContentBean bookContentBean = new BookContentBean();
+        bookContentBean.setDurChapterName(chapter.getDurChapterName());
+        bookContentBean.setDurChapterIndex(chapter.getDurChapterIndex());
+        bookContentBean.setDurChapterUrl(chapter.getDurChapterUrl());
+        bookContentBean.setTag(chapter.getTag());
+        bookContentBean.setNoteUrl(chapter.getNoteUrl());
+
+        String content;
+        mAnalyzer.beginExecute();
+        try {
+            mAnalyzer.setContent(source);
+            content = mAnalyzer.getResultContent(mBookSource.getRuleBookContent());
+        } catch (Exception ex) {
+            Logger.e(TAG, "getBookContent", ex);
+            String chapterUrl = bookContentBean.getDurChapterUrl();
+            content = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + " : " + ex.getMessage();
+        }
+        mAnalyzer.endExecute();
+
+        bookContentBean.setDurChapterContent(content);
+
+        return bookContentBean;
+    }
+
+    private BookContentBean getContentFromXJsoup(String source) {
         ChapterBean chapter = mConfig.getExtras().getParcelable("chapter");
         assert chapter != null;
         BookContentBean bookContentBean = new BookContentBean();
@@ -255,17 +329,6 @@ class XJsoupContentDelegate implements ContentDelegate {
         return bookContentBean;
     }
 
-    @Override
-    public String getAudioLink(String source) {
-        final String ruleBookContent = mBookSource.getRealRuleBookContent();
-        mAnalyzer.beginExecute();
-        mAnalyzer.setContent(source);
-        String url = mAnalyzer.getResultUrl(ruleBookContent);
-        mAnalyzer.endExecute();
-        return url;
-    }
-
-
     private RawResult<String> getRawContentResult(String s, String chapterUrl, String ruleContent) {
         RawResult<String> webContentBean = new RawResult<>();
         try {
@@ -279,6 +342,16 @@ class XJsoupContentDelegate implements ContentDelegate {
             webContentBean.result = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + " : " + ex.getMessage();
         }
         return webContentBean;
+    }
+
+    @Override
+    public String getAudioLink(String source) {
+        final String ruleBookContent = mBookSource.getRealRuleBookContent();
+        mAnalyzer.beginExecute();
+        mAnalyzer.setContent(source);
+        String url = mAnalyzer.getResultUrl(ruleBookContent);
+        mAnalyzer.endExecute();
+        return url;
     }
 
 }

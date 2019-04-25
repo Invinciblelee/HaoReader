@@ -11,7 +11,6 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModelImpl;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
-import com.monke.monkeybook.utils.ListUtils;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ import io.reactivex.schedulers.Schedulers;
 public class SearchTaskImpl implements ISearchTask {
 
     private CompositeDisposable disposables;
-    private OnSearchingListener listener;
+    private final OnSearchingListener listener;
 
     private int successCount;
 
@@ -136,10 +135,10 @@ public class SearchTaskImpl implements ISearchTask {
         return Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             boolean hasMore = true;
             if (!isDisposed() && searchBookBeans != null && !searchBookBeans.isEmpty()) {
-                listener.onSearchResult(ListUtils.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getName().compareTo(o2.getName())));
+                listener.onSearchResult(searchBookBeans);
                 saveData(searchBookBeans);
 
-                if(TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)){
+                if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
                     hasMore = false;
                 }
             } else {

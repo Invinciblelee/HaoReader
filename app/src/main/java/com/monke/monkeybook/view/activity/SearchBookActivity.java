@@ -11,6 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.basemvplib.AppActivityManager;
@@ -29,11 +35,6 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -420,10 +421,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         }
 
         moDialogHUD.showTwoButton("您没有选择任何书源", "去选择"
-                , v -> {
-                    moDialogHUD.dismiss();
-                    BookSourceActivity.startThis(SearchBookActivity.this);
-                }, "取消",
-                v -> moDialogHUD.dismiss());
+                , v -> BookSourceActivity.startThis(SearchBookActivity.this), "取消", null);
     }
 }
