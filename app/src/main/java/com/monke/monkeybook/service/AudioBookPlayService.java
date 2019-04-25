@@ -390,7 +390,7 @@ public class AudioBookPlayService extends Service {
                     } else {
                         ToastUtils.toast(AudioBookPlayService.this, "网络连接失败");
                     }
-                    sendWhenError();
+                    sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
                 }
             });
         }

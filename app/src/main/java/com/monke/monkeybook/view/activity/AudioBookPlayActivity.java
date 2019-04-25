@@ -216,7 +216,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     public void onBackPressed() {
         if (bookInfoBean != null) {
             if (!BookshelfHelp.isInBookShelf(bookInfoBean.getNoteUrl())) {
-                showAddShelfPop(tvTitle.getText().toString());
+                showAddShelfPop(bookInfoBean.getName());
                 return;
             }
         }
@@ -418,11 +418,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                         .error(R.drawable.img_cover_gs))
                 .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
                 .into(ivBlurCover);
-    }
-
-    private void resetPlay() {
-        setProgress(0, 0);
-        setChapters(null, 0);
     }
 
     private void showAddShelfPop(String bookName) {

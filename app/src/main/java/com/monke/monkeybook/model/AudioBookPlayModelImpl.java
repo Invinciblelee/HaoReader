@@ -159,12 +159,19 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     bookShelfBean.setNewChapters(0);
                     return bookShelfBean;
                 })
-                .doOnNext(bookShelfBean -> {
-                    BookshelfHelp.removeFromBookShelf(bookShelf);
-                    BookshelfHelp.saveBookToShelf(bookShelfBean);
-                    bookShelf.setChangeSource(true);
-                    RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                    RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
+                    if (!bookShelfBean.realChapterListEmpty()) {
+                        return Observable.create(emitter -> {
+                            BookshelfHelp.removeFromBookShelf(bookShelf);
+                            BookshelfHelp.saveBookToShelf(bookShelfBean);
+                            bookShelf.setChangeSource(true);
+                            RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
+                            RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                            emitter.onNext(bookShelfBean);
+                            emitter.onComplete();
+                        });
+                    }
+                    return Observable.error(new BookException("目录获取失败"));
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
