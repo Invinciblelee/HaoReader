@@ -213,19 +213,23 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
+    public void finish() {
+        if (bookInfoBean != null) {
+            if (!BookshelfHelp.isInBookShelf(bookInfoBean.getNoteUrl())) {
+                showAddShelfPop(tvTitle.getText().toString());
+                return;
+            }
+        }
+        super.finish();
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (moDialogHUD != null && moDialogHUD.onKeyDown(keyCode, event)) {
             return true;
         }
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (bookInfoBean != null) {
-                if (!BookshelfHelp.isInBookShelf(bookInfoBean.getNoteUrl())) {
-                    showAddShelfPop(tvTitle.getText().toString());
-                    return true;
-                }
-            }
-
             if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
                 supportFinishAfterTransition();
             } else {
