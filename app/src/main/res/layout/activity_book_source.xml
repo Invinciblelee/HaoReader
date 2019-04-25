@@ -38,18 +38,20 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBar">
 
-        <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"
             android:clipToPadding="false"
+            android:overScrollMode="never"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            app:showBubble="true"
-            app:bubbleColor="@color/tv_text_button_deep_pre"
-            app:handleColor="@color/tv_text_button_pre"
-            app:trackColor="@color/scroller_track_color" />
+            app:fastScrollEnableThumbInactiveColor="false"
+            app:fastScrollPopupTextVerticalAlignmentMode="font_metrics"
+            app:fastScrollPopupBgColor="@color/tv_text_button_deep_pre"
+            app:fastScrollPopupTextColor="@color/white"
+            app:fastScrollThumbColor="@color/tv_text_button_pre"
+            app:fastScrollTrackColor="@color/scroller_track_color" />
 
     </RelativeLayout>
 

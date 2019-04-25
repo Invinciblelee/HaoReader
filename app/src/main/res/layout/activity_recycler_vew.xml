@@ -31,17 +31,14 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBar">
 
-        <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:paddingTop="@dimen/half_card_item_margin"
-            android:paddingBottom="@dimen/half_card_item_margin"
-            app:bubbleColor="@color/tv_text_button_deep_pre"
-            app:handleColor="@color/tv_text_button_pre"
-            app:trackColor="@color/scroller_track_color" />
+            android:paddingBottom="@dimen/half_card_item_margin" />
 
     </RelativeLayout>
 

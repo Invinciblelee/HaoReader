@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -21,7 +22,6 @@ import com.monke.monkeybook.bean.DownloadInfo;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.DownloadService;
 import com.monke.monkeybook.view.adapter.DownloadAdapter;
-import com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +37,7 @@ public class DownloadActivity extends MBaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.recycler_view)
-    FastScrollRecyclerView recyclerView;
+    RecyclerView recyclerView;
 
     private DownloadAdapter adapter;
 
@@ -86,7 +86,6 @@ public class DownloadActivity extends MBaseActivity {
     }
 
     private void initRecyclerView() {
-        recyclerView.setFastScrollEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new DownloadAdapter(this);
         recyclerView.setAdapter(adapter);

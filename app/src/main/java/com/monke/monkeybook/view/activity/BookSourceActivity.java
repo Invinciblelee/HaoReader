@@ -4,15 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,6 +11,13 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
@@ -38,7 +36,7 @@ import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
-import com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -146,7 +144,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BookSourceAdapter(this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setSectionIndexer(adapter);
         itemTouchHelpCallback = new MyItemTouchHelpCallback();
         itemTouchHelpCallback.setOnItemTouchCallbackListener(adapter.getItemTouchCallbackListener());
         itemTouchHelpCallback.setDragEnable(true);

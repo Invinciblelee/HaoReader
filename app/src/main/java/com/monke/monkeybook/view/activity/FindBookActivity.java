@@ -7,6 +7,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -14,20 +21,13 @@ import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
-import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.FindKindAdapter;
 import com.monke.monkeybook.widget.AppCompat;
-import com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView;
 import com.monke.monkeybook.widget.refreshview.scroller.TopLinearSmoothScroller;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -81,8 +81,6 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         expandableList.setAdapter(adapter);
         tvEmpty.setText(R.string.find_empty);
         tvEmpty.setVisibility(View.GONE);
-
-        expandableList.setSectionIndexer(adapter);
 
         //  设置子选项点击监听事件
         adapter.setOnChildItemClickListener(kindBean -> {

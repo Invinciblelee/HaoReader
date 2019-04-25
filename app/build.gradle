@@ -171,6 +171,8 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.8.6'
     //Rhino
     implementation 'io.apisense:rhino-android:1.0'
+    //fastscroller
+    implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.0'
 }
 
 greendao {

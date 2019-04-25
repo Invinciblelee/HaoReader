@@ -18,7 +18,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.utils.StringUtils;
-import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +29,7 @@ import java.util.List;
  * 书源Adapter
  */
 
-public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemViewHolder> implements Filterable, FastScroller.SectionIndexer {
+public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemViewHolder> implements Filterable, FastScrollRecyclerView.SectionedAdapter {
     private List<FindKindGroupBean> dataList;
 
     private List<FindKindGroupBean> originalList;
@@ -167,10 +167,11 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
         return myFilter;
     }
 
+    @NonNull
     @Override
-    public String getSectionText(int position) {
+    public String getSectionName(int position) {
         String groupName = dataList.get(position % dataList.size()).getGroupName();
-        return (dataList == null || StringUtils.isEmpty(groupName)) ? null : groupName.substring(0, 1);
+        return (dataList == null || StringUtils.isEmpty(groupName)) ? "" : groupName.substring(0, 1);
     }
 
 
@@ -211,9 +212,9 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
 
             if (originalList == null) {
                 synchronized (lock) {
-                    if(dataList == null){
+                    if (dataList == null) {
                         originalList = new ArrayList<>();
-                    }else {
+                    } else {
                         originalList = new ArrayList<>(dataList);
                     }
                 }

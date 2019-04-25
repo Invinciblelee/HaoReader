@@ -1,12 +1,13 @@
 package com.monke.monkeybook.view.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -17,7 +18,7 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookSourceActivity;
 import com.monke.monkeybook.view.activity.SourceEditActivity;
-import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,7 @@ import java.util.List;
  * 书源Adapter
  */
 
-public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.MyViewHolder> implements FastScroller.SectionIndexer {
+public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.MyViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
     private List<BookSourceBean> dataList;
     private List<BookSourceBean> allDataList;
     private BookSourceActivity activity;
@@ -156,9 +157,9 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             dataList.add(0, item);
             notifyItemRemoved(realPosition + 1);
 
-            if (dataList.size() != allDataList.size()){
-                for (int i = 0;i < allDataList.size();i++){
-                    if (item.equals(allDataList.get(i))){
+            if (dataList.size() != allDataList.size()) {
+                for (int i = 0; i < allDataList.size(); i++) {
+                    if (item.equals(allDataList.get(i))) {
                         index = i;
                         break;
                     }
@@ -166,7 +167,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
                 BookSourceBean moveDataA = allDataList.get(index);
                 allDataList.remove(index);
                 notifyItemInserted(0);
-                allDataList.add(0,moveDataA);
+                allDataList.add(0, moveDataA);
                 notifyItemRemoved(index + 1);
             }
             notifyDataSetChanged();
@@ -179,10 +180,12 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
         return dataList.size();
     }
 
+
+    @NonNull
     @Override
-    public String getSectionText(int position) {
+    public String getSectionName(int position) {
         String groupName = dataList.get(position % dataList.size()).getBookSourceName();
-        return (dataList == null || StringUtils.isEmpty(groupName)) ? null : groupName.substring(0, 1);
+        return (dataList == null || StringUtils.isEmpty(groupName)) ? "" : groupName.substring(0, 1);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
