@@ -130,7 +130,7 @@ public class ReadAloudService extends Service {
             if (action != null) {
                 switch (action) {
                     case ActionDoneService:
-                        doneService();
+                        stopSelf();
                         break;
                     case ActionPauseService:
                         pauseReadAloud(true);
@@ -272,15 +272,6 @@ public class ReadAloudService extends Service {
     }
 
     /**
-     * 关闭服务
-     */
-    private void doneService() {
-        cancelTimer();
-        RxBus.get().post(RxBusTag.ALOUD_STATE, STOP);
-        stopSelf();
-    }
-
-    /**
      * @param pause true 暂停, false 失去焦点
      */
     private void pauseReadAloud(Boolean pause) {
@@ -312,7 +303,7 @@ public class ReadAloudService extends Service {
         } else if (timerMinute <= 0) {
             if (timerEnable) {
                 cancelTimer();
-                doneService();
+                stopSelf();
             }
         } else {
             timerEnable = true;
@@ -384,11 +375,13 @@ public class ReadAloudService extends Service {
     public void onDestroy() {
         super.onDestroy();
         running = false;
+        cancelTimer();
         clearTTS();
         unregisterMediaButton();
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
+        RxBus.get().post(RxBusTag.ALOUD_STATE, STOP);
     }
 
     private void showNotification(Bitmap cover) {
@@ -565,7 +558,7 @@ public class ReadAloudService extends Service {
                 }
             } else {
                 RxBus.get().post(RxBusTag.ALOUD_MSG, getString(R.string.tts_init_failed));
-                doneService();
+                stopSelf();
             }
         }
     }
