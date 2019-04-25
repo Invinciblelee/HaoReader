@@ -213,14 +213,19 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
-    public void finish() {
+    public void onBackPressed() {
         if (bookInfoBean != null) {
             if (!BookshelfHelp.isInBookShelf(bookInfoBean.getNoteUrl())) {
                 showAddShelfPop(tvTitle.getText().toString());
                 return;
             }
         }
-        super.finish();
+
+        if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
+            supportFinishAfterTransition();
+        } else {
+            finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
+        }
     }
 
     @Override
@@ -230,11 +235,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         }
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
-                supportFinishAfterTransition();
-            } else {
-                finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
-            }
+            onBackPressed();
             return true;
         }
         return super.onKeyDown(keyCode, event);

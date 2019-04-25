@@ -38,12 +38,10 @@ abstract class BaseAnalyzerPresenter<S, T> implements IAnalyzerPresenter, JavaEx
     }
 
 
-    String evalStringScript(@NonNull String string, @NonNull RulePattern rulePattern) {
-        String result = string;
+    String evalStringScript(@NonNull String result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                final Object value = getJSParser().evalStringScript(javaScript, this, string, getConfig().getBaseURL());
-                result = StringUtils.valueOf(value);
+                result = getJSParser().evalStringScript(javaScript, this, result, getConfig().getBaseURL());
             }
         }
         return result;
