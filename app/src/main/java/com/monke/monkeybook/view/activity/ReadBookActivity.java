@@ -818,13 +818,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             }
             return;
         }
-        //启动朗读
-        if (getIntent().getBooleanExtra("readAloud", false)
-                && pageIndex >= 0 && mPageLoader.getContent(pageIndex) != null) {
-            getIntent().putExtra("readAloud", false);
-            onMediaButton();
-            return;
-        }
         autoPage();
     }
 
@@ -952,7 +945,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 ReadAloudService.setTimer(this);
                 break;
             case R.id.fabReadAloud:
-                newAloud();
+                onMediaPlay();
                 break;
             case R.id.fabAutoPage:
                 if (ReadAloudService.running) {
@@ -1359,15 +1352,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     /**
      * 朗读
      */
-    private void newAloud(){
-        popMenuOut();
-        if (mPresenter.getBookShelf() != null && mPageLoader != null) {
-            controlsView.postDelayed(() -> ReadAloudService.play(ReadBookActivity.this, true, mPageLoader.getCurrentContent(),
-                    mPresenter.getBookShelf().getBookInfoBean().getName(),
-                    mPresenter.getChapterTitle(mPageLoader.getChapterPosition()),
-                    mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl()
-            ), DELAY_SHORT);
-        }
+    private void newAloud() {
+
     }
 
     /**
@@ -1546,6 +1532,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (!ReadAloudService.running) {
             return;
         }
+
+        onMediaPlay();
+    }
+
+    private void onMediaPlay() {
         switch (aloudStatus) {
             case PAUSE:
                 ReadAloudService.resume(this);
@@ -1556,7 +1547,14 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 fabReadAloud.setContentDescription(getString(R.string.read_aloud_pause));
                 break;
             default:
-               newAloud();
+                popMenuOut();
+                if (mPresenter.getBookShelf() != null && mPageLoader != null) {
+                    controlsView.postDelayed(() -> ReadAloudService.play(ReadBookActivity.this, true, mPageLoader.getCurrentContent(),
+                            mPresenter.getBookShelf().getBookInfoBean().getName(),
+                            mPresenter.getChapterTitle(mPageLoader.getChapterPosition()),
+                            mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl()
+                    ), DELAY_SHORT);
+                }
         }
     }
 
