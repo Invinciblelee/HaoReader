@@ -302,10 +302,6 @@ public class ReadAloudService extends Service {
     }
 
     private void updateTimer(int minute) {
-        if (pause) {
-            return;
-        }
-
         timerMinute = timerMinute + minute;
         int maxTimeMinute = 60;
         if (timerMinute > maxTimeMinute) {
@@ -390,7 +386,7 @@ public class ReadAloudService extends Service {
         running = false;
         clearTTS();
         unregisterMediaButton();
-        if(broadcastReceiver != null) {
+        if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
     }
