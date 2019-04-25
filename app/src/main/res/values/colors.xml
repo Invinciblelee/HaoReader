@@ -34,7 +34,6 @@
     <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#199589</color>
     <color name="colorAccentTranslucent">#66199589</color>
-    <color name="colorPrimaryTranslucent">#66ffffff</color>
 
     <color name="colorReadBar">#ffffff</color>
     <color name="colorReadBarText">#4a4a4a</color>

@@ -9,15 +9,15 @@ import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import androidx.annotation.Nullable;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class AjaxWebView {
@@ -72,6 +72,7 @@ public class AjaxWebView {
         settings.setUserAgentString(userAgent);
         settings.setBlockNetworkImage(true);
         settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         return webView;
     }
@@ -86,6 +87,7 @@ public class AjaxWebView {
         private CookieStore cookieStore;
         private String audioSuffix;
         private String javaScript;
+        private List<String> audioSuffixList;
 
         public AjaxParams(Context context, String tag) {
             this.context = context;
@@ -144,6 +146,18 @@ public class AjaxWebView {
         private void clearJavaScript() {
             javaScript = null;
         }
+
+        private List<String> getAudioSuffixList() {
+            if (audioSuffixList == null) {
+                if (isSniff()) {
+                    final String[] suffixArray = audioSuffix.split("\\|\\|");
+                    audioSuffixList = Arrays.asList(suffixArray);
+                } else {
+                    audioSuffixList = Collections.emptyList();
+                }
+            }
+            return audioSuffixList;
+        }
     }
 
 
@@ -191,6 +205,7 @@ public class AjaxWebView {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed();
+            super.onReceivedSslError(view, handler, error);
         }
     }
 
@@ -204,16 +219,18 @@ public class AjaxWebView {
             this.callback = callback;
         }
 
-        @Nullable
         @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            String url = request.getUrl().toString();
-            String suffix = params.audioSuffix;
-            if (!TextUtils.isEmpty(suffix) && url.contains(suffix)) {
-                callback.onResult(url);
-                callback.onComplete();
+        public void onLoadResource(WebView view, String url) {
+            super.onLoadResource(view, url);
+            List<String> suffixList = params.getAudioSuffixList();
+            for (String suffix : suffixList) {
+                if (!TextUtils.isEmpty(suffix) && url.contains(suffix)) {
+                    callback.onResult(url);
+                    callback.onComplete();
+                    clearWebView(view);
+                    break;
+                }
             }
-            return super.shouldInterceptRequest(view, request);
         }
 
         @Override
@@ -237,6 +254,7 @@ public class AjaxWebView {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed();
+            super.onReceivedSslError(view, handler, error);
         }
 
         @Override
@@ -247,9 +265,6 @@ public class AjaxWebView {
             if (params.hasJavaScript()) {
                 view.evaluateJavascript(params.javaScript, null);
                 params.clearJavaScript();
-            } else {
-                callback.onError(new NullPointerException("JavaScript can not be null"));
-                clearWebView(view);
             }
         }
     }

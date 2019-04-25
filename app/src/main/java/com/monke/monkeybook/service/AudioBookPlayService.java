@@ -405,7 +405,7 @@ public class AudioBookPlayService extends Service {
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
             Logger.d(TAG, "audio error --> " + what + "  " + extra);
             isPrepared = false;
-            if (mModel != null && mModel.retryPlay()) {
+            if (mModel != null && mModel.retryPlay(false)) {
                 ToastUtils.toast(AudioBookPlayService.this, "播放失败，正在重试");
             } else {
                 ToastUtils.toast(AudioBookPlayService.this, "播放失败");
@@ -498,6 +498,7 @@ public class AudioBookPlayService extends Service {
 
     private void resetPlay() {
         if (mModel != null) {
+            mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
 
@@ -590,7 +591,7 @@ public class AudioBookPlayService extends Service {
         if (isError) {//失败后重试
             isPause = false;
             setPause(false);
-            mModel.retryPlay();
+            mModel.retryPlay(true);
             return true;
         }
         return false;
@@ -609,7 +610,9 @@ public class AudioBookPlayService extends Service {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
+            Logger.e(TAG, "startPlay", e);
             ToastUtils.toast(this, "播放失败");
+            sendWhenError();
         }
     }
 
