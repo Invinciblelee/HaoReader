@@ -2,12 +2,15 @@ package com.monke.monkeybook.model.impl;
 
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.bean.SearchBookBean;
 
 public interface IAudioBookPlayModel {
 
     void registerPlayCallback(PlayCallback callback);
 
     void ensureChapterList(Callback<BookShelfBean> callback);
+
+    void changeSource(SearchBookBean searchBookBean, Callback<BookShelfBean> callback);
 
     void updateBookShelf(BookShelfBean bookShelfBean);
 
@@ -34,7 +37,7 @@ public interface IAudioBookPlayModel {
     ChapterBean getDurChapter();
 
 
-    interface Callback<T>{
+    interface Callback<T> {
 
         void onSuccess(T data);
 
@@ -42,7 +45,7 @@ public interface IAudioBookPlayModel {
 
     }
 
-    interface PlayCallback{
+    interface PlayCallback {
 
         void onStart();
 

@@ -421,6 +421,9 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         }
 
         moDialogHUD.showTwoButton("您没有选择任何书源", "去选择"
-                , v -> BookSourceActivity.startThis(SearchBookActivity.this), "取消", null);
+                , v -> {
+                    moDialogHUD.dismiss();
+                    BookSourceActivity.startThis(SearchBookActivity.this);
+                }, "取消", v -> moDialogHUD.dismiss());
     }
 }

@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import java.util.List;
-
 public interface JavaExecutor {
 
     String ajax(String url);
@@ -16,7 +14,4 @@ public interface JavaExecutor {
 
     String parseResultUrl(String source, String rule);
 
-    List<String> parseResultContents(String source, String rule);
-
-    List<Object> parseList(String source, String rule);
 }

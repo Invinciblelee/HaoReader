@@ -461,7 +461,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
-    }
+}
 
     @Override
     public void finish() {

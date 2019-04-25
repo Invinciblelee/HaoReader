@@ -368,4 +368,29 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         }
         return (this.variableMap != null && !this.variableMap.isEmpty()) ? this.variableMap.get(key) : null;
     }
+
+    @Override
+    public String toString() {
+        return "SearchBookBean{" +
+                "noteUrl='" + noteUrl + '\'' +
+                ", coverUrl='" + coverUrl + '\'' +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", tag='" + tag + '\'' +
+                ", kind='" + kind + '\'' +
+                ", origin='" + origin + '\'' +
+                ", desc='" + desc + '\'' +
+                ", lastChapter='" + lastChapter + '\'' +
+                ", introduce='" + introduce + '\'' +
+                ", bookType='" + bookType + '\'' +
+                ", variableString='" + variableString + '\'' +
+                ", addTime=" + addTime +
+                ", weight=" + weight +
+                ", lastChapterNum=" + lastChapterNum +
+                ", isCurrentSource=" + isCurrentSource +
+                ", originNum=" + originNum +
+                ", tags=" + tags +
+                ", variableMap=" + variableMap +
+                '}';
+    }
 }

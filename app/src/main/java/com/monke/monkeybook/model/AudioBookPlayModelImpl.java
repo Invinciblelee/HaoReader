@@ -6,6 +6,7 @@ import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
@@ -32,17 +33,18 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private Disposable mPlayDisposable;
+    private Disposable mChapterDisposable;
 
     private PlayCallback mPlayCallback;
 
     private boolean isPrepared;
-    private BookShelfBean bookShelfBean;
+    private BookShelfBean bookShelf;
 
     private int mPlayIndex;
     private int mRetryCount;
 
-    public AudioBookPlayModelImpl(BookShelfBean bookShelfBean) {
-        this.bookShelfBean = bookShelfBean;
+    public AudioBookPlayModelImpl(BookShelfBean bookShelf) {
+        this.bookShelf = bookShelf;
     }
 
     @Override
@@ -56,18 +58,22 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             mPlayCallback.onStart();
         }
 
-        if (!bookShelfBean.realChapterListEmpty()) {
+        if (mChapterDisposable != null) {
+            disposables.remove(mChapterDisposable);
+        }
+
+        if (!bookShelf.realChapterListEmpty()) {
             isPrepared = true;
             if (callback != null) {
-                callback.onSuccess(bookShelfBean);
+                callback.onSuccess(bookShelf);
             }
-            mPlayIndex = bookShelfBean.getDurChapter();
-            ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
+            mPlayIndex = bookShelf.getDurChapter();
+            ChapterBean chapterBean = bookShelf.getChapter(mPlayIndex);
             playChapter(chapterBean, false);
-            saveBookShelf(bookShelfBean);
+            saveBookShelf(bookShelf);
         } else {
             Observable.create((ObservableOnSubscribe<List<ChapterBean>>) emitter -> {
-                List<ChapterBean> chapterBeans = BookshelfHelp.queryChapterList(bookShelfBean.getNoteUrl());
+                List<ChapterBean> chapterBeans = BookshelfHelp.queryChapterList(bookShelf.getNoteUrl());
                 if (chapterBeans != null) {
                     emitter.onNext(chapterBeans);
                 } else {
@@ -78,10 +84,10 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     .subscribeOn(Schedulers.single())
                     .flatMap((Function<List<ChapterBean>, ObservableSource<BookShelfBean>>) chapterBeans -> {
                         if (chapterBeans.isEmpty()) {
-                            return getChapterList(bookShelfBean);
+                            return getChapterList(bookShelf);
                         }
-                        bookShelfBean.setChapterList(chapterBeans);
-                        return Observable.just(bookShelfBean);
+                        bookShelf.setChapterList(chapterBeans);
+                        return Observable.just(bookShelf);
                     })
                     .doAfterNext(this::saveBookShelf)
                     .observeOn(AndroidSchedulers.mainThread())
@@ -89,25 +95,13 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
                         @Override
                         public void onSubscribe(Disposable d) {
-                            disposables.add(d);
+                            disposables.add(mChapterDisposable = d);
                         }
 
                         @Override
                         public void onNext(BookShelfBean bookShelfBean) {
-                            if (bookShelfBean.realChapterListEmpty()) {
-                                if (callback != null) {
-                                    callback.onError(new BookException("目录获取失败"));
-                                }
-                            } else {
-                                isPrepared = true;
-                                if (callback != null) {
-                                    callback.onSuccess(bookShelfBean);
-                                }
-
-                                mPlayIndex = bookShelfBean.getDurChapter();
-                                ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
-                                playChapter(chapterBean, false);
-                            }
+                            bookShelf = bookShelfBean;
+                            onSuccess(callback);
                         }
 
                         @Override
@@ -120,26 +114,95 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         }
     }
 
+    private void onSuccess(Callback<BookShelfBean> callback) {
+        if (bookShelf.realChapterListEmpty()) {
+            if (callback != null) {
+                callback.onError(new BookException("目录获取失败"));
+            }
+        } else {
+            isPrepared = true;
+            if (callback != null) {
+                callback.onSuccess(bookShelf);
+            }
+
+            mPlayIndex = bookShelf.getDurChapter();
+            ChapterBean chapterBean = bookShelf.getChapter(mPlayIndex);
+            playChapter(chapterBean, false);
+        }
+    }
+
+    @Override
+    public void changeSource(SearchBookBean searchBookBean, Callback<BookShelfBean> callback) {
+        if (bookShelf == null) return;
+
+        if (mPlayCallback != null) {
+            mPlayCallback.onStart();
+        }
+
+        if (mChapterDisposable != null) {
+            disposables.remove(mChapterDisposable);
+        }
+
+        BookShelfBean target = BookshelfHelp.getBookFromSearchBook(searchBookBean);
+        target.setSerialNumber(bookShelf.getSerialNumber());
+        target.setDurChapterName(bookShelf.getDurChapterName());
+        target.setDurChapter(bookShelf.getDurChapter());
+        target.setDurChapterPage(bookShelf.getDurChapterPage());
+        target.setFinalDate(bookShelf.getFinalDate());
+        WebBookModelImpl.getInstance().getBookInfo(target)
+                .subscribeOn(Schedulers.io())
+                .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean))
+                .timeout(30, TimeUnit.SECONDS)
+                .map(bookShelfBean -> {
+                    bookShelfBean.setGroup(bookShelf.getGroup());
+                    bookShelfBean.setUpdateOff(bookShelf.getUpdateOff());
+                    bookShelfBean.setNewChapters(0);
+                    return bookShelfBean;
+                })
+                .doOnNext(bookShelfBean -> {
+                    BookshelfHelp.removeFromBookShelf(bookShelf);
+                    BookshelfHelp.saveBookToShelf(bookShelfBean);
+                    bookShelf.setChangeSource(true);
+                    RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
+                    RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<BookShelfBean>() {
+                    @Override
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        bookShelf = bookShelfBean;
+                        onSuccess(callback);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (callback != null) {
+                            callback.onError(e);
+                        }
+                    }
+                });
+    }
+
     @Override
     public void updateBookShelf(BookShelfBean bookShelfBean) {
         if (bookShelfBean != null && !bookShelfBean.realChapterListEmpty()) {
-            this.bookShelfBean = bookShelfBean;
+            this.bookShelf = bookShelfBean;
         }
     }
 
     @Override
     public void addToShelf() {
-        if (bookShelfBean != null) {
-            saveBookShelf(bookShelfBean, true);
+        if (bookShelf != null) {
+            saveBookShelf(bookShelf, true);
         }
     }
 
     @Override
     public boolean inBookShelf() {
-        if (bookShelfBean == null) {
+        if (bookShelf == null) {
             return false;
         }
-        return BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl());
+        return BookshelfHelp.isInBookShelf(bookShelf.getNoteUrl());
     }
 
     @Override
@@ -150,7 +213,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
         if (hasNext()) {
             mPlayIndex += 1;
-            ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
+            ChapterBean chapterBean = bookShelf.getChapter(mPlayIndex);
             playChapter(chapterBean, true);
         }
 
@@ -164,7 +227,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
         if (hasPrevious()) {
             mPlayIndex -= 1;
-            ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
+            ChapterBean chapterBean = bookShelf.getChapter(mPlayIndex);
             playChapter(chapterBean, true);
         }
 
@@ -172,7 +235,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
     @Override
     public boolean hasNext() {
-        return mPlayIndex < bookShelfBean.getChapterList().size() - 1;
+        return mPlayIndex < bookShelf.getChapterList().size() - 1;
     }
 
     @Override
@@ -187,8 +250,8 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
     @Override
     public ChapterBean getDurChapter() {
-        if (bookShelfBean != null && !bookShelfBean.realChapterListEmpty()) {
-            return bookShelfBean.getChapter(mPlayIndex);
+        if (bookShelf != null && !bookShelf.realChapterListEmpty()) {
+            return bookShelf.getChapter(mPlayIndex);
         }
         return null;
     }
@@ -219,16 +282,16 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 })
                 .doOnNext(chapterBean -> {
                     mPlayIndex = chapterBean.getDurChapterIndex();
-                    bookShelfBean.setDurChapter(chapterBean.getDurChapterIndex());
-                    bookShelfBean.setDurChapterName(chapterBean.getDurChapterName());
-                    saveBookShelf(bookShelfBean);
+                    bookShelf.setDurChapter(chapterBean.getDurChapterIndex());
+                    bookShelf.setDurChapterName(chapterBean.getDurChapterName());
+                    saveBookShelf(bookShelf);
                 })
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (!TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
                         return Observable.just(chapterBean);
                     }
                     return WebBookModelImpl.getInstance()
-                            .processAudioChapter(bookShelfBean.getTag(), chapterBean);
+                            .processAudioChapter(bookShelf.getTag(), chapterBean);
                 })
                 .timeout(20, TimeUnit.SECONDS)
                 .retry(RETRY_COUNT)
@@ -240,8 +303,8 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 })
                 .doAfterNext(chapterBean -> {
                     try {
-                        bookShelfBean.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
-                        if (BookshelfHelp.isInBookShelf(chapterBean.getNoteUrl())) {
+                        bookShelf.getChapterList().set(chapterBean.getDurChapterIndex(), chapterBean);
+                        if (inBookShelf()) {
                             DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
                         }
                     } catch (Exception ignore) {
@@ -291,8 +354,8 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     @Override
     public void saveProgress(int progress, int duration) {
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
-                ChapterBean chapterBean = bookShelfBean.getChapter(mPlayIndex);
+            if (inBookShelf()) {
+                ChapterBean chapterBean = bookShelf.getChapter(mPlayIndex);
                 chapterBean.setStart(progress);
                 chapterBean.setEnd(duration);
                 DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
@@ -316,11 +379,11 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         saveBookShelf(bookShelfBean, false);
     }
 
-    private void saveBookShelf(BookShelfBean bookShelfBean, boolean forceAdd) {
+    private void saveBookShelf(BookShelfBean bookShelfBean, boolean forceSave) {
         Observable.create((ObservableOnSubscribe<BookShelfBean>) emitter -> {
             bookShelfBean.setFinalDate(System.currentTimeMillis());
             bookShelfBean.setHasUpdate(false);
-            if (forceAdd || BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+            if (forceSave || inBookShelf()) {
                 BookshelfHelp.saveBookToShelf(bookShelfBean);
             }
             emitter.onNext(bookShelfBean);
@@ -341,12 +404,11 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
     private Observable<BookShelfBean> getChapterList(BookShelfBean bookShelf) {
         return WebBookModelImpl.getInstance().getChapterList(bookShelf)
-                .doOnNext(bookShelfBean -> {
-                    // 存储章节到数据库
+                .map(bookShelfBean -> {
                     bookShelfBean.setHasUpdate(false);
                     bookShelfBean.setNewChapters(0);
                     bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
-                    saveBookShelf(bookShelfBean);
+                    return bookShelfBean;
                 });
     }
 

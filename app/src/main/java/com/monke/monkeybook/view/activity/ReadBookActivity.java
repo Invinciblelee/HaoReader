@@ -265,6 +265,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         isFirstIn = false;
     }
 
+    @Override
+    protected void tintToolbarNavIcon() {
+    }
+
     /**
      * 状态栏
      */
@@ -1134,7 +1138,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 moDialogHUD.showTwoButton(getString(R.string.clean_book_cache_s),
                         getString(R.string.ok),
                         v -> mPresenter.cleanCache(),
-                        getString(R.string.cancel), null);
+                        getString(R.string.cancel), v -> moDialogHUD.dismiss());
                 break;
             case R.id.action_book_info:
                 ensureWindowAnimNotTranslucent();
@@ -1264,10 +1268,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPresenter.getBookShelf() != null) {
             ensureProgressHUD();
             moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
-                mHandler.post(() -> {
-                    mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
-                    mPresenter.changeBookSource(searchBookBean);
-                });
+                mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
+                mPresenter.changeBookSource(searchBookBean);
             });
         }
     }

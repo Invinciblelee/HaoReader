@@ -6,10 +6,11 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
 import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import retrofit2.Response;
 
 final class BookList {
@@ -21,24 +22,20 @@ final class BookList {
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final Response<String> response) {
-        return Observable.create(e -> {
-            try {
-                String baseURL;
-                okhttp3.Response networkResponse = response.raw().networkResponse();
-                if (networkResponse != null) {
-                    baseURL = networkResponse.request().url().toString();
-                } else {
-                    baseURL = response.raw().request().url().toString();
-                }
-
-                analyzer.apply(analyzer.newConfig().baseURL(baseURL));
-
-                e.onNext(analyzer.getSearchBooks(response.body()));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                e.onNext(new ArrayList<>());
+        return Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
+            String baseURL;
+            okhttp3.Response networkResponse = response.raw().networkResponse();
+            if (networkResponse != null) {
+                baseURL = networkResponse.request().url().toString();
+            } else {
+                baseURL = response.raw().request().url().toString();
             }
+
+            analyzer.apply(analyzer.newConfig().baseURL(baseURL));
+
+            List<SearchBookBean> searchBookBeans = analyzer.getSearchBooks(response.body());
+            e.onNext(searchBookBeans);
             e.onComplete();
-        });
+        }).onErrorReturnItem(Collections.emptyList());
     }
 }

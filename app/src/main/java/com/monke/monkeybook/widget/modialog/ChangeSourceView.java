@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.monke.basemvplib.BaseActivity;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -29,7 +31,6 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -135,14 +136,16 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
 
     private void selectSource(SearchBookBean searchBook) {
         moDialogView.getMoDialogHUD().dismiss();
-        if (!selectCover) {
-            if (!searchBook.isCurrentSource()) {
+        moDialogView.post(() -> {
+            if (selectCover) {
                 onClickSource.changeSource(searchBook);
-                incrementSourceWeightBySelection(searchBook);
+            } else {
+                if (!searchBook.isCurrentSource()) {
+                    onClickSource.changeSource(searchBook);
+                    incrementSourceWeightBySelection(searchBook);
+                }
             }
-        } else {
-            onClickSource.changeSource(searchBook);
-        }
+        });
     }
 
     private void getSearchBookInDb() {

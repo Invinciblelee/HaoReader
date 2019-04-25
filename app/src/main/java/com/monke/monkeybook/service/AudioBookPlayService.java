@@ -36,6 +36,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.RxBusTag;
@@ -58,7 +59,7 @@ public class AudioBookPlayService extends Service {
 
     public static final String ACTION_ATTACH = "ACTION_ATTACH";
     public static final String ACTION_START = "ACTION_START";
-    public static final String ACTION_PULL = "ACTION_PULL";
+    public static final String ACTION_CHANGE_SOURCE = "ACTION_CHANGE_SOURCE";
     public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
     public static final String ACTION_PLAY = "ACTION_PLAY";
     public static final String ACTION_NEXT = "ACTION_NEXT";
@@ -86,9 +87,7 @@ public class AudioBookPlayService extends Service {
     public static boolean running;
 
     private BookShelfBean bookShelfBean;
-
     private final MediaPlayer mediaPlayer = new MediaPlayer();
-
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private MediaSessionCompat mediaSessionCompat;
@@ -119,7 +118,20 @@ public class AudioBookPlayService extends Service {
         context.startService(intent);
     }
 
+    public static void start(Context context) {
+        start(context, null);
+    }
+
+    public static void changeSource(Context context, SearchBookBean searchBookBean) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_CHANGE_SOURCE);
+        intent.putExtra("searchBook", searchBookBean);
+        context.startService(intent);
+    }
+
     public static void play(Context context, ChapterBean chapterBean) {
+        if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_PLAY);
         intent.putExtra("chapter", chapterBean);
@@ -130,13 +142,6 @@ public class AudioBookPlayService extends Service {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_ADD_SHELF);
-        context.startService(intent);
-    }
-
-    public static void pull(Context context) {
-        if (!running) return;
-        Intent intent = new Intent(context, AudioBookPlayService.class);
-        intent.setAction(ACTION_PULL);
         context.startService(intent);
     }
 
@@ -223,8 +228,9 @@ public class AudioBookPlayService extends Service {
                 case ACTION_START:
                     onActionStart(intent);
                     break;
-                case ACTION_PULL:
-                    pullAudioInfo();
+                case ACTION_CHANGE_SOURCE:
+                    SearchBookBean searchBookBean = intent.getParcelableExtra("searchBook");
+                    changeSource(searchBookBean);
                     break;
                 case ACTION_PLAY:
                     ChapterBean chapterBean = intent.getParcelableExtra("chapter");
@@ -303,26 +309,25 @@ public class AudioBookPlayService extends Service {
                 initModel();
             }
         } else {
-            restart();
+            sendWhenAttach();
         }
         updateNotification();
     }
 
     private void initModel() {
         resetPlay();
-
         mModel = createModel(bookShelfBean);
         mModel.registerPlayCallback(new IAudioBookPlayModel.PlayCallback() {
 
             @Override
             public void onStart() {
-                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(true));
+                sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
             }
 
             @Override
             public void onPrepare(ChapterBean chapterBean) {
                 updateNotification();
-                sendBroadcast(ACTION_PREPARE, AudioPlayInfo.start(chapterBean));
+                sendEvent(ACTION_PREPARE, AudioPlayInfo.start(chapterBean));
             }
 
             @Override
@@ -350,7 +355,7 @@ public class AudioBookPlayService extends Service {
         mModel.ensureChapterList(new IAudioBookPlayModel.Callback<BookShelfBean>() {
             @Override
             public void onSuccess(BookShelfBean data) {
-                sendBroadcast(ACTION_START, AudioPlayInfo.start(timerMinute, data.getBookInfoBean().getRealCoverUrl(), data.getDurChapter(), data.getChapterList()));
+                sendEvent(ACTION_START, AudioPlayInfo.start(timerMinute, data.getDurChapter(), data.getChapterList()));
             }
 
             @Override
@@ -363,6 +368,32 @@ public class AudioBookPlayService extends Service {
                 sendWhenError();
             }
         });
+    }
+
+    private void changeSource(SearchBookBean searchBookBean) {
+        if (mModel != null && searchBookBean != null) {
+            mModel.changeSource(searchBookBean, new IAudioBookPlayModel.Callback<BookShelfBean>() {
+                @Override
+                public void onSuccess(BookShelfBean data) {
+                    bookShelfBean = data;
+                    isPrepared = false;
+                    mediaPlayer.reset();
+                    setPause(false);
+                    sendEvent(ACTION_ATTACH, AudioPlayInfo.attach(data.getBookInfoBean()));
+                    sendEvent(ACTION_START, AudioPlayInfo.start(timerMinute, data.getDurChapter(), data.getChapterList()));
+                }
+
+                @Override
+                public void onError(Throwable error) {
+                    if (NetworkUtil.isNetworkAvailable()) {
+                        ToastUtils.toast(AudioBookPlayService.this, "换源失败，请重新换源");
+                    } else {
+                        ToastUtils.toast(AudioBookPlayService.this, "网络连接失败");
+                    }
+                    sendWhenError();
+                }
+            });
+        }
     }
 
     private void initMediaPlayer() {
@@ -384,7 +415,7 @@ public class AudioBookPlayService extends Service {
 
             cancelProgressTimer();
             setProgressTimer();
-            sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+            sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
         });
         mediaPlayer.setOnCompletionListener(mp -> {
             if (isPrepared) {
@@ -395,9 +426,9 @@ public class AudioBookPlayService extends Service {
 
         mediaPlayer.setOnInfoListener((mp, what, extra) -> {
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
-                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(true));
+                sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
-                sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+                sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
             }
             return false;
         });
@@ -465,38 +496,36 @@ public class AudioBookPlayService extends Service {
         if (bookShelfBean == null) return;
         Logger.d(TAG, "audio --> restart");
         sendWhenAttach();
-        pullAudioInfo();
         resumePlay();
-    }
-
-    private void pullAudioInfo() {
-        if (bookShelfBean != null && !bookShelfBean.realChapterListEmpty()) {
-            Logger.d(TAG, "audio --> pullAudioInfo");
-            AudioPlayInfo info = AudioPlayInfo.pull(timerMinute, timerUntilFinish, bookShelfBean.getDurChapterName(), bookShelfBean.getBookInfoBean().getRealCoverUrl(), bookShelfBean.getChapterList());
-            info.setPause(isPause);
-            info.setDurChapterIndex(bookShelfBean.getDurChapter());
-            if (isPrepared) {
-                info.setProgress(mediaPlayer.getCurrentPosition());
-                info.setDuration(mediaPlayer.getDuration());
-            }
-            sendBroadcast(ACTION_PULL, info);
-        }
     }
 
     private void sendWhenError() {
         isError = true;
         isPause = true;
         setPause(true);
-        sendBroadcast(ACTION_LOADING, AudioPlayInfo.loading(false));
+        sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
     }
 
     private void sendWhenAttach() {
         if (bookShelfBean != null) {
-            sendBroadcast(ACTION_ATTACH, AudioPlayInfo.attach(bookShelfBean.getBookInfoBean().getName(), bookShelfBean.getBookInfoBean().getRealCoverUrl(), bookShelfBean.getNoteUrl()));
+            AudioPlayInfo info = AudioPlayInfo.attach(bookShelfBean.getBookInfoBean());
+            info.setPause(isPause);
+            info.setTimerMinute(timerMinute);
+            info.setTimerMinuteUntilFinish(timerUntilFinish);
+            if (!bookShelfBean.realChapterListEmpty()) {
+                info.setChapterBeans(bookShelfBean.getChapterList());
+                info.setDurChapterIndex(bookShelfBean.getDurChapter());
+            }
+            if (isPrepared) {
+                info.setProgress(mediaPlayer.getCurrentPosition());
+                info.setDuration(mediaPlayer.getDuration());
+            }
+            sendEvent(ACTION_ATTACH, info);
         }
     }
 
     private void resetPlay() {
+        sendWhenAttach();
         if (mModel != null) {
             mModel.saveProgress(progress, duration);
             mModel.destroy();
@@ -505,7 +534,6 @@ public class AudioBookPlayService extends Service {
         isPrepared = false;
         isPause = false;
         mediaPlayer.reset();
-        sendWhenAttach();
     }
 
     private void nextPlay() {
@@ -550,9 +578,9 @@ public class AudioBookPlayService extends Service {
 
     private void setPause(boolean pause) {
         if (pause) {
-            sendBroadcast(ACTION_PAUSE, AudioPlayInfo.empty());
+            sendEvent(ACTION_PAUSE, AudioPlayInfo.empty());
         } else {
-            sendBroadcast(ACTION_RESUME, AudioPlayInfo.empty());
+            sendEvent(ACTION_RESUME, AudioPlayInfo.empty());
         }
         updateNotification();
         updateMediaSessionPlaybackState();
@@ -629,7 +657,7 @@ public class AudioBookPlayService extends Service {
                 if (mediaPlayer.isPlaying()) {
                     duration = mediaPlayer.getDuration();
                     progress = mediaPlayer.getCurrentPosition();
-                    sendBroadcast(ACTION_PROGRESS, AudioPlayInfo.play(progress, duration));
+                    sendEvent(ACTION_PROGRESS, AudioPlayInfo.play(progress, duration));
                 }
             }, 0, 1000, TimeUnit.MILLISECONDS);
         }
@@ -654,7 +682,7 @@ public class AudioBookPlayService extends Service {
 
         }, 60 * 1000, 60 * 1000, TimeUnit.MILLISECONDS);
 
-        sendBroadcast(ACTION_TIMER_PROGRESS, AudioPlayInfo.timerDown(timerUntilFinish));
+        sendEvent(ACTION_TIMER_PROGRESS, AudioPlayInfo.timerDown(timerUntilFinish));
         updateNotification();
     }
 
@@ -751,7 +779,7 @@ public class AudioBookPlayService extends Service {
         return new AudioBookPlayModelImpl(bookShelfBean);
     }
 
-    private void sendBroadcast(String action, AudioPlayInfo info) {
+    private void sendEvent(String action, AudioPlayInfo info) {
         if (info != null) {
             info.setAction(action);
             RxBus.get().post(RxBusTag.AUDIO_PLAY, info);
@@ -773,12 +801,13 @@ public class AudioBookPlayService extends Service {
         running = false;
         cancelProgressTimer();
         cancelAlarmTimer();
+        mediaPlayer.stop();
         mediaPlayer.release();
         if (mModel != null) {
             mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
-        sendBroadcast(ACTION_STOP, AudioPlayInfo.empty());
+        sendEvent(ACTION_STOP, AudioPlayInfo.empty());
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
@@ -788,7 +817,7 @@ public class AudioBookPlayService extends Service {
     @Subscribe(thread = EventThread.MAIN_THREAD,
             tags = {@Tag(RxBusTag.HAD_REMOVE_BOOK)})
     public void removeBookShelf(BookShelfBean bookShelf) {
-        if (bookShelfBean != null && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
+        if (bookShelfBean != null && !bookShelf.isChangeSource() && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
             stopPlay();
         }
     }

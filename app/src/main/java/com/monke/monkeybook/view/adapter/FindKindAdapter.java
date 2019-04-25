@@ -211,7 +211,11 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
 
             if (originalList == null) {
                 synchronized (lock) {
-                    originalList = new ArrayList<>(dataList);
+                    if(dataList == null){
+                        originalList = new ArrayList<>();
+                    }else {
+                        originalList = new ArrayList<>(dataList);
+                    }
                 }
             }
 

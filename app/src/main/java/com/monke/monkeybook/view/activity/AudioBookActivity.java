@@ -127,13 +127,12 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         RxBus.get().register(this);
         if (AudioBookPlayService.running) {
             runningView.setVisibility(View.VISIBLE);
-            AudioBookPlayService.pull(this);
+            AudioBookPlayService.start(this);
         } else {
             runningView.setVisibility(View.INVISIBLE);
         }
 
         mPresenter.loadAudioBooks(false);
-
     }
 
     private void setupActionBar() {
@@ -166,20 +165,16 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     public void onPlayEvent(AudioPlayInfo info) {
         switch (info.getAction()) {
             case AudioBookPlayService.ACTION_ATTACH:
-                setCoverImage(info.getCover());
-                runningView.setVisibility(View.VISIBLE);
-                break;
-            case AudioBookPlayService.ACTION_PULL:
+                setCoverImage(info.getBookInfoBean().getRealCoverUrl());
                 setProgress(info.getProgress(), info.getDuration());
-                setCoverImage(info.getCover());
                 if (info.isPause()) {
                     setPause();
                 } else {
                     setResume();
                 }
+                runningView.setVisibility(View.VISIBLE);
                 break;
             case AudioBookPlayService.ACTION_START:
-                setCoverImage(info.getCover());
                 setResume();
                 break;
             case AudioBookPlayService.ACTION_PAUSE:

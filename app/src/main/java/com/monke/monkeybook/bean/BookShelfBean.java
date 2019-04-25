@@ -55,6 +55,8 @@ public class BookShelfBean implements Parcelable, VariableStore {
     private List<ChapterBean> chapterList = new ArrayList<>();    //章节列表
     @Transient
     private List<BookmarkBean> bookmarkList = new ArrayList<>();    //书签列表
+    @Transient
+    private boolean changeSource;
 
     public BookShelfBean() {
     }
@@ -247,6 +249,14 @@ public class BookShelfBean implements Parcelable, VariableStore {
             }
         }
         return bookShelfBean;
+    }
+
+    public boolean isChangeSource() {
+        return changeSource;
+    }
+
+    public void setChangeSource(boolean changeSource) {
+        this.changeSource = changeSource;
     }
 
     public String getNoteUrl() {

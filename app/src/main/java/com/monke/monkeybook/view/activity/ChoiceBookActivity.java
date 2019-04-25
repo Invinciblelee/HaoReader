@@ -149,15 +149,9 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
 
     @Override
     public void loadMoreSearchBook(final List<SearchBookBean> books) {
-        if (books.size() <= 0) {
+        if (books.isEmpty()) {
             loadMoreFinish(true);
             return;
-        }
-        for (SearchBookBean searchBook : searchBookAdapter.getSearchBooks()) {
-            if (Objects.equals(books.get(0).getName(), searchBook.getName()) && Objects.equals(books.get(0).getAuthor(), searchBook.getAuthor())) {
-                loadMoreFinish(true);
-                return;
-            }
         }
         searchBookAdapter.addAll(books);
         loadMoreFinish(false);

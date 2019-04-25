@@ -8,9 +8,6 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.JavaScriptEngine;
 import com.monke.monkeybook.help.Logger;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.script.SimpleBindings;
 
 final class JSParser {
@@ -32,22 +29,6 @@ final class JSParser {
         } else {
             return evalStringScriptByRhino(jsStr, java, result, baseUrl);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    List<Object> evalArrayScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
-        try {
-            SimpleBindings bindings = new SimpleBindings();
-            bindings.put("java", java);
-            bindings.put("result", result);
-            bindings.put("baseUrl", baseUrl);
-            jsStr = jsStr.replace("parseResultContents", "java.parseResultContents")
-                    .replace("parseList", "java.parseList");
-            return (List<Object>) JavaScriptEngine.getEngine().eval(jsStr, bindings);
-        } catch (Exception e) {
-            Logger.e("Rhino", jsStr, e);
-        }
-        return Collections.emptyList();
     }
 
     private String evalStringScriptByRhino(String jsStr, JavaExecutor java, String result, String baseUrl) {

@@ -6,7 +6,6 @@ import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -45,16 +44,6 @@ abstract class BaseAnalyzerPresenter<S, T> implements IAnalyzerPresenter, JavaEx
             for (String javaScript : rulePattern.javaScripts) {
                 final Object value = getJSParser().evalStringScript(javaScript, this, string, getConfig().getBaseURL());
                 result = StringUtils.valueOf(value);
-            }
-        }
-        return result;
-    }
-
-    List<Object> evalArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
-        List<Object> result = new ArrayList<>();
-        if (!rulePattern.javaScripts.isEmpty()) {
-            for (String javaScript : rulePattern.javaScripts) {
-                result = getJSParser().evalArrayScript(javaScript, this, string, getConfig().getBaseURL());
             }
         }
         return result;

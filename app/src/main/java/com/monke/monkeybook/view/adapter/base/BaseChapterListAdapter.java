@@ -142,7 +142,11 @@ public abstract class BaseChapterListAdapter<T extends FilterBean> extends Recyc
 
             if (originalList == null) {
                 synchronized (lock) {
-                    originalList = new ArrayList<>(dataList);
+                    if(dataList == null){
+                        originalList = new ArrayList<>();
+                    }else {
+                        originalList = new ArrayList<>(dataList);
+                    }
                 }
             }
 

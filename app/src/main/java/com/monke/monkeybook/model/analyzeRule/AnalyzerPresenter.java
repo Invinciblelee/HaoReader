@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -184,11 +182,7 @@ public class AnalyzerPresenter<S, T> extends BaseAnalyzerPresenter<S, T> {
     }
 
     private List<T> getSingleRawList(RulePattern rulePattern) {
-        if (rulePattern.isSimpleJS) {
-            List<Object> list = evalArrayScript(getParser().getStringSource(), rulePattern);
-            Log.e("TAG", "list: " + list.toString());
-            return (List<T>) list;
-        } else if (rulePattern.isRedirect) {
+        if (rulePattern.isRedirect) {
             String source = evalStringScript(getParser().getStringSource(), rulePattern);
             RulePattern pattern = RulePattern.fromRule(rulePattern.redirectRule);
             return getParser().parseList(source, pattern.elementsRule);
@@ -241,13 +235,4 @@ public class AnalyzerPresenter<S, T> extends BaseAnalyzerPresenter<S, T> {
         return "";
     }
 
-    @Override
-    public List<String> parseResultContents(String source, String rule) {
-        return null;
-    }
-
-    @Override
-    public List<Object> parseList(String source, String rule) {
-        return null;
-    }
 }

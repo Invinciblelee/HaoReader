@@ -197,8 +197,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
                             getString(R.string.ok),
-                            v -> mPresenter.removeFromBookShelf(bookShelf),
-                            getString(R.string.cancel), null);
+                            v -> {
+                                mPresenter.removeFromBookShelf(bookShelf);
+                                moDialogHUD.dismiss();
+                            },
+                            getString(R.string.cancel), v -> moDialogHUD.dismiss());
                 } else {
                     ReadBookActivity.startThis(MainActivity.this, bookShelf, true);
                 }
@@ -210,8 +213,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
                             getString(R.string.ok),
-                            v -> mPresenter.removeFromBookShelf(bookShelf),
-                            getString(R.string.cancel), null);
+                            v -> {
+                                mPresenter.removeFromBookShelf(bookShelf);
+                                moDialogHUD.dismiss();
+                            },
+                            getString(R.string.cancel), v -> moDialogHUD.dismiss());
                 } else {
                     BookDetailActivity.startThis(MainActivity.this, bookShelf);
                 }
@@ -285,13 +291,13 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 moDialogHUD.showTwoButton(getString(R.string.clean_caches_s),
                         getString(R.string.ok),
                         v -> mPresenter.cleanCaches(),
-                        getString(R.string.cancel), null);
+                        getString(R.string.cancel), v -> moDialogHUD.dismiss());
                 break;
             case R.id.action_clearBookshelf:
                 moDialogHUD.showTwoButton(getString(R.string.clear_bookshelf_s),
                         getString(R.string.ok),
                         v -> mPresenter.clearBookshelf(),
-                        getString(R.string.cancel), null);
+                        getString(R.string.cancel), v -> moDialogHUD.dismiss());
                 break;
             case R.id.action_refreshBookshelf:
                 BookListFragment current = fragments[this.group];
@@ -448,7 +454,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             moDialogHUD.showTwoButton(getString(R.string.backup_message),
                     getString(R.string.ok),
                     v -> mPresenter.backupData(),
-                    getString(R.string.cancel), null);
+                    getString(R.string.cancel), v -> moDialogHUD.dismiss());
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.backup_permission),
                     BACKUP_RESULT, MApplication.PerList);
@@ -466,7 +472,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             moDialogHUD.showTwoButton(getString(R.string.restore_message),
                     getString(R.string.ok),
                     v -> mPresenter.restoreData(),
-                    getString(R.string.cancel), null);
+                    getString(R.string.cancel), v -> moDialogHUD.dismiss());
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.restore_permission),
                     RESTORE_RESULT, MApplication.PerList);

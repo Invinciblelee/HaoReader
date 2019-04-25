@@ -3,6 +3,7 @@ package com.monke.monkeybook.view.activity;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.AudioPlayInfo;
+import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
@@ -38,6 +40,8 @@ import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
+import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,7 +91,9 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     private AudioTimerPop audioTimerPop;
     private CheckAddShelfPop checkAddShelfPop;
 
-    private String noteUrl;
+    private BookInfoBean bookInfoBean;
+
+    private MoDialogHUD moDialogHUD;
 
     public static void startThis(MBaseActivity activity, View transitionView, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, AudioBookPlayActivity.class);
@@ -109,6 +115,10 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
+    protected void tintToolbarNavIcon() {
+    }
+
+    @Override
     protected IPresenter initInjector() {
         return null;
     }
@@ -125,10 +135,12 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
         }
         setCoverImage(null);
         setButtonEnabled(false);
@@ -177,18 +189,19 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_book_source_activity, menu);
+        getMenuInflater().inflate(R.menu.menu_audio_play_activity, menu);
+        AppCompat.setTint(menu.findItem(R.id.action_change_source), getResources().getColor(R.color.white));
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            onBackPressed();
         } else if (item.getItemId() == R.id.action_change_source) {
             changeSource();
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -200,19 +213,27 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
-    public void onBackPressed() {
-        if (noteUrl != null) {
-            if (!BookshelfHelp.isInBookShelf(noteUrl)) {
-                showAddShelfPop(tvTitle.getText().toString());
-                return;
-            }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (moDialogHUD != null && moDialogHUD.onKeyDown(keyCode, event)) {
+            return true;
         }
 
-        if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
-            supportFinishAfterTransition();
-        } else {
-            finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (bookInfoBean != null) {
+                if (!BookshelfHelp.isInBookShelf(bookInfoBean.getNoteUrl())) {
+                    showAddShelfPop(tvTitle.getText().toString());
+                    return true;
+                }
+            }
+
+            if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
+                supportFinishAfterTransition();
+            } else {
+                finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
+            }
+            return true;
         }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -257,16 +278,12 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         String action = info.getAction();
         switch (action) {
             case AudioBookPlayService.ACTION_ATTACH:
-                noteUrl = info.getNoteUrl();
-                setTitle(info.getName());
-                setCoverImage(info.getCover());
-                break;
-            case AudioBookPlayService.ACTION_PULL:
-                setTitle(info.getName());
+                bookInfoBean = info.getBookInfoBean();
+                setTitle(bookInfoBean.getName());
+                setCoverImage(bookInfoBean.getRealCoverUrl());
                 setAlarmTimer(info.getTimerMinute());
-                setCoverImage(info.getCover());
                 setChapters(info.getChapterBeans(), info.getDurChapterIndex());
-                setButtonEnabled(true);
+                setButtonEnabled(info.isChapterNotEmpty());
                 setMediaButtonEnabled(true);
                 setProgress(info.getProgress(), info.getDuration());
                 if (info.isPause()) {
@@ -279,9 +296,8 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 showProgress(info.isLoading());
                 break;
             case AudioBookPlayService.ACTION_START:
-                setCoverImage(info.getCover());
                 setChapters(info.getChapterBeans(), info.getDurChapterIndex());
-                setButtonEnabled(true);
+                setButtonEnabled(info.isChapterNotEmpty());
                 setResume();
                 break;
             case AudioBookPlayService.ACTION_PREPARE:
@@ -399,6 +415,11 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 .into(ivBlurCover);
     }
 
+    private void resetPlay() {
+        setProgress(0, 0);
+        setChapters(null, 0);
+    }
+
     private void showAddShelfPop(String bookName) {
         if (checkAddShelfPop == null) {
             checkAddShelfPop = new CheckAddShelfPop(this, bookName,
@@ -429,5 +450,15 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             return;
         }
 
+        if (bookInfoBean == null) {
+            return;
+        }
+
+        if (moDialogHUD == null) {
+            moDialogHUD = new MoDialogHUD(this);
+        }
+        moDialogHUD.showChangeSource(this, bookInfoBean, searchBookBean -> {
+            AudioBookPlayService.changeSource(AudioBookPlayActivity.this, searchBookBean);
+        });
     }
 }

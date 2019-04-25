@@ -244,26 +244,26 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
     @Override
     public void changeBookSource(SearchBookBean searchBookBean) {
         disposables.clear();
-        BookShelfBean bookShelfBean = BookshelfHelp.getBookFromSearchBook(searchBookBean);
-        bookShelfBean.setSerialNumber(bookShelf.getSerialNumber());
-        bookShelfBean.setDurChapterName(bookShelf.getDurChapterName());
-        bookShelfBean.setDurChapter(bookShelf.getDurChapter());
-        bookShelfBean.setDurChapterPage(bookShelf.getDurChapterPage());
-        bookShelfBean.setFinalDate(bookShelf.getFinalDate());
-        WebBookModelImpl.getInstance().getBookInfo(bookShelfBean)
+        BookShelfBean target = BookshelfHelp.getBookFromSearchBook(searchBookBean);
+        target.setSerialNumber(bookShelf.getSerialNumber());
+        target.setDurChapterName(bookShelf.getDurChapterName());
+        target.setDurChapter(bookShelf.getDurChapter());
+        target.setDurChapterPage(bookShelf.getDurChapterPage());
+        target.setFinalDate(bookShelf.getFinalDate());
+        WebBookModelImpl.getInstance().getBookInfo(target)
                 .subscribeOn(Schedulers.io())
-                .flatMap(bookShelfBean1 -> {
+                .flatMap(bookShelfBean -> {
                     if (inBookShelf) {
-                        return WebBookModelImpl.getInstance().getChapterList(bookShelfBean1);
+                        return WebBookModelImpl.getInstance().getChapterList(bookShelfBean);
                     }
-                    return Observable.just(bookShelfBean1);
+                    return Observable.just(bookShelfBean);
                 })
                 .timeout(30, TimeUnit.SECONDS)
-                .map(bookShelfBean1 -> {
-                    bookShelfBean1.setGroup(bookShelf.getGroup());
-                    bookShelfBean1.setUpdateOff(bookShelf.getUpdateOff());
-                    bookShelfBean1.setNewChapters(0);
-                    return bookShelfBean1;
+                .map(bookShelfBean -> {
+                    bookShelfBean.setGroup(bookShelf.getGroup());
+                    bookShelfBean.setUpdateOff(bookShelf.getUpdateOff());
+                    bookShelfBean.setNewChapters(0);
+                    return bookShelfBean;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {

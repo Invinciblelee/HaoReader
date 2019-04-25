@@ -124,6 +124,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             return;
         }
 
+        mView.showLoading("正在清除缓存");
         Single.create((SingleOnSubscribe<Boolean>) emitter -> {
             BookshelfHelp.cleanBookCache(bookShelf);
             emitter.onSuccess(true);
@@ -209,22 +210,22 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     public void changeBookSource(SearchBookBean searchBook) {
         mView.stopRefreshChapterList();
         changeSourceDisp.clear();
-        BookShelfBean bookShelfBean = BookshelfHelp.getBookFromSearchBook(searchBook);
-        bookShelfBean.setSerialNumber(bookShelf.getSerialNumber());
-        bookShelfBean.setLastChapterName(bookShelf.getLastChapterName());
-        bookShelfBean.setDurChapterName(bookShelf.getDurChapterName());
-        bookShelfBean.setDurChapter(bookShelf.getDurChapter());
-        bookShelfBean.setDurChapterPage(bookShelf.getDurChapterPage());
-        bookShelfBean.setGroup(bookShelf.getGroup());
-        WebBookModelImpl.getInstance().getBookInfo(bookShelfBean)
-                .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
+        BookShelfBean target = BookshelfHelp.getBookFromSearchBook(searchBook);
+        target.setSerialNumber(bookShelf.getSerialNumber());
+        target.setLastChapterName(bookShelf.getLastChapterName());
+        target.setDurChapterName(bookShelf.getDurChapterName());
+        target.setDurChapter(bookShelf.getDurChapter());
+        target.setDurChapterPage(bookShelf.getDurChapterPage());
+        target.setGroup(bookShelf.getGroup());
+        WebBookModelImpl.getInstance().getBookInfo(target)
+                .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(bookShelfBean2 -> {
-                    bookShelfBean2.setHasUpdate(false);
-                    bookShelfBean2.setNewChapters(0);
-                    return bookShelfBean2;
+                .map(bookShelfBean -> {
+                    bookShelfBean.setHasUpdate(false);
+                    bookShelfBean.setNewChapters(0);
+                    return bookShelfBean;
                 })
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 

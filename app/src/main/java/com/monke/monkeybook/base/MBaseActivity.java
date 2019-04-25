@@ -45,7 +45,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getWindow().getDecorView().setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
         }
-        initToolbarColors();
+        tintToolbarNavIcon();
     }
 
     @Override
@@ -55,7 +55,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         initImmersionBar();
     }
 
-    private void initToolbarColors() {
+    protected void tintToolbarNavIcon() {
         Toolbar toolbar = findToolbar();
         if (toolbar != null) {
             int color = getResources().getColor(R.color.menu_color_default);

@@ -157,7 +157,7 @@ public class MoDialogHUD {
         if (mSharedView != null && rootView != null && mSharedView.getParent() != null) {
             hideIMM(rootView);
             if (!isFinishing) {
-                new Handler().post(() -> {
+                mSharedView.post(() -> {
                     outAnim.setAnimationListener(outAnimListener);
                     mSharedView.getChildAt(0).startAnimation(outAnim);
                 });
@@ -171,7 +171,7 @@ public class MoDialogHUD {
 
     private void dismissImmediately() {
         if (mSharedView != null && rootView != null && mSharedView.getParent() != null) {
-            new Handler().post(() -> {
+            mSharedView.post(() -> {
                 rootView.removeView(mSharedView);
                 decorView.removeView(rootView);
                 if (onDismissListener != null) {

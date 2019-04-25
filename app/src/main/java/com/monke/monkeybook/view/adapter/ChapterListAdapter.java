@@ -34,7 +34,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
     }
 
     public synchronized void upChapterIndex(int index) {
-        if (this.mIndex != index) {
+        if(getItemCount() == 0){
+            return;
+        }
+        if (this.mIndex != index ) {
             if (this.mIndex != -1) {
                 notifyItemChanged(this.mIndex, 0);
             }

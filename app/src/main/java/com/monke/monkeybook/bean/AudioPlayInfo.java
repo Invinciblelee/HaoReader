@@ -13,9 +13,7 @@ public class AudioPlayInfo {
     private int timerMinuteUntilFinish;
     private int durChapterIndex;
     private ChapterBean durChapter;
-    private String name;
-    private String cover;
-    private String noteUrl;
+    private BookInfoBean bookInfoBean;
     private List<ChapterBean> chapterBeans;
 
     private boolean loading;
@@ -87,13 +85,6 @@ public class AudioPlayInfo {
         this.durChapter = durChapter;
     }
 
-    public String getCover() {
-        return cover;
-    }
-
-    public void setCover(String cover) {
-        this.cover = cover;
-    }
 
     public List<ChapterBean> getChapterBeans() {
         return chapterBeans;
@@ -103,20 +94,16 @@ public class AudioPlayInfo {
         this.chapterBeans = chapterBeans;
     }
 
-    public String getName() {
-        return name;
+    public boolean isChapterNotEmpty() {
+        return chapterBeans != null && !chapterBeans.isEmpty();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public BookInfoBean getBookInfoBean() {
+        return bookInfoBean;
     }
 
-    public String getNoteUrl() {
-        return noteUrl;
-    }
-
-    public void setNoteUrl(String noteUrl) {
-        this.noteUrl = noteUrl;
+    public void setBookInfoBean(BookInfoBean bookInfoBean) {
+        this.bookInfoBean = bookInfoBean;
     }
 
     public boolean isLoading() {
@@ -127,19 +114,16 @@ public class AudioPlayInfo {
         this.loading = loading;
     }
 
-    public static AudioPlayInfo attach(String name, String cover, String noteUrl) {
+    public static AudioPlayInfo attach(BookInfoBean bookInfoBean) {
         AudioPlayInfo info = new AudioPlayInfo();
-        info.setName(name);
-        info.setCover(cover);
-        info.setNoteUrl(noteUrl);
+        info.setBookInfoBean(bookInfoBean);
         return info;
     }
 
-    public static AudioPlayInfo start(int timerMinute, String cover, int durChapterIndex, List<ChapterBean> chapterBeans) {
+    public static AudioPlayInfo start(int timerMinute, int durChapterIndex, List<ChapterBean> chapterBeans) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setTimerMinute(timerMinute);
         info.setChapterBeans(chapterBeans);
-        info.setCover(cover);
         info.setDurChapterIndex(durChapterIndex);
         return info;
     }
@@ -151,13 +135,11 @@ public class AudioPlayInfo {
     }
 
 
-    public static AudioPlayInfo pull(int timerMinute, int timerMinuteUntilFinish, String name, String cover, List<ChapterBean> chapterBeans) {
+    public static AudioPlayInfo pull(int timerMinute, int timerMinuteUntilFinish, List<ChapterBean> chapterBeans) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setTimerMinute(timerMinute);
         info.setTimerMinuteUntilFinish(timerMinuteUntilFinish);
-        info.setName(name);
         info.setChapterBeans(chapterBeans);
-        info.setCover(cover);
         return info;
     }
 
