@@ -15,7 +15,7 @@
         app:fastScrollPopupTextColor="@color/white"
         app:fastScrollPopupTextVerticalAlignmentMode="font_metrics"
         app:fastScrollThumbColor="@color/tv_text_button_pre"
-        app:fastScrollTrackColor="@color/translucent" />
+        app:fastScrollTrackColor="@color/transparent" />
 
     <LinearLayout
         android:id="@+id/ll_chapter_base_info"
