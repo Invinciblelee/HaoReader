@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
@@ -34,10 +35,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
     }
 
     public synchronized void upChapterIndex(int index) {
-        if(getItemCount() == 0){
+        if (getItemCount() == 0) {
             return;
         }
-        if (this.mIndex != index ) {
+        if (this.mIndex != index) {
             if (this.mIndex != -1) {
                 notifyItemChanged(this.mIndex, 0);
             }
@@ -76,7 +77,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
             }
             return;
         }
-        if (realPosition == getItemCount() - 1) {
+        if (realPosition == (reverseLayout() ? 0 : getItemCount() - 1)) {
             holder.line.setVisibility(View.GONE);
         } else {
             holder.line.setVisibility(View.VISIBLE);
@@ -114,4 +115,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
         holder.tvName.setTextColor(color);
     }
 
+    private boolean reverseLayout() {
+        return AppConfigHelper.get().getBoolean("isChapterReverse", false);
+    }
 }
