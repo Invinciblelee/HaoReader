@@ -24,7 +24,6 @@ import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.view.adapter.FindKindAdapter;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.refreshview.scroller.TopLinearSmoothScroller;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.recycler_view)
-    FastScrollRecyclerView expandableList;
+    RecyclerView expandableList;
     @BindView(R.id.tv_empty)
     TextView tvEmpty;
 

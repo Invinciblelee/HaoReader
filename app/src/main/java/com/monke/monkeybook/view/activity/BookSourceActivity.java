@@ -18,6 +18,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
@@ -36,7 +37,6 @@ import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.view.fragment.FileSelector;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @BindView(R.id.rl_content)
     RelativeLayout rlContent;
     @BindView(R.id.recycler_view)
-    FastScrollRecyclerView recyclerView;
+    RecyclerView recyclerView;
     @BindView(R.id.searchView)
     SearchView searchView;
 

@@ -14,11 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.l4digital.fastscroll.FastScroller;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
+import com.monke.monkeybook.utils.DensityUtil;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +31,7 @@ import java.util.List;
  * 书源Adapter
  */
 
-public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemViewHolder> implements Filterable, FastScrollRecyclerView.SectionedAdapter {
+public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemViewHolder> implements Filterable, FastScroller.SectionIndexer {
     private List<FindKindGroupBean> dataList;
 
     private List<FindKindGroupBean> originalList;
@@ -62,6 +64,9 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
+        params.topMargin = holder.getLayoutPosition() == 0 ? ScreenUtils.dpToPx(8) : 0;
+        holder.itemView.setLayoutParams(params);
         FindKindGroupBean item = dataList.get(position);
         holder.tvTitle.setText(item.getGroupName());
         holder.itemView.setOnLongClickListener(v -> {
@@ -167,11 +172,14 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
         return myFilter;
     }
 
-    @NonNull
+
     @Override
-    public String getSectionName(int position) {
-        String groupName = dataList.get(position % dataList.size()).getGroupName();
-        return (dataList == null || StringUtils.isEmpty(groupName)) ? "" : groupName.substring(0, 1);
+    public CharSequence getSectionText(int element) {
+        if (dataList == null || dataList.isEmpty()) {
+            return "";
+        }
+        String groupName = dataList.get(element % dataList.size()).getGroupName();
+        return StringUtils.isEmpty(groupName) ? "" : groupName.substring(0, 1);
     }
 
 

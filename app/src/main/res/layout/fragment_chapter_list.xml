@@ -5,17 +5,15 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants">
 
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+    <com.l4digital.fastscroll.FastScrollRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/ll_chapter_base_info"
-        app:fastScrollEnableThumbInactiveColor="false"
-        app:fastScrollPopupBgColor="@color/tv_text_button_deep_pre"
-        app:fastScrollPopupTextColor="@color/white"
-        app:fastScrollPopupTextVerticalAlignmentMode="font_metrics"
-        app:fastScrollThumbColor="@color/tv_text_button_pre"
-        app:fastScrollTrackColor="@color/transparent" />
+        app:bubbleColor="@color/colorAccent"
+        app:bubbleTextColor="@color/white"
+        app:handleColor="@color/colorAccent"
+        app:showBubble="false"/>
 
     <LinearLayout
         android:id="@+id/ll_chapter_base_info"

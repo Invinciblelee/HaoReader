@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.l4digital.fastscroll.FastScroller;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
@@ -18,7 +19,6 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookSourceActivity;
 import com.monke.monkeybook.view.activity.SourceEditActivity;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.List;
  * 书源Adapter
  */
 
-public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.MyViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
+public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.MyViewHolder> implements FastScroller.SectionIndexer {
     private List<BookSourceBean> dataList;
     private List<BookSourceBean> allDataList;
     private BookSourceActivity activity;
@@ -181,11 +181,13 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     }
 
 
-    @NonNull
     @Override
-    public String getSectionName(int position) {
-        String groupName = dataList.get(position % dataList.size()).getBookSourceName();
-        return (dataList == null || StringUtils.isEmpty(groupName)) ? "" : groupName.substring(0, 1);
+    public CharSequence getSectionText(int element) {
+        if (dataList == null || dataList.isEmpty()) {
+            return "";
+        }
+        String groupName = dataList.get(element % dataList.size()).getBookSourceName();
+        return StringUtils.isEmpty(groupName) ? "" : groupName.substring(0, 1);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

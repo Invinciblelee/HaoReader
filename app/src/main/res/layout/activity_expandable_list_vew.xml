@@ -27,20 +27,20 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-        android:id="@+id/recycler_view"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar"
-        android:clipToPadding="false"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        app:fastScrollEnableThumbInactiveColor="false"
-        app:fastScrollPopupTextVerticalAlignmentMode="font_metrics"
-        app:fastScrollPopupBgColor="@color/tv_text_button_deep_pre"
-        app:fastScrollPopupTextColor="@color/white"
-        app:fastScrollThumbColor="@color/tv_text_button_pre"
-        app:fastScrollTrackColor="@color/scroller_track_color" />
+        android:layout_below="@id/appBar">
+
+        <com.l4digital.fastscroll.FastScrollRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:bubbleColor="@color/colorAccent"
+            app:bubbleTextColor="@color/white"
+            app:handleColor="@color/colorAccent" />
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/tv_empty"

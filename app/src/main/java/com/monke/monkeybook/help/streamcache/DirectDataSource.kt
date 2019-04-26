@@ -17,7 +17,7 @@ class DirectDataSource(private val source: Source) : DataSource {
 
         operator fun invoke(uri: Uri): DirectDataSource {
             val source = if (uri.scheme == "file") {
-                FileSource(uri.path)
+                FileSource(uri.toString())
             } else {
                 HttpSource(uri.toString(), emptyHeaderInjector)
             }
