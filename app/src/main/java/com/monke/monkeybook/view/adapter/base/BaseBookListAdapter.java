@@ -1,9 +1,10 @@
 package com.monke.monkeybook.view.adapter.base;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -22,6 +23,8 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
     private int bookshelfPx;
     private Context context;
     private OnBookItemClickListenerTwo itemClickListener;
+
+    private final Object lock = new Object();
 
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
@@ -103,70 +106,81 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         books = new ArrayList<>();
     }
 
-    public synchronized boolean updateBook(BookShelfBean bookShelf, boolean sort) {
-        if (bookShelf != null) {
-            for (int i = 0, size = books.size(); i < size; i++) {
-                if (TextUtils.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
-                    books.set(i, bookShelf);
-                    if (sort) {
-                        BookshelfHelp.order(books, bookshelfPx);
-                        notifyDataSetChanged();
-                    } else {
-                        notifyItemChanged(i, 0);
+    public boolean updateBook(BookShelfBean bookShelf, boolean sort) {
+        synchronized (lock) {
+            if (bookShelf != null) {
+                for (int i = 0, size = books.size(); i < size; i++) {
+                    if (TextUtils.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
+                        books.set(i, bookShelf);
+                        if (sort) {
+                            BookshelfHelp.order(books, bookshelfPx);
+                            notifyDataSetChanged();
+                        } else {
+                            notifyItemChanged(i, 0);
+                        }
+                        return true;
                     }
-                    return true;
                 }
             }
         }
         return false;
     }
 
-    public synchronized void addBook(BookShelfBean bookShelf) {
-        if (bookShelf != null && !updateBook(bookShelf, true)) {
-            books.add(bookShelf);
-            BookshelfHelp.order(books, bookshelfPx);
-            notifyDataSetChanged();
-        }
-    }
-
-    public synchronized void removeBook(BookShelfBean bookShelf) {
-        if (bookShelf == null || books.isEmpty()) {
-            return;
-        }
-
-        int index = -1;
-        for (int i = 0, size = books.size(); i < size; i++) {
-            if (TextUtils.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
-                index = i;
-                break;
+    public void addBook(BookShelfBean bookShelf) {
+        synchronized (lock) {
+            if (bookShelf != null && !updateBook(bookShelf, true)) {
+                books.add(bookShelf);
+                BookshelfHelp.order(books, bookshelfPx);
+                notifyDataSetChanged();
             }
         }
-        if (index >= 0) {
-            books.remove(index);
-            notifyItemRemoved(index);
-        }
-
     }
 
-    public synchronized void sort() {
-        if (!books.isEmpty()) {
-            BookshelfHelp.order(books, bookshelfPx);
+    public void removeBook(BookShelfBean bookShelf) {
+        synchronized (lock) {
+            if (bookShelf == null || books.isEmpty()) {
+                return;
+            }
+
+            int index = -1;
+            for (int i = 0, size = books.size(); i < size; i++) {
+                if (TextUtils.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index >= 0) {
+                books.remove(index);
+                notifyItemRemoved(index);
+            }
+        }
+    }
+
+    public void sort() {
+        synchronized (lock) {
+            if (!books.isEmpty()) {
+                BookshelfHelp.order(books, bookshelfPx);
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void replaceAll(List<BookShelfBean> newDataS) {
+        synchronized (lock) {
+            books.clear();
+            if (null != newDataS && newDataS.size() > 0) {
+                BookshelfHelp.order(newDataS, bookshelfPx);
+                books.addAll(newDataS);
+            }
             notifyDataSetChanged();
         }
     }
 
-    public synchronized void replaceAll(List<BookShelfBean> newDataS) {
-        books.clear();
-        if (null != newDataS && newDataS.size() > 0) {
-            BookshelfHelp.order(newDataS, bookshelfPx);
-            books.addAll(newDataS);
+    public void clear() {
+        synchronized (lock) {
+            books.clear();
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
-    }
-
-    public synchronized void clear() {
-        books.clear();
-        notifyDataSetChanged();
     }
 
     @Override

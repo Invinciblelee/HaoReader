@@ -446,8 +446,10 @@ public class AudioBookPlayService extends Service {
         mediaPlayer.setOnInfoListener((mp, what, extra) -> {
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
+                return true;
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
+                return true;
             }
             return false;
         });
@@ -455,9 +457,11 @@ public class AudioBookPlayService extends Service {
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
             Logger.d(TAG, "audio error --> " + what + "  " + extra);
             isPrepared = false;
-            toastError("播放失败，请重试");
+            if (what != -38) {
+                toastError("播放失败，请重试");
+            }
             sendWhenError();
-            return false;
+            return true;
         });
     }
 
@@ -551,6 +555,7 @@ public class AudioBookPlayService extends Service {
             mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
+        resetPlayer(true);
     }
 
     private void resetPlayer(boolean resetProgress) {
@@ -558,10 +563,8 @@ public class AudioBookPlayService extends Service {
             progress = 0;
             duration = 0;
         }
-        if (isPrepared) {
-            isPrepared = false;
-            mediaPlayer.reset();
-        }
+        isPrepared = false;
+        mediaPlayer.reset();
     }
 
     private boolean nextPlay() {
@@ -691,7 +694,7 @@ public class AudioBookPlayService extends Service {
         if (mTimer == null || mTimer.isShutdown()) {
             mTimer = Executors.newSingleThreadScheduledExecutor();
             mTimer.scheduleAtFixedRate(() -> {
-                if (!isPause) {
+                if (mediaPlayer.isPlaying()) {
                     int dur = mediaPlayer.getDuration();
                     int pro = mediaPlayer.getCurrentPosition();
                     if (dur != 0 && pro != 0) {
