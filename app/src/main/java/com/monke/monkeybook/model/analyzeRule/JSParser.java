@@ -5,7 +5,6 @@ import com.eclipsesource.v8.V8;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.JavaScriptEngine;
 import com.monke.monkeybook.help.Logger;
 
 import javax.script.SimpleBindings;
@@ -43,7 +42,7 @@ final class JSParser {
                     .replace("parseResultUrl", "java.parseResultUrl")
                     .replace("formatResultContent", "java.formatResultContent")
                     .replace("formatResultUrl", "java.formatResultUrl");
-            return (String) JavaScriptEngine.getEngine().eval(jsStr, bindings);
+            return (String) JavaScriptEngine.INSTANCE.getEngine().eval(jsStr, bindings);
         } catch (Exception e) {
             Logger.e("Rhino", jsStr, e);
         }

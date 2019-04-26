@@ -92,7 +92,7 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix ' debug'
             buildConfigField "boolean", "IS_RELEASE", "false"
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         android.applicationVariants.all { variant ->

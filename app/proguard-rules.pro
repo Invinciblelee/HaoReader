@@ -137,6 +137,10 @@
     public void *(android.webkit.webView, jav.lang.String);
 }
 
+-keepclassmembers class * {
+    public <init> (org.json.JSONObject);
+}
+
 # 移除Log类打印各个等级日志的代码，打正式包的时候可以做为禁log使用，这里可以作为禁止log打印的功能使用
 # 记得proguard-android.txt中一定不要加-dontoptimize才起作用
 # 另外的一种实现方案是通过BuildConfig.DEBUG的变量来控制
@@ -208,10 +212,23 @@ public static java.lang.String TABLENAME;
 -dontwarn sun.misc.**
 -keep class sun.reflect.**{*;}
 -dontwarn sun.reflect.**
+-keep class java.security.**{*;}
+-dontwarn java.security.**
+
+## Rhino
+-keep class javax.script.** { *; }
+-keep class com.sun.script.** { *; }
+-keep class org.mozilla.** { *; }
+-dontwarn org.mozilla.**
+-dontwarn sun.**
 
 ## J2V8
 -keep class com.eclipsesource.v8.**{*;}
 -dontwarn com.eclipsesource.v8.**
+
+##model
+-keep class com.monke.monkeybook.model.analyzeRule.**{*;}
+-dontwarn com.monke.monkeybook.model.analyzeRule.**
 
 ## Bugly
 -dontwarn com.tencent.bugly.**

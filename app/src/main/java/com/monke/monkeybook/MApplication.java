@@ -22,6 +22,8 @@ import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.activity.MainActivity;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import javax.script.ScriptEngineManager;
+
 import io.reactivex.plugins.RxJavaPlugins;
 
 public class MApplication extends Application {
