@@ -185,8 +185,6 @@ public static java.lang.String TABLENAME;
 -keep class android.support.**{*;}
 -keep class me.grantland.widget.**{*;}
 -keep class de.hdodenhof.circleimageview.**{*;}
--keep class tyrant.explosionfield.**{*;}
--keep class tyrantgit.explosionfield.**{*;}
 -keep class freemarker.**{*;}
 -keep class com.gyf.barlibrary.* {*;}
 ##JSOUP

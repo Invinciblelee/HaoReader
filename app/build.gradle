@@ -84,7 +84,7 @@ android {
         release {
             signingConfig signingConfigs.myConfig
             buildConfigField "boolean", "IS_RELEASE", "true"
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
