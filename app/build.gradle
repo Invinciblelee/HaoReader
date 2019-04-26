@@ -175,7 +175,7 @@ dependencies {
     implementation 'io.apisense:rhino-android:1.0'
     //fastscroller
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.0'
-    compile "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.0.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 

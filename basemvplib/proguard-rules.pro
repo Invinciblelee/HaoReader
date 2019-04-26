@@ -15,22 +15,3 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--optimizationpasses 5
--dontskipnonpubliclibraryclassmembers
--dontusemixedcaseclassnames
--classobfuscationdictionary  obfuscationClassNames.txt
--dontskipnonpubliclibraryclasses
--verbose
-
-##################OKGO########################
-#okgo
--dontwarn com.lzy.okgo.**
--keep class com.lzy.okgo.**{*;}
-
-#okrx
--dontwarn com.lzy.okrx.**
--keep class com.lzy.okrx.**{*;}
-
-#okserver
--dontwarn com.lzy.okserver.**
--keep class com.lzy.okserver.**{*;}
