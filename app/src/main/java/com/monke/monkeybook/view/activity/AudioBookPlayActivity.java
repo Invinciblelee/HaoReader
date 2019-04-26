@@ -155,9 +155,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    AudioBookPlayService.seek(AudioBookPlayActivity.this, progress);
-                }
             }
 
             @Override
@@ -167,7 +164,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                AudioBookPlayService.seek(AudioBookPlayActivity.this, seekBar.getProgress());
             }
         });
 
@@ -182,9 +179,10 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     protected void firstRequest() {
         RxBus.get().register(this);
 
-        String key = getIntent().getStringExtra("data_key");
+        final boolean resume = getIntent().getBooleanExtra("resume", true);
+        final String key = getIntent().getStringExtra("data_key");
         BookShelfBean bookShelfBean = BitIntentDataManager.getInstance().getData(key, null);
-        AudioBookPlayService.start(this, bookShelfBean);
+        AudioBookPlayService.start(this, bookShelfBean, resume);
     }
 
     @Override
@@ -244,6 +242,11 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     @Override
     public void onSelected(ChapterBean chapterBean) {
         AudioBookPlayService.play(this, chapterBean);
+    }
+
+    @Override
+    public void onRefresh(ChapterBean chapterBean) {
+        AudioBookPlayService.reset(this, chapterBean);
     }
 
 
@@ -309,7 +312,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 updateIndex(info.getDurChapter().getDurChapterIndex());
                 setTitle(info.getDurChapter().getDurChapterName());
                 setMediaButtonEnabled(true);
-                setProgress(0, 0);
+                setProgress(info.getProgress(), info.getDuration());
                 break;
             case AudioBookPlayService.ACTION_PAUSE:
                 setPause();
@@ -322,6 +325,9 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 break;
             case AudioBookPlayService.ACTION_STOP:
                 finish();
+                break;
+            case AudioBookPlayService.ACTION_SEEK_ENABLED:
+                seekBar.setEnabled(info.isSeekEabled());
                 break;
         }
     }
@@ -342,6 +348,10 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     private void setChapters(List<ChapterBean> chapterBeans, int durChapter) {
         audioChapterPop.setDataSet(chapterBeans);
         audioChapterPop.upIndex(durChapter);
+        if (chapterBeans != null && !chapterBeans.isEmpty()) {
+            ChapterBean chapterBean = chapterBeans.get(durChapter);
+            setTitle(chapterBean.getDurChapterName());
+        }
     }
 
     private void updateIndex(int durChapter) {

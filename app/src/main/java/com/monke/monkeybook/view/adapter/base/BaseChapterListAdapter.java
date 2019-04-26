@@ -107,12 +107,14 @@ public abstract class BaseChapterListAdapter<T extends FilterBean> extends Recyc
         public TextView tvName;
         public View line;
         public View llName;
+        public View btnRefresh;
 
         ThisViewHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             line = itemView.findViewById(R.id.v_line);
             llName = itemView.findViewById(R.id.ll_name);
+            btnRefresh = itemView.findViewById(R.id.btn_chapter_refresh);
         }
     }
 

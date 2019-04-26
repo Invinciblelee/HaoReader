@@ -45,6 +45,13 @@
         android:summary="@string/show_all_find_s"
         android:title="@string/show_all_find" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pk_audio_cache"
+        android:layout="@layout/view_preference"
+        android:summary="@string/audio_cache_s"
+        android:title="@string/audio_cache" />
+
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/bookshelf_px_title"

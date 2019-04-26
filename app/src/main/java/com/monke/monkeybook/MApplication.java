@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.streamcache.CacheGlobalSetting;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.activity.MainActivity;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -80,6 +81,13 @@ public class MApplication extends Application {
         AppCompatDelegate.setDefaultNightMode(nightTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
         registerActivityCallback();
+
+        initMediaPlayerCache();
+    }
+
+    private void initMediaPlayerCache() {
+        CacheGlobalSetting.INSTANCE.setCACHE_PATH(Constant.AUDIO_CACHE_PATH);
+        CacheGlobalSetting.INSTANCE.setCACHE_SIZE(1024 * 1024 * 10);
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -169,7 +177,7 @@ public class MApplication extends Application {
             public void onActivityDestroyed(Activity activity) {
                 if (activity instanceof MainActivity) {
                     Intent intent = activity.getIntent();
-                    if(intent != null && !intent.getBooleanExtra("isRecreate", false)) {
+                    if (intent != null && !intent.getBooleanExtra("isRecreate", false)) {
                         AudioBookPlayService.stop(activity);
                     }
                 }

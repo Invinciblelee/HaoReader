@@ -9,6 +9,7 @@ public class AudioPlayInfo {
     private int progress;
     private int duration;
     private boolean isPause;
+    private boolean seekEabled;
     private int timerMinute;
     private int timerMinuteUntilFinish;
     private int durChapterIndex;
@@ -51,6 +52,14 @@ public class AudioPlayInfo {
 
     public void setPause(boolean pause) {
         isPause = pause;
+    }
+
+    public boolean isSeekEabled() {
+        return seekEabled;
+    }
+
+    public void setSeekEabled(boolean seekEabled) {
+        this.seekEabled = seekEabled;
     }
 
     public int getTimerMinute() {
@@ -134,6 +143,12 @@ public class AudioPlayInfo {
         return info;
     }
 
+
+    public static AudioPlayInfo seekEnabled(boolean seekEabled) {
+        AudioPlayInfo info = new AudioPlayInfo();
+        info.setSeekEabled(seekEabled);
+        return info;
+    }
 
     public static AudioPlayInfo pull(int timerMinute, int timerMinuteUntilFinish, List<ChapterBean> chapterBeans) {
         AudioPlayInfo info = new AudioPlayInfo();

@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'org.greenrobot.greendao'
 
 static def getVersionName() {
@@ -173,6 +175,8 @@ dependencies {
     implementation 'io.apisense:rhino-android:1.0'
     //fastscroller
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.0'
+    compile "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 greendao {

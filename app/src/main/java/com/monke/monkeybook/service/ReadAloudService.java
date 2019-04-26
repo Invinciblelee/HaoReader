@@ -12,8 +12,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.media.AudioAttributes;
-import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
@@ -24,12 +22,10 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
@@ -38,7 +34,6 @@ import com.bumptech.glide.request.transition.Transition;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.help.RunMediaPlayer;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
@@ -52,7 +47,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static android.text.TextUtils.isEmpty;
-import static com.monke.monkeybook.MApplication.DEBUG;
 
 /**
  * Created by GKF on 2018/1/2.
@@ -88,11 +82,9 @@ public class ReadAloudService extends Service {
     private int nowSpeak;
     private int timerMinute = 0;
     private boolean timerEnable = false;
+    private AudioFocusManager focusManager;
     private ScheduledExecutorService mTimer;
-    private AudioManager audioManager;
     private MediaSessionCompat mediaSessionCompat;
-    private AudioFocusChangeListener audioFocusChangeListener;
-    private AudioFocusRequest mFocusRequest;
     private BroadcastReceiver broadcastReceiver;
     private SharedPreferences preference;
     private int speechRate;
@@ -108,17 +100,13 @@ public class ReadAloudService extends Service {
         running = true;
         preference = this.getSharedPreferences("CONFIG", 0);
         textToSpeech = new TextToSpeech(this, new TTSListener());
-        audioFocusChangeListener = new AudioFocusChangeListener();
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        focusManager = new ReadAloudFocusManager(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initFocusRequest();
-        }
         initMediaSession();
         initBroadcastReceiver();
         mediaSessionCompat.setActive(true);
         updateMediaSessionPlaybackState();
-        updateNotification();
+        updatePlayState();
 
         AudioBookPlayService.stop(this);
     }
@@ -186,7 +174,7 @@ public class ReadAloudService extends Service {
         if (ttsInitSuccess && !speak && requestFocus()) {
             speak = !speak;
             RxBus.get().post(RxBusTag.ALOUD_STATE, PLAY);
-            updateNotification();
+            updatePlayState();
             initSpeechRate();
             HashMap<String, String> map = new HashMap<>();
             map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "content");
@@ -277,7 +265,7 @@ public class ReadAloudService extends Service {
     private void pauseReadAloud(Boolean pause) {
         this.pause = pause;
         speak = false;
-        updateNotification();
+        updatePlayState();
         updateMediaSessionPlaybackState();
         textToSpeech.stop();
         RxBus.get().post(RxBusTag.ALOUD_STATE, PAUSE);
@@ -299,7 +287,7 @@ public class ReadAloudService extends Service {
             timerEnable = false;
             cancelTimer();
             timerMinute = 0;
-            updateNotification();
+            updatePlayState();
         } else if (timerMinute <= 0) {
             if (timerEnable) {
                 cancelTimer();
@@ -307,7 +295,7 @@ public class ReadAloudService extends Service {
             }
         } else {
             timerEnable = true;
-            updateNotification();
+            updatePlayState();
             setTimer();
         }
     }
@@ -385,7 +373,6 @@ public class ReadAloudService extends Service {
     }
 
     private void showNotification(Bitmap cover) {
-        updateTimer();
         final String contentTitle;
         if (timerMinute > 0 && timerMinute <= 60) {
             contentTitle = String.format(Locale.getDefault(), "(%d分钟)%s", timerMinute, this.title);
@@ -434,6 +421,11 @@ public class ReadAloudService extends Service {
         RxBus.get().post(RxBusTag.ALOUD_TIMER, timerDesc);
     }
 
+    private void updatePlayState() {
+        updateTimer();
+        updateNotification();
+    }
+
     private void clearTTS() {
         if (textToSpeech != null) {
             textToSpeech.stop();
@@ -448,35 +440,18 @@ public class ReadAloudService extends Service {
             mediaSessionCompat.setActive(false);
             mediaSessionCompat.release();
         }
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        if (focusManager != null) {
+            focusManager.abandonAudioFocus();
+        }
     }
 
     /**
      * @return 音频焦点
      */
     private boolean requestFocus() {
-        RunMediaPlayer.playSilentSound(this);
-        int request;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            request = audioManager.requestAudioFocus(mFocusRequest);
-        } else {
-            request = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        }
-        return (request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
+        return focusManager != null && focusManager.requestAudioFocus();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void initFocusRequest() {
-        AudioAttributes mPlaybackAttributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build();
-        mFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(mPlaybackAttributes)
-                .setAcceptsDelayedFocusGain(true)
-                .setOnAudioFocusChangeListener(audioFocusChangeListener)
-                .build();
-    }
 
     /**
      * 初始化MediaSession
@@ -589,29 +564,40 @@ public class ReadAloudService extends Service {
         }
     }
 
-    class AudioFocusChangeListener implements AudioManager.OnAudioFocusChangeListener {
+    private class ReadAloudFocusManager extends AudioFocusManager {
+
+        private ReadAloudFocusManager(Context context) {
+            super(context);
+        }
+
         @Override
-        public void onAudioFocusChange(int focusChange) {
-            if (DEBUG) Log.v(TAG, "focusChange: " + focusChange);
-            switch (focusChange) {
-                case AudioManager.AUDIOFOCUS_GAIN:
-                    // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
-                    if (!pause) {
-                        resumeReadAloud();
-                    }
-                    break;
-                case AudioManager.AUDIOFOCUS_LOSS:
-                    // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                    // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
-                    if (!pause) {
-                        pauseReadAloud(false);
-                    }
-                    break;
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                    // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
-                    break;
+        protected void onFocusGainFromFocusLossTransient() {
+            if (!pause) {
+                resumeReadAloud();
             }
+        }
+
+        @Override
+        protected void onFocusGain() {
+
+        }
+
+        @Override
+        protected void onFocusLoss() {
+            if (!pause) {
+                pauseReadAloud(false);
+            }
+        }
+
+        @Override
+        protected void onFocusLossTransient() {
+            if (!pause) {
+                pauseReadAloud(false);
+            }
+        }
+
+        @Override
+        protected void onFocusLossTransientCanDuck() {
         }
     }
 

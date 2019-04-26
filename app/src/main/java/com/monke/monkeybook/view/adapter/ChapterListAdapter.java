@@ -14,6 +14,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.FormatWebText;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
     private BookShelfBean mBook;
     private int mIndex = -1;
 
+    private OnRefreshChapterListener refreshChapterListener;
 
     public ChapterListAdapter(Context context) {
         super(context);
@@ -61,6 +63,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
         return mIndex;
     }
 
+    public void setOnRefreshChapterListener(OnRefreshChapterListener listener) {
+        refreshChapterListener = listener;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ThisViewHolder holder, int position, @NonNull List<Object> payloads) {
         final int realPosition = holder.getLayoutPosition();
@@ -72,8 +78,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
             if (this.mIndex == chapterBean.getDurChapterIndex()) {
                 setTextTint(holder, R.color.colorAccent);
+                setRefreshVisible(holder, true);
             } else {
                 setTextTint(holder, R.color.color_chapter_item);
+                setRefreshVisible(holder, false);
             }
             return;
         }
@@ -87,8 +95,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
         if (chapterBean.getDurChapterIndex() == mIndex) {
             setTextTint(holder, R.color.colorAccent);
+            setRefreshVisible(holder, true);
         } else {
             setTextTint(holder, R.color.color_chapter_item);
+            setRefreshVisible(holder, false);
         }
         if (isCached(chapterBean)) {
             setBoldText(holder, true);
@@ -96,6 +106,14 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
             setBoldText(holder, false);
         }
         holder.llName.setOnClickListener(v -> callOnItemClickListener(chapterBean));
+
+        if (holder.btnRefresh.isShown()) {
+            holder.btnRefresh.setOnClickListener(v -> {
+                if (refreshChapterListener != null) {
+                    refreshChapterListener.onRefreshChapter(chapterBean);
+                }
+            });
+        }
     }
 
     private boolean isCached(ChapterBean chapterBean) {
@@ -115,7 +133,20 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
         holder.tvName.setTextColor(color);
     }
 
+    private void setRefreshVisible(ThisViewHolder holder, boolean visible) {
+        if (mBook != null && !TextUtils.equals(mBook.getBookInfoBean().getBookType(), BookType.AUDIO)) {
+            return;
+        }
+        holder.btnRefresh.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
     private boolean reverseLayout() {
         return AppConfigHelper.get().getBoolean("isChapterReverse", false);
+    }
+
+    public interface OnRefreshChapterListener {
+
+        void onRefreshChapter(ChapterBean chapterBean);
+
     }
 }

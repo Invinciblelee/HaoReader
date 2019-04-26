@@ -80,10 +80,17 @@ public class AudioChapterPop extends PopupWindow {
         adapter.setOnItemClickListener(new BaseChapterListAdapter.OnItemClickListener<ChapterBean>() {
             @Override
             public void itemClick(ChapterBean item) {
+                dismiss();
                 if(listener != null){
                     listener.onSelected(item);
                 }
-                dismiss();
+            }
+        });
+
+        adapter.setOnRefreshChapterListener(chapterBean -> {
+            dismiss();
+            if(listener != null){
+                listener.onRefresh(chapterBean);
             }
         });
     }
@@ -108,5 +115,7 @@ public class AudioChapterPop extends PopupWindow {
 
     public interface OnChapterSelectListener {
         void onSelected(ChapterBean chapterBean);
+
+        void onRefresh(ChapterBean chapterBean);
     }
 }

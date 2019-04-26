@@ -252,6 +252,8 @@
     <string name="default_expand_first">默认展开第一组发现</string>
     <string name="show_all_find">显示所有发现</string>
     <string name="show_all_find_s">关闭则只显示勾选源的发现</string>
+    <string name="audio_cache">有声书边下边播</string>
+    <string name="audio_cache_s">开启可实现离线播放</string>
     <string name="threads_num">当前线程数 %s</string>
     <string name="read_aloud_speed">朗读语速</string>
     <string name="auto_next_page">自动翻页</string>

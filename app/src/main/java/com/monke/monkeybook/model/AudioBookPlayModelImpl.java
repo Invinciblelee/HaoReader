@@ -12,6 +12,7 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
+import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     private BookShelfBean bookShelf;
 
     private int mPlayIndex;
-    private int mRetryCount;
 
     public AudioBookPlayModelImpl(BookShelfBean bookShelf) {
         this.bookShelf = bookShelf;
@@ -216,8 +216,6 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     public void playNext() {
         if (!isPrepared) return;
 
-        mRetryCount = 0;
-
         if (hasNext()) {
             mPlayIndex += 1;
             ChapterBean chapterBean = bookShelf.getChapter(mPlayIndex);
@@ -229,8 +227,6 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     @Override
     public void playPrevious() {
         if (!isPrepared) return;
-
-        mRetryCount = 0;
 
         if (hasPrevious()) {
             mPlayIndex -= 1;
@@ -294,13 +290,13 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     saveBookShelf(bookShelf);
                 })
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
-                    if (!TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
+                    if (!NetworkUtil.isNetworkAvailable() || !TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
                         return Observable.just(chapterBean);
                     }
                     return WebBookModelImpl.getInstance()
                             .processAudioChapter(bookShelf.getTag(), chapterBean);
                 })
-                .timeout(20, TimeUnit.SECONDS)
+                .timeout(20L, TimeUnit.SECONDS)
                 .retry(RETRY_COUNT)
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (TextUtils.isEmpty(chapterBean.getDurChapterPlayUrl())) {
@@ -343,19 +339,28 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     @Override
-    public boolean retryPlay(boolean reset) {
-        if (!isPrepared) return false;
+    public void retryPlay(int progress) {
+        if (!isPrepared) return;
 
         ChapterBean chapterBean = getDurChapter();
-        if (reset || (chapterBean != null && mRetryCount < RETRY_COUNT)) {
-            if (!reset) {
-                mRetryCount += 1;
-            }
-            chapterBean.setDurChapterPlayUrl(null);
-            playChapter(chapterBean, true);
-            return true;
+        if (chapterBean != null) {
+            chapterBean.setStart(progress);
+            playChapter(chapterBean, false);
+        } else if (mPlayCallback != null) {
+            mPlayCallback.onError(new NullPointerException("current chapter is null"));
         }
-        return false;
+    }
+
+    @Override
+    public void resetChapter(ChapterBean chapter) {
+        if (!isPrepared) return;
+
+        if (chapter != null) {
+            chapter.setDurChapterPlayUrl(null);
+            playChapter(chapter, true);
+        } else if (mPlayCallback != null) {
+            mPlayCallback.onError(new NullPointerException("current chapter is null"));
+        }
     }
 
     @Override
