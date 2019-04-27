@@ -155,6 +155,9 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    setProgress(progress, seekBar.getMax());
+                }
             }
 
             @Override

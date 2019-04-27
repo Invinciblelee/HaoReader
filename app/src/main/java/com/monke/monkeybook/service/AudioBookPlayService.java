@@ -447,10 +447,8 @@ public class AudioBookPlayService extends Service {
         mediaPlayer.setOnInfoListener((mp, what, extra) -> {
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
-                return true;
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
-                return true;
             }
             return false;
         });
@@ -698,7 +696,7 @@ public class AudioBookPlayService extends Service {
                 if (mediaPlayer.isPlaying()) {
                     int dur = mediaPlayer.getDuration();
                     int pro = mediaPlayer.getCurrentPosition();
-                    if (dur != 0 && pro != 0) {
+                    if (dur != 0) {
                         duration = dur;
                         progress = pro;
                         sendEvent(ACTION_PROGRESS, AudioPlayInfo.play(progress, duration));
