@@ -367,6 +367,7 @@ public class AudioBookPlayService extends Service {
             public void onPlay(ChapterBean chapterBean) {
                 targetPosition = chapterBean.getStart();
                 startPlay(chapterBean.getDurChapterPlayUrl());
+                updateNotification();
             }
 
             @Override
