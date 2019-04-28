@@ -71,7 +71,7 @@
     <color name="tv_text_button_deep_pre">#11665e</color>
     <color name="tv_text_button_disable">#dddddd</color>
 
-    <color name="textfield_search_color">#339e9e9e</color>
+    <color name="textfield_search_color">#4D9e9e9e</color>
 
     <!-- 自定义header背景色 -->
     <color name="bg_head">#FF0F4AAA</color>
