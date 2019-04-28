@@ -241,7 +241,7 @@ public class Debug {
 
     private void printError(String msg) {
         if (callBack != null) {
-            callBack.printError(String.format("%s %s", getDoTime(), msg));
+            callBack.printError(String.format("%s%s", "●", msg));
         }
     }
 

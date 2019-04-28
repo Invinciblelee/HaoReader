@@ -142,13 +142,14 @@ final class JsonParser extends SourceParser<ReadContext> {
             String result = rule;
             Matcher matcher = PATTERN_JSON.matcher(rule);
             while (matcher.find()) {
+                final String group = matcher.group();
                 Object object = null;
                 try {
-                    object = source.read(matcher.group());
+                    object = source.read(group);
                 } catch (Exception e) {
                     Logger.e(TAG, rule, e);
                 }
-                result = result.replace(String.format("{%s}", matcher.group()), StringUtils.valueOf(object));
+                result = result.replace(String.format("{%s}", group), StringUtils.valueOf(object));
             }
             return result;
         }
@@ -202,9 +203,10 @@ final class JsonParser extends SourceParser<ReadContext> {
         } else {
             Matcher matcher = PATTERN_JSON.matcher(rule);
             while (matcher.find()) {
-                List<String> stringList = parseStringList(source, matcher.group());
+                final String group = matcher.group();
+                final List<String> stringList = parseStringList(source, group);
                 for (String string : stringList) {
-                    resultList.add(rule.replace(String.format("{%s}", matcher.group()), string));
+                    resultList.add(rule.replace(String.format("{%s}", group), string));
                 }
             }
             return resultList;
