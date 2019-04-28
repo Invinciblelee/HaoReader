@@ -44,9 +44,9 @@ final class RulePattern {
         if (variableStore != null) {
             Matcher getMatcher = PATTERN_GET.matcher(rawRule);
             while (getMatcher.find()) {
-                String find = getMatcher.group();
-                String value = variableStore.getVariable(find.substring(6, find.length() - 1));
-                rawRule = rawRule.replace(find, value != null ? value : "");
+                final String group = getMatcher.group();
+                final String value = variableStore.getVariable(group.substring(6, group.length() - 1));
+                rawRule = rawRule.replace(group, value != null ? value : "");
             }
         }
 
@@ -87,11 +87,11 @@ final class RulePattern {
         javaScripts = new ArrayList<>();
         Matcher jsMatcher = PATTERN_JS.matcher(rawRule);
         while (jsMatcher.find()) {
-            String string = jsMatcher.group();
-            if (StringUtils.startsWithIgnoreCase(string, "<js>")) {
-                javaScripts.add(string.substring(4, string.lastIndexOf("<")));
+            final String group = jsMatcher.group();
+            if (StringUtils.startsWithIgnoreCase(group, "<js>")) {
+                javaScripts.add(group.substring(4, group.lastIndexOf("<")));
             } else {
-                javaScripts.add(string.substring(4));
+                javaScripts.add(group.substring(4));
             }
             if (start == -1) {
                 start = jsMatcher.start();
