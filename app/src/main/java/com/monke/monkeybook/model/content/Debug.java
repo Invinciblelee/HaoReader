@@ -20,8 +20,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -71,8 +73,7 @@ public class Debug {
     }
 
     private void searchDebug(String key) {
-        printLog(String.format("%s 搜索开始", getDoTime()));
-        printLog("≡开始搜索指定关键字");
+        printLog(String.format("★%s 搜索开始", getDoTime()));
         WebBookModel.getInstance().searchBook(key, 1, Debug.SOURCE_DEBUG_TAG)
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new Observer<List<SearchBookBean>>() {
@@ -86,18 +87,18 @@ public class Debug {
                     public void onNext(List<SearchBookBean> searchBookBeans) {
                         if (searchBookBeans.isEmpty()) {
                             printError("搜索列表为空");
-                            printLog(String.format("%s 搜索结束", getDoTime()));
+                            printLog(String.format("★%s 搜索结束", getDoTime()));
                         } else {
-                            printLog("●成功获取搜索列表 共" + searchBookBeans.size() + "个结果");
+                            printLog("●成功获取搜索列表» 共" + searchBookBeans.size() + "个结果");
                             SearchBookBean searchBookBean = searchBookBeans.get(0);
-                            printLog("●书籍名称 " + searchBookBean.getName());
-                            printLog("●书籍作者 " + searchBookBean.getAuthor());
-                            printLog("●书籍分类 " + searchBookBean.getKind());
-                            printLog("●书籍简介 " + searchBookBean.getIntroduce());
-                            printLog("●最新章节 " + searchBookBean.getLastChapter());
-                            printLog("●书籍封面 " + searchBookBean.getCoverUrl());
-                            printLog("●书籍网址 " + searchBookBean.getNoteUrl());
-                            printLog(String.format("%s 搜索结束", getDoTime()));
+                            printLog("●书籍名称» " + searchBookBean.getName());
+                            printLog("●书籍作者» " + searchBookBean.getAuthor());
+                            printLog("●书籍分类» " + searchBookBean.getKind());
+                            printLog("●书籍简介» " + searchBookBean.getIntroduce());
+                            printLog("●最新章节» " + searchBookBean.getLastChapter());
+                            printLog("●书籍封面» " + searchBookBean.getCoverUrl());
+                            printLog("●书籍网址» " + searchBookBean.getNoteUrl());
+                            printLog(String.format("★%s 搜索结束", getDoTime()));
                             if (!TextUtils.isEmpty(searchBookBean.getNoteUrl())) {
                                 bookInfoDebug(BookshelfHelp.getBookFromSearchBook(searchBookBean), false);
                             }
@@ -107,6 +108,7 @@ public class Debug {
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
+                        printLog(String.format("★%s 目录结束", getDoTime()));
                     }
 
                     @Override
@@ -120,8 +122,7 @@ public class Debug {
         if (!start) {
             printLog("\n");
         }
-        printLog(String.format("%s 详情开始", getDoTime()));
-        printLog("≡开始获取详情页");
+        printLog(String.format("★%s 详情开始", getDoTime()));
         WebBookModel.getInstance().getBookInfo(bookShelfBean)
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new Observer<BookShelfBean>() {
@@ -133,20 +134,21 @@ public class Debug {
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
                         BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
-                        printLog("●成功获取详情页 " + bookInfoBean.getNoteUrl());
-                        printLog("●书籍名称 " + bookInfoBean.getName());
-                        printLog("●书籍作者 " + bookInfoBean.getAuthor());
-                        printLog("●书籍简介 " + bookInfoBean.getIntroduce());
-                        printLog("●最新章节 " + bookShelfBean.getLastChapterName());
-                        printLog("●书籍封面 " + bookInfoBean.getCoverUrl());
-                        printLog("●目录网址 " + bookInfoBean.getChapterListUrl());
-                        printLog(String.format("%s 详情结束", getDoTime()));
+                        printLog("●成功获取详情页» " + bookInfoBean.getNoteUrl());
+                        printLog("●书籍名称» " + bookInfoBean.getName());
+                        printLog("●书籍作者» " + bookInfoBean.getAuthor());
+                        printLog("●书籍简介» " + bookInfoBean.getIntroduce());
+                        printLog("●最新章节» " + bookShelfBean.getLastChapterName());
+                        printLog("●书籍封面» " + bookInfoBean.getCoverUrl());
+                        printLog("●目录网址» " + bookInfoBean.getChapterListUrl());
+                        printLog(String.format("★%s 详情结束", getDoTime()));
                         bookChapterListDebug(bookShelfBean);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
+                        printLog(String.format("★%s 目录结束", getDoTime()));
                     }
 
                     @Override
@@ -158,8 +160,7 @@ public class Debug {
 
     private void bookChapterListDebug(BookShelfBean bookShelfBean) {
         printLog("\n");
-        printLog(String.format("%s 目录开始", getDoTime()));
-        printLog("≡开始获取目录页");
+        printLog(String.format("★%s 目录开始", getDoTime()));
         WebBookModel.getInstance().getChapterList(bookShelfBean)
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new Observer<BookShelfBean>() {
@@ -173,15 +174,15 @@ public class Debug {
                     public void onNext(BookShelfBean bookShelfBean) {
                         int size = bookShelfBean.getChapterList().size();
                         if (size > 0) {
-                            printLog("●成功获取目录列表 共" + size + "个章节");
+                            printLog("●成功获取目录列表» 共" + size + "个章节");
                             ChapterBean chapterBean = bookShelfBean.getChapter(0);
-                            printLog("●章节名称 " + chapterBean.getDurChapterName());
-                            printLog("●章节网址 " + chapterBean.getDurChapterUrl());
+                            printLog("●章节名称» " + chapterBean.getDurChapterName());
+                            printLog("●章节网址» " + chapterBean.getDurChapterUrl());
                             printLog(String.format("%s 目录结束", getDoTime()));
                             bookContentDebug(bookShelfBean.getBookInfoBean(), chapterBean);
                         } else {
                             printError("获取到的目录为空");
-                            printLog(String.format("%s 目录结束", getDoTime()));
+                            printLog(String.format("★%s 目录结束", getDoTime()));
                         }
 
                     }
@@ -189,6 +190,7 @@ public class Debug {
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
+                        printLog(String.format("★%s 目录结束", getDoTime()));
                     }
 
                     @Override
@@ -200,10 +202,11 @@ public class Debug {
 
     private void bookContentDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
         printLog("\n");
-        printLog(String.format("%s 正文开始", getDoTime()));
-        printLog("≡开始获取正文页");
+        printLog(String.format("★%s 正文开始", getDoTime()));
         WebBookModel.getInstance().getBookContent(bookInfoBean, chapterBean)
                 .compose(RxUtils::toSimpleSingle)
+                .timeout(30L, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BookContentBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -212,14 +215,15 @@ public class Debug {
 
                     @Override
                     public void onNext(BookContentBean bookContentBean) {
-                        printLog("●成功获取正文页 " + bookContentBean.getDurChapterUrl());
-                        printLog("●章节内容 " + bookContentBean.getDurChapterContent());
-                        printLog(String.format("%s 正文结束", getDoTime()));
+                        printLog("●成功获取正文页» " + bookContentBean.getDurChapterUrl());
+                        printLog("●章节内容» " + bookContentBean.getDurChapterContent());
+                        printLog(String.format("★%s 正文结束", getDoTime()));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
+                        printLog(String.format("★%s 正文结束", getDoTime()));
                     }
 
                     @Override
