@@ -301,4 +301,7 @@
     <string name="audio_timer">定时关闭</string>
     <string name="close">关闭</string>
     <string name="audio_refresh">刷新</string>
+    <string name="debug_hint">书名、作者、URL</string>
+    <string name="non_null_source_name_url">书源名称和URL不能为空</string>
+    <string name="source_debug">调试书源</string>
 </resources>

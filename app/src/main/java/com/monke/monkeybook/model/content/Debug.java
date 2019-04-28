@@ -1,0 +1,257 @@
+package com.monke.monkeybook.model.content;
+
+import android.annotation.SuppressLint;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+
+import com.monke.monkeybook.bean.BookContentBean;
+import com.monke.monkeybook.bean.BookInfoBean;
+import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.RxUtils;
+import com.monke.monkeybook.utils.StringUtils;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
+public class Debug {
+    public static String SOURCE_DEBUG_TAG;
+    @SuppressLint("ConstantLocale")
+    private static final DateFormat DEBUG_TIME_FORMAT = new SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault());
+    private static long startTime;
+
+    private static String getDoTime() {
+        return StringUtils.millis2String(System.currentTimeMillis() - startTime, DEBUG_TIME_FORMAT);
+    }
+
+    public static void newDebug(String tag, String key, @NonNull CompositeDisposable compositeDisposable, @NonNull CallBack callBack) {
+        if (TextUtils.isEmpty(tag)) {
+            callBack.printError("书源url不能为空");
+            return;
+        }
+        key = StringUtils.trim(key);
+        if (TextUtils.isEmpty(key)) {
+            callBack.printError("关键字不能为空");
+            return;
+        }
+        new Debug(tag, key, compositeDisposable, callBack);
+    }
+
+    private CallBack callBack;
+    private CompositeDisposable compositeDisposable;
+
+    private Debug(String tag, String key, CompositeDisposable compositeDisposable, CallBack callBack) {
+        startTime = System.currentTimeMillis();
+        SOURCE_DEBUG_TAG = tag;
+        this.callBack = callBack;
+        this.compositeDisposable = compositeDisposable;
+        if (NetworkUtil.isUrl(key)) {
+            BookShelfBean bookShelfBean = new BookShelfBean();
+            bookShelfBean.setTag(Debug.SOURCE_DEBUG_TAG);
+            bookShelfBean.setNoteUrl(key);
+            bookShelfBean.setDurChapter(0);
+            bookShelfBean.setGroup(0);
+            bookShelfBean.setDurChapterPage(0);
+            bookShelfBean.setFinalDate(System.currentTimeMillis());
+            bookInfoDebug(bookShelfBean, true);
+        } else {
+            searchDebug(key);
+        }
+    }
+
+    private void searchDebug(String key) {
+        printLog(String.format("%s 搜索开始", getDoTime()));
+        printLog("≡开始搜索指定关键字");
+        WebBookModel.getInstance().searchBook(key, 1, Debug.SOURCE_DEBUG_TAG)
+                .compose(RxUtils::toSimpleSingle)
+                .subscribe(new Observer<List<SearchBookBean>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @SuppressLint("DefaultLocale")
+                    @Override
+                    public void onNext(List<SearchBookBean> searchBookBeans) {
+                        if (searchBookBeans.isEmpty()) {
+                            printError("搜索列表为空");
+                            printLog(String.format("%s 搜索结束", getDoTime()));
+                        } else {
+                            printLog("●成功获取搜索列表 共" + searchBookBeans.size() + "个结果");
+                            SearchBookBean searchBookBean = searchBookBeans.get(0);
+                            printLog("●书籍名称 " + searchBookBean.getName());
+                            printLog("●书籍作者 " + searchBookBean.getAuthor());
+                            printLog("●书籍分类 " + searchBookBean.getKind());
+                            printLog("●书籍简介 " + searchBookBean.getIntroduce());
+                            printLog("●最新章节 " + searchBookBean.getLastChapter());
+                            printLog("●书籍封面 " + searchBookBean.getCoverUrl());
+                            printLog("●书籍网址 " + searchBookBean.getNoteUrl());
+                            printLog(String.format("%s 搜索结束", getDoTime()));
+                            if (!TextUtils.isEmpty(searchBookBean.getNoteUrl())) {
+                                bookInfoDebug(BookshelfHelp.getBookFromSearchBook(searchBookBean), false);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        printError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void bookInfoDebug(BookShelfBean bookShelfBean, boolean start) {
+        if (!start) {
+            printLog("\n");
+        }
+        printLog(String.format("%s 详情开始", getDoTime()));
+        printLog("≡开始获取详情页");
+        WebBookModel.getInstance().getBookInfo(bookShelfBean)
+                .compose(RxUtils::toSimpleSingle)
+                .subscribe(new Observer<BookShelfBean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
+                        printLog("●成功获取详情页 " + bookInfoBean.getNoteUrl());
+                        printLog("●书籍名称 " + bookInfoBean.getName());
+                        printLog("●书籍作者 " + bookInfoBean.getAuthor());
+                        printLog("●书籍简介 " + bookInfoBean.getIntroduce());
+                        printLog("●最新章节 " + bookShelfBean.getLastChapterName());
+                        printLog("●书籍封面 " + bookInfoBean.getCoverUrl());
+                        printLog("●目录网址 " + bookInfoBean.getChapterListUrl());
+                        printLog(String.format("%s 详情结束", getDoTime()));
+                        bookChapterListDebug(bookShelfBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        printError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void bookChapterListDebug(BookShelfBean bookShelfBean) {
+        printLog("\n");
+        printLog(String.format("%s 目录开始", getDoTime()));
+        printLog("≡开始获取目录页");
+        WebBookModel.getInstance().getChapterList(bookShelfBean)
+                .compose(RxUtils::toSimpleSingle)
+                .subscribe(new Observer<BookShelfBean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @SuppressLint("DefaultLocale")
+                    @Override
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        int size = bookShelfBean.getChapterList().size();
+                        if (size > 0) {
+                            printLog("●成功获取目录列表 共" + size + "个章节");
+                            ChapterBean chapterBean = bookShelfBean.getChapter(0);
+                            printLog("●章节名称 " + chapterBean.getDurChapterName());
+                            printLog("●章节网址 " + chapterBean.getDurChapterUrl());
+                            printLog(String.format("%s 目录结束", getDoTime()));
+                            bookContentDebug(bookShelfBean.getBookInfoBean(), chapterBean);
+                        } else {
+                            printError("获取到的目录为空");
+                            printLog(String.format("%s 目录结束", getDoTime()));
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        printError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void bookContentDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
+        printLog("\n");
+        printLog(String.format("%s 正文开始", getDoTime()));
+        printLog("≡开始获取正文页");
+        WebBookModel.getInstance().getBookContent(bookInfoBean, chapterBean)
+                .compose(RxUtils::toSimpleSingle)
+                .subscribe(new Observer<BookContentBean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(BookContentBean bookContentBean) {
+                        printLog("●成功获取正文页 " + bookContentBean.getDurChapterUrl());
+                        printLog("●章节内容 " + bookContentBean.getDurChapterContent());
+                        printLog(String.format("%s 正文结束", getDoTime()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        printError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        finish();
+                    }
+                });
+    }
+
+    private void printLog(String log) {
+        if (callBack != null) {
+            callBack.printLog(log);
+        }
+    }
+
+    private void printError(String msg) {
+        if (callBack != null) {
+            callBack.printError(String.format("%s %s", getDoTime(), msg));
+        }
+    }
+
+    private void finish() {
+        if (callBack != null) {
+            callBack.finish();
+        }
+    }
+
+    public interface CallBack {
+        void printLog(String msg);
+
+        void printError(String msg);
+
+        void finish();
+    }
+}

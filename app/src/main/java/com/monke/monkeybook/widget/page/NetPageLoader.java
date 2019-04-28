@@ -4,7 +4,7 @@ import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.NetworkUtil;
 
@@ -12,11 +12,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.Collections;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
@@ -62,7 +60,7 @@ public class NetPageLoader extends PageLoader {
             if (mChapterDisp != null) {
                 mChapterDisp.dispose();
             }
-            WebBookModelImpl.getInstance().getChapterList(getCollBook())
+            WebBookModel.getInstance().getChapterList(getCollBook())
                     .subscribeOn(Schedulers.single())
                     .doAfterNext(bookShelfBean -> {
                         // 存储章节到数据库

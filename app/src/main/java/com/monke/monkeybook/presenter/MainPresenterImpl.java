@@ -21,9 +21,8 @@ import com.monke.monkeybook.help.DataBackup;
 import com.monke.monkeybook.help.DataRestore;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.ImportBookModelImpl;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.MainContract;
-import com.monke.monkeybook.service.AudioBookPlayService;
 
 import java.io.File;
 import java.net.URL;
@@ -262,10 +261,10 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     }
 
     private void getBook(BookShelfBean bookShelfBean) {
-        WebBookModelImpl.getInstance()
+        WebBookModel.getInstance()
                 .getBookInfo(bookShelfBean)
                 .subscribeOn(Schedulers.io())
-                .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
+                .flatMap(bookShelfBean1 -> WebBookModel.getInstance().getChapterList(bookShelfBean1))
                 .flatMap(this::saveBookToShelfO)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {

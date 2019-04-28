@@ -13,7 +13,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -193,7 +193,7 @@ class ChapterProvider {
             }
             chapter.setNextChapterUrl(nextChapter == null ? null : nextChapter.getDurChapterUrl());
             if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
-                WebBookModelImpl.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
+                WebBookModel.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
                         .subscribeOn(mScheduler)
                         .doAfterNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
                         .timeout(30, TimeUnit.SECONDS)

@@ -149,9 +149,9 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         target.setDurChapter(bookShelf.getDurChapter());
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setFinalDate(bookShelf.getFinalDate());
-        WebBookModelImpl.getInstance().getBookInfo(target)
+        WebBookModel.getInstance().getBookInfo(target)
                 .subscribeOn(Schedulers.io())
-                .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean))
+                .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
                 .map(bookShelfBean -> {
                     bookShelfBean.setGroup(bookShelf.getGroup());
@@ -293,7 +293,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     if (!NetworkUtil.isNetworkAvailable() || !TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
                         return Observable.just(chapterBean);
                     }
-                    return WebBookModelImpl.getInstance()
+                    return WebBookModel.getInstance()
                             .processAudioChapter(bookShelf.getTag(), chapterBean);
                 })
                 .timeout(20L, TimeUnit.SECONDS)
@@ -415,7 +415,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     private Observable<BookShelfBean> getChapterList(BookShelfBean bookShelf) {
-        return WebBookModelImpl.getInstance().getChapterList(bookShelf)
+        return WebBookModel.getInstance().getChapterList(bookShelf)
                 .map(bookShelfBean -> {
                     bookShelfBean.setHasUpdate(false);
                     bookShelfBean.setNewChapters(0);

@@ -9,7 +9,7 @@ import java.io.File;
 public interface SourceEditContract {
     interface Presenter extends IPresenter {
 
-        void saveSource(BookSourceBean bookSource, BookSourceBean bookSourceOld);
+        void saveSource(BookSourceBean bookSource, BookSourceBean bookSourceOld, boolean debug);
 
         void copySource(BookSourceBean bookSourceBean);
 
@@ -19,12 +19,13 @@ public interface SourceEditContract {
 
         void handleSourceShare();
 
-        void analyzeBitmap(String path);
     }
 
     interface View extends IView {
 
         void setText(BookSourceBean bookSourceBean);
+
+        void toDebug(BookSourceBean bookSourceBean);
 
         String getBookSourceStr();
 

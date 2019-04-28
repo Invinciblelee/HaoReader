@@ -271,7 +271,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             showSnackBar("书源名称和URL不能为空");
             return;
         }
-        mPresenter.saveSource(getBookSource(), bookSourceBean);
+        mPresenter.saveSource(getBookSource(), bookSourceBean, false);
     }
 
     @Override
@@ -387,6 +387,13 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieRuleContentUrlNext.setText(trim(bookSourceBean.getRuleContentUrlNext()));
     }
 
+    @Override
+    public void toDebug(BookSourceBean bookSourceBean) {
+        this.bookSourceBean = bookSourceBean;
+        setResult(RESULT_OK);
+        SourceDebugActivity.startThis(SourceEditActivity.this, getBookSource().getBookSourceUrl());
+    }
+
     private void setHint() {
         tilBookSourceType.setHint("书源类型(BookSourceType)");
         tilBookSourceRuleType.setHint("书源规则类型(BookSourceRuleType)");
@@ -449,6 +456,14 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         }
     }
 
+    private boolean canSaveBookSource() {
+        if (isEmpty(trim(tieBookSourceName.getText())) || isEmpty(trim(tieBookSourceUrl.getText()))) {
+            toast(R.string.non_null_source_name_url);
+            return false;
+        }
+        return true;
+    }
+
     // 添加菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -483,6 +498,11 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 } else {
                     WebLoadConfig config = new WebLoadConfig(url, trim(tieHttpUserAgent.getText()));
                     WebViewActivity.startThis(this, config);
+                }
+                break;
+            case R.id.action_debug:
+                if (canSaveBookSource()) {
+                    mPresenter.saveSource(getBookSource(), bookSourceBean, true);
                 }
                 break;
             case R.id.action_rule_summary:

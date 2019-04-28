@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 /**
@@ -80,6 +81,10 @@ public class StringUtils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String millis2String(final long millis, @NonNull final DateFormat format) {
+        return format.format(new Date(millis));
     }
 
     public static String toFirstCapital(String str) {

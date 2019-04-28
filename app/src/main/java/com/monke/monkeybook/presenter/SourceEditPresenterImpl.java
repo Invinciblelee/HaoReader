@@ -62,7 +62,7 @@ import static com.monke.monkeybook.help.Constant.RULE_TYPES;
 public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContract.View> implements SourceEditContract.Presenter {
 
     @Override
-    public void saveSource(BookSourceBean bookSource, BookSourceBean bookSourceOld) {
+    public void saveSource(BookSourceBean bookSource, BookSourceBean bookSourceOld, boolean debug) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             if (bookSourceOld != null && !Objects.equals(bookSource.getBookSourceUrl(), bookSourceOld.getBookSourceUrl())) {
                 DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(bookSourceOld);
@@ -75,12 +75,16 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
-                        mView.saveSuccess();
+                        if (debug) {
+                            mView.toDebug(bookSource);
+                        } else {
+                            mView.saveSuccess();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+                        mView.showSnackBar("书源保存失败");
                     }
                 });
     }
@@ -156,37 +160,6 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
                         mView.showSnackBar("分享失败");
                     }
                 });
-    }
-
-    @Override
-    public void analyzeBitmap(String path) {
-        try {
-            Bitmap bitmap = BitmapFactory.decodeFile(path);
-            bitmap = BitmapUtil.getImage(bitmap);
-
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
-            int[] pixels = new int[width * height];
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-
-            RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
-            BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
-            Reader reader = new MultiFormatReader();
-            Result result;
-
-            try {
-                result = reader.decode(binaryBitmap);
-                setText(result.getText());
-            } catch (NotFoundException | ChecksumException | FormatException e) {
-                e.printStackTrace();
-                mView.showSnackBar("解析图片错误");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            mView.showSnackBar("图片获取错误");
-        }
-
     }
 
     @Override

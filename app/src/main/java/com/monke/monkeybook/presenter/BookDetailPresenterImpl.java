@@ -1,7 +1,6 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -17,7 +16,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
 
 import java.util.concurrent.TimeUnit;
@@ -114,10 +113,10 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     mView.updateView(false);
                 })
                 .observeOn(Schedulers.io())
-                .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getBookInfo(bookShelfBean))
+                .flatMap(bookShelfBean -> WebBookModel.getInstance().getBookInfo(bookShelfBean))
                 .flatMap(bookShelfBean -> {
                     if (refresh && inBookShelf) {
-                        return WebBookModelImpl.getInstance().getChapterList(bookShelfBean);
+                        return WebBookModel.getInstance().getChapterList(bookShelfBean);
                     }
                     return Observable.just(bookShelfBean);
                 })
@@ -253,11 +252,11 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         target.setDurChapter(bookShelf.getDurChapter());
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setFinalDate(bookShelf.getFinalDate());
-        WebBookModelImpl.getInstance().getBookInfo(target)
+        WebBookModel.getInstance().getBookInfo(target)
                 .subscribeOn(Schedulers.io())
                 .flatMap(bookShelfBean -> {
                     if (inBookShelf) {
-                        return WebBookModelImpl.getInstance().getChapterList(bookShelfBean);
+                        return WebBookModel.getInstance().getChapterList(bookShelfBean);
                     }
                     return Observable.just(bookShelfBean);
                 })

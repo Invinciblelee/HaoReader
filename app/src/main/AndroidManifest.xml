@@ -95,7 +95,8 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/CAppTheme.Activity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".view.activity.ChoiceBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -113,7 +114,8 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/CAppTheme.Activity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".view.activity.ReplaceRuleActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -190,6 +192,15 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
+
+        <activity
+            android:name=".view.activity.SourceDebugActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
 
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />

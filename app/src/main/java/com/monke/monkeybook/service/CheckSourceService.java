@@ -11,7 +11,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.OkHttpHelper;
@@ -21,7 +20,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.BookSourceManager;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.view.activity.BookSourceActivity;
@@ -192,7 +191,7 @@ public class CheckSourceService extends Service {
                     bookShelfBean.setFinalDate(System.currentTimeMillis());
                     bookShelfBean.setDurChapter(0);
                     bookShelfBean.setDurChapterPage(0);
-                    WebBookModelImpl.getInstance().getBookInfo(bookShelfBean)
+                    WebBookModel.getInstance().getBookInfo(bookShelfBean)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .timeout(30, TimeUnit.SECONDS)

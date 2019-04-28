@@ -23,17 +23,17 @@ import java.util.Objects;
 
 import io.reactivex.Observable;
 
-public class WebBookModelImpl implements IWebBookModel {
+public class WebBookModel implements IWebBookModel {
 
-    private WebBookModelImpl() {
+    private WebBookModel() {
 
     }
 
     private static class Holder {
-        private static final WebBookModelImpl SINGLETON = new WebBookModelImpl();
+        private static final WebBookModel SINGLETON = new WebBookModel();
     }
 
-    public static WebBookModelImpl getInstance() {
+    public static WebBookModel getInstance() {
         return Holder.SINGLETON;
     }
 
@@ -92,7 +92,7 @@ public class WebBookModelImpl implements IWebBookModel {
      * 其他站点集合搜索
      */
     @Override
-    public Observable<List<SearchBookBean>> searchOtherBook(String content, int page, String tag) {
+    public Observable<List<SearchBookBean>> searchBook(String content, int page, String tag) {
         //获取所有书源类
         IStationBookModel bookModel = getBookSourceModel(tag);
         if (bookModel != null) {

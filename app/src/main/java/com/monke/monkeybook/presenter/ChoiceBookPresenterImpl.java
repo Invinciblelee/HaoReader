@@ -13,7 +13,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     }
 
     private void searchBook(final long searchTime) {
-        WebBookModelImpl.getInstance().findBook(url, page, tag)
+        WebBookModel.getInstance().findBook(url, page, tag)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
@@ -89,8 +89,8 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
         bookShelfResult.setDurChapter(0);
         bookShelfResult.setDurChapterPage(0);
         bookShelfResult.setTag(searchBookBean.getTag());
-        WebBookModelImpl.getInstance().getBookInfo(bookShelfResult)
-                .flatMap(bookShelfBean1 -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean1))
+        WebBookModel.getInstance().getBookInfo(bookShelfResult)
+                .flatMap(bookShelfBean1 -> WebBookModel.getInstance().getChapterList(bookShelfBean1))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {

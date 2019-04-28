@@ -21,12 +21,11 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
-import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
@@ -217,8 +216,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         target.setDurChapter(bookShelf.getDurChapter());
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setGroup(bookShelf.getGroup());
-        WebBookModelImpl.getInstance().getBookInfo(target)
-                .flatMap(bookShelfBean -> WebBookModelImpl.getInstance().getChapterList(bookShelfBean))
+        WebBookModel.getInstance().getBookInfo(target)
+                .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

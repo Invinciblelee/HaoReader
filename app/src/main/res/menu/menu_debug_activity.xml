@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/action_scan"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_qr_scan_black_24dp"
+        android:title="@string/camera_scan" />
+
+
+</menu>

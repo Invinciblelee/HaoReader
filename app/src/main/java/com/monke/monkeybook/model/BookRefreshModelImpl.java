@@ -132,7 +132,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     }
 
     private void refreshBookShelf(BookShelfBean bookShelfBean) {
-        WebBookModelImpl.getInstance().getChapterList(bookShelfBean)
+        WebBookModel.getInstance().getChapterList(bookShelfBean)
                 .subscribeOn(Schedulers.io())
                 .flatMap(this::saveBookToShelfO)
                 .observeOn(AndroidSchedulers.mainThread())

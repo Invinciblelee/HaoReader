@@ -13,7 +13,7 @@ import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.impl.IDownloadTask;
 
 import java.util.ArrayList;
@@ -206,7 +206,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             }
             e.onComplete();
         })
-                .flatMap(result -> WebBookModelImpl.getInstance().getBookContent(bookInfo, chapter))
+                .flatMap(result -> WebBookModel.getInstance().getBookContent(bookInfo, chapter))
                 .subscribeOn(scheduler)
                 .timeout(25, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())

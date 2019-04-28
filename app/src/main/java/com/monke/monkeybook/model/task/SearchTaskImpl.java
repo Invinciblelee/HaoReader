@@ -8,7 +8,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
-import com.monke.monkeybook.model.WebBookModelImpl;
+import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
@@ -69,8 +69,8 @@ public class SearchTaskImpl implements ISearchTask {
                 }
             } else {
                 searchEngine.searchBegin();
-                WebBookModelImpl.getInstance()
-                        .searchOtherBook(query, searchEngine.getPage(), searchEngine.getTag())
+                WebBookModel.getInstance()
+                        .searchBook(query, searchEngine.getPage(), searchEngine.getTag())
                         .subscribeOn(scheduler)
                         .flatMap(this::dispatchResult)
                         .doAfterNext(bool -> incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime()))

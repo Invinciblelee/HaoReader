@@ -1,7 +1,8 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import com.monke.monkeybook.utils.StringUtils;
+
 import java.util.List;
-import java.util.Objects;
 
 final class HybridParser extends SourceParser<Object> {
 
@@ -15,7 +16,9 @@ final class HybridParser extends SourceParser<Object> {
     private boolean sourceChangedJS = false;
     private boolean sourceChangedJP = false;
 
-    private JsoupParser getJsoupParser() {
+    private boolean isJSon = false;
+
+    private void ensureJsoupParser() {
         if (jsoupParser == null) {
             jsoupParser = new JsoupParser();
             jsoupParser.setContent(getSource());
@@ -24,10 +27,9 @@ final class HybridParser extends SourceParser<Object> {
             sourceChangedJP = false;
         }
         currentParser = jsoupParser;
-        return jsoupParser;
     }
 
-    private JsonParser getJsonParser() {
+    private void ensureJsonParser() {
         if (jsonParser == null) {
             jsonParser = new JsonParser();
             jsonParser.setContent(getSource());
@@ -36,10 +38,9 @@ final class HybridParser extends SourceParser<Object> {
             sourceChangedJS = false;
         }
         currentParser = jsonParser;
-        return jsonParser;
     }
 
-    private XPathParser getXPathParser() {
+    private void ensureXPathParser() {
         if (xPathParser == null) {
             xPathParser = new XPathParser();
             xPathParser.setContent(getSource());
@@ -48,7 +49,26 @@ final class HybridParser extends SourceParser<Object> {
             sourceChangedXP = false;
         }
         currentParser = xPathParser;
-        return xPathParser;
+    }
+
+    private SourceParser<?> getCurrentParser(RuleMode mode) {
+        switch (mode) {
+            case XPath:
+                ensureXPathParser();
+                break;
+            case JSon:
+                ensureJsonParser();
+                break;
+            case Default:
+            default:
+                if (isJSon) {
+                    ensureJsonParser();
+                } else {
+                    ensureJsoupParser();
+                }
+
+        }
+        return currentParser;
     }
 
     @Override
@@ -66,111 +86,48 @@ final class HybridParser extends SourceParser<Object> {
         sourceChangedXP = true;
         sourceChangedJS = true;
         sourceChangedJP = true;
+        isJSon = StringUtils.isJsonType(StringUtils.valueOf(getSource()));
         return source;
     }
 
     @Override
     List<Object> getList(Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().getList(rule);
-            case JSon:
-                return getJsonParser().getList(rule);
-            case Default:
-            default:
-                return getJsoupParser().getList(rule);
-        }
+        return getCurrentParser(rule.getMode()).getList(rule);
     }
 
     @Override
     List<Object> parseList(String source, Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().parseList(source, rule);
-            case JSon:
-                return getJsonParser().parseList(source, rule);
-            case Default:
-            default:
-                return getJsoupParser().parseList(source, rule);
-        }
+        return getCurrentParser(rule.getMode()).parseList(source, rule);
     }
 
     @Override
     String getString(Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().getString(rule);
-            case JSon:
-                return getJsonParser().getString(rule);
-            case Default:
-            default:
-                return getJsoupParser().getString(rule);
-        }
+        return getCurrentParser(rule.getMode()).getString(rule);
     }
 
     @Override
     String parseString(String source, Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().parseString(source, rule);
-            case JSon:
-                return getJsonParser().parseString(source, rule);
-            case Default:
-            default:
-                return getJsoupParser().parseString(source, rule);
-        }
+        return getCurrentParser(rule.getMode()).parseString(source, rule);
     }
 
     @Override
     String getStringFirst(Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().getStringFirst(rule);
-            case JSon:
-                return getJsonParser().getStringFirst(rule);
-            case Default:
-            default:
-                return getJsoupParser().getStringFirst(rule);
-        }
+        return getCurrentParser(rule.getMode()).getStringFirst(rule);
     }
 
     @Override
     String parseStringFirst(String source, Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().parseStringFirst(source, rule);
-            case JSon:
-                return getJsonParser().parseStringFirst(source, rule);
-            case Default:
-            default:
-                return getJsoupParser().parseStringFirst(source, rule);
-        }
+        return getCurrentParser(rule.getMode()).parseStringFirst(source, rule);
     }
 
     @Override
     List<String> getStringList(Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().getStringList(rule);
-            case JSon:
-                return getJsonParser().getStringList(rule);
-            case Default:
-            default:
-                return getJsoupParser().getStringList(rule);
-        }
+        return getCurrentParser(rule.getMode()).getStringList(rule);
     }
 
     @Override
     List<String> parseStringList(String source, Rule rule) {
-        switch (rule.getMode()) {
-            case XPath:
-                return getXPathParser().parseStringList(source, rule);
-            case JSon:
-                return getJsonParser().parseStringList(source, rule);
-            case Default:
-            default:
-                return getJsoupParser().parseStringList(source, rule);
-        }
+        return getCurrentParser(rule.getMode()).parseStringList(source, rule);
     }
 
 }
