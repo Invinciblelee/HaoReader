@@ -762,7 +762,7 @@ public class AudioBookPlayService extends Service {
                 });
     }
 
-    private synchronized void showNotification(Bitmap cover) {
+    private void showNotification(Bitmap cover) {
         final String contentTitle;
         final String name = bookShelfBean == null ? getString(R.string.app_name) : bookShelfBean.getBookInfoBean().getName();
         if (timerUntilFinish > 0) {
