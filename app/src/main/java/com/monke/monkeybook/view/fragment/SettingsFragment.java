@@ -30,7 +30,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         settingActivity = (SettingActivity) this.getActivity();
 
         bindPreferenceSummaryToValue(findPreference(mContext.getString(R.string.pk_bookshelf_px)));
-        bindPreferenceSummaryToValue(findPreference(mContext.getString(R.string.pk_js_engine)));
     }
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (Preference preference, Object value) -> {

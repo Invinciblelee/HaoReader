@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -33,8 +34,8 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
+import com.monke.monkeybook.widget.RotateLoading;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
-import com.victor.loading.rotate.RotateLoading;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -171,7 +172,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         llLoading.setVisibility(View.VISIBLE);
         tvLoadingMsg.setText("加载失败，点击重试");
         progressBar.setVisibility(View.GONE);
-        progressBar.stop();
         llLoading.setEnabled(true);
         llLoading.setOnClickListener(v -> {
             showLoading(true);
@@ -409,7 +409,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             llLoading.setVisibility(View.VISIBLE);
             tvLoadingMsg.setText(R.string.data_loading);
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.start();
         } else {
             if (llLoading.getVisibility() == View.GONE) {
                 return;
@@ -461,7 +460,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
-}
+    }
 
     @Override
     public void finish() {

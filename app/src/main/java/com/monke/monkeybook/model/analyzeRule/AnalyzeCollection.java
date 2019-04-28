@@ -13,7 +13,6 @@ final class AnalyzeCollection {
         this.mIterator = rawList.iterator();
     }
 
-    @SuppressWarnings("unchecked")
     boolean hasNext() {
         if (mIterator.hasNext()) {
             Object o = mIterator.next();
@@ -24,7 +23,7 @@ final class AnalyzeCollection {
     }
 
 
-    OutAnalyzer<?, ?> mutable() {
+    OutAnalyzer<?> mutable() {
         return mAnalyzer;
     }
 }

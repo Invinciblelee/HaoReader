@@ -14,7 +14,7 @@ import io.reactivex.ObservableOnSubscribe;
 import retrofit2.Response;
 
 final class BookList {
-    private final OutAnalyzer<?, ?> analyzer;
+    private final OutAnalyzer<?> analyzer;
 
     BookList(String tag, String name, BookSourceBean bookSourceBean) {
         this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()

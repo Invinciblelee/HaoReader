@@ -9,22 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.monke.monkeybook.R;
-import com.monke.monkeybook.bean.FileSnapshot;
-import com.monke.monkeybook.bean.RipeFile;
-import com.monke.monkeybook.presenter.FileSelectorPresenterImpl;
-import com.monke.monkeybook.presenter.contract.FileSelectorContract;
-import com.monke.monkeybook.utils.ToastUtils;
-import com.monke.monkeybook.view.activity.BigImageActivity;
-import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
-import com.monke.monkeybook.widget.AppCompat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -34,12 +18,31 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.FileSnapshot;
+import com.monke.monkeybook.bean.RipeFile;
+import com.monke.monkeybook.presenter.FileSelectorPresenterImpl;
+import com.monke.monkeybook.presenter.contract.FileSelectorContract;
+import com.monke.monkeybook.utils.ToastUtils;
+import com.monke.monkeybook.view.activity.BigImageActivity;
+import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
+import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 public class FileSelector extends AppCompatDialogFragment implements FileSelectorContract.View,
-        View.OnClickListener, Toolbar.OnMenuItemClickListener, FileSelectorAdapter.OnItemClickListener {
+        View.OnClickListener, Toolbar.OnMenuItemClickListener, FileSelectorAdapter.OnItemClickListener
+        , SwipeRefreshLayout.OnRefreshListener {
 
     Toolbar toolbar;
     RecyclerView rvFiles;
     ContentLoadingProgressBar progressBar;
+    SwipeRefreshLayout refreshLayout;
 
     Button okBth, backBtn;
 
@@ -85,6 +88,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
         toolbar = view.findViewById(R.id.toolbar);
         rvFiles = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.loading_progress);
+        refreshLayout = view.findViewById(R.id.refresh_layout);
         initView();
         return builder.create();
     }
@@ -108,6 +112,8 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
         toolbar.setOnMenuItemClickListener(this);
 
         rvFiles.setAdapter(adapter = new FileSelectorAdapter(this, mPresenter.isSingleChoice(), mPresenter.checkBookAdded(), mPresenter.isImage()));
+
+        refreshLayout.setOnRefreshListener(this);
 
         adapter.setOnItemClickListener(this);
 
@@ -137,18 +143,16 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     }
 
     @Override
-    public void showSubtitle(String subtitle) {
-        toolbar.setSubtitle(subtitle);
-    }
-
-    @Override
     public void showLoading() {
         progressBar.show();
+        refreshLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void hideLoading() {
         progressBar.hide();
+        refreshLayout.setVisibility(View.VISIBLE);
+        refreshLayout.stopRefreshing();
     }
 
     @Override
@@ -158,20 +162,16 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
     @Override
     public void onShow(FileSnapshot snapshot, boolean back) {
-        progressBar.hide();
-        if (snapshot == null) {
-            adapter.setItems(null);
+        hideLoading();
+        adapter.setItems(snapshot.getFiles());
+
+        toolbar.setSubtitle(snapshot.getParent().getPath());
+
+        if (back) {
+            int oldScrollOffset = rvFiles.computeVerticalScrollOffset();
+            rvFiles.scrollBy(0, snapshot.getScrollOffset() - oldScrollOffset);
         } else {
-            adapter.setItems(snapshot.getFiles());
-
-            toolbar.setSubtitle(snapshot.getParent().getPath());
-
-            if (back) {
-                int oldScrollOffset = rvFiles.computeVerticalScrollOffset();
-                rvFiles.scrollBy(0, snapshot.getScrollOffset() - oldScrollOffset);
-            } else {
-                rvFiles.scrollToPosition(0);
-            }
+            rvFiles.scrollToPosition(0);
         }
 
         backBtn.setVisibility(mPresenter.canGoBack() ? View.VISIBLE : View.INVISIBLE);
@@ -181,6 +181,11 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     @Override
     public void showBigImage(View shareView, String url) {
         BigImageActivity.startThis((AppCompatActivity) getActivity(), url, shareView);
+    }
+
+    @Override
+    public void onRefresh() {
+        mPresenter.refreshCurrent();
     }
 
     @Override
@@ -271,6 +276,7 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
         this.selectedListener = selectedListener;
         super.show(activity.getSupportFragmentManager(), "FileSelector");
     }
+
 
     public static abstract class OnFileSelectedListener {
         public void onSingleChoice(String path) {

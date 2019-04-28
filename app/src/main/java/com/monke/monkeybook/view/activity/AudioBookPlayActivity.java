@@ -140,11 +140,12 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
         }
         setCoverImage(null);
         setButtonEnabled(false);
         setMediaButtonEnabled(false);
+
+        setTitle(null);
 
         audioChapterPop = new AudioChapterPop(this, this);
         audioTimerPop = new AudioTimerPop(this, this);
@@ -313,7 +314,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 break;
             case AudioBookPlayService.ACTION_PREPARE:
                 updateIndex(info.getDurChapter().getDurChapterIndex());
-                setTitle(info.getDurChapter().getDurChapterName());
+                setSubTitle(info.getDurChapter().getDurChapterName());
                 setMediaButtonEnabled(true);
                 setProgress(info.getProgress(), info.getDuration());
                 break;
@@ -335,7 +336,14 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         }
     }
 
-    private void setTitle(String title) {
+    private void setTitle(String title){
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setTitle(title);
+        }
+    }
+
+    private void setSubTitle(String title) {
         if (title != null) {
             tvTitle.setText(title);
         }
@@ -353,7 +361,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         audioChapterPop.upIndex(durChapter);
         if (chapterBeans != null && !chapterBeans.isEmpty()) {
             ChapterBean chapterBean = chapterBeans.get(durChapter);
-            setTitle(chapterBean.getDurChapterName());
+            setSubTitle(chapterBean.getDurChapterName());
         }
     }
 

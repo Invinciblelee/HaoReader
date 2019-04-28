@@ -47,14 +47,14 @@ public class RipeFile implements Serializable {
     }
 
     public String getName() {
-        if (name == null) {
+        if (name == null && file != null) {
             name = file.getName();
         }
         return name;
     }
 
     public String getSize() {
-        if (size == null) {
+        if (size == null && file != null) {
             size = FileHelp.getFileSize(file.length());
         }
         return size;
@@ -62,39 +62,43 @@ public class RipeFile implements Serializable {
 
 
     public String getDate() {
-        if (date == null) {
+        if (date == null && file != null) {
             date = StringUtils.dateConvert(file.lastModified(), Constant.FORMAT_FILE_DATE);
         }
         return date;
     }
 
     public boolean isDirectory() {
-        if (isDirectory == null) {
+        if (isDirectory == null && file != null) {
             isDirectory = file.isDirectory();
         }
-        return isDirectory;
+        return isDirectory == null ? false : isDirectory;
     }
 
     public String getPath() {
-        if (path == null) {
+        if (path == null && file != null) {
             path = file.getAbsolutePath();
         }
         return path;
     }
 
     public String getSuffix() {
-        if (suffix == null) {
+        if (suffix == null && file != null) {
             suffix = FileHelp.getFileSuffix(file).toUpperCase();
         }
         return suffix;
     }
 
     public int getChildCount() {
-        if (childCount == null) {
+        if (childCount == null && file != null) {
             String[] files = file.list();
             childCount = files == null ? 0 : files.length;
         }
-        return childCount;
+        return childCount == null ? 0 : childCount;
+    }
+
+    public boolean exists() {
+        return file != null && file.exists();
     }
 
     @Override

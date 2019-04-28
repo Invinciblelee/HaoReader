@@ -20,13 +20,17 @@ public class Patterns {
     public static final String REGEX_OPERATOR = "(?i)@operate:";
     public static final String REGEX_REDIRECT = "(?i)@redirect:";
 
-    public static final String RULE_REDIRECT = "?";
     public static final String RULE_AJAX = "$";
     public static final String RULE_SNIFF = "$$";
     public static final String RULE_KEEP = "^";
     public static final String RULE_REVERSE = "-";
     public static final String RULE_REGEX = "#";
     public static final String RULE_BODY = "outerBody";
+
+    public static final String RULE_JSON = "@JSon:";
+    public static final String RULE_JSON_TRAIT = "$.";
+    public static final String RULE_XPATH = "@XPath:";
+    public static final String RULE_XPATH_TRAIT = "//";
 
     public static final Type STRING_MAP = new TypeToken<Map<String, String>>() {
     }.getType();

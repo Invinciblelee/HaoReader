@@ -71,8 +71,8 @@
     </declare-styleable>
 
     <declare-styleable name="NumberButton">
-        <attr name="themeColor" format="color|reference"/>
-        <attr name="android:background"/>
+        <attr name="themeColor" format="color|reference" />
+        <attr name="android:background" />
     </declare-styleable>
 
     <declare-styleable name="AbsRoundImageView">
@@ -87,4 +87,10 @@
         <attr name="leftBottomRadius" format="dimension|reference" />
     </declare-styleable>
 
+    <declare-styleable name="RotateLoading">
+        <attr name="loadingWidth" format="dimension|reference"/>
+        <attr name="loadingColor" format="color|reference"/>
+        <attr name="shadowPosition" format="integer|reference"/>
+        <attr name="loadingSpeed" format="integer|reference"/>
+    </declare-styleable>
 </resources>

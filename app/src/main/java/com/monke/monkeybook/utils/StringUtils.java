@@ -1,5 +1,6 @@
 package com.monke.monkeybook.utils;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.monke.monkeybook.MApplication;
@@ -336,4 +337,16 @@ public class StringUtils {
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
 
+    public static boolean isJsonType(String str) {
+        boolean result = false;
+        if (!TextUtils.isEmpty(str)) {
+            str = str.trim();
+            if (str.startsWith("{") && str.endsWith("}")) {
+                result = true;
+            } else if (str.startsWith("[") && str.endsWith("]")) {
+                result = true;
+            }
+        }
+        return result;
+    }
 }

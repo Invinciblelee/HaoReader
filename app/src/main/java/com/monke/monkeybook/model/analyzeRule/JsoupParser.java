@@ -2,7 +2,6 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.ListUtils;
 
 import org.jsoup.Jsoup;
@@ -14,10 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static android.text.TextUtils.isEmpty;
 
-final class JsoupParser extends SourceParser<Element, Element> {
+final class JsoupParser extends SourceParser<Element> {
 
     private static final String TAG = "JSOUP";
 
@@ -26,68 +26,93 @@ final class JsoupParser extends SourceParser<Element, Element> {
     }
 
     @Override
-    String sourceToString(Element source) {
-        if (source == null) {
-            return "";
+    String sourceToString(Object source) {
+        if (source instanceof String) {
+            return (String) source;
+        } else if (source instanceof Element) {
+            return source.toString();
         }
-
-        return source.toString();
+        return "";
     }
 
     @Override
-    Element fromSource(String source) {
-        return Jsoup.parse(source);
+    Element fromSource(Object source) {
+        Objects.requireNonNull(source);
+
+        if (source instanceof String) {
+            return Jsoup.parse((String) source);
+        } else if (source instanceof Element) {
+            return (Element) source;
+        }
+        throw new IllegalAccessError("JsoupParser can not support the source type");
     }
 
     @Override
-    Element fromSource(Element source) {
-        return source;
-    }
-
-    @Override
-    List<Element> getList(String rawRule) {
-        if (isOuterBody(rawRule)) {
+    List<Object> getList(Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isOuterBody(ruleStr)) {
             return Collections.singletonList(getSource());
         }
-        return parseList(getSource(), rawRule);
+        return ListUtils.toObjectList(parseList(getSource(), ruleStr));
     }
 
     @Override
-    List<Element> parseList(String source, String rawRule) {
-        if (isOuterBody(rawRule)) {
-            return Collections.singletonList(fromSource(source));
+    List<Object> parseList(String source, Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isOuterBody(ruleStr)) {
+            return Collections.singletonList(source);
         }
-        return parseList(fromSource(source), rawRule);
+        return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
     }
 
     @Override
-    String getString(String rawRule) {
-        if (isEmpty(rawRule)) {
+    String getString(Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return "";
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return getStringSource();
         }
 
-        return parseString(getSource(), rawRule);
+        return parseString(getSource(), ruleStr);
     }
 
     @Override
-    String parseString(String source, String rawRule) {
-        if (isEmpty(rawRule)) {
+    String parseString(String source, Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return "";
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return source;
         }
 
-        return parseString(fromSource(source), rawRule);
+        return parseString(fromSource(source), ruleStr);
     }
 
-    private String parseString(Element source, String rawRule) {
-        final List<String> textS = parseStringList(source, rawRule);
+    @Override
+    String getStringFirst(Rule rule) {
+        final List<String> result = getStringList(rule);
+        if(!result.isEmpty()){
+            return result.get(0);
+        }
+        return "";
+    }
+
+    @Override
+    String parseStringFirst(String source, Rule rule) {
+        final List<String> result = parseStringList(source, rule);
+        if(!result.isEmpty()){
+            return result.get(0);
+        }
+        return "";
+    }
+
+    private String parseString(Element source, String rule) {
+        final List<String> textS = parseStringList(source, rule);
         final StringBuilder content = new StringBuilder();
         for (String text : textS) {
             if (textS.size() > 1) {
@@ -105,37 +130,39 @@ final class JsoupParser extends SourceParser<Element, Element> {
     }
 
     @Override
-    List<String> getStringList(String rawRule) {
-        if (isEmpty(rawRule)) {
+    List<String> getStringList(Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return Collections.emptyList();
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return ListUtils.mutableList(getStringSource());
         }
 
-        return parseStringList(getSource(), rawRule);
+        return parseStringList(getSource(), ruleStr);
     }
 
 
     @Override
-    List<String> parseStringList(String source, String rawRule) {
-        if (isEmpty(rawRule)) {
+    List<String> parseStringList(String source, Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return Collections.emptyList();
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return ListUtils.mutableList(source);
         }
 
-        return parseStringList(fromSource(source), rawRule);
+        return parseStringList(fromSource(source), ruleStr);
     }
 
-    private List<String> parseStringList(Element element, String rawRule) {
+    private List<String> parseStringList(Element element, String rule) {
         final List<String> textS = new ArrayList<>();
         Elements elements = new Elements();
         elements.add(element);
-        String[] ruleS = rawRule.split("@");
+        String[] ruleS = rule.split("@");
         for (int i = 0, length = ruleS.length - 1; i < length; i++) {
             Elements es = new Elements();
             for (Element elt : elements) {
@@ -225,22 +252,22 @@ final class JsoupParser extends SourceParser<Element, Element> {
     /**
      * 获取Elements按照一个规则
      */
-    private Elements parseList(Element temp, String rawRule) {
+    private Elements parseList(Element temp, String rule) {
         final Elements elements = new Elements();
         try {
-            String[] ruleS = rawRule.split("@");
+            String[] ruleS = rule.split("@");
             if (ruleS.length > 1) {
                 elements.add(temp);
-                for (String rule : ruleS) {
+                for (String singleRule : ruleS) {
                     Elements es = new Elements();
                     for (Element et : elements) {
-                        es.addAll(parseList(et, rule));
+                        es.addAll(parseList(et, singleRule));
                     }
                     elements.clear();
                     elements.addAll(es);
                 }
             } else {
-                String[] rulePcx = rawRule.split("!");
+                String[] rulePcx = rule.split("!");
                 String[] rulePc = rulePcx[0].trim().split(">");
                 String[] rules = rulePc[0].trim().split("\\.");
                 String[] filterRules = ensureFilterRules(rulePc);
@@ -313,16 +340,16 @@ final class JsoupParser extends SourceParser<Element, Element> {
             }
 
         } catch (Exception e) {
-            Logger.e(TAG, rawRule, e);
+            Logger.e(TAG, rule, e);
         }
         return elements;
     }
 
-    private String[] ensureFilterRules(String[] rawRules) {
+    private String[] ensureFilterRules(String[] rules) {
         final String[] filterRules;
-        final boolean valid = rawRules.length > 1 && !isEmpty(rawRules[1]);
+        final boolean valid = rules.length > 1 && !isEmpty(rules[1]);
         if (valid) {
-            filterRules = rawRules[1].split("\\.");
+            filterRules = rules[1].split("\\.");
             List<String> validKeys = Arrays.asList("class", "id", "tag", "text");
             if (filterRules.length < 2 || !validKeys.contains(filterRules[0]) || isEmpty(filterRules[1])) {
                 return null;

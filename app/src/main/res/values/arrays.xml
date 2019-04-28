@@ -86,11 +86,7 @@
         <item>DEFAULT</item>
         <item>XPATH</item>
         <item>JSON</item>
-    </string-array>
-
-    <string-array name="js_engine_px_title">
-        <item>J2V8-速度</item>
-        <item>Rhino-兼容</item>
+        <item>HYBRID</item>
     </string-array>
 
     <string-array name="js_engine_px_value">

@@ -187,10 +187,7 @@ public static java.lang.String TABLENAME;
 -keep class com.monke.monkeybook.widget.**{*;}
 -keep class com.monke.monkeybook.bean.**{*;}
 -keep class android.support.**{*;}
--keep class me.grantland.widget.**{*;}
--keep class de.hdodenhof.circleimageview.**{*;}
--keep class freemarker.**{*;}
--keep class com.gyf.barlibrary.* {*;}
+
 ##JSOUP
 -keep class org.jsoup.**{*;}
 -keep class com.monke.mprogressbar.**{*;}
@@ -212,23 +209,17 @@ public static java.lang.String TABLENAME;
 -dontwarn sun.misc.**
 -keep class sun.reflect.**{*;}
 -dontwarn sun.reflect.**
--keep class java.security.**{*;}
--dontwarn java.security.**
 
 ## Rhino
 -keep class javax.script.** { *; }
--keep class com.sun.script.** { *; }
--keep class org.mozilla.** { *; }
--dontwarn org.mozilla.**
+-keep class com.sun.script.javascript.** { *; }
+-keep class org.mozilla.javascript.** { *; }
+-dontwarn org.mozilla.javascript.**
 -dontwarn sun.**
 
 ## J2V8
 -keep class com.eclipsesource.v8.**{*;}
 -dontwarn com.eclipsesource.v8.**
-
-##model
--keep class com.monke.monkeybook.model.analyzeRule.**{*;}
--dontwarn com.monke.monkeybook.model.analyzeRule.**
 
 ## Bugly
 -dontwarn com.tencent.bugly.**

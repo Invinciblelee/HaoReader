@@ -24,7 +24,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
-import com.victor.loading.rotate.RotateLoading;
+import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
 import java.util.Locale;
@@ -102,16 +102,14 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         if (item.isLoading()) {
             holder.ivHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
-            holder.rotateLoading.start();
         } else {
             holder.rotateLoading.setVisibility(View.INVISIBLE);
-            holder.rotateLoading.stop();
         }
     }
 
-    private SpannableStringBuilder getBookName(String name, int newChapters){
+    private SpannableStringBuilder getBookName(String name, int newChapters) {
         SpannableStringBuilder sbs = new SpannableStringBuilder(name);
-        if(newChapters == 0){
+        if (newChapters == 0) {
             return sbs;
         }
         SpannableString chaptersSpan = new SpannableString(String.format(Locale.getDefault(), "(新增%d章)", newChapters));

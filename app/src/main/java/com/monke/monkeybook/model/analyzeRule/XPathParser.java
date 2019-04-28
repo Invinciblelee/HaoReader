@@ -3,11 +3,9 @@ package com.monke.monkeybook.model.analyzeRule;
 import android.text.TextUtils;
 
 import com.monke.monkeybook.help.Logger;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.seimicrawler.xpath.JXDocument;
@@ -15,10 +13,11 @@ import org.seimicrawler.xpath.JXDocument;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static android.text.TextUtils.isEmpty;
 
-final class XPathParser extends SourceParser<JXDocument, Element> {
+final class XPathParser extends SourceParser<JXDocument> {
 
     private static final String TAG = "XPATH";
 
@@ -27,85 +26,93 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
     }
 
     @Override
-    String sourceToString(Element source) {
-        if (source == null) {
-            return "";
+    String sourceToString(Object source) {
+        if (source instanceof String) {
+            return (String) source;
+        } else if (source instanceof Element) {
+            return source.toString();
+        } else if (source instanceof JXDocument) {
+            Object object = ((JXDocument) source).selOne("//*");
+            return StringUtils.valueOf(object);
         }
-
-        return source.toString();
+        return "";
     }
 
     @Override
-    JXDocument fromSource(String source) {
-        return JXDocument.create(ensureTableNode(source));
-    }
-
-    @Override
-    JXDocument fromSource(Element source) {
-        String string = sourceToString(source);
-        return fromSource(string);
-    }
-
-    @Override
-    List<Element> getList(String rawRule) {
-        if (isOuterBody(rawRule)) {
-            Element element = Jsoup.parse(ensureTableNode(getStringSource()));
-            return Collections.singletonList(element);
+    JXDocument fromSource(Object source) {
+        Objects.requireNonNull(source);
+        if (source instanceof String) {
+            return JXDocument.create(ensureTableNode((String) source));
+        } else if (source instanceof Element) {
+            return JXDocument.create(ensureTableNode(source.toString()));
+        } else if (source instanceof JXDocument) {
+            return (JXDocument) source;
         }
-        return parseList(getSource(), rawRule);
+        throw new IllegalAccessError("XPathParser can not support the source type");
     }
 
     @Override
-    List<Element> parseList(String source, String rawRule) {
-        if (isOuterBody(rawRule)) {
-            Element element = Jsoup.parse(ensureTableNode(source));
-            return Collections.singletonList(element);
+    List<Object> getList(Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isOuterBody(ruleStr)) {
+            return Collections.singletonList(getSource());
         }
-        return parseList(fromSource(source), rawRule);
+        return ListUtils.toObjectList(parseList(getSource(), ruleStr));
     }
 
-    private List<Element> parseList(JXDocument source, String rawRule) {
-        if (TextUtils.isEmpty(rawRule)) {
-            return new Elements();
+    @Override
+    List<Object> parseList(String source, Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isOuterBody(ruleStr)) {
+            return Collections.singletonList(source);
+        }
+        return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
+    }
+
+    private List<Element> parseList(JXDocument source, String rule) {
+        if (TextUtils.isEmpty(rule)) {
+            return new ArrayList<>();
         }
         final Elements elements = new Elements();
         try {
-            List<Object> objects = source.sel(rawRule);
+            List<Object> objects = source.sel(rule);
             for (Object object : objects) {
                 if (object instanceof Element) {
                     elements.add((Element) object);
                 }
             }
         } catch (Exception e) {
-            Logger.e(TAG, rawRule, e);
+            Logger.e(TAG, rule, e);
         }
         return elements;
     }
 
     @Override
-    List<String> getStringList(String rawRule) {
-        if (isEmpty(rawRule)) {
+    List<String> getStringList(Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return Collections.emptyList();
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return ListUtils.mutableList(getStringSource());
         }
 
-        return parseStringList(getSource(), rawRule);
+        return parseStringList(getSource(), ruleStr);
     }
 
     @Override
-    List<String> parseStringList(String source, String rawRule) {
-        if (isEmpty(rawRule)) {
+    List<String> parseStringList(String source, Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return Collections.emptyList();
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return ListUtils.mutableList(source);
         }
 
-        return parseStringList(fromSource(source), rawRule);
+        return parseStringList(fromSource(source), ruleStr);
     }
 
     private List<String> parseStringList(JXDocument source, String xPath) {
@@ -127,30 +134,42 @@ final class XPathParser extends SourceParser<JXDocument, Element> {
     }
 
     @Override
-    String getString(String rawRule) {
-        if (isEmpty(rawRule)) {
+    String getString(Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return "";
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return getStringSource();
         }
 
 
-        return parseString(getSource(), rawRule);
+        return parseString(getSource(), ruleStr);
     }
 
     @Override
-    String parseString(String source, String rawRule) {
-        if (isEmpty(rawRule)) {
+    String parseString(String source, Rule rule) {
+        String ruleStr = rule.getRule();
+        if (isEmpty(ruleStr)) {
             return "";
         }
 
-        if (isOuterBody(rawRule)) {
+        if (isOuterBody(ruleStr)) {
             return source;
         }
 
-        return parseString(fromSource(source), rawRule);
+        return parseString(fromSource(source), ruleStr);
+    }
+
+    @Override
+    String getStringFirst(Rule rule) {
+        return getString(rule);
+    }
+
+    @Override
+    String parseStringFirst(String source, Rule rule) {
+        return parseString(source, rule);
     }
 
     private String parseString(JXDocument document, String xPath) {

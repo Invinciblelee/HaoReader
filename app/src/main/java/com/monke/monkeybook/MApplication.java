@@ -15,14 +15,16 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Option;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
-import com.monke.monkeybook.help.streamcache.CacheGlobalSetting;
+import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.activity.MainActivity;
 import com.tencent.bugly.crashreport.CrashReport;
 
-import javax.script.ScriptEngineManager;
+import java.io.File;
 
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -39,6 +41,8 @@ public class MApplication extends Application {
     private static String versionName;
     private static int versionCode;
 
+    private HttpProxyCacheServer proxyCacheServer;
+
     public static MApplication getInstance() {
         return instance;
     }
@@ -50,6 +54,23 @@ public class MApplication extends Application {
     public static String getVersionName() {
         return versionName;
     }
+
+    public static HttpProxyCacheServer getProxyCacheServer(Context context) {
+        MApplication app = (MApplication) context.getApplicationContext();
+        return app.getProxyCacheServer();
+    }
+
+
+    private HttpProxyCacheServer getProxyCacheServer() {
+        if (proxyCacheServer == null) {
+            proxyCacheServer = new HttpProxyCacheServer.Builder(this)
+                    .cacheDirectory(new File(Constant.AUDIO_CACHE_PATH))
+                    .maxCacheSize(1024 * 1024 * 1024)
+                    .build();
+        }
+        return proxyCacheServer;
+    }
+
 
     @Override
     public void onCreate() {
@@ -79,17 +100,13 @@ public class MApplication extends Application {
 
         CrashReport.initCrashReport(getApplicationContext(), Constant.BUGLY_APP_ID, DEBUG);
 
+        Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+
         boolean nightTheme = AppConfigHelper.get().getPreferences().getBoolean("nightTheme", false);
         AppCompatDelegate.setDefaultNightMode(nightTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
         registerActivityCallback();
 
-        initMediaPlayerCache();
-    }
-
-    private void initMediaPlayerCache() {
-        CacheGlobalSetting.INSTANCE.setCACHE_PATH(Constant.AUDIO_CACHE_PATH);
-        CacheGlobalSetting.INSTANCE.setCACHE_SIZE(1024 * 1024 * 10);
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

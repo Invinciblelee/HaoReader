@@ -480,11 +480,16 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             atvDivider.setVisibility(View.GONE);
             atvLayout.setVisibility(View.GONE);
         } else {
-            atvDivider.setVisibility(View.VISIBLE);
-            atvLayout.setVisibility(View.VISIBLE);
             int chapterIndex = mPresenter.getBookShelf().getDurChapter();
             atvUrl.setText(mPresenter.getBookShelf().getChapter(chapterIndex).getDurChapterUrl());
             atvSourceName.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
+            if (TextUtils.isEmpty(atvUrl.getText())) {
+                atvDivider.setVisibility(View.GONE);
+                atvLayout.setVisibility(View.GONE);
+            } else {
+                atvDivider.setVisibility(View.VISIBLE);
+                atvLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 

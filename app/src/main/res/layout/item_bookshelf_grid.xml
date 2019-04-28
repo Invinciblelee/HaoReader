@@ -39,15 +39,14 @@
                 android:src="@drawable/ic_circle_red_24dp"
                 android:visibility="invisible" />
 
-            <com.victor.loading.rotate.RotateLoading
+            <com.monke.monkeybook.widget.RotateLoading
                 android:id="@+id/rl_loading"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"
                 android:visibility="invisible"
-                app:loading_color="@color/colorAccent"
-                app:loading_width="2dp" />
+                app:loadingWidth="2dp" />
 
         </FrameLayout>
     </com.monke.monkeybook.widget.CoverCardView>

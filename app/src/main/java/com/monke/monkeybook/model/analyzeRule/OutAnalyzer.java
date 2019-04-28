@@ -10,18 +10,21 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import java.util.List;
 import java.util.Map;
 
-public abstract class OutAnalyzer<S, T> implements IAnalyzerPresenter, ContentDelegate {
+public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDelegate {
 
-    private final JSParser mJSParser = new JSParser();
+    private SourceParser<S> mSourceParser;
+    private IAnalyzerPresenter mPresenter;
+    private ContentDelegate mDelegate;
 
-    private AnalyzeConfig mConfig;
+    private final AnalyzeConfig mConfig;
+
+    public OutAnalyzer(AnalyzeConfig config) {
+        mConfig = new AnalyzeConfig();
+        mConfig.apply(config);
+    }
 
     public final AnalyzeConfig getConfig() {
         return mConfig;
-    }
-
-    public final JSParser getJSParser() {
-        return mJSParser;
     }
 
     public final AnalyzeConfig newConfig() {
@@ -32,31 +35,44 @@ public abstract class OutAnalyzer<S, T> implements IAnalyzerPresenter, ContentDe
         }
     }
 
-    public final void apply(@NonNull AnalyzeConfig config) {
-        this.mConfig = config;
+    public void apply(@NonNull AnalyzeConfig config) {
+        this.mConfig.apply(config);
     }
 
-    public void setContent(String source) {
+    public final void setContent(Object source) {
         getParser().setContent(source);
     }
 
-    public void setContent(T source) {
-        getParser().setContent(source);
+    final SourceParser<S> getParser() {
+        if (mSourceParser == null) {
+            mSourceParser = onCreateSourceParser();
+        }
+        return mSourceParser;
     }
 
-    public void beginExecute() {
-        mJSParser.start();
+    final IAnalyzerPresenter getPresenter() {
+        if (mPresenter == null) {
+            mPresenter = onCreateAnalyzerPresenter(this);
+        }
+        return mPresenter;
     }
 
-    public void endExecute() {
-        mJSParser.stop();
+    private ContentDelegate getDelegate() {
+        if (mDelegate == null) {
+            mDelegate = onCreateContentDelegate(this);
+        }
+        return mDelegate;
     }
 
-    abstract SourceParser<S, T> getParser();
+    abstract SourceParser<S> onCreateSourceParser();
 
-    abstract IAnalyzerPresenter getPresenter();
+    IAnalyzerPresenter onCreateAnalyzerPresenter(OutAnalyzer<S> analyzer) {
+        return new DefaultAnalyzerPresenter<>(analyzer);
+    }
 
-    abstract ContentDelegate getDelegate();
+    ContentDelegate onCreateContentDelegate(OutAnalyzer<S> analyzer) {
+        return new DefaultContentDelegate(analyzer);
+    }
 
     @Override
     public String getResultContent(String rule) {

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.MarkdownUtils;
 import com.monke.monkeybook.utils.ReadAssets;
-import com.victor.loading.rotate.RotateLoading;
 
 
 /**
@@ -53,9 +52,6 @@ public class MoDialogView extends LinearLayout {
         if (text != null && text.length() > 0) {
             msgTv.setText(text);
         }
-
-        RotateLoading rlLoading = findViewById(R.id.rl_loading);
-        rlLoading.start();
     }
 
     //单个按钮的信息提示框

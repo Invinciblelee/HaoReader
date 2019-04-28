@@ -6,6 +6,7 @@ import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -13,23 +14,19 @@ import retrofit2.Response;
 
 import static android.text.TextUtils.isEmpty;
 
-abstract class BaseAnalyzerPresenter<S, T> implements IAnalyzerPresenter, JavaExecutor {
+abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecutor {
 
-    private final OutAnalyzer<S, T> mAnalyzer;
+    private final OutAnalyzer<S> mAnalyzer;
 
-    BaseAnalyzerPresenter(OutAnalyzer<S, T> analyzer) {
+    BaseAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         this.mAnalyzer = analyzer;
     }
 
-    final OutAnalyzer<S, T> getAnalyzer() {
+    final OutAnalyzer<S> getAnalyzer() {
         return mAnalyzer;
     }
 
-    final JSParser getJSParser() {
-        return mAnalyzer.getJSParser();
-    }
-
-    final SourceParser<S, T> getParser() {
+    final SourceParser<S> getParser() {
         return mAnalyzer.getParser();
     }
 
@@ -37,14 +34,40 @@ abstract class BaseAnalyzerPresenter<S, T> implements IAnalyzerPresenter, JavaEx
         return mAnalyzer.getConfig();
     }
 
+    RulePatterns fromRule(String rawRule, boolean withVariableStore) {
+        if (withVariableStore) {
+            return RulePatterns.fromRule(rawRule, getConfig().getVariableStore());
+        } else {
+            return RulePatterns.fromRule(rawRule);
+        }
+    }
 
-    String evalStringScript(@NonNull String result, @NonNull RulePattern rulePattern) {
+
+    RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
+        if (withVariableStore) {
+            return RulePattern.fromRule(rawRule, getConfig().getVariableStore());
+        } else {
+            return RulePattern.fromRule(rawRule);
+        }
+    }
+
+    String evalStringScript(@NonNull String string, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                result = getJSParser().evalStringScript(javaScript, this, result, getConfig().getBaseURL());
+                string = JSParser.evalStringScript(javaScript, this, string, getConfig().getBaseURL());
             }
         }
-        return result;
+        return string;
+    }
+
+    List<String> evalArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
+        final List<String> list = new ArrayList<>();
+        if (!rulePattern.javaScripts.isEmpty()) {
+            for (String javaScript : rulePattern.javaScripts) {
+                list.addAll(JSParser.evalArrayScript(javaScript, this, string, getConfig().getBaseURL()));
+            }
+        }
+        return list;
     }
 
     void processResultContents(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
@@ -103,17 +126,12 @@ abstract class BaseAnalyzerPresenter<S, T> implements IAnalyzerPresenter, JavaEx
     }
 
     @Override
-    public final String formatResultContent(String string) {
+    public final String formatHtml(String string) {
         if (isEmpty(string)) {
             return "";
         }
         return string.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
                 .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
                 .replaceAll("\\s*\\n+\\s*", "\n　　");                   // 移除空行,并增加段前缩进2个汉字
-    }
-
-    @Override
-    public String formatResultUrl(String string) {
-        return NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), string);
     }
 }

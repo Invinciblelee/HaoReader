@@ -30,14 +30,15 @@ public class ListUtils {
 
     public static <T> List<Object> toObjectList(List<T> list) {
         if (list == null) {
-            return null;
+            return new ArrayList<>();
         }
         return new ArrayList<>(list);
     }
 
+    @SafeVarargs
     public static <T> List<T> mutableList(T... a) {
         if (a == null) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         return new ArrayList<>(Arrays.asList(a));
     }

@@ -15,7 +15,7 @@ import io.reactivex.Observable;
 
 final class BookChapters {
 
-    private final OutAnalyzer<?, ?> analyzer;
+    private final OutAnalyzer<?> analyzer;
 
     BookChapters(String tag, BookSourceBean bookSourceBean) {
         analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()

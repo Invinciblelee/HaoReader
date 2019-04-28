@@ -13,6 +13,8 @@
 
     <dimen name="progress_bar_height">2dp</dimen>
 
+    <dimen name="progress_bar_stroke_width">4dp</dimen>
+
     <dimen name="small_button_height">18.5sp</dimen>
 
     <dimen name="modialog_width">270dp</dimen>

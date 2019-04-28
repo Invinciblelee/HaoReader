@@ -9,12 +9,11 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <com.victor.loading.rotate.RotateLoading
+    <com.monke.monkeybook.widget.RotateLoading
         android:id="@+id/rl_loading"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        app:loading_color="@color/tv_text_summary"
-        app:loading_width="2dp" />
+        app:loadingWidth="2dp" />
 
     <TextView
         android:id="@+id/tv_loadmore"

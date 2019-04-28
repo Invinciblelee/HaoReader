@@ -8,11 +8,13 @@ import java.lang.annotation.RetentionPolicy;
 @StringDef({
         RuleType.DEFAULT,
         RuleType.XPATH,
-        RuleType.JSON
+        RuleType.JSON,
+        RuleType.HYBRID
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface RuleType {
     String DEFAULT = "DEFAULT";
     String XPATH = "XPATH";
     String JSON = "JSON";
+    String HYBRID = "HYBRID";
 }

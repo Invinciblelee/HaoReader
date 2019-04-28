@@ -22,6 +22,8 @@ public interface FileSelectorContract {
 
         void push(RipeFile folder, int offset);
 
+        void refreshCurrent();
+
         boolean canGoBack();
 
         boolean isSingleChoice();
@@ -38,8 +40,6 @@ public interface FileSelectorContract {
         void showLoading();
 
         void hideLoading();
-
-        void showSubtitle(String subtitle);
 
         int getScrollOffset();
 

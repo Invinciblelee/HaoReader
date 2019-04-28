@@ -2,7 +2,6 @@ package com.monke.monkeybook.presenter;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
@@ -27,8 +26,8 @@ import java.util.Stack;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import okhttp3.internal.cache.DiskLruCache;
 
 public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorContract.View> implements FileSelectorContract.Presenter, FileFilter {
 
@@ -43,11 +42,15 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
 
     private boolean sortChanged;
     private FileSnapshot current;
-    private FileSnapshot root;
 
     private final Stack<FileSnapshot> snapshots = new Stack<>();
 
     private final Collator collator = Collator.getInstance(java.util.Locale.CHINA);
+
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
+    private Disposable pushDisposable;
+    private Disposable refreshDisposable;
 
     @Override
     public void init(Fragment fragment) {
@@ -81,9 +84,6 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
         mView.showLoading();
 
         Single.create((SingleOnSubscribe<FileSnapshot>) emitter -> {
-            loadRoot();
-
-
             List<FileSnapshot> snapshotList = null;
             try {
                 snapshotList = (List<FileSnapshot>) ACache.get(mView.getContext()).getAsObject(key);
@@ -94,13 +94,13 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                 snapshots.addAll(snapshotList);
                 FileSnapshot old = snapshots.pop();
                 current = loadFolder(old.getParent());
-                if(current != null) {
+                if (current != null) {
                     current.setScrollOffset(old.getScrollOffset());
-                }else {
-                    current = old;
+                } else {
+                    current = snapshots.pop();
                 }
-            } else if (root != null) {
-                current = root;
+            } else {
+                current = loadRoot();
             }
 
             if (current != null) {
@@ -112,7 +112,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -129,28 +129,114 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
 
     @Override
     public void pop() {
-        if (!snapshots.empty()) {
-            current = snapshots.pop();
-            if (current != null) {
-                if (sortChanged) {
-                    sortFiles(current.getFiles(), orderIndex);
+        Single.create((SingleOnSubscribe<FileSnapshot>) emitter -> {
+            if (!snapshots.empty()) {
+                current = snapshots.pop();
+                if (current != null) {
+                    if (sortChanged) {
+                        sortFiles(current.getFiles(), orderIndex);
+                    }
+                    emitter.onSuccess(current);
+                } else {
+                    emitter.onError(new Exception("snapshot pop failed!"));
                 }
-                mView.onShow(current, true);
-            } else if (root != null) {
-                mView.onShow(current = root, true);
             }
-        }
+        }).compose(RxUtils::toSimpleSingle)
+                .subscribe(new SingleObserver<FileSnapshot>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposables.add(d);
+                    }
+
+                    @Override
+                    public void onSuccess(FileSnapshot fileSnapshot) {
+                        mView.onShow(fileSnapshot, true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
     }
 
     @Override
     public void push(RipeFile folder, int offset) {
-        final FileSnapshot next =  loadFolder(folder);
-        if(next != null){
-            current.setScrollOffset(offset);
-            snapshots.push(current);
-            current = next;
-            mView.onShow(current, false);
+        if (pushDisposable != null) {
+            disposables.remove(pushDisposable);
         }
+        Single.create((SingleOnSubscribe<FileSnapshot>) emitter -> {
+            final FileSnapshot next = loadFolder(folder);
+            if (next != null) {
+                current.setScrollOffset(offset);
+                snapshots.push(current);
+                current = next;
+                emitter.onSuccess(current);
+            } else {
+                emitter.onError(new Exception("snapshot push failed!"));
+            }
+        }).compose(RxUtils::toSimpleSingle)
+                .subscribe(new SingleObserver<FileSnapshot>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposables.add(pushDisposable = d);
+                    }
+
+                    @Override
+                    public void onSuccess(FileSnapshot fileSnapshot) {
+                        mView.onShow(fileSnapshot, false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+    }
+
+    @Override
+    public void refreshCurrent() {
+        if (refreshDisposable != null) {
+            disposables.remove(refreshDisposable);
+        }
+        Single.create((SingleOnSubscribe<FileSnapshot>) emitter -> {
+            if (current != null) {
+                FileSnapshot old = current;
+                current = loadFolder(old.getParent());
+                if (current != null) {
+                    current.setScrollOffset(old.getScrollOffset());
+                } else if (!snapshots.empty()) {
+                    current = snapshots.pop();
+                } else {
+                    current = loadRoot();
+                }
+            } else if (!snapshots.empty()) {
+                current = snapshots.pop();
+            } else {
+                current = loadRoot();
+            }
+            if (current != null) {
+                emitter.onSuccess(current);
+            } else {
+                emitter.onError(new Exception("file load failed!"));
+            }
+        }).compose(RxUtils::toSimpleSingle)
+                .subscribe(new SingleObserver<FileSnapshot>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposables.add(refreshDisposable = d);
+                    }
+
+                    @Override
+                    public void onSuccess(FileSnapshot fileSnapshot) {
+                        mView.onShow(fileSnapshot, false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideLoading();
+                    }
+                });
+
     }
 
     @Override
@@ -208,17 +294,15 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                 current.setScrollOffset(mView.getScrollOffset());
                 snapshots.push(current);
             }
-        } else if (root != null) {
-            root.setScrollOffset(mView.getScrollOffset());
-            snapshots.push(root);
         }
+        disposables.dispose();
         ACache.get(mView.getContext()).put(key, snapshots);
     }
 
-    private void loadRoot() {
+    private FileSnapshot loadRoot() {
         List<String> list = FileUtil.getStorageData(mView.getContext());
         if (list != null) {
-            root = new FileSnapshot();
+            FileSnapshot root = new FileSnapshot();
             RipeFile parent = new RipeFile();
             parent.setPath("/");
             root.setParent(parent);
@@ -229,11 +313,13 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                 fileList.add(file);
             }
             root.setFiles(fileList);
+            return root;
         }
+        return null;
     }
 
     private FileSnapshot loadFolder(RipeFile folder) {
-        if (folder.isDirectory()) {
+        if (folder != null && folder.exists() && folder.isDirectory()) {
             File[] files = folder.getFile().listFiles(FileSelectorPresenterImpl.this);
             if (files != null && files.length > 0) {
                 FileSnapshot snapshot = new FileSnapshot();

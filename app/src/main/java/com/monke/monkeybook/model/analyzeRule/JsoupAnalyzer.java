@@ -7,41 +7,15 @@ import org.jsoup.nodes.Element;
  * 书源规则解析
  */
 
-public class JsoupAnalyzer extends OutAnalyzer<Element, Element> {
+final class JsoupAnalyzer extends OutAnalyzer<Element> {
 
-    private JsoupParser mParser;
-    private JsoupPresenter mPresenter;
-    private ContentDelegate mDelegate;
-
-    @Override
-    SourceParser<Element, Element> getParser() {
-        if(mParser == null){
-            mParser = new JsoupParser();
-        }
-        return mParser;
+    JsoupAnalyzer(AnalyzeConfig config) {
+        super(config);
     }
 
     @Override
-    IAnalyzerPresenter getPresenter() {
-        if(mPresenter == null){
-            mPresenter = new JsoupPresenter(this);
-        }
-        return mPresenter;
-    }
-
-    @Override
-    public ContentDelegate getDelegate() {
-        if (mDelegate == null) {
-            mDelegate = new ContentDelegateImpl(this);
-        }
-        return mDelegate;
-    }
-
-    private static class JsoupPresenter extends AnalyzerPresenter<Element, Element>{
-
-        private JsoupPresenter(OutAnalyzer<Element, Element> analyzer) {
-            super(analyzer);
-        }
+    SourceParser<Element> onCreateSourceParser() {
+        return new JsoupParser();
     }
 }
 

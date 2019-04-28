@@ -1,6 +1,7 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -122,8 +123,10 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 })
                 .doAfterNext(bookShelfBean -> {
                     if (inBookShelf) {
-                        BookshelfHelp.saveBookToShelf(bookShelfBean);
-                        RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
+                        Schedulers.single().createWorker().schedule(() -> {
+                            BookshelfHelp.saveBookToShelf(bookShelfBean);
+                            RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
+                        });
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())

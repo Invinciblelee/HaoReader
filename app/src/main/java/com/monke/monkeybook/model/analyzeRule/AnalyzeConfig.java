@@ -25,6 +25,18 @@ public class AnalyzeConfig {
         return config;
     }
 
+    public AnalyzeConfig apply(AnalyzeConfig config) {
+        if (config != null) {
+            this.tag = config.tag;
+            this.name = config.name;
+            this.baseURL = config.baseURL;
+            this.bookSource = config.bookSource;
+            this.variableStore = config.variableStore;
+            this.extras = config.extras;
+        }
+        return config;
+    }
+
     public AnalyzeConfig tag(String tag) {
         this.tag = tag;
         return this;
@@ -45,48 +57,49 @@ public class AnalyzeConfig {
         return this;
     }
 
-    public AnalyzeConfig variableStore(VariableStore variableStore){
+    public AnalyzeConfig variableStore(VariableStore variableStore) {
         this.variableStore = variableStore;
         return this;
     }
 
-    public AnalyzeConfig extras(Bundle extras){
+    public AnalyzeConfig extras(Bundle extras) {
         this.extras = extras;
         return this;
     }
 
-    public AnalyzeConfig extra(String key, String value){
-        if(this.extras == null){
+    public AnalyzeConfig extra(String key, String value) {
+        if (this.extras == null) {
             this.extras = new Bundle();
         }
         this.extras.putString(key, value);
         return this;
     }
-    public AnalyzeConfig extra(String key, int value){
-        if(this.extras == null){
+
+    public AnalyzeConfig extra(String key, int value) {
+        if (this.extras == null) {
             this.extras = new Bundle();
         }
         this.extras.putInt(key, value);
         return this;
     }
 
-    public AnalyzeConfig extra(String key, Serializable value){
-        if(this.extras == null){
+    public AnalyzeConfig extra(String key, Serializable value) {
+        if (this.extras == null) {
             this.extras = new Bundle();
         }
         this.extras.putSerializable(key, value);
         return this;
     }
 
-    public AnalyzeConfig extra(String key, Parcelable value){
-        if(this.extras == null){
+    public AnalyzeConfig extra(String key, Parcelable value) {
+        if (this.extras == null) {
             this.extras = new Bundle();
         }
         this.extras.putParcelable(key, value);
         return this;
     }
 
-    public final Bundle getExtras(){
+    public final Bundle getExtras() {
         return extras;
     }
 

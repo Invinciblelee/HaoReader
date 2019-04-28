@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-android'
 apply plugin: 'org.greenrobot.greendao'
 
 static def getVersionName() {
@@ -69,12 +67,6 @@ android {
         versionName currentVersionName
         project.ext.set("archivesBaseName", name + "_" + version)
         multiDexEnabled true
-
-        ndk {
-            // 设置支持的SO库架构
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
-            //'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
-        }
     }
 
     lintOptions {
@@ -84,7 +76,7 @@ android {
         release {
             signingConfig signingConfigs.myConfig
             buildConfigField "boolean", "IS_RELEASE", "true"
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -92,7 +84,7 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix ' debug'
             buildConfigField "boolean", "IS_RELEASE", "false"
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         android.applicationVariants.all { variant ->
@@ -125,9 +117,6 @@ configurations.all {
 dependencies {
     implementation project(':basemvplib')
     testImplementation 'junit:junit:4.12'
-
-    implementation 'com.eclipsesource.j2v8:j2v8:4.8.2@aar'
-
     //support
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.media:media:1.1.0-alpha04'
@@ -139,26 +128,17 @@ dependencies {
     //GreenDao
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
-    //codecMD5
-    implementation 'commons-codec:commons-codec:1.11'
     //ProgressBar
     implementation 'com.zhangmonke:MProgressBar:1.0.1'
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'jp.wasabeef:glide-transformations:3.2.0'
-    //View简易动画
-    implementation 'com.daimajia.easing:library:2.1@aar'
-    implementation 'com.daimajia.androidanimations:library:2.3@aar'
     //CircleImageView
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    //SwitchButton
-    implementation 'com.kyleduo.switchbutton:library:2.0.0'
     //bind view
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
-    //动画
-    implementation 'com.victor:lib:1.0.4'
     //简易权限获取
     implementation 'pub.devrel:easypermissions:2.0.0'
     //二维码
@@ -175,9 +155,6 @@ dependencies {
     implementation 'io.apisense:rhino-android:1.0'
     //fastscrollbar
     implementation 'com.l4digital.fastscroll:fastscroll:2.0.1'
-    //Kotlin
-    implementation "androidx.core:core-ktx:1.0.1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 greendao {

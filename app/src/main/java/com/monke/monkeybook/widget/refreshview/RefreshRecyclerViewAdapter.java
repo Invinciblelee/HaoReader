@@ -2,15 +2,16 @@ package com.monke.monkeybook.widget.refreshview;
 
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.monke.monkeybook.R;
-import com.victor.loading.rotate.RotateLoading;
+import com.monke.monkeybook.widget.RotateLoading;
 
 public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
     private final int LOAD_MORE_TYPE = 2001;
@@ -67,11 +68,9 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
             LoadMoreViewHolder loadHolder = (LoadMoreViewHolder) holder;
             if (!loadMoreError) {
                 loadHolder.progressBar.setVisibility(View.VISIBLE);
-                loadHolder.progressBar.start();
                 loadHolder.tvLoadMore.setText("正在加载...");
             } else {
                 loadHolder.progressBar.setVisibility(View.GONE);
-                loadHolder.progressBar.stop();
                 loadHolder.tvLoadMore.setText("加载失败,点击重试");
             }
             ((LoadMoreViewHolder) holder).llLoadMore.setOnClickListener(v -> {

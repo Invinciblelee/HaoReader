@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.annotation.RuleType;
+import com.monke.monkeybook.utils.StringUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -367,11 +368,21 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public boolean ajaxRuleBookContent() {
-        return !TextUtils.equals(bookSourceRuleType, RuleType.JSON) && !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_AJAX);
+        if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
+                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON)
+                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON_TRAIT)) {
+            return false;
+        }
+        return !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_AJAX);
     }
 
     public boolean sniffRuleBookContent() {
-        return !TextUtils.equals(bookSourceRuleType, RuleType.JSON) && !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_SNIFF);
+        if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
+                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON)
+                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON_TRAIT)) {
+            return false;
+        }
+        return !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_SNIFF);
     }
 
     public void setRuleBookContent(String ruleBookContent) {

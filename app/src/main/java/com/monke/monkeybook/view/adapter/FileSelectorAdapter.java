@@ -1,17 +1,17 @@
 package com.monke.monkeybook.view.adapter;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -23,6 +23,7 @@ import com.monke.monkeybook.bean.RipeFile;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ScreenUtils;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.AppCompat;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
 
     private WeakReference<Fragment> fragment;
     private LayoutInflater inflater;
+    private final Context context;
 
     private boolean singleChoice;
     private boolean checkBookAdded;
@@ -57,15 +59,16 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
         this.itemClickListener = itemClickListener;
     }
 
-    public FileSelectorAdapter(Fragment context, boolean singleChoice, boolean checkBookAdded, boolean isImage) {
-        this.fragment = new WeakReference<>(context);
+    public FileSelectorAdapter(Fragment fragment, boolean singleChoice, boolean checkBookAdded, boolean isImage) {
+        this.fragment = new WeakReference<>(fragment);
         this.singleChoice = singleChoice;
         this.checkBookAdded = checkBookAdded;
         this.isImage = isImage;
-        this.inflater = LayoutInflater.from(fragment.get().getContext());
+        this.context = fragment.getContext();
+        this.inflater = LayoutInflater.from(context);
 
-        placeholder = context.getResources().getDrawable(R.drawable.ic_image_placeholder);
-        AppCompat.setTint(placeholder, context.getResources().getColor(R.color.tv_text_summary));
+        placeholder = fragment.getResources().getDrawable(R.drawable.ic_image_placeholder);
+        AppCompat.setTint(placeholder, fragment.getResources().getColor(R.color.tv_text_summary));
 
         files = new ArrayList<>();
     }
@@ -146,6 +149,10 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
             holder.mChecker.setChecked(item.isSelected());
 
             holder.itemView.setOnClickListener(v -> {
+                if (fileNotExists(item, holder.getLayoutPosition())) {
+                    return;
+                }
+
                 if (singleChoice) {
                     int index;
                     if (lastSelectedFile != null && (index = files.indexOf(lastSelectedFile)) >= 0) {
@@ -175,6 +182,9 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
 
             if (isImage) {
                 holder.mCover.setOnClickListener(v -> {
+                    if (fileNotExists(item, holder.getLayoutPosition())) {
+                        return;
+                    }
                     if (fragment.get() instanceof FileSelectorContract.View) {
                         ((FileSelectorContract.View) fragment.get()).showBigImage(holder.mCover, item.getPath());
                     }
@@ -190,6 +200,16 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
 
     public String getSelectedFile() {
         return lastSelectedFile == null ? null : lastSelectedFile.getPath();
+    }
+
+    private boolean fileNotExists(RipeFile file, int position) {
+        if (!file.exists()) {
+            ToastUtils.toast(context, "文件不存在");
+            files.remove(file);
+            notifyItemRemoved(position);
+            return true;
+        }
+        return false;
     }
 
     public void sort(Comparator<RipeFile> comparator) {

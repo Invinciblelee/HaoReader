@@ -1,21 +1,15 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 
 import java.util.List;
 
-abstract class SourceParser<S, T> {
+abstract class SourceParser<S> {
 
     private S mSource;
-    private String mStringSource;
 
-    final void setContent(String source) {
-        mStringSource = source;
-        mSource = fromSource(source);
-    }
-
-    final void setContent(T source) {
-        mStringSource = sourceToString(source);
+    final void setContent(Object source) {
         mSource = fromSource(source);
     }
 
@@ -24,33 +18,35 @@ abstract class SourceParser<S, T> {
     }
 
     final String getStringSource() {
-        return mStringSource;
+        return sourceToString(mSource);
     }
 
-    final boolean empty() {
+    boolean isSourceEmpty() {
         return mSource == null;
     }
 
     final boolean isOuterBody(String rule) {
-        return Patterns.RULE_BODY.endsWith(rule);
+        return Patterns.RULE_BODY.equals(rule);
     }
 
-    abstract String sourceToString(T source);
+    abstract String sourceToString(Object source);
 
-    abstract S fromSource(String source);
+    abstract S fromSource(Object source);
 
-    abstract S fromSource(T source);
+    abstract List<Object> getList(Rule rule);
 
-    abstract List<T> getList(String rawRule);
+    abstract List<Object> parseList(String source, Rule rule);
 
-    abstract List<T> parseList(String source, String rawRule);
+    abstract String getString(Rule rule);
 
-    abstract String getString(String rawRule);
+    abstract String parseString(String source, Rule rule);
 
-    abstract String parseString(String source, String rawRule);
+    abstract String getStringFirst(Rule rule);
 
-    abstract List<String> getStringList(String rawRule);
+    abstract String parseStringFirst(String source, Rule rule);
 
-    abstract List<String> parseStringList(String source, String rawRule);
+    abstract List<String> getStringList(Rule rule);
+
+    abstract List<String> parseStringList(String source, Rule rule);
 
 }

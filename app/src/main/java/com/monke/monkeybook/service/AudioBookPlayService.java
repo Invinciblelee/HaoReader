@@ -12,8 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -43,7 +41,6 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.help.streamcache.MediaDataSourceDelegate;
 import com.monke.monkeybook.model.AudioBookPlayModelImpl;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import com.monke.monkeybook.utils.DensityUtil;
@@ -97,7 +94,6 @@ public class AudioBookPlayService extends Service {
     private final MediaPlayer mediaPlayer = new MediaPlayer();
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private MediaDataSourceDelegate sourceDelegate;
     private MediaSessionCompat mediaSessionCompat;
     private BroadcastReceiver broadcastReceiver;
     private AudioFocusManager focusManager;
@@ -664,11 +660,9 @@ public class AudioBookPlayService extends Service {
         try {
             Logger.d(TAG, "audio --> play: " + url);
             mediaPlayer.reset();
-            if (useCacheSource() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (sourceDelegate != null) {
-                    sourceDelegate.close();
-                }
-                mediaPlayer.setDataSource(sourceDelegate = new MediaDataSourceDelegate(Uri.parse(url)));
+            if (useCacheSource()) {
+                String proxyUrl = MApplication.getProxyCacheServer(this).getProxyUrl(url);
+                mediaPlayer.setDataSource(proxyUrl);
             } else {
                 mediaPlayer.setDataSource(url);
             }
@@ -855,9 +849,6 @@ public class AudioBookPlayService extends Service {
         }
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
-        }
-        if (sourceDelegate != null) {
-            sourceDelegate.close();
         }
         unregisterMediaButton();
         sendEvent(ACTION_STOP, AudioPlayInfo.empty());

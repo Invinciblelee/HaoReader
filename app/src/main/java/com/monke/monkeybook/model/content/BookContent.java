@@ -12,7 +12,7 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 import io.reactivex.Observable;
 
 final class BookContent {
-    private final OutAnalyzer<?, ?> analyzer;
+    private final OutAnalyzer<?> analyzer;
 
     private boolean isAJAX;
 
