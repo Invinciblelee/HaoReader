@@ -7,9 +7,10 @@ public class AudioPlayInfo {
     private String action;
 
     private int progress;
+    private int secondProgress;
     private int duration;
     private boolean isPause;
-    private boolean seekEabled;
+    private boolean seekEnabled;
     private int timerMinute;
     private int timerMinuteUntilFinish;
     private int durChapterIndex;
@@ -54,12 +55,12 @@ public class AudioPlayInfo {
         isPause = pause;
     }
 
-    public boolean isSeekEabled() {
-        return seekEabled;
+    public boolean isSeekEnabled() {
+        return seekEnabled;
     }
 
-    public void setSeekEabled(boolean seekEabled) {
-        this.seekEabled = seekEabled;
+    public void setSeekEnabled(boolean seekEnabled) {
+        this.seekEnabled = seekEnabled;
     }
 
     public int getTimerMinute() {
@@ -123,6 +124,14 @@ public class AudioPlayInfo {
         this.loading = loading;
     }
 
+    public int getSecondProgress() {
+        return secondProgress;
+    }
+
+    public void setSecondProgress(int secondProgress) {
+        this.secondProgress = secondProgress;
+    }
+
     public static AudioPlayInfo attach(BookInfoBean bookInfoBean) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setBookInfoBean(bookInfoBean);
@@ -144,17 +153,15 @@ public class AudioPlayInfo {
     }
 
 
-    public static AudioPlayInfo seekEnabled(boolean seekEabled) {
+    public static AudioPlayInfo seekEnabled(boolean seekEnabled) {
         AudioPlayInfo info = new AudioPlayInfo();
-        info.setSeekEabled(seekEabled);
+        info.setSeekEnabled(seekEnabled);
         return info;
     }
 
-    public static AudioPlayInfo pull(int timerMinute, int timerMinuteUntilFinish, List<ChapterBean> chapterBeans) {
+    public static AudioPlayInfo secondProgress(int secondProgress){
         AudioPlayInfo info = new AudioPlayInfo();
-        info.setTimerMinute(timerMinute);
-        info.setTimerMinuteUntilFinish(timerMinuteUntilFinish);
-        info.setChapterBeans(chapterBeans);
+        info.setSecondProgress(secondProgress);
         return info;
     }
 

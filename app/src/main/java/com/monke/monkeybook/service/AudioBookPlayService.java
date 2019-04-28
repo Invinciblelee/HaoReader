@@ -18,6 +18,7 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -70,6 +71,7 @@ public class AudioBookPlayService extends Service {
     public static final String ACTION_STOP = "ACTION_STOP";
     public static final String ACTION_PREPARE = "ACTION_PREPARE";
     public static final String ACTION_PROGRESS = "ACTION_PROGRESS";
+    public static final String ACTION_SECOND_PROGRESS = "ACTION_SECOND_PROGRESS";
     public static final String ACTION_LOADING = "ACTION_LOADING";
     public static final String ACTION_TIMER = "ACTION_TIMER";
     public static final String ACTION_TIMER_PROGRESS = "ACTION_TIMER_PROGRESS";
@@ -433,6 +435,7 @@ public class AudioBookPlayService extends Service {
             setProgressTimer();
             sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
             sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(true));
+            updateNotification();
         });
         mediaPlayer.setOnCompletionListener(mp -> {
             if (isPrepared && !nextPlay()) {
@@ -441,16 +444,22 @@ public class AudioBookPlayService extends Service {
         });
 
         mediaPlayer.setOnInfoListener((mp, what, extra) -> {
+            Log.d(TAG, "audio info --> " + what + "  " + extra);
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
             }
-            return false;
+            return true;
+        });
+
+        mediaPlayer.setOnBufferingUpdateListener((mp, percent) -> {
+            Log.d(TAG, "audio buffering --> " + percent);
+            sendEvent(ACTION_SECOND_PROGRESS, AudioPlayInfo.secondProgress((percent / 100) * duration));
         });
 
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
-            Logger.d(TAG, "audio error --> " + what + "  " + extra);
+            Log.d(TAG, "audio error --> " + what + "  " + extra);
             isPrepared = false;
             if (what != -38) {
                 toastError("播放失败，请重试");

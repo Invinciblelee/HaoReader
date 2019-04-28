@@ -156,7 +156,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser){
+                if (fromUser) {
                     setProgress(progress, seekBar.getMax());
                 }
             }
@@ -327,18 +327,21 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             case AudioBookPlayService.ACTION_PROGRESS:
                 setProgress(info.getProgress(), info.getDuration());
                 break;
+            case AudioBookPlayService.ACTION_SECOND_PROGRESS:
+                setSecondProgress(info.getSecondProgress());
+                break;
             case AudioBookPlayService.ACTION_STOP:
                 finish();
                 break;
             case AudioBookPlayService.ACTION_SEEK_ENABLED:
-                seekBar.setEnabled(info.isSeekEabled());
+                seekBar.setEnabled(info.isSeekEnabled());
                 break;
         }
     }
 
-    private void setTitle(String title){
+    private void setTitle(String title) {
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
+        if (actionBar != null) {
             actionBar.setTitle(title);
         }
     }
@@ -354,6 +357,10 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         seekBar.setProgress(progress);
         tvProgress.setText(dateFormat.format(new Date(progress)));
         tvDuration.setText(dateFormat.format(new Date(duration)));
+    }
+
+    private void setSecondProgress(int secondProgress) {
+        seekBar.setSecondaryProgress(secondProgress);
     }
 
     private void setChapters(List<ChapterBean> chapterBeans, int durChapter) {
