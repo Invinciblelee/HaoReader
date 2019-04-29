@@ -34,7 +34,7 @@ public class Constant {
 
 
     public static final String[] RULE_TYPES = {
-            RuleType.DEFAULT, RuleType.XPATH, RuleType.JSON, RuleType.HYBRID
+            RuleType.DEFAULT, RuleType.XPATH, RuleType.JSON, RuleType.CSS, RuleType.HYBRID
     };
 
     public static final int GROUP_ZHUIGENG = 0;

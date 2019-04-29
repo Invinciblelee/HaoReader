@@ -352,7 +352,7 @@ public class BitmapUtil {
 
 
     public static Bitmap getBitmap(String filePath, int maxWidth, int maxHeight){
-        if(StringUtils.isEmpty(filePath)){
+        if(StringUtils.isBlank(filePath)){
             return null;
         }
         BitmapFactory.Options options = new BitmapFactory.Options();

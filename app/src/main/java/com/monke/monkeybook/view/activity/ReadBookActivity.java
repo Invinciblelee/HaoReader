@@ -1152,7 +1152,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private void openCurrentChapterBrowser() {
         ensureWindowAnimNotTranslucent();
         String url = atvUrl.getText().toString();
-        if (StringUtils.isEmpty(url)) {
+        if (StringUtils.isBlank(url)) {
             return;
         }
         BookSourceBean bookSource = mPresenter.getBookSource();

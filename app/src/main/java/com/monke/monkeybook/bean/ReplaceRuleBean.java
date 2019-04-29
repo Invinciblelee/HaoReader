@@ -9,6 +9,8 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Transient;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by GKF on 2018/2/7.
  * 阅读内容替换规则
@@ -154,5 +156,12 @@ public class ReplaceRuleBean implements Parcelable {
 
     public Boolean getIsRegex() {
         return isRegex == null ? false : isRegex;
+    }
+
+    public String getFixedRegex() {
+        if (getIsRegex())
+            return this.regex;
+        else
+            return Pattern.quote(regex);
     }
 }

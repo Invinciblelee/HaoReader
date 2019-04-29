@@ -89,7 +89,7 @@ public class CookieHelper implements CookieStore {
 
     private static Map<String, String> cookieToMap(String cookie) {
         final Map<String, String> cookieMap = new HashMap<>();
-        if (StringUtils.isTrimEmpty(cookie)) {
+        if (StringUtils.isBlank(cookie)) {
             return cookieMap;
         }
         String[] pairArray = cookie.split(";");
@@ -100,7 +100,7 @@ public class CookieHelper implements CookieStore {
             }
             String key = pairs[0].trim();
             String value = pairs[1];
-            if (!StringUtils.isTrimEmpty(value) || value.trim().equals("null")) {
+            if (!StringUtils.isBlank(value) || value.trim().equals("null")) {
                 cookieMap.put(key, value.trim());
             }
         }
@@ -114,7 +114,7 @@ public class CookieHelper implements CookieStore {
         final StringBuilder builder = new StringBuilder();
         for (String key : cookieMap.keySet()) {
             String value = cookieMap.get(key);
-            if (!StringUtils.isTrimEmpty(value)) {
+            if (!StringUtils.isBlank(value)) {
                 builder.append(key)
                         .append("=")
                         .append(value)

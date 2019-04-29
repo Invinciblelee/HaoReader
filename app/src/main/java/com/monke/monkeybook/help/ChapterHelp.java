@@ -9,12 +9,12 @@ import java.util.regex.Pattern;
 
 public class ChapterHelp {
 
-    private static String[] CHAPTER_PATTERNS = new String[]{
+    private static final String[] CHAPTER_PATTERNS = new String[]{
             "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节回])[、，。　：:.\\s]*",
             "^([\\(（\\[【]*([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[】\\]）\\)]*)[、，。　：:.\\s]+"
     };
 
-    private static String SPECIAL_PATTERN = "第.*?[卷篇集].*?第.*[章节回].*?";
+    private static final String SPECIAL_PATTERN = "第.*?[卷篇集].*?第.*[章节回].*?";
 
     private ChapterHelp() {
     }
@@ -34,30 +34,11 @@ public class ChapterHelp {
     }
 
     public static String getFormatChapterName(String chapterName) {
-        if (TextUtils.isEmpty(chapterName)) {
+        if (StringUtils.isBlank(chapterName)) {
             return "";
         }
 
-        chapterName = StringUtils.fullToHalf(chapterName);
-
-        if (chapterName.matches(SPECIAL_PATTERN)) {
-            return chapterName;
-        }
-
-        for (String str : CHAPTER_PATTERNS) {
-            Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
-            Matcher matcher = pattern.matcher(chapterName);
-            if (matcher.find()) {
-                String SIMPLE_CHAPTER_PATTERN = "^第.*\\d+.*[章节回]";//eg. 第20-24章
-                if (matcher.group(0).matches(SIMPLE_CHAPTER_PATTERN)) {
-                    return matcher.replaceFirst("$1 ");
-                }
-                int num = StringUtils.stringToInt(matcher.group(2));
-                chapterName = num > 0 ? matcher.replaceFirst("第" + num + "章 ") : matcher.replaceFirst("$1 ");
-                return chapterName;
-            }
-        }
-        return chapterName;
+        return StringUtils.fullToHalf(chapterName.trim());
     }
 
     public String getPureChapterName(String chapterName) {

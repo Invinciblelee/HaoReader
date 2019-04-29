@@ -9,12 +9,14 @@ final class HybridParser extends SourceParser<Object> {
     private JsoupParser jsoupParser;
     private JsonParser jsonParser;
     private XPathParser xPathParser;
+    private CSSParser cssParser;
 
     private SourceParser<?> currentParser;
 
     private boolean sourceChangedXP = false;
     private boolean sourceChangedJS = false;
     private boolean sourceChangedJP = false;
+    private boolean sourceChangedCS = false;
 
     private boolean isJSon = false;
 
@@ -51,6 +53,17 @@ final class HybridParser extends SourceParser<Object> {
         currentParser = xPathParser;
     }
 
+    private void ensureCSSParser() {
+        if (cssParser == null) {
+            cssParser = new CSSParser();
+            cssParser.setContent(getSource());
+        } else if (sourceChangedCS) {
+            cssParser.setContent(getSource());
+            sourceChangedCS = false;
+        }
+        currentParser = cssParser;
+    }
+
     private SourceParser<?> getCurrentParser(RuleMode mode) {
         switch (mode) {
             case XPath:
@@ -58,6 +71,9 @@ final class HybridParser extends SourceParser<Object> {
                 break;
             case JSon:
                 ensureJsonParser();
+                break;
+            case CSS:
+                ensureCSSParser();
                 break;
             case Default:
             default:
@@ -86,6 +102,7 @@ final class HybridParser extends SourceParser<Object> {
         sourceChangedXP = true;
         sourceChangedJS = true;
         sourceChangedJP = true;
+        sourceChangedCS = true;
         isJSon = StringUtils.isJsonType(StringUtils.valueOf(getSource()));
         return source;
     }

@@ -187,7 +187,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             return "";
         }
         String groupName = dataList.get(element % dataList.size()).getBookSourceName();
-        return StringUtils.isEmpty(groupName) ? "" : groupName.substring(0, 1);
+        return StringUtils.isBlank(groupName) ? "" : groupName.substring(0, 1);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

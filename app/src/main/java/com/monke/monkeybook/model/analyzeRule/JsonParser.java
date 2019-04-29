@@ -58,7 +58,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     List<Object> getList(Rule rule) {
         String ruleStr = rule.getRule();
         if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(getSource());
+            return ListUtils.mutableList(getSource());
         }
         return parseList(getSource(), ruleStr);
     }
@@ -67,21 +67,21 @@ final class JsonParser extends SourceParser<ReadContext> {
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
         if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(source);
+            return ListUtils.mutableList(source);
         }
         return parseList(fromSource(source), ruleStr);
     }
 
     private List<Object> parseList(ReadContext source, String rule) {
         if (TextUtils.isEmpty(rule)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
         try {
             return source.read(rule);
         } catch (Exception e) {
             Logger.e(TAG, rule, e);
         }
-        return Collections.emptyList();
+        return ListUtils.mutableList();
     }
 
     @Override
@@ -155,7 +155,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     List<String> getStringList(Rule rule) {
         String ruleStr = rule.getRule();
         if (TextUtils.isEmpty(ruleStr)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
 
         if (isOuterBody(ruleStr)) {
@@ -169,7 +169,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     List<String> parseStringList(String source, Rule rule) {
         String ruleStr = rule.getRule();
         if (TextUtils.isEmpty(ruleStr)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
 
         if (isOuterBody(ruleStr)) {

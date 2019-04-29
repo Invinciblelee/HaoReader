@@ -202,7 +202,7 @@ public class SourceDebugActivity extends MBaseActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_QR) {
                 String result = data.getStringExtra("result");
-                if (!StringUtils.isTrimEmpty(result)) {
+                if (!StringUtils.isBlank(result)) {
                     searchView.setQuery(result, true);
                 }
             }

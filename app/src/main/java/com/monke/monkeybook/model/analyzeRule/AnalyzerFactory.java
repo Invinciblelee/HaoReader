@@ -24,6 +24,9 @@ public class AnalyzerFactory {
                 case RuleType.JSON:
                     analyzer = new JsonAnalyzer(config);
                     break;
+                case RuleType.CSS:
+                    analyzer = new CSSAnalyzer(config);
+                    break;
                 case RuleType.HYBRID:
                     analyzer = new HybridAnalyzer(config);
                     break;

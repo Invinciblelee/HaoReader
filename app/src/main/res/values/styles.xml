@@ -141,7 +141,7 @@
 
     <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
-        <item name="overlapAnchor">true</item>
+        <item name="overlapAnchor">false</item>
         <!--背景-->
         <item name="android:popupBackground">@drawable/bg_popup_background</item>
     </style>

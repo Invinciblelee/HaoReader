@@ -86,6 +86,7 @@
         <item>DEFAULT</item>
         <item>XPATH</item>
         <item>JSON</item>
+        <item>CSS</item>
         <item>HYBRID</item>
     </string-array>
 

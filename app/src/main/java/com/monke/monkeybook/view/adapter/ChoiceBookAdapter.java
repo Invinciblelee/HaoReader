@@ -70,32 +70,32 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
 
         BookKindBean kindBean = new BookKindBean(item.getKind());
         String state = kindBean.getState();
-        if (StringUtils.isEmpty(state)) {
+        if (StringUtils.isBlank(state)) {
             myViewHolder.tvState.setVisibility(View.GONE);
         } else {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
             myViewHolder.tvState.setText(state);
         }
         String words = kindBean.getWordsS();
-        if (StringUtils.isEmpty(words)) {
+        if (StringUtils.isBlank(words)) {
             myViewHolder.tvWords.setVisibility(View.INVISIBLE);
         } else {
             myViewHolder.tvWords.setVisibility(View.VISIBLE);
             myViewHolder.tvWords.setText(words);
         }
         String kind = kindBean.getKind();
-        if (StringUtils.isEmpty(kind)) {
+        if (StringUtils.isBlank(kind)) {
             myViewHolder.tvKind.setVisibility(View.GONE);
         } else {
             myViewHolder.tvKind.setVisibility(View.VISIBLE);
             myViewHolder.tvKind.setText(kind);
         }
 
-        String desc = !StringUtils.isEmpty(item.getLastChapter()) ? item.getLastChapter()
-                : !StringUtils.isEmpty(item.getDesc()) ? item.getDesc() : "";
+        String desc = !StringUtils.isBlank(item.getLastChapter()) ? item.getLastChapter()
+                : !StringUtils.isBlank(item.getDesc()) ? item.getDesc() : "";
         myViewHolder.tvLasted.setText(desc);
 
-        if (!StringUtils.isEmpty(item.getOrigin())) {
+        if (!StringUtils.isBlank(item.getOrigin())) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
             myViewHolder.tvOrigin.setText(item.getOrigin());
         } else {

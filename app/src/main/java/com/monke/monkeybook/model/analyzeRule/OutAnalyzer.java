@@ -6,6 +6,7 @@ import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.model.annotation.RuleType;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,9 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     public final void setContent(Object source) {
         getParser().setContent(source);
     }
+
+    @RuleType
+    abstract String getRuleType();
 
     final SourceParser<S> getParser() {
         if (mSourceParser == null) {

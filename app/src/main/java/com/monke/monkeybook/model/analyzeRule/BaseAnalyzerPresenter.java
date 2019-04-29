@@ -35,19 +35,21 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
+        RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            return RulePatterns.fromRule(rawRule, getConfig().getVariableStore());
+            return RulePatterns.fromRule(rawRule, getConfig().getVariableStore(), mode);
         } else {
-            return RulePatterns.fromRule(rawRule);
+            return RulePatterns.fromRule(rawRule, mode);
         }
     }
 
 
     RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
+        RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            return RulePattern.fromRule(rawRule, getConfig().getVariableStore());
+            return RulePattern.fromRule(rawRule, getConfig().getVariableStore(), mode);
         } else {
-            return RulePattern.fromRule(rawRule);
+            return RulePattern.fromRule(rawRule, mode);
         }
     }
 

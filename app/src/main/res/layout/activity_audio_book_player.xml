@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp" />
 
     </RelativeLayout>
 

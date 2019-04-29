@@ -150,7 +150,7 @@ dependencies {
     //Bugly
     implementation 'com.tencent.bugly:crashreport:2.8.6'
     //Rhino
-    implementation 'io.apisense:rhino-android:1.0'
+    implementation 'com.github.gedoor:rhino-android:1.2'
     //fastscrollbar
     implementation 'com.l4digital.fastscroll:fastscroll:2.0.1'
 }

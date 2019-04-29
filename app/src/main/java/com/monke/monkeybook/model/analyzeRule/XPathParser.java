@@ -55,7 +55,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     List<Object> getList(Rule rule) {
         String ruleStr = rule.getRule();
         if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(getSource());
+            return ListUtils.mutableList(getSource());
         }
         return ListUtils.toObjectList(parseList(getSource(), ruleStr));
     }
@@ -64,14 +64,14 @@ final class XPathParser extends SourceParser<JXDocument> {
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
         if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(source);
+            return ListUtils.mutableList(source);
         }
         return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
     }
 
     private List<Element> parseList(JXDocument source, String rule) {
         if (TextUtils.isEmpty(rule)) {
-            return new ArrayList<>();
+            return ListUtils.mutableList();
         }
         final Elements elements = new Elements();
         try {
@@ -91,7 +91,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     List<String> getStringList(Rule rule) {
         String ruleStr = rule.getRule();
         if (isEmpty(ruleStr)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
 
         if (isOuterBody(ruleStr)) {
@@ -105,7 +105,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     List<String> parseStringList(String source, Rule rule) {
         String ruleStr = rule.getRule();
         if (isEmpty(ruleStr)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
 
         if (isOuterBody(ruleStr)) {
@@ -116,7 +116,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     }
 
     private List<String> parseStringList(JXDocument source, String xPath) {
-        final List<String> resultList = new ArrayList<>();
+        final List<String> resultList = ListUtils.mutableList();
 
         try {
             final List<Object> objects = source.sel(xPath);

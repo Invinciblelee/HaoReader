@@ -11,7 +11,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 final class RulePatterns {
 
@@ -29,20 +28,26 @@ final class RulePatterns {
     }
 
     @MergeType
-    final int mergeType;
-    final List<RulePattern> patterns;
+    int mergeType;
+    List<RulePattern> patterns;
 
     private RuleMode mode;
 
-    private RulePatterns(String rawRule, VariableStore variableStore, boolean hybrid) {
-        Objects.requireNonNull(rawRule);
+    private RulePatterns(String rawRule, VariableStore variableStore) {
+        Rule rule = RootRule.fromStringRule(rawRule);
+        rawRule = rule.getRule();
+        this.mode = rule.getMode();
 
-        if (hybrid) {
-            Rule rule = Rule.fromStringRule(rawRule);
-            rawRule = rule.getRule();
-            mode = rule.getMode();
-        }
+        splitRulePattern(variableStore, splitRule(rawRule), this.mode);
+    }
 
+    private RulePatterns(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
+        this.mode = ruleMode;
+
+        splitRulePattern(variableStore, splitRule(rawRule), this.mode);
+    }
+
+    private String[] splitRule(String rawRule) {
         final String[] rules;
         if (rawRule.contains("&&")) {
             rules = rawRule.split("&&");
@@ -54,22 +59,23 @@ final class RulePatterns {
             rules = rawRule.split("\\|\\|");
             mergeType = RULE_MERGE_OR;
         }
+        return rules;
+    }
 
+    private void splitRulePattern(VariableStore variableStore, String[] rules, RuleMode mode) {
         patterns = new ArrayList<>();
-        for (String rule : rules) {
-            if (!StringUtils.isTrimEmpty(rule)) {
-                patterns.add(RulePattern.fromRule(rule.trim(), variableStore));
+        for (String ruleStr : rules) {
+            if (!StringUtils.isBlank(ruleStr)) {
+                patterns.add(RulePattern.fromRule(ruleStr.trim(), variableStore, mode));
             }
         }
 
         if (!patterns.isEmpty()) {
             RulePattern lastPattern = patterns.get(patterns.size() - 1);
             for (RulePattern pattern : patterns) {
-                pattern.setMode(mode);
                 if (pattern == lastPattern || pattern.isKeep) {
                     continue;
                 }
-
                 if (TextUtils.isEmpty(pattern.replaceRegex)) {
                     pattern.replaceRegex = lastPattern.replaceRegex;
                     pattern.replacement = lastPattern.replacement;
@@ -82,19 +88,20 @@ final class RulePatterns {
         }
     }
 
-    static RulePatterns fromRule(String rawRule, VariableStore variableStore) {
-        return new RulePatterns(rawRule, variableStore, false);
+    static RulePatterns fromRule(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
+        return new RulePatterns(rawRule, variableStore, ruleMode);
     }
 
-    static RulePatterns fromRule(String rawRule) {
-        return new RulePatterns(rawRule, null, false);
+    static RulePatterns fromRule(String rawRule, RuleMode ruleMode) {
+        return fromRule(rawRule, null, ruleMode);
     }
 
     static RulePatterns fromHybridRule(String rawRule, VariableStore variableStore) {
-        return new RulePatterns(rawRule, variableStore, true);
+        return new RulePatterns(rawRule, variableStore);
     }
 
     static RulePatterns fromHybridRule(String rawRule) {
-        return new RulePatterns(rawRule, null, true);
+        return fromHybridRule(rawRule, null);
     }
+
 }

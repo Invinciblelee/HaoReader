@@ -273,7 +273,7 @@ class DefaultContentDelegate implements ContentDelegate {
         RawResult<String> webContentBean = getRawContentResult(source, bookContentBean.getDurChapterUrl(), ruleBookContent);
         bookContentBean.setDurChapterContent(webContentBean.result);
 
-        if (!StringUtils.isEmpty(webContentBean.nextUrl)) {
+        if (!StringUtils.isBlank(webContentBean.nextUrl)) {
             List<String> nextUrls = new ArrayList<>();
             int retryCount = 0;
 

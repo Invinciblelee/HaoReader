@@ -31,6 +31,7 @@ public class Patterns {
     public static final String RULE_JSON_TRAIT = "$.";
     public static final String RULE_XPATH = "@XPath:";
     public static final String RULE_XPATH_TRAIT = "//";
+    public static final String RULE_CSS = "@CSS:";
 
     public static final Type STRING_MAP = new TypeToken<Map<String, String>>() {
     }.getType();

@@ -22,7 +22,7 @@
             android:background="@color/colorPrimary"
             app:contentInsetStartWithNavigation="0dp"
             app:navigationContentDescription="@string/back"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 

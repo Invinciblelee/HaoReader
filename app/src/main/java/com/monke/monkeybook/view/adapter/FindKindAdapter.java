@@ -179,7 +179,7 @@ public class FindKindAdapter extends RecyclerView.Adapter<FindKindAdapter.ItemVi
             return "";
         }
         String groupName = dataList.get(element % dataList.size()).getGroupName();
-        return StringUtils.isEmpty(groupName) ? "" : groupName.substring(0, 1);
+        return StringUtils.isBlank(groupName) ? "" : groupName.substring(0, 1);
     }
 
 

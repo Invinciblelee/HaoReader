@@ -49,7 +49,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:theme="@style/AppTheme.AppBarOverlay"
-                        app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+                        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
                         app:titleTextColor="@color/colorReadBarText" />
 
                     <View

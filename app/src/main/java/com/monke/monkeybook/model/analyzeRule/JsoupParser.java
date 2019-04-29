@@ -133,7 +133,7 @@ final class JsoupParser extends SourceParser<Element> {
     List<String> getStringList(Rule rule) {
         String ruleStr = rule.getRule();
         if (isEmpty(ruleStr)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
 
         if (isOuterBody(ruleStr)) {
@@ -148,7 +148,7 @@ final class JsoupParser extends SourceParser<Element> {
     List<String> parseStringList(String source, Rule rule) {
         String ruleStr = rule.getRule();
         if (isEmpty(ruleStr)) {
-            return Collections.emptyList();
+            return ListUtils.mutableList();
         }
 
         if (isOuterBody(ruleStr)) {
@@ -157,6 +157,8 @@ final class JsoupParser extends SourceParser<Element> {
 
         return parseStringList(fromSource(source), ruleStr);
     }
+
+
 
     private List<String> parseStringList(Element element, String rule) {
         final List<String> textS = new ArrayList<>();
@@ -237,9 +239,9 @@ final class JsoupParser extends SourceParser<Element> {
                     break;
                 default:
                     for (Element element : elements) {
-                        String url = element.attr(lastRule);
-                        if (!isEmpty(url) && !textS.contains(url)) {
-                            textS.add(url);
+                        String attr = element.attr(lastRule);
+                        if (!isEmpty(attr) && !textS.contains(attr)) {
+                            textS.add(attr);
                         }
                     }
             }

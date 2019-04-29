@@ -281,7 +281,7 @@ public class StringUtils {
         if (charSequence == null) {
             return true;
         }
-        return charSequence.toString().trim().length() == 0;
+        return charSequence.length() == 0;
     }
 
     public static boolean isContainNumber(String company) {
@@ -297,7 +297,7 @@ public class StringUtils {
     }
 
     public static String base64Decode(String str) {
-        if (isTrimEmpty(str)) {
+        if (isBlank(str)) {
             return "";
         }
         byte[] bytes = Base64.decode(str, Base64.DEFAULT);
@@ -309,7 +309,7 @@ public class StringUtils {
     }
 
     public static String base64Encode(String str) {
-        if (isTrimEmpty(str)) {
+        if (isBlank(str)) {
             return "";
         }
         byte[] bytes = Base64.encode(str.getBytes(), Base64.DEFAULT);
@@ -339,7 +339,7 @@ public class StringUtils {
         return src.substring(0, obj.length()).equalsIgnoreCase(obj);
     }
 
-    public static boolean isTrimEmpty(String text) {
+    public static boolean isBlank(String text) {
         if (text == null) return true;
         if (text.length() == 0) return true;
         return text.trim().length() == 0;

@@ -4,25 +4,18 @@ import com.monke.monkeybook.model.annotation.RuleType;
 
 import org.jsoup.nodes.Element;
 
-/**
- * Created by GKF on 2018/1/25.
- * 书源规则解析
- */
-
-final class JsoupAnalyzer extends OutAnalyzer<Element> {
-
-    JsoupAnalyzer(AnalyzeConfig config) {
+final class CSSAnalyzer extends OutAnalyzer<Element> {
+    CSSAnalyzer(AnalyzeConfig config) {
         super(config);
     }
 
     @Override
     String getRuleType() {
-        return RuleType.DEFAULT;
+        return RuleType.CSS;
     }
 
     @Override
     SourceParser<Element> onCreateSourceParser() {
-        return new JsoupParser();
+        return new CSSParser();
     }
 }
-

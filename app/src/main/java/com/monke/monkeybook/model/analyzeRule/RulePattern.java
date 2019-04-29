@@ -20,26 +20,65 @@ import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JS
 
 final class RulePattern {
 
-    final boolean isRedirect;
-    final String redirectRule;
+    boolean isRedirect;
+    String redirectRule;
 
-    final boolean isKeep;
-    final boolean isSimpleJS;
+    boolean isKeep;
+    boolean isSimpleJS;
 
-    final Rule elementsRule;
+    Rule elementsRule;
 
     String replaceRegex;
     String replacement;
     List<String> javaScripts;
 
-    private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore, boolean hybrid) {
+    private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore) {
         elementsRule = new Rule();
-        if (hybrid) {
-            Rule rule = Rule.fromStringRule(rawRule);
-            rawRule = rule.getRule();
-            elementsRule.setMode(rule.getMode());
+        Rule rule = RootRule.fromStringRule(rawRule);
+        rawRule = rule.getRule();
+        elementsRule.setMode(rule.getMode());
+
+        initRulePattern(rawRule, variableStore, elementsRule.getMode());
+    }
+
+    private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
+        elementsRule = new Rule();
+        elementsRule.setMode(ruleMode);
+
+        initRulePattern(rawRule, variableStore, elementsRule.getMode());
+    }
+
+    private void initRulePattern(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
+        //分离get规则
+        rawRule = replaceVariableValue(variableStore, rawRule);
+
+        //不共用js规则和正则
+        rawRule = ensureKeepRule(rawRule);
+
+        //分离重定向规则（规则重定向）
+        rawRule = ensureRedirectRule(rawRule);
+
+        //分离正则表达式
+        if (ruleMode != RuleMode.CSS) {
+            rawRule = ensureRegexRule(rawRule);
+        } else {
+            replaceRegex = "";
+            replacement = "";
         }
 
+        //分离js
+        int start = ensureJavaScripts(rawRule);
+
+        //最终的规则
+        elementsRule.setRule(start == -1 ? rawRule : rawRule.substring(0, start));
+
+        //是否全部使用js
+        isSimpleJS = !isRedirect && TextUtils.isEmpty(elementsRule.getRule()) && !javaScripts.isEmpty();
+
+        Log.e("TAG", toString());
+    }
+
+    private String replaceVariableValue(VariableStore variableStore, String rawRule) {
         //分离get规则
         if (variableStore != null) {
             Matcher getMatcher = PATTERN_GET.matcher(rawRule);
@@ -49,14 +88,18 @@ final class RulePattern {
                 rawRule = rawRule.replace(group, value != null ? value : "");
             }
         }
+        return rawRule;
+    }
 
-        //不共用js规则和正则
+    private String ensureKeepRule(String rawRule) {
         isKeep = rawRule.startsWith(Patterns.RULE_KEEP);
         if (isKeep) {
             rawRule = rawRule.substring(1);
         }
+        return rawRule;
+    }
 
-        //分离重定向规则（规则重定向）
+    private String ensureRedirectRule(String rawRule) {
         final String[] ruleS = rawRule.split(Patterns.REGEX_REDIRECT);
         if (ruleS.length > 1) {
             isRedirect = true;
@@ -66,8 +109,10 @@ final class RulePattern {
             isRedirect = false;
             redirectRule = "";
         }
+        return rawRule;
+    }
 
-        //分离正则表达式
+    private String ensureRegexRule(String rawRule) {
         final String[] rules = rawRule.split(Patterns.RULE_REGEX);
         rawRule = rules[0];
         if (rules.length > 1) {
@@ -81,8 +126,10 @@ final class RulePattern {
         } else {
             replacement = "";
         }
+        return rawRule;
+    }
 
-        //分离js
+    private int ensureJavaScripts(String rawRule) {
         int start = -1;
         javaScripts = new ArrayList<>();
         Matcher jsMatcher = PATTERN_JS.matcher(rawRule);
@@ -97,31 +144,23 @@ final class RulePattern {
                 start = jsMatcher.start();
             }
         }
-
-        elementsRule.setRule(start == -1 ? rawRule : rawRule.substring(0, start));
-
-        //是否全部使用js
-        isSimpleJS = !isRedirect && TextUtils.isEmpty(elementsRule.getRule()) && !javaScripts.isEmpty();
+        return start;
     }
 
-    void setMode(RuleMode mode) {
-        elementsRule.setMode(mode);
+    static RulePattern fromRule(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
+        return new RulePattern(rawRule, variableStore, ruleMode);
     }
 
-    static RulePattern fromRule(@NonNull String rawRule, @Nullable VariableStore variableStore) {
-        return new RulePattern(rawRule, variableStore, false);
-    }
-
-    static RulePattern fromRule(@NonNull String rawRule) {
-        return new RulePattern(rawRule, null, false);
+    static RulePattern fromRule(@NonNull String rawRule, @Nullable RuleMode ruleMode) {
+        return fromRule(rawRule, null, ruleMode);
     }
 
     static RulePattern fromHybridRule(@NonNull String rawRule, @Nullable VariableStore variableStore) {
-        return new RulePattern(rawRule, variableStore, true);
+        return new RulePattern(rawRule, variableStore);
     }
 
     static RulePattern fromHybridRule(@NonNull String rawRule) {
-        return new RulePattern(rawRule, null, true);
+        return fromHybridRule(rawRule, null);
     }
 
     @Override

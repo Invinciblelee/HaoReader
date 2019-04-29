@@ -53,7 +53,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:title="二维码扫描"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp" />
 
     </RelativeLayout>
 </RelativeLayout>
