@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AppTheme.CardView"
-    android:layout_width="225dp"
-    android:layout_height="128dp">
+    style="@style/AppTheme.CardView.Background"
+    android:layout_width="@dimen/modialog_loading_width"
+    android:layout_height="@dimen/modialog_loading_height">
 
     <LinearLayout
         android:id="@+id/ll_content"

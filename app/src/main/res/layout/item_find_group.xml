@@ -39,7 +39,7 @@
             android:layout_marginEnd="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_group_expander"
-            android:tint="@color/menu_color_default" />
+            android:tint="@color/colorMenuText" />
     </FrameLayout>
 
     <com.google.android.flexbox.FlexboxLayout

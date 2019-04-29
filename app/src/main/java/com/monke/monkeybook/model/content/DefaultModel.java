@@ -21,6 +21,7 @@ import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,16 +87,16 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     public Observable<List<SearchBookBean>> findBook(String url, int page) {
         if (!initBookSourceBean() || isEmpty(url)) {
             return Observable.create(emitter -> {
-                emitter.onNext(new ArrayList<>());
+                emitter.onNext(Collections.emptyList());
                 emitter.onComplete();
             });
         }
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, page, headerMap(true), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, page, headerMap(false), tag);
             if (analyzeUrl.getHost() == null) {
                 return Observable.create(emitter -> {
-                    emitter.onNext(new ArrayList<>());
+                    emitter.onNext(Collections.emptyList());
                     emitter.onComplete();
                 });
             }
@@ -103,7 +104,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                     .flatMap(bookList::analyzeSearchBook);
         } catch (Exception e) {
             Logger.e(TAG, "findBook: " + url, e);
-            return Observable.just(new ArrayList<>());
+            return Observable.just(Collections.emptyList());
         }
     }
 
@@ -114,7 +115,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     public Observable<List<SearchBookBean>> searchBook(String content, int page) {
         if (!initBookSourceBean() || isEmpty(bookSourceBean.getRuleSearchUrl())) {
             return Observable.create(emitter -> {
-                emitter.onNext(new ArrayList<>());
+                emitter.onNext(Collections.emptyList());
                 emitter.onComplete();
             });
         }
@@ -122,13 +123,13 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookSourceBean.getRuleSearchUrl(), content, page, headerMap(false), tag);
             if (analyzeUrl.getHost() == null) {
-                return Observable.just(new ArrayList<>());
+                return Observable.just(Collections.emptyList());
             }
             return toObservable(analyzeUrl)
                     .flatMap(bookList::analyzeSearchBook);
         } catch (Exception e) {
             Logger.e(TAG, "searchBook: " + content, e);
-            return Observable.just(new ArrayList<>());
+            return Observable.just(Collections.emptyList());
         }
     }
 

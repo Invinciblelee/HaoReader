@@ -34,7 +34,7 @@ public class AnalyzeConfig {
             this.variableStore = config.variableStore;
             this.extras = config.extras;
         }
-        return config;
+        return this;
     }
 
     public AnalyzeConfig tag(String tag) {

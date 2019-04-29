@@ -3,11 +3,11 @@ package com.monke.monkeybook.help;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.documentfile.provider.DocumentFile;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.monke.monkeybook.MApplication;
-import com.monke.monkeybook.R;
-import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
@@ -16,16 +16,9 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.utils.FileUtil;
-import com.monke.monkeybook.utils.ToastUtils;
 
 import java.io.File;
 import java.util.List;
-
-import androidx.documentfile.provider.DocumentFile;
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by GKF on 2018/1/30.
@@ -38,35 +31,15 @@ public class DataBackup {
         return new DataBackup();
     }
 
-    public void run() {
-        Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            File dir = FileHelp.getFolder(FileUtil.getSdCardPath(), "YueDu/backups");
-            String dirPath = dir.getAbsolutePath();
-            backupBookShelf(dirPath);
-            backupBookSource(dirPath);
-            backupSearchHistory(dirPath);
-            backupReplaceRule(dirPath);
-            backupConfig(dirPath);
-            e.onNext(true);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<Boolean>() {
-                    @Override
-                    public void onNext(Boolean value) {
-                        if (value) {
-                            ToastUtils.longToast(MApplication.getInstance(), R.string.backup_success);
-                        } else {
-                            ToastUtils.longToast(MApplication.getInstance(), R.string.backup_fail);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        ToastUtils.longToast(MApplication.getInstance(), R.string.backup_fail);
-                    }
-                });
+    public boolean run() {
+        File dir = FileHelp.getFolder(FileUtil.getSdCardPath(), "YueDu/backups");
+        String dirPath = dir.getAbsolutePath();
+        backupBookShelf(dirPath);
+        backupBookSource(dirPath);
+        backupSearchHistory(dirPath);
+        backupReplaceRule(dirPath);
+        backupConfig(dirPath);
+        return true;
     }
 
     private void backupBookShelf(String file) {

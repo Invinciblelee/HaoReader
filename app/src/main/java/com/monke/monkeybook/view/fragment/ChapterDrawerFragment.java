@@ -6,22 +6,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.tabs.TabLayout;
-import com.hwangjr.rxbus.RxBus;
-import com.monke.basemvplib.BaseFragment;
-import com.monke.basemvplib.impl.IPresenter;
-import com.monke.monkeybook.R;
-import com.monke.monkeybook.widget.AppCompat;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
+import com.monke.basemvplib.BaseFragment;
+import com.monke.basemvplib.impl.IPresenter;
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.BookShelfHolder;
+import com.monke.monkeybook.widget.AppCompat;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,10 +43,10 @@ public class ChapterDrawerFragment extends BaseFragment {
     Toolbar toolbar;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    @BindView(R.id.tv_title)
+    AppCompatTextView tvTitle;
 
     SearchView searchView;
-
-    private int paddingTop;
 
     private final BaseChapterListFragment[] fragments = new BaseChapterListFragment[2];
 
@@ -60,28 +63,6 @@ public class ChapterDrawerFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        RxBus.get().register(this);
-
-        if (savedInstanceState != null) {
-            paddingTop = savedInstanceState.getInt("paddingTop");
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("paddingTop", paddingTop);
-    }
-
-    @Override
-    public void onDestroy() {
-        RxBus.get().unregister(this);
-        super.onDestroy();
-    }
-
-    @Override
     protected View createView(LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.fragment_tab_chapterlist, container, false);
     }
@@ -89,10 +70,8 @@ public class ChapterDrawerFragment extends BaseFragment {
     @Override
     protected void bindView() {
         ButterKnife.bind(this, view);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorMenuText));
 //        inflateMenu();
-
-        setPaddingTop(paddingTop);
 
         tabLayout.setupWithViewPager(viewPager);
         fragments[0] = ChapterListFragment.newInstance();
@@ -101,6 +80,12 @@ public class ChapterDrawerFragment extends BaseFragment {
         titles[0] = getString(R.string.category);
         titles[1] = getString(R.string.bookmark);
         viewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager(), titles, fragments));
+
+        BookShelfHolder.get().observe(this, bookShelfBean -> {
+            if (tvTitle != null) {
+                tvTitle.setText(bookShelfBean.getBookInfoBean().getName());
+            }
+        });
     }
 
     @Override
@@ -128,6 +113,12 @@ public class ChapterDrawerFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        BookShelfHolder.get().unsubscribe(this);
+        super.onDestroyView();
+    }
+
     private void inflateMenu() {
         toolbar.inflateMenu(R.menu.menu_search_view);
         MenuItem search = toolbar.getMenu().findItem(R.id.action_search);
@@ -153,13 +144,6 @@ public class ChapterDrawerFragment extends BaseFragment {
                 return false;
             }
         });
-    }
-
-    public void setPaddingTop(int paddingTop) {
-        if (this.paddingTop != paddingTop) {
-            this.paddingTop = paddingTop;
-            appBar.setPadding(0, paddingTop, 0, 0);
-        }
     }
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {

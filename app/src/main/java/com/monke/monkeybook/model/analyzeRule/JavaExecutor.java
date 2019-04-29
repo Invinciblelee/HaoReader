@@ -8,6 +8,8 @@ public interface JavaExecutor {
 
     String base64Decode(String string);
 
+    String base64Encode(String string);
+
     String formatHtml(String string);
 
     String parseResultContent(String source, String rule);

@@ -126,7 +126,7 @@ final class JsonParser extends SourceParser<ReadContext> {
         if (!rule.contains("{$.")) {
             final StringBuilder content = new StringBuilder();
             try {
-                Object object = source.read(rule);
+                final Object object = source.read(rule);
                 if (object instanceof List) {
                     for (Object o : (List) object) {
                         content.append(StringUtils.valueOf(o)).append("\n");
@@ -143,13 +143,8 @@ final class JsonParser extends SourceParser<ReadContext> {
             Matcher matcher = PATTERN_JSON.matcher(rule);
             while (matcher.find()) {
                 final String group = matcher.group();
-                Object object = null;
-                try {
-                    object = source.read(group);
-                } catch (Exception e) {
-                    Logger.e(TAG, rule, e);
-                }
-                result = result.replace(String.format("{%s}", group), StringUtils.valueOf(object));
+                final String string = parseString(source, group);
+                result = result.replace(String.format("{%s}", group), string);
             }
             return result;
         }

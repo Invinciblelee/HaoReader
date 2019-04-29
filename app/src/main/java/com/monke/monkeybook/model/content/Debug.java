@@ -11,7 +11,9 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.StringUtils;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -178,7 +181,7 @@ public class Debug {
                             ChapterBean chapterBean = bookShelfBean.getChapter(0);
                             printLog("●章节名称» " + chapterBean.getDurChapterName());
                             printLog("●章节网址» " + chapterBean.getDurChapterUrl());
-                            printLog(String.format("%s 目录结束", getDoTime()));
+                            printLog(String.format("★%s 目录结束", getDoTime()));
                             bookContentDebug(bookShelfBean.getBookInfoBean(), chapterBean);
                         } else {
                             printError("获取到的目录为空");
@@ -203,6 +206,12 @@ public class Debug {
     private void bookContentDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
         printLog("\n");
         printLog(String.format("★%s 正文开始", getDoTime()));
+
+        if(BookType.AUDIO.equals(bookInfoBean.getBookType())){
+            bookAudioDebug(bookInfoBean, chapterBean);
+            return;
+        }
+
         WebBookModel.getInstance().getBookContent(bookInfoBean, chapterBean)
                 .compose(RxUtils::toSimpleSingle)
                 .timeout(30L, TimeUnit.SECONDS)
@@ -217,6 +226,37 @@ public class Debug {
                     public void onNext(BookContentBean bookContentBean) {
                         printLog("●成功获取正文页» " + bookContentBean.getDurChapterUrl());
                         printLog("●章节内容» " + bookContentBean.getDurChapterContent());
+                        printLog(String.format("★%s 正文结束", getDoTime()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        printError(e.getMessage());
+                        printLog(String.format("★%s 正文结束", getDoTime()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        finish();
+                    }
+                });
+    }
+
+    private void bookAudioDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean){
+        WebBookModel.getInstance().processAudioChapter(bookInfoBean.getTag(), chapterBean)
+                .compose(RxUtils::toSimpleSingle)
+                .timeout(30L, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ChapterBean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                            compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(ChapterBean chapterBean) {
+                        printLog("●成功获取播放页» " + chapterBean.getDurChapterUrl());
+                        printLog("●播放链接» " + chapterBean.getDurChapterPlayUrl());
                         printLog(String.format("★%s 正文结束", getDoTime()));
                     }
 

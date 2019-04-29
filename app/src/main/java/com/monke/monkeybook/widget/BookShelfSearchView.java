@@ -68,7 +68,7 @@ public class BookShelfSearchView extends LinearLayout {
     private void initView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_search_bookshelf, this, true);
         ButterKnife.bind(this);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
         toolbar.inflateMenu(R.menu.menu_search_view);
         MenuItem search = toolbar.getMenu().findItem(R.id.action_search);
         searchView = (SearchView) search.getActionView();

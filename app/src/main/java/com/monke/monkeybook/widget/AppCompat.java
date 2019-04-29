@@ -39,7 +39,7 @@ public class AppCompat {
     }
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchHintIcon, boolean showBg) {
-        final int normalColor = searchView.getResources().getColor(R.color.menu_color_default);
+        final int normalColor = searchView.getResources().getColor(R.color.colorToolBarText);
         AppCompatImageView search = searchView.findViewById(androidx.appcompat.R.id.search_button);
         search.setImageResource(R.drawable.ic_search_black_24dp);
         setTint(search, normalColor);
@@ -99,7 +99,7 @@ public class AppCompat {
 
 
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText, boolean showIcon) {
-        searchText.setTextColor(searchText.getResources().getColor(R.color.tv_text_default));
+        searchText.setTextColor(searchText.getResources().getColor(R.color.colorToolBarText));
         if (showIcon) {
             final int textSize = (int) (searchText.getTextSize() * DRAWABLE_SCALE);
             Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);

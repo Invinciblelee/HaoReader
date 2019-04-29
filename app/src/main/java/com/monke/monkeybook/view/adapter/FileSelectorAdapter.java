@@ -153,6 +153,10 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
                     return;
                 }
 
+                if(!item.isDirectory() && !holder.mChecker.isShown()){
+                    return;
+                }
+
                 if (singleChoice) {
                     int index;
                     if (lastSelectedFile != null && (index = files.indexOf(lastSelectedFile)) >= 0) {

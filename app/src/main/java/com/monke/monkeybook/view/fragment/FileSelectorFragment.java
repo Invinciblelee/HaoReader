@@ -1,17 +1,18 @@
 package com.monke.monkeybook.view.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.appcompat.widget.Toolbar;
@@ -23,9 +24,11 @@ import com.monke.monkeybook.bean.FileSnapshot;
 import com.monke.monkeybook.bean.RipeFile;
 import com.monke.monkeybook.presenter.FileSelectorPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BigImageActivity;
 import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
+import com.monke.monkeybook.view.fragment.dialog.AppCompatDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
@@ -35,18 +38,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class FileSelector extends AppCompatDialogFragment implements FileSelectorContract.View,
+public class FileSelectorFragment extends AppCompatDialog implements FileSelectorContract.View,
         View.OnClickListener, Toolbar.OnMenuItemClickListener, FileSelectorAdapter.OnItemClickListener
         , SwipeRefreshLayout.OnRefreshListener {
 
-    Toolbar toolbar;
-    RecyclerView rvFiles;
-    ContentLoadingProgressBar progressBar;
-    SwipeRefreshLayout refreshLayout;
+    private Toolbar toolbar;
+    private RecyclerView rvFiles;
+    private ContentLoadingProgressBar progressBar;
+    private SwipeRefreshLayout refreshLayout;
 
-    Button okBth, backBtn;
-
-    boolean isShowing;
+    private Button okBth, backBtn, cancelBtn;
 
     private FileSelectorAdapter adapter;
 
@@ -54,14 +55,14 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
     private FileSelectorContract.Presenter mPresenter;
 
-    public static FileSelector newInstance(String title, boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
+    public static FileSelectorFragment newInstance(String title, boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putBoolean("isSingleChoice", singleChoice);
         args.putBoolean("checkBookAdded", checkBookAdded);
         args.putBoolean("isImage", isImage);
         args.putStringArrayList("suffixes", new ArrayList<>(Arrays.asList(suffixes)));
-        FileSelector fragment = new FileSelector();
+        FileSelectorFragment fragment = new FileSelectorFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,28 +70,27 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_TITLE, R.style.Style_Dialog_Files);
 
         mPresenter = new FileSelectorPresenterImpl();
         mPresenter.attachView(this);
         mPresenter.init(this);
     }
 
-    @NonNull
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()), getTheme());
-        builder.setNeutralButton(R.string.back, null);
-        builder.setPositiveButton(R.string.ok, null);
-        builder.setNegativeButton(R.string.cancel, null);
-        @SuppressLint("InflateParams") View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_file_selector, null);
-        builder.setView(view);
+    public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_file_selector, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         toolbar = view.findViewById(R.id.toolbar);
         rvFiles = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.loading_progress);
         refreshLayout = view.findViewById(R.id.refresh_layout);
+        okBth = view.findViewById(android.R.id.button1);
+        cancelBtn = view.findViewById(android.R.id.button2);
+        backBtn = view.findViewById(android.R.id.button3);
         initView();
-        return builder.create();
     }
 
     private void initView() {
@@ -117,23 +117,22 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
         adapter.setOnItemClickListener(this);
 
+        okBth.setOnClickListener(this);
+        cancelBtn.setOnClickListener(this);
+        backBtn.setOnClickListener(this);
+        okBth.setText(R.string.ok);
+        cancelBtn.setText(R.string.cancel);
+        backBtn.setText(R.string.back);
+
         mPresenter.startLoad();
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (!isShowing) {
-            AlertDialog dialog = (AlertDialog) getDialog();
-            assert dialog != null;
-            okBth = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            backBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-            backBtn.setVisibility(View.INVISIBLE);
-
-            backBtn.setOnClickListener(this);
-            okBth.setOnClickListener(this);
-            isShowing = true;
-        }
+    protected void onDialogAttachWindow(@NonNull Window window) {
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.width = getResources().getDisplayMetrics().widthPixels - ScreenUtils.dpToPx(56);
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        window.setAttributes(params);
     }
 
     @Override
@@ -204,10 +203,12 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
     }
 
     @Override
-    public void onClick(View v) {
-        if (v == backBtn) {
+    public void onClick(View view) {
+        if (view == backBtn) {
             mPresenter.pop();
-        } else if (v == okBth) {
+        } else if (view == cancelBtn) {
+            dismissAllowingStateLoss();
+        } else if (view == okBth) {
             boolean haveSelected = true;
             if (mPresenter.isSingleChoice()) {
                 String path = adapter.getSelectedFile();
@@ -274,9 +275,8 @@ public class FileSelector extends AppCompatDialogFragment implements FileSelecto
 
     public void show(AppCompatActivity activity, OnFileSelectedListener selectedListener) {
         this.selectedListener = selectedListener;
-        super.show(activity.getSupportFragmentManager(), "FileSelector");
+        super.show(activity.getSupportFragmentManager(), "FileSelectorFragment");
     }
-
 
     public static abstract class OnFileSelectedListener {
         public void onSingleChoice(String path) {

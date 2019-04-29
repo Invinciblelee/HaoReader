@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="CAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
@@ -7,7 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">@color/tv_text_secondary</item>
         <item name="colorButtonNormal">@color/tv_text_secondary</item>
-        <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu.Overflow</item>
+        <item name="actionOverflowButtonStyle">@style/Overflow.Menu.Button</item>
         <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text.style</item>
         <item name="android:listDivider">@drawable/bg_list_divider</item>
         <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
@@ -65,21 +66,18 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlNormal">@color/menu_color_default</item>
-        <item name="colorButtonNormal">@color/menu_color_default</item>
+    <style name="CAppTheme.Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay.Read" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlNormal">@color/colorReadBarText</item>
-        <item name="colorButtonNormal">@color/colorReadBarText</item>
-        <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu.Read</item>
-        <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text.style.Read</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
     </style>
 
-    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorControlNormal">@color/menu_color_default</item>
-        <item name="colorButtonNormal">@color/menu_color_default</item>
+    <style name="Overflow.Menu.Button" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/colorToolBarText</item>
     </style>
 
     <style name="CAppTheme.Navigation.Text" parent="TextAppearance.AppCompat.Large">
@@ -90,13 +88,10 @@
 
     </style>
 
-    <style name="AppTheme.CardView" parent="CardView.Light">
+    <style name="AppTheme.CardView.Background" parent="CardView.Light">
         <item name="cardBackgroundColor">@color/card_background</item>
-        <item name="cardElevation">1dp</item>
-        <item name="android:layout_marginLeft">@dimen/card_margin</item>
-        <item name="android:layout_marginRight">@dimen/card_margin</item>
-        <item name="android:layout_marginTop">@dimen/card_margin</item>
-        <item name="android:layout_marginBottom">@dimen/card_margin</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardUseCompatPadding">true</item>
     </style>
 
     <style name="AppTheme.CardView.Image" parent="CardView.Light">
@@ -140,26 +135,19 @@
         <item name="drawableSize">16sp</item>
     </style>
 
-    <style name="AppTheme.PopupMenu.Read" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
-        <item name="overlapAnchor">false</item>
-        <!--背景-->
-        <item name="android:popupBackground">@drawable/bg_read_popup_background</item>
-    </style>
-
     <style name="Overflow.Menu.Text.style.Read" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
         <item name="android:textColor">@color/colorReadBarText</item>
     </style>
 
-    <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+    <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
-        <item name="overlapAnchor">false</item>
+        <item name="overlapAnchor">true</item>
         <!--背景-->
         <item name="android:popupBackground">@drawable/bg_popup_background</item>
     </style>
 
     <style name="Overflow.Menu.Text.style" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
-        <item name="android:textColor">@color/menu_color_default</item>
+        <item name="android:textColor">@color/colorMenuText</item>
     </style>
 
     <style name="Widget.AppCompat.CompoundButton.Light" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -191,7 +179,12 @@
         <item name="android:windowExitAnimation">@anim/moprogress_out</item>
     </style>
 
-    <style name="Style.Dialog.Files" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+    <style name="Style.Dialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowElevation" tools:targetApi="lollipop">0dp</item>
         <item name="android:windowAnimationStyle">@style/anim_dialog</item>
     </style>
 

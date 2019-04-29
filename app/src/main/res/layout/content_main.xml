@@ -29,12 +29,12 @@
         android:id="@+id/book_list_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_below="@id/appBar" />
 
 
     <include layout="@layout/view_floating_menu"
-        app:layout_behavior="@string/fab_transformation_sheet_behavior"
+        app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior"
         android:id="@+id/book_shelf_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

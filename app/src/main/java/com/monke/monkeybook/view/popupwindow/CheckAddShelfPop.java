@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -28,7 +29,7 @@ public class CheckAddShelfPop extends PopupWindow {
     private String bookName;
 
     public CheckAddShelfPop(Context context, @NonNull String bookName, @NonNull OnItemClickListener itemClick, boolean isAudioBook) {
-        super(ScreenUtils.dpToPx(300f), ViewGroup.LayoutParams.WRAP_CONTENT);
+        super(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mContext = context;
         this.isAudioBook = isAudioBook;
         this.bookName = bookName;
@@ -46,14 +47,14 @@ public class CheckAddShelfPop extends PopupWindow {
     private void initView() {
         TextView tvBookName = view.findViewById(R.id.tv_msg);
         tvBookName.setText(mContext.getString(R.string.check_add_bookshelf, bookName));
-        TextView tvExit = view.findViewById(R.id.tv_cancel);
-        tvExit.setText(isAudioBook ? "退出听书" : "退出阅读");
-        tvExit.setOnClickListener(v -> {
+        Button btnExit = view.findViewById(R.id.btn_cancel);
+        btnExit.setText(isAudioBook ? "退出听书" : "退出阅读");
+        btnExit.setOnClickListener(v -> {
             dismiss();
             itemClick.clickExit();
         });
-        TextView tvAddShelf = view.findViewById(R.id.tv_done);
-        tvAddShelf.setText("放入书架");
-        tvAddShelf.setOnClickListener(v -> itemClick.clickAddShelf());
+        Button btnAddShelf = view.findViewById(R.id.btn_done);
+        btnAddShelf.setText("放入书架");
+        btnAddShelf.setOnClickListener(v -> itemClick.clickAddShelf());
     }
 }

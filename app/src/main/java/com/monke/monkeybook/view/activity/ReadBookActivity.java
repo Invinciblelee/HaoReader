@@ -47,7 +47,6 @@ import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.ReadAloudService;
-import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.SystemUtil;
 import com.monke.monkeybook.view.fragment.ChapterDrawerFragment;
@@ -290,22 +289,14 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
 
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            if (isNightTheme()) {
-                mImmersionBar.statusBarDarkFont(false);
-            } else {
-                mImmersionBar.statusBarDarkFont(true, 0.2f);
-            }
+            mImmersionBar.statusBarDarkFont(false);
             if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         } else if (isMenuShowing() || isPopShowing()) {
-            if (isImmersionBarEnabled() && !isNightTheme()) {
-                mImmersionBar.statusBarDarkFont(true, 0.2f);
-            } else {
-                mImmersionBar.statusBarDarkFont(false);
-            }
+            mImmersionBar.statusBarDarkFont(false);
             if (isMenuShowing()) {
                 mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {
@@ -929,8 +920,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             @Override
             public void onDrawerStateChanged(int newState) {
                 if (chapterFragment != null && !drawerLayout.isDrawerOpen(GravityCompat.START) && newState == DrawerLayout.STATE_SETTLING) {
-                    boolean hideStatusBar = readBookControl.getHideStatusBar();
-                    chapterFragment.setPaddingTop(hideStatusBar ? 0 : ScreenUtils.getStatusBarHeight());
                     BookShelfHolder.get().post(mPresenter.getBookShelf());
                 }
             }
@@ -1056,7 +1045,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         getMenuInflater().inflate(R.menu.menu_book_read_activity, menu);
         for (int i = 0; i < menu.size(); i++) {
             MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-            AppCompat.setTint(item, getResources().getColor(R.color.colorReadBarText));
+            if (item.requiresOverflow()) {
+                AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
+            } else {
+                AppCompat.setTint(item, getResources().getColor(R.color.colorReadBarText));
+            }
         }
         return true;
     }

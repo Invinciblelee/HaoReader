@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -84,13 +85,13 @@ public class MoDialogView extends LinearLayout {
         removeAllViews();
         LayoutInflater.from(getContext()).inflate(R.layout.moprogress_dialog_two, this, true);
         TextView tvMsg = findViewById(R.id.tv_msg);
-        TextView tvCancel = findViewById(R.id.tv_cancel);
-        TextView tvDone = findViewById(R.id.tv_done);
+        Button btnCancel = findViewById(R.id.btn_cancel);
+        Button btnDone = findViewById(R.id.btn_done);
         tvMsg.setText(msg);
-        tvCancel.setText(b_f);
-        tvCancel.setOnClickListener(c_f);
-        tvDone.setText(b_s);
-        tvDone.setOnClickListener(c_s);
+        btnCancel.setText(b_f);
+        btnCancel.setOnClickListener(c_f);
+        btnDone.setText(b_s);
+        btnDone.setOnClickListener(c_s);
     }
 
     /**

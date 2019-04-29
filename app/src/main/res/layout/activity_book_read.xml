@@ -48,14 +48,14 @@
                         android:id="@+id/read_toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
-                        android:theme="@style/AppTheme.AppBarOverlay.Read"
+                        android:theme="@style/AppTheme.AppBarOverlay"
                         app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
                         app:titleTextColor="@color/colorReadBarText" />
 
                     <View
                         android:id="@+id/atv_divider"
                         style="@style/Style.Line"
-                        android:layout_height="0.5dp"
+                        android:background="@color/colorReadDivider"
                         android:visibility="gone" />
 
                     <LinearLayout
@@ -85,9 +85,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:includeFontPadding="false"
-                            android:textColor="@color/colorReadBarText"
                             android:paddingStart="3dp"
                             android:paddingEnd="10dp"
+                            android:textColor="@color/colorReadBarText"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -288,8 +288,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@id/hpb_read_progress"
-                        android:layout_marginBottom="4dp"
                         android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp"
                         android:baselineAligned="false"
                         android:orientation="horizontal">
 

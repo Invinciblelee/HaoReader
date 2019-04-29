@@ -1,5 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 enum RuleMode {
-    XPath, JSon, Default
+    XPath, JSon, CSS, Default
 }

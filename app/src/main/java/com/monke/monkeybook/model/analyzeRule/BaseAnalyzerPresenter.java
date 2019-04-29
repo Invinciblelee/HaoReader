@@ -125,6 +125,12 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return StringUtils.base64Decode(base64);
     }
 
+
+    @Override
+    public String base64Encode(String string) {
+        return StringUtils.base64Encode(string);
+    }
+
     @Override
     public final String formatHtml(String string) {
         if (isEmpty(string)) {

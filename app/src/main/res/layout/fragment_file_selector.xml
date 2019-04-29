@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -10,28 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="?android:listPreferredItemHeight"
         android:background="@color/colorAccent"
-        android:theme="@style/AppTheme.AppBarOverlay.Dark"
-        android:stateListAnimator="@animator/design_topbar_state_list_animator">
+        android:stateListAnimator="@animator/design_topbar_state_list_animator"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:logo="@drawable/ic_directory_parent"
-            app:popupTheme="@style/AppTheme.PopupMenu"
-            app:title="选择文件"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
             app:subtitle="/"
-            app:titleMarginStart="25dp"/>
+            app:title="选择文件"
+            app:titleMarginStart="25dp" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -48,21 +48,59 @@
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="vertical"
                 android:overScrollMode="never"
-                />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
 
 
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/loading_progress"
+            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
     </FrameLayout>
 
 
+    <androidx.appcompat.widget.ButtonBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layoutDirection="locale"
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingTop="4dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="4dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@android:id/button3"
+            style="?attr/buttonBarNeutralButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <android.widget.Space
+            android:id="@+id/spacer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@android:id/button2"
+            style="?attr/buttonBarNegativeButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@android:id/button1"
+            style="?attr/buttonBarPositiveButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </androidx.appcompat.widget.ButtonBarLayout>
+
 </LinearLayout>
+
+

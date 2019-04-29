@@ -2,18 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/side_nav_bar"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_height="128dp"
+        android:padding="16dp"
         android:contentDescription="@string/app_name"
         android:paddingStart="0dp"
         android:paddingEnd="48dp"
         android:src="@drawable/ic_read"
-        android:tint="@color/colorAccent" />
+        android:tint="@color/colorToolBarText" />
 
     <TextView
         android:id="@+id/tv_user"
@@ -24,10 +24,8 @@
         android:layout_marginBottom="10dp"
         android:singleLine="true"
         android:text="@string/read_summary"
-        android:textColor="@color/menu_color_default"
+        android:textColor="@color/colorToolBarText"
         android:textSize="14sp" />
-
-    <include layout="@layout/view_navigation_divider" />
 
 </LinearLayout>
 

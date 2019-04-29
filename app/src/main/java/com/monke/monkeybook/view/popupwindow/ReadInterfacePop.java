@@ -10,9 +10,13 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.monke.monkeybook.MApplication;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.ReadBookControl;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.view.activity.ReadStyleActivity;
@@ -22,12 +26,9 @@ import com.monke.mprogressbar.OnProgressListener;
 
 import java.lang.ref.WeakReference;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class ReadInterfacePop extends PopupWindow {
 
@@ -133,26 +134,11 @@ public class ReadInterfacePop extends PopupWindow {
         });
 
         //选择字体
-        btnTextFont.setOnClickListener(view -> {
-            if (EasyPermissions.hasPermissions(activity, MApplication.PerList)) {
-                new FontSelector(activity, readBookControl.getFontPath())
-                        .setListener(new FontSelector.OnThisListener() {
-                            @Override
-                            public void setDefault() {
-                                clearFontPath();
-                            }
-
-                            @Override
-                            public void setFontPath(String fontPath) {
-                                setReadFonts(fontPath);
-                            }
-                        })
-                        .create()
-                        .show();
-            } else {
-                EasyPermissions.requestPermissions(activity, "读取字体需要存储权限", MApplication.RESULT_PERMS, MApplication.PerList);
-            }
-        });
+        btnTextFont.setOnClickListener(view -> new PermissionsCompat.Builder(activity)
+                .addPermissions(Permissions.Group.STORAGE)
+                .rationale("存储")
+                .onGranted(requestCode -> showFontSelector())
+                .request());
 
         //长按清除字体
         btnTextFont.setOnLongClickListener(view -> {
@@ -229,6 +215,23 @@ public class ReadInterfacePop extends PopupWindow {
         intent.putExtra("index", index);
         activity.startActivity(intent);
         return false;
+    }
+
+    private void showFontSelector() {
+        new FontSelector(activity, readBookControl.getFontPath())
+                .setListener(new FontSelector.OnThisListener() {
+                    @Override
+                    public void setDefault() {
+                        clearFontPath();
+                    }
+
+                    @Override
+                    public void setFontPath(String fontPath) {
+                        setReadFonts(fontPath);
+                    }
+                })
+                .create()
+                .show();
     }
 
     //设置字体

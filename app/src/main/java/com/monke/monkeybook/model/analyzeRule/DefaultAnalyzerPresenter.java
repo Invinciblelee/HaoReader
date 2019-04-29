@@ -102,6 +102,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         return resultList;
     }
 
+
     @Override
     public String parseResultContent(String string, String rule) {
         if (string == null || isEmpty(rule)) {

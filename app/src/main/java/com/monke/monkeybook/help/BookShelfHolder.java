@@ -71,10 +71,10 @@ public class BookShelfHolder {
 
 
     private void dispatchChange(BookShelfBean bookShelfBean) {
-        if (mListeners.isEmpty()) {
-            return;
-        }
         synchronized (mListeners) {
+            if (mListeners.isEmpty()) {
+                return;
+            }
             Observable.fromIterable(mListeners.values())
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .filter(ObjectsCompat::nonNull)

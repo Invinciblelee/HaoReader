@@ -58,7 +58,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     protected void tintToolbarNavIcon() {
         Toolbar toolbar = findToolbar();
         if (toolbar != null) {
-            int color = getResources().getColor(R.color.menu_color_default);
+            int color = getResources().getColor(R.color.colorToolBarText);
             toolbar.setTitleTextColor(color);
             AppCompat.setToolbarNavIconTint(toolbar, color);
         }
@@ -135,7 +135,11 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (menu != null) {
             for (int i = 0; i < menu.size(); i++) {
                 MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-                AppCompat.setTint(item, getResources().getColor(R.color.menu_color_default));
+                if(item.requiresOverflow()){
+                    AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
+                }else {
+                    AppCompat.setTint(item, getResources().getColor(R.color.colorToolBarText));
+                }
             }
         }
         return super.onCreateOptionsMenu(menu);
@@ -158,11 +162,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
                 mImmersionBar.navigationBarDarkIcon(false);
             }
 
-            if (isImmersionBarEnabled() && !isNightTheme()) {
-                mImmersionBar.statusBarDarkFont(true, 0.2f);
-            } else {
-                mImmersionBar.statusBarDarkFont(false);
-            }
+            mImmersionBar.statusBarDarkFont(false);
 
             mImmersionBar.init();
         } catch (Exception e) {

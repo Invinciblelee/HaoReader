@@ -76,6 +76,9 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         };
         expandableList.setLayoutManager(manager);
         expandableList.setHasFixedSize(true);
+        expandableList.setItemViewCacheSize(20);
+        expandableList.setDrawingCacheEnabled(true);
+        expandableList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         adapter = new FindKindAdapter(this, autoExpandGroup());
         expandableList.setAdapter(adapter);
         tvEmpty.setText(R.string.find_empty);

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cv_root"
-    style="@style/AppTheme.CardView"
+    style="@style/AppTheme.CardView.Background"
     android:layout_width="@dimen/modialog_width"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/ll_content"

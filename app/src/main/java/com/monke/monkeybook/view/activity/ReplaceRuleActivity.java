@@ -3,20 +3,19 @@ package com.monke.monkeybook.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.hwangjr.rxbus.RxBus;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -24,11 +23,13 @@ import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.presenter.ReplaceRulePresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
-import com.monke.monkeybook.view.fragment.FileSelector;
+import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.io.File;
@@ -40,10 +41,6 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
-
-import static com.monke.monkeybook.view.activity.BookSourceActivity.RESULT_IMPORT_PERMS;
 
 /**
  * Created by GKF on 2017/12/16.
@@ -207,17 +204,15 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     }
 
     private void selectReplaceRuleFile() {
-        if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            resultImportPerms();
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.import_book_source),
-                    RESULT_IMPORT_PERMS, MApplication.PerList);
-        }
+        new PermissionsCompat.Builder(this)
+                .addPermissions(Permissions.Group.STORAGE)
+                .rationale("存储")
+                .onGranted(requestCode -> resultImportPerms())
+                .request();
     }
 
-    @AfterPermissionGranted(RESULT_IMPORT_PERMS)
     private void resultImportPerms() {
-        FileSelector.newInstance("选择文件",true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelectorFragment.newInstance("选择文件", true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 mPresenter.importDataS(new File(path));

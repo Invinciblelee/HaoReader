@@ -21,6 +21,8 @@ import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.model.content.Debug;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.AppCompat;
@@ -183,8 +185,15 @@ public class SourceDebugActivity extends MBaseActivity {
     }
 
     private void scan() {
-        Intent intent = new Intent(this, QRCodeScanActivity.class);
-        startActivityForResult(intent, REQUEST_QR);
+        new PermissionsCompat.Builder(this)
+                .addPermissions(Permissions.Group.CAMERA)
+                .addPermissions(Permissions.Group.STORAGE)
+                .rationale("相机/存储")
+                .onGranted(requestCode -> {
+                    Intent intent = new Intent(SourceDebugActivity.this, QRCodeScanActivity.class);
+                    startActivityForResult(intent, REQUEST_QR);
+                })
+                .request();
     }
 
     @Override

@@ -16,10 +16,9 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     private IAnalyzerPresenter mPresenter;
     private ContentDelegate mDelegate;
 
-    private final AnalyzeConfig mConfig;
+    private final AnalyzeConfig mConfig = new AnalyzeConfig();
 
     public OutAnalyzer(AnalyzeConfig config) {
-        mConfig = new AnalyzeConfig();
         mConfig.apply(config);
     }
 
@@ -28,11 +27,7 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     public final AnalyzeConfig newConfig() {
-        if (mConfig == null) {
-            return new AnalyzeConfig();
-        } else {
-            return mConfig.newConfig();
-        }
+        return mConfig.newConfig();
     }
 
     public void apply(@NonNull AnalyzeConfig config) {

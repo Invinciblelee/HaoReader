@@ -3,6 +3,9 @@ package com.monke.monkeybook.utils;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+
 import com.monke.monkeybook.MApplication;
 
 import java.nio.charset.StandardCharsets;
@@ -16,9 +19,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 
 /**
  * Created by newbiechen on 17-4-22.
@@ -297,7 +297,22 @@ public class StringUtils {
     }
 
     public static String base64Decode(String str) {
+        if (isTrimEmpty(str)) {
+            return "";
+        }
         byte[] bytes = Base64.decode(str, Base64.DEFAULT);
+        try {
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return new String(bytes);
+        }
+    }
+
+    public static String base64Encode(String str) {
+        if (isTrimEmpty(str)) {
+            return "";
+        }
+        byte[] bytes = Base64.encode(str.getBytes(), Base64.DEFAULT);
         try {
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {

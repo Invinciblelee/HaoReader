@@ -27,12 +27,13 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.view.fragment.FileSelector;
+import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
+import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDialogListener {
 
@@ -148,11 +149,11 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
                         .show(ReadStyleActivity.this));
         //选择背景图片
         tvSelectBgImage.setOnClickListener(view -> {
-            if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                imageSelectorResult();
-            } else {
-                EasyPermissions.requestPermissions(this, "获取背景图片需存储权限", MApplication.RESULT_PERMS, MApplication.PerList);
-            }
+            new PermissionsCompat.Builder(ReadStyleActivity.this)
+                    .addPermissions(Permissions.Group.STORAGE)
+                    .rationale("存储")
+                    .onGranted(requestCode -> imageSelectorResult())
+                    .request();
         });
         //恢复默认
         tvDefault.setOnClickListener(view -> {
@@ -196,15 +197,9 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
 
-    @AfterPermissionGranted(MApplication.RESULT_PERMS)
     private void imageSelectorResult() {
-        FileSelector.newInstance("选择图片",true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelectorFragment.newInstance("选择图片",true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 setCustomBg(path);

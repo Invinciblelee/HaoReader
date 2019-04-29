@@ -5,16 +5,13 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.KeyEvent;
 
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.WelcomePresenterImpl;
 import com.monke.monkeybook.presenter.contract.WelcomeContract;
-
-import androidx.annotation.NonNull;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> implements WelcomeContract.View {
 
@@ -49,28 +46,11 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
 
     @Override
     public void openBookFromUri() {
-        if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            mPresenter.openBookFromUri(this);
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.open_from_other),
-                    MApplication.RESULT_PERMS, MApplication.PerList);
-        }
-    }
-
-    @AfterPermissionGranted(MApplication.RESULT_PERMS)
-    private void onResultOpenOtherPerms() {
-        if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            mPresenter.openBookFromUri(this);
-        } else {
-            toast("未获取到权限");
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        new PermissionsCompat.Builder(this)
+                .addPermissions(Permissions.Group.STORAGE)
+                .rationale("存储")
+                .onGranted(requestCode -> mPresenter.openBookFromUri(WelcomeActivity.this))
+                .request();
     }
 
     @Override

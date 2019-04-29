@@ -122,7 +122,7 @@ class DownLoadView {
         llContent.setOnClickListener(null);
         edtStart = moDialogView.findViewById(R.id.edt_start);
         edtEnd = moDialogView.findViewById(R.id.edt_end);
-        tvCancel = moDialogView.findViewById(R.id.tv_cancel);
+        tvCancel = moDialogView.findViewById(R.id.btn_cancel);
         tvDownload = moDialogView.findViewById(R.id.tv_download);
     }
 

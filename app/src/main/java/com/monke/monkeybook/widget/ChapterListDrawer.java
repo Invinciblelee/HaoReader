@@ -16,7 +16,11 @@ public class ChapterListDrawer extends FrameLayout {
     public ChapterListDrawer(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        mWidth = screenWidth - ScreenUtils.dpToPx(48);
+        if(isInEditMode()){
+            mWidth = screenWidth;
+        }else {
+            mWidth = screenWidth - ScreenUtils.dpToPx(48);
+        }
     }
 
 

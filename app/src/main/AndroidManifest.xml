@@ -201,6 +201,10 @@
             android:theme="@style/CAppTheme.Activity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
+        <activity android:name=".help.permission.PermissionActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/CAppTheme.Activity.Permission"
+            android:windowSoftInputMode="adjustNothing|stateAlwaysHidden"/>
 
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />

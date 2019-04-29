@@ -14,10 +14,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Switch;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -28,13 +26,16 @@ import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
-import com.monke.monkeybook.view.fragment.FileSelector;
+import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
@@ -45,10 +46,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View, BookListFragment.IConfigGetter {
+public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View, BookListFragment.IConfigGetter, OnPermissionsGrantedCallback {
     private static final int BACKUP_RESULT = 11;
     private static final int RESTORE_RESULT = 12;
     private static final int FILE_SELECT_RESULT = 13;
@@ -163,9 +162,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     protected void firstRequest() {
-        if (!EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            ActivityCompat.requestPermissions(this, MApplication.PerList, MApplication.RESULT_PERMS);
-        }
+        requestPermissions(9999);
     }
 
     @Override
@@ -236,7 +233,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             pauseMenu.setIcon(R.drawable.ic_view_list_black_24dp);
             pauseMenu.setTitle(R.string.action_list);
         }
-        AppCompat.setTint(pauseMenu, getResources().getColor(R.color.menu_color_default));
+        AppCompat.setTint(pauseMenu, getResources().getColor(R.color.colorMenuText));
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -266,12 +263,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 startActivity(new Intent(this, AudioBookActivity.class));
                 break;
             case R.id.action_add_local:
-                if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-                    fileSelectResult();
-                } else {
-                    EasyPermissions.requestPermissions(this, "添加本地书籍",
-                            FILE_SELECT_RESULT, MApplication.PerList);
-                }
+                requestPermissions(FILE_SELECT_RESULT);
                 break;
             case R.id.action_add_url:
                 moDialogHUD.showInputBox("添加书籍网址", null, null, inputText -> mPresenter.addBookUrl(inputText));
@@ -323,7 +315,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.menu_color_default));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorMenuText));
     }
 
     //初始化侧边栏
@@ -450,43 +442,46 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     //备份
     private void backup() {
-        if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            moDialogHUD.showTwoButton(getString(R.string.backup_message),
-                    getString(R.string.ok),
-                    v -> mPresenter.backupData(),
-                    getString(R.string.cancel), v -> moDialogHUD.dismiss());
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.backup_permission),
-                    BACKUP_RESULT, MApplication.PerList);
-        }
-    }
-
-    @AfterPermissionGranted(BACKUP_RESULT)
-    private void backupResult() {
-        backup();
+        moDialogHUD.showTwoButton(getString(R.string.backup_message),
+                getString(R.string.ok),
+                v -> requestPermissions(BACKUP_RESULT),
+                getString(R.string.cancel), v -> moDialogHUD.dismiss());
     }
 
     //恢复
     private void restore() {
-        if (EasyPermissions.hasPermissions(this, MApplication.PerList)) {
-            moDialogHUD.showTwoButton(getString(R.string.restore_message),
-                    getString(R.string.ok),
-                    v -> mPresenter.restoreData(),
-                    getString(R.string.cancel), v -> moDialogHUD.dismiss());
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.restore_permission),
-                    RESTORE_RESULT, MApplication.PerList);
+        moDialogHUD.showTwoButton(getString(R.string.restore_message),
+                getString(R.string.ok),
+                v -> requestPermissions(RESTORE_RESULT),
+                getString(R.string.cancel), v -> moDialogHUD.dismiss());
+    }
+
+    private void requestPermissions(int requestCode) {
+        new PermissionsCompat.Builder(this)
+                .requestCode(requestCode)
+                .addPermissions(Permissions.Group.STORAGE)
+                .rationale("存储")
+                .onGranted(this)
+                .request();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode) {
+        switch (requestCode) {
+            case BACKUP_RESULT:
+                mPresenter.backupData();
+                break;
+            case RESTORE_RESULT:
+                mPresenter.restoreData();
+                break;
+            case FILE_SELECT_RESULT:
+                fileSelectResult();
+                break;
         }
     }
 
-    @AfterPermissionGranted(RESTORE_RESULT)
-    private void restoreResult() {
-        restore();
-    }
-
-    @AfterPermissionGranted(FILE_SELECT_RESULT)
     private void fileSelectResult() {
-        FileSelector.newInstance("选择文件", false, true, false, new String[]{"txt"}).show(this, new FileSelector.OnFileSelectedListener() {
+        FileSelectorFragment.newInstance("选择文件", false, true, false, new String[]{"txt"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
             @Override
             public void onMultiplyChoice(List<String> paths) {
                 mPresenter.importBooks(paths);
@@ -580,15 +575,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected View getSnackBarView() {
         return toolbar;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override

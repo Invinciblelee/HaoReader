@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
@@ -34,8 +33,6 @@ public class MApplication extends Application {
     public final static String channelIdDownload = "channel_download";
     public final static String channelIdReadAloud = "channel_read_aloud";
     public final static String channelIdAudioBook = "channel_audio_book";
-    public final static String[] PerList = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-    public final static int RESULT_PERMS = 263;
 
     private static MApplication instance;
     private static String versionName;

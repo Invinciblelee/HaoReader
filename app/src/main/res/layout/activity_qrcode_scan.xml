@@ -51,7 +51,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/transparent"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:theme="@style/AppTheme.AppBarOverlay.Dark"
+            android:theme="@style/AppTheme.AppBarOverlay"
             app:title="二维码扫描"
             app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
 

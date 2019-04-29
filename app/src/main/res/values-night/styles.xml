@@ -1,8 +1,8 @@
 <resources>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorControlNormal">@color/menu_color_default</item>
-        <item name="colorButtonNormal">@color/menu_color_default</item>
+        <item name="colorControlNormal">@color/colorMenuText</item>
+        <item name="colorButtonNormal">@color/colorMenuText</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">

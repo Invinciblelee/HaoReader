@@ -40,14 +40,14 @@ public class TextInputSpinner extends TextInputEditText {
         Drawable arrow = getResources().getDrawable(R.drawable.ic_arrow_drop_down_black_24dp);
         arrow.setBounds(0, 0, arrow.getIntrinsicWidth(), arrow.getIntrinsicHeight());
         setCompoundDrawablesRelative(null, null, arrow, null);
-        AppCompat.setTint(arrow, getResources().getColor(R.color.menu_color_default));
+        AppCompat.setTint(arrow, getResources().getColor(R.color.colorMenuText));
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.TextInputSpinner, defStyleAttr, 0);
         mEntities = a.getTextArray(R.styleable.TextInputSpinner_android_entries);
         a.recycle();
 
-        mPopup = new ListPopupWindow(context, attrs, defStyleAttr, R.style.AppTheme_PopupMenu);
+        mPopup = new ListPopupWindow(context, attrs, defStyleAttr, R.style.AppTheme_PopupMenu_Overflow);
         mPopup.setAdapter(new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, mEntities));
         mPopup.setOnItemClickListener((parent, view, position, id) -> {
             setSelection(position);

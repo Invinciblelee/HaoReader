@@ -6,10 +6,15 @@
     <color name="colorPrimary">#363636</color>
     <color name="colorPrimaryDark">#363636</color>
 
+    <color name="colorToolBarText">#f3f3f3</color>
+    <color name="colorMenuText">#f3f3f3</color>
+
     <color name="colorReadBar">#363636</color>
     <color name="colorReadBarText">#f3f3f3</color>
-    <color name="colorReadProgressThumb">#ffffff</color>
-    <color name="colorReadProgressBack">#5f5b5a</color>
+    <color name="colorReadProgressThumb">#838383</color>
+    <color name="colorReadProgressBack">#454545</color>
+
+    <color name="colorReadDivider">#298e8e8e</color>
 
     <color name="btn_bg_press">#454545</color>
     <color name="btn_bg_press_2">#303030</color>
@@ -26,13 +31,11 @@
     <color name="tv_chapter_color_normal">#969696</color>
 
     <color name="progress_back_color">#454545</color>
-    <color name="progress_color">#767676</color>
-    <color name="progress_text_color">#666666</color>
+    <color name="progress_color">#838383</color>
 
     <color name="tv_text_default">#f3f3f3</color>
     <color name="tv_text_secondary">#c9c9c9</color>
     <color name="tv_text_summary">#999999</color>
-    <color name="menu_color_default">#f3f3f3</color>
 
     <color name="textfield_search_color">#4D1a1a1a</color>
 

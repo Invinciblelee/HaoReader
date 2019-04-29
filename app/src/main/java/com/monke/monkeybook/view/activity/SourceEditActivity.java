@@ -33,6 +33,9 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.BitIntentDataManager;
+import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
+import com.monke.monkeybook.help.permission.Permissions;
+import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
@@ -297,8 +300,15 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void scanBookSource() {
-        Intent intent = new Intent(this, QRCodeScanActivity.class);
-        startActivityForResult(intent, QR_SCAN);
+        new PermissionsCompat.Builder(this)
+                .addPermissions(Permissions.Group.CAMERA)
+                .addPermissions(Permissions.Group.STORAGE)
+                .rationale("相机/存储")
+                .onGranted(requestCode -> {
+                    Intent intent = new Intent(SourceEditActivity.this, QRCodeScanActivity.class);
+                    startActivityForResult(intent, QR_SCAN);
+                })
+                .request();
     }
 
     private String trim(CharSequence string) {

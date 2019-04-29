@@ -304,4 +304,7 @@
     <string name="debug_hint">书名、作者、URL</string>
     <string name="non_null_source_name_url">书源名称和URL不能为空</string>
     <string name="source_debug">调试书源</string>
+    <string name="dialog_title">提示</string>
+    <string name="tip_permission_denied">应用需要【%s】权限，请前往“设置”—”应用权限“—打开所需权限</string>
+    <string name="goto_setting">去设置</string>
 </resources>

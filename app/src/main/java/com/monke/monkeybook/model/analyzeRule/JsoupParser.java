@@ -51,7 +51,7 @@ final class JsoupParser extends SourceParser<Element> {
     List<Object> getList(Rule rule) {
         String ruleStr = rule.getRule();
         if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(getSource());
+            return ListUtils.mutableList(getSource());
         }
         return ListUtils.toObjectList(parseList(getSource(), ruleStr));
     }
@@ -60,7 +60,7 @@ final class JsoupParser extends SourceParser<Element> {
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
         if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(source);
+            return ListUtils.mutableList(source);
         }
         return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
     }
@@ -252,7 +252,7 @@ final class JsoupParser extends SourceParser<Element> {
     /**
      * 获取Elements按照一个规则
      */
-    private Elements parseList(Element temp, String rule) {
+    private List<Element> parseList(Element temp, String rule) {
         final Elements elements = new Elements();
         try {
             String[] ruleS = rule.split("@");

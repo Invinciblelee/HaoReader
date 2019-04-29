@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:orientation="vertical">
 
 
@@ -30,7 +30,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:minWidth="0dp"
                 android:text="@string/font_smaller"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:text="16"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="18sp" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -52,7 +52,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:minWidth="0dp"
                 android:text="@string/font_larger"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -68,7 +68,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:minWidth="0dp"
                 android:text="@string/text_bold"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <Space
@@ -84,7 +84,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:minWidth="0dp"
                 android:text="@string/select_font"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -106,7 +106,7 @@
                 android:minWidth="0dp"
                 android:tag="0"
                 android:text="@string/page_anim_cover"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <Space
@@ -122,7 +122,7 @@
                 android:minWidth="0dp"
                 android:tag="1"
                 android:text="@string/page_anim_simulation"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <Space
@@ -138,7 +138,7 @@
                 android:minWidth="0dp"
                 android:tag="2"
                 android:text="@string/page_anim_slide"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <Space
@@ -154,7 +154,7 @@
                 android:minWidth="0dp"
                 android:tag="3"
                 android:text="@string/page_anim_none"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -175,7 +175,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:src="@drawable/b4_space1"
                 android:tag="0"
-                android:tint="@color/colorReadBarText"/>
+                android:tint="@color/tv_text_default"/>
 
             <Space
                 android:layout_width="10dp"
@@ -189,7 +189,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:src="@drawable/b4_space2"
                 android:tag="1"
-                android:tint="@color/colorReadBarText"/>
+                android:tint="@color/tv_text_default"/>
 
             <Space
                 android:layout_width="10dp"
@@ -203,7 +203,7 @@
                 android:background="@drawable/select_pop_round_button_bg"
                 android:src="@drawable/b4_space3"
                 android:tag="2"
-                android:tint="@color/colorReadBarText"/>
+                android:tint="@color/tv_text_default"/>
 
             <Space
                 android:layout_width="10dp"
@@ -218,7 +218,7 @@
                 android:minWidth="0dp"
                 android:tag="3"
                 android:text="@string/page_read_space_default"
-                android:textColor="@color/colorReadBarText"
+                android:textColor="@color/tv_text_default"
                 android:textSize="14sp" />
 
             <Space
@@ -231,7 +231,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/select_pop_round_button_bg"
                 android:tag="4"
-                android:tint="@color/colorReadBarText"
+                android:tint="@color/tv_text_default"
                 app:srcCompat="@drawable/ic_add_black_24dp" />
         </LinearLayout>
 
@@ -254,7 +254,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="背景1"
                     android:src="@color/background"
-                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_color="@color/tv_text_default"
                     app:civ_border_width="1dp"
                     tools:ignore="HardcodedText" />
 
@@ -286,7 +286,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="背景2"
                     android:src="@color/background"
-                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_color="@color/tv_text_default"
                     app:civ_border_width="1dp"
                     tools:ignore="HardcodedText" />
 
@@ -317,7 +317,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="背景3"
                     android:src="@color/background"
-                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_color="@color/tv_text_default"
                     app:civ_border_width="1dp"
                     tools:ignore="HardcodedText" />
 
@@ -348,7 +348,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="背景4"
                     android:src="@color/background"
-                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_color="@color/tv_text_default"
                     app:civ_border_width="1dp"
                     tools:ignore="HardcodedText" />
 
@@ -379,7 +379,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="背景5"
                     android:src="@color/background"
-                    app:civ_border_color="@color/colorReadBarText"
+                    app:civ_border_color="@color/tv_text_default"
                     app:civ_border_width="1dp"
                     tools:ignore="HardcodedText" />
 
