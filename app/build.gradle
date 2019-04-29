@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 
 static def getVersionName() {
-    return String.format(Locale.getDefault(), "2.1.%d", (int) (System.currentTimeMillis() / 1000 / 60 / 60))
+    return String.format(Locale.getDefault(), "2.2.%d", (int) (System.currentTimeMillis() / 1000 / 60 / 60))
 }
 
 def getVersionCode() {// 获取版本号
