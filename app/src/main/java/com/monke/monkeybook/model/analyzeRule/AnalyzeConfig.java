@@ -7,11 +7,13 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.VariableStore;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class AnalyzeConfig {
     private String tag;
     private String name;
     private String baseURL;
+    private Map<String, String> headerMap;
     private BookSourceBean bookSource;
     private VariableStore variableStore;
     private Bundle extras;
@@ -30,6 +32,7 @@ public class AnalyzeConfig {
             this.tag = config.tag;
             this.name = config.name;
             this.baseURL = config.baseURL;
+            this.headerMap = config.headerMap;
             this.bookSource = config.bookSource;
             this.variableStore = config.variableStore;
             this.extras = config.extras;
@@ -59,6 +62,11 @@ public class AnalyzeConfig {
 
     public AnalyzeConfig variableStore(VariableStore variableStore) {
         this.variableStore = variableStore;
+        return this;
+    }
+
+    public AnalyzeConfig headerMap(Map<String, String> headerMap) {
+        this.headerMap = headerMap;
         return this;
     }
 
@@ -119,7 +127,11 @@ public class AnalyzeConfig {
         return bookSource;
     }
 
-    public VariableStore getVariableStore() {
+    public final VariableStore getVariableStore() {
         return variableStore;
+    }
+
+    public final Map<String, String> getHeaderMap() {
+        return headerMap;
     }
 }

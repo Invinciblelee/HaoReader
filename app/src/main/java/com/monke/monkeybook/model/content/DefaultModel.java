@@ -21,8 +21,6 @@ import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.utils.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,7 +162,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(false), tag);
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean));
+                    .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean, headerMap(false)));
         } catch (Exception e) {
             Logger.e(TAG, "目录获取失败", e);
             return Observable.error(new BookException("目录获取失败"));

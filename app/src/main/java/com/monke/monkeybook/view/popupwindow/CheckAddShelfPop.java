@@ -29,7 +29,7 @@ public class CheckAddShelfPop extends PopupWindow {
     private String bookName;
 
     public CheckAddShelfPop(Context context, @NonNull String bookName, @NonNull OnItemClickListener itemClick, boolean isAudioBook) {
-        super(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        super(context.getResources().getDimensionPixelSize(R.dimen.modialog_width), ViewGroup.LayoutParams.WRAP_CONTENT);
         mContext = context;
         this.isAudioBook = isAudioBook;
         this.bookName = bookName;

@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -13,6 +14,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -161,7 +163,7 @@ class DefaultContentDelegate implements ContentDelegate {
     }
 
     private List<ChapterBean> getChaptersFromXJsoup(String source) {
-        String noteUrl = getConfig().getExtras().getString("noteUrl");
+        final String noteUrl = getConfig().getExtras().getString("noteUrl");
 
         final String ruleChapterList = getBookSource().getRealRuleChapterList();
 
@@ -171,11 +173,10 @@ class DefaultContentDelegate implements ContentDelegate {
         List<String> nextUrls = new ArrayList<>();
         int retryCount = 0;
         while (!isEmpty(webChapterBean.nextUrl) && !nextUrls.contains(webChapterBean.nextUrl)) {
-            Call<String> call = OkHttpHelper.getInstance().createService(getBookSource().getBookSourceUrl(), IHttpGetApi.class)
-                    .getWebContentCall(webChapterBean.nextUrl, AnalyzeHeaders.getMap(getBookSource()));
             String response = "";
             try {
-                response = call.execute().body();
+                AnalyzeUrl analyzeUrl = new AnalyzeUrl(webChapterBean.nextUrl, getConfig().getHeaderMap(), getConfig().getTag());
+                response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
             } catch (Exception ignore) {
             }
             if (!isEmpty(response)) {

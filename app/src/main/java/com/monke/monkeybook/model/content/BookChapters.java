@@ -10,6 +10,7 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 
@@ -22,7 +23,7 @@ final class BookChapters {
                 .tag(tag).bookSource(bookSourceBean));
     }
 
-    Observable<List<ChapterBean>> analyzeChapters(final String s, final BookShelfBean bookShelfBean) {
+    Observable<List<ChapterBean>> analyzeChapters(final String s, final BookShelfBean bookShelfBean, Map<String, String> headerMap) {
         return Observable.create(e -> {
             if (TextUtils.isEmpty(s)) {
                 e.onError(new Throwable("目录获取失败"));
@@ -32,6 +33,7 @@ final class BookChapters {
             analyzer.apply(analyzer.newConfig()
                     .baseURL(bookShelfBean.getBookInfoBean().getChapterListUrl())
                     .variableStore(bookShelfBean)
+                    .headerMap(headerMap)
                     .extra("noteUrl", bookShelfBean.getNoteUrl()));
             List<ChapterBean> chapters = analyzer.getChapters(s);
             e.onNext(chapters);
