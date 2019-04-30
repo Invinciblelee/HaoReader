@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
@@ -19,19 +20,22 @@ import com.monke.monkeybook.R;
 
 public class AppCompatDialog extends AppCompatDialogFragment {
 
+    private View mDialogView;
+
     public AppCompatDialog() {
         setStyle(STYLE_NO_TITLE, R.style.Style_Dialog);
     }
 
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View dialogView = onCreateDialogView(inflater, container, savedInstanceState);
-        if (dialogView != null) {
-            return dialogView;
+        mDialogView = onCreateDialogView(inflater, container, savedInstanceState);
+        if (mDialogView != null) {
+            return mDialogView;
         }
         ViewGroup containerView = (ViewGroup) inflater.inflate(R.layout.dialog_design_alert, container, false);
         containerView.addView(onCreateDialogContentView(inflater, containerView, savedInstanceState));
-        return containerView;
+        mDialogView = containerView;
+        return mDialogView;
     }
 
     public View onCreateDialogView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,6 +43,18 @@ public class AppCompatDialog extends AppCompatDialogFragment {
     }
 
     public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return null;
+    }
+
+    public final boolean isViewCreated(){
+        return mDialogView != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final <T> T findViewById(@IdRes int id) {
+        if (mDialogView != null) {
+            return (T) mDialogView.findViewById(id);
+        }
         return null;
     }
 

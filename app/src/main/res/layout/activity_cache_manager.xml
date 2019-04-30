@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     app:appInsetForeground="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
+        android:id="@+id/action_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
@@ -19,43 +19,31 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
             android:transitionName="sharedView"
-            app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/cache_manager" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/appBar">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:bubbleColor="@color/colorAccent"
-            app:bubbleTextColor="@color/white"
-            app:handleColor="@color/colorAccent" />
-
-        <TextView
-            android:id="@+id/tv_empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@color/tv_text_secondary"
-            android:textSize="16sp" />
+            android:layout_height="match_parent" />
 
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/progressBar"
-            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_gravity="center"/>
 
-    </RelativeLayout>
+    </FrameLayout>
 
-
-</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>
+</com.monke.monkeybook.widget.ScrimInsetsLinearLayout>

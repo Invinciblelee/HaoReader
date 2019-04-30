@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/selector_book_detail_read_bg"
+            android:background="@drawable/selector_tv_first_button"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"

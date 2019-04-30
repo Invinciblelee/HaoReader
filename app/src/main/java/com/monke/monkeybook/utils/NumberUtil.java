@@ -1,23 +1,25 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.utils;
 
+import java.text.NumberFormat;
+
 public class NumberUtil {
 
     /**
      * 中文数字转阿拉伯数字
      */
-    private static int chineseNumber2Int(String chineseNumber){
+    private static int chineseNumber2Int(String chineseNumber) {
         int result = 0;
         int temp = 1;//存放一个单位的数字如：十万
         int count = 0;//判断是否有chArr
-        char[] cnArr = new char[]{'一','二','三','四','五','六','七','八','九'};
-        char[] chArr = new char[]{'十','百','千','万','亿'};
+        char[] cnArr = new char[]{'一', '二', '三', '四', '五', '六', '七', '八', '九'};
+        char[] chArr = new char[]{'十', '百', '千', '万', '亿'};
         for (int i = 0; i < chineseNumber.length(); i++) {
             boolean b = true;//判断是否是chArr
             char c = chineseNumber.charAt(i);
             for (int j = 0; j < cnArr.length; j++) {//非单位，即数字
                 if (c == cnArr[j]) {
-                    if(0 != count){//添加下一个单位之前，先把上一个单位值添加到结果中
+                    if (0 != count) {//添加下一个单位之前，先把上一个单位值添加到结果中
                         result += temp;
                         temp = 1;
                         count = 0;
@@ -28,7 +30,7 @@ public class NumberUtil {
                     break;
                 }
             }
-            if(b){//单位{'十','百','千','万','亿'}
+            if (b) {//单位{'十','百','千','万','亿'}
                 for (int j = 0; j < chArr.length; j++) {
                     if (c == chArr[j]) {
                         switch (j) {
@@ -59,5 +61,21 @@ public class NumberUtil {
             }
         }
         return result;
+    }
+
+    public static int getPercent(int num1, int num2) {
+        if (num1 == 0 || num2 == 0) {
+            return 0;
+        }
+
+        if (num1 == num2) {
+            return 100;
+        }
+
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        // 设置精确到小数点后2位
+        numberFormat.setMaximumFractionDigits(2);
+        float proportion = Float.parseFloat(numberFormat.format((float) num1 / (float) num2));
+        return (int) (proportion * 100);
     }
 }

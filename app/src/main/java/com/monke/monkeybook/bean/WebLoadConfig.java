@@ -2,6 +2,9 @@ package com.monke.monkeybook.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.webkit.WebView;
+
+import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 
 public class WebLoadConfig implements Parcelable {
 
@@ -85,5 +88,20 @@ public class WebLoadConfig implements Parcelable {
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public void intoWebView(WebView webView) {
+        try {
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, tag);
+            if (analyzeUrl.getPostData() != null) {
+                webView.postUrl(analyzeUrl.getUrl(), analyzeUrl.getPostData());
+            } else if (analyzeUrl.getHeaderMap() != null) {
+                webView.loadUrl(analyzeUrl.getUrl(), analyzeUrl.getHeaderMap());
+            } else {
+                webView.loadUrl(analyzeUrl.getUrl());
+            }
+        } catch (Exception e) {
+            webView.loadUrl(url);
+        }
     }
 }

@@ -5,6 +5,8 @@
         <item name="colorButtonNormal">@color/colorMenuText</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay.Read"/>
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
         <item name="overlapAnchor">false</item>
     </style>

@@ -421,6 +421,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 case R.id.action_donate:
                     new Handler().postDelayed(() -> DonateActivity.startThis(this), 220L);
                     break;
+                case R.id.action_cache_manager:
+                    new Handler().postDelayed(() -> CacheManagerActivity.startThis(this), 220L);
+                    break;
                 case R.id.action_backup:
                     backup();
                     break;
@@ -444,7 +447,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private void backup() {
         moDialogHUD.showTwoButton(getString(R.string.backup_message),
                 getString(R.string.ok),
-                v -> requestPermissions(BACKUP_RESULT),
+                v -> {
+                    moDialogHUD.dismiss();
+                    requestPermissions(BACKUP_RESULT);
+                },
                 getString(R.string.cancel), v -> moDialogHUD.dismiss());
     }
 
@@ -452,7 +458,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private void restore() {
         moDialogHUD.showTwoButton(getString(R.string.restore_message),
                 getString(R.string.ok),
-                v -> requestPermissions(RESTORE_RESULT),
+                v -> {
+                    moDialogHUD.dismiss();
+                    requestPermissions(RESTORE_RESULT);
+                },
                 getString(R.string.cancel), v -> moDialogHUD.dismiss());
     }
 

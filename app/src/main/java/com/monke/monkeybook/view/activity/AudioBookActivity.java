@@ -195,6 +195,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
 
     @Override
     public void onRefresh() {
+        refreshLayout.stopRefreshing();
         mPresenter.loadAudioBooks(true);
     }
 

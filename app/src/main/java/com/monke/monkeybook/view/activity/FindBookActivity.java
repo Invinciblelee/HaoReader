@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +40,8 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     RecyclerView expandableList;
     @BindView(R.id.tv_empty)
     TextView tvEmpty;
+    @BindView(R.id.progressBar)
+    ContentLoadingProgressBar progressBar;
 
     SearchView searchView;
     private boolean hasSearchFocus;
@@ -136,13 +139,10 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
                 return false;
             }
         });
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                hasSearchFocus = hasFocus;
-                if (!hasFocus) {
-                    searchView.onActionViewCollapsed();
-                }
+        searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
+            hasSearchFocus = hasFocus;
+            if (!hasFocus) {
+                searchView.onActionViewCollapsed();
             }
         });
         return true;
@@ -177,6 +177,16 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         } else {
             tvEmpty.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void showProgress() {
+        progressBar.show();
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.hide();
     }
 
     @Override

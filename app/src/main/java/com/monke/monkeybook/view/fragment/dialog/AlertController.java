@@ -340,7 +340,7 @@ final class AlertController {
                 break;
         }
         final boolean hasButtons = mNegativeText != null || mPositiveText != null;
-        if(mButtonsPanel != null) {
+        if (mButtonsPanel != null) {
             mButtonsPanel.setVisibility(hasButtons ? View.VISIBLE : View.GONE);
             if (!hasButtons) {
                 mNoButtonsDivider.setVisibility(View.VISIBLE);
@@ -409,7 +409,7 @@ final class AlertController {
                 }
             }
 
-            mMessageTextAlignment = bundle.getInt(ARG_MESSAGE_TEXT_ALIGNMENT, View.TEXT_ALIGNMENT_CENTER);
+            mMessageTextAlignment = bundle.getInt(ARG_MESSAGE_TEXT_ALIGNMENT, View.TEXT_ALIGNMENT_TEXT_START);
 
             mPositiveText = bundle.getCharSequence(ARG_POSITIVE_TEXT);
             if (mPositiveText == null) {

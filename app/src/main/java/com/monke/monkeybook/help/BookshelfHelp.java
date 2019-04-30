@@ -200,6 +200,22 @@ public class BookshelfHelp {
         }
     }
 
+    public static boolean hasCache(BookShelfBean bookShelfBean) {
+        return getCacheChapterCount(bookShelfBean) > 0;
+    }
+
+    public static int getCacheChapterCount(BookShelfBean bookShelfBean) {
+        BookInfoBean bookInfo = bookShelfBean.getBookInfoBean();
+        File folder = new File(Constant.BOOK_CACHE_PATH, getCacheFolderPath(bookInfo));
+        if (folder.exists() && folder.isDirectory()) {
+            String[] files = folder.list();
+            if (files != null) {
+                return files.length;
+            }
+        }
+        return 0;
+    }
+
     public static void saveBookToShelf(BookShelfBean bookShelfBean) {
         if (TextUtils.equals(bookShelfBean.getBookInfoBean().getBookType(), BookType.AUDIO)) {
             bookShelfBean.setGroup(Constant.GROUP_AUDIO);

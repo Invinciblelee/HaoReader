@@ -9,7 +9,6 @@ import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.l4digital.fastscroll.FastScroller;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
@@ -19,6 +18,7 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookSourceActivity;
 import com.monke.monkeybook.view.activity.SourceEditActivity;
+import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -14,13 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayout;
-import com.l4digital.fastscroll.FastScroller;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
-import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
 
 import java.util.ArrayList;
 import java.util.HashSet;

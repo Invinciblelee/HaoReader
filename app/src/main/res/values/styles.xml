@@ -76,6 +76,17 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
     </style>
 
+    <style name="AppTheme.AppBarOverlay.Read" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorMenuText</item>
+        <item name="colorButtonNormal">@color/colorMenuText</item>
+        <item name="actionOverflowButtonStyle">@style/Overflow.Menu.Button.Read</item>
+    </style>
+
+
+    <style name="Overflow.Menu.Button.Read" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/colorMenuText</item>
+    </style>
+
     <style name="Overflow.Menu.Button" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/colorToolBarText</item>
     </style>

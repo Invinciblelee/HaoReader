@@ -18,5 +18,9 @@ public interface FindBookContract {
          */
         void updateUI(List<FindKindGroupBean> group);
 
+
+        void showProgress();
+
+        void hideProgress();
     }
 }

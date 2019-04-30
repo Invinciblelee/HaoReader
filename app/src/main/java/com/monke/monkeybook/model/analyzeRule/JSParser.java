@@ -2,7 +2,9 @@ package com.monke.monkeybook.model.analyzeRule;
 
 
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.script.ScriptEngine;
@@ -23,9 +25,17 @@ final class JSParser {
         return (String) evalObjectScript(jsStr, java, result, baseUrl);
     }
 
-    @SuppressWarnings("unchecked")
     static List<String> evalArrayScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
-        return (List<String>) evalObjectScript(jsStr, java, result, baseUrl);
+        final Object object = evalObjectScript(jsStr, java, result, baseUrl);
+        final List<String> resultList = new ArrayList<>();
+        if (object instanceof List) {
+            for (Object obj : (List) object) {
+                resultList.add(StringUtils.valueOf(obj));
+            }
+        } else {
+            resultList.add(StringUtils.valueOf(object));
+        }
+        return resultList;
     }
 
     static Object evalObjectScript(String jsStr, JavaExecutor java, String result, String baseUrl) {

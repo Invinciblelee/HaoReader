@@ -22,10 +22,10 @@ public class Constant {
     //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
     public static String BOOK_CACHE_PATH = FileUtil.getSdCardPath() + File.separator
             + "YueDu" + File.separator + "chapters" + File.separator;
-    public static String APP_CRASH_PATH = FileUtil.getSdCardPath() + File.separator
-            + "YueDu" + File.separator + "crashes" + File.separator;
     public static String AUDIO_CACHE_PATH = FileUtil.getSdCardPath() + File.separator
             + "YueDu" + File.separator + "audios" + File.separator;
+    public static String AUDIO_BOOK_PATH = FileUtil.getSdCardPath() + File.separator
+            + "YueDu" + File.separator + "books" + File.separator;
 
 
     public static final String[] BOOK_TYPES = {

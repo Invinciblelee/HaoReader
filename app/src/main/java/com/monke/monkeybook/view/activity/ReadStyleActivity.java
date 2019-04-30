@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
@@ -31,6 +32,7 @@ import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.widget.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -166,6 +168,12 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
         });
     }
 
+    @Override
+    protected void tintToolbarNavIcon() {
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorMenuText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorMenuText));
+    }
+
     //设置ToolBar
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -179,7 +187,11 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_read_style_activity, menu);
-        return super.onCreateOptionsMenu(menu);
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
+            AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
+        }
+        return true;
     }
 
     //菜单

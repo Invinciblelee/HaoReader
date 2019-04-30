@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
@@ -67,6 +68,7 @@ public class AlertDialog extends AppCompatDialog {
         window.setGravity(Gravity.CENTER);
         window.setLayout(getResources().getDimensionPixelSize(R.dimen.modialog_width), WindowManager.LayoutParams.WRAP_CONTENT);
     }
+
 
     public void show() {
         if (mAlert != null) {

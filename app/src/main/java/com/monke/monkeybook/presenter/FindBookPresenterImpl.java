@@ -1,8 +1,9 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.presenter;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.BasePresenterImpl;
@@ -54,11 +55,11 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             for (BookSourceBean sourceBean : bookSourceBeans) {
                 try {
                     if (!TextUtils.isEmpty(sourceBean.getRuleFindUrl())) {
-                        String kindA[] = sourceBean.getRuleFindUrl().split("(&&|\n)+");
+                        String[] kindA = sourceBean.getRuleFindUrl().split("(&&|\n)+");
                         List<FindKindBean> children = new ArrayList<>();
                         for (String kindB : kindA) {
                             if (kindB.trim().isEmpty()) continue;
-                            String kind[] = kindB.split("::");
+                            String[] kind = kindB.split("::");
                             FindKindBean findKindBean = new FindKindBean();
                             findKindBean.setGroup(sourceBean.getBookSourceName());
                             findKindBean.setTag(sourceBean.getBookSourceUrl());
@@ -89,12 +90,13 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     public void onNext(List<FindKindGroupBean> value) {
                         //执行刷新界面
                         mView.updateUI(value);
-
+                        mView.hideProgress();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        mView.hideProgress();
                     }
                 });
     }

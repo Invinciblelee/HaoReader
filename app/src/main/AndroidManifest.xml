@@ -194,12 +194,21 @@
             android:theme="@style/CAppTheme.Activity" />
 
         <activity
+            android:name=".view.activity.CacheManagerActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CAppTheme.Activity" />
+
+        <activity
             android:name=".view.activity.SourceDebugActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+
+
 
         <activity android:name=".help.permission.PermissionActivity"
             android:launchMode="singleTask"

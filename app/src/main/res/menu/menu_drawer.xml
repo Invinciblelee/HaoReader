@@ -17,6 +17,11 @@
             android:id="@+id/action_replace_rule"
             android:icon="@drawable/ic_find_replace_black_24dp"
             android:title="@string/replace_rule_title" />
+
+        <item
+            android:id="@+id/action_cache_manager"
+            android:icon="@drawable/ic_insert_chart_black_24dp"
+            android:title="@string/cache_manager" />
     </group>
 
     <group android:id="@+id/drawer_night_theme">

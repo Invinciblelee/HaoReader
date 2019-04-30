@@ -296,7 +296,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         } else if (isMenuShowing() || isPopShowing()) {
-            mImmersionBar.statusBarDarkFont(false);
+            if (isImmersionBarEnabled() && !isNightTheme()) {
+                mImmersionBar.statusBarDarkFont(true, 0.2f);
+            } else {
+                mImmersionBar.statusBarDarkFont(false);
+            }
             if (isMenuShowing()) {
                 mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {

@@ -132,7 +132,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
 
         getWindow().getDecorView().post(() -> {
             if (webView != null) {
-                webView.loadUrl(mConfig.getUrl());
+                mConfig.intoWebView(webView);
             }
         });
 

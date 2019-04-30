@@ -3,19 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/side_nav_bar"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme.AppBarOverlay">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
-        android:layout_height="128dp"
-        android:padding="16dp"
+        android:layout_height="108dp"
         android:contentDescription="@string/app_name"
         android:paddingStart="0dp"
+        android:paddingTop="16dp"
         android:paddingEnd="48dp"
+        android:paddingBottom="16dp"
         android:src="@drawable/ic_read"
         android:tint="@color/colorToolBarText" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +26,6 @@
         android:layout_marginBottom="10dp"
         android:singleLine="true"
         android:text="@string/read_summary"
-        android:textColor="@color/colorToolBarText"
         android:textSize="14sp" />
 
 </LinearLayout>
