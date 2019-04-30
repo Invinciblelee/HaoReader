@@ -63,9 +63,6 @@ final class XPathParser extends SourceParser<JXDocument> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
-        }
         return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
     }
 
@@ -107,11 +104,6 @@ final class XPathParser extends SourceParser<JXDocument> {
         if (isEmpty(ruleStr)) {
             return ListUtils.mutableList();
         }
-
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
-        }
-
         return parseStringList(fromSource(source), ruleStr);
     }
 
@@ -144,7 +136,6 @@ final class XPathParser extends SourceParser<JXDocument> {
             return getStringSource();
         }
 
-
         return parseString(getSource(), ruleStr);
     }
 
@@ -154,11 +145,6 @@ final class XPathParser extends SourceParser<JXDocument> {
         if (isEmpty(ruleStr)) {
             return "";
         }
-
-        if (isOuterBody(ruleStr)) {
-            return source;
-        }
-
         return parseString(fromSource(source), ruleStr);
     }
 

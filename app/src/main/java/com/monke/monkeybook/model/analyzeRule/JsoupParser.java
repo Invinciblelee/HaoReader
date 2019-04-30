@@ -11,7 +11,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,9 +58,6 @@ final class JsoupParser extends SourceParser<Element> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
-        }
         return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
     }
 
@@ -85,18 +81,16 @@ final class JsoupParser extends SourceParser<Element> {
         if (isEmpty(ruleStr)) {
             return "";
         }
-
-        if (isOuterBody(ruleStr)) {
-            return source;
-        }
-
         return parseString(fromSource(source), ruleStr);
     }
 
     @Override
     String getStringFirst(Rule rule) {
+        if (isOuterBody(rule.getRule())) {
+            return getStringSource();
+        }
         final List<String> result = getStringList(rule);
-        if(!result.isEmpty()){
+        if (!result.isEmpty()) {
             return result.get(0);
         }
         return "";
@@ -105,7 +99,7 @@ final class JsoupParser extends SourceParser<Element> {
     @Override
     String parseStringFirst(String source, Rule rule) {
         final List<String> result = parseStringList(source, rule);
-        if(!result.isEmpty()){
+        if (!result.isEmpty()) {
             return result.get(0);
         }
         return "";
@@ -151,13 +145,8 @@ final class JsoupParser extends SourceParser<Element> {
             return ListUtils.mutableList();
         }
 
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
-        }
-
         return parseStringList(fromSource(source), ruleStr);
     }
-
 
 
     private List<String> parseStringList(Element element, String rule) {

@@ -46,9 +46,6 @@ final class CSSParser extends SourceParser<Element> {
     @Override
     List<Object> getList(Rule rule) {
         String ruleStr = rule.getRule();
-        if (isEmpty(ruleStr)) {
-            return ListUtils.mutableList();
-        }
         if (isOuterBody(ruleStr)) {
             return Collections.singletonList(getSource());
         }
@@ -58,16 +55,13 @@ final class CSSParser extends SourceParser<Element> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        if (isEmpty(ruleStr)) {
-            return ListUtils.mutableList();
-        }
-        if (isOuterBody(ruleStr)) {
-            return Collections.singletonList(source);
-        }
         return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
     }
 
     private List<Element> parseList(Element temp, String rule) {
+        if (isEmpty(rule)) {
+            return ListUtils.mutableList();
+        }
         try {
             return temp.select(rule);
         } catch (Exception e) {
@@ -96,11 +90,6 @@ final class CSSParser extends SourceParser<Element> {
         if (isEmpty(ruleStr)) {
             return "";
         }
-
-        if (isOuterBody(ruleStr)) {
-            return source;
-        }
-
         return parseString(fromSource(source), ruleStr);
     }
 
@@ -125,6 +114,9 @@ final class CSSParser extends SourceParser<Element> {
 
     @Override
     String getStringFirst(Rule rule) {
+        if (isOuterBody(rule.getRule())) {
+            return getStringSource();
+        }
         final List<String> result = getStringList(rule);
         if (!result.isEmpty()) {
             return result.get(0);
@@ -147,7 +139,6 @@ final class CSSParser extends SourceParser<Element> {
         if (isEmpty(ruleStr)) {
             return ListUtils.mutableList();
         }
-
         if (isOuterBody(ruleStr)) {
             return ListUtils.mutableList(getStringSource());
         }
@@ -159,10 +150,6 @@ final class CSSParser extends SourceParser<Element> {
         String ruleStr = rule.getRule();
         if (isEmpty(ruleStr)) {
             return ListUtils.mutableList();
-        }
-
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
         }
         return parseStringList(fromSource(source), ruleStr);
     }

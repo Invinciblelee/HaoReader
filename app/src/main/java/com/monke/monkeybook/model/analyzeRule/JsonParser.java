@@ -65,9 +65,6 @@ final class JsonParser extends SourceParser<ReadContext> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
-        }
         return parseList(fromSource(source), ruleStr);
     }
 
@@ -103,11 +100,6 @@ final class JsonParser extends SourceParser<ReadContext> {
         if (TextUtils.isEmpty(ruleStr)) {
             return "";
         }
-
-        if (isOuterBody(ruleStr)) {
-            return source;
-        }
-
         return parseString(fromSource(source), ruleStr);
     }
 
@@ -170,11 +162,6 @@ final class JsonParser extends SourceParser<ReadContext> {
         if (TextUtils.isEmpty(ruleStr)) {
             return ListUtils.mutableList();
         }
-
-        if (isOuterBody(ruleStr)) {
-            return ListUtils.mutableList(source);
-        }
-
         return parseStringList(fromSource(source), ruleStr);
     }
 
