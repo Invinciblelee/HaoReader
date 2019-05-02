@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/view_custom_space"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical">
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -21,7 +20,7 @@
             android:layout_marginStart="12dp"
             android:background="@drawable/bg_ib_pre_round"
             android:src="@drawable/ic_arrow_back_white_24dp"
-            android:tint="@color/colorReadBarText" />
+            android:tint="@color/tv_text_default" />
 
 
         <TextView
@@ -29,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="@string/custom_space"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -37,36 +36,32 @@
         android:id="@+id/view_line_space"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tag="lineSpacing"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:tag="lineSpacing">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/line_size"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/hpb_read_line_space"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            app:bgdrawable="@color/colorReadProgressBack"
-            app:cantouch="true"
-            app:cursordrawable="@drawable/shape_read_progress_cursor"
-            app:cursordrawable_height="13dp"
-            app:cursordrawable_width="13dp"
-            app:fontdrawable="@color/colorReadProgressThumb"
-            app:maxprogress="50"
-            app:progresswidth="@dimen/progress_bar_height" />
+            android:max="50"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
+            android:thumbTint="@color/progress_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -74,7 +69,7 @@
             android:gravity="center|end"
             android:minWidth="24dp"
             android:text="0"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -83,36 +78,32 @@
         android:id="@+id/view_paragraph_space"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical"
-        android:tag="paragraphSpacing"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:tag="paragraphSpacing">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/paragraph_size"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/hpb_read_paragraph_space"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            app:bgdrawable="@color/colorReadProgressBack"
-            app:cantouch="true"
-            app:cursordrawable="@drawable/shape_read_progress_cursor"
-            app:cursordrawable_height="13dp"
-            app:cursordrawable_width="13dp"
-            app:fontdrawable="@color/colorReadProgressThumb"
-            app:maxprogress="50"
-            app:progresswidth="@dimen/progress_bar_height" />
+            android:max="50"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
+            android:thumbTint="@color/progress_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -120,7 +111,7 @@
             android:gravity="center|end"
             android:minWidth="24dp"
             android:text="0"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -128,36 +119,32 @@
         android:id="@+id/view_padding_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tag="paddingTop"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:tag="paddingTop">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/padding_top"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/hpb_read_padding_top"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            app:bgdrawable="@color/colorReadProgressBack"
-            app:cantouch="true"
-            app:cursordrawable="@drawable/shape_read_progress_cursor"
-            app:cursordrawable_height="13dp"
-            app:cursordrawable_width="13dp"
-            app:fontdrawable="@color/colorReadProgressThumb"
-            app:maxprogress="50"
-            app:progresswidth="@dimen/progress_bar_height" />
+            android:max="50"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
+            android:thumbTint="@color/progress_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -165,7 +152,7 @@
             android:gravity="center|end"
             android:minWidth="24dp"
             android:text="0"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -173,36 +160,32 @@
         android:id="@+id/view_padding_left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tag="paddingLeft"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:tag="paddingLeft">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/padding_left"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/hpb_read_padding_left"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            app:bgdrawable="@color/colorReadProgressBack"
-            app:cantouch="true"
-            app:cursordrawable="@drawable/shape_read_progress_cursor"
-            app:cursordrawable_height="13dp"
-            app:cursordrawable_width="13dp"
-            app:fontdrawable="@color/colorReadProgressThumb"
-            app:maxprogress="50"
-            app:progresswidth="@dimen/progress_bar_height" />
+            android:max="50"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
+            android:thumbTint="@color/progress_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -210,7 +193,7 @@
             android:gravity="center|end"
             android:minWidth="24dp"
             android:text="0"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -218,36 +201,32 @@
         android:id="@+id/view_padding_right"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tag="paddingRight"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:tag="paddingRight">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/padding_right"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/hpb_read_padding_right"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            app:bgdrawable="@color/colorReadProgressBack"
-            app:cantouch="true"
-            app:cursordrawable="@drawable/shape_read_progress_cursor"
-            app:cursordrawable_height="13dp"
-            app:cursordrawable_width="13dp"
-            app:fontdrawable="@color/colorReadProgressThumb"
-            app:maxprogress="50"
-            app:progresswidth="@dimen/progress_bar_height" />
+            android:max="50"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
+            android:thumbTint="@color/progress_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -255,7 +234,7 @@
             android:gravity="center|end"
             android:minWidth="24dp"
             android:text="0"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -263,45 +242,44 @@
         android:id="@+id/view_padding_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tag="paddingBottom"
-        android:background="@color/colorReadBar"
+        android:background="@color/background"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        android:tag="paddingBottom">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/padding_bottom"
-            android:textColor="@color/colorReadBarText"
+            android:textColor="@color/tv_text_default"
             android:textSize="16sp" />
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/hpb_read_padding_bottom"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            app:bgdrawable="@color/colorReadProgressBack"
-            app:cantouch="true"
-            app:cursordrawable="@drawable/shape_read_progress_cursor"
-            app:cursordrawable_height="13dp"
-            app:cursordrawable_width="13dp"
-            app:fontdrawable="@color/colorReadProgressThumb"
-            app:maxprogress="50"
-            app:progresswidth="@dimen/progress_bar_height" />
+            android:max="50"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
+            android:thumbTint="@color/progress_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center|end"
             android:minWidth="24dp"
+            android:progressBackgroundTint="@color/progress_back_color"
+            android:progressTint="@color/progress_color"
             android:text="0"
-            android:textColor="@color/colorReadBarText"
-            android:textSize="16sp" />
+            android:textColor="@color/tv_text_default"
+            android:textSize="16sp"
+            android:thumbTint="@color/progress_color" />
     </LinearLayout>
 
 </LinearLayout>

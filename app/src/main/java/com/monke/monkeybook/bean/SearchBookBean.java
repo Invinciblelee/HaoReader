@@ -5,12 +5,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.monke.monkeybook.help.ChapterHelp;
-import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.utils.ObjectsCompat;
+import com.monke.monkeybook.utils.StringUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -151,16 +152,16 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         return noteUrl;
     }
 
+    public void setNoteUrl(String noteUrl) {
+        this.noteUrl = noteUrl;
+    }
+
     public String getRealNoteUrl() {
-        if (TextUtils.equals(tag, Default716.TAG)
-                && !TextUtils.isEmpty(noteUrl)) {
+        if (!StringUtils.isBlank(noteUrl)
+                && noteUrl.startsWith("@716:")) {
             return noteUrl.substring(5);
         }
         return noteUrl;
-    }
-
-    public void setNoteUrl(String noteUrl) {
-        this.noteUrl = noteUrl;
     }
 
     public String getCoverUrl() {
@@ -192,7 +193,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public void setLastChapter(String lastChapter) {
-        this.lastChapter = ChapterHelp.getFormatChapterName(lastChapter);
+        this.lastChapter = ChapterHelp.formatChapterName(lastChapter);
     }
 
     public int getLastChapterNum() {
@@ -295,30 +296,44 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         this.addTime = addTime;
     }
 
+    public boolean isSimilarTo(BookInfoBean book) {
+        if (book == null) {
+            return false;
+        }
+        return TextUtils.equals(bookType, book.getBookType())
+                && TextUtils.equals(name, book.getName())
+                && TextUtils.equals(author, book.getAuthor());
+    }
+
+    public boolean isSimilarTo(SearchBookBean book) {
+        if (book == null) {
+            return false;
+        }
+        return TextUtils.equals(bookType, book.bookType)
+                && TextUtils.equals(name, book.name)
+                && TextUtils.equals(author, book.author);
+    }
+
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof SearchBookBean) {
             SearchBookBean compare = (SearchBookBean) obj;
             return TextUtils.equals(compare.bookType, bookType)
-                    && TextUtils.equals(compare.name, name)
-                    && TextUtils.equals(compare.author, author);
+                    && TextUtils.equals(compare.tag, tag)
+                    && TextUtils.equals(compare.getRealNoteUrl(), getRealNoteUrl());
         }
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return ObjectsCompat.hashCode(name) + ObjectsCompat.hashCode(author);
+        return ObjectsCompat.hashCode(tag) + ObjectsCompat.hashCode(getRealNoteUrl());
     }
 
     @Override
     public int compareTo(SearchBookBean o) {
         int result;
-        if (this.isCurrentSource()) {
-            return -1;
-        } else if (o.isCurrentSource()) {
-            return 1;
-        } else if ((result = Integer.compare(o.getLastChapterNum(), this.getLastChapterNum())) != 0) {
+        if ((result = Integer.compare(o.getLastChapterNum(), this.getLastChapterNum())) != 0) {
             return result;
         } else if ((result = Long.compare(this.getAddTime(), o.getAddTime())) != 0) {
             return result;
@@ -369,6 +384,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         return (this.variableMap != null && !this.variableMap.isEmpty()) ? this.variableMap.get(key) : null;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "SearchBookBean{" +

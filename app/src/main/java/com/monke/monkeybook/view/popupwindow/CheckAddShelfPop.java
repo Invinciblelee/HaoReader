@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.utils.ScreenUtils;
 
 public class CheckAddShelfPop extends PopupWindow {
     private Context mContext;
@@ -29,7 +28,7 @@ public class CheckAddShelfPop extends PopupWindow {
     private String bookName;
 
     public CheckAddShelfPop(Context context, @NonNull String bookName, @NonNull OnItemClickListener itemClick, boolean isAudioBook) {
-        super(context.getResources().getDimensionPixelSize(R.dimen.modialog_width), ViewGroup.LayoutParams.WRAP_CONTENT);
+        super(context.getResources().getDisplayMetrics().widthPixels - context.getResources().getDimensionPixelSize(R.dimen.alert_dialog_spacing) * 2, ViewGroup.LayoutParams.WRAP_CONTENT);
         mContext = context;
         this.isAudioBook = isAudioBook;
         this.bookName = bookName;

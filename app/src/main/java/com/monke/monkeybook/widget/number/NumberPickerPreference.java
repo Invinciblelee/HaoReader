@@ -3,7 +3,6 @@ package com.monke.monkeybook.widget.number;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+
+import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.R;
 

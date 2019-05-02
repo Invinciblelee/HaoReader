@@ -70,7 +70,7 @@ final class RulePatterns {
             }
         }
 
-        if (!patterns.isEmpty()) {
+        if (patterns.size() > 1) {
             RulePattern lastPattern = patterns.get(patterns.size() - 1);
             for (RulePattern pattern : patterns) {
                 if (pattern == lastPattern || pattern.isKeep) {

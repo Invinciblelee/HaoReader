@@ -69,7 +69,7 @@ public class AppCompat {
         plate.setPaddingRelative(ScreenUtils.dpToPx(6), 0, ScreenUtils.dpToPx(6), 0);
 
         if (showBg) {
-            Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_textfield_search);
+            Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_search_field);
             androidx.core.view.ViewCompat.setBackground(plate, bag);
         } else {
             androidx.core.view.ViewCompat.setBackground(plate, null);

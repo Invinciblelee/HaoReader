@@ -94,6 +94,9 @@ final class HybridParser extends SourceParser<Object> {
 
     @Override
     String sourceToString(Object source) {
+        if (currentParser == null) {
+            return StringUtils.valueOf(source);
+        }
         return currentParser.sourceToString(source);
     }
 

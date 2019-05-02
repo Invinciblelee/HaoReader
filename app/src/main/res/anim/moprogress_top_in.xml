@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false"
-   >
-    <translate android:fromYDelta="0%p"
-        android:toYDelta="15%p"
+    >
+    <translate android:fromYDelta="-10%p"
+        android:toYDelta="0%p"
         android:duration="@android:integer/config_mediumAnimTime"
         android:interpolator="@android:interpolator/decelerate_quint"/>
 
     <alpha
-        android:fromAlpha="1"
-        android:toAlpha="0"
+        android:fromAlpha="0"
+        android:toAlpha="1"
         android:duration="@android:integer/config_mediumAnimTime"
         android:interpolator="@android:interpolator/decelerate_cubic"/>
 </set>

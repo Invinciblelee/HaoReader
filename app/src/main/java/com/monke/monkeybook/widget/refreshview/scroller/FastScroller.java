@@ -49,9 +49,9 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 /**
  * A ListView-like FastScroller for the {@link RecyclerView}.
@@ -131,7 +131,7 @@ public class FastScroller extends LinearLayout {
     private final Runnable positionFixer = new Runnable() {
         @Override
         public void run() {
-            if (!handleView.isSelected() && isEnabled()) {
+            if (handleView != null && !handleView.isSelected() && isEnabled()) {
                 setViewPositions(getScrollProportion(recyclerView), false);
             }
 
@@ -148,7 +148,7 @@ public class FastScroller extends LinearLayout {
 
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            getHandler().post(positionFixer);
+            recyclerView.post(positionFixer);
         }
 
         @Override
@@ -560,6 +560,10 @@ public class FastScroller extends LinearLayout {
     }
 
     private void setViewPositions(float y, boolean fromTouch) {
+        if (recyclerView == null) {
+            return;
+        }
+
         bubbleHeight = bubbleView.getMeasuredHeight();
         handleHeight = handleView.getMeasuredHeight();
 

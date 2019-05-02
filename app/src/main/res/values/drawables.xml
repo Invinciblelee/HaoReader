@@ -3,4 +3,5 @@
 
     <drawable name="bg_welcome_drawable">@drawable/bg_welcome_drawable_day</drawable>
 
+    <drawable name="bg_search_field">@drawable/bg_search_textfield_day</drawable>
 </resources>

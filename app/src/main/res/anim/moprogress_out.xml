@@ -4,10 +4,10 @@
     android:duration="@android:integer/config_mediumAnimTime">
 
     <scale
-        android:fromXScale="100%"
-        android:toXScale="80%"
-        android:fromYScale="100%"
-        android:toYScale="80%"
+        android:fromXScale="1"
+        android:toXScale="0.8"
+        android:fromYScale="1"
+        android:toYScale="0.8"
         android:pivotX="50%"
         android:pivotY="50%"/>
 

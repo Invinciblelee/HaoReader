@@ -8,4 +8,10 @@
         android:title="@string/change_origin"
         app:showAsAction="always" />
 
+
+    <item
+        android:id="@+id/action_chapter_refresh"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:title="@string/change_origin"
+        app:showAsAction="always" />
 </menu>

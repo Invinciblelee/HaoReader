@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hwangjr.rxbus.RxBus;
@@ -39,6 +40,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
 
     private SharedPreferences preferences;
 
+    private int mDurIndex;
 
     public static ChapterListFragment newInstance() {
 
@@ -54,8 +56,20 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
         super.onCreate(savedInstanceState);
         RxBus.get().register(this);
 
+        if (savedInstanceState != null) {
+            mDurIndex = savedInstanceState.getInt("durIndex", -1);
+        }
+
         preferences = AppConfigHelper.get().getPreferences();
         isChapterReverse = preferences.getBoolean("isChapterReverse", false);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(getAdapter() != null) {
+            outState.putInt("durIndex", getAdapter().getIndex());
+        }
     }
 
     @Override
@@ -91,6 +105,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
 
         });
 
+        getAdapter().restoreIndex(mDurIndex);
     }
 
     @Override
@@ -103,7 +118,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
         if (bookShelf != null && tvChapterInfo != null) {
             final int durChapter = bookShelf.getDurChapter();
             getAdapter().upChapterIndex(durChapter);
-            String durChapterName = ChapterHelp.getFormatChapterName(bookShelf.getDurChapterName());
+            String durChapterName = ChapterHelp.formatChapterName(bookShelf.getDurChapterName());
             if (getAdapter().getItemCount() == 0) {
                 tvChapterInfo.setText(durChapterName);
             } else {

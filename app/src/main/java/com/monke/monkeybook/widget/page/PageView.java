@@ -327,7 +327,7 @@ public class PageView extends View {
         }
     }
 
-    public void drawPage(){
+    public void drawPage() {
         drawPage(false);
     }
 

@@ -116,7 +116,7 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
                 .setTitle(R.string.dialog_title)
                 .setMessage("当前书籍存在已提取的文本，是否重新提取")
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.ok, (dialog, dialogView, which) -> extractBookCache(bookShelfBean, true))
+                .setPositiveButton(R.string.ok, (dialog, which) -> extractBookCache(bookShelfBean, true))
                 .show();
     }
 
@@ -134,7 +134,10 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
             }
 
             if (progress == max) {
-                new Handler().postDelayed(() -> progressDialog.dismissAllowingStateLoss(), 100L);
+                new Handler().postDelayed(() -> {
+                    progressDialog.dismissAllowingStateLoss();
+                    showSnackBar("缓存提取成功");
+                }, 100L);
             }
         }
     }
@@ -155,7 +158,7 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
                 .setView(R.layout.dialog_progress)
                 .setCancelable(false)
                 .setOnViewCreatedCallback((dialog, dialogView) -> setProgress(max, progress))
-                .setNegativeButton(R.string.cancel, (dialog, dialogView, which) -> mPresenter.cancel())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> mPresenter.cancel())
                 .show();
     }
 

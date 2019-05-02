@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.ReadBookControl;
@@ -21,8 +23,6 @@ import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.view.activity.ReadStyleActivity;
 import com.monke.monkeybook.widget.font.FontSelector;
-import com.monke.mprogressbar.MHorProgressBar;
-import com.monke.mprogressbar.OnProgressListener;
 
 import java.lang.ref.WeakReference;
 
@@ -358,30 +358,25 @@ public class ReadInterfacePop extends PopupWindow {
     private void initSpaceChildView(ViewGroup childGroup) {
         String key = (String) childGroup.getTag();
         int progress = readBookControl.getSpacingByKey(key);
-        MHorProgressBar progressBar = (MHorProgressBar) childGroup.getChildAt(1);
+        AppCompatSeekBar progressBar = (AppCompatSeekBar) childGroup.getChildAt(1);
         TextView tvProgress = (TextView) childGroup.getChildAt(2);
-        progressBar.setDurProgress(progress);
+        progressBar.setProgress(progress);
         tvProgress.setText(String.valueOf(progress));
 
-        progressBar.setProgressListener(new OnProgressListener() {
+        progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void moveStartProgress(float dur) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tvProgress.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
 
             @Override
-            public void durProgressChange(float dur) {
-                tvProgress.setText(String.valueOf((int) dur));
-            }
-
-            @Override
-            public void moveStopProgress(float dur) {
-                updateSpacing(key, (int) dur);
-            }
-
-            @Override
-            public void setDurProgress(float dur) {
-
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                updateSpacing(key, seekBar.getProgress());
             }
         });
     }

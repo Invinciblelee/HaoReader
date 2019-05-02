@@ -59,8 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="24dp"
-                android:tint="@color/colorToolBarText"
-                app:backgroundTint="@color/colorPrimary"
+                android:tint="@color/colorFloatingButtonText"
+                app:backgroundTint="@color/colorFloatingButton"
                 android:src="@drawable/ic_stop_white_24dp"
                 android:visibility="invisible"
                 app:fabSize="normal" />

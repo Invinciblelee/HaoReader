@@ -14,6 +14,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
@@ -144,6 +145,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         setCoverImage(null);
         setButtonEnabled(false);
         setMediaButtonEnabled(false);
+        seekBar.setEnabled(false);
 
         setTitle(null);
 
@@ -192,7 +194,10 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_audio_play_activity, menu);
-        AppCompat.setTint(menu.findItem(R.id.action_change_source), getResources().getColor(R.color.white));
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
+            AppCompat.setTint(item, getResources().getColor(R.color.colorToolBarText));
+        }
         return true;
     }
 
@@ -202,6 +207,8 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             onBackPressed();
         } else if (item.getItemId() == R.id.action_change_source) {
             changeSource();
+        } else if (item.getItemId() == R.id.action_chapter_refresh) {
+            AudioBookPlayService.refresh(this);
         }
         return true;
     }
@@ -247,12 +254,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     public void onSelected(ChapterBean chapterBean) {
         AudioBookPlayService.play(this, chapterBean);
     }
-
-    @Override
-    public void onRefresh(ChapterBean chapterBean) {
-        AudioBookPlayService.reset(this, chapterBean);
-    }
-
 
     @Override
     public void onSelected(int timerMinute) {
@@ -327,9 +328,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             case AudioBookPlayService.ACTION_PROGRESS:
                 setProgress(info.getProgress(), info.getDuration());
                 break;
-            case AudioBookPlayService.ACTION_SECOND_PROGRESS:
-                setSecondProgress(info.getSecondProgress());
-                break;
             case AudioBookPlayService.ACTION_STOP:
                 finish();
                 break;
@@ -355,12 +353,11 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     private void setProgress(int progress, int duration) {
         seekBar.setMax(duration);
         seekBar.setProgress(progress);
+        if (duration > 0) {
+            seekBar.setEnabled(true);
+        }
         tvProgress.setText(dateFormat.format(new Date(progress)));
         tvDuration.setText(dateFormat.format(new Date(duration)));
-    }
-
-    private void setSecondProgress(int secondProgress) {
-        seekBar.setSecondaryProgress(secondProgress);
     }
 
     private void setChapters(List<ChapterBean> chapterBeans, int durChapter) {

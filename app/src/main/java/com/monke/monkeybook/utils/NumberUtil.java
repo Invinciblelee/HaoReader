@@ -78,4 +78,10 @@ public class NumberUtil {
         float proportion = Float.parseFloat(numberFormat.format((float) num1 / (float) num2));
         return (int) (proportion * 100);
     }
+
+
+    public static int makeInRange(int min, int max, int value) {
+        int minimum = Math.max(min, value);
+        return Math.min(minimum, max);
+    }
 }

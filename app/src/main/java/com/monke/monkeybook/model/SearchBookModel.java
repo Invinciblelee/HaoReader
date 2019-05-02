@@ -12,6 +12,7 @@ import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
+import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -88,6 +89,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             for (SearchEngine searchEngine : searchEngineS) {
                 searchEngine.searchReset();
             }
+        }
+
+        if (!NetworkUtil.isNetworkAvailable()) {
+            searchListener.searchBookError();
+            return;
         }
 
         if (searchEngineS.isEmpty()) {

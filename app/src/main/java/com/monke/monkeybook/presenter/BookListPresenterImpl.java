@@ -78,7 +78,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public void onError(String msg) {
-        mView.toast(msg);
+        mView.refreshError(msg);
     }
 
     @Override

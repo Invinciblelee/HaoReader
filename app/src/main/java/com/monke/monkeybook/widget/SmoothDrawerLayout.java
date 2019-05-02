@@ -7,29 +7,27 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-public class CustomDrawerLayout extends DrawerLayout {
+public class SmoothDrawerLayout extends DrawerLayout {
 
-    private int mTouchSlop;
+    private final int mTouchSlop;
     private float mLastMotionX;
     private float mLastMotionY;
 
     private boolean isClosed = true;
 
-    public CustomDrawerLayout(Context context) {
+    public SmoothDrawerLayout(Context context) {
         this(context, null);
     }
 
-    public CustomDrawerLayout(Context context, AttributeSet attrs) {
+    public SmoothDrawerLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CustomDrawerLayout(Context context, AttributeSet attrs, int defStyle) {
+    public SmoothDrawerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        final ViewConfiguration configuration = ViewConfiguration
-                .get(getContext());
+        final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
 
         addDrawerListener(new DrawerListener() {

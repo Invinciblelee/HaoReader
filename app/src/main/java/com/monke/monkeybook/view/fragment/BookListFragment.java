@@ -2,16 +2,22 @@ package com.monke.monkeybook.view.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.monke.basemvplib.BaseFragment;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.presenter.BookListPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookListContract;
@@ -20,32 +26,31 @@ import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class BookListFragment extends BaseFragment<BookListContract.Presenter> implements BookListContract.View {
 
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
 
     private Unbinder unbinder;
 
-    private BaseBookListAdapter bookListAdapter;
+    private BaseBookListAdapter<?> bookListAdapter;
     private OnBookItemClickListenerTwo itemClickListenerTwo;
     private ItemTouchHelper itemTouchHelper;
     private MyItemTouchHelpCallback itemTouchHelpCallback;
 
-    private IConfigGetter configGetter;
+
+    private boolean isRecreate;
 
     public static BookListFragment newInstance(int group) {
         Bundle args = new Bundle();
@@ -55,8 +60,10 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         return fragment;
     }
 
-    public void setConfigGetter(IConfigGetter configGetter) {
-        this.configGetter = configGetter;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isRecreate = savedInstanceState != null;
     }
 
     @Override
@@ -113,6 +120,14 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
     }
 
     @Override
+    protected void bindEvent() {
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.stopRefreshing();
+            refreshBookShelf(true);
+        });
+    }
+
+    @Override
     public List<BookShelfBean> getShowingBooks() {
         return bookListAdapter == null ? null : bookListAdapter.getBooks();
     }
@@ -128,9 +143,9 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
         bookListAdapter.replaceAll(bookShelfBeanList);
 
-        if(!isEmptyBefore) {
+        if (!isEmptyBefore) {
             rvBookshelf.scrollToPosition(0);
-        }else {
+        } else {
             startLayoutAnimation();
         }
     }
@@ -196,12 +211,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public void updateLayoutType(boolean viewIsList) {
-        final List<BookShelfBean> books;
-        if (bookListAdapter instanceof BookShelfListAdapter) {
-            books = ((BookShelfListAdapter) bookListAdapter).getBooks();
-        } else {
-            books = ((BookShelfGridAdapter) bookListAdapter).getBooks();
-        }
+        final List<BookShelfBean> books = bookListAdapter.getBooks();
 
         int bookPx = mPresenter.getBookshelfPx();
         int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
@@ -227,7 +237,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public SharedPreferences getPreferences() {
-        return configGetter.getPreferences();
+        return AppConfigHelper.get().getPreferences();
     }
 
     @Override
@@ -242,7 +252,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public boolean isRecreate() {
-        return configGetter.isRecreate();
+        return isRecreate;
     }
 
     //*****************************************************************************************************************************************//
@@ -254,9 +264,4 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         }
     }
 
-    public interface IConfigGetter {
-        boolean isRecreate();
-
-        SharedPreferences getPreferences();
-    }
 }

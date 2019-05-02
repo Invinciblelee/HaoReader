@@ -35,31 +35,28 @@ public class CoverPageAnim extends HorizonPageAnim {
     @Override
     public void drawMove(Canvas canvas) {
         int dis;
-        switch (mDirection) {
-            case NEXT:
-                dis = (int) (mViewWidth - mStartX + mTouchX);
-                if (dis > mViewWidth) {
-                    dis = mViewWidth;
-                }
-                //计算bitmap截取的区域
-                mSrcRect.left = mViewWidth - dis;
-                //计算bitmap在canvas显示的区域
-                mDestRect.right = dis;
-                canvas.drawBitmap(mNextBitmap, 0, 0, null);
-                canvas.drawBitmap(mCurBitmap, mSrcRect, mDestRect, null);
-                addShadow(dis, canvas);
-                break;
-            default:
-                dis = (int) (mTouchX - mStartX);
-                if (dis > mViewWidth) {
-                    dis = mViewWidth;
-                }
-                mSrcRect.left = mViewWidth - dis;
-                mDestRect.right = dis;
-                canvas.drawBitmap(mCurBitmap, 0, 0, null);
-                canvas.drawBitmap(mNextBitmap, mSrcRect, mDestRect, null);
-                addShadow(dis, canvas);
-                break;
+        if (mDirection == Direction.NEXT) {
+            dis = (int) (mViewWidth - mStartX + mTouchX);
+            if (dis > mViewWidth) {
+                dis = mViewWidth;
+            }
+            //计算bitmap截取的区域
+            mSrcRect.left = mViewWidth - dis;
+            //计算bitmap在canvas显示的区域
+            mDestRect.right = dis;
+            canvas.drawBitmap(mNextBitmap, 0, 0, null);
+            canvas.drawBitmap(mCurBitmap, mSrcRect, mDestRect, null);
+            addShadow(dis, canvas);
+        } else {
+            dis = (int) (mTouchX - mStartX);
+            if (dis > mViewWidth) {
+                dis = mViewWidth;
+            }
+            mSrcRect.left = mViewWidth - dis;
+            mDestRect.right = dis;
+            canvas.drawBitmap(mCurBitmap, 0, 0, null);
+            canvas.drawBitmap(mNextBitmap, mSrcRect, mDestRect, null);
+            addShadow(dis, canvas);
         }
     }
 

@@ -64,14 +64,13 @@ public class AudioBookPlayService extends Service {
     public static final String ACTION_CHANGE_SOURCE = "ACTION_CHANGE_SOURCE";
     public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
     public static final String ACTION_PLAY = "ACTION_PLAY";
-    public static final String ACTION_RESET_CHAPTER = "ACTION_RESET_CHAPTER";
+    public static final String ACTION_REFRESH_CHAPTER = "ACTION_REFRESH_CHAPTER";
     public static final String ACTION_NEXT = "ACTION_NEXT";
     public static final String ACTION_PAUSE = "ACTION_PAUSE";
     public static final String ACTION_RESUME = "ACTION_RESUME";
     public static final String ACTION_STOP = "ACTION_STOP";
     public static final String ACTION_PREPARE = "ACTION_PREPARE";
     public static final String ACTION_PROGRESS = "ACTION_PROGRESS";
-    public static final String ACTION_SECOND_PROGRESS = "ACTION_SECOND_PROGRESS";
     public static final String ACTION_LOADING = "ACTION_LOADING";
     public static final String ACTION_TIMER = "ACTION_TIMER";
     public static final String ACTION_TIMER_PROGRESS = "ACTION_TIMER_PROGRESS";
@@ -146,11 +145,10 @@ public class AudioBookPlayService extends Service {
         context.startService(intent);
     }
 
-    public static void reset(Context context, ChapterBean chapterBean) {
+    public static void refresh(Context context) {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
-        intent.setAction(ACTION_RESET_CHAPTER);
-        intent.putExtra("chapter", chapterBean);
+        intent.setAction(ACTION_REFRESH_CHAPTER);
         context.startService(intent);
     }
 
@@ -257,11 +255,10 @@ public class AudioBookPlayService extends Service {
                         mModel.playChapter(chapterBean, true);
                     }
                     break;
-                case ACTION_RESET_CHAPTER:
-                    chapterBean = intent.getParcelableExtra("chapter");
+                case ACTION_REFRESH_CHAPTER:
                     if (mModel != null && mModel.isPrepared()) {
                         resetPlayer(true);
-                        mModel.resetChapter(chapterBean);
+                        mModel.resetChapter();
                     }
                     break;
                 case ACTION_ADD_SHELF:
@@ -451,11 +448,6 @@ public class AudioBookPlayService extends Service {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
             }
             return true;
-        });
-
-        mediaPlayer.setOnBufferingUpdateListener((mp, percent) -> {
-            Log.d(TAG, "audio buffering --> " + percent);
-            sendEvent(ACTION_SECOND_PROGRESS, AudioPlayInfo.secondProgress((percent / 100) * duration));
         });
 
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {

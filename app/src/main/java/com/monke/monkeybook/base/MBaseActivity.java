@@ -13,8 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.material.snackbar.Snackbar;
-import com.gyf.barlibrary.ImmersionBar;
+import com.gyf.immersionbar.ImmersionBar;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
@@ -23,13 +30,6 @@ import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.AppCompat;
 
 import java.lang.reflect.Method;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.appcompat.widget.Toolbar;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
 
@@ -97,13 +97,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mImmersionBar != null) {
-            mImmersionBar.destroy();  //在BaseActivity里销毁}
-        }
-    }
 
     @Override
     protected void onPause() {
@@ -135,9 +128,9 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (menu != null) {
             for (int i = 0; i < menu.size(); i++) {
                 MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-                if(item.requiresOverflow()){
+                if (item.requiresOverflow()) {
                     AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
-                }else {
+                } else {
                     AppCompat.setTint(item, getResources().getColor(R.color.colorToolBarText));
                 }
             }
@@ -149,25 +142,21 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
      * 沉浸状态栏
      */
     protected void initImmersionBar() {
-        try {
-            if (isImmersionBarEnabled()) {
-                mImmersionBar.transparentStatusBar();
-            } else {
-                mImmersionBar.statusBarColor(R.color.status_bar_bag);
-            }
-
-            mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
-
-            if (canNavigationBarLightFont()) {
-                mImmersionBar.navigationBarDarkIcon(false);
-            }
-
-            mImmersionBar.statusBarDarkFont(false);
-
-            mImmersionBar.init();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isImmersionBarEnabled()) {
+            mImmersionBar.transparentStatusBar();
+        } else {
+            mImmersionBar.statusBarColor(R.color.status_bar_bag);
         }
+
+        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
+        mImmersionBar.statusBarDarkFont(false);
+
+        mImmersionBar.init();
     }
 
     protected boolean canNavigationBarLightFont() {

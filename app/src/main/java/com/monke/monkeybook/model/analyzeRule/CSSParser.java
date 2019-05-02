@@ -3,6 +3,7 @@ package com.monke.monkeybook.model.analyzeRule;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.utils.ListUtils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -26,7 +27,7 @@ final class CSSParser extends SourceParser<Element> {
         if (source instanceof String) {
             return (String) source;
         } else if (source instanceof Element) {
-            return source.toString();
+            return StringUtils.valueOf(source);
         }
         return "";
     }

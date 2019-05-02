@@ -7,7 +7,6 @@ public class AudioPlayInfo {
     private String action;
 
     private int progress;
-    private int secondProgress;
     private int duration;
     private boolean isPause;
     private boolean seekEnabled;
@@ -124,14 +123,6 @@ public class AudioPlayInfo {
         this.loading = loading;
     }
 
-    public int getSecondProgress() {
-        return secondProgress;
-    }
-
-    public void setSecondProgress(int secondProgress) {
-        this.secondProgress = secondProgress;
-    }
-
     public static AudioPlayInfo attach(BookInfoBean bookInfoBean) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setBookInfoBean(bookInfoBean);
@@ -156,12 +147,6 @@ public class AudioPlayInfo {
     public static AudioPlayInfo seekEnabled(boolean seekEnabled) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setSeekEnabled(seekEnabled);
-        return info;
-    }
-
-    public static AudioPlayInfo secondProgress(int secondProgress){
-        AudioPlayInfo info = new AudioPlayInfo();
-        info.setSecondProgress(secondProgress);
         return info;
     }
 

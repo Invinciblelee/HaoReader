@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +22,7 @@ public class AppCompatDialog extends AppCompatDialogFragment {
     private View mDialogView;
 
     public AppCompatDialog() {
-        setStyle(STYLE_NO_TITLE, R.style.Style_Dialog);
+        setStyle(STYLE_NO_TITLE, R.style.Style_Custom_Dialog);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class AppCompatDialog extends AppCompatDialogFragment {
         return null;
     }
 
-    public final boolean isViewCreated(){
+    public final boolean isViewCreated() {
         return mDialogView != null;
     }
 
@@ -58,24 +57,30 @@ public class AppCompatDialog extends AppCompatDialogFragment {
         return null;
     }
 
+    public final View getDialogView() {
+        return mDialogView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                onDialogAttachWindow(window);
+            }
+        }
+    }
+
     public final boolean isShowing() {
         final Dialog dialog = getDialog();
         return dialog != null && dialog.isShowing();
     }
 
-    @CallSuper
-    @Override
-    public void onStart() {
-        super.onStart();
-        Dialog dialog = getDialog();
-        Window window = dialog == null ? null : dialog.getWindow();
-        if (window != null) {
-            onDialogAttachWindow(window);
-        }
-    }
-
     protected void onDialogAttachWindow(@NonNull Window window) {
         window.setGravity(Gravity.CENTER);
-        window.setLayout(getResources().getDimensionPixelSize(R.dimen.modialog_width), WindowManager.LayoutParams.WRAP_CONTENT);
+        int width = getResources().getDisplayMetrics().widthPixels - getResources().getDimensionPixelSize(R.dimen.alert_dialog_spacing) * 2;
+        window.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 }

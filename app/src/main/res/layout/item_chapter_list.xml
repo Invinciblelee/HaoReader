@@ -30,24 +30,13 @@
             android:text="@string/app_name"
             android:textColor="@color/color_chapter_item"
             android:textSize="15sp" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_chapter_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:src="@drawable/ic_refresh_black_24dp"
-            android:tint="@color/colorAccent"
-            android:visibility="invisible" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/v_line"
-        android:layout_width="match_parent"
-        android:layout_height="1.5dp"
-        android:layout_gravity="bottom"
-        android:background="@drawable/bg_chapter_item_divider"
-        android:layerType="software"
-        android:paddingBottom="1dp" />
-
+    <!--<View-->
+        <!--android:id="@+id/v_line"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1.5dp"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:background="@drawable/bg_chapter_item_divider"-->
+        <!--android:layerType="software"/>-->
 </LinearLayout>

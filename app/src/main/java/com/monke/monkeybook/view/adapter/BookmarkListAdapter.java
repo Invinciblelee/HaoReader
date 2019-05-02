@@ -19,11 +19,6 @@ public class BookmarkListAdapter extends BaseChapterListAdapter<BookmarkBean> {
     @Override
     public void onBindViewHolder(@NonNull ThisViewHolder holder, int position, @NonNull List<Object> payloads) {
         int realPosition = holder.getLayoutPosition();
-        if (realPosition == getItemCount() - 1) {
-            holder.line.setVisibility(View.GONE);
-        } else {
-            holder.line.setVisibility(View.VISIBLE);
-        }
         BookmarkBean bookmarkBean = getItem(realPosition);
         holder.tvName.setText(bookmarkBean.getContent());
         holder.llName.setOnClickListener(v -> callOnItemClickListener(bookmarkBean));

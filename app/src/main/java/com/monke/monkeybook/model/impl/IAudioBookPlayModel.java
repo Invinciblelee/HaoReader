@@ -22,7 +22,7 @@ public interface IAudioBookPlayModel {
 
     void retryPlay(int progress);
 
-    void resetChapter(ChapterBean chapter);
+    void resetChapter();
 
     void saveProgress(int progress, int duration);
 

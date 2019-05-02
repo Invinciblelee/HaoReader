@@ -38,7 +38,7 @@ final class JSParser {
         return resultList;
     }
 
-    static Object evalObjectScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
+    private static Object evalObjectScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
         try {
             SimpleBindings bindings = new SimpleBindings();
             bindings.put("java", java);

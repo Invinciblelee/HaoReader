@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.KeyEvent;
 
+import com.gyf.immersionbar.BarHide;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -23,6 +24,13 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     @Override
     protected void onCreateActivity() {
 
+    }
+
+    @Override
+    protected void initImmersionBar() {
+        mImmersionBar.fullScreen(true);
+        mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+        mImmersionBar.init();
     }
 
     @Override

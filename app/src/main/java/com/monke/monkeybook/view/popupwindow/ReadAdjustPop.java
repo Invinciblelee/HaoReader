@@ -6,14 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.view.activity.ReadBookActivity;
 import com.monke.monkeybook.widget.checkbox.SmoothCheckBox;
-import com.monke.mprogressbar.MHorProgressBar;
-import com.monke.mprogressbar.OnProgressListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +24,7 @@ import static com.monke.monkeybook.utils.ScreenBrightnessUtil.setScreenBrightnes
 
 public class ReadAdjustPop extends PopupWindow {
     @BindView(R.id.hpb_light)
-    MHorProgressBar hpbLight;
+    AppCompatSeekBar hpbLight;
     @BindView(R.id.scb_follow_sys)
     SmoothCheckBox scbFollowSys;
     @BindView(R.id.ll_follow_sys)
@@ -31,17 +32,17 @@ public class ReadAdjustPop extends PopupWindow {
     @BindView(R.id.ll_click)
     LinearLayout llClick;
     @BindView(R.id.hpb_click)
-    MHorProgressBar hpbClick;
+    AppCompatSeekBar hpbClick;
     @BindView(R.id.ll_tts_SpeechRate)
     LinearLayout llTtsSpeechRate;
     @BindView(R.id.hpb_tts_SpeechRate)
-    MHorProgressBar hpbTtsSpeechRate;
+    AppCompatSeekBar hpbTtsSpeechRate;
     @BindView(R.id.scb_tts_follow_sys)
     SmoothCheckBox scbTtsFollowSys;
     @BindView(R.id.tv_auto_page)
     TextView tvAutoPage;
     @BindView(R.id.hpb_anim_duration)
-    MHorProgressBar hpbAnimDuration;
+    AppCompatSeekBar hpbAnimDuration;
     @BindView(R.id.tv_anim_duration)
     TextView tvAnimDuration;
 
@@ -92,95 +93,83 @@ public class ReadAdjustPop extends PopupWindow {
             isFollowSys = isChecked;
             if (isChecked) {
                 //跟随系统
-                hpbLight.setCanTouch(false);
+                hpbLight.setEnabled(false);
                 setScreenBrightness(activity);
             } else {
                 //不跟随系统
-                hpbLight.setCanTouch(true);
-                hpbLight.setDurProgress(light);
+                hpbLight.setEnabled(true);
+                hpbLight.setProgress(light);
             }
         });
-        hpbLight.setProgressListener(new OnProgressListener() {
+        hpbLight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void moveStartProgress(float dur) {
-
-            }
-
-            @Override
-            public void durProgressChange(float dur) {
-                if (!isFollowSys) {
-                    light = (int) dur;
-                    setScreenBrightness(activity, (int) dur);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    if (!isFollowSys) {
+                        setScreenBrightness(activity, progress);
+                    }
                 }
             }
 
             @Override
-            public void moveStopProgress(float dur) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
 
             @Override
-            public void setDurProgress(float dur) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
 
         //自动翻页间隔
-        hpbClick.setMaxProgress(175);
-
-        hpbClick.setDurProgress(readBookControl.getClickSensitivity() - 5);
-        hpbClick.setProgressListener(new OnProgressListener() {
+        hpbClick.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void moveStartProgress(float dur) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tvAutoPage.setText(String.format("%sS", progress + 5));
+                if (fromUser) {
+                    readBookControl.setClickSensitivity(progress + 5);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
 
             @Override
-            public void durProgressChange(float dur) {
-                tvAutoPage.setText(String.format("%sS", (int) dur + 5));
-                readBookControl.setClickSensitivity((int) dur + 5);
-            }
-
-            @Override
-            public void moveStopProgress(float dur) {
-
-            }
-
-            @Override
-            public void setDurProgress(float dur) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
+        hpbClick.setMax(175);
+        hpbClick.setProgress(readBookControl.getClickSensitivity() - 5);
 
-        hpbAnimDuration.setMaxProgress(400);
-
-        hpbAnimDuration.setDurProgress(readBookControl.getAnimSpeed() - 200);
-        hpbAnimDuration.setProgressListener(new OnProgressListener() {
+        hpbAnimDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void moveStartProgress(float dur) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tvAnimDuration.setText(String.format("%sMS", progress + 200));
+                if (fromUser) {
+                    readBookControl.setAnimSpeed(progress + 200);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
 
             @Override
-            public void durProgressChange(float dur) {
-                tvAnimDuration.setText(String.format("%sMS", (int) dur + 200));
-                readBookControl.setAnimSpeed((int) dur + 200);
-            }
-
-            @Override
-            public void moveStopProgress(float dur) {
-
-            }
-
-            @Override
-            public void setDurProgress(float dur) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
+        hpbAnimDuration.setMax(400);
+        hpbAnimDuration.setProgress(readBookControl.getAnimSpeed() - 200);
 
         //朗读语速调节
         scbTtsFollowSys.setChecked(readBookControl.isSpeechRateFollowSys());
-        hpbTtsSpeechRate.setCanTouch(!scbTtsFollowSys.isChecked());
+        hpbTtsSpeechRate.setEnabled(!scbTtsFollowSys.isChecked());
         llTtsSpeechRate.setOnClickListener(v -> {
             if (scbTtsFollowSys.isChecked()) {
                 scbTtsFollowSys.setChecked(false, true);
@@ -191,45 +180,43 @@ public class ReadAdjustPop extends PopupWindow {
         scbTtsFollowSys.setOnCheckedChangeListener((checkBox, isChecked) -> {
             if (isChecked) {
                 //跟随系统
-                hpbTtsSpeechRate.setCanTouch(false);
+                hpbTtsSpeechRate.setEnabled(false);
                 readBookControl.setSpeechRateFollowSys(true);
                 if (adjustListener != null) {
                     adjustListener.speechRateFollowSys();
                 }
             } else {
                 //不跟随系统
-                hpbTtsSpeechRate.setCanTouch(true);
+                hpbTtsSpeechRate.setEnabled(true);
                 readBookControl.setSpeechRateFollowSys(false);
                 if (adjustListener != null) {
                     adjustListener.changeSpeechRate(readBookControl.getSpeechRate());
                 }
             }
         });
-        hpbTtsSpeechRate.setDurProgress(readBookControl.getSpeechRate() - 5);
-        hpbTtsSpeechRate.setProgressListener(new OnProgressListener() {
+
+        hpbTtsSpeechRate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void moveStartProgress(float dur) {
-
-            }
-
-            @Override
-            public void durProgressChange(float dur) {
-
-            }
-
-            @Override
-            public void moveStopProgress(float dur) {
-                readBookControl.setSpeechRate((int) dur + 5);
-                if (adjustListener != null) {
-                    adjustListener.changeSpeechRate(readBookControl.getSpeechRate());
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    readBookControl.setSpeechRate(progress + 5);
+                    if (adjustListener != null) {
+                        adjustListener.changeSpeechRate(readBookControl.getSpeechRate());
+                    }
                 }
             }
 
             @Override
-            public void setDurProgress(float dur) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
+        hpbTtsSpeechRate.setProgress(readBookControl.getSpeechRate() - 5);
     }
 
     @Override
@@ -242,7 +229,7 @@ public class ReadAdjustPop extends PopupWindow {
     public void showAtLocation(View parent, int gravity, int x, int y) {
         super.showAtLocation(parent, gravity, x, y);
         initData();
-        hpbLight.setDurProgress(light);
+        hpbLight.setProgress(light);
         scbFollowSys.setChecked(isFollowSys);
     }
 

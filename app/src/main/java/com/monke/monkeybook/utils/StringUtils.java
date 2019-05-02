@@ -126,15 +126,12 @@ public class StringUtils {
     //功能：字符串全角转换为半角
     public static String fullToHalf(String input) {
         char[] c = input.toCharArray();
-        for (int i = 0; i < c.length; i++) {
-            if (c[i] == 12288) //全角空格
-            {
-                c[i] = (char) 32;
-                continue;
-            }
-
-            if (c[i] > 65280 && c[i] < 65375)
+        for (int i = 0, length = c.length; i < length; i++) {
+            if (c[i] == '\u3000') {
+                c[i] = ' ';
+            } else if (c[i] > '\uFF00' && c[i] < '\uFF5F') {
                 c[i] = (char) (c[i] - 65248);
+            }
         }
         return new String(c);
     }

@@ -112,8 +112,26 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
             }
 
             JsonObject targetSource = null;
-            if (sourceMap.containsKey("my176")) {
+            if (sourceMap.containsKey("xbiquge")) {
+                targetSource = sourceMap.get("xbiquge");
+            } else if (sourceMap.containsKey("my176")) {
                 targetSource = sourceMap.get("my176");
+            } else if (sourceMap.containsKey("hunhun")) {
+                targetSource = sourceMap.get("hunhun");
+            } else if (sourceMap.containsKey("sanjiangge")) {
+                targetSource = sourceMap.get("sanjiangge");
+            } else if (sourceMap.containsKey("xiaoxiaoshuwu")) {
+                targetSource = sourceMap.get("xiaoxiaoshuwu");
+            } else if (sourceMap.containsKey("luoqiu")) {
+                targetSource = sourceMap.get("luoqiu");
+            } else if (sourceMap.containsKey("snwx")) {
+                targetSource = sourceMap.get("snwx");
+            } else if (sourceMap.containsKey("tianyibook")) {
+                targetSource = sourceMap.get("tianyibook");
+            } else if (sourceMap.containsKey("shuhaha")) {
+                targetSource = sourceMap.get("shuhaha");
+            } else if (sourceMap.containsKey("lewenwu")) {
+                targetSource = sourceMap.get("lewenwu");
             } else if (sourceMap.containsKey("zhuishuvip")) {
                 targetSource = sourceMap.get("zhuishuvip");
             } else if (sourceMap.size() > 0) {

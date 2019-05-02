@@ -9,12 +9,11 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <androidx.drawerlayout.widget.DrawerLayout
+    <com.monke.monkeybook.widget.SmoothDrawerLayout
         android:id="@+id/drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/background">
+        android:orientation="vertical">
 
         <include layout="@layout/content_main" />
 
@@ -27,7 +26,7 @@
             app:itemTextAppearance="@style/CAppTheme.Navigation.Text"
             app:itemTextColor="@color/navigation_color"
             app:itemIconTint="@color/navigation_icon_color"
-            android:background="@color/card_background"
+            android:background="@color/background"
             app:menu="@menu/menu_drawer" />
 
 
@@ -37,6 +36,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="end"/>
 
-    </androidx.drawerlayout.widget.DrawerLayout>
+    </com.monke.monkeybook.widget.SmoothDrawerLayout>
 </com.monke.monkeybook.widget.ScrimInsetsFrameLayout>
 

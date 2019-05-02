@@ -24,9 +24,9 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 /**
  * A layout that contains and manages a {@link RecyclerView} with a {@link FastScroller}.

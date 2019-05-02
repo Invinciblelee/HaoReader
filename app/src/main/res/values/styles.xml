@@ -15,8 +15,8 @@
         <item name="android:textColorPrimary">@color/tv_text_default</item>
         <item name="android:textColorSecondary">@color/tv_text_secondary</item>
         <item name="android:textColorAlertDialogListItem">@color/tv_text_default</item>
-        <item name="android:backgroundDimAmount">0.4</item>
-        <item name="colorBackgroundFloating">@color/card_background</item>
+        <item name="alertDialogTheme">@style/Style.Dialog</item>
+        <item name="android:alertDialogTheme">@style/Style.Dialog</item>
     </style>
 
     <style name="CAppTheme.Activity" parent="CAppTheme">
@@ -74,17 +74,7 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
-    </style>
 
-    <style name="AppTheme.AppBarOverlay.Read" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlNormal">@color/colorMenuText</item>
-        <item name="colorButtonNormal">@color/colorMenuText</item>
-        <item name="actionOverflowButtonStyle">@style/Overflow.Menu.Button.Read</item>
-    </style>
-
-
-    <style name="Overflow.Menu.Button.Read" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:tint">@color/colorMenuText</item>
     </style>
 
     <style name="Overflow.Menu.Button" parent="Widget.AppCompat.ActionButton.Overflow">
@@ -153,7 +143,6 @@
     <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
         <item name="overlapAnchor">false</item>
-        <!--背景-->
         <item name="android:popupBackground">@drawable/bg_popup_background</item>
     </style>
 
@@ -190,12 +179,24 @@
         <item name="android:windowExitAnimation">@anim/moprogress_out</item>
     </style>
 
+    <style name="anim_dialog_slide">
+        <item name="android:windowEnterAnimation">@anim/moprogress_top_in</item>
+        <item name="android:windowExitAnimation">@anim/moprogress_bottom_out</item>
+    </style>
+
     <style name="Style.Dialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_dialog_background</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@style/anim_dialog</item>
+    </style>
+
+    <style name="Style.Custom.Dialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowElevation" tools:targetApi="lollipop">0dp</item>
+        <item name="android:windowElevation">0dp</item>
         <item name="android:windowAnimationStyle">@style/anim_dialog</item>
     </style>
 

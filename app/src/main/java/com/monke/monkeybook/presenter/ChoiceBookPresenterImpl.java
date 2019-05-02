@@ -84,7 +84,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     @Override
     public void addBookToShelf(final SearchBookBean searchBookBean) {
         final BookShelfBean bookShelfResult = new BookShelfBean();
-        bookShelfResult.setNoteUrl(searchBookBean.getRealNoteUrl());
+        bookShelfResult.setNoteUrl(searchBookBean.getNoteUrl());
         bookShelfResult.setFinalDate(System.currentTimeMillis());
         bookShelfResult.setDurChapter(0);
         bookShelfResult.setDurChapterPage(0);

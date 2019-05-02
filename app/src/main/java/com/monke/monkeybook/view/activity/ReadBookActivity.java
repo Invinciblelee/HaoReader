@@ -20,18 +20,21 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.gyf.barlibrary.BarHide;
+import com.gyf.immersionbar.BarHide;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -50,6 +53,7 @@ import com.monke.monkeybook.service.ReadAloudService;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.SystemUtil;
 import com.monke.monkeybook.view.fragment.ChapterDrawerFragment;
+import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
@@ -64,8 +68,6 @@ import com.monke.monkeybook.widget.page.OnPageChangeListener;
 import com.monke.monkeybook.widget.page.PageLoader;
 import com.monke.monkeybook.widget.page.PageStatus;
 import com.monke.monkeybook.widget.page.PageView;
-import com.monke.mprogressbar.MHorProgressBar;
-import com.monke.mprogressbar.OnProgressListener;
 
 import java.util.List;
 
@@ -99,7 +101,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @BindView(R.id.tv_next)
     TextView tvNext;
     @BindView(R.id.hpb_read_progress)
-    MHorProgressBar hpbReadProgress;
+    AppCompatSeekBar hpbReadProgress;
     @BindView(R.id.btn_catalog)
     TextView btnCatalog;
     @BindView(R.id.btn_light)
@@ -141,7 +143,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @BindView(R.id.fabAutoPage)
     FloatingActionButton fabAutoPage;
     @BindView(R.id.hpb_next_page_progress)
-    MHorProgressBar hpbNextPageProgress;
+    ProgressBar hpbNextPageProgress;
     @BindView(R.id.read_statusbar)
     ReadBottomStatusBar readStatusBar;
 
@@ -158,6 +160,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private int chapterProgressMax;
     private int chapterDurProgress;
     private boolean chapterDraggable;
+    private boolean nextChapterEnabled;
+    private boolean preChapterEnabled;
 
     private CheckAddShelfPop checkAddShelfPop;
     private ReadAdjustPop readAdjustPop;
@@ -212,6 +216,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             chapterProgressMax = savedInstanceState.getInt("chapterPageMax");
             chapterDurProgress = savedInstanceState.getInt("chapterDurPage");
             chapterDraggable = savedInstanceState.getBoolean("chapterDraggable");
+            nextChapterEnabled = savedInstanceState.getBoolean("nextChapterEnabled");
+            preChapterEnabled = savedInstanceState.getBoolean("preChapterEnabled");
             aloudStatus = savedInstanceState.getInt("aloudStatus");
             isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
             getWindow().setWindowAnimations(isWindowAnimTranslucent ? R.style.Animation_Activity_Translucent : R.style.Animation_Activity);
@@ -238,9 +244,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         super.onSaveInstanceState(outState);
         outState.putInt("aloudStatus", aloudStatus);
         outState.putBoolean("isWindowAnimTranslucent", isWindowAnimTranslucent);
-        outState.putInt("chapterPageMax", (int) hpbReadProgress.getMaxProgress());
-        outState.putInt("chapterDurPage", (int) hpbReadProgress.getDurProgress());
+        outState.putInt("chapterPageMax", hpbReadProgress.getMax());
+        outState.putInt("chapterDurPage", hpbReadProgress.getProgress());
         outState.putBoolean("chapterDraggable", hpbReadProgress.isEnabled());
+        outState.putBoolean("nextChapterEnabled", tvNext.isEnabled());
+        outState.putBoolean("preChapterEnabled", tvPre.isEnabled());
         if (mPresenter.getBookShelf() != null) {
             BitIntentDataManager dataManager = BitIntentDataManager.getInstance();
             dataManager.putData("inBookShelf", mPresenter.inBookShelf());
@@ -296,11 +304,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         } else if (isMenuShowing() || isPopShowing()) {
-            if (isImmersionBarEnabled() && !isNightTheme()) {
-                mImmersionBar.statusBarDarkFont(true, 0.2f);
-            } else {
-                mImmersionBar.statusBarDarkFont(false);
-            }
+            mImmersionBar.statusBarDarkFont(false);
             if (isMenuShowing()) {
                 mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {
@@ -370,7 +374,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (autoPage) {
             hpbNextPageProgress.setVisibility(View.VISIBLE);
             nextPageTime = readBookControl.getClickSensitivity() * 1000;
-            hpbNextPageProgress.setMaxProgress(nextPageTime);
+            hpbNextPageProgress.setMax(nextPageTime);
             if (upHpbNextPage == null) {
                 upHpbNextPage = this::upHpbNextPage;
             }
@@ -386,7 +390,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     private void upHpbNextPage() {
         nextPageTime = nextPageTime - HPB_UPDATE_INTERVAL;
-        hpbNextPageProgress.setDurProgress(nextPageTime);
+        hpbNextPageProgress.setProgress(nextPageTime);
         mHandler.postDelayed(upHpbNextPage, HPB_UPDATE_INTERVAL);
         if (nextPageTime <= 0) {
             nextPage();
@@ -501,7 +505,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void showLoading(String msg) {
-        ensureProgressHUD();
+        ensureDialogHUD();
         moDialogHUD.showLoading(msg);
     }
 
@@ -725,7 +729,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     /**
      * 弹窗
      */
-    private void ensureProgressHUD() {
+    private void ensureDialogHUD() {
         if (moDialogHUD != null) {
             return;
         }
@@ -790,8 +794,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void onPageCountChange(int count) {
-        hpbReadProgress.setMaxProgress(Math.max(0, count - 1));
-        hpbReadProgress.setDurProgress(0);
+        hpbReadProgress.setMax(Math.max(0, count - 1));
+        hpbReadProgress.setProgress(0);
         hpbReadProgress.setEnabled(mPageLoader.isPageScrollable());
     }
 
@@ -804,7 +808,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         readStatusBar.updateChapterInfo(mPresenter.getBookShelf(), pageSize);
 
-        hpbReadProgress.post(() -> hpbReadProgress.setDurProgress(pageIndex));
+        hpbReadProgress.post(() -> hpbReadProgress.setProgress(pageIndex));
 
         //继续朗读
         if ((ReadAloudService.running) && pageIndex >= 0) {
@@ -874,31 +878,25 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
 
         //阅读进度
-        hpbReadProgress.setProgressListener(new OnProgressListener() {
+        hpbReadProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void moveStartProgress(float dur) {
-
-            }
-
-            @Override
-            public void durProgressChange(float dur) {
-
-            }
-
-            @Override
-            public void moveStopProgress(float dur) {
-                if (mPageLoader != null) {
-                    int realDur = (int) Math.ceil(dur);
-                    if ((realDur) != mPresenter.getBookShelf().getDurChapterPage()) {
-                        mPageLoader.skipToPage(realDur);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    if (mPageLoader != null) {
+                        if (progress != mPresenter.getBookShelf().getDurChapterPage()) {
+                            mPageLoader.skipToPage(progress);
+                        }
                     }
-                    if (hpbReadProgress.getDurProgress() != realDur)
-                        hpbReadProgress.setDurProgress(realDur);
                 }
             }
 
             @Override
-            public void setDurProgress(float dur) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
@@ -1037,9 +1035,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void startLoadingBook() {
-        hpbReadProgress.setMaxProgress(chapterProgressMax);
-        hpbReadProgress.setDurProgress(chapterDurProgress);
+        hpbReadProgress.setMax(chapterProgressMax);
+        hpbReadProgress.setProgress(chapterDurProgress);
         hpbReadProgress.setEnabled(chapterDraggable);
+        tvPre.setEnabled(preChapterEnabled);
+        tvNext.setEnabled(nextChapterEnabled);
 
         initPageView();
     }
@@ -1117,7 +1117,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 if (mPageLoader != null) {
                     String content = mPageLoader.getCurrentContent();
                     if (!TextUtils.isEmpty(content)) {
-                        ensureProgressHUD();
+                        ensureDialogHUD();
                         moDialogHUD.showText(content);
                     }
                 }
@@ -1129,11 +1129,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 setCharset();
                 break;
             case R.id.action_clean_cache:
-                ensureProgressHUD();
-                moDialogHUD.showTwoButton(getString(R.string.clean_book_cache_s),
-                        getString(R.string.ok),
-                        v -> mPresenter.cleanCache(),
-                        getString(R.string.cancel), v -> moDialogHUD.dismiss());
+                new AlertDialog.Builder(getSupportFragmentManager())
+                        .setTitle(R.string.dialog_title)
+                        .setMessage(R.string.clean_book_cache_s)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.cleanCache())
+                        .show();
                 break;
             case R.id.action_book_info:
                 ensureWindowAnimNotTranslucent();
@@ -1202,7 +1203,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 bookmarkBean.setChapterName(mPresenter.getChapterTitle(mPresenter.getBookShelf().getDurChapter()));
             }
 
-            ensureProgressHUD();
+            ensureDialogHUD();
             moDialogHUD.showBookmark(bookmarkBean, isAdd, new EditBookmarkView.OnBookmarkClick() {
                 @Override
                 public void saveBookmark(BookmarkBean bookmarkBean) {
@@ -1261,7 +1262,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
         popMenuOut();
         if (mPresenter.getBookShelf() != null) {
-            ensureProgressHUD();
+            ensureDialogHUD();
             moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
                 mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
                 mPresenter.changeBookSource(searchBookBean);
@@ -1293,7 +1294,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             //弹出离线下载界面
             int endIndex = mPresenter.getBookShelf().getChapterListSize() - 1;
 
-            ensureProgressHUD();
+            ensureDialogHUD();
             moDialogHUD.showDownloadList(mPresenter.getBookShelf().getDurChapter(), endIndex,
                     mPresenter.getBookShelf().getChapterListSize(),
                     (start, end) -> {
@@ -1310,7 +1311,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         popMenuOut();
 
         if (mPageLoader instanceof LocalPageLoader && mPresenter.getBookShelf() != null) {
-            ensureProgressHUD();
+            ensureDialogHUD();
             String charset = mPresenter.getBookShelf().getBookInfoBean().getCharset();
             moDialogHUD.showInputBox(getString(R.string.edit_charset),
                     charset,

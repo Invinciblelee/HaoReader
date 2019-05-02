@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.impl.IBookRefreshModel;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.RxUtils;
@@ -64,7 +65,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                     @Override
                     public void onSuccess(List<BookShelfBean> value) {
                         dispatchResultEvent(value);
-                        if (refresh) {
+                        if (refresh && group != Constant.GROUP_BENDI) {
                             if (!NetworkUtil.isNetworkAvailable()) {
                                 dispatchErrorEvent("无网络，请打开网络后再试");
                             } else {
@@ -165,7 +166,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
         if (loadingCount.decrementAndGet() == 0) {
             if (errBooks.size() > 0) {
-                dispatchErrorEvent(TextUtils.join("、", errBooks) + " 更新失败！");
+                dispatchErrorEvent(TextUtils.join("、", errBooks) + " 更新失败");
                 errBooks.clear();
             }
             dispatchFinishEvent();

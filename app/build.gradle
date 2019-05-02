@@ -128,8 +128,6 @@ dependencies {
     //GreenDao
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
-    //ProgressBar
-    implementation 'com.zhangmonke:MProgressBar:1.0.1'
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
@@ -146,7 +144,7 @@ dependencies {
     //简繁转换
     implementation 'com.luhuiguo:chinese-utils:1.0'
     implementation 'com.github.florent37:arclayout:1.0.3'
-    implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta05'
+    implementation 'com.gyf.immersionbar:immersionbar:3.0.0-beta02'
     //Bugly
     implementation 'com.tencent.bugly:crashreport:2.8.6'
     //Rhino

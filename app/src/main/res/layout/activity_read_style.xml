@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+    android:fitsSystemWindows="true"
+    app:appInsetForeground="@color/transparent"
     tools:context="com.monke.monkeybook.view.activity.ReadStyleActivity">
 
     <LinearLayout
@@ -29,10 +31,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stateListAnimator="@animator/design_bottombar_state_list_animator"
-        android:background="@color/background"
         android:layout_gravity="bottom"
-        android:orientation="vertical">
+        android:background="@color/background"
+        android:orientation="vertical"
+        android:stateListAnimator="@animator/design_bottombar_state_list_animator">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,13 +65,13 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:gravity="center"
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="文字颜色"
-                android:textSize="14sp"
                 android:textColor="@color/tv_text_default"
+                android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -78,13 +81,13 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:gravity="center"
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="背景颜色"
-                android:textSize="14sp"
                 android:textColor="@color/tv_text_default"
+                android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -94,13 +97,13 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:gravity="center"
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="背景图片"
-                android:textSize="14sp"
                 android:textColor="@color/tv_text_default"
+                android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -110,13 +113,13 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:gravity="center"
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="恢复默认"
-                android:textSize="14sp"
                 android:textColor="@color/tv_text_default"
+                android:textSize="14sp"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
@@ -124,9 +127,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </LinearLayout>
-</FrameLayout>
+</com.monke.monkeybook.widget.ScrimInsetsFrameLayout>

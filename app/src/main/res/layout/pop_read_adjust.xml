@@ -54,28 +54,24 @@
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_gravity="center_vertical"
-                    app:color_checked="#767676"
-                    app:color_tick="#ffffff"
-                    app:color_unchecked="#ffffff"
-                    app:color_unchecked_stroke="#c1c1c1"
+                    app:color_checked="@color/colorAccent"
+                    app:color_tick="@color/white"
+                    app:color_unchecked="@color/white"
+                    app:color_unchecked_stroke="?colorControlNormal"
                     app:duration="150" />
             </LinearLayout>
 
-            <com.monke.mprogressbar.MHorProgressBar
+            <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/hpb_light"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
-                app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
-                app:cursordrawable_height="13dp"
-                app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
-                app:maxprogress="255"
-                app:progresswidth="@dimen/progress_bar_height" />
+                android:max="225"
+                android:progressBackgroundTint="@color/progress_back_color"
+                android:progressTint="@color/progress_color"
+                android:thumbTint="@color/progress_color"/>
 
         </LinearLayout>
 
@@ -118,28 +114,24 @@
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_gravity="center_vertical"
-                    app:color_checked="#767676"
-                    app:color_tick="#ffffff"
-                    app:color_unchecked="#ffffff"
-                    app:color_unchecked_stroke="#c1c1c1"
+                    app:color_checked="@color/colorAccent"
+                    app:color_tick="@color/white"
+                    app:color_unchecked="@color/white"
+                    app:color_unchecked_stroke="?colorControlNormal"
                     app:duration="150" />
             </LinearLayout>
 
-            <com.monke.mprogressbar.MHorProgressBar
+            <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/hpb_tts_SpeechRate"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
-                app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
-                app:cursordrawable_height="13dp"
-                app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
-                app:maxprogress="20"
-                app:progresswidth="@dimen/progress_bar_height" />
+                android:max="20"
+                android:progressBackgroundTint="@color/progress_back_color"
+                android:progressTint="@color/progress_color"
+                android:thumbTint="@color/progress_color"/>
 
         </LinearLayout>
 
@@ -179,21 +171,17 @@
 
             </LinearLayout>
 
-            <com.monke.mprogressbar.MHorProgressBar
+            <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/hpb_click"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
-                app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
-                app:cursordrawable_height="13dp"
-                app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
-                app:maxprogress="180"
-                app:progresswidth="@dimen/progress_bar_height" />
+                android:max="180"
+                android:progressBackgroundTint="@color/progress_back_color"
+                android:progressTint="@color/progress_color"
+                android:thumbTint="@color/progress_color"/>
 
         </LinearLayout>
 
@@ -234,21 +222,17 @@
 
             </LinearLayout>
 
-            <com.monke.mprogressbar.MHorProgressBar
+            <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/hpb_anim_duration"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                app:bgdrawable="@color/progress_back_color"
-                app:cantouch="true"
-                app:cursordrawable="@drawable/shape_progress_cursor"
-                app:cursordrawable_height="13dp"
-                app:cursordrawable_width="13dp"
-                app:fontdrawable="@color/progress_color"
-                app:maxprogress="800"
-                app:progresswidth="@dimen/progress_bar_height" />
+                android:max="800"
+                android:progressBackgroundTint="@color/progress_back_color"
+                android:progressTint="@color/progress_color"
+                android:thumbTint="@color/progress_color"/>
 
         </LinearLayout>
     </LinearLayout>

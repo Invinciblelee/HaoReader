@@ -30,42 +30,38 @@ public class SlidePageAnim extends HorizonPageAnim {
     @Override
     public void drawMove(Canvas canvas) {
         int dis;
-        switch (mDirection) {
-            case NEXT:
-                //左半边的剩余区域
-                dis = (int) (mViewWidth - mStartX + mTouchX);
-                if (dis > mViewWidth) {
-                    dis = mViewWidth;
-                }
-                //计算bitmap截取的区域
-                mSrcRect.left = mViewWidth - dis;
-                //计算bitmap在canvas显示的区域
-                mDestRect.right = dis;
-                //计算下一页截取的区域
-                mNextSrcRect.right = mViewWidth - dis;
-                //计算下一页在canvas显示的区域
-                mNextDestRect.left = dis;
+        if (mDirection == Direction.NEXT) {//左半边的剩余区域
+            dis = (int) (mViewWidth - mStartX + mTouchX);
+            if (dis > mViewWidth) {
+                dis = mViewWidth;
+            }
+            //计算bitmap截取的区域
+            mSrcRect.left = mViewWidth - dis;
+            //计算bitmap在canvas显示的区域
+            mDestRect.right = dis;
+            //计算下一页截取的区域
+            mNextSrcRect.right = mViewWidth - dis;
+            //计算下一页在canvas显示的区域
+            mNextDestRect.left = dis;
 
-                canvas.drawBitmap(mNextBitmap, mNextSrcRect, mNextDestRect, null);
-                canvas.drawBitmap(mCurBitmap, mSrcRect, mDestRect, null);
-                break;
-            default:
-                dis = (int) (mTouchX - mStartX);
-                if (dis < 0) {
-                    dis = 0;
-                    mStartX = mTouchX;
-                }
-                mSrcRect.left = mViewWidth - dis;
-                mDestRect.right = dis;
+            canvas.drawBitmap(mNextBitmap, mNextSrcRect, mNextDestRect, null);
+            canvas.drawBitmap(mCurBitmap, mSrcRect, mDestRect, null);
+        } else {
+            dis = (int) (mTouchX - mStartX);
+            if (dis < 0) {
+                dis = 0;
+                mStartX = mTouchX;
+            }
+            mSrcRect.left = mViewWidth - dis;
+            mDestRect.right = dis;
 
-                //计算下一页截取的区域
-                mNextSrcRect.right = mViewWidth - dis;
-                //计算下一页在canvas显示的区域
-                mNextDestRect.left = dis;
+            //计算下一页截取的区域
+            mNextSrcRect.right = mViewWidth - dis;
+            //计算下一页在canvas显示的区域
+            mNextDestRect.left = dis;
 
-                canvas.drawBitmap(mCurBitmap, mNextSrcRect, mNextDestRect, null);
-                canvas.drawBitmap(mNextBitmap, mSrcRect, mDestRect, null);
-                break;
+            canvas.drawBitmap(mCurBitmap, mNextSrcRect, mNextDestRect, null);
+            canvas.drawBitmap(mNextBitmap, mSrcRect, mDestRect, null);
         }
     }
 

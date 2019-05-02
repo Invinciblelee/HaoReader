@@ -3,6 +3,8 @@ package com.monke.monkeybook.presenter;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -31,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
@@ -73,8 +74,9 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public void backupData() {
+        mView.showLoading(mView.getContext().getString(R.string.on_backup));
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            if ( DataBackup.getInstance().run()) {
+            if (DataBackup.getInstance().run()) {
                 e.onNext(true);
             } else {
                 e.onNext(false);
@@ -84,17 +86,17 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
-                        if(aBoolean){
-                            mView.toast(R.string.backup_success);
-                        }else {
-                            mView.toast(R.string.backup_fail);
+                        if (aBoolean) {
+                            mView.showSnackBar(R.string.backup_success);
+                        } else {
+                            mView.showSnackBar(R.string.backup_fail);
                         }
                         mView.dismissHUD();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.toast(R.string.backup_fail);
+                        mView.showSnackBar(R.string.backup_fail);
                         mView.dismissHUD();
                     }
                 });
@@ -103,7 +105,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public void restoreData() {
-        mView.onRestore(mView.getContext().getString(R.string.on_restore));
+        mView.showLoading(mView.getContext().getString(R.string.on_restore));
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             if (DataRestore.getInstance().run()) {
                 e.onNext(true);
@@ -118,17 +120,17 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(Boolean value) {
                         if (value) {
                             mView.restoreSuccess();
-                            mView.toast(R.string.restore_success);
+                            mView.showSnackBar(R.string.restore_success);
                         } else {
                             mView.dismissHUD();
-                            mView.toast(R.string.restore_fail);
+                            mView.showSnackBar(R.string.restore_fail);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.toast(R.string.restore_fail);
+                        mView.showSnackBar(R.string.restore_fail);
                     }
                 });
     }
@@ -164,14 +166,14 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                             getBook(bookShelfBean);
                         } else {
                             mView.dismissHUD();
-                            mView.toast("该书已在书架中");
+                            mView.showSnackBar("该书已在书架中");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.toast("网址格式错误");
+                        mView.showSnackBar("网址格式错误");
                     }
                 });
     }
@@ -190,13 +192,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
                             } else {
-                                mView.toast("移出书架失败");
+                                mView.showSnackBar("移出书架失败");
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            mView.toast("移出书架失败");
+                            mView.showSnackBar("移出书架失败");
                         }
                     });
         }
@@ -219,7 +221,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.toast("书架清空失败");
+                        mView.showSnackBar("书架清空失败");
                         mView.dismissHUD();
                     }
                 });
@@ -236,13 +238,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
-                        mView.toast("缓存清除成功");
+                        mView.showSnackBar("缓存清除成功");
                         mView.dismissHUD();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.toast("缓存清除失败");
+                        mView.showSnackBar("缓存清除失败");
                         mView.dismissHUD();
                     }
                 });
@@ -273,7 +275,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.toast(e.getMessage());
+                        mView.showSnackBar(e.getMessage());
                         mView.dismissHUD();
                     }
                 });
@@ -291,18 +293,18 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(BookShelfBean value) {
                         mView.dismissHUD();
                         if (value.getBookInfoBean().getChapterListUrl() == null) {
-                            mView.toast("添加书籍失败");
+                            mView.showSnackBar("添加书籍失败");
                         } else {
                             //成功   //发送RxBus
                             RxBus.get().post(RxBusTag.HAD_ADD_BOOK, value);
-                            mView.toast("添加书籍成功");
+                            mView.showSnackBar("添加书籍成功");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.toast("添加书籍失败");
+                        mView.showSnackBar("添加书籍失败");
                     }
                 });
     }

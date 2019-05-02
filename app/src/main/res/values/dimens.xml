@@ -17,10 +17,10 @@
 
     <dimen name="small_button_height">18.5sp</dimen>
 
-    <dimen name="modialog_width">270dp</dimen>
-    <dimen name="modialog_loading_width">225dp</dimen>
-    <dimen name="modialog_loading_height">128dp</dimen>
+    <dimen name="book_detail_arc_height">24dp</dimen>
 
+    <dimen name="alert_dialog_spacing">30dp</dimen>
+    <dimen name="alert_dialog_spacing_inset">24dp</dimen>
 
     <dimen name="fastscroll_bubble_padding">16dp</dimen>
     <dimen name="fastscroll_bubble_padding_small">12dp</dimen>

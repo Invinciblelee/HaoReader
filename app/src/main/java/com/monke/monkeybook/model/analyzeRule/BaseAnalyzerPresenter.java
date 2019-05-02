@@ -72,6 +72,16 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return list;
     }
 
+    void evalReplace(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
+        if (!isEmpty(rulePattern.replaceRegex)) {
+            ListIterator<String> iterator = list.listIterator();
+            while (iterator.hasNext()) {
+                String string = iterator.next();
+                iterator.set(string.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
+            }
+        }
+    }
+
     void processResultContents(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             ListIterator<String> iterator = result.listIterator();
@@ -80,27 +90,34 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             }
         }
 
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            ListIterator<String> iterator = result.listIterator();
-            while (iterator.hasNext()) {
-                String string = iterator.next();
-                iterator.set(string.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
-            }
-        }
+        evalReplace(result, rulePattern);
     }
 
     String processResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
         result = evalStringScript(result, rulePattern);
 
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
+        result = evalReplace(result, rulePattern);
+
         return result;
     }
 
 
     String processResultUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
         result = evalStringScript(result, rulePattern);
+
+        result = evalJoinUrl(result, rulePattern);
+        return result;
+    }
+
+    String evalReplace(@NonNull String result, @NonNull RulePattern rulePattern) {
+        if (!isEmpty(rulePattern.replaceRegex)) {
+            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
+        }
+        return result;
+    }
+
+    String evalJoinUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
+        result = evalReplace(result, rulePattern);
 
         if (!isEmpty(result)) {
             result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);

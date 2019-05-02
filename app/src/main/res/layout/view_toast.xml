@@ -2,11 +2,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/AppTheme.CardView.Image"
-    app:cardElevation="2dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:outlineProvider="background"
-    app:cardBackgroundColor="#3E3E3E">
+    app:cardBackgroundColor="@color/colorAccent"
+    app:cardElevation="1dp">
 
     <TextView
         android:id="@+id/tv_message"

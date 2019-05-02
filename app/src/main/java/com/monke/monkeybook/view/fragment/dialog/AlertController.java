@@ -2,6 +2,8 @@ package com.monke.monkeybook.view.fragment.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.monke.monkeybook.R;
+
+import java.lang.ref.WeakReference;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -44,6 +48,8 @@ final class AlertController {
     private final LayoutInflater mInflater;
     private FragmentManager mFragmentManager;
 
+    Handler mHandler;
+
     private int mTheme;
 
     private boolean mCancelable;
@@ -58,10 +64,12 @@ final class AlertController {
     private int mMessageTextAlignment;
 
     AppCompatButton mButtonPositive;
+    Message mButtonPositiveMessage;
     private CharSequence mPositiveText;
     private AlertDialog.OnClickListener mPositiveClickListener;
 
     AppCompatButton mButtonNegative;
+    Message mButtonNegativeMessage;
     private CharSequence mNegativeText;
     private AlertDialog.OnClickListener mNegativeClickListener;
 
@@ -84,24 +92,55 @@ final class AlertController {
     private final View.OnClickListener mButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (v == mButtonPositive) {
-                if (mPositiveClickListener != null) {
-                    mPositiveClickListener.onClick(mDialog, mAlertView, AlertDialog.BUTTON_POSITIVE);
-                }
-            } else if (v == mButtonNegative) {
-                if (mNegativeClickListener != null) {
-                    mNegativeClickListener.onClick(mDialog, mAlertView, AlertDialog.BUTTON_NEGATIVE);
-                }
+            mHandler.obtainMessage(ButtonHandler.MSG_DISMISS_DIALOG, mDialog)
+                    .sendToTarget();
+
+
+            final Message m;
+            if (v == mButtonPositive && mButtonPositiveMessage != null) {
+                m = Message.obtain(mButtonPositiveMessage);
+            } else if (v == mButtonNegative && mButtonNegativeMessage != null) {
+                m = Message.obtain(mButtonNegativeMessage);
+            } else {
+                m = null;
             }
 
-            mDialog.dismissAllowingStateLoss();
+            if (m != null) {
+                m.sendToTarget();
+            }
         }
     };
+
+    private static class ButtonHandler extends Handler {
+
+        private static final int MSG_DISMISS_DIALOG = 1;
+
+        private WeakReference<AlertDialog> mDialog;
+
+        private ButtonHandler(AlertDialog dialog) {
+            mDialog = new WeakReference<>(dialog);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+
+                case AlertDialog.BUTTON_POSITIVE:
+                case AlertDialog.BUTTON_NEGATIVE:
+                    ((AlertDialog.OnClickListener) msg.obj).onClick(mDialog.get(), msg.what);
+                    break;
+
+                case MSG_DISMISS_DIALOG:
+                    ((AlertDialog) msg.obj).dismiss();
+            }
+        }
+    }
 
     AlertController(Context context, AlertDialog di) {
         mContext = context;
         mDialog = di;
         mInflater = LayoutInflater.from(mContext);
+        mHandler = new ButtonHandler(mDialog);
 
         if (mTheme != 0) {
             mDialog.setStyle(DialogFragment.STYLE_NO_TITLE, mTheme);
@@ -311,10 +350,19 @@ final class AlertController {
 
     public void setButton(int whichButton, CharSequence text,
                           AlertDialog.OnClickListener listener) {
+
+        final Message msg;
+        if (listener != null) {
+            msg = mHandler.obtainMessage(whichButton, listener);
+        } else {
+            msg = null;
+        }
+
         switch (whichButton) {
             case AlertDialog.BUTTON_POSITIVE:
                 mPositiveText = text;
                 mPositiveClickListener = listener;
+                mButtonPositiveMessage = msg;
                 if (mButtonPositive != null) {
                     mButtonPositive.setText(mPositiveText);
                     if (mPositiveText != null) {
@@ -328,6 +376,7 @@ final class AlertController {
             case AlertDialog.BUTTON_NEGATIVE:
                 mNegativeText = text;
                 mNegativeClickListener = listener;
+                mButtonNegativeMessage = msg;
                 if (mButtonNegative != null) {
                     mButtonNegative.setText(mNegativeText);
                     if (mNegativeText != null) {

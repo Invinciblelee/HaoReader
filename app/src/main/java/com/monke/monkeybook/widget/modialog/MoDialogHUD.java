@@ -2,7 +2,6 @@ package com.monke.monkeybook.widget.modialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -60,22 +59,16 @@ public class MoDialogHUD {
     }
 
     private void initAnimation() {
-        inAnim = getInAnimation();
-        outAnim = getOutAnimation();
+        initScaleAnimation();
     }
 
-    private void initFromTopRight() {
-        inAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_in_top_right);
-        outAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_out_top_right);
+    private void initScaleAnimation() {
+        inAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_in);
+        outAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_out);
     }
 
-    private void initFromBottomRight() {
-        inAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_in_bottom_right);
-        outAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_out_bottom_right);
-    }
-
-    private void initFromBottomAnimation() {
-        inAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_bottom_in);
+    private void initSlideAnimation() {
+        inAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_top_in);
         outAnim = AnimationUtils.loadAnimation(context, R.anim.moprogress_bottom_out);
     }
 
@@ -130,13 +123,6 @@ public class MoDialogHUD {
         mSharedView.onAttach(this);
     }
 
-    private Animation getInAnimation() {
-        return AnimationUtils.loadAnimation(context, R.anim.moprogress_in);
-    }
-
-    private Animation getOutAnimation() {
-        return AnimationUtils.loadAnimation(context, R.anim.moprogress_out);
-    }
 
     private boolean isShowing() {
         return rootView.getParent() != null;
@@ -244,21 +230,6 @@ public class MoDialogHUD {
         canBack = true;
         rootView.setOnClickListener(v -> dismiss());
         mSharedView.showInfo(msg, btnText, listener);
-        if (!isShowing()) {
-            onAttached();
-        }
-        mSharedView.getChildAt(0).startAnimation(inAnim);
-    }
-
-    /**
-     * 两个不同等级的按钮
-     */
-    public void showTwoButton(String msg, String b_s, View.OnClickListener c_s, String b_f, View.OnClickListener c_f) {
-        initCenter();
-        initAnimation();
-        canBack = true;
-        rootView.setOnClickListener(v -> dismiss());
-        mSharedView.showTwoButton(msg, b_f, c_f, b_s, c_s);
         if (!isShowing()) {
             onAttached();
         }

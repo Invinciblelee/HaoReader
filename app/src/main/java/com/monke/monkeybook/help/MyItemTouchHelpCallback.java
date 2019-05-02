@@ -144,11 +144,11 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         super.onSelectedChanged(viewHolder, actionState);
         if (viewHolder instanceof BookShelfGridAdapter.MyViewHolder) {
-            ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.progress_back_color);
+            ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.colorAccentLight);
         }else if(viewHolder instanceof BookShelfListAdapter.MyViewHolder){
-            ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.progress_back_color);
+            ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.colorAccentLight);
         }else if(viewHolder != null){
-            viewHolder.itemView.setBackgroundResource(R.color.progress_back_color);
+            viewHolder.itemView.setBackgroundResource(R.color.colorAccentLight);
         }
     }
 

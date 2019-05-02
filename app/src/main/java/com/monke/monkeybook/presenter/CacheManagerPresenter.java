@@ -174,14 +174,14 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
             String fileName = file.getName().split("-")[1];
             String name = fileName.substring(0, fileName.lastIndexOf("."));
             accessFile.write(name.getBytes());
+            accessFile.write("\r\n".getBytes());
             Reader reader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                accessFile.write("\r\n".getBytes());
                 accessFile.write(line.getBytes());
+                accessFile.write("\r\n".getBytes());
             }
-            accessFile.write("\r\n".getBytes());
             emitter.onSuccess(wrappedFile.index);
         }).compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<Integer>() {

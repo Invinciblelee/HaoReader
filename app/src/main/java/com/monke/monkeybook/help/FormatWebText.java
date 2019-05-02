@@ -49,10 +49,10 @@ public class FormatWebText {
     }
 
 
-    public static String trim(String s) {
+    public static String trim(String string) {
         String result = "";
-        if (null != s && !"".equals(s)) {
-            result = s.replaceAll("^[　*| *| *|//s*]*", "").replaceAll("[　*| *| *|//s*]*$", "");
+        if (null != string && !"".equals(string)) {
+            result = string.replaceAll("^[　*| *| *|//s*]*", "").replaceAll("[　*| *| *|//s*]*$", "");
         }
         return result;
     }

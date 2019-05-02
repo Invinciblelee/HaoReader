@@ -7,28 +7,25 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.gyf.barlibrary.ImmersionBar;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.Toolbar;
+
+import com.gyf.immersionbar.ImmersionBar;
 import com.hwangjr.rxbus.RxBus;
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 import com.monke.basemvplib.impl.IPresenter;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
@@ -37,7 +34,7 @@ import com.monke.monkeybook.widget.AppCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDialogListener {
+public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialogListener {
 
     private final int SELECT_TEXT_COLOR = 201;
     private final int SELECT_BG_COLOR = 301;
@@ -88,7 +85,6 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
     protected void onCreateActivity() {
         setContentView(R.layout.activity_read_style);
         ButterKnife.bind(this);
-        llContent.setPadding(0, ImmersionBar.getStatusBarHeight(this), 0, 0);
         this.setSupportActionBar(toolbar);
         setupActionBar();
         setTextKind(readBookControl);
@@ -168,12 +164,6 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
         });
     }
 
-    @Override
-    protected void tintToolbarNavIcon() {
-        toolbar.setTitleTextColor(getResources().getColor(R.color.colorMenuText));
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorMenuText));
-    }
-
     //设置ToolBar
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -187,11 +177,7 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_read_style_activity, menu);
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-            AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
-        }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     //菜单
@@ -211,7 +197,7 @@ public class ReadStyleActivity extends MBaseActivity  implements ColorPickerDial
 
 
     private void imageSelectorResult() {
-        FileSelectorFragment.newInstance("选择图片",true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
+        FileSelectorFragment.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 setCustomBg(path);

@@ -618,10 +618,10 @@ public abstract class PageLoader {
 
         drawContent(bitmap);
         //更新绘制
-        mPageView.postInvalidate();
+        mPageView.invalidate();
     }
 
-    private void preDrawNextPage() {
+    private void preDrawBackground() {
         Bitmap bitmap = mPageView.getNextBitmap();
         if (bitmap != null && !bitmap.isRecycled()) {
             Canvas canvas = new Canvas(bitmap);
@@ -833,7 +833,7 @@ public abstract class PageLoader {
                 callback.onChapterPrepared();
             }
         } else {
-            preDrawNextPage(); //由于异步加载，先绘制一下背景。否则可能会出现黑屏
+            preDrawBackground(); //由于异步加载，先绘制一下背景。否则可能会出现黑屏
             //异步加载章节
             dealLoadChapter(prevChapter, () -> {
                 if (!mCurChapter.isEmpty()) {
@@ -902,7 +902,7 @@ public abstract class PageLoader {
                 callback.onChapterPrepared();
             }
         } else {
-            preDrawNextPage();//由于异步加载，先绘制一下背景。否则可能会出现黑屏
+            preDrawBackground();//由于异步加载，先绘制一下背景。否则可能会出现黑屏
             //异步加载章节
             dealLoadChapter(nextChapter, () -> {
                 if (!mCurChapter.isEmpty()) {

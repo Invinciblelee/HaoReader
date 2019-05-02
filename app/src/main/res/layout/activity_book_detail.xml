@@ -5,7 +5,7 @@
     android:id="@+id/ifl_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/btn_bg_press_tp"
+    android:background="@color/dim_translucent"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -17,7 +17,7 @@
         android:layout_margin="30dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="@color/card_background"
+        app:cardBackgroundColor="@color/background"
         app:cardCornerRadius="6dp"
         app:cardElevation="10dp">
 
@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 app:arc_cropDirection="cropInside"
-                app:arc_height="20dp"
+                app:arc_height="@dimen/book_detail_arc_height"
                 app:arc_position="bottom"
                 tools:visibility="invisible">
 

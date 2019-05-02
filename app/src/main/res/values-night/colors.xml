@@ -5,42 +5,44 @@
 
     <color name="colorPrimary">#363636</color>
     <color name="colorPrimaryDark">#363636</color>
+    <color name="colorAccent">#D9AB23</color>
+    <color name="colorAccentDark">#A6831B</color>
+    <color name="colorAccentLight">#FFD75E</color>
+
+    <color name="colorFloatingButton">@color/colorAccent</color>
+    <color name="colorFloatingButtonText">#ffffff</color>
 
     <color name="colorToolBarText">#f3f3f3</color>
     <color name="colorMenuText">#f3f3f3</color>
 
     <color name="colorReadBar">#363636</color>
     <color name="colorReadBarText">#f3f3f3</color>
-    <color name="colorReadProgressThumb">#838383</color>
-    <color name="colorReadProgressBack">#454545</color>
+    <color name="colorReadProgress">@color/colorAccent</color>
+    <color name="colorReadProgressBack">#e3e3e3</color>
 
     <color name="colorReadDivider">#298e8e8e</color>
 
-    <color name="btn_bg_press">#454545</color>
-    <color name="btn_bg_press_2">#303030</color>
-    <color name="btn_bg_press_tp">#66454545</color>
-
-    <color name="tv_tag_nor">#515151</color>
-    <color name="tv_tag_nor_dark">#4a4a4a</color>
-    <color name="tv_tag_press">#66454545</color>
-
-    <color name="tv_btn_normal_black">#737373</color>
-    <color name="tv_btn_press_black">#565656</color>
-
-    <color name="tv_chapter_color_selected">#b7b7b7</color>
-    <color name="tv_chapter_color_normal">#969696</color>
-
-    <color name="progress_back_color">#454545</color>
-    <color name="progress_color">#838383</color>
+    <color name="progress_back_color">#e3e3e3</color>
+    <color name="progress_color">@color/colorAccent</color>
 
     <color name="tv_text_default">#f3f3f3</color>
     <color name="tv_text_secondary">#c9c9c9</color>
     <color name="tv_text_summary">#999999</color>
 
-    <color name="textfield_search_color">#4D1a1a1a</color>
+    <color name="tv_text_button_neg_nor">#454545</color>
+    <color name="tv_text_button_neg_pre">#303030</color>
 
-    <color name="tv_text_button_nor">#303030</color>
+    <color name="tv_text_button_pos_nor">@color/colorAccent</color>
+    <color name="tv_text_button_pos_pre">@color/colorAccentDark</color>
     <color name="tv_text_button_disable">#434343</color>
 
-    <color name="navigation_bar_bag">#222222</color>
+    <color name="tv_tag_nor">#515151</color>
+    <color name="tv_tag_nor_dark">#4a4a4a</color>
+    <color name="tv_tag_press">#66454545</color>
+
+    <color name="tv_chapter_color_selected">#b7b7b7</color>
+    <color name="tv_chapter_color_normal">#969696</color>
+
+    <!--statusBarBackground-->
+    <color name="navigation_bar_bag">@color/colorPrimary</color>
 </resources>

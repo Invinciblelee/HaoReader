@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
 
@@ -179,7 +178,6 @@ public class AnalyzeUrl {
                 urlPath = ruleUrl.substring(hostUrl.length());
             }
         }
-        Logger.d(TAG, toString());
     }
 
     public String getHost() {
@@ -192,6 +190,13 @@ public class AnalyzeUrl {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getUrlWithQuery() {
+        if (StringUtils.isBlank(queryStr)) {
+            return url;
+        }
+        return String.format("%s?%s", url, queryStr);
     }
 
     public Map<String, String> getQueryMap() {

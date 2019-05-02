@@ -2,16 +2,19 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cv_root"
     style="@style/AppTheme.CardView.Background"
-    android:layout_width="@dimen/modialog_width"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_margin="@dimen/alert_dialog_spacing">
 
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,9 +29,9 @@
             android:id="@+id/til_replace_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/replace_rule_summary"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:hint="@string/replace_rule_summary">
+            android:paddingRight="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tie_replace_summary"
@@ -43,9 +46,9 @@
             android:id="@+id/til_replace_rule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/replace_rule"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:hint="@string/replace_rule">
+            android:paddingRight="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tie_replace_rule"
@@ -60,9 +63,9 @@
             android:id="@+id/til_replace_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/replace_to"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:hint="@string/replace_to">
+            android:paddingRight="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tie_replace_to"
@@ -77,9 +80,9 @@
             android:id="@+id/til_use_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/use_to"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:hint="@string/use_to">
+            android:paddingRight="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tie_use_to"
@@ -94,22 +97,23 @@
             android:id="@+id/cb_use_regex"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
-            android:layout_marginBottom="6dp"
-            android:textSize="13sp"
             android:text="@string/use_regex"
-            android:textColor="@color/tv_text_secondary" />
+            android:textColor="@color/tv_text_secondary"
+            android:textSize="13sp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_ok"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/selector_tv_first_button"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
+            android:minHeight="0dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="@string/ok"

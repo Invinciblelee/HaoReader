@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
@@ -43,7 +42,7 @@ public class AudioChapterPop extends PopupWindow {
 
 
     public AudioChapterPop(Context context, OnChapterSelectListener listener) {
-        super(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.dp2px(context, 550));
+        super(ViewGroup.LayoutParams.MATCH_PARENT, (int) (context.getResources().getDisplayMetrics().heightPixels * 0.8));
         this.context = context;
         this.listener = listener;
 
@@ -81,28 +80,21 @@ public class AudioChapterPop extends PopupWindow {
             @Override
             public void itemClick(ChapterBean item) {
                 dismiss();
-                if(listener != null){
+                if (listener != null) {
                     listener.onSelected(item);
                 }
             }
         });
-
-        adapter.setOnRefreshChapterListener(chapterBean -> {
-            dismiss();
-            if(listener != null){
-                listener.onRefresh(chapterBean);
-            }
-        });
     }
 
-    public void upIndex(int index){
-        if(adapter != null){
+    public void upIndex(int index) {
+        if (adapter != null) {
             adapter.upChapterIndex(index);
         }
     }
 
-    public void setDataSet(List<ChapterBean> chapterBeans){
-        if(adapter != null){
+    public void setDataSet(List<ChapterBean> chapterBeans) {
+        if (adapter != null) {
             adapter.setDataList(chapterBeans);
         }
     }
@@ -115,7 +107,5 @@ public class AudioChapterPop extends PopupWindow {
 
     public interface OnChapterSelectListener {
         void onSelected(ChapterBean chapterBean);
-
-        void onRefresh(ChapterBean chapterBean);
     }
 }

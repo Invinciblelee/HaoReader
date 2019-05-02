@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +35,7 @@ import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
@@ -47,7 +47,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View, BookListFragment.IConfigGetter, OnPermissionsGrantedCallback {
+public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View {
     private static final int BACKUP_RESULT = 11;
     private static final int RESTORE_RESULT = 12;
     private static final int FILE_SELECT_RESULT = 13;
@@ -80,6 +80,21 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     private BookListFragment[] fragments = new BookListFragment[4];
 
+
+    private final OnPermissionsGrantedCallback grantedCallback = requestCode -> {
+        switch (requestCode) {
+            case BACKUP_RESULT:
+                mPresenter.backupData();
+                break;
+            case RESTORE_RESULT:
+                mPresenter.restoreData();
+                break;
+            case FILE_SELECT_RESULT:
+                fileSelectResult();
+                break;
+        }
+    };
+
     @Override
     protected MainContract.Presenter initInjector() {
         return new MainPresenterImpl();
@@ -98,7 +113,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
             for (BookListFragment fragment : fragments) {
                 if (fragment != null) {
-                    fragment.setConfigGetter(this);
                     fragment.setItemClickListenerTwo(getAdapterListener());
                 }
             }
@@ -192,13 +206,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onClick(View view, BookShelfBean bookShelf) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
-                    moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
-                            getString(R.string.ok),
-                            v -> {
-                                mPresenter.removeFromBookShelf(bookShelf);
-                                moDialogHUD.dismiss();
-                            },
-                            getString(R.string.cancel), v -> moDialogHUD.dismiss());
+                    new AlertDialog.Builder(getSupportFragmentManager())
+                            .setTitle(R.string.dialog_title)
+                            .setMessage(R.string.delete_bookshelf_not_exist_s)
+                            .setNegativeButton(R.string.cancel, null)
+                            .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.removeFromBookShelf(bookShelf))
+                            .show();
                 } else {
                     ReadBookActivity.startThis(MainActivity.this, bookShelf, true);
                 }
@@ -208,13 +221,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onLongClick(View view, BookShelfBean bookShelf) {
                 KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
-                    moDialogHUD.showTwoButton(getString(R.string.delete_bookshelf_not_exist_s),
-                            getString(R.string.ok),
-                            v -> {
-                                mPresenter.removeFromBookShelf(bookShelf);
-                                moDialogHUD.dismiss();
-                            },
-                            getString(R.string.cancel), v -> moDialogHUD.dismiss());
+                    new AlertDialog.Builder(getSupportFragmentManager())
+                            .setTitle(R.string.dialog_title)
+                            .setMessage(R.string.delete_bookshelf_not_exist_s)
+                            .setNegativeButton(R.string.cancel, null)
+                            .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.removeFromBookShelf(bookShelf))
+                            .show();
                 } else {
                     BookDetailActivity.startThis(MainActivity.this, bookShelf);
                 }
@@ -280,22 +292,20 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 }
                 break;
             case R.id.action_clearCaches:
-                moDialogHUD.showTwoButton(getString(R.string.clean_caches_s),
-                        getString(R.string.ok),
-                        v -> mPresenter.cleanCaches(),
-                        getString(R.string.cancel), v -> moDialogHUD.dismiss());
+                new AlertDialog.Builder(getSupportFragmentManager())
+                        .setTitle(R.string.dialog_title)
+                        .setMessage(R.string.clean_caches_s)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.cleanCaches())
+                        .show();
                 break;
             case R.id.action_clearBookshelf:
-                moDialogHUD.showTwoButton(getString(R.string.clear_bookshelf_s),
-                        getString(R.string.ok),
-                        v -> mPresenter.clearBookshelf(),
-                        getString(R.string.cancel), v -> moDialogHUD.dismiss());
-                break;
-            case R.id.action_refreshBookshelf:
-                BookListFragment current = fragments[this.group];
-                if (current != null) {
-                    current.refreshBookShelf(true);
-                }
+                new AlertDialog.Builder(getSupportFragmentManager())
+                        .setTitle(R.string.dialog_title)
+                        .setMessage(R.string.clear_bookshelf_s)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.clearBookshelf())
+                        .show();
                 break;
             case android.R.id.home:
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -374,7 +384,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         if (to == null) {
             to = fragments[group] = BookListFragment.newInstance(group);
-            to.setConfigGetter(this);
             to.setItemClickListenerTwo(getAdapterListener());
         }
 
@@ -404,31 +413,31 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerLeft.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_download:
-                    new Handler().postDelayed(() -> DownloadActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> DownloadActivity.startThis(this), 220L);
                     break;
                 case R.id.action_book_source_manage:
-                    new Handler().postDelayed(() -> BookSourceActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> BookSourceActivity.startThis(this), 220L);
                     break;
                 case R.id.action_replace_rule:
-                    new Handler().postDelayed(() -> ReplaceRuleActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> ReplaceRuleActivity.startThis(this), 220L);
                     break;
                 case R.id.action_setting:
-                    new Handler().postDelayed(() -> SettingActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> SettingActivity.startThis(this), 220L);
                     break;
                 case R.id.action_about:
-                    new Handler().postDelayed(() -> AboutActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> AboutActivity.startThis(this), 220L);
                     break;
                 case R.id.action_donate:
-                    new Handler().postDelayed(() -> DonateActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> DonateActivity.startThis(this), 220L);
                     break;
                 case R.id.action_cache_manager:
-                    new Handler().postDelayed(() -> CacheManagerActivity.startThis(this), 220L);
+                    drawerLeft.postDelayed(() -> CacheManagerActivity.startThis(this), 220L);
                     break;
                 case R.id.action_backup:
-                    backup();
+                    drawerLeft.postDelayed(this::backup, 220L);
                     break;
                 case R.id.action_restore:
-                    restore();
+                    drawerLeft.postDelayed(this::restore, 220L);
                     break;
                 case R.id.action_night_theme:
                     getIntent().putExtra("isRecreate", true);
@@ -445,24 +454,22 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     //备份
     private void backup() {
-        moDialogHUD.showTwoButton(getString(R.string.backup_message),
-                getString(R.string.ok),
-                v -> {
-                    moDialogHUD.dismiss();
-                    requestPermissions(BACKUP_RESULT);
-                },
-                getString(R.string.cancel), v -> moDialogHUD.dismiss());
+        new AlertDialog.Builder(getSupportFragmentManager())
+                .setTitle(R.string.dialog_title)
+                .setMessage(R.string.backup_message)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.ok, (dialog, which) -> requestPermissions(BACKUP_RESULT))
+                .show();
     }
 
     //恢复
     private void restore() {
-        moDialogHUD.showTwoButton(getString(R.string.restore_message),
-                getString(R.string.ok),
-                v -> {
-                    moDialogHUD.dismiss();
-                    requestPermissions(RESTORE_RESULT);
-                },
-                getString(R.string.cancel), v -> moDialogHUD.dismiss());
+        new AlertDialog.Builder(getSupportFragmentManager())
+                .setTitle(R.string.dialog_title)
+                .setMessage(R.string.restore_message)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.ok, (dialog, which) -> requestPermissions(RESTORE_RESULT))
+                .show();
     }
 
     private void requestPermissions(int requestCode) {
@@ -470,23 +477,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 .requestCode(requestCode)
                 .addPermissions(Permissions.Group.STORAGE)
                 .rationale("存储")
-                .onGranted(this)
+                .onGranted(grantedCallback)
                 .request();
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode) {
-        switch (requestCode) {
-            case BACKUP_RESULT:
-                mPresenter.backupData();
-                break;
-            case RESTORE_RESULT:
-                mPresenter.restoreData();
-                break;
-            case FILE_SELECT_RESULT:
-                fileSelectResult();
-                break;
-        }
     }
 
     private void fileSelectResult() {
@@ -507,10 +499,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
     }
 
-    @Override
-    public boolean isRecreate() {
-        return isRecreate;
-    }
 
     @Override
     public void clearBookshelf() {
@@ -551,11 +539,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void showLoading(String msg) {
-        moDialogHUD.showLoading(msg);
-    }
-
-    @Override
-    public void onRestore(String msg) {
         moDialogHUD.showLoading(msg);
     }
 

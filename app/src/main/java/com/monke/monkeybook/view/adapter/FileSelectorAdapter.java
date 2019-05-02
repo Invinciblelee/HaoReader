@@ -140,7 +140,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
                     holder.mAdded.setVisibility(View.INVISIBLE);
                     holder.mCover.setVisibility(View.INVISIBLE);
                     holder.mIcon.setImageResource(R.drawable.ic_file_black_24dp);
-                    AppCompat.setTint(holder.mIcon, holder.mChecker.getResources().getColor(R.color.light_red));
+                    AppCompat.setTint(holder.mIcon, holder.mChecker.getResources().getColor(R.color.tv_text_secondary));
                 }
                 holder.mTvTag.setText(item.getSuffix());
                 holder.mTvInfo.setText(String.format(Locale.getDefault(), "%s | %s", item.getSize(), item.getDate()));

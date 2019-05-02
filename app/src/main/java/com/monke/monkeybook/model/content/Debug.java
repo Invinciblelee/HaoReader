@@ -29,6 +29,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class Debug {
     public static String SOURCE_DEBUG_TAG;
@@ -78,7 +79,9 @@ public class Debug {
     private void searchDebug(String key) {
         printLog(String.format("★%s 搜索开始", getDoTime()));
         WebBookModel.getInstance().searchBook(key, 1, Debug.SOURCE_DEBUG_TAG)
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
+                .timeout(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<SearchBookBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {

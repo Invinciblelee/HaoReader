@@ -1,20 +1,20 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
+import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,16 +27,16 @@ import static android.text.TextUtils.isEmpty;
  * 书源Adapter
  */
 
-public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
-    private List<SearchBookBean> searchBookBeans;
+public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements FastScroller.SectionIndexer {
+    private final List<SearchBookBean> searchBookBeans;
     private OnItemClickListener mOnItemClickListener;
-    private Context mContext;
+    private LayoutInflater inflater;
     private boolean noSelected;
     private int lastSelectIndex = -1;
 
     public ChangeSourceAdapter(Context context, boolean noSelected) {
         super(false);
-        this.mContext = context;
+        this.inflater = LayoutInflater.from(context);
         this.noSelected = noSelected;
 
         searchBookBeans = new ArrayList<>();
@@ -44,7 +44,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
 
     public synchronized void addAllSourceAdapter(List<SearchBookBean> value) {
         searchBookBeans.addAll(value);
-        searchBookBeans = ListUtils.removeDuplicate(searchBookBeans, (o1, o2) -> o1.getTag().compareTo(o2.getTag()));
+        ListUtils.removeDuplicate(searchBookBeans);
         Collections.sort(searchBookBeans);
         notifyDataSetChanged();
     }
@@ -81,7 +81,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateIViewHolder(ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_change_source, parent, false));
+        return new MyViewHolder(inflater.inflate(R.layout.item_change_source, parent, false));
     }
 
     @Override
@@ -135,5 +135,14 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter {
     @Override
     public int getICount() {
         return searchBookBeans.size();
+    }
+
+    @Override
+    public CharSequence getSectionText(int position) {
+        if (!searchBookBeans.isEmpty()) {
+            String name = searchBookBeans.get(position).getOrigin();
+            return name.substring(0, 1);
+        }
+        return "";
     }
 }

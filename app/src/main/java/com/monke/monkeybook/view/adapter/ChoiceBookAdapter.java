@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -17,11 +20,8 @@ import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     private Activity activity;
@@ -106,9 +106,9 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             if (itemClickListener != null)
                 itemClickListener.clickItem(v, realPosition, item);
         });
-        myViewHolder.tvAddShelf.setOnClickListener(v -> {
+        myViewHolder.btnAddShelf.setOnClickListener(v -> {
             if (itemClickListener != null)
-                itemClickListener.clickToSearch(myViewHolder.tvAddShelf, realPosition, item);
+                itemClickListener.clickToSearch(myViewHolder.btnAddShelf, realPosition, item);
         });
 
     }
@@ -131,7 +131,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvWords;
         TextView tvKind;
         TextView tvLasted;
-        TextView tvAddShelf;
+        Button btnAddShelf;
         TextView tvOrigin;
 
         MyViewHolder(View itemView) {
@@ -142,10 +142,10 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             tvState = itemView.findViewById(R.id.tv_state);
             tvWords = itemView.findViewById(R.id.tv_words);
             tvLasted = itemView.findViewById(R.id.tv_lasted);
-            tvAddShelf = itemView.findViewById(R.id.btn_search_book);
+            btnAddShelf = itemView.findViewById(R.id.btn_search_book);
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
-            tvAddShelf.setVisibility(View.VISIBLE);
+            btnAddShelf.setVisibility(View.VISIBLE);
 
             tvOrigin.setPadding(0, 0, ScreenUtils.dpToPx(72), 0);
         }

@@ -73,21 +73,18 @@ public class SimulationPageAnim extends HorizonPageAnim {
 
     @Override
     public void drawMove(Canvas canvas) {
-        switch (mDirection) {
-            case NEXT:
-                calcPoints();
-                drawCurrentPageArea(canvas, mCurBitmap, mPath0);//绘制翻页时的正面页
-                drawNextPageAreaAndShadow(canvas, mNextBitmap);
-                drawCurrentPageShadow(canvas);
-                drawCurrentBackArea(canvas, mCurBitmap);
-                break;
-            default:
-                calcPoints();
-                drawCurrentPageArea(canvas, mNextBitmap, mPath0);
-                drawNextPageAreaAndShadow(canvas, mCurBitmap);
-                drawCurrentPageShadow(canvas);
-                drawCurrentBackArea(canvas, mNextBitmap);
-                break;
+        if (mDirection == Direction.NEXT) {
+            calcPoints();
+            drawCurrentPageArea(canvas, mCurBitmap, mPath0);//绘制翻页时的正面页
+            drawNextPageAreaAndShadow(canvas, mNextBitmap);
+            drawCurrentPageShadow(canvas);
+            drawCurrentBackArea(canvas, mCurBitmap);
+        } else {
+            calcPoints();
+            drawCurrentPageArea(canvas, mNextBitmap, mPath0);
+            drawNextPageAreaAndShadow(canvas, mCurBitmap);
+            drawCurrentPageShadow(canvas);
+            drawCurrentBackArea(canvas, mNextBitmap);
         }
     }
 

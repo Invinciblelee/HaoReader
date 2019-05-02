@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import retrofit2.Response;
 
 import static android.text.TextUtils.isEmpty;
@@ -100,7 +99,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 });
             }
             return toObservable(analyzeUrl)
-                    .flatMap(bookList::analyzeSearchBook);
+                    .flatMap(response -> bookList.analyzeSearchBook(response.body(), analyzeUrl.getHost()));
         } catch (Exception e) {
             Logger.e(TAG, "findBook: " + url, e);
             return Observable.just(ListUtils.mutableList());
@@ -124,8 +123,9 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             if (analyzeUrl.getHost() == null) {
                 return Observable.just(ListUtils.mutableList());
             }
+
             return toObservable(analyzeUrl)
-                    .flatMap(bookList::analyzeSearchBook);
+                    .flatMap(response -> bookList.analyzeSearchBook(response.body(), analyzeUrl.getHost()));
         } catch (Exception e) {
             Logger.e(TAG, "searchBook: " + content, e);
             return Observable.just(ListUtils.mutableList());
@@ -190,12 +190,12 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         params.url(analyzeUrl.getUrl()).postData(analyzeUrl.getPostData());
                         break;
                     case GET:
-                        params.url(String.format("%s?%s", analyzeUrl.getUrl(), analyzeUrl.getQueryStr())).headerMap(analyzeUrl.getHeaderMap());
+                        params.url(analyzeUrl.getUrlWithQuery()).headerMap(analyzeUrl.getHeaderMap());
                         break;
                     default:
                         params.url(analyzeUrl.getUrl()).headerMap(analyzeUrl.getHeaderMap());
                 }
-                return ajax(params).subscribeOn(AndroidSchedulers.mainThread())
+                return ajax(params)
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             } else {
                 return toObservable(analyzeUrl)
@@ -233,12 +233,12 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         params.url(analyzeUrl.getUrl()).postData(analyzeUrl.getPostData());
                         break;
                     case GET:
-                        params.url(String.format("%s?%s", analyzeUrl.getUrl(), analyzeUrl.getQueryStr())).headerMap(analyzeUrl.getHeaderMap());
+                        params.url(analyzeUrl.getUrlWithQuery()).headerMap(analyzeUrl.getHeaderMap());
                         break;
                     default:
                         params.url(analyzeUrl.getUrl()).headerMap(analyzeUrl.getHeaderMap());
                 }
-                return sniff(params).subscribeOn(AndroidSchedulers.mainThread())
+                return sniff(params)
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             } else {
                 return toObservable(analyzeUrl)

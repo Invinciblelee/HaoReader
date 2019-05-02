@@ -21,8 +21,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_arrow_back_white_24dp" />
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            app:titleTextColor="@color/white" />
 
     </RelativeLayout>
 
@@ -77,10 +77,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:secondaryProgressTint="@color/white_translucent"
-            android:progressBackgroundTint="@color/dark_white"
-            android:progressTint="@color/white"
-            android:thumb="@drawable/shape_thumb" />
+            android:progressBackgroundTint="@color/colorReadProgressBack"
+            android:progressTint="@color/colorReadProgress"
+            android:thumbTint="@color/progress_color" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_duration"

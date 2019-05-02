@@ -12,7 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -464,6 +463,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     @Override
     public void finish() {
-        super.finishByAnim(0, R.anim.anim_alpha_out);
+        finishByAnim(0, R.anim.anim_alpha_out);
     }
 }

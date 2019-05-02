@@ -352,9 +352,10 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     @Override
-    public void resetChapter(ChapterBean chapter) {
+    public void resetChapter() {
         if (!isPrepared) return;
 
+        ChapterBean chapter = getDurChapter();
         if (chapter != null) {
             chapter.setDurChapterPlayUrl(null);
             playChapter(chapter, true);

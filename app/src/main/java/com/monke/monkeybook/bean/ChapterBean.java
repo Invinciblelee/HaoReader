@@ -169,7 +169,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     }
 
     public void setDurChapterName(String durChapterName) {
-        this.durChapterName = ChapterHelp.getFormatChapterName(durChapterName);
+        this.durChapterName = durChapterName;
     }
 
     public String getDurChapterUrl() {

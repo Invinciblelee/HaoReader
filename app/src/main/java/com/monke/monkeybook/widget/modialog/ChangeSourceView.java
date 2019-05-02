@@ -29,7 +29,6 @@ import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -108,6 +107,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
 
     @Override
     public void loadMoreSearchBook(List<SearchBookBean> value) {
+        ListUtils.filter(value, searchBookBean -> searchBookBean.isSimilarTo(bookInfo));
         addSearchBook(value);
     }
 
@@ -140,7 +140,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
             if (selectCover) {
                 onClickSource.changeSource(searchBook);
             } else {
-                if (!searchBook.isCurrentSource()) {
+                if (!isCurrent(searchBook)) {
                     onClickSource.changeSource(searchBook);
                     incrementSourceWeightBySelection(searchBook);
                 }
@@ -163,7 +163,7 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
                     public void onNext(List<SearchBookBean> searchBookBeans) {
                         if (!searchBookBeans.isEmpty()) {
                             for (SearchBookBean searchBookBean : searchBookBeans) {
-                                if (Objects.equals(searchBookBean.getNoteUrl(), bookInfo.getNoteUrl())) {
+                                if (isCurrent(searchBookBean)) {
                                     searchBookBean.setIsCurrentSource(true);
                                 } else {
                                     searchBookBean.setIsCurrentSource(false);
@@ -193,16 +193,15 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     }
 
     private synchronized void addSearchBook(List<SearchBookBean> searchBookBeans) {
-        final List<SearchBookBean> newDataS = ListUtils.filter(searchBookBeans, searchBookBean -> ChangeSourceView.this.test(searchBookBean, bookInfo));
-        if (!newDataS.isEmpty()) {
-            for (SearchBookBean searchBookBean : newDataS) {
-                if (TextUtils.equals(searchBookBean.getTag(), bookInfo.getTag())) {
+        if (!searchBookBeans.isEmpty()) {
+            for (SearchBookBean searchBookBean : searchBookBeans) {
+                if (isCurrent(searchBookBean)) {
                     searchBookBean.setIsCurrentSource(true);
                 } else {
                     searchBookBean.setIsCurrentSource(false);
                 }
             }
-            handler.post(() -> adapter.addAllSourceAdapter(newDataS));
+            handler.post(() -> adapter.addAllSourceAdapter(searchBookBeans));
         }
     }
 
@@ -216,10 +215,9 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
         });
     }
 
-    private boolean test(SearchBookBean searchBookBean, BookInfoBean book) {
-        return TextUtils.equals(searchBookBean.getBookType(), book.getBookType())
-                && TextUtils.equals(searchBookBean.getName(), book.getName())
-                && TextUtils.equals(searchBookBean.getAuthor(), book.getAuthor());
+    private boolean isCurrent(SearchBookBean searchBookBean) {
+        return TextUtils.equals(searchBookBean.getRealNoteUrl(), bookInfo.getNoteUrl())
+                && TextUtils.equals(searchBookBean.getTag(), bookInfo.getTag());
     }
 
     private void bindView() {

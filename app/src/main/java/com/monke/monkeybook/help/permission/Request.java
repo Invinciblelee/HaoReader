@@ -3,6 +3,8 @@ package com.monke.monkeybook.help.permission;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -15,12 +17,13 @@ import androidx.fragment.app.Fragment;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * create on 2019/2/13
- *
+ * <p>
  * by 咸鱼
  */
 final class Request implements OnRequestPermissionsResultCallback {
@@ -40,12 +43,41 @@ final class Request implements OnRequestPermissionsResultCallback {
 
     private AlertDialog mRationaleDialog;
 
+    private Handler mHandler;
+
+    private static class CallbackHandler extends Handler {
+
+        private static final int MSG_GRANTED = 1;
+        private static final int MSG_DENIED = 2;
+
+
+        private WeakReference<Request> mRequest;
+
+        private CallbackHandler(Request request) {
+            mRequest = new WeakReference<>(request);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_GRANTED:
+                    mRequest.get().dispatchGrantedEvent(msg.arg1);
+                    break;
+                case MSG_DENIED:
+                    mRequest.get().dispatchDeniedEvent(msg.arg1, (String[]) msg.obj);
+                    break;
+            }
+        }
+    }
+
     Request(@NonNull AppCompatActivity activity) {
+        mHandler = new CallbackHandler(this);
         mSource = new ActivitySource(activity);
         mPermissions = new ArrayList<>();
     }
 
     Request(@NonNull Fragment fragment) {
+        mHandler = new CallbackHandler(this);
         mSource = new FragmentSource(fragment);
         mPermissions = new ArrayList<>();
     }
@@ -117,7 +149,7 @@ final class Request implements OnRequestPermissionsResultCallback {
         mDeniedCallback = null;
     }
 
-    long getStartTime(){
+    long getStartTime() {
         return mStartTime;
     }
 
@@ -168,17 +200,29 @@ final class Request implements OnRequestPermissionsResultCallback {
                 .setTitle(R.string.dialog_title)
                 .setMessage(mSource.getContext().getString(R.string.tip_permission_denied, rationale))
                 .setMessageTextAlignment(View.TEXT_ALIGNMENT_TEXT_START)
-                .setPositiveButton(R.string.goto_setting, (dialog, dialogView, which) -> {
+                .setPositiveButton(R.string.goto_setting, (dialog, which) -> {
                     Intent intent = new Intent(mSource.getContext(), PermissionActivity.class);
                     intent.putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_SETTING);
                     mSource.startActivity(intent);
                 })
-                .setNegativeButton(R.string.cancel, (dialog, dialogView, which) -> cancel.onCancel())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> cancel.onCancel())
                 .show();
         mRationaleDialog.show();
     }
 
     private void onPermissionsGranted(int requestCode) {
+        Message message = mHandler.obtainMessage(CallbackHandler.MSG_GRANTED);
+        message.arg1 = requestCode;
+        message.sendToTarget();
+    }
+
+    private void onPermissionsDenied(int requestCode, String[] deniedPermissions) {
+        Message message = mHandler.obtainMessage(CallbackHandler.MSG_DENIED, deniedPermissions);
+        message.arg1 = requestCode;
+        message.sendToTarget();
+    }
+
+    private void dispatchGrantedEvent(int requestCode) {
         try {
             if (mResultCallback != null) {
                 mResultCallback.onPermissionsGranted(requestCode);
@@ -187,8 +231,7 @@ final class Request implements OnRequestPermissionsResultCallback {
             if (mGrantedCallback != null) {
                 mGrantedCallback.onPermissionsGranted(requestCode);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
         }
 
         if (RequestPlugins.sResultCallback != null) {
@@ -196,7 +239,7 @@ final class Request implements OnRequestPermissionsResultCallback {
         }
     }
 
-    private void onPermissionsDenied(int requestCode, String[] deniedPermissions) {
+    private void dispatchDeniedEvent(int requestCode, String[] deniedPermissions) {
         try {
             if (mResultCallback != null) {
                 mResultCallback.onPermissionsDenied(requestCode, deniedPermissions);
@@ -205,8 +248,7 @@ final class Request implements OnRequestPermissionsResultCallback {
             if (mDeniedCallback != null) {
                 mDeniedCallback.onPermissionsDenied(requestCode, deniedPermissions);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
         }
 
         if (RequestPlugins.sResultCallback != null) {

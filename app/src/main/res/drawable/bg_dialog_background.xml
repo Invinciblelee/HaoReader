@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetTop="@dimen/alert_dialog_spacing"
+    android:insetBottom="@dimen/alert_dialog_spacing"
+    android:insetRight="@dimen/alert_dialog_spacing_inset"
+    android:insetLeft="@dimen/alert_dialog_spacing_inset">
+
+    <shape android:shape="rectangle">
+        <corners
+            android:radius="2dp" />
+        <solid
+            android:color="@color/card_background" />
+    </shape>
+
+</inset>

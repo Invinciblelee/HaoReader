@@ -2,6 +2,8 @@ package com.monke.basemvplib;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class BaseModelImpl {
 
@@ -16,11 +18,21 @@ public class BaseModelImpl {
 
 
     protected Observable<String> ajax(AjaxWebView.AjaxParams params) {
-        return Observable.create(e -> AjaxWebView.ajax(params, new AjaxCallback(e)));
+        return Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                AjaxWebView.ajax(params, new AjaxCallback(emitter));
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread());
     }
 
     protected Observable<String> sniff(AjaxWebView.AjaxParams params) {
-        return Observable.create(e -> AjaxWebView.sniff(params, new AjaxCallback(e)));
+        return Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                AjaxWebView.sniff(params, new AjaxCallback(emitter));
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread());
     }
 
 

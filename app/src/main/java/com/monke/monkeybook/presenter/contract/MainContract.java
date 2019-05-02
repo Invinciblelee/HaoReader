@@ -35,11 +35,6 @@ public interface MainContract {
          */
         void showLoading(String msg);
 
-        /**
-         * 恢复数据
-         */
-        void onRestore(String msg);
-
         void restoreSuccess();
 
         /**
@@ -47,9 +42,9 @@ public interface MainContract {
          */
         void addSuccess(BookShelfBean bookShelfBean);
 
-        void toast(String msg);
+        void showSnackBar(String msg);
 
-        void toast(@StringRes int msgId);
+        void showSnackBar(@StringRes int msgId);
     }
 
     interface Presenter extends IPresenter {

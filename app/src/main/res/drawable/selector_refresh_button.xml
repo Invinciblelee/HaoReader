@@ -3,13 +3,13 @@
 
     <item android:state_pressed="true">
         <shape android:shape="oval">
-            <solid android:color="@color/tv_text_button_deep_pre"/>
+            <solid android:color="@color/tv_text_button_pos_pre"/>
         </shape>
     </item>
 
     <item >
         <shape android:shape="oval">
-            <solid android:color="@color/tv_text_button_pre"/>
+            <solid android:color="@color/tv_text_button_pos_nor"/>
         </shape>
     </item>
 </selector>

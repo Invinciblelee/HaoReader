@@ -178,8 +178,10 @@ public class AjaxWebView {
             super.onPageFinished(view, url);
 
             view.evaluateJavascript("document.documentElement.outerHTML", value -> {
-                callback.onResult(StringEscapeUtils.unescapeJson(value));
+                String result =StringEscapeUtils.unescapeJson(value);
+                callback.onResult(result);
                 callback.onComplete();
+                System.out.println(result);
                 clearWebView(view);
             });
         }

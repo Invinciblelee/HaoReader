@@ -22,6 +22,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             keyWord = intent.getStringExtra("searchKey");
             if (keyWord == null && intent.getClipData() != null && intent.getClipData().getItemCount() > 0) {
                 ClipData.Item item = intent.getClipData().getItemAt(0);
-                keyWord = item.getText().toString().trim();
+                keyWord = StringUtils.valueOf(item.getText()).trim();
 
                 if (!TextUtils.isEmpty(keyWord)) {
                     int start = keyWord.indexOf("《");

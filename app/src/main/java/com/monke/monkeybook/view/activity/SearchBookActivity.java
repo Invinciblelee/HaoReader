@@ -28,6 +28,7 @@ import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
+import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
@@ -420,10 +421,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             moDialogHUD = new MoDialogHUD(this);
         }
 
-        moDialogHUD.showTwoButton("您没有选择任何书源", "去选择"
-                , v -> {
-                    moDialogHUD.dismiss();
-                    BookSourceActivity.startThis(SearchBookActivity.this);
-                }, "取消", v -> moDialogHUD.dismiss());
+        new AlertDialog.Builder(getSupportFragmentManager())
+                .setTitle(R.string.dialog_title)
+                .setMessage(R.string.tip_source_not_selected)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.goto_select, (dialog, which) -> BookSourceActivity.startThis(SearchBookActivity.this))
+                .show();
     }
 }

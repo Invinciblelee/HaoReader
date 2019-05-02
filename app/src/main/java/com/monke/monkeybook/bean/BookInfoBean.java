@@ -212,7 +212,7 @@ public class BookInfoBean implements Parcelable {
         return bookType == null ? BookType.TEXT : bookType;
     }
 
-    public void setBookType(String bookType) {
+    public void setBookType(@BookType String bookType) {
         this.bookType = bookType;
     }
 

@@ -173,9 +173,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                     boolean hasSame = false;
                     for (int i = 0, size = copyDataS.size(); i < size; i++) {
                         SearchBookBean searchBook = copyDataS.get(i);
-                        if (TextUtils.equals(temp.getBookType(), searchBook.getBookType())
-                                && TextUtils.equals(temp.getName(), searchBook.getName())
-                                && TextUtils.equals(temp.getAuthor(), searchBook.getAuthor())) {
+                        if (temp.isSimilarTo(searchBook)) {
                             hasSame = true;
                             searchBook.addTag(temp.getTag());
                             break;

@@ -3,16 +3,13 @@ package com.monke.monkeybook.widget.page.animation;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
-import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
-
-import com.monke.monkeybook.widget.page.PageMode;
-import com.monke.monkeybook.widget.page.PageView;
 
 import androidx.annotation.CallSuper;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+
+import com.monke.monkeybook.widget.page.PageMode;
+import com.monke.monkeybook.widget.page.PageView;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -103,7 +100,7 @@ public abstract class PageAnimation {
     public void startAnim() {
         isStarted = true;
         isRunning = true;
-        mView.postInvalidate();
+        mView.invalidate();
     }
 
     public Direction getDirection() {

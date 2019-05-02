@@ -11,9 +11,9 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import retrofit2.Response;
 
 final class BookList {
+
     private final OutAnalyzer<?> analyzer;
 
     BookList(String tag, String name, BookSourceBean bookSourceBean) {
@@ -21,21 +21,14 @@ final class BookList {
                 .tag(tag).name(name).bookSource(bookSourceBean));
     }
 
-    Observable<List<SearchBookBean>> analyzeSearchBook(final Response<String> response) {
+    Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {
         return Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
-            String baseURL;
-            okhttp3.Response networkResponse = response.raw().networkResponse();
-            if (networkResponse != null) {
-                baseURL = networkResponse.request().url().toString();
-            } else {
-                baseURL = response.raw().request().url().toString();
-            }
+            analyzer.apply(analyzer.newConfig().baseURL(baseUrl));
 
-            analyzer.apply(analyzer.newConfig().baseURL(baseURL));
-
-            List<SearchBookBean> searchBookBeans = analyzer.getSearchBooks(response.body());
+            List<SearchBookBean> searchBookBeans = analyzer.getSearchBooks(response);
             e.onNext(searchBookBeans);
             e.onComplete();
         }).onErrorReturnItem(Collections.emptyList());
     }
+
 }

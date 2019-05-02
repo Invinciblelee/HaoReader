@@ -1,20 +1,17 @@
 package com.monke.monkeybook.view.fragment;
 
-import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +21,6 @@ import com.monke.monkeybook.bean.FileSnapshot;
 import com.monke.monkeybook.bean.RipeFile;
 import com.monke.monkeybook.presenter.FileSelectorPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
-import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BigImageActivity;
 import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
@@ -123,16 +119,12 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
         okBth.setText(R.string.ok);
         cancelBtn.setText(R.string.cancel);
         backBtn.setText(R.string.back);
-
-        mPresenter.startLoad();
     }
 
     @Override
-    protected void onDialogAttachWindow(@NonNull Window window) {
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.width = getResources().getDisplayMetrics().widthPixels - ScreenUtils.dpToPx(56);
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        window.setAttributes(params);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        new Handler().postDelayed(() -> mPresenter.startLoad(), 400L);
     }
 
     @Override
@@ -207,7 +199,7 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
         if (view == backBtn) {
             mPresenter.pop();
         } else if (view == cancelBtn) {
-            dismissAllowingStateLoss();
+            dismiss();
         } else if (view == okBth) {
             boolean haveSelected = true;
             if (mPresenter.isSingleChoice()) {
@@ -215,7 +207,7 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
                 if (path == null) {
                     haveSelected = false;
                 } else if (selectedListener != null) {
-                    dismissAllowingStateLoss();
+                    dismiss();
                     selectedListener.onSingleChoice(path);
                 }
             } else {
@@ -223,7 +215,7 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
                 if (paths.isEmpty()) {
                     haveSelected = false;
                 } else if (selectedListener != null) {
-                    dismissAllowingStateLoss();
+                    dismiss();
                     selectedListener.onMultiplyChoice(paths);
                 }
             }

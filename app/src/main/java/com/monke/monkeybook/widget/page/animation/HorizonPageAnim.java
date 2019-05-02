@@ -43,8 +43,13 @@ public abstract class HorizonPageAnim extends PageAnimation {
     public void init(int w, int h, PageView view, OnPageChangeListener listener) {
         super.init(w, h, view, listener);
         //创建图片
-        mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
-        mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
+        if (mCurBitmap == null || mCurBitmap.isRecycled()) {
+            mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
+        }
+
+        if (mNextBitmap == null || mNextBitmap.isRecycled()) {
+            mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
+        }
 
         mTouchSlop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
     }
@@ -129,7 +134,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     mMoveX = x;
                     mMoveY = y;
                     isRunning = true;
-                    mView.postInvalidate();
+                    mView.invalidate();
                 }
 
                 break;
@@ -192,7 +197,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
                 isRunning = false;
             }
-            mView.postInvalidate();
+            mView.invalidate();
         }
     }
 
@@ -202,7 +207,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             mScroller.abortAnimation();
             isRunning = false;
             setTouchPoint(mScroller.getFinalX(), mScroller.getFinalY());
-            mView.postInvalidate();
+            mView.invalidate();
         }
     }
 

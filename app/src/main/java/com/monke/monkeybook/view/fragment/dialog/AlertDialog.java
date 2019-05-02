@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
@@ -63,12 +62,6 @@ public class AlertDialog extends AppCompatDialog {
         mAlert.onDestroy();
     }
 
-    @Override
-    protected void onDialogAttachWindow(@NonNull Window window) {
-        window.setGravity(Gravity.CENTER);
-        window.setLayout(getResources().getDimensionPixelSize(R.dimen.modialog_width), WindowManager.LayoutParams.WRAP_CONTENT);
-    }
-
 
     public void show() {
         if (mAlert != null) {
@@ -81,7 +74,7 @@ public class AlertDialog extends AppCompatDialog {
     }
 
     public interface OnClickListener {
-        void onClick(@NonNull AlertDialog dialog, @NonNull View dialogView, int which);
+        void onClick(@NonNull AlertDialog dialog, int which);
     }
 
     public interface OnDismissListener {
@@ -92,7 +85,7 @@ public class AlertDialog extends AppCompatDialog {
         private final AlertController.AlertParams P;
 
         public Builder(FragmentManager fragmentManager) {
-            this(fragmentManager, R.style.Style_Dialog);
+            this(fragmentManager, R.style.Style_Custom_Dialog);
         }
 
         public Builder(FragmentManager fragmentManager, int theme) {

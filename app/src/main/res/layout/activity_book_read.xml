@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.CustomDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.SmoothDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
@@ -41,9 +41,9 @@
                     android:id="@+id/appBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/AppTheme.AppBarOverlay.Read"
                     android:background="@color/colorReadBar"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:theme="@style/AppTheme.AppBarOverlay">
 
                     <androidx.appcompat.widget.Toolbar
                         android:id="@+id/read_toolbar"
@@ -250,22 +250,18 @@
                         android:textColor="@color/colorReadBarText"
                         android:textSize="14sp" />
 
-                    <com.monke.mprogressbar.MHorProgressBar
+                    <androidx.appcompat.widget.AppCompatSeekBar
                         android:id="@+id/hpb_read_progress"
                         android:layout_width="wrap_content"
-                        android:layout_height="25dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignTop="@id/tv_pre"
                         android:layout_alignBottom="@id/tv_pre"
                         android:layout_gravity="center_vertical"
                         android:layout_toStartOf="@id/tv_next"
                         android:layout_toEndOf="@id/tv_pre"
-                        app:bgdrawable="@color/colorReadProgressBack"
-                        app:cantouch="true"
-                        app:cursordrawable="@drawable/shape_read_progress_cursor"
-                        app:cursordrawable_height="13dp"
-                        app:cursordrawable_width="13dp"
-                        app:fontdrawable="@color/colorReadProgressThumb"
-                        app:progresswidth="@dimen/progress_bar_height" />
+                        android:progressBackgroundTint="@color/colorReadProgressBack"
+                        android:progressTint="@color/colorReadProgress"
+                        android:thumbTint="@color/colorReadProgress" />
 
                     <TextView
                         android:id="@+id/tv_next"
@@ -395,14 +391,16 @@
 
         </com.monke.monkeybook.widget.ScrimInsetsFrameLayout>
 
-        <com.monke.mprogressbar.MHorProgressBar
+        <ProgressBar
             android:id="@+id/hpb_next_page_progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/progress_bar_height"
-            android:visibility="invisible"
-            app:bgdrawable="@color/transparent"
-            app:cantouch="false"
-            app:fontdrawable="@color/colorAccent" />
+            android:layout_height="wrap_content"
+            android:minHeight="3dp"
+            android:maxHeight="3dp"
+            android:progressBackgroundTint="@color/transparent"
+            android:progressTint="@color/colorReadProgress"
+            android:visibility="invisible" />
 
     </FrameLayout>
 
@@ -411,4 +409,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start" />
-</com.monke.monkeybook.widget.CustomDrawerLayout>
+</com.monke.monkeybook.widget.SmoothDrawerLayout>

@@ -38,7 +38,7 @@
             <com.monke.monkeybook.widget.CoverCardView
                 android:id="@+id/cover_card"
                 style="@style/AppTheme.CardView.Image"
-                android:layout_width="80dp"
+                android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:transitionName="image_cover">
@@ -57,7 +57,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_book_name"
@@ -77,6 +79,7 @@
                     android:id="@+id/til_book_author"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:hint="bookAuthor">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -115,30 +118,30 @@
                 android:id="@+id/tv_select_local_cover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:padding="5dp"
-                android:textColor="@color/tv_text_default"
-                android:text="选择本地图片" />
+                android:text="选择本地图片"
+                android:textColor="@color/tv_text_default" />
 
             <TextView
                 android:id="@+id/tv_change_cover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/tv_text_default"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:padding="5dp"
-                android:text="封面换源" />
+                android:text="封面换源"
+                android:textColor="@color/tv_text_default" />
 
             <TextView
                 android:id="@+id/tv_refresh_cover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/tv_text_default"
-                android:background="@drawable/selector_pop_font_bg"
+                android:background="@drawable/shape_style_rect_bg"
                 android:padding="5dp"
-                android:text="刷新封面" />
+                android:text="刷新封面"
+                android:textColor="@color/tv_text_default" />
 
         </LinearLayout>
 

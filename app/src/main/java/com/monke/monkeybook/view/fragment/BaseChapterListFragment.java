@@ -5,16 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.monke.monkeybook.R;
-import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.BookShelfHolder;
-import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.help.BookShelfHolder;
+import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;

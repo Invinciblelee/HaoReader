@@ -33,12 +33,13 @@ public class ChapterHelp {
         return -1;
     }
 
-    public static String getFormatChapterName(String chapterName) {
+    public static String formatChapterName(String chapterName) {
         if (StringUtils.isBlank(chapterName)) {
             return "";
         }
 
-        return StringUtils.fullToHalf(chapterName.trim());
+        String halfString = StringUtils.fullToHalf(chapterName.trim());
+        return FormatWebText.trim(halfString.replaceAll(" +", " "));
     }
 
     public String getPureChapterName(String chapterName) {

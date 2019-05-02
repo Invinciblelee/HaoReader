@@ -13,7 +13,6 @@
     <color name="violet">#7F00FF</color>
     <color name="magenta">#FF00FF</color>
     <color name="d_blue">#82A6F5</color>
-    <color name="translucent">#99343434</color>
     <color name="gray">#b8b8b8</color>
     <color name="light_gray">#dddddd</color>
     <color name="light_pink">#fb9090</color>
@@ -21,70 +20,63 @@
     <color name="light_coffee">#A58D5E</color>
     <color name="light_red">#EC4A48</color>
     <color name="light_blue">#039BE5</color>
-    <color name="light_translucent">#23000000</color>
-    <color name="dark_translucent">#66000000</color>
     <color name="common_gray">#EEEEEE</color>
     <color name="dark_white">#f3f3f3</color>
+    <color name="transparent">#00000000</color>
+    <color name="light_translucent">#23000000</color>
+    <color name="dark_translucent">#66000000</color>
     <color name="white_translucent">#66ffffff</color>
+    <color name="dim_translucent">#66000000</color>
+
 
     <color name="background">#f4f4f4</color>
     <color name="card_background">#ffffff</color>
-    <color name="transparent">#00000000</color>
 
-    <color name="colorPrimary">#009688</color>
-    <color name="colorPrimaryDark">#009688</color>
-    <color name="colorAccent">#00897b</color>
-    <color name="colorAccentTranslucent">#6600897b</color>
+    <color name="colorPrimary">#7a92ac</color>
+    <color name="colorPrimaryDark">#7a92ac</color>
+    <color name="colorAccent">#D9AB23</color>
+    <color name="colorAccentDark">#A6831B</color>
+    <color name="colorAccentLight">#FFD75E</color>
+
+    <color name="colorFloatingButton">@color/colorAccent</color>
+    <color name="colorFloatingButtonText">#ffffff</color>
 
     <color name="colorToolBarText">#ffffff</color>
     <color name="colorMenuText">#4a4a4a</color>
 
-    <color name="colorReadBar">#ffffff</color>
-    <color name="colorReadBarText">#4a4a4a</color>
-    <color name="colorReadProgressThumb">#737373</color>
-    <color name="colorReadProgressBack">#c9c9c9</color>
+    <color name="colorReadBar">@color/colorPrimary</color>
+    <color name="colorReadBarText">#ffffff</color>
+    <color name="colorReadProgress">@color/colorAccent</color>
+    <color name="colorReadProgressBack">#f3f3f3</color>
 
-    <color name="colorReadDivider">#299e9e9e</color>
-
-    <color name="btn_bg_press">#dddddd</color>
-    <color name="btn_bg_press_2">#cfcfcf</color>
-    <color name="btn_bg_press_tp">#66000000</color>
-
-    <color name="tv_tag_nor">#eeeeee</color>
-    <color name="tv_tag_nor_dark">#e1e1e1</color>
-    <color name="tv_tag_press">#36000000</color>
-
-    <color name="tv_btn_normal_black">#737373</color>
-    <color name="tv_btn_press_black">#adadad</color>
-
-    <color name="tv_chapter_color_selected">#5e5e5e</color>
-    <color name="tv_chapter_color_normal">#737373</color>
+    <color name="colorReadDivider">#29efefef</color>
 
     <color name="tv_text_default">#4a4a4a</color>
     <color name="tv_text_secondary">#636363</color>
     <color name="tv_text_summary">#8a8a8a</color>
 
-    <color name="progress_back_color">#cccccc</color>
-    <color name="progress_color">#767676</color>
+    <color name="progress_back_color">#636363</color>
+    <color name="progress_color">@color/colorAccent</color>
 
-    <color name="scroller_track_color">#337e7e7e</color>
+    <color name="tv_text_button_neg_nor">#dddddd</color>
+    <color name="tv_text_button_neg_pre">#cfcfcf</color>
+    <color name="btn_bg_press_tp">#66dddddd</color>
 
-    <color name="tv_text_button_nor">#efefef</color>
-    <color name="tv_text_button_pre">#009688</color>
-    <color name="tv_text_button_deep_pre">#00796b</color>
+    <color name="tv_text_button_pos_nor">@color/colorAccent</color>
+    <color name="tv_text_button_pos_pre">@color/colorAccentDark</color>
     <color name="tv_text_button_disable">#dddddd</color>
 
-    <color name="textfield_search_color">#4Df3f3f3</color>
+    <color name="tv_tag_nor">#eeeeee</color>
+    <color name="tv_tag_nor_dark">#e1e1e1</color>
+    <color name="tv_tag_press">#36000000</color>
 
-    <!-- 自定义header背景色 -->
-    <color name="bg_head">#FF0F4AAA</color>
-    <!-- 灰色背景 -->
-    <color name="bg_grey">#FFE5E5E5</color>
-    <!-- 白色背景 -->
-    <color name="bg_white">#FFFFFFFF</color>
-    <!-- 分格线背景色 -->
+    <color name="tv_chapter_color_selected">#5e5e5e</color>
+    <color name="tv_chapter_color_normal">#737373</color>
+    <color name="scroller_track_color">#337e7e7e</color>
+
     <color name="bg_divider_line">#299e9e9e</color>
+
     <!--statusBarBackground-->
     <color name="status_bar_bag">#33000000</color>
-    <color name="navigation_bar_bag">#a4a4a4</color>
+    <color name="navigation_bar_bag">@color/colorPrimary</color>
 </resources>

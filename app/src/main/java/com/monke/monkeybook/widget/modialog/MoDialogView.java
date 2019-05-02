@@ -80,20 +80,6 @@ public class MoDialogView extends LinearLayout {
         tvClose.setOnClickListener(listener);
     }
 
-    //////////////////////两个不同等级的按钮//////////////////////
-    public void showTwoButton(String msg, String b_f, OnClickListener c_f, String b_s, OnClickListener c_s) {
-        removeAllViews();
-        LayoutInflater.from(getContext()).inflate(R.layout.moprogress_dialog_two, this, true);
-        TextView tvMsg = findViewById(R.id.tv_msg);
-        Button btnCancel = findViewById(R.id.btn_cancel);
-        Button btnDone = findViewById(R.id.btn_done);
-        tvMsg.setText(msg);
-        btnCancel.setText(b_f);
-        btnCancel.setOnClickListener(c_f);
-        btnDone.setText(b_s);
-        btnDone.setOnClickListener(c_s);
-    }
-
     /**
      * 显示一段文本
      */
