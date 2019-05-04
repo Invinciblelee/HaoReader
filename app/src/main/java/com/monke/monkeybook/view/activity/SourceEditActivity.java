@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
@@ -33,7 +33,6 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.BitIntentDataManager;
-import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
@@ -62,8 +61,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_content)
-    LinearLayout llContent;
+    @BindView(R.id.rl_content)
+    RelativeLayout rlContent;
     @BindView(R.id.tie_book_source_type)
     TextInputEditText tieBookSourceType;
     @BindView(R.id.til_book_source_type)
@@ -593,7 +592,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             return;
         }
         if (mSoftKeyboardTool != null) {
-            mSoftKeyboardTool.showAtLocation(llContent, Gravity.BOTTOM, 0, 0);
+            mSoftKeyboardTool.showAtLocation(rlContent, Gravity.BOTTOM, 0, 0);
         }
     }
 
