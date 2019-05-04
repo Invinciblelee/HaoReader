@@ -44,6 +44,8 @@
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
+    <string name="pt_auto_clean_book">自动移除无效书籍</string>
+    <string name="ps_auto_clean_book">清理本地已删除的书籍</string>
     <string name="backup">备份</string>
     <string name="restore">恢复</string>
     <string name="backup_permission">备份请给与存储权限</string>

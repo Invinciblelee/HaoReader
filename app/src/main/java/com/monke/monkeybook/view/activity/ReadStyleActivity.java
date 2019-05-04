@@ -14,10 +14,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.appcompat.widget.Toolbar;
 
-import com.gyf.immersionbar.ImmersionBar;
 import com.hwangjr.rxbus.RxBus;
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
@@ -29,7 +27,6 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
-import com.monke.monkeybook.widget.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,11 +88,16 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
     }
 
     @Override
-    protected void initImmersionBar() {
-        super.initImmersionBar();
-        if (!isImmersionBarEnabled()) {
-            mImmersionBar.statusBarDarkFont(false);
-        } else if (darkStatusIcon) {
+    public void initImmersionBar() {
+        mImmersionBar.transparentStatusBar();
+
+        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
+        if (darkStatusIcon) {
             mImmersionBar.statusBarDarkFont(true);
         } else {
             mImmersionBar.statusBarDarkFont(false);

@@ -4,17 +4,11 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"><!--解决有时候自动滑动-->
 
-    <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bookshelf"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_bookshelf"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" />
-
-    </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
+        android:layout_height="match_parent"
+        android:clipToPadding="false" />
 
 </RelativeLayout>

@@ -162,11 +162,13 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
                     if (!bookShelfBean.realChapterListEmpty()) {
                         return Observable.create(emitter -> {
-                            BookshelfHelp.removeFromBookShelf(bookShelf);
-                            BookshelfHelp.saveBookToShelf(bookShelfBean);
-                            bookShelf.setChangeSource(true);
-                            RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                            RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                            if(inBookShelf()) {
+                                BookshelfHelp.removeFromBookShelf(bookShelf);
+                                BookshelfHelp.saveBookToShelf(bookShelfBean);
+                                bookShelf.setChangeSource(true);
+                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
+                                RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                            }
                             emitter.onNext(bookShelfBean);
                             emitter.onComplete();
                         });

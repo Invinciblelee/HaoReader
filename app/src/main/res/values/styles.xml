@@ -68,8 +68,10 @@
 
     <style name="CAppTheme.Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
     </style>
 

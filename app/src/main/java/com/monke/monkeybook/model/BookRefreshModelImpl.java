@@ -8,9 +8,10 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.impl.IBookRefreshModel;
 import com.monke.monkeybook.utils.NetworkUtil;
-import com.monke.monkeybook.utils.RxUtils;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,6 +20,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -50,12 +52,42 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     }
 
     @Override
-    public void queryBooks(int group, boolean refresh) {
+    public void queryBooks(int group, boolean refresh, boolean autoClean) {
         Single.create((SingleOnSubscribe<List<BookShelfBean>>) e -> {
             List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooksByGroup(group);
             e.onSuccess(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .flatMap((Function<List<BookShelfBean>, SingleSource<List<BookShelfBean>>>) bookShelfBeans -> {
+                    if (group == Constant.GROUP_BENDI && autoClean) {
+                        return Single.create((SingleOnSubscribe<List<BookShelfBean>>) emitter -> {
+                            final List<BookShelfBean> remove = new ArrayList<>();
+                            if (bookShelfBeans != null) {
+                                for (BookShelfBean bookShelfBean : bookShelfBeans) {
+                                    if (BookShelfBean.LOCAL_TAG.equals(bookShelfBean.getTag())) {
+                                        File file = new File(bookShelfBean.getNoteUrl());
+                                        if (!file.exists()) {
+                                            BookshelfHelp.removeFromBookShelf(bookShelfBean);
+                                            remove.add(bookShelfBean);
+                                        }
+                                    }
+                                }
+                            }
+                            emitter.onSuccess(remove);
+                        }).observeOn(AndroidSchedulers.mainThread())
+                                .onErrorReturnItem(Collections.emptyList())
+                                .map(remove -> {
+                                    if (!remove.isEmpty()) {
+                                        bookShelfBeans.removeAll(remove);
+                                        dispatchErrorEvent("发现" + remove.size() + "本失效书籍，已自动清理");
+                                    }
+                                    return bookShelfBeans;
+                                });
+                    } else {
+                        return Single.just(bookShelfBeans);
+                    }
+                })
                 .map(ensureNotLoading())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<BookShelfBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -181,8 +213,10 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     private Observable<BookShelfBean> saveBookToShelfO(BookShelfBean bookShelfBean) {
         return Observable.create(e -> {
             if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {//移出了书架
+                BookshelfHelp.delChapterList(bookShelfBean.getNoteUrl());
                 BookshelfHelp.saveBookToShelf(bookShelfBean);
             }
+            bookShelfBean.setChapterList(null, false);
             e.onNext(bookShelfBean);
             e.onComplete();
         });

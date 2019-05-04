@@ -5,6 +5,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.CookieHelper;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class AnalyzeHeaders {
     public static Map<String, String> getMap(BookSourceBean bookSource) {
         Map<String, String> headerMap = new HashMap<>();
         String userAgent = bookSource == null ? null : bookSource.getHttpUserAgent();
-        if (!isEmpty(userAgent)) {
+        if (!StringUtils.isBlank(userAgent)) {
             headerMap.put("User-Agent", userAgent);
         } else {
             headerMap.put("User-Agent", getDefaultUserAgent());

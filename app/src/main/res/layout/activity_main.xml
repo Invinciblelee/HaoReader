@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_container"
-    android:fitsSystemWindows="true"
-    app:appInsetForeground="@color/colorPrimary"
-    app:appConsumeInsets="false"
-    android:background="@color/background"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:background="@color/background"
+    app:appConsumeInsets="false"
+    app:appInsetForeground="@color/colorPrimary">
 
     <com.monke.monkeybook.widget.SmoothDrawerLayout
         android:id="@+id/drawer"
@@ -22,11 +21,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            android:background="@color/background"
             app:headerLayout="@layout/navigation_header"
+            app:itemIconTint="@color/navigation_icon_color"
             app:itemTextAppearance="@style/CAppTheme.Navigation.Text"
             app:itemTextColor="@color/navigation_color"
-            app:itemIconTint="@color/navigation_icon_color"
-            android:background="@color/background"
             app:menu="@menu/menu_drawer" />
 
 
@@ -34,8 +33,8 @@
             android:id="@+id/bookshelf_search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end" />
 
     </com.monke.monkeybook.widget.SmoothDrawerLayout>
-</com.monke.monkeybook.widget.ScrimInsetsFrameLayout>
+</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>
 

@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -129,8 +131,10 @@ public class AppCompat {
                     if (viewHolder != null && "SeparatorViewHolder".equals(viewHolder.getClass().getSimpleName())) {
                         if (viewHolder.itemView instanceof FrameLayout) {
                             FrameLayout frameLayout = (FrameLayout) viewHolder.itemView;
-                            frameLayout.removeAllViews();
-                            View.inflate(view.getContext(), R.layout.view_navigation_divider, frameLayout);
+                            View divider = frameLayout.getChildAt(0);
+                            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) divider.getLayoutParams();
+                            params.height = view.getResources().getDimensionPixelSize(R.dimen.line_height);
+                            divider.setLayoutParams(params);
                         }
                     }
                 }

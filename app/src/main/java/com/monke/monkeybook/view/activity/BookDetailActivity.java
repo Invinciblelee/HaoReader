@@ -135,6 +135,21 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     @Override
+    public void initImmersionBar() {
+        mImmersionBar.transparentStatusBar();
+
+        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
+        mImmersionBar.statusBarDarkFont(false);
+
+        mImmersionBar.init();
+    }
+
+    @Override
     protected void initData() {
         mPresenter.initData(getIntent());
         animShowInfo = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
@@ -393,7 +408,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     private void startForBookType(String bookType) {
         if (TextUtils.equals(bookType, BookType.TEXT)) {
             //进入阅读
-            ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf(), mPresenter.inBookShelf());
+            ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf());
             finish();
         } else if (TextUtils.equals(bookType, BookType.AUDIO)) {
             AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf());
@@ -419,23 +434,21 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     private void showCoverImage(String image) {
-        if (!this.isFinishing()) {
-            Glide.with(this).load(image)
-                    .apply(new RequestOptions().dontAnimate().centerCrop()
-                            .placeholder(R.drawable.img_cover_default)
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .error(R.drawable.img_cover_default)).into(ivCover);
+        Glide.with(this).load(image)
+                .apply(new RequestOptions().dontAnimate().centerCrop()
+                        .placeholder(R.drawable.img_cover_default)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .error(R.drawable.img_cover_default)).into(ivCover);
 
-            Glide.with(this).load(image)
-                    .apply(new RequestOptions()
-                            .dontAnimate()
-                            .centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .placeholder(R.drawable.img_cover_gs)
-                            .error(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
-                    .into(ivBlurCover);
-        }
+        Glide.with(this).load(image)
+                .apply(new RequestOptions()
+                        .dontAnimate()
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .placeholder(R.drawable.img_cover_gs)
+                        .error(R.drawable.img_cover_gs))
+                .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
+                .into(ivBlurCover);
     }
 
     private void changeSource() {

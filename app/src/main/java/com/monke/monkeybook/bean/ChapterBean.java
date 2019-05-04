@@ -35,7 +35,6 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     private Integer start;
     //章节内容在文章中的终止位置(本地)
     private Integer end;
-
     @Transient
     private String nextChapterUrl;
 

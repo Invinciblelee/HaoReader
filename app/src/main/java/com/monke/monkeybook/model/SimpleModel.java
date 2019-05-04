@@ -14,7 +14,7 @@ public class SimpleModel {
 
     public static Observable<Response<String>> getResponse(AnalyzeUrl analyzeUrl) {
         try {
-            switch (analyzeUrl.getUrlMode()) {
+            switch (analyzeUrl.getRequestMethod()) {
                 case POST:
                     return OkHttpHelper.getInstance().createService(analyzeUrl.getHost(), IHttpPostApi.class)
                             .searchBook(analyzeUrl.getPath(),

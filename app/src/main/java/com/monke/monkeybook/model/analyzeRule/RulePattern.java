@@ -58,12 +58,7 @@ final class RulePattern {
         rawRule = ensureRedirectRule(rawRule);
 
         //分离正则表达式
-        if (ruleMode != RuleMode.CSS) {
-            rawRule = ensureRegexRule(rawRule);
-        } else {
-            replaceRegex = "";
-            replacement = "";
-        }
+        rawRule = ensureRegexRule(rawRule, ruleMode == RuleMode.CSS);
 
         //分离js
         int start = ensureJavaScripts(rawRule);
@@ -109,8 +104,8 @@ final class RulePattern {
         return rawRule;
     }
 
-    private String ensureRegexRule(String rawRule) {
-        final String[] rules = rawRule.split(Patterns.RULE_REGEX);
+    private String ensureRegexRule(String rawRule, boolean css) {
+        final String[] rules = rawRule.split(css ? Patterns.RULE_REGEX_TRAIT : Patterns.RULE_REGEX);
         rawRule = rules[0];
         if (rules.length > 1) {
             replaceRegex = rules[1];

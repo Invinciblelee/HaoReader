@@ -60,7 +60,7 @@ import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
 import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.ReadBottomStatusBar;
-import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
+import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.modialog.EditBookmarkView;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.page.LocalPageLoader;
@@ -93,7 +93,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @BindView(R.id.controls_frame)
-    ScrimInsetsFrameLayout controlsView;
+    ScrimInsetsRelativeLayout controlsView;
     @BindView(R.id.ll_menu_bottom)
     LinearLayout llMenuBottom;
     @BindView(R.id.tv_pre)
@@ -182,9 +182,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     private ChapterDrawerFragment chapterFragment;
 
-    public static void startThis(MBaseActivity activity, BookShelfBean bookShelf, boolean inBookShelf) {
+    public static void startThis(MBaseActivity activity, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, ReadBookActivity.class);
-        intent.putExtra("inBookShelf", inBookShelf);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         intent.putExtra("fromDetail", activity instanceof BookDetailActivity);
@@ -193,10 +192,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         activity.startActivity(intent);
     }
 
-    public static void startThisFromUri(MBaseActivity activity, BookShelfBean bookShelf, boolean inBookShelf) {
+    public static void startThisFromUri(MBaseActivity activity, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, ReadBookActivity.class);
         intent.putExtra("fromUri", true);
-        intent.putExtra("inBookShelf", inBookShelf);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
@@ -273,14 +271,14 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    protected void tintToolbarNavIcon() {
+    protected void initToolbar() {
     }
 
     /**
      * 状态栏
      */
     @Override
-    protected void initImmersionBar() {
+    public void initImmersionBar() {
         mImmersionBar.fullScreen(true);
 
 
@@ -1141,7 +1139,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 BookInfoActivity.startThis(this, mPresenter.getBookShelf().copy());
                 break;
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -1353,13 +1351,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     /**
-     * 朗读
-     */
-    private void newAloud() {
-
-    }
-
-    /**
      * 更新朗读状态
      */
     @Override
@@ -1474,7 +1465,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     toast(getString(R.string.read_aloud_pause));
                     return true;
                 } else {
-                    finish();
+                    onBackPressed();
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -1592,6 +1583,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             mHandler.removeCallbacks(keepScreenRunnable);
         }
         super.onDestroy();
+        if (mPresenter.inBookShelf()) {
+            readBookControl.setLastNoteUrl(mPresenter.getBookShelf().getNoteUrl());
+        }
         if (batInfoReceiver != null) {
             unregisterReceiver(batInfoReceiver);
             batInfoReceiver = null;
@@ -1605,17 +1599,23 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         BookShelfHolder.get().clear();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!checkAddShelf()) {
+            return;
+        }
+        finish();
+    }
+
     /**
      * 结束
      */
     @Override
     public void finish() {
-        if (!checkAddShelf()) {
-            return;
-        }
         BitIntentDataManager.getInstance().cleanAllData();
-        if (AppActivityManager.getInstance().size() == 1) {
-            android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
+        if (AppActivityManager.getInstance().indexOf(this) == 0
+                && AppActivityManager.getInstance().size() == 1) {
+            Intent intent = new Intent(this, MainActivity.class);
             startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
             super.finishByAnim(R.anim.anim_alpha_in, R.anim.anim_alpha_out);
         } else {

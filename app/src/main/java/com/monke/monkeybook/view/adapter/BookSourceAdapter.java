@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.dao.BookSourceBeanDao;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.utils.StringUtils;
@@ -76,7 +74,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
         activity.upGroupMenu();
     }
 
-    private void allDataList(List<BookSourceBean> bookSourceBeanList) {
+    private void setAllDataList(List<BookSourceBean> bookSourceBeanList) {
         this.allDataList = bookSourceBeanList;
         notifyDataSetChanged();
         activity.upDateSelectAll();
@@ -144,34 +142,27 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             activity.upSearchView(dataList.size());
         });
         holder.topView.setOnClickListener(view -> {
-            allDataList(BookSourceManager.getInstance().getAllBookSource());
-
-            BookSourceBean moveData = dataList.get(realPosition);
-            int maxWeight = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .orderDesc(BookSourceBeanDao.Properties.Weight).limit(1).unique().getWeight();
-            moveData.setWeight(maxWeight + 1);
-            BookSourceManager.getInstance().saveBookSource(moveData);
-
-            dataList.remove(realPosition);
+            setAllDataList(BookSourceManager.getInstance().getAllBookSource());
+            BookSourceBean moveData = dataList.get(position);
+            dataList.remove(position);
+            notifyItemRemoved(position);
+            dataList.add(0, moveData);
             notifyItemInserted(0);
-            dataList.add(0, item);
-            notifyItemRemoved(realPosition + 1);
-
-            if (dataList.size() != allDataList.size()) {
-                for (int i = 0; i < allDataList.size(); i++) {
-                    if (item.equals(allDataList.get(i))) {
-                        index = i;
-                        break;
-                    }
-                }
-                BookSourceBean moveDataA = allDataList.get(index);
-                allDataList.remove(index);
-                notifyItemInserted(0);
-                allDataList.add(0, moveDataA);
-                notifyItemRemoved(index + 1);
+            if (canTop) {
+                BookSourceBean first = allDataList.get(0);
+                int maxWeight = first.getWeight();
+                moveData.setWeight(maxWeight + 1);
+                int maxNumber = first.getSerialNumber();
+                moveData.setSerialNumber(maxNumber + 1);
             }
-            notifyDataSetChanged();
-            activity.saveDate(dataList);
+            if (dataList.size() != allDataList.size()) {
+                index = allDataList.indexOf(moveData);
+                allDataList.remove(index);
+                allDataList.add(0, moveData);
+                activity.saveDate(allDataList);
+            } else {
+                activity.saveDate(dataList);
+            }
         });
     }
 

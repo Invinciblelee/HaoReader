@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="@color/tv_text_button_neg_nor"/>
+    <solid android:color="@color/bg_read_divider"/>
 
 </shape>

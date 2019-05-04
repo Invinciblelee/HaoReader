@@ -16,6 +16,7 @@ G.新增几个java调用方法(注：下面的规则不能用连接符号)：
     2.parseResultUrl(String source, String rule) 返回字符串，会替换baseUrl
     3.parseResultContents(String source, String rule)返回字符串列表
     4.formatHtml(String string) 可以把html格式化为可阅读的内容
+F.CSS可以用##match##replace 的方式使用正则表达式
 
 **2019/04/30**
 *修改界面

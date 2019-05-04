@@ -46,7 +46,7 @@ class ChapterProvider {
     ChapterProvider(PageLoader pageLoader) {
         this.mPageLoader = pageLoader;
 
-        mExecutor = Executors.newFixedThreadPool(4);
+        mExecutor = Executors.newFixedThreadPool(8);
         mScheduler = Schedulers.from(mExecutor);
     }
 

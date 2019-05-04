@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="6dp"
-                android:background="@drawable/bg_ib_pre_round"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="5dp"
                 android:src="@drawable/ic_stop_white_24dp"
                 android:tint="@color/tv_text_default" />

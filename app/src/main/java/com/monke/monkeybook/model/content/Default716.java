@@ -143,9 +143,9 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 bookShelfBean.setLastChapterName(targetSource.get("lastChapter").getAsString());
                 BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
                 bookInfoBean.setBookType(BookType.TEXT);
+                bookInfoBean.setTag(TAG);
+                bookInfoBean.setOrigin(TAG);
                 bookInfoBean.setNoteUrl(bookShelfBean.getNoteUrl());
-                bookInfoBean.setTag(bookShelfBean.getTag());
-                bookInfoBean.setOrigin(bookShelfBean.getTag());
                 bookInfoBean.setChapterListUrl("http://api.zhuishushenqi.com/atoc/" + targetSource.get("_id").getAsString() + "?view=chapters");
                 e.onNext(bookShelfBean);
             } else {
@@ -174,8 +174,8 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 JsonObject chapter = chapterArray.get(i).getAsJsonObject();
                 ChapterBean chapterBean = new ChapterBean();
                 chapterBean.setDurChapterIndex(i);
-                chapterBean.setNoteUrl(bookShelfBean.getNoteUrl());
                 chapterBean.setTag(bookShelfBean.getTag());
+                chapterBean.setNoteUrl(bookShelfBean.getNoteUrl());
                 chapterBean.setDurChapterName(chapter.get("title").getAsString());
                 chapterBean.setDurChapterUrl("http://chapterup.zhuishushenqi.com/chapter/" + URLEncoder.encode(chapter.get("link").getAsString(), "UTF-8"));
                 chapterList.add(chapterBean);
@@ -206,6 +206,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
                 bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
                 bookContentBean.setTag(chapterBean.getTag());
+                bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
                 if (chapterJson.has("isVip")) {
                     if (chapterJson.get("isVip").getAsBoolean()) {
                         bookContentBean.setDurChapterContent("当前章节为VIP章节，暂时无法查看");

@@ -70,7 +70,7 @@ public class SearchTaskImpl implements ISearchTask {
             } else {
                 searchEngine.searchBegin();
                 WebBookModel.getInstance()
-                        .searchBook(query, searchEngine.getPage(), searchEngine.getTag())
+                        .searchBook(searchEngine.getTag(), query, searchEngine.getPage())
                         .subscribeOn(scheduler)
                         .flatMap(this::dispatchResult)
                         .doAfterNext(bool -> incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime()))

@@ -28,16 +28,6 @@
     <attr name="appInsetForeground" format="reference" />
     <attr name="appConsumeInsets" format="boolean" />
 
-    <declare-styleable name="ScrimInsetsFrameLayout">
-        <attr name="appInsetForeground" />
-        <attr name="appConsumeInsets" />
-    </declare-styleable>
-
-    <declare-styleable name="ScrimInsetsLinearLayout">
-        <attr name="appInsetForeground" />
-        <attr name="appConsumeInsets" />
-    </declare-styleable>
-
     <declare-styleable name="ScrimInsetsRelativeLayout">
         <attr name="appInsetForeground" />
         <attr name="appConsumeInsets" />

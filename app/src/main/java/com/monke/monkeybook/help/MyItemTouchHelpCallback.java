@@ -1,13 +1,18 @@
 package com.monke.monkeybook.help;
 
+import android.util.Log;
+import android.view.ViewParent;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
+import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 /**
  * Created by GKF on 2018/3/16.
@@ -83,7 +88,7 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
      * @return
      */
     @Override
-    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+    public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {// GridLayoutManager
             // flag如果值是0，相当于这个功能被关闭
@@ -120,7 +125,7 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
      * @return
      */
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder srcViewHolder, RecyclerView.ViewHolder targetViewHolder) {
+    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder srcViewHolder, @NonNull RecyclerView.ViewHolder targetViewHolder) {
         if (onItemTouchCallbackListener != null) {
             return onItemTouchCallbackListener.onMove(srcViewHolder.getLayoutPosition(), targetViewHolder.getLayoutPosition());
         }
@@ -128,7 +133,7 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         if (onItemTouchCallbackListener != null) {
             onItemTouchCallbackListener.onSwiped(viewHolder.getLayoutPosition());
         }
@@ -144,11 +149,11 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         super.onSelectedChanged(viewHolder, actionState);
         if (viewHolder instanceof BookShelfGridAdapter.MyViewHolder) {
-            ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.colorAccentLight);
-        }else if(viewHolder instanceof BookShelfListAdapter.MyViewHolder){
-            ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.colorAccentLight);
-        }else if(viewHolder != null){
-            viewHolder.itemView.setBackgroundResource(R.color.colorAccentLight);
+            ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.colorAccentTranslucent);
+        } else if (viewHolder instanceof BookShelfListAdapter.MyViewHolder) {
+            ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.colorAccentTranslucent);
+        } else if (viewHolder != null) {
+            viewHolder.itemView.setBackgroundResource(R.color.colorAccentTranslucent);
         }
     }
 
@@ -159,13 +164,13 @@ public class MyItemTouchHelpCallback extends ItemTouchHelper.Callback {
      * @param viewHolder
      */
     @Override
-    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
         if (viewHolder instanceof BookShelfGridAdapter.MyViewHolder) {
             ((BookShelfGridAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.transparent);
-        }else if(viewHolder instanceof BookShelfListAdapter.MyViewHolder){
+        } else if (viewHolder instanceof BookShelfListAdapter.MyViewHolder) {
             ((BookShelfListAdapter.MyViewHolder) viewHolder).content.setBackgroundResource(R.color.transparent);
-        }else {
+        } else {
             viewHolder.itemView.setBackgroundResource(R.color.transparent);
         }
         if (onItemTouchCallbackListener != null) {

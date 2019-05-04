@@ -39,7 +39,7 @@ import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
-import com.monke.monkeybook.widget.ScrimInsetsFrameLayout;
+import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj, R.string.item_group_bd};
 
     @BindView(R.id.layout_container)
-    ScrimInsetsFrameLayout container;
+    ScrimInsetsRelativeLayout container;
     @BindView(R.id.book_list_frame)
     FrameLayout frameContent;
     @BindView(R.id.drawer)
@@ -76,7 +76,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private boolean viewIsList;
     private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
-    private boolean isRecreate;
 
     private BookListFragment[] fragments = new BookListFragment[4];
 
@@ -138,7 +137,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     protected void initData() {
         viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
         group = getPreferences().getInt("shelfGroup", 0);
-        isRecreate = getIntent().getBooleanExtra("isRecreate", false);
         getIntent().putExtra("isRecreate", false);
     }
 
@@ -213,7 +211,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                             .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.removeFromBookShelf(bookShelf))
                             .show();
                 } else {
-                    ReadBookActivity.startThis(MainActivity.this, bookShelf, true);
+                    ReadBookActivity.startThis(MainActivity.this, bookShelf);
                 }
             }
 
@@ -266,7 +264,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         switch (id) {
             case R.id.action_search:
                 //点击搜索
-                startActivityByAnim(new Intent(this, SearchBookActivity.class), toolbar, "sharedView");
+                startActivityByAnim(new Intent(this, SearchBookActivity.class), R.anim.anim_alpha_in, R.anim.anim_alpha_out);
                 break;
             case R.id.action_library:
                 startActivity(new Intent(this, FindBookActivity.class));
@@ -306,6 +304,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                         .setNegativeButton(R.string.cancel, null)
                         .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.clearBookshelf())
                         .show();
+                break;
+            case R.id.action_refreshBookshelf:
+                BookListFragment current = fragments[this.group];
+                if (current != null) {
+                    current.refreshBookShelf(true);
+                }
                 break;
             case android.R.id.home:
                 if (drawer.isDrawerOpen(GravityCompat.START)) {

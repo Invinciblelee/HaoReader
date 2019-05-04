@@ -23,6 +23,8 @@ public interface ChoiceBookContract {
 
     interface View extends IView {
 
+        void initImmersionBar();
+
         void refreshSearchBook(List<SearchBookBean> books);
 
         void loadMoreSearchBook(List<SearchBookBean> books);

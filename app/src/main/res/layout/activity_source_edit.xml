@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
     app:appInsetForeground="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -30,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appBar"
+        android:overScrollMode="ifContentScrolls"
         android:scrollbars="none">
 
         <LinearLayout
@@ -402,4 +402,4 @@
 
         </LinearLayout>
     </ScrollView>
-</com.monke.monkeybook.widget.ScrimInsetsLinearLayout>
+</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

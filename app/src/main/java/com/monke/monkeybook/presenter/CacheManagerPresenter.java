@@ -9,6 +9,7 @@ import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.presenter.contract.CacheManagerContract;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.RxUtils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -148,8 +149,8 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
 
     private void sortFile(List<File> fileList) {
         Collections.sort(fileList, (o1, o2) -> {
-            int i1 = Integer.parseInt(o1.getName().split("-")[0]);
-            int i2 = Integer.parseInt(o2.getName().split("-")[0]);
+            int i1 = StringUtils.stringToInt(o1.getName().split("-")[0]);
+            int i2 = StringUtils.stringToInt(o2.getName().split("-")[0]);
             return Integer.compare(i1, i2);
         });
     }

@@ -2,12 +2,13 @@
 package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -20,7 +21,6 @@ import com.monke.monkeybook.widget.refreshview.OnLoadMoreListener;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -163,9 +163,9 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
             rfRvSearchBooks.loadMoreError();
         } else {
             //刷新失败
-            if(!NetworkUtil.isNetworkAvailable()){
+            if (!NetworkUtil.isNetworkAvailable()) {
                 rfRvSearchBooks.refreshError("网络不可用");
-            }else {
+            } else {
                 rfRvSearchBooks.refreshError();
             }
         }

@@ -20,6 +20,7 @@
     <application
         android:name=".MApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -51,7 +52,7 @@
         <activity
             android:name=".view.activity.MainActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/CAppTheme.Activity" />
 
@@ -145,7 +146,8 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/CAppTheme.Activity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".view.activity.ReadStyleActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -209,11 +211,11 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
 
-
-        <activity android:name=".help.permission.PermissionActivity"
+        <activity
+            android:name=".help.permission.PermissionActivity"
             android:launchMode="singleTask"
             android:theme="@style/CAppTheme.Activity.Permission"
-            android:windowSoftInputMode="adjustNothing|stateAlwaysHidden"/>
+            android:windowSoftInputMode="adjustNothing|stateAlwaysHidden" />
 
         <service android:name=".service.DownloadService" />
         <service android:name=".service.ReadAloudService" />

@@ -16,6 +16,11 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Transient;
 
+import java.util.Arrays;
+
+import static com.monke.monkeybook.help.Constant.BOOK_TYPES;
+import static com.monke.monkeybook.help.Constant.RULE_TYPES;
+
 /**
  * Created by GKF on 2017/12/14.
  * 书源信息
@@ -258,6 +263,9 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public void setBookSourceType(@BookType String bookSourceType) {
+        if (!Arrays.asList(BOOK_TYPES).contains(StringUtils.nonNull(bookSourceType))) {
+            bookSourceType = BookType.TEXT;
+        }
         this.bookSourceType = bookSourceType;
     }
 
@@ -266,6 +274,9 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public void setBookSourceRuleType(@RuleType String bookSourceRuleType) {
+        if (!Arrays.asList(RULE_TYPES).contains(StringUtils.nonNull(bookSourceRuleType))) {
+            bookSourceRuleType = RuleType.DEFAULT;
+        }
         this.bookSourceRuleType = bookSourceRuleType;
     }
 

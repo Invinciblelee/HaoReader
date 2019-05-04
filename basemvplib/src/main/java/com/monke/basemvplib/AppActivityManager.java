@@ -39,7 +39,16 @@ public class AppActivityManager {
     添加Activity
      */
     public void add(Activity activity) {
-        activities.add(new WeakReference<Activity>(activity));
+        activities.add(new WeakReference<>(activity));
+    }
+
+    public int indexOf(Activity activity) {
+        for (WeakReference<Activity> temp : activities) {
+            if (null != temp.get() && temp.get() == activity) {
+                return activities.indexOf(temp);
+            }
+        }
+        return -1;
     }
 
     /*
@@ -100,8 +109,8 @@ public class AppActivityManager {
     /*
     判断指定Activity是否存在
      */
-    public Boolean isExist(Class<?> activityClass) {
-        Boolean result = false;
+    public boolean isExist(Class<?> activityClass) {
+        boolean result = false;
         for (WeakReference<Activity> item : activities) {
             if (null != item && null != item.get() && item.get().getClass() == activityClass) {
                 result = true;
@@ -111,7 +120,7 @@ public class AppActivityManager {
         return result;
     }
 
-    public Boolean isEmpty() {
+    public boolean isEmpty() {
         return activities == null || activities.isEmpty();
     }
 

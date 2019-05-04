@@ -6,6 +6,9 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
+import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -55,7 +58,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     }
 
     private void searchBook(final long searchTime) {
-        WebBookModel.getInstance().findBook(url, page, tag)
+        WebBookModel.getInstance().findBook(tag, url, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
@@ -145,6 +148,11 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     @Override
     public void detachView() {
         RxBus.get().unregister(this);
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.IMMERSION_CHANGE)})
+    public void initImmersionBar(Boolean immersion) {
+        mView.initImmersionBar();
     }
 
 }

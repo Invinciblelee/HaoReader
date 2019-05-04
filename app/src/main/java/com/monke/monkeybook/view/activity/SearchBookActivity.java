@@ -231,7 +231,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void finish() {
-        if (AppActivityManager.getInstance().size() == 1) {
+        if (AppActivityManager.getInstance().indexOf(this) == 0
+                && AppActivityManager.getInstance().size() == 1) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
         }

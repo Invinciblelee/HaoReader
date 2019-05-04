@@ -35,7 +35,7 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
     @Override
     public void loadAudioBooks(boolean refresh) {
         boolean needUpdate = refresh || haveRefresh();
-        impl.queryBooks(Constant.GROUP_AUDIO, needUpdate);
+        impl.queryBooks(Constant.GROUP_AUDIO, needUpdate, false);
     }
 
     @Override

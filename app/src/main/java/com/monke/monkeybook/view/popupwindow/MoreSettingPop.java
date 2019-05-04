@@ -155,8 +155,8 @@ public class MoreSettingPop extends PopupWindow {
             boolean isChecked = sbImmersionBar.isChecked();
             sbImmersionBar.setChecked(!isChecked);
             readBookControl.setImmersionStatusBar(!isChecked);
-            RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
             changeProListener.refresh();
+            RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
         });
 
         llScreenTimeOut.setOnClickListener(view -> {

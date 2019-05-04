@@ -5,9 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
+
+import androidx.core.view.ViewCompat;
 
 import com.monke.monkeybook.R;
 
@@ -114,6 +115,10 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
         if (mInsetForeground != null) {
             mInsetForeground.setCallback(null);
         }
+    }
+
+    public Rect getWindowInsets() {
+        return mInsets;
     }
 
     protected void onInsetsChanged(Rect insets) {

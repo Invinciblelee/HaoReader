@@ -61,7 +61,8 @@ public class BookSourceManager extends BaseModelImpl {
         if (selectedBookSource == null) {
             selectedBookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                     .where(BookSourceBeanDao.Properties.Enable.eq(true))
-                    .orderRaw(getBookSourceSort())
+                    .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                    .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                     .list();
         }
         return selectedBookSource;
@@ -92,7 +93,8 @@ public class BookSourceManager extends BaseModelImpl {
 
         selectedBookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.Enable.eq(true))
-                .orderRaw(getBookSourceSort())
+                .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();
 
         upGroupList();
@@ -130,14 +132,6 @@ public class BookSourceManager extends BaseModelImpl {
             bookSourceBean.setEnable(temp.getEnable());
         } else {
             bookSourceBean.setEnable(true);
-        }
-
-        if (!Arrays.asList(BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
-            bookSourceBean.setBookSourceType(BookType.TEXT);
-        }
-
-        if (!Arrays.asList(RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())) {
-            bookSourceBean.setBookSourceRuleType(RuleType.DEFAULT);
         }
 
         if (bookSourceBean.getSerialNumber() == 0) {

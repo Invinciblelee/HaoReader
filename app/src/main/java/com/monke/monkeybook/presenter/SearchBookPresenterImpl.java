@@ -264,4 +264,9 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     public void sourceListChange(Boolean change) {
         searchBookModel.notifySearchEngineChanged();
     }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.IMMERSION_CHANGE)})
+    public void initImmersionBar(Boolean immersion) {
+        mView.initImmersionBar();
+    }
 }

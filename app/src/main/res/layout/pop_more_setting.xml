@@ -9,7 +9,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="256dp"
-        android:background="@color/background">
+        android:background="@color/card_background"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"

@@ -11,9 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.gyf.immersionbar.ImmersionBar;
+
 /**
  * create on 2019/2/13
- *
+ * <p>
  * by 咸鱼
  */
 public class PermissionActivity extends AppCompatActivity {
@@ -48,6 +50,14 @@ public class PermissionActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        ImmersionBar.with(this)
+                .transparentBar()
+                .init();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (RequestPlugins.sRequestCallback != null) {
@@ -71,5 +81,17 @@ public class PermissionActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 }

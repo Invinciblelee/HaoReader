@@ -11,7 +11,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -78,9 +76,8 @@ public class Debug {
 
     private void searchDebug(String key) {
         printLog(String.format("★%s 搜索开始", getDoTime()));
-        WebBookModel.getInstance().searchBook(key, 1, Debug.SOURCE_DEBUG_TAG)
+        WebBookModel.getInstance().searchBook(Debug.SOURCE_DEBUG_TAG, key, 1)
                 .subscribeOn(Schedulers.single())
-                .timeout(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<SearchBookBean>>() {
                     @Override
@@ -210,7 +207,7 @@ public class Debug {
         printLog("\n");
         printLog(String.format("★%s 正文开始", getDoTime()));
 
-        if(BookType.AUDIO.equals(bookInfoBean.getBookType())){
+        if (BookType.AUDIO.equals(bookInfoBean.getBookType())) {
             bookAudioDebug(bookInfoBean, chapterBean);
             return;
         }
@@ -245,7 +242,7 @@ public class Debug {
                 });
     }
 
-    private void bookAudioDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean){
+    private void bookAudioDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
         WebBookModel.getInstance().processAudioChapter(bookInfoBean.getTag(), chapterBean)
                 .compose(RxUtils::toSimpleSingle)
                 .timeout(30L, TimeUnit.SECONDS)
@@ -253,7 +250,7 @@ public class Debug {
                 .subscribe(new Observer<ChapterBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                            compositeDisposable.add(d);
+                        compositeDisposable.add(d);
                     }
 
                     @Override

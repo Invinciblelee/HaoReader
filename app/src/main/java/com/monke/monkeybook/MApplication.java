@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
+import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
@@ -161,7 +162,7 @@ public class MApplication extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+                AppActivityManager.getInstance().add(activity);
             }
 
             @Override
@@ -191,6 +192,7 @@ public class MApplication extends Application {
 
             @Override
             public void onActivityDestroyed(Activity activity) {
+                AppActivityManager.getInstance().remove(activity);
                 if (activity instanceof MainActivity) {
                     Intent intent = activity.getIntent();
                     if (intent != null && !intent.getBooleanExtra("isRecreate", false)) {

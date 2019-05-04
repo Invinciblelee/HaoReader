@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#2b2b2b</color>
-    <color name="card_background">#363636</color>
+    <color name="background">#212121</color>
+    <color name="card_background">#2e2e2e</color>
 
     <color name="colorPrimary">#363636</color>
     <color name="colorPrimaryDark">#363636</color>
     <color name="colorAccent">#D9AB23</color>
     <color name="colorAccentDark">#A6831B</color>
     <color name="colorAccentLight">#FFD75E</color>
+    <color name="colorAccentTranslucent">#66D9AB23</color>
 
     <color name="colorFloatingButton">@color/colorAccent</color>
     <color name="colorFloatingButtonText">#ffffff</color>
@@ -15,12 +16,10 @@
     <color name="colorToolBarText">#f3f3f3</color>
     <color name="colorMenuText">#f3f3f3</color>
 
-    <color name="colorReadBar">#363636</color>
+    <color name="colorReadBar">@color/colorPrimary</color>
     <color name="colorReadBarText">#f3f3f3</color>
     <color name="colorReadProgress">@color/colorAccent</color>
     <color name="colorReadProgressBack">#e3e3e3</color>
-
-    <color name="colorReadDivider">#298e8e8e</color>
 
     <color name="progress_back_color">#e3e3e3</color>
     <color name="progress_color">@color/colorAccent</color>
@@ -29,19 +28,22 @@
     <color name="tv_text_secondary">#c9c9c9</color>
     <color name="tv_text_summary">#999999</color>
 
-    <color name="tv_text_button_neg_nor">#454545</color>
-    <color name="tv_text_button_neg_pre">#303030</color>
+    <color name="tv_text_button_neg_nor">@color/card_background</color>
+    <color name="tv_text_button_neg_pre">#262626</color>
 
     <color name="tv_text_button_pos_nor">@color/colorAccent</color>
     <color name="tv_text_button_pos_pre">@color/colorAccentDark</color>
     <color name="tv_text_button_disable">#434343</color>
 
-    <color name="tv_tag_nor">#515151</color>
+    <color name="tv_tag_nor">#505050</color>
     <color name="tv_tag_nor_dark">#4a4a4a</color>
-    <color name="tv_tag_press">#66454545</color>
+    <color name="tv_tag_press">#80454545</color>
 
     <color name="tv_chapter_color_selected">#b7b7b7</color>
     <color name="tv_chapter_color_normal">#969696</color>
+
+    <color name="bg_read_divider">#297e7e7e</color>
+    <color name="bg_divider_line">#294a4a4a</color>
 
     <!--statusBarBackground-->
     <color name="navigation_bar_bag">@color/colorPrimary</color>

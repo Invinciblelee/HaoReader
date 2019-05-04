@@ -17,6 +17,14 @@
         android:summary="@string/s_bookshelf_anim"
         android:title="@string/t_bookshelf_anim" />
 
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pk_auto_clean_book"
+        android:layout="@layout/view_preference"
+        android:summary="@string/ps_auto_clean_book"
+        android:title="@string/pt_auto_clean_book" />
+
     <SwitchPreference
         android:defaultValue="true"
         android:key="@string/pk_auto_refresh"

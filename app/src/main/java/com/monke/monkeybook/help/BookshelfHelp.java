@@ -200,6 +200,13 @@ public class BookshelfHelp {
         }
     }
 
+
+    public static void delChapterList(String noteUrl) {
+        DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
+                .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
     public static boolean hasCache(BookShelfBean bookShelfBean) {
         return getCacheChapterCount(bookShelfBean) > 0;
     }
@@ -281,24 +288,6 @@ public class BookshelfHelp {
                 .where(BookmarkBeanDao.Properties.BookName.eq(bookName))
                 .build()
                 .list();
-    }
-
-    public static String getReadProgress(BookShelfBean bookShelfBean) {
-        return getReadProgress(bookShelfBean.getDurChapter(), bookShelfBean.getChapterListSize(), 0, 0);
-    }
-
-    public static String getReadProgress(int durChapterIndex, int chapterAll, int durPageIndex, int durPageAll) {
-        DecimalFormat df = new DecimalFormat("0.0%");
-        if (chapterAll == 0) {
-            return "0.0%";
-        } else if (durPageAll == 0) {
-            return df.format(durChapterIndex * 1.0f / chapterAll);
-        }
-        String percent = df.format(durChapterIndex * 1.0f / chapterAll + 1.0f / chapterAll * (durPageIndex + 1) / durPageAll);
-        if (percent.equals("100.0%") && (durChapterIndex + 1 != chapterAll || durPageIndex + 1 != durPageAll)) {
-            percent = "99.9%";
-        }
-        return percent;
     }
 
     /**

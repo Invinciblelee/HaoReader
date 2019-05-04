@@ -68,7 +68,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
     public void queryBookShelf(boolean refresh) {
         boolean needUpdate = group != 3 && (refresh || haveRefresh());
 
-        impl.queryBooks(group, needUpdate);
+        impl.queryBooks(group, needUpdate, autoClean());
     }
 
     @Override
@@ -119,6 +119,9 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
         return mView.getPreferences().getBoolean(mView.getContext().getString(R.string.pk_auto_refresh), false) && !mView.isRecreate();
     }
 
+    private boolean autoClean() {
+        return AppConfigHelper.get().getBoolean(mView.getContext().getString(R.string.pk_auto_clean_book), false);
+    }
 
     @Override
     public void attachView(@NonNull IView iView) {

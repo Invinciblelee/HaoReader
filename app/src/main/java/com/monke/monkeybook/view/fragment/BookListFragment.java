@@ -26,7 +26,6 @@ import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
-import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,8 +36,6 @@ import butterknife.Unbinder;
 
 public class BookListFragment extends BaseFragment<BookListContract.Presenter> implements BookListContract.View {
 
-    @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
 
@@ -117,14 +114,6 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
         updateBookPx(bookPx);
 
         rvBookshelf.setAdapter(bookListAdapter);
-    }
-
-    @Override
-    protected void bindEvent() {
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.stopRefreshing();
-            refreshBookShelf(true);
-        });
     }
 
     @Override

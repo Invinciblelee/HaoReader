@@ -151,15 +151,17 @@ public class NetPageLoader extends PageLoader {
     @Override
     void parsePrevChapter(OnChapterPreparedCallback callback) {
         super.parsePrevChapter(callback);
-        if (getChapterPosition() >= 1 && shouldRequestChapter(getChapterPosition() - 1)) {
-            getChapterProvider().loadChapterContent(getChapterPosition() - 1);
+        final int position = getChapterPosition();
+        if (position >= 1 && shouldRequestChapter(position - 1)) {
+            getChapterProvider().loadChapterContent(position - 1);
         }
     }
 
     @Override
     void parseCurChapter(OnChapterPreparedCallback callback) {
         super.parseCurChapter(callback);
-        for (int i = getChapterPosition() >= 1 ? getChapterPosition() - 1 : getChapterPosition(); i < getChapterPosition() + 3; i++) {
+        final int position = getChapterPosition();
+        for (int i = (position >= 1 ? position - 1 : position); i < position + 3; i++) {
             if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
                 getChapterProvider().loadChapterContent(i);
             }
@@ -169,7 +171,8 @@ public class NetPageLoader extends PageLoader {
     @Override
     void parseNextChapter(OnChapterPreparedCallback callback) {
         super.parseNextChapter(callback);
-        for (int i = getChapterPosition() + 1; i < getChapterPosition() + 3; i++) {
+        final int position = getChapterPosition();
+        for (int i = position + 1; i < position + 3; i++) {
             if (i < getCollBook().getChapterListSize() && shouldRequestChapter(i)) {
                 getChapterProvider().loadChapterContent(i);
             }

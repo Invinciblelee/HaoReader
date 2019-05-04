@@ -213,6 +213,7 @@ public class StringUtils {
         return -1;
     }
 
+
     public static String clearString(String str) {
         if (str == null) {
             return "";
@@ -334,6 +335,10 @@ public class StringUtils {
         if (src == null || obj == null) return false;
         if (obj.length() > src.length()) return false;
         return src.substring(0, obj.length()).equalsIgnoreCase(obj);
+    }
+
+    public static String nonNull(String string) {
+        return string == null ? "" : string;
     }
 
     public static boolean isBlank(String text) {

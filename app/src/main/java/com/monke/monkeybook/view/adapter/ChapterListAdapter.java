@@ -38,20 +38,13 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
     public void upChapterIndex(int index) {
         synchronized (lock) {
-            upIndex(index);
-        }
-    }
-
-    private void upIndex(int index) {
-        if (getItemCount() == 0) {
-            return;
-        }
-        if (this.mIndex != index) {
-            if (this.mIndex != -1) {
+            if (this.mIndex != index) {
+                if (this.mIndex != -1) {
+                    notifyItemChanged(this.mIndex, 0);
+                }
+                this.mIndex = NumberUtil.makeInRange(0, getItemCount() - 1, index);
                 notifyItemChanged(this.mIndex, 0);
             }
-            this.mIndex = NumberUtil.makeInRange(0, getItemCount() - 1, index);
-            notifyItemChanged(this.mIndex, 0);
         }
     }
 
@@ -63,7 +56,6 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
                 if (changed) {
                     setDataList(mBook.getChapterList());
                 }
-                upIndex(this.mBook.getDurChapter());
             }
         }
     }
@@ -85,7 +77,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
                 setBoldText(holder, true);
             }
 
-            if (this.mIndex == chapterBean.getDurChapterIndex()) {
+            if (this.mIndex == realPosition) {
                 setTextTint(holder, R.color.colorAccent);
             } else {
                 setTextTint(holder, R.color.color_chapter_item);
@@ -101,7 +93,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
             setBoldText(holder, false);
         }
 
-        if (chapterBean.getDurChapterIndex() == mIndex) {
+        if (realPosition == mIndex) {
             setTextTint(holder, R.color.colorAccent);
         } else {
             setTextTint(holder, R.color.color_chapter_item);

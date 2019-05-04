@@ -85,7 +85,6 @@ class DefaultContentDelegate implements ContentDelegate {
     @Override
     public BookShelfBean getBook(String source) {
         BookShelfBean book = (BookShelfBean) getConfig().getVariableStore();
-        assert book != null;
         BookInfoBean bookInfoBean = book.getBookInfoBean();
         if (bookInfoBean == null) {
             bookInfoBean = new BookInfoBean();
@@ -178,7 +177,7 @@ class DefaultContentDelegate implements ContentDelegate {
         while (!isEmpty(webChapterBean.nextUrl) && !nextUrls.contains(webChapterBean.nextUrl)) {
             String response = "";
             try {
-                AnalyzeUrl analyzeUrl = new AnalyzeUrl(webChapterBean.nextUrl, getConfig().getHeaderMap(), getConfig().getTag());
+                AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getTag(), webChapterBean.nextUrl, AnalyzeHeaders.getMap(getBookSource()));
                 response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
             } catch (Exception ignore) {
             }

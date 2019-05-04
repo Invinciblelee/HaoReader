@@ -4,6 +4,8 @@ package com.monke.monkeybook.presenter;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -33,7 +35,6 @@ import com.monke.monkeybook.utils.RxUtils;
 
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
@@ -47,7 +48,6 @@ import io.reactivex.schedulers.Schedulers;
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
 
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
-    private boolean inBookShelf;
     private BookShelfBean bookShelf;
     private BookSourceBean bookSource;
 
@@ -63,7 +63,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             BitIntentDataManager dataManager = BitIntentDataManager.getInstance();
             bookShelf = dataManager.getData("bookShelf", null);
             if (bookShelf != null) {
-                inBookShelf = dataManager.getData("inBookShelf", false);
                 mView.prepareDisplay();
                 checkShowMenu();
             } else {
@@ -71,7 +70,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             }
         } else {
             intent.putExtra("isRecreate", true).putExtra("fromUri", false);
-            inBookShelf = intent.getBooleanExtra("inBookShelf", true);
             String key = intent.getStringExtra("data_key");
             bookShelf = BitIntentDataManager.getInstance().getData(key, null);
             BitIntentDataManager.getInstance().cleanData(key);
@@ -79,9 +77,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             if (bookShelf == null) {
                 mView.finish();
             } else {
-                if (inBookShelf) {
-                    readBookControl.setLastNoteUrl(bookShelf.getNoteUrl());
-                }
                 mView.prepareDisplay();
                 checkShowMenu();
             }
@@ -101,6 +96,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         try {
             switch (bookShelf.getTag()) {
                 case BookShelfBean.LOCAL_TAG:
+                case Default716.TAG:
                     break;
                 default:
                     BookSourceBean bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
@@ -151,14 +147,16 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public void saveProgress() {
-        if (bookShelf != null && inBookShelf) {
+        if (bookShelf != null) {
             Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
                 bookShelf.setFinalDate(System.currentTimeMillis());
                 if (!bookShelf.realChapterListEmpty()) {
                     bookShelf.upDurChapterName();
                     bookShelf.upLastChapterName();
                 }
-                DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelf);
+                if(inBookShelf()) {
+                    DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelf);
+                }
                 e.onNext(bookShelf);
                 e.onComplete();
             }).subscribeOn(Schedulers.io())
@@ -194,7 +192,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             downloadBook.setTag(bookShelf.getTag());
             downloadBook.setName(bookShelf.getBookInfoBean().getName());
             downloadBook.setNoteUrl(bookShelf.getNoteUrl());
-            downloadBook.setCoverUrl(bookShelf.getBookInfoBean().getCoverUrl());
+            downloadBook.setCoverUrl(bookShelf.getBookInfoBean().getRealCoverUrl());
             downloadBook.setStart(start);
             downloadBook.setEnd(end);
             downloadBook.setFinalDate(System.currentTimeMillis());
@@ -237,7 +235,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     public void onNext(BookShelfBean bookShelfBean) {
                         bookShelfBean.setHasUpdate(false);
 
-                        if (inBookShelf) {
+                        if (inBookShelf()) {
                             saveChangedBook(bookShelfBean);
                         } else {
                             bookShelf = bookShelfBean;
@@ -360,7 +358,10 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public boolean inBookShelf() {
-        return inBookShelf;
+        if (bookShelf == null) {
+            return false;
+        }
+        return BookshelfHelp.isInBookShelf(bookShelf.getNoteUrl());
     }
 
     @Override
@@ -411,7 +412,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         @Override
                         public void onNext(Boolean value) {
                             RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelf);
-                            inBookShelf = true;
                             if (addListener != null)
                                 addListener.addSuccess();
                         }
@@ -436,7 +436,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         @Override
                         public void onNext(Boolean aBoolean) {
                             RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                            inBookShelf = aBoolean;
                             mView.finish();
                         }
 

@@ -78,7 +78,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
                     public void onSuccess(BookShelfBean bookShelfBean) {
                         long delay = START_DELAY - (System.currentTimeMillis() - start);
                         if (!TextUtils.isEmpty(bookShelfBean.getNoteUrl())) {
-                            mView.startReadBookAct(bookShelfBean, true, false, delay);
+                            mView.startReadBookAct(bookShelfBean, false, delay);
                         } else {
                             mView.onStartNormal(delay);
                         }
@@ -110,8 +110,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
                 .subscribe(new SimpleObserver<LocBookShelfBean>() {
                     @Override
                     public void onNext(LocBookShelfBean locBookShelfBean) {
-                        boolean inBookShelf = !locBookShelfBean.getNew();
-                        mView.startReadBookAct(locBookShelfBean.getBookShelfBean(), inBookShelf, true, START_DELAY - (System.currentTimeMillis() - start));
+                        mView.startReadBookAct(locBookShelfBean.getBookShelfBean(), true, START_DELAY - (System.currentTimeMillis() - start));
                     }
 
                     @Override

@@ -130,7 +130,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     @Override
     public final String ajax(String urlStr) {
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(urlStr, getConfig().getBaseURL());
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), urlStr);
             Response<String> response = SimpleModel.getResponse(analyzeUrl)
                     .blockingFirst();
             return response.body();

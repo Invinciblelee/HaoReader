@@ -16,7 +16,6 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.savedInstanceState = savedInstanceState;
-        AppActivityManager.getInstance().add(this);
         initSDK();
         onCreateActivity();
         mPresenter = initInjector();
@@ -92,7 +91,6 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
     @Override
     protected void onDestroy() {
         detachView();
-        AppActivityManager.getInstance().remove(this);
         super.onDestroy();
     }
 

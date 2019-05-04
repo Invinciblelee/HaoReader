@@ -30,7 +30,7 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public RefreshRecyclerViewAdapter(Boolean needLoadMore) {
         this.needLoadMore = needLoadMore;
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     public int getIsRequesting() {
@@ -38,6 +38,8 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     public void setIsRequesting(int isRequesting, Boolean needNoti) {
+        if (!needLoadMore) return;
+
         this.isRequesting = isRequesting;
         if (this.isRequesting == 1) {
             isAll = false;
@@ -108,6 +110,8 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
     public abstract int getICount();
 
     public void setIsAll(Boolean isAll, Boolean needNoti) {
+        if (!needLoadMore) return;
+
         this.isAll = isAll;
         if (needNoti) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -152,6 +156,8 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     public void setLoadMoreError(Boolean loadMoreError, Boolean needNoti) {
+        if (!needLoadMore) return;
+
         this.isRequesting = 0;
         this.loadMoreError = loadMoreError;
         if (needNoti) {

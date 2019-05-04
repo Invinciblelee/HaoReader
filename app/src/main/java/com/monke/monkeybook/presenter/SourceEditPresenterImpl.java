@@ -113,15 +113,6 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
         Gson gson = new Gson();
         try {
             BookSourceBean bookSourceBean = gson.fromJson(bookSourceStr, BookSourceBean.class);
-
-            if (!Arrays.asList(BOOK_TYPES).contains(bookSourceBean.getBookSourceType())) {
-                bookSourceBean.setBookSourceType(BookType.TEXT);
-            }
-
-            if (!Arrays.asList(RULE_TYPES).contains(bookSourceBean.getBookSourceRuleType())) {
-                bookSourceBean.setBookSourceRuleType(RuleType.DEFAULT);
-            }
-
             mView.setText(bookSourceBean);
         } catch (Exception ignore) {
             mView.showSnackBar("数据格式不对");

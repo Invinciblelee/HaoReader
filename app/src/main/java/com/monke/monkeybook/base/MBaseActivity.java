@@ -45,7 +45,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getWindow().getDecorView().setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
         }
-        tintToolbarNavIcon();
+        initToolbar();
     }
 
     @Override
@@ -55,7 +55,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         initImmersionBar();
     }
 
-    protected void tintToolbarNavIcon() {
+    protected void initToolbar() {
         Toolbar toolbar = findToolbar();
         if (toolbar != null) {
             int color = getResources().getColor(R.color.colorToolBarText);
@@ -141,7 +141,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     /**
      * 沉浸状态栏
      */
-    protected void initImmersionBar() {
+    public void initImmersionBar() {
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();
         } else {

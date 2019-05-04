@@ -95,7 +95,7 @@ public class ReadBookControl {
         Map<String, Integer> temp5 = new HashMap<>();
         temp5.put("textColor", Color.parseColor("#a3a3a3"));
         temp5.put("bgIsColor", 1);
-        temp5.put("textBackground", Color.parseColor("#2a2a2a"));
+        temp5.put("textBackground", Color.parseColor("#212121"));
         temp5.put("darkStatusIcon", 0);
         textDrawables.add(temp5);
 

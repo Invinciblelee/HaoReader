@@ -30,12 +30,12 @@ public interface IWebBookModel {
     /**
      * 其他站点资源整合搜索
      */
-    Observable<List<SearchBookBean>> searchBook(String content, int page, String tag);
+    Observable<List<SearchBookBean>> searchBook(String tag, String content, int page);
 
     /**
      * 发现
      */
-    Observable<List<SearchBookBean>> findBook(String url, int page, String tag);
+    Observable<List<SearchBookBean>> findBook(String tag, String url, int page);
 
     /**
      * 听书章节

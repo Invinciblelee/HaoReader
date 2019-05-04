@@ -91,7 +91,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(url, page, headerMap(false), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, url, page, headerMap(false));
             if (analyzeUrl.getHost() == null) {
                 return Observable.create(emitter -> {
                     emitter.onNext(ListUtils.mutableList());
@@ -119,7 +119,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookSourceBean.getRuleSearchUrl(), content, page, headerMap(false), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookSourceBean.getRuleSearchUrl(), content, page, headerMap(false));
             if (analyzeUrl.getHost() == null) {
                 return Observable.just(ListUtils.mutableList());
             }
@@ -142,7 +142,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), headerMap(false), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getNoteUrl(), headerMap(true));
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookInfo.analyzeBookInfo(response.body(), bookShelfBean));
         } catch (Exception e) {
@@ -160,9 +160,9 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(false), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean, headerMap(false)));
+                    .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "目录获取失败", e);
             return Observable.error(new BookException("目录获取失败"));
@@ -180,20 +180,20 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
         final BookContent bookContent = new BookContent(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap(true), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, chapter.getDurChapterUrl(), headerMap(true));
             if (bookContent.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
-                        .cookieStore(CookieHelper.get())
-                        .userAgent(analyzeUrl.getUserAgent());
-                switch (analyzeUrl.getUrlMode()) {
+                        .requestMethod(analyzeUrl.getRequestMethod())
+                        .postData(analyzeUrl.getPostData())
+                        .headerMap(analyzeUrl.getHeaderMap())
+                        .cookieStore(CookieHelper.get());
+                switch (analyzeUrl.getRequestMethod()) {
+                    case DEFAULT:
                     case POST:
-                        params.url(analyzeUrl.getUrl()).postData(analyzeUrl.getPostData());
+                        params.url(analyzeUrl.getUrl());
                         break;
                     case GET:
-                        params.url(analyzeUrl.getUrlWithQuery()).headerMap(analyzeUrl.getHeaderMap());
-                        break;
-                    default:
-                        params.url(analyzeUrl.getUrl()).headerMap(analyzeUrl.getHeaderMap());
+                        params.url(analyzeUrl.getUrlWithQuery());
                 }
                 return ajax(params)
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
@@ -221,22 +221,22 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
         final AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getDurChapterUrl(), headerMap(true), tag);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, chapter.getDurChapterUrl(), headerMap(true));
             if (audioBookChapter.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
+                        .requestMethod(analyzeUrl.getRequestMethod())
                         .suffix(audioBookChapter.getSuffix())
                         .cookieStore(CookieHelper.get())
-                        .userAgent(analyzeUrl.getUserAgent())
+                        .postData(analyzeUrl.getPostData())
+                        .headerMap(analyzeUrl.getHeaderMap())
                         .javaScript(audioBookChapter.getJavaScript());
-                switch (analyzeUrl.getUrlMode()) {
+                switch (analyzeUrl.getRequestMethod()) {
+                    case DEFAULT:
                     case POST:
-                        params.url(analyzeUrl.getUrl()).postData(analyzeUrl.getPostData());
+                        params.url(analyzeUrl.getUrl());
                         break;
                     case GET:
-                        params.url(analyzeUrl.getUrlWithQuery()).headerMap(analyzeUrl.getHeaderMap());
-                        break;
-                    default:
-                        params.url(analyzeUrl.getUrl()).headerMap(analyzeUrl.getHeaderMap());
+                        params.url(analyzeUrl.getUrlWithQuery());
                 }
                 return sniff(params)
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));

@@ -77,7 +77,7 @@ public class WebBookModel implements IWebBookModel {
      */
     @Override
     public Observable<BookContentBean> getBookContent(BookInfoBean bookInfo, ChapterBean chapter) {
-        IStationBookModel bookModel = getBookSourceModel(chapter.getTag());
+        IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
         if (bookModel != null) {
             return bookModel.getBookContent(chapter)
                     .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
@@ -92,7 +92,7 @@ public class WebBookModel implements IWebBookModel {
      * 其他站点集合搜索
      */
     @Override
-    public Observable<List<SearchBookBean>> searchBook(String content, int page, String tag) {
+    public Observable<List<SearchBookBean>> searchBook(String tag, String content, int page) {
         //获取所有书源类
         IStationBookModel bookModel = getBookSourceModel(tag);
         if (bookModel != null) {
@@ -109,7 +109,7 @@ public class WebBookModel implements IWebBookModel {
      * 发现页
      */
     @Override
-    public Observable<List<SearchBookBean>> findBook(String url, int page, String tag) {
+    public Observable<List<SearchBookBean>> findBook(String tag, String url, int page) {
         IStationBookModel bookModel = getBookSourceModel(tag);
         if (bookModel != null) {
             return bookModel.findBook(url, page);

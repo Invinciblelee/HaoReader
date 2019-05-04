@@ -27,7 +27,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     }
 
     @Override
-    protected void initImmersionBar() {
+    public void initImmersionBar() {
         mImmersionBar.fullScreen(true);
         mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
         mImmersionBar.init();
@@ -62,19 +62,19 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     }
 
     @Override
-    public void startReadBookAct(BookShelfBean shelfBean, boolean inShelf, boolean fromUri, long startDelay) {
+    public void startReadBookAct(BookShelfBean shelfBean, boolean fromUri, long startDelay) {
         if (startDelay <= 0) {
-            startReadBookActivity(shelfBean, inShelf, fromUri);
+            startReadBookActivity(shelfBean, fromUri);
         } else {
-            new Handler().postDelayed(() -> startReadBookActivity(shelfBean, inShelf, fromUri), startDelay);
+            new Handler().postDelayed(() -> startReadBookActivity(shelfBean, fromUri), startDelay);
         }
     }
 
-    private void startReadBookActivity(BookShelfBean shelfBean, boolean inShelf, boolean fromUri) {
+    private void startReadBookActivity(BookShelfBean shelfBean, boolean fromUri) {
         if (fromUri) {
-            ReadBookActivity.startThisFromUri(this, shelfBean, inShelf);
+            ReadBookActivity.startThisFromUri(this, shelfBean);
         } else {
-            ReadBookActivity.startThis(this, shelfBean, inShelf);
+            ReadBookActivity.startThis(this, shelfBean);
         }
         finish();
     }

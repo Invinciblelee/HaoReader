@@ -28,7 +28,7 @@
             android:id="@+id/iv_chapter_sort"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/bg_ib_pre_round"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/swap_vert"
             android:padding="2dp"
             android:src="@drawable/ic_swap_vert_black_24dp"

@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
     app:appConsumeInsets="false"
-    app:appInsetForeground="@color/colorPrimary">
+    app:appInsetForeground="@color/transparent">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -38,8 +37,7 @@
         <WebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
     </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
 
 

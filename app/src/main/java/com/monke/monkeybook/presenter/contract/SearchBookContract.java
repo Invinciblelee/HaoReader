@@ -31,6 +31,8 @@ public interface SearchBookContract {
 
     interface View extends IView {
 
+        void initImmersionBar();
+
         void searchBook(String searchKey);
 
         /**

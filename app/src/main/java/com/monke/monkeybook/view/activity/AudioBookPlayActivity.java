@@ -109,14 +109,23 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
-    protected void initImmersionBar() {
-        super.initImmersionBar();
+    public void initImmersionBar() {
+        mImmersionBar.transparentStatusBar();
+
+        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
+        mImmersionBar.statusBarDarkFont(false);
+
         mImmersionBar.statusBarDarkFont(false);
         mImmersionBar.init();
     }
 
     @Override
-    protected void tintToolbarNavIcon() {
+    protected void initToolbar() {
     }
 
     @Override
@@ -398,7 +407,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         btnPrevious.setEnabled(enabled);
         btnPause.setEnabled(enabled);
         btnNext.setEnabled(enabled);
-        seekBar.setEnabled(enabled);
     }
 
     private void showProgress(boolean showProgress) {

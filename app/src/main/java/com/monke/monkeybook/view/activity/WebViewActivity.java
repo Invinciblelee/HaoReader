@@ -17,6 +17,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -81,6 +82,21 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     protected void onCreateActivity() {
         setContentView(R.layout.activity_webview);
         ButterKnife.bind(this);
+    }
+
+    @Override
+    public void initImmersionBar() {
+        mImmersionBar.transparentStatusBar();
+
+        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
+        mImmersionBar.statusBarDarkFont(false);
+
+        mImmersionBar.init();
     }
 
     @Override

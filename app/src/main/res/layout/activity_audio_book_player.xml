@@ -102,18 +102,28 @@
         android:paddingBottom="24dp">
 
 
-        <com.monke.monkeybook.widget.ScaleDrawableTextView
+        <LinearLayout
             android:id="@+id/btn_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_timer_white_24dp"
-            android:drawablePadding="1dp"
-            android:gravity="center_horizontal"
-            android:text="@string/set_timer"
-            android:textColor="@color/dark_white"
-            android:textSize="12sp"
-            app:drawableColor="@color/dark_white"
-            app:drawableSize="28dp" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_timer_white_24dp"
+                android:tint="@color/dark_white" />
+
+
+            <com.monke.monkeybook.widget.ScaleDrawableTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/set_timer"
+                android:textColor="@color/dark_white"
+                android:textSize="12sp" />
+        </LinearLayout>
 
         <Space
             android:layout_width="0dp"
@@ -169,17 +179,29 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <com.monke.monkeybook.widget.ScaleDrawableTextView
+
+        <LinearLayout
             android:id="@+id/btn_catalog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_format_list_bulleted_black_24dp"
-            android:drawablePadding="1dp"
-            android:gravity="center_horizontal"
-            android:text="@string/category"
-            android:textColor="@color/dark_white"
-            android:textSize="12sp"
-            app:drawableColor="@color/dark_white"
-            app:drawableSize="28dp" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp"
+                android:src="@drawable/ic_format_list_bulleted_black_24dp"
+                android:tint="@color/dark_white" />
+
+            <com.monke.monkeybook.widget.ScaleDrawableTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/category"
+                android:textColor="@color/dark_white"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

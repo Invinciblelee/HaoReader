@@ -37,7 +37,7 @@ public class BigImageActivity extends MBaseActivity {
     }
 
     @Override
-    protected void initImmersionBar() {
+    public void initImmersionBar() {
         mImmersionBar.fullScreen(true)
                 .transparentBar()
                 .init();

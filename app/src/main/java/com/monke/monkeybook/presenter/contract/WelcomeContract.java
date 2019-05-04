@@ -12,7 +12,7 @@ public interface WelcomeContract {
     interface View extends IView {
         void openBookFromUri();
 
-        void startReadBookAct(BookShelfBean shelfBean, boolean inShelf, boolean fromUri, long startDelay);
+        void startReadBookAct(BookShelfBean shelfBean, boolean fromUri, long startDelay);
 
         void onStartNormal(long startDelay);
 

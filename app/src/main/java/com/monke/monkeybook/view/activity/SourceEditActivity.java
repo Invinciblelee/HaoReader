@@ -413,14 +413,14 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilCheckUrl.setHint("书源校验URL(CheckUrl)");
         tilLoginCookieKey.setHint("登录Cookie标识(LoginCookieKey)");
         tilRuleBookAuthor.setHint("作者获取规则(RuleBookAuthor)");
-        tilRuleBookContent.setHint("章节内容获取规则(RuleBookContent)");
+        tilRuleBookContent.setHint("内容获取规则(RuleBookContent)");
         tilRuleBookName.setHint("书名获取规则(RuleBookName)");
         tilRuleLastChapter.setHint("最新章节获取规则(RuleBookLastChapter)");
         tilRuleChapterList.setHint("目录列表获取规则(RuleChapterList)");
         tilRuleChapterName.setHint("章节名称获取规则(RuleChapterName)");
         tilRuleChapterUrl.setHint("目录URL获取规则(RuleChapterUrl)");
         tilRuleChapterUrlNext.setHint("下一页目录URL获取规则(RuleChapterUrlNext)");
-        tilRuleContentUrl.setHint("章节内容URL获取规则(RuleContentUrl)");
+        tilRuleContentUrl.setHint("内容URL获取规则(RuleContentUrl)");
         tilRuleCoverUrl.setHint("封面URL获取规则(RuleCoverUrl)");
         tilRuleIntroduce.setHint("简介获取规则(RuleIntroduce)");
         tilRuleSearchAuthor.setHint("搜索结果作者获取规则(RuleSearchAuthor)");
@@ -434,7 +434,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilRulePersistedVariables.setHint("持久化变量(RulePersistedVariables)");
         tilHttpUserAgent.setHint("用户代理(HttpUserAgent)");
         tilRuleFindUrl.setHint("发现获取规则(RuleFinalUrl)");
-        tilRuleContentUrlNext.setHint("下一页章节内容URL获取规则(RuleContentUrlNext)");
+        tilRuleContentUrlNext.setHint("下一页内容URL获取规则(RuleContentUrlNext)");
     }
 
     @Override

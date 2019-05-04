@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.monke.basemvplib.RequestMethod;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
 
@@ -25,31 +26,28 @@ import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP
 
 public class AnalyzeUrl {
 
-    private static final String TAG = AnalyzeUrl.class.getSimpleName();
-
     private String url;
     private String hostUrl;
     private String urlPath;
     private String queryStr;
-    private String userAgent;
     private Map<String, String> queryMap = new HashMap<>();
     private Map<String, String> headerMap = new HashMap<>();
     private String charCode;
-    private UrlMode urlMode = UrlMode.DEFAULT;
+    private RequestMethod requestMethod = RequestMethod.DEFAULT;
 
-    public AnalyzeUrl(String urlRule, String baseUrl) throws Exception {
-        this(urlRule, null, null, null, baseUrl);
+    public AnalyzeUrl(String baseUrl, String urlRule) throws Exception {
+        this(baseUrl, urlRule, null);
     }
 
-    public AnalyzeUrl(String ruleUrl, Map<String, String> headerMap, String baseUrl) throws Exception {
-        this(ruleUrl, null, null, headerMap, baseUrl);
+    public AnalyzeUrl(String baseUrl, String ruleUrl, Map<String, String> headerMap) throws Exception {
+        this(baseUrl, ruleUrl, null, headerMap);
     }
 
-    public AnalyzeUrl(String ruleUrl, Integer page, Map<String, String> headerMap, String baseUrl) throws Exception {
-        this(ruleUrl, "", page, headerMap, baseUrl);
+    public AnalyzeUrl(String baseUrl, String ruleUrl, Integer page, Map<String, String> headerMap) throws Exception {
+        this(baseUrl, ruleUrl, null, page, headerMap);
     }
 
-    public AnalyzeUrl(String ruleUrl, String key, Integer page, Map<String, String> headerMap, String baseUrl) throws Exception {
+    public AnalyzeUrl(String baseUrl, String ruleUrl, String key, Integer page, Map<String, String> headerMap) throws Exception {
         this.hostUrl = baseUrl;
         //解析Header
         ruleUrl = analyzeHeader(ruleUrl, headerMap);
@@ -69,16 +67,16 @@ public class AnalyzeUrl {
         //分离post参数
         String[] ruleUrlS = ruleUrl.split("@");
         if (ruleUrlS.length > 1) {
-            urlMode = UrlMode.POST;
+            requestMethod = RequestMethod.POST;
         } else {
             //分离get参数
             ruleUrlS = ruleUrlS[0].split("\\?");
             if (ruleUrlS.length > 1) {
-                urlMode = UrlMode.GET;
+                requestMethod = RequestMethod.GET;
             }
         }
         generateUrlPath(ruleUrlS[0]);
-        if (urlMode != UrlMode.DEFAULT) {
+        if (requestMethod != RequestMethod.DEFAULT) {
             analyzeQuery(queryStr = ruleUrlS[1]);
         }
     }
@@ -89,7 +87,6 @@ public class AnalyzeUrl {
     private String analyzeHeader(String ruleUrl, Map<String, String> headerMapF) {
         if (headerMapF != null) {
             headerMap.putAll(headerMapF);
-            userAgent = headerMapF.get("User-Agent");
         }
         Matcher matcher = PATTERN_HEADER.matcher(ruleUrl);
         Gson gson = new Gson();
@@ -211,10 +208,6 @@ public class AnalyzeUrl {
         return queryStr;
     }
 
-    public String getUserAgent() {
-        return userAgent;
-    }
-
     public byte[] getPostData() {
         StringBuilder builder = new StringBuilder();
         Set<String> keys = queryMap.keySet();
@@ -225,13 +218,10 @@ public class AnalyzeUrl {
         return builder.toString().getBytes();
     }
 
-    public UrlMode getUrlMode() {
-        return urlMode;
+    public RequestMethod getRequestMethod() {
+        return requestMethod == null ? RequestMethod.DEFAULT : requestMethod;
     }
 
-    public enum UrlMode {
-        GET, POST, DEFAULT
-    }
 
     @NonNull
     @Override
@@ -241,11 +231,10 @@ public class AnalyzeUrl {
                 ", hostUrl='" + hostUrl + '\'' +
                 ", urlPath='" + urlPath + '\'' +
                 ", queryStr='" + queryStr + '\'' +
-                ", userAgent='" + userAgent + '\'' +
                 ", queryMap=" + queryMap +
                 ", headerMap=" + headerMap +
                 ", charCode='" + charCode + '\'' +
-                ", urlMode=" + urlMode +
+                ", requestMethod=" + requestMethod +
                 '}';
     }
 }
