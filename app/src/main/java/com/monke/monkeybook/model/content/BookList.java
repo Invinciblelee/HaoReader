@@ -22,13 +22,13 @@ final class BookList {
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {
-        return Observable.create((ObservableOnSubscribe<List<SearchBookBean>>) e -> {
+        return Observable.create(e -> {
             analyzer.apply(analyzer.newConfig().baseURL(baseUrl));
 
             List<SearchBookBean> searchBookBeans = analyzer.getSearchBooks(response);
             e.onNext(searchBookBeans);
             e.onComplete();
-        }).onErrorReturnItem(Collections.emptyList());
+        });
     }
 
 }

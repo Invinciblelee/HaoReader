@@ -37,14 +37,12 @@ final class JsoupParser extends SourceParser<Element> {
 
     @Override
     Element fromSource(Object source) {
-        Objects.requireNonNull(source);
-
         if (source instanceof String) {
             return Jsoup.parse((String) source);
         } else if (source instanceof Element) {
             return (Element) source;
         }
-        throw new IllegalAccessError("JsoupParser can not support the source type");
+        return null;
     }
 
     @Override

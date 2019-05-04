@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -51,29 +52,26 @@ class DefaultContentDelegate implements ContentDelegate {
         final AnalyzeCollection collection = mAnalyzer.getRawCollection(getBookSource().getRealRuleSearchList());
         List<SearchBookBean> books = new ArrayList<>();
         while (collection.hasNext()) {
-            try {
-                SearchBookBean item = new SearchBookBean();
-                item.setTag(getConfig().getTag());
-                item.setOrigin(getConfig().getName());
-                item.setBookType(getBookSource().getBookSourceType());
-                item.setAuthor(FormatWebText.getAuthor(collection.mutable().getResultContent(getBookSource().getRuleSearchAuthor())));
-                item.setKind(StringUtils.join(",", collection.mutable().getResultContents(getBookSource().getRuleSearchKind())));
-                item.setLastChapter(FormatWebText.trim(collection.mutable().getResultContent(getBookSource().getRuleSearchLastChapter())));
-                item.setName(FormatWebText.getBookName(collection.mutable().getResultContent(getBookSource().getRuleSearchName())));
-                item.setNoteUrl(collection.mutable().getResultUrl(getBookSource().getRuleSearchNoteUrl()));
-                item.setIntroduce(collection.mutable().getResultContent(getBookSource().getRuleIntroduce()));
-                item.putVariableMap(collection.mutable().getVariableMap(getBookSource().getRulePersistedVariables()));
-                if (isEmpty(item.getNoteUrl())) {
-                    item.setNoteUrl(getConfig().getBaseURL());
-                }
-                item.setCoverUrl(collection.mutable().getResultUrl(getBookSource().getRuleSearchCoverUrl()));
-                if (!isEmpty(item.getName())) {
-                    books.add(item);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            SearchBookBean item = new SearchBookBean();
+            item.setTag(getConfig().getTag());
+            item.setOrigin(getConfig().getName());
+            item.setBookType(getBookSource().getBookSourceType());
+            item.setAuthor(FormatWebText.getAuthor(collection.mutable().getResultContent(getBookSource().getRuleSearchAuthor())));
+            item.setKind(StringUtils.join(",", collection.mutable().getResultContents(getBookSource().getRuleSearchKind())));
+            item.setLastChapter(FormatWebText.trim(collection.mutable().getResultContent(getBookSource().getRuleSearchLastChapter())));
+            item.setName(FormatWebText.getBookName(collection.mutable().getResultContent(getBookSource().getRuleSearchName())));
+            item.setNoteUrl(collection.mutable().getResultUrl(getBookSource().getRuleSearchNoteUrl()));
+            item.setIntroduce(collection.mutable().getResultContent(getBookSource().getRuleIntroduce()));
+            item.putVariableMap(collection.mutable().getVariableMap(getBookSource().getRulePersistedVariables()));
+            if (isEmpty(item.getNoteUrl())) {
+                item.setNoteUrl(getConfig().getBaseURL());
+            }
+            item.setCoverUrl(collection.mutable().getResultUrl(getBookSource().getRuleSearchCoverUrl()));
+            if (!isEmpty(item.getName())) {
+                books.add(item);
             }
         }
+
 
         if (getBookSource().reverseSearchList()) {
             Collections.reverse(books);

@@ -40,7 +40,6 @@ final class XPathParser extends SourceParser<JXDocument> {
 
     @Override
     JXDocument fromSource(Object source) {
-        Objects.requireNonNull(source);
         if (source instanceof String) {
             return JXDocument.create(ensureTableNode((String) source));
         } else if (source instanceof Element) {
@@ -48,7 +47,7 @@ final class XPathParser extends SourceParser<JXDocument> {
         } else if (source instanceof JXDocument) {
             return (JXDocument) source;
         }
-        throw new IllegalAccessError("XPathParser can not support the source type");
+        return null;
     }
 
     @Override

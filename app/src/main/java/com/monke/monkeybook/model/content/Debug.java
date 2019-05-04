@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.content;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -77,8 +78,7 @@ public class Debug {
     private void searchDebug(String key) {
         printLog(String.format("★%s 搜索开始", getDoTime()));
         WebBookModel.getInstance().searchBook(Debug.SOURCE_DEBUG_TAG, key, 1)
-                .subscribeOn(Schedulers.single())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxUtils::toSimpleSingle)
                 .subscribe(new Observer<List<SearchBookBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -104,6 +104,9 @@ public class Debug {
                             printLog(String.format("★%s 搜索结束", getDoTime()));
                             if (!TextUtils.isEmpty(searchBookBean.getNoteUrl())) {
                                 bookInfoDebug(BookshelfHelp.getBookFromSearchBook(searchBookBean), false);
+                            }else {
+                                printError("详情网址获取失败");
+                                printLog(String.format("★%s 搜索结束", getDoTime()));
                             }
                         }
                     }
@@ -150,8 +153,9 @@ public class Debug {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         printError(e.getMessage());
-                        printLog(String.format("★%s 目录结束", getDoTime()));
+                        printLog(String.format("★%s 详情结束", getDoTime()));
                     }
 
                     @Override

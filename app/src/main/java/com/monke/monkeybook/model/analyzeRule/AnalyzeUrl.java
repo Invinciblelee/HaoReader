@@ -30,6 +30,7 @@ public class AnalyzeUrl {
     private String hostUrl;
     private String urlPath;
     private String queryStr;
+    private byte[] postData;
     private Map<String, String> queryMap = new HashMap<>();
     private Map<String, String> headerMap = new HashMap<>();
     private String charCode;
@@ -68,6 +69,7 @@ public class AnalyzeUrl {
         String[] ruleUrlS = ruleUrl.split("@");
         if (ruleUrlS.length > 1) {
             requestMethod = RequestMethod.POST;
+            postData = generatePostData();
         } else {
             //分离get参数
             ruleUrlS = ruleUrlS[0].split("\\?");
@@ -163,6 +165,19 @@ public class AnalyzeUrl {
         }
     }
 
+    /**
+     * PostData
+     */
+    private byte[] generatePostData() {
+        StringBuilder builder = new StringBuilder();
+        Set<String> keys = queryMap.keySet();
+        for (String key : keys) {
+            builder.append(String.format("%s=%s&", key, queryMap.get(key)));
+        }
+        builder.deleteCharAt(builder.lastIndexOf("&"));
+        return builder.toString().getBytes();
+    }
+
     private void generateUrlPath(String ruleUrl) {
         String baseUrl = StringUtils.getBaseUrl(ruleUrl);
         if (StringUtils.isBlank(baseUrl) && hostUrl != null) {
@@ -176,6 +191,7 @@ public class AnalyzeUrl {
             }
         }
     }
+
 
     public String getHost() {
         return hostUrl;
@@ -209,13 +225,7 @@ public class AnalyzeUrl {
     }
 
     public byte[] getPostData() {
-        StringBuilder builder = new StringBuilder();
-        Set<String> keys = queryMap.keySet();
-        for (String key : keys) {
-            builder.append(String.format("%s=%s&", key, queryMap.get(key)));
-        }
-        builder.deleteCharAt(builder.lastIndexOf("&"));
-        return builder.toString().getBytes();
+        return postData;
     }
 
     public RequestMethod getRequestMethod() {

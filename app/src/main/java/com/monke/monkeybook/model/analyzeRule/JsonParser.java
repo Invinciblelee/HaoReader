@@ -43,8 +43,6 @@ final class JsonParser extends SourceParser<ReadContext> {
 
     @Override
     ReadContext fromSource(Object source) {
-        Objects.requireNonNull(source);
-
         if (source instanceof ReadContext) {
             return (ReadContext) source;
         } else if (source instanceof String) {
