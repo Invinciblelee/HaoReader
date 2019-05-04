@@ -169,13 +169,16 @@ public class AnalyzeUrl {
      * PostData
      */
     private byte[] generatePostData() {
-        StringBuilder builder = new StringBuilder();
-        Set<String> keys = queryMap.keySet();
-        for (String key : keys) {
-            builder.append(String.format("%s=%s&", key, queryMap.get(key)));
+        if (queryMap != null && !queryMap.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            Set<String> keys = queryMap.keySet();
+            for (String key : keys) {
+                builder.append(String.format("%s=%s&", key, queryMap.get(key)));
+            }
+            builder.deleteCharAt(builder.lastIndexOf("&"));
+            return builder.toString().getBytes();
         }
-        builder.deleteCharAt(builder.lastIndexOf("&"));
-        return builder.toString().getBytes();
+        return null;
     }
 
     private void generateUrlPath(String ruleUrl) {
