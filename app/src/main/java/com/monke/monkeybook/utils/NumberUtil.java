@@ -71,14 +71,17 @@ public class NumberUtil {
         if (num1 == num2) {
             return 100;
         }
-
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        // 设置精确到小数点后2位
-        numberFormat.setMaximumFractionDigits(2);
-        float proportion = Float.parseFloat(numberFormat.format((float) num1 / (float) num2));
+        float proportion = getProportion(num1, num2);
         return (int) (proportion * 100);
     }
 
+
+    public static float getProportion(int num1, int num2) {
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        // 设置精确到小数点后2位
+        numberFormat.setMaximumFractionDigits(2);
+        return Float.parseFloat(numberFormat.format((float) num1 / (float) num2));
+    }
 
     public static int makeInRange(int min, int max, int value) {
         int minimum = Math.max(min, value);

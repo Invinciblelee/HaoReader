@@ -301,7 +301,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 .retry(RETRY_COUNT)
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (TextUtils.isEmpty(chapterBean.getDurChapterPlayUrl())) {
-                        return Observable.error(new NullPointerException("audio play url is null"));
+                        return Observable.error(new NullPointerException("audio progress url is null"));
                     }
                     return Observable.just(chapterBean);
                 })

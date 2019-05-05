@@ -156,7 +156,7 @@ public class AudioPlayInfo {
         return info;
     }
 
-    public static AudioPlayInfo play(int progress, int duration) {
+    public static AudioPlayInfo progress(int progress, int duration) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setProgress(progress);
         info.setDuration(duration);
