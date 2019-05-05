@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -359,7 +358,7 @@ public class PageView extends View {
     public PageLoader getPageLoader(ReadBookActivity activity, BookShelfBean collBook) {
         this.activity = new WeakReference<>(activity);
 
-        if (TextUtils.equals(collBook.getTag(), BookShelfBean.LOCAL_TAG)) {
+        if (collBook.isLocalBook()) {
             mPageLoader = new LocalPageLoader(this, collBook);
         } else {
             mPageLoader = new NetPageLoader(this, collBook);

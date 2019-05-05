@@ -44,7 +44,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public boolean checkLocalBookNotExists(BookShelfBean bookShelf) {
-        if (!Objects.equals(bookShelf.getTag(), BookShelfBean.LOCAL_TAG)) {
+        if (bookShelf.isLocalBook()) {
             return false;
         }
 

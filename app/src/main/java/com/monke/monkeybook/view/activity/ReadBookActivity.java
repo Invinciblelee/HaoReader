@@ -473,7 +473,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private void showHideUrlViews() {
         if (mPresenter.getBookShelf() == null
                 || mPresenter.getBookShelf().realChapterListEmpty()
-                || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
+                || mPresenter.getBookShelf().isLocalBook()) {
             atvDivider.setVisibility(View.GONE);
             atvLayout.setVisibility(View.GONE);
         } else {

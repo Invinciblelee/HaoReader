@@ -87,7 +87,7 @@ class ChapterProvider {
         try {
             boolean showTitle = true; // 是否展示标题
             String paragraph = chapter.getDurChapterName() + "\n"; //默认展示标题
-            if (collBook.getTag().equals(BookShelfBean.LOCAL_TAG)) {
+            if (collBook.isLocalBook()) {
                 br.readLine();
             }
             while (showTitle || (paragraph = br.readLine()) != null) {

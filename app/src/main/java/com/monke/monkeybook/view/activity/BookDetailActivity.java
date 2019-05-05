@@ -33,6 +33,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.RotateLoading;
 import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
@@ -249,8 +250,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     public void updateView(boolean stopLoading) {
         if (null != mPresenter.getBookShelf()) {
-            boolean local = mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG);
-            if (local) {
+            if (mPresenter.getBookShelf().isLocalBook()) {
                 tvUpdateSw.setVisibility(View.GONE);
                 rgGroup.setVisibility(View.GONE);
                 ivRefresh.setVisibility(View.GONE);
@@ -270,21 +270,15 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
 
             String bookType = mPresenter.getBookShelf().getBookInfoBean().getBookType();
-            showHideViews(bookType);
-            changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
-
-            if (TextUtils.isEmpty(tvName.getText())) {
-                tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
-            }
-            tvAuthor.setText(mPresenter.getBookShelf().getBookInfoBean().getAuthor());
-            if (TextUtils.isEmpty(tvAuthor.getText())) {
-                tvAuthor.setText(R.string.author_unknown);
-            }
 
             if (mPresenter.inBookShelf()) {
                 if (rgGroup.getVisibility() == View.VISIBLE) {
                     int index = mPresenter.getBookShelf().getGroup();
-                    ((RadioButton) rgGroup.getChildAt(Math.max(0, index))).setChecked(true);
+                    if (index < 0 || index >= rgGroup.getChildCount()) {
+                        rgGroup.setVisibility(View.GONE);
+                    } else {
+                        ((RadioButton) rgGroup.getChildAt(index)).setChecked(true);
+                    }
                 }
                 llBookRecent.setVisibility(View.VISIBLE);
                 String durChapterName = mPresenter.getBookShelf().getDurChapterName();
@@ -300,20 +294,30 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 tvRemoveShelf.setText(R.string.add_shelf);
             }
 
+            showHideViews(bookType);
+            changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
+
+            if (TextUtils.isEmpty(tvName.getText())) {
+                tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
+            }
+            tvAuthor.setText(mPresenter.getBookShelf().getBookInfoBean().getAuthor());
+            if (TextUtils.isEmpty(tvAuthor.getText())) {
+                tvAuthor.setText(R.string.author_unknown);
+            }
+
             String lastChapterName = mPresenter.getBookShelf().getLastChapterName();
+            if (TextUtils.isEmpty(lastChapterName) && mPresenter.getSearchBook() != null) {
+                lastChapterName = mPresenter.getSearchBook().getLastChapter();
+            }
             if (!TextUtils.isEmpty(lastChapterName)) {
                 tvLastChapter.setText(lastChapterName);
-            } else if (mPresenter.getSearchBook() != null && !TextUtils.isEmpty(mPresenter.getSearchBook().getLastChapter())) {
-                tvLastChapter.setText(mPresenter.getSearchBook().getLastChapter());
             } else {
                 tvLastChapter.setText(getString(R.string.book_search_last, getString(R.string.text_placeholder)));
             }
 
-            if (!TextUtils.isEmpty(mPresenter.getBookShelf().getBookInfoBean().getIntroduce())) {
-                tvIntro.setText(mPresenter.getBookShelf().getBookInfoBean().getIntroduce());
-            } else {
-                tvIntro.setText(null);
-            }
+            String introduce = mPresenter.getBookShelf().getBookInfoBean().getIntroduce();
+            tvIntro.setText(StringUtils.isBlank(introduce) ? null : introduce);
+
             if (tvIntro.getVisibility() != View.VISIBLE) {
                 tvIntro.setVisibility(View.VISIBLE);
                 tvIntro.startAnimation(animShowInfo);

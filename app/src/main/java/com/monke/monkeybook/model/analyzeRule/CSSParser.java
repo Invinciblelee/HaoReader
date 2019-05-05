@@ -1,6 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
@@ -178,7 +177,6 @@ final class CSSParser extends SourceParser<Element> {
                         List<TextNode> contentEs = element.textNodes();
                         for (int i = 0; i < contentEs.size(); i++) {
                             String temp = contentEs.get(i).text().trim();
-                            temp = FormatWebText.getContent(temp);
                             if (!isEmpty(temp)) {
                                 textS.add(temp);
                             }
