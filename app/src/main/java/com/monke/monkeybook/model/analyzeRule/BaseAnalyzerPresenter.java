@@ -98,7 +98,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
         result = evalReplace(result, rulePattern);
 
-        return result;
+        return formatHtml(result);
     }
 
 
