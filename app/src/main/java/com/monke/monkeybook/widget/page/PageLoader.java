@@ -347,6 +347,8 @@ public abstract class PageLoader {
             return;
         }
 
+        mChapterProvider.stop();
+
         mCurChapter.reset();
 
         BookshelfHelp.delChapter(BookshelfHelp.getCacheFolderPath(mCollBook.getBookInfoBean()),
@@ -594,7 +596,7 @@ public abstract class PageLoader {
      */
     public abstract void refreshChapterList();
 
-    public void stopRefreshChapterList() {
+    public void stopLoading() {
 
     }
 
@@ -1258,7 +1260,7 @@ public abstract class PageLoader {
         mCurChapter = null;
         mNextChapter = null;
 
-        mChapterProvider.close();
+        mChapterProvider.stop();
     }
 
     interface OnChapterPreparedCallback {
