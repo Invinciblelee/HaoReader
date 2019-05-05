@@ -1148,11 +1148,6 @@ public abstract class PageLoader {
         setCurrentStatus(status, true);
     }
 
-    void setCurrentErrorMsg(String msg) {
-        mCurChapter.setErrorMsg(msg);
-        mPageView.drawPage();
-    }
-
     void setCurrentStatus(int status, boolean notify) {
         if (mCurChapter.getStatus() != status) {
             mCurChapter.setStatus(status);

@@ -14,7 +14,6 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
-import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -222,10 +222,10 @@ class ChapterProvider {
                                 if (chapterIndex == mPageLoader.getChapterPosition()) {
                                     if (!NetworkUtil.isNetworkAvailable()) {
                                         mPageLoader.setCurrentStatus(PageStatus.STATUS_NETWORK_ERROR);
-                                    } else if (e instanceof BookException) {
-                                        mPageLoader.setCurrentErrorMsg(e.getMessage());
+                                    } else if (e instanceof TimeoutException) {
+                                        mPageLoader.setCurrentStatus(PageStatus.STATUS_CONTENT_TIMEOUT);
                                     } else {
-                                        mPageLoader.setCurrentStatus(PageStatus.STATUS_UNKNOWN_ERROR);
+                                        mPageLoader.setCurrentStatus(PageStatus.STATUS_CONTENT_ERROR);
                                     }
                                 }
                             }

@@ -5,7 +5,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModel;
-import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.io.BufferedReader;
@@ -99,8 +98,6 @@ public class NetPageLoader extends PageLoader {
                             e.printStackTrace();
                             if (!NetworkUtil.isNetworkAvailable()) {
                                 setCurrentStatus(STATUS_NETWORK_ERROR);
-                            } else if (e instanceof BookException) {
-                                setCurrentErrorMsg(e.getMessage());
                             } else {
                                 setCurrentStatus(STATUS_CATEGORY_ERROR);
                             }

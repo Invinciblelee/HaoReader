@@ -560,10 +560,6 @@ public class FastScroller extends LinearLayout {
     }
 
     private void setViewPositions(float y, boolean fromTouch) {
-        if (recyclerView == null) {
-            return;
-        }
-
         bubbleHeight = bubbleView.getMeasuredHeight();
         handleHeight = handleView.getMeasuredHeight();
 
@@ -571,6 +567,10 @@ public class FastScroller extends LinearLayout {
         int handleY = getValueInRange(0, viewHeight - handleHeight, (int) (y - handleHeight / 2));
 
         if (!fromTouch) {
+            if (recyclerView == null) {
+                return;
+            }
+
             if (!recyclerView.canScrollVertically(1)) {//确保能滑动到底部
                 bubbleY = viewHeight - bubbleHeight - handleHeight / 2;
                 handleY = viewHeight - handleHeight;

@@ -209,7 +209,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
                 if (chapterJson.has("isVip")) {
                     if (chapterJson.get("isVip").getAsBoolean()) {
-                        bookContentBean.setDurChapterContent("当前章节为VIP章节，暂时无法查看");
+                        bookContentBean.setDurChapterContent("当前章节为VIP章节，无法阅读，请换源。");
                     } else {
                         bookContentBean.setDurChapterContent(chapterJson.get("cpContent").getAsString());
                     }
@@ -218,7 +218,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 }
                 e.onNext(bookContentBean);
             } else {
-                e.onError(new BookException("正文获取失败"));
+                e.onError(new Exception("正文获取失败"));
             }
             e.onComplete();
         });

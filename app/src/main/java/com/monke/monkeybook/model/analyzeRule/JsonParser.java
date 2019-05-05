@@ -11,7 +11,6 @@ import com.monke.monkeybook.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JSON;
@@ -24,7 +23,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     @Override
-    String sourceToString(Object source) {
+    String parseObject(Object source) {
         if (source == null) {
             return "";
         }
@@ -33,7 +32,7 @@ final class JsonParser extends SourceParser<ReadContext> {
             return (String) source;
         }
 
-        final ReadContext context = fromSource(source);
+        final ReadContext context = fromObject(source);
         Object json = context.json();
         if (json instanceof List || json instanceof Map) {
             return context.jsonString();
@@ -42,7 +41,10 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     @Override
-    ReadContext fromSource(Object source) {
+    ReadContext fromObject(Object source) {
+        if (source == null) {
+            return null;
+        }
         if (source instanceof ReadContext) {
             return (ReadContext) source;
         } else if (source instanceof String) {
@@ -63,7 +65,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        return parseList(fromSource(source), ruleStr);
+        return parseList(fromObject(source), ruleStr);
     }
 
     private List<Object> parseList(ReadContext source, String rule) {
@@ -98,7 +100,7 @@ final class JsonParser extends SourceParser<ReadContext> {
         if (TextUtils.isEmpty(ruleStr)) {
             return "";
         }
-        return parseString(fromSource(source), ruleStr);
+        return parseString(fromObject(source), ruleStr);
     }
 
     @Override
@@ -160,7 +162,7 @@ final class JsonParser extends SourceParser<ReadContext> {
         if (TextUtils.isEmpty(ruleStr)) {
             return ListUtils.mutableList();
         }
-        return parseStringList(fromSource(source), ruleStr);
+        return parseStringList(fromObject(source), ruleStr);
     }
 
     private List<String> parseStringList(ReadContext source, String rule) {

@@ -1,11 +1,13 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
 import com.monke.basemvplib.RequestMethod;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
 
@@ -14,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+
+import javax.script.SimpleBindings;
 
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_HEADER;
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_PAGE;
@@ -59,11 +63,16 @@ public class AnalyzeUrl {
         //分离编码规则
         ruleUrl = splitCharCode(ruleUrl);
 
-        //设置页数
-        //设置页数
-        if (page != null) {
-            ruleUrl = analyzePage(ruleUrl, page);
+        //判断是否有下一页
+        if (page != null && page > 1 && withoutPaging(ruleUrl)) {
+            throw new Exception("no next page");
         }
+
+        //替换js
+        ruleUrl = analyzeJs(ruleUrl, baseUrl, key, page);
+
+        //设置页数
+        ruleUrl = analyzePage(ruleUrl, page);
 
         //分离post参数
         String[] ruleUrlS = ruleUrl.split("@");
@@ -77,10 +86,19 @@ public class AnalyzeUrl {
                 requestMethod = RequestMethod.GET;
             }
         }
+
         generateUrlPath(ruleUrlS[0]);
         if (requestMethod != RequestMethod.DEFAULT) {
             analyzeQuery(queryStr = ruleUrlS[1]);
         }
+    }
+
+    /**
+     * 没有分页规则
+     */
+    private boolean withoutPaging(String ruleUrl) {
+        return !ruleUrl.contains("searchPage")
+                && !PATTERN_PAGE.matcher(ruleUrl).find();
     }
 
     /**
@@ -91,13 +109,12 @@ public class AnalyzeUrl {
             headerMap.putAll(headerMapF);
         }
         Matcher matcher = PATTERN_HEADER.matcher(ruleUrl);
-        Gson gson = new Gson();
         if (matcher.find()) {
             String find = matcher.group(0);
             ruleUrl = ruleUrl.replace(find, "");
             find = find.substring(8);
             try {
-                Map<String, String> map = gson.fromJson(find, STRING_MAP);
+                Map<String, String> map = Global.GSON.fromJson(find, STRING_MAP);
                 headerMap.putAll(map);
             } catch (Exception ignore) {
             }
@@ -108,19 +125,53 @@ public class AnalyzeUrl {
     /**
      * 解析页数
      */
-    private String analyzePage(String ruleUrl, final int searchPage) {
+    private String analyzePage(String ruleUrl, Integer searchPage) throws Exception {
+        if (searchPage == null) return ruleUrl;
         Matcher matcher = PATTERN_PAGE.matcher(ruleUrl);
         if (matcher.find()) {
-            String[] pages = matcher.group(0).split(",");
+            String[] pages = matcher.group().substring(1, matcher.group().length() - 1).split(",");
             if (searchPage <= pages.length) {
-                ruleUrl = ruleUrl.replaceAll("\\{.*?\\}", pages[searchPage - 1].trim());
+                ruleUrl = ruleUrl.replace(matcher.group(), pages[searchPage - 1].trim());
             } else {
-                ruleUrl = ruleUrl.replaceAll("\\{.*?\\}", pages[pages.length - 1].trim());
+                final String page = pages[pages.length - 1].trim();
+                if (withoutPaging(page)) {
+                    throw new Exception("no next page");
+                }
+                ruleUrl = ruleUrl.replace(matcher.group(), page);
             }
         }
         return ruleUrl.replace("searchPage-1", String.valueOf(searchPage - 1))
                 .replace("searchPage+1", String.valueOf(searchPage + 1))
                 .replace("searchPage", String.valueOf(searchPage));
+    }
+
+    /**
+     * 替换js
+     */
+    @SuppressLint("DefaultLocale")
+    private String analyzeJs(String ruleUrl, String baseUrl, String searchKey, Integer searchPage) {
+        if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
+            final StringBuffer sb = new StringBuffer(ruleUrl.length());
+            final SimpleBindings simpleBindings = new SimpleBindings() {{
+                this.put("baseUrl", baseUrl);
+                this.put("searchKey", searchKey);
+                if (searchPage != null) {
+                    this.put("searchPage", searchPage);
+                }
+            }};
+            Matcher expMatcher = Patterns.PATTERN_EXP.matcher(ruleUrl);
+            while (expMatcher.find()) {
+                Object result = JSParser.evalObjectScript(expMatcher.group(1), simpleBindings);
+                if (result instanceof Double && ((Double) result) % 1.0 == 0) {
+                    expMatcher.appendReplacement(sb, String.format("%.0f", (Double) result));
+                } else {
+                    expMatcher.appendReplacement(sb, StringUtils.valueOf(result));
+                }
+            }
+            expMatcher.appendTail(sb);
+            ruleUrl = sb.toString();
+        }
+        return ruleUrl;
     }
 
 

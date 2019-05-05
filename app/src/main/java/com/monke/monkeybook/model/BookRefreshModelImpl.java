@@ -109,7 +109,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        dispatchErrorEvent(NetworkUtil.getErrorTip(NetworkUtil.ERROR_CODE_ANALY));
+                        dispatchResultEvent(Collections.emptyList());
                     }
                 });
     }

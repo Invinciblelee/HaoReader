@@ -138,7 +138,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<BookShelfBean> getBookInfo(final BookShelfBean bookShelfBean) {
         if (!initBookSourceBean()) {
-            return Observable.error(new BookException("没有找到当前书源"));
+            return Observable.error(new Exception("没有找到当前书源"));
         }
         final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
         try {
@@ -146,7 +146,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookInfo.analyzeBookInfo(response.body(), bookShelfBean));
         } catch (Exception e) {
-            return Observable.error(new BookException("书籍信息获取失败"));
+            Logger.e(TAG, "书籍信息获取失败", e);
+            return Observable.error(e);
         }
     }
 
@@ -156,7 +157,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<List<ChapterBean>> getChapterList(final BookShelfBean bookShelfBean) {
         if (!initBookSourceBean()) {
-            return Observable.error(new BookException("没有找到当前书源"));
+            return Observable.error(new Exception("没有找到当前书源"));
         }
         final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         try {
@@ -165,7 +166,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                     .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "目录获取失败", e);
-            return Observable.error(new BookException("目录获取失败"));
+            return Observable.error(e);
         }
     }
 
@@ -175,7 +176,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<BookContentBean> getBookContent(final ChapterBean chapter) {
         if (!initBookSourceBean()) {
-            return Observable.error(new BookException("没有找到当前书源"));
+            return Observable.error(new Exception("没有找到当前书源"));
         }
 
         final BookContent bookContent = new BookContent(tag, bookSourceBean);
@@ -203,7 +204,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             }
         } catch (Exception e) {
             Logger.e(TAG, "正文获取失败", e);
-            return Observable.error(new BookException("正文获取失败"));
+            return Observable.error(e);
         }
 
     }
@@ -211,7 +212,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<ChapterBean> processAudioChapter(ChapterBean chapter) {
         if (!initBookSourceBean()) {
-            return Observable.error(new BookException("没有找到书源"));
+            return Observable.error(new Exception("没有找到书源"));
         }
 
         if (isEmpty(bookSourceBean.getRuleBookContent())) {
@@ -245,7 +246,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response.body(), chapter));
             }
         } catch (Exception e) {
-            return Observable.error(new BookException("播放链接获取失败"));
+            Logger.e(TAG, "播放链接获取失败", e);
+            return Observable.error(e);
         }
     }
 

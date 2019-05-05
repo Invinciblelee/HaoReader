@@ -10,10 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.seimicrawler.xpath.JXDocument;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -26,7 +23,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     }
 
     @Override
-    String sourceToString(Object source) {
+    String parseObject(Object source) {
         if (source instanceof String) {
             return (String) source;
         } else if (source instanceof Element) {
@@ -39,7 +36,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     }
 
     @Override
-    JXDocument fromSource(Object source) {
+    JXDocument fromObject(Object source) {
         if (source instanceof String) {
             return JXDocument.create(ensureTableNode((String) source));
         } else if (source instanceof Element) {
@@ -62,7 +59,7 @@ final class XPathParser extends SourceParser<JXDocument> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
+        return ListUtils.toObjectList(parseList(fromObject(source), ruleStr));
     }
 
     private List<Element> parseList(JXDocument source, String rule) {
@@ -103,7 +100,7 @@ final class XPathParser extends SourceParser<JXDocument> {
         if (isEmpty(ruleStr)) {
             return ListUtils.mutableList();
         }
-        return parseStringList(fromSource(source), ruleStr);
+        return parseStringList(fromObject(source), ruleStr);
     }
 
     private List<String> parseStringList(JXDocument source, String xPath) {
@@ -144,7 +141,7 @@ final class XPathParser extends SourceParser<JXDocument> {
         if (isEmpty(ruleStr)) {
             return "";
         }
-        return parseString(fromSource(source), ruleStr);
+        return parseString(fromObject(source), ruleStr);
     }
 
     @Override

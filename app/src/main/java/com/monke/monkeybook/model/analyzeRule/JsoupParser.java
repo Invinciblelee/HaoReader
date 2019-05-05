@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -26,7 +25,7 @@ final class JsoupParser extends SourceParser<Element> {
     }
 
     @Override
-    String sourceToString(Object source) {
+    String parseObject(Object source) {
         if (source instanceof String) {
             return (String) source;
         } else if (source instanceof Element) {
@@ -36,7 +35,7 @@ final class JsoupParser extends SourceParser<Element> {
     }
 
     @Override
-    Element fromSource(Object source) {
+    Element fromObject(Object source) {
         if (source instanceof String) {
             return Jsoup.parse((String) source);
         } else if (source instanceof Element) {
@@ -57,7 +56,7 @@ final class JsoupParser extends SourceParser<Element> {
     @Override
     List<Object> parseList(String source, Rule rule) {
         String ruleStr = rule.getRule();
-        return ListUtils.toObjectList(parseList(fromSource(source), ruleStr));
+        return ListUtils.toObjectList(parseList(fromObject(source), ruleStr));
     }
 
     @Override
@@ -80,7 +79,7 @@ final class JsoupParser extends SourceParser<Element> {
         if (isEmpty(ruleStr)) {
             return "";
         }
-        return parseString(fromSource(source), ruleStr);
+        return parseString(fromObject(source), ruleStr);
     }
 
     @Override
@@ -106,20 +105,10 @@ final class JsoupParser extends SourceParser<Element> {
 
     private String parseString(Element source, String rule) {
         final List<String> textS = parseStringList(source, rule);
-        final StringBuilder content = new StringBuilder();
-        for (String text : textS) {
-            if (textS.size() > 1) {
-                if (text.length() > 0) {
-                    if (content.length() > 0) {
-                        content.append("\n");
-                    }
-                    content.append("\u3000\u3000").append(text);
-                }
-            } else {
-                content.append(text);
-            }
+        if (textS.isEmpty()) {
+            return "";
         }
-        return content.toString();
+        return StringUtils.join("\n", textS);
     }
 
     @Override
@@ -144,7 +133,7 @@ final class JsoupParser extends SourceParser<Element> {
             return ListUtils.mutableList();
         }
 
-        return parseStringList(fromSource(source), ruleStr);
+        return parseStringList(fromObject(source), ruleStr);
     }
 
 
@@ -183,21 +172,10 @@ final class JsoupParser extends SourceParser<Element> {
                     }
                     break;
                 case "ownText":
-                    List<String> keptTags = Arrays.asList("br", "b", "em", "strong");
                     for (Element element : elements) {
-                        Element ele = element.clone();
-                        for (Element child : ele.children()) {
-                            if (!keptTags.contains(child.tagName())) {
-                                child.remove();
-                            }
-                        }
-                        String[] htmlS = ele.html().replaceAll("(?i)<br[\\s/]*>", "\n")
-                                .replaceAll("<.*?>", "").split("\n");
-                        for (String temp : htmlS) {
-                            temp = FormatWebText.getContent(temp);
-                            if (!isEmpty(temp)) {
-                                textS.add(temp);
-                            }
+                        String text = element.ownText();
+                        if (!isEmpty(text)) {
+                            textS.add(text);
                         }
                     }
                     break;
@@ -215,14 +193,9 @@ final class JsoupParser extends SourceParser<Element> {
                     break;
                 case "html":
                     elements.select("script").remove();
-                    String[] htmlS = elements.html().replaceAll("(?i)<(br[\\\\s/]*|p.*?|div.*?|/p|/div)>", "\n")
-                            .replaceAll("<.*?>", "")
-                            .split("\n");
-                    for (String temp : htmlS) {
-                        temp = FormatWebText.getContent(temp);
-                        if (!isEmpty(temp)) {
-                            textS.add(temp);
-                        }
+                    String html = elements.html();
+                    if (!isEmpty(html)) {
+                        textS.add(html);
                     }
                     break;
                 default:

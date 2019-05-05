@@ -8,20 +8,21 @@ public class PageStatus {
     public static final int STATUS_FINISH = 3;          // 加载完成
     public static final int STATUS_UNKNOWN_ERROR = 4;   // 未知错误
     public static final int STATUS_NETWORK_ERROR = 5;   // 网络错误
-    public static final int STATUS_CONTENT_EMPTY = 6;   // 空数据
-    public static final int STATUS_PARING = 7;          // 正在解析 (装载本地数据)
-    public static final int STATUS_PARSE_ERROR = 8;     // 本地文件解析错误(暂未被使用)
-    public static final int STATUS_CATEGORY_EMPTY = 9;  // 获取到的目录为空
-    public static final int STATUS_CATEGORY_ERROR = 10; //目录获取失败
-    public static final int STATUS_HY = 11;            // 换源
-    public static final int STATUS_HY_ERROR = 12;      // 换源失败
-    public static final int STATUS_CHANGE_CHARSET = 13; //设置编码
-    public static final int STATUS_ERROR_OTHER = 14;//其他错误
+    public static final int STATUS_CONTENT_TIMEOUT = 6;   // 加载超时
+    public static final int STATUS_CONTENT_EMPTY = 7;   // 空数据
+    public static final int STATUS_CONTENT_ERROR = 8;   // 正文加载失败
+    public static final int STATUS_PARING = 9;          // 正在解析 (装载本地数据)
+    public static final int STATUS_PARSE_ERROR = 10;     // 本地文件解析错误(暂未被使用)
+    public static final int STATUS_CATEGORY_EMPTY = 11;  // 获取到的目录为空
+    public static final int STATUS_CATEGORY_ERROR = 12; //目录获取失败
+    public static final int STATUS_HY = 13;            // 换源
+    public static final int STATUS_HY_ERROR = 14;      // 换源失败
+    public static final int STATUS_CHANGE_CHARSET = 15; //设置编码
 
     private PageStatus() {
     }
 
-    static String getStatusPrompt(int status, String errorMsg) {
+    static String getStatusPrompt(int status) {
         String tip;
         switch (status) {
             case STATUS_UNKNOWN_ERROR:
@@ -29,6 +30,12 @@ public class PageStatus {
                 break;
             case STATUS_NETWORK_ERROR:
                 tip = String.format("加载失败\n%s", "网络连接不可用");
+                break;
+            case STATUS_CONTENT_TIMEOUT:
+                tip = String.format("加载失败\n%s", "正文内容获取超时");
+                break;
+            case STATUS_CONTENT_ERROR:
+                tip = String.format("加载失败\n%s", "无法获取正文内容");
                 break;
             case STATUS_HY_ERROR:
                 tip = String.format("换源失败\n%s", "请重新选择书源");
@@ -57,16 +64,10 @@ public class PageStatus {
             case STATUS_CHANGE_CHARSET:
                 tip = "正在设置编码...";
                 break;
-            case STATUS_ERROR_OTHER:
-                tip = String.format("加载失败\n%s", errorMsg == null ? "出现未知错误" : errorMsg);
-                break;
             default:
                 tip = "正在拼命加载中...";
         }
         return tip;
     }
 
-    static String getStatusPrompt(int status) {
-        return getStatusPrompt(status, null);
-    }
 }

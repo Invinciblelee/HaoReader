@@ -2,7 +2,6 @@ package com.monke.monkeybook.model.content;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,9 +13,9 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.annotation.BookType;
-import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,7 +27,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class Debug {
     public static String SOURCE_DEBUG_TAG;
@@ -61,7 +59,7 @@ public class Debug {
         SOURCE_DEBUG_TAG = tag;
         this.callBack = callBack;
         this.compositeDisposable = compositeDisposable;
-        if (NetworkUtil.isUrl(key)) {
+        if (URLUtils.isUrl(key)) {
             BookShelfBean bookShelfBean = new BookShelfBean();
             bookShelfBean.setTag(Debug.SOURCE_DEBUG_TAG);
             bookShelfBean.setNoteUrl(key);
@@ -104,7 +102,7 @@ public class Debug {
                             printLog(String.format("★%s 搜索结束", getDoTime()));
                             if (!TextUtils.isEmpty(searchBookBean.getNoteUrl())) {
                                 bookInfoDebug(BookshelfHelp.getBookFromSearchBook(searchBookBean), false);
-                            }else {
+                            } else {
                                 printError("详情网址获取失败");
                                 printLog(String.format("★%s 搜索结束", getDoTime()));
                             }

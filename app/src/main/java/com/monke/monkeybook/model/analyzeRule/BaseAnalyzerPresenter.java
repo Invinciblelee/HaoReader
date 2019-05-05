@@ -3,8 +3,8 @@ package com.monke.monkeybook.model.analyzeRule;
 import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.model.SimpleModel;
-import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +120,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         result = evalReplace(result, rulePattern);
 
         if (!isEmpty(result)) {
-            result = NetworkUtil.getAbsoluteURL(getConfig().getBaseURL(), result);
+            result = URLUtils.getAbsoluteURL(getConfig().getBaseURL(), result);
         }
         return result;
     }

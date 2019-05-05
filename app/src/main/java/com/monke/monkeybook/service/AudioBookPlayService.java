@@ -238,77 +238,79 @@ public class AudioBookPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = intent.getAction();
-        if (action != null) {
-            switch (intent.getAction()) {
-                case ACTION_START:
-                    onActionStart(intent);
-                    break;
-                case ACTION_CHANGE_SOURCE:
-                    SearchBookBean searchBookBean = intent.getParcelableExtra("searchBook");
-                    changeSource(searchBookBean);
-                    break;
-                case ACTION_PLAY:
-                    ChapterBean chapterBean = intent.getParcelableExtra("chapter");
-                    if (mModel != null && mModel.isPrepared()) {
-                        resetPlayer(true);
-                        mModel.playChapter(chapterBean, true);
-                    }
-                    break;
-                case ACTION_REFRESH_CHAPTER:
-                    if (mModel != null && mModel.isPrepared()) {
-                        resetPlayer(true);
-                        mModel.resetChapter();
-                    }
-                    break;
-                case ACTION_ADD_SHELF:
-                    if (mModel != null) {
-                        mModel.addToShelf();
-                    }
-                    break;
-                case ACTION_NEXT:
-                    nextPlay();
-                    break;
-                case ACTION_PREVIOUS:
-                    previousPlay();
-                    break;
-                case ACTION_PAUSE:
-                    pausePlay();
-                    break;
-                case ACTION_RESUME:
-                    resumePlay();
-                    break;
-                case ACTION_PROGRESS:
-                    int position = intent.getIntExtra("position", 0);
-                    seekTo(position);
-                    break;
-                case ACTION_TIMER:
-                    timerMinute = intent.getIntExtra("minute", -1);
-                    timerUntilFinish = timerMinute;
-                    if (timerMinute == -1) {
-                        cancelAlarmTimer();
-                    } else {
-                        setAlarmTimer();
-                    }
-                    break;
-                case ACTION_TIMER_PROGRESS:
-                    int minute = intent.getIntExtra("minute", -1);
-                    updateAlarmTimer(minute);
-                    break;
-                case ACTION_STOP:
-                    stopPlay();
-                    break;
-                case ACTION_STOP_NOT_IN_SHELF:
-                    if (mModel != null) {
-                        if (!mModel.inBookShelf()) {
+        if (intent != null) {
+            String action = intent.getAction();
+            if (action != null) {
+                switch (intent.getAction()) {
+                    case ACTION_START:
+                        onActionStart(intent);
+                        break;
+                    case ACTION_CHANGE_SOURCE:
+                        SearchBookBean searchBookBean = intent.getParcelableExtra("searchBook");
+                        changeSource(searchBookBean);
+                        break;
+                    case ACTION_PLAY:
+                        ChapterBean chapterBean = intent.getParcelableExtra("chapter");
+                        if (mModel != null && mModel.isPrepared()) {
+                            resetPlayer(true);
+                            mModel.playChapter(chapterBean, true);
+                        }
+                        break;
+                    case ACTION_REFRESH_CHAPTER:
+                        if (mModel != null && mModel.isPrepared()) {
+                            resetPlayer(true);
+                            mModel.resetChapter();
+                        }
+                        break;
+                    case ACTION_ADD_SHELF:
+                        if (mModel != null) {
+                            mModel.addToShelf();
+                        }
+                        break;
+                    case ACTION_NEXT:
+                        nextPlay();
+                        break;
+                    case ACTION_PREVIOUS:
+                        previousPlay();
+                        break;
+                    case ACTION_PAUSE:
+                        pausePlay();
+                        break;
+                    case ACTION_RESUME:
+                        resumePlay();
+                        break;
+                    case ACTION_PROGRESS:
+                        int position = intent.getIntExtra("position", 0);
+                        seekTo(position);
+                        break;
+                    case ACTION_TIMER:
+                        timerMinute = intent.getIntExtra("minute", -1);
+                        timerUntilFinish = timerMinute;
+                        if (timerMinute == -1) {
+                            cancelAlarmTimer();
+                        } else {
+                            setAlarmTimer();
+                        }
+                        break;
+                    case ACTION_TIMER_PROGRESS:
+                        int minute = intent.getIntExtra("minute", -1);
+                        updateAlarmTimer(minute);
+                        break;
+                    case ACTION_STOP:
+                        stopPlay();
+                        break;
+                    case ACTION_STOP_NOT_IN_SHELF:
+                        if (mModel != null) {
+                            if (!mModel.inBookShelf()) {
+                                stopPlay();
+                            }
+                        } else {
                             stopPlay();
                         }
-                    } else {
-                        stopPlay();
-                    }
-                    break;
-            }
+                        break;
+                }
 
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

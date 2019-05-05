@@ -10,12 +10,13 @@ public class Patterns {
 
 
     public static final Pattern PATTERN_HEADER = Pattern.compile("@header:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
-    public static final Pattern PATTERN_PAGE = Pattern.compile("(?<=\\{).+?(?=\\})");
+    public static final Pattern PATTERN_PAGE = Pattern.compile("\\{.*?\\}");
 
     public static final Pattern PATTERN_GET = Pattern.compile("@get:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
     public static final Pattern PATTERN_JS = Pattern.compile("(<js>[\\w\\W]*?</js>|@js:[\\w\\W]*$)", Pattern.CASE_INSENSITIVE);
 
     public static final Pattern PATTERN_JSON = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})");
+    public static final Pattern PATTERN_EXP = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}");
 
     public static final String REGEX_OPERATOR = "(?i)@operate:";
     public static final String REGEX_REDIRECT = "(?i)@redirect:";

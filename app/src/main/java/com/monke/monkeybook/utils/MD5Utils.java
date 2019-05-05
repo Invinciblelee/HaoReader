@@ -18,7 +18,7 @@ public class MD5Utils {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             byte[] bytes = md5.digest(str.getBytes());
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
             for (byte b : bytes){
                 int bt = b&0xff;
                 if (bt < 16){

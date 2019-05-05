@@ -88,11 +88,6 @@ public class TxtChapter {
         this.errorMsg = PageStatus.getStatusPrompt(status);
     }
 
-    void setErrorMsg(String errorMsg) {
-        this.status = PageStatus.STATUS_ERROR_OTHER;
-        this.errorMsg = PageStatus.getStatusPrompt(status, errorMsg);
-    }
-
     int getStatus() {
         return status;
     }

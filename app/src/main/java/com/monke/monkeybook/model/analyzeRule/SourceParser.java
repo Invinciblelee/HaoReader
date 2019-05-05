@@ -10,7 +10,7 @@ abstract class SourceParser<S> {
     private S mSource;
 
     final void setContent(Object source) {
-        mSource = fromSource(source);
+        mSource = fromObject(source);
     }
 
     final S getSource() {
@@ -18,7 +18,7 @@ abstract class SourceParser<S> {
     }
 
     final String getStringSource() {
-        return sourceToString(mSource);
+        return parseObject(mSource);
     }
 
     boolean isSourceEmpty() {
@@ -29,9 +29,9 @@ abstract class SourceParser<S> {
         return Patterns.RULE_BODY.equals(rule);
     }
 
-    abstract String sourceToString(Object source);
+    abstract String parseObject(Object source);
 
-    abstract S fromSource(Object source);
+    abstract S fromObject(Object source);
 
     abstract List<Object> getList(Rule rule);
 

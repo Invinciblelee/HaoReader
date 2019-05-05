@@ -93,15 +93,15 @@ final class HybridParser extends SourceParser<Object> {
     }
 
     @Override
-    String sourceToString(Object source) {
+    String parseObject(Object source) {
         if (currentParser == null) {
             return StringUtils.valueOf(source);
         }
-        return currentParser.sourceToString(source);
+        return currentParser.parseObject(source);
     }
 
     @Override
-    Object fromSource(Object source) {
+    Object fromObject(Object source) {
         sourceChangedXP = true;
         sourceChangedJS = true;
         sourceChangedJP = true;

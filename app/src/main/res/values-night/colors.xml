@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background">#212121</color>
-    <color name="card_background">#2e2e2e</color>
+    <color name="card_background">#2d2d2d</color>
 
     <color name="colorPrimary">#363636</color>
     <color name="colorPrimaryDark">#363636</color>
@@ -43,7 +43,7 @@
     <color name="tv_chapter_color_normal">#969696</color>
 
     <color name="bg_read_divider">#297e7e7e</color>
-    <color name="bg_divider_line">#294a4a4a</color>
+    <color name="bg_divider_line">#294b4b4b</color>
 
     <!--statusBarBackground-->
     <color name="navigation_bar_bag">@color/colorPrimary</color>

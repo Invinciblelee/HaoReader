@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class AjaxWebView {
 
@@ -60,12 +59,19 @@ public class AjaxWebView {
                 case MSG_SUCCESS:
                     mCallback.onResult((String) msg.obj);
                     mCallback.onComplete();
-                    clearWebView(mWebView);
+                    destroyWebView();
                     break;
                 case MSG_ERROR:
                     mCallback.onError((Throwable) msg.obj);
-                    clearWebView(mWebView);
+                    destroyWebView();
                     break;
+            }
+        }
+
+        private void destroyWebView() {
+            if (mWebView != null) {
+                mWebView.destroy();
+                mWebView = null;
             }
         }
     }
@@ -82,21 +88,17 @@ public class AjaxWebView {
                 .sendToTarget();
     }
 
-    private static void clearWebView(WebView webView) {
-        if (webView != null) {
-            webView.stopLoading();
-            webView.destroy();
-        }
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     private static WebView createAjaxWebView(AjaxParams params, Handler handler) {
-        WebView webView = new WebView(params.context);
+        WebView webView = new WebView(params.context.getApplicationContext());
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(true);
+        settings.setBlockNetworkImage(true);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setUserAgentString(params.getUserAgent());
         if (params.isSniff()) {
@@ -170,8 +172,9 @@ public class AjaxWebView {
             return this;
         }
 
-        private void setCookie(String cookie) {
+        private void setCookie(String url) {
             if (cookieStore != null) {
+                String cookie = CookieManager.getInstance().getCookie(url);
                 cookieStore.setCookie(tag, cookie);
             }
         }
@@ -215,6 +218,8 @@ public class AjaxWebView {
 
     private static class HtmlWebViewClient extends WebViewClient {
 
+        private static final String OUTER_HTML = "document.documentElement.outerHTML";
+
         private final AjaxParams params;
         private final Handler handler;
 
@@ -225,30 +230,23 @@ public class AjaxWebView {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            String cookie = CookieManager.getInstance().getCookie(url);
-            params.setCookie(cookie);
-            super.onPageFinished(view, url);
-
-            final String script = "document.documentElement.outerHTML";
-            view.evaluateJavascript(script, new ValueCallback<String>() {
+            view.evaluateJavascript(OUTER_HTML, new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String value) {
-                    String result = StringEscapeUtils.unescapeJson(value);
-                    if (isLoadFinish(result)) {
-                        System.out.println(value);
-                        handler.obtainMessage(AjaxHandler.MSG_SUCCESS, result)
+                    if (!TextUtils.isEmpty(value)) {
+                        handler.obtainMessage(AjaxHandler.MSG_SUCCESS, StringEscapeUtils.unescapeJson(value))
                                 .sendToTarget();
                     } else {
-                        view.evaluateJavascript(script, this);
+                        view.evaluateJavascript(OUTER_HTML, this);
                     }
                 }
             });
 
+            params.setCookie(url);
         }
 
         @Override
         public void onReceivedError(android.webkit.WebView view, int errorCode, String description, String failingUrl) {
-            super.onReceivedError(view, errorCode, description, failingUrl);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 handler.obtainMessage(AjaxHandler.MSG_ERROR, new Exception(description))
                         .sendToTarget();
@@ -257,7 +255,6 @@ public class AjaxWebView {
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-            super.onReceivedError(view, request, error);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 handler.obtainMessage(AjaxHandler.MSG_ERROR, new Exception(error.getDescription().toString()))
                         .sendToTarget();
@@ -267,11 +264,6 @@ public class AjaxWebView {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed();
-        }
-
-        private boolean isLoadFinish(String value) {    // 验证正文内容是否符合要求
-            value = value.replaceAll("&nbsp;|<br.*?>|\\s|\\n", "");
-            return Pattern.matches(".*[^\\x00-\\xFF]{50,}.*", value);
         }
     }
 
@@ -287,7 +279,6 @@ public class AjaxWebView {
 
         @Override
         public void onLoadResource(WebView view, String url) {
-            super.onLoadResource(view, url);
             List<String> suffixList = params.getAudioSuffixList();
             for (String suffix : suffixList) {
                 if (!TextUtils.isEmpty(suffix) && url.contains(suffix)) {
@@ -300,7 +291,6 @@ public class AjaxWebView {
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            super.onReceivedError(view, errorCode, description, failingUrl);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 handler.obtainMessage(AjaxHandler.MSG_ERROR, new Exception(description))
                         .sendToTarget();
@@ -309,7 +299,6 @@ public class AjaxWebView {
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-            super.onReceivedError(view, request, error);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 handler.obtainMessage(AjaxHandler.MSG_ERROR, new Exception(error.getDescription().toString()))
                         .sendToTarget();
@@ -323,13 +312,20 @@ public class AjaxWebView {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            String cookie = CookieManager.getInstance().getCookie(url);
-            params.setCookie(cookie);
-            super.onPageFinished(view, url);
             if (params.hasJavaScript()) {
-                view.evaluateJavascript(params.javaScript, null);
+                final String javaScript = params.javaScript;
+                view.evaluateJavascript(javaScript, new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (!TextUtils.isEmpty(value) || "false".equals(value)) {
+                            view.evaluateJavascript(javaScript, this);
+                        }
+                    }
+                });
                 params.clearJavaScript();
             }
+
+            params.setCookie(url);
         }
     }
 

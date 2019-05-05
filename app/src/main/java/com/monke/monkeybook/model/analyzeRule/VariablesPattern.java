@@ -1,14 +1,13 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.google.gson.Gson;
+import androidx.annotation.NonNull;
+
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
-
 
 final class VariablesPattern {
 
@@ -17,7 +16,7 @@ final class VariablesPattern {
     private VariablesPattern(@NonNull String ruleStr) {
         putterMap = new HashMap<>();
         try {
-            Map<String, String> putVariable = new Gson().fromJson(ruleStr, STRING_MAP);
+            Map<String, String> putVariable = Global.GSON.fromJson(ruleStr, STRING_MAP);
             putterMap.putAll(putVariable);
         } catch (Exception ignore) {
         }

@@ -1,22 +1,28 @@
 ## 本软件为开源软件,没有上架Google Play,没有在任何地方售卖,如果想支持我请通过软件里的捐赠,不要在任何地方购买!
 ## 更新日志
 #### 彩蛋,领支付宝红包有惊喜
+**2019/05/05**
+*修复发现列表重复bug
+*修复内置书源
+*修复内置书源和外置716冲突
+*优化动态内容获取流程
+
 **2019/05/02**
 *修改界面，统一颜色
 *删除一些库，使用系统原生控件，精简安装包
 *规则改动：
-A.为了减少判断，请把@header:放到最后面，
-B.没有@put:规则，新增了一个规则rulePersistedVariables，写法{key:value,key:value}, @get:获取是一样的
-C.新增一个规则outerBody代表根节点，适用于所有规则，例如目录列表用这个规则，可以把正文页当成一个目录章节
-D.只能用&&，||，%%连接规则，例如rule1||^rule2||rule2#正则@js: ,规则前面加^表示rule2不共用正则和js规则，rule1和rule3会共用正则和js;
-E.js规则，写法有：rule<js></js>(中间不能插入规则)<js></js> 或 rule@js: 或 全部写js；
-F.另外还可以rule1@js:ajax(result)@redirect:rule2  @redirect:重定向一个规则 js执行后会指向rule2，rule2的写法完全和普通规则一样，可以嵌套正则和js;
-G.新增几个java调用方法(注：下面的规则不能用连接符号)：
+A.没有@put:规则，新增了一个规则rulePersistedVariables，写法{key:value,key:value}, @get:获取是一样的
+B.新增一个规则outerBody代表根节点，适用于所有规则，例如目录列表用这个规则，可以把正文页当成一个目录章节
+C.只能用&&，||，%%连接规则，旧版本&，|，%失效，例如rule1||^rule2||rule2#正则@js: ,规则前面加^表示rule2不共用正则和js规则，rule1和rule3会共用正则和js;
+D.js规则，写法有：rule<js></js>(中间不能插入规则)<js></js> 或 rule@js: 或 全部写js；
+E.另外还有写法，例如：rule1@js:ajax(result)@redirect:rule2  @redirect:重定向一个规则 js执行后会指向rule2，rule2的写法完全和普通规则一样，可以嵌套正则和js;
+F.新增几个java调用方法(注：下面的规则不能用连接符号，只对字符串进行操作，不注入其他java对象)：
     1.parseResultContent(String source, String rule) source 内容，rule 规则 返回字符串
     2.parseResultUrl(String source, String rule) 返回字符串，会替换baseUrl
     3.parseResultContents(String source, String rule)返回字符串列表
     4.formatHtml(String string) 可以把html格式化为可阅读的内容
-F.CSS可以用##match##replace 的方式使用正则表达式
+G.CSS可以用##match##replace 的方式使用正则表达式（注：所有规则均可使用正则表达式，并且必须放到最后面）
+H.附一个完整写法：rule@js:jsRule#match#replace||rule<js>jsRule</js>#match#replace||@js:#match#replace||rule@js:jsRule#match#replace@redirect:rule2@js:jsRule#match#replace
 
 **2019/04/30**
 *修改界面

@@ -10,7 +10,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.content.BookException;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import com.monke.monkeybook.utils.NetworkUtil;
 
@@ -117,7 +116,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     private void onSuccess(Callback<BookShelfBean> callback) {
         if (bookShelf.realChapterListEmpty()) {
             if (callback != null) {
-                callback.onError(new BookException("目录获取失败"));
+                callback.onError(new Exception("目录获取失败"));
             }
         } else {
             isPrepared = true;
@@ -162,7 +161,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
                     if (!bookShelfBean.realChapterListEmpty()) {
                         return Observable.create(emitter -> {
-                            if(inBookShelf()) {
+                            if (inBookShelf()) {
                                 BookshelfHelp.removeFromBookShelf(bookShelf);
                                 BookshelfHelp.saveBookToShelf(bookShelfBean);
                                 bookShelf.setChangeSource(true);
@@ -173,7 +172,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                             emitter.onComplete();
                         });
                     }
-                    return Observable.error(new BookException("目录获取失败"));
+                    return Observable.error(new Exception("目录获取失败"));
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {

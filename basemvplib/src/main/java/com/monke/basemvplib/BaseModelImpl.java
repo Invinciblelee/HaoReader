@@ -18,16 +18,14 @@ public class BaseModelImpl {
     protected Observable<String> ajax(AjaxWebView.AjaxParams params) {
         return Observable.create(emitter -> {
             final AjaxWebView webView = new AjaxWebView();
-            final AjaxWebView.Callback callback = new AjaxCallback(emitter);
-            webView.ajax(params, callback);
+            webView.ajax(params, new AjaxCallback(emitter));
         });
     }
 
     protected Observable<String> sniff(AjaxWebView.AjaxParams params) {
         return Observable.create(emitter -> {
             final AjaxWebView webView = new AjaxWebView();
-            final AjaxWebView.Callback callback = new AjaxCallback(emitter);
-            webView.sniff(params, callback);
+            webView.sniff(params, new AjaxCallback(emitter));
         });
     }
 

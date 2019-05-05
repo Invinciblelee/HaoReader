@@ -140,7 +140,7 @@ final class RulePattern {
     }
 
     static RulePattern fromRule(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
-        return new RulePattern(rawRule, variableStore, ruleMode);
+        return new RulePattern(rawRule.trim(), variableStore, ruleMode);
     }
 
     static RulePattern fromRule(@NonNull String rawRule, @Nullable RuleMode ruleMode) {
@@ -148,7 +148,7 @@ final class RulePattern {
     }
 
     static RulePattern fromHybridRule(@NonNull String rawRule, @Nullable VariableStore variableStore) {
-        return new RulePattern(rawRule, variableStore);
+        return new RulePattern(rawRule.trim(), variableStore);
     }
 
     static RulePattern fromHybridRule(@NonNull String rawRule) {

@@ -66,7 +66,7 @@ final class RulePatterns {
         patterns = new ArrayList<>();
         for (String ruleStr : rules) {
             if (!StringUtils.isBlank(ruleStr)) {
-                patterns.add(RulePattern.fromRule(ruleStr.trim(), variableStore, mode));
+                patterns.add(RulePattern.fromRule(ruleStr, variableStore, mode));
             }
         }
 
@@ -89,7 +89,7 @@ final class RulePatterns {
     }
 
     static RulePatterns fromRule(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
-        return new RulePatterns(rawRule, variableStore, ruleMode);
+        return new RulePatterns(rawRule.trim(), variableStore, ruleMode);
     }
 
     static RulePatterns fromRule(String rawRule, RuleMode ruleMode) {
@@ -97,7 +97,7 @@ final class RulePatterns {
     }
 
     static RulePatterns fromHybridRule(String rawRule, VariableStore variableStore) {
-        return new RulePatterns(rawRule, variableStore);
+        return new RulePatterns(rawRule.trim(), variableStore);
     }
 
     static RulePatterns fromHybridRule(String rawRule) {
