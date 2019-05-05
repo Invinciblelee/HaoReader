@@ -30,6 +30,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     public void initImmersionBar() {
         mImmersionBar.fullScreen(true);
         mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+        mImmersionBar.statusBarDarkFont(false);
         mImmersionBar.init();
     }
 

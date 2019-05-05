@@ -526,9 +526,9 @@ public class AudioBookPlayService extends Service {
             info.setPause(isPause);
             info.setTimerMinute(timerMinute);
             info.setTimerMinuteUntilFinish(timerUntilFinish);
-            info.setProgress(progress);
-            info.setDuration(duration);
             if (!bookShelfBean.realChapterListEmpty()) {
+                info.setProgress(progress);
+                info.setDuration(duration);
                 info.setChapterBeans(bookShelfBean.getChapterList());
                 info.setDurChapterIndex(bookShelfBean.getDurChapter());
             }
@@ -549,11 +549,11 @@ public class AudioBookPlayService extends Service {
     }
 
     private void resetModel() {
-        sendWhenAttach(false);
         if (mModel != null) {
             mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
+        sendWhenAttach(false);
         resetPlayer(true);
     }
 
