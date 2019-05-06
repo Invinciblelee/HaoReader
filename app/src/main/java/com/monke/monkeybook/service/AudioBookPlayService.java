@@ -431,9 +431,6 @@ public class AudioBookPlayService extends Service {
 
             cancelProgressTimer();
             setProgressTimer();
-            sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
-            sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(true));
-            updateNotification();
         });
 
         mediaPlayer.setOnCompletionListener(mp -> {
@@ -645,7 +642,7 @@ public class AudioBookPlayService extends Service {
         if (isError) {//失败后重试
             setPause(false);
             resetPlayer(false);
-            mModel.retryPlay(progress);
+            mModel.retryPlay(progress);//按上次进度继续播放
             return true;
         }
         return false;
@@ -701,6 +698,10 @@ public class AudioBookPlayService extends Service {
                 }
             }, 0, 1000, TimeUnit.MILLISECONDS);
         }
+
+        sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
+        sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(true));
+        updateNotification();
     }
 
     private void cancelProgressTimer() {
