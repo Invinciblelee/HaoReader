@@ -45,9 +45,6 @@ class ChapterProvider {
 
     ChapterProvider(PageLoader pageLoader) {
         this.mPageLoader = pageLoader;
-
-        mExecutor = Executors.newFixedThreadPool(8);
-        mScheduler = Schedulers.from(mExecutor);
     }
 
     /**
@@ -90,7 +87,7 @@ class ChapterProvider {
         try {
             boolean showTitle = true; // 是否展示标题
             String paragraph = chapter.getDurChapterName() + "\n"; //默认展示标题
-            if (collBook.getTag().equals(BookShelfBean.LOCAL_TAG)) {
+            if (collBook.isLocalBook()) {
                 br.readLine();
             }
             while (showTitle || (paragraph = br.readLine()) != null) {
@@ -193,6 +190,7 @@ class ChapterProvider {
             }
             chapter.setNextChapterUrl(nextChapter == null ? null : nextChapter.getDurChapterUrl());
             if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
+                ensureExecutor();
                 WebBookModel.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
                         .subscribeOn(mScheduler)
                         .doAfterNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
@@ -202,9 +200,7 @@ class ChapterProvider {
 
                             @Override
                             public void onSubscribe(Disposable d) {
-                                if (mCompositeDisposable == null || mCompositeDisposable.isDisposed()) {
-                                    mCompositeDisposable = new CompositeDisposable();
-                                }
+                                ensureCompositeDisposable();
                                 mCompositeDisposable.add(d);
                             }
 
@@ -245,11 +241,28 @@ class ChapterProvider {
         return false;
     }
 
-    void close() {
+    private void ensureExecutor(){
+        if(mExecutor == null || mExecutor.isShutdown()){
+            mExecutor = Executors.newFixedThreadPool(8);
+            mScheduler = Schedulers.from(mExecutor);
+        }
+    }
+
+    private void ensureCompositeDisposable(){
+        if (mCompositeDisposable == null || mCompositeDisposable.isDisposed()) {
+            mCompositeDisposable = new CompositeDisposable();
+        }
+    }
+
+    void stop() {
+        mDownloadingChapterList.clear();
         if (mCompositeDisposable != null) {
             mCompositeDisposable.dispose();
             mCompositeDisposable = null;
         }
-        mExecutor.shutdown();
+        if(mExecutor != null) {
+            mExecutor.shutdown();
+            mExecutor = null;
+        }
     }
 }

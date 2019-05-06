@@ -120,7 +120,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
         mImmersionBar.statusBarDarkFont(false);
 
-        mImmersionBar.statusBarDarkFont(false);
         mImmersionBar.init();
     }
 

@@ -134,7 +134,7 @@ public class WebBookModel implements IWebBookModel {
 
     //获取book source class
     private IStationBookModel getBookSourceModel(String tag) {
-        if (TextUtils.equals(tag, BookShelfBean.LOCAL_TAG)) {
+        if (BookShelfBean.LOCAL_TAG.equals(tag)) {
             return null;
         } else if (TextUtils.equals(tag, Default716.TAG)) {
             return Default716.newInstance();

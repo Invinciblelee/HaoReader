@@ -473,7 +473,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private void showHideUrlViews() {
         if (mPresenter.getBookShelf() == null
                 || mPresenter.getBookShelf().realChapterListEmpty()
-                || mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG)) {
+                || mPresenter.getBookShelf().isLocalBook()) {
             atvDivider.setVisibility(View.GONE);
             atvLayout.setVisibility(View.GONE);
         } else {
@@ -1262,6 +1262,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPresenter.getBookShelf() != null) {
             ensureDialogHUD();
             moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
+                mPageLoader.stopLoading();
                 mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
                 mPresenter.changeBookSource(searchBookBean);
             });
@@ -1626,7 +1627,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void stopRefreshChapterList() {
         if (mPageLoader != null) {
-            mPageLoader.stopRefreshChapterList();
+            mPageLoader.stopLoading();
         }
     }
 

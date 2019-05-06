@@ -63,7 +63,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                             final List<BookShelfBean> remove = new ArrayList<>();
                             if (bookShelfBeans != null) {
                                 for (BookShelfBean bookShelfBean : bookShelfBeans) {
-                                    if (BookShelfBean.LOCAL_TAG.equals(bookShelfBean.getTag())) {
+                                    if (bookShelfBean.isLocalBook()) {
                                         File file = new File(bookShelfBean.getNoteUrl());
                                         if (!file.exists()) {
                                             BookshelfHelp.removeFromBookShelf(bookShelfBean);

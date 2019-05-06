@@ -7,22 +7,12 @@ import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.android.material.internal.NavigationMenuPresenter;
-import com.google.android.material.internal.NavigationMenuView;
-import com.google.android.material.navigation.NavigationView;
-import com.monke.monkeybook.R;
-import com.monke.monkeybook.utils.ScreenUtils;
-
-import java.lang.reflect.Field;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -31,6 +21,14 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.internal.NavigationMenuPresenter;
+import com.google.android.material.internal.NavigationMenuView;
+import com.google.android.material.navigation.NavigationView;
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.ScreenUtils;
+
+import java.lang.reflect.Field;
 
 public class AppCompat {
 
@@ -43,7 +41,7 @@ public class AppCompat {
     public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchHintIcon, boolean showBg) {
         final int normalColor = searchView.getResources().getColor(R.color.colorToolBarText);
         AppCompatImageView search = searchView.findViewById(androidx.appcompat.R.id.search_button);
-        search.setImageResource(R.drawable.ic_search_black_24dp);
+        search.setImageResource(R.drawable.ic_search_large_black_24dp);
         setTint(search, normalColor);
 
         SearchView.SearchAutoComplete searchText = searchView.findViewById(R.id.search_src_text);

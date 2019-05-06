@@ -31,7 +31,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -44,7 +43,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public boolean checkLocalBookNotExists(BookShelfBean bookShelf) {
-        if (!Objects.equals(bookShelf.getTag(), BookShelfBean.LOCAL_TAG)) {
+        if (!bookShelf.isLocalBook()) {
             return false;
         }
 

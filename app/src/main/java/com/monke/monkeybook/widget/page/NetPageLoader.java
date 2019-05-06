@@ -107,7 +107,8 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    public void stopRefreshChapterList() {
+    public void stopLoading() {
+        getChapterProvider().stop();
         if (mChapterDisp != null) {
             mChapterDisp.dispose();
         }

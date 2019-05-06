@@ -184,7 +184,6 @@ final class JsoupParser extends SourceParser<Element> {
                         List<TextNode> contentEs = element.textNodes();
                         for (int i = 0; i < contentEs.size(); i++) {
                             String temp = contentEs.get(i).text().trim();
-                            temp = FormatWebText.getContent(temp);
                             if (!isEmpty(temp)) {
                                 textS.add(temp);
                             }

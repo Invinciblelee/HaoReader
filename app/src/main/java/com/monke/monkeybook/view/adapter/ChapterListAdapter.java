@@ -109,7 +109,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
         if (chapterBean == null || mBook == null) {
             return false;
         }
-        return TextUtils.equals(mBook.getTag(), BookShelfBean.LOCAL_TAG) || chapterBean.getHasCache(mBook.getBookInfoBean());
+        return mBook.isLocalBook() || chapterBean.getHasCache(mBook.getBookInfoBean());
     }
 
     private void setBoldText(ThisViewHolder holder, boolean bold) {

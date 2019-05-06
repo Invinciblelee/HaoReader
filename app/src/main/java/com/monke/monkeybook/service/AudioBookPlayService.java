@@ -436,6 +436,7 @@ public class AudioBookPlayService extends Service {
             sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(true));
             updateNotification();
         });
+
         mediaPlayer.setOnCompletionListener(mp -> {
             if (isPrepared && !nextPlay()) {
                 setPause(true);
@@ -525,9 +526,9 @@ public class AudioBookPlayService extends Service {
             info.setPause(isPause);
             info.setTimerMinute(timerMinute);
             info.setTimerMinuteUntilFinish(timerUntilFinish);
-            info.setProgress(progress);
-            info.setDuration(duration);
             if (!bookShelfBean.realChapterListEmpty()) {
+                info.setProgress(progress);
+                info.setDuration(duration);
                 info.setChapterBeans(bookShelfBean.getChapterList());
                 info.setDurChapterIndex(bookShelfBean.getDurChapter());
             }
@@ -548,11 +549,11 @@ public class AudioBookPlayService extends Service {
     }
 
     private void resetModel() {
-        sendWhenAttach(false);
         if (mModel != null) {
             mModel.saveProgress(progress, duration);
             mModel.destroy();
         }
+        sendWhenAttach(false);
         resetPlayer(true);
     }
 
@@ -661,9 +662,9 @@ public class AudioBookPlayService extends Service {
 
     private void startPlay(String url) {
         try {
-            Logger.d(TAG, "audio --> play: " + url);
+            Logger.d(TAG, "audio --> progress: " + url);
             mediaPlayer.reset();
-            if (useCacheSource()) {
+            if (useCacheSource() && mModel.inBookShelf()) {
                 String proxyUrl = MApplication.getProxyCacheServer(this).getProxyUrl(url);
                 mediaPlayer.setDataSource(proxyUrl);
             } else {
@@ -696,7 +697,7 @@ public class AudioBookPlayService extends Service {
                     if (dur != 0) {
                         duration = dur;
                         progress = pro;
-                        sendEvent(ACTION_PROGRESS, AudioPlayInfo.play(progress, duration));
+                        sendEvent(ACTION_PROGRESS, AudioPlayInfo.progress(progress, duration));
                     }
                 }
             }, 0, 1000, TimeUnit.MILLISECONDS);
@@ -843,6 +844,7 @@ public class AudioBookPlayService extends Service {
         super.onDestroy();
         RxBus.get().unregister(this);
         running = false;
+        mediaPlayer.stop();
         mediaPlayer.release();
         cancelProgressTimer();
         cancelAlarmTimer();
