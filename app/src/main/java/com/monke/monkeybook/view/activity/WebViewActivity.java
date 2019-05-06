@@ -236,7 +236,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
             intent.setData(Uri.parse(url));
             startActivity(intent);
         } catch (Exception e) {
-            e.printStackTrace();
             toast(R.string.can_not_open);
         }
     }
