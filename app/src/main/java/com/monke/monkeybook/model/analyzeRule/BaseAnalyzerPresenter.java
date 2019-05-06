@@ -98,7 +98,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
         result = evalReplace(result, rulePattern);
 
-        return formatHtml(result);
+        return result;
     }
 
 
@@ -152,11 +152,6 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     @Override
     public final String formatHtml(String string) {
-        if (isEmpty(string)) {
-            return "";
-        }
-        return string.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
-                .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
-                .replaceAll("\\s*\\n+\\s*", "\n　　");                   // 移除空行,并增加段前缩进2个汉字
+        return StringUtils.formatHtml(string);
     }
 }

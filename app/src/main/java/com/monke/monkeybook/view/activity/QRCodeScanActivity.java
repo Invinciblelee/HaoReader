@@ -65,6 +65,12 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
     }
 
     @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getWindow().getDecorView().post(this::startCamera);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("选择图片").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
@@ -103,12 +109,6 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        startCamera();
-    }
-
-    @Override
     protected void onStop() {
         zxingview.stopCamera(); // 关闭摄像头预览，并且隐藏扫描框
         super.onStop();
@@ -126,6 +126,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
         intent.putExtra("result", result);
         setResult(RESULT_OK, intent);
         finish();
+
     }
 
     @Override

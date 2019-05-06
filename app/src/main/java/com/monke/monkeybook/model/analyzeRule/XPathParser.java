@@ -158,9 +158,9 @@ final class XPathParser extends SourceParser<JXDocument> {
         try {
             Object object = document.selOne(xPath);
             if (object instanceof Element) {
-                return formatHtmlString(((Element) object).html());
+                return StringUtils.formatHtml(((Element) object).html());
             } else {
-                return formatHtmlString(StringUtils.valueOf(object));
+                return StringUtils.formatHtml(StringUtils.valueOf(object));
             }
 
         } catch (Exception e) {
@@ -169,11 +169,6 @@ final class XPathParser extends SourceParser<JXDocument> {
         return "";
     }
 
-    private String formatHtmlString(String html) {
-        return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
-                .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
-                .replaceAll("\\s*\\n+\\s*", "\n　　");                   // 移除空行,并增加段前缩进2个汉字
-    }
 
     private String ensureTableNode(String source) {
         // 给表格标签添加完整的框架结构,否则会丢失表格标签;html标准不允许表格标签独立在table之外

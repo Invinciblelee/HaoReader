@@ -72,8 +72,6 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         String bookType = item.getBookType();
         if (TextUtils.equals(bookType, BookType.AUDIO)) {
             builder.insert(0, activity.getString(R.string.book_audio));
-        } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
-            builder.insert(0, activity.getString(R.string.book_download));
         }
         myViewHolder.tvName.setText(builder.toString());
 

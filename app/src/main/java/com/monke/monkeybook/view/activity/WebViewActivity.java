@@ -17,7 +17,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -118,16 +117,13 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         webView.setHorizontalScrollBarEnabled(false);
 
         WebSettings settings = webView.getSettings();
-        settings.setSupportZoom(true);
-        settings.setBuiltInZoomControls(true);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
         settings.setUserAgentString(AnalyzeHeaders.getUserAgent(mConfig.getUserAgent()));
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setBuiltInZoomControls(false);
-        settings.setDisplayZoomControls(false);
+        settings.setSupportZoom(true);
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -203,6 +199,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     protected void onDestroy() {
         super.onDestroy();
         if (webView != null) {
+            webView.setVisibility(View.GONE);
             webView.destroy();
             webView = null;
         }

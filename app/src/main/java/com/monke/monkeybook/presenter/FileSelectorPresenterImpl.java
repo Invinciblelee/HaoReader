@@ -271,7 +271,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             return false;
         }
         //文件夹内部数量为0
-        if (pathname.isDirectory() && pathname.list().length == 0) {
+        if (pathname.isDirectory() && (pathname.list() == null || pathname.list().length == 0)) {
             return false;
         }
 

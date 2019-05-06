@@ -29,7 +29,7 @@ public class Constant {
 
 
     public static final String[] BOOK_TYPES = {
-            BookType.TEXT, BookType.AUDIO, BookType.DOWNLOAD
+            BookType.TEXT, BookType.AUDIO
     };
 
 

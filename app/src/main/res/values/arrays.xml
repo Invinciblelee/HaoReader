@@ -79,7 +79,6 @@
     <string-array name="source_type">
         <item>TEXT</item>
         <item>AUDIO</item>
-        <item>DOWNLOAD</item>
     </string-array>
 
     <string-array name="source_rule_type">

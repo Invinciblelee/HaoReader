@@ -30,7 +30,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
     private static final int RETRY_COUNT = 2;
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private CompositeDisposable disposables;
 
     private Disposable mPlayDisposable;
     private Disposable mChapterDisposable;
@@ -57,7 +57,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             mPlayCallback.onStart();
         }
 
-        if (mChapterDisposable != null) {
+        if (disposables != null && mChapterDisposable != null) {
             disposables.remove(mChapterDisposable);
         }
 
@@ -94,6 +94,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
                         @Override
                         public void onSubscribe(Disposable d) {
+                            ensureCompositeDisposable();
                             disposables.add(mChapterDisposable = d);
                         }
 
@@ -138,7 +139,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             mPlayCallback.onStart();
         }
 
-        if (mChapterDisposable != null) {
+        if (disposables != null && mChapterDisposable != null) {
             disposables.remove(mChapterDisposable);
         }
 
@@ -268,7 +269,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             mPlayCallback.onStart();
         }
 
-        if (mPlayDisposable != null) {
+        if (disposables != null && mPlayDisposable != null) {
             disposables.remove(mPlayDisposable);
         }
 
@@ -319,6 +320,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
                     @Override
                     public void onSubscribe(Disposable d) {
+                        ensureCompositeDisposable();
                         disposables.add(mPlayDisposable = d);
                     }
 
@@ -426,8 +428,16 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 });
     }
 
+
+    private void ensureCompositeDisposable(){
+        if(disposables == null || disposables.isDisposed()){
+            disposables = new CompositeDisposable();
+        }
+    }
+
     public void destroy() {
         disposables.dispose();
+        disposables = null;
     }
 
 }

@@ -17,7 +17,8 @@ public class UrlEncoderUtils {
         for (i = '0'; i <= '9'; i++) {
             dontNeedEncoding.set(i);
         }
-        dontNeedEncoding.set('+');
+        dontNeedEncoding.set(' '); /** encoding a space to a + is done
+                                     * in the encode() method */
         /**
          * 这里会有误差,比如输入一个字符串 123+456,它到底是原文就是123+456还是123 456做了urlEncode后的内容呢？<br>
          * 其实问题是一样的，比如遇到123%2B456,它到底是原文即使如此，还是123+456 urlEncode后的呢？ <br>
@@ -29,6 +30,21 @@ public class UrlEncoderUtils {
         dontNeedEncoding.set('_');
         dontNeedEncoding.set('.');
         dontNeedEncoding.set('*');
+
+        /**
+         * 对以下在 URI 中具有特殊含义的 ASCII 标点符号    ;/?:@&=+$,#  不需要转义
+         */
+        dontNeedEncoding.set(';');
+        dontNeedEncoding.set('/');
+        dontNeedEncoding.set('?');
+        dontNeedEncoding.set(':');
+        dontNeedEncoding.set('@');
+        dontNeedEncoding.set('&');
+        dontNeedEncoding.set('=');
+        dontNeedEncoding.set('+');
+        dontNeedEncoding.set('$');
+        dontNeedEncoding.set(',');
+        dontNeedEncoding.set('#');
     }
 
     /**

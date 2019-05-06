@@ -19,6 +19,7 @@ import android.webkit.WebViewClient;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -217,7 +218,6 @@ public class AjaxWebView {
         }
     }
 
-
     private static class HtmlWebViewClient extends WebViewClient {
 
         private static final String OUTER_HTML = "document.documentElement.outerHTML";
@@ -232,17 +232,7 @@ public class AjaxWebView {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            view.evaluateJavascript(OUTER_HTML, new ValueCallback<String>() {
-                @Override
-                public void onReceiveValue(String value) {
-                    if (!TextUtils.isEmpty(value)) {
-                        handler.obtainMessage(AjaxHandler.MSG_SUCCESS, StringEscapeUtils.unescapeJson(value))
-                                .sendToTarget();
-                    } else {
-                        view.evaluateJavascript(OUTER_HTML, this);
-                    }
-                }
-            });
+            evaluateJavascript(view, OUTER_HTML);
 
             params.setCookie(url);
         }
@@ -266,6 +256,18 @@ public class AjaxWebView {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed();
+        }
+
+        private void evaluateJavascript(final WebView webView, final String javaScript) {
+            final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript, value -> {
+                if (!TextUtils.isEmpty(value)) {
+                    handler.obtainMessage(AjaxHandler.MSG_SUCCESS, StringEscapeUtils.unescapeJson(value))
+                            .sendToTarget();
+                } else {
+                    evaluateJavascript(webView, javaScript);
+                }
+            });
+            handler.postDelayed(runnable, 1000L);
         }
     }
 
@@ -315,19 +317,42 @@ public class AjaxWebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             if (params.hasJavaScript()) {
-                final String javaScript = params.javaScript;
-                view.evaluateJavascript(javaScript, new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        if (!TextUtils.isEmpty(value) || "false".equals(value)) {
-                            view.evaluateJavascript(javaScript, this);
-                        }
-                    }
-                });
+                evaluateJavascript(view, params.javaScript);
                 params.clearJavaScript();
             }
 
             params.setCookie(url);
+        }
+
+        private void evaluateJavascript(final WebView webView, final String javaScript) {
+            final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript, value -> {
+                if (!TextUtils.isEmpty(value) || "false".equals(value)) {
+                    evaluateJavascript(webView, javaScript);
+                }
+            });
+            handler.postDelayed(runnable, 1000L);
+        }
+    }
+
+    private static class ScriptRunnable implements Runnable {
+
+        private final String mJavaScript;
+        private final ValueCallback<String> mCallback;
+
+        private WeakReference<WebView> mWebView;
+
+        private ScriptRunnable(WebView webView, String javaScript, ValueCallback<String> callback) {
+            mWebView = new WeakReference<>(webView);
+            mJavaScript = javaScript;
+            mCallback = callback;
+        }
+
+        @Override
+        public void run() {
+            WebView webView = mWebView.get();
+            if (webView != null) {
+                webView.evaluateJavascript(mJavaScript, mCallback);
+            }
         }
     }
 

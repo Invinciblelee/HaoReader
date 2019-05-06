@@ -239,7 +239,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             }
             tvIntro.setVisibility(View.INVISIBLE);
             llBookRecent.setVisibility(View.GONE);
-            showHideViews(mPresenter.getSearchBook().getBookType());
+            showHideViews(mPresenter.getSearchBook().getBookType(), false);
             showLoading(true);
         }
 
@@ -250,26 +250,11 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     public void updateView(boolean stopLoading) {
         if (null != mPresenter.getBookShelf()) {
-            if (mPresenter.getBookShelf().isLocalBook()) {
-                tvUpdateSw.setVisibility(View.GONE);
-                rgGroup.setVisibility(View.GONE);
-                ivRefresh.setVisibility(View.GONE);
-                tvChangeOrigin.setVisibility(View.GONE);
-                tvOrigin.setText(getString(R.string.local));
-            } else {
-                tvUpdateSw.setVisibility(View.VISIBLE);
-                rgGroup.setVisibility(View.VISIBLE);
-                ivRefresh.setVisibility(View.VISIBLE);
-                tvChangeOrigin.setVisibility(View.VISIBLE);
-                if (mPresenter.getBookShelf().getBookInfoBean().getOrigin() != null && mPresenter.getBookShelf().getBookInfoBean().getOrigin().length() > 0) {
-                    tvOrigin.setVisibility(View.VISIBLE);
-                    tvOrigin.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
-                } else {
-                    tvOrigin.setVisibility(View.INVISIBLE);
-                }
-            }
-
             String bookType = mPresenter.getBookShelf().getBookInfoBean().getBookType();
+
+            showCoverImage(mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl());
+            showHideViews(bookType, mPresenter.getBookShelf().isLocalBook());
+            changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
 
             if (mPresenter.inBookShelf()) {
                 if (rgGroup.getVisibility() == View.VISIBLE) {
@@ -293,9 +278,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 llBookRecent.setVisibility(View.GONE);
                 tvRemoveShelf.setText(R.string.add_shelf);
             }
-
-            showHideViews(bookType);
-            changeUpdateSwitch(mPresenter.getBookShelf().getUpdateOff());
 
             if (TextUtils.isEmpty(tvName.getText())) {
                 tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
@@ -322,8 +304,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 tvIntro.setVisibility(View.VISIBLE);
                 tvIntro.startAnimation(animShowInfo);
             }
-
-            showCoverImage(mPresenter.getBookShelf().getBookInfoBean().getRealCoverUrl());
         }
         if (stopLoading) {
             showLoading(false);
@@ -400,12 +380,28 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         });
     }
 
-    private void showHideViews(String bookType) {
+    private void showHideViews(String bookType, boolean local) {
+        if (local) {
+            tvUpdateSw.setVisibility(View.GONE);
+            rgGroup.setVisibility(View.GONE);
+            ivRefresh.setVisibility(View.GONE);
+            tvChangeOrigin.setVisibility(View.GONE);
+            tvOrigin.setText(getString(R.string.local));
+        } else {
+            tvUpdateSw.setVisibility(View.VISIBLE);
+            rgGroup.setVisibility(View.VISIBLE);
+            ivRefresh.setVisibility(View.VISIBLE);
+            tvChangeOrigin.setVisibility(View.VISIBLE);
+            if (mPresenter.getBookShelf().getBookInfoBean().getOrigin() != null && mPresenter.getBookShelf().getBookInfoBean().getOrigin().length() > 0) {
+                tvOrigin.setVisibility(View.VISIBLE);
+                tvOrigin.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
+            } else {
+                tvOrigin.setVisibility(View.INVISIBLE);
+            }
+        }
         if (TextUtils.equals(bookType, BookType.AUDIO)) {
             tvRead.setText(R.string.start_listen);
             rgGroup.setVisibility(View.GONE);
-        } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
-
         }
     }
 
@@ -417,8 +413,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         } else if (TextUtils.equals(bookType, BookType.AUDIO)) {
             AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf());
             finish();
-        } else if (TextUtils.equals(bookType, BookType.DOWNLOAD)) {
-
         }
     }
 

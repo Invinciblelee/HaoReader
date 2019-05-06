@@ -7,12 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 
 @StringDef({
         BookType.TEXT,
-        BookType.AUDIO,
-        BookType.DOWNLOAD,
+        BookType.AUDIO
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface BookType {
     String TEXT = "TEXT";
     String AUDIO = "AUDIO";
-    String DOWNLOAD = "DOWNLOAD";
 }

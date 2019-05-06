@@ -10,6 +10,7 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -95,7 +96,8 @@ final class CSSParser extends SourceParser<Element> {
         if (textS.isEmpty()) {
             return "";
         }
-        return StringUtils.join("\n", textS);
+        final String result = StringUtils.join("\n", textS);
+        return StringUtils.formatHtml(result);
     }
 
     @Override
@@ -164,30 +166,37 @@ final class CSSParser extends SourceParser<Element> {
                         }
                     }
                     break;
-                case "ownText":
+                case "textNodes":
                     for (Element element : elements) {
-                        String text = element.ownText();
+                        List<TextNode> contentEs = element.textNodes();
+                        for (int i = 0; i < contentEs.size(); i++) {
+                            String text = contentEs.get(i).text();
+                            if (!isEmpty(text)) {
+                                textS.add(text);
+                            }
+                        }
+                    }
+                    break;
+                case "ownText":
+                    List<String> keptTags = Arrays.asList("br", "b", "em", "strong");
+                    for (Element element : elements) {
+                        Element ele = element.clone();
+                        for (Element child : ele.children()) {
+                            if (!keptTags.contains(child.tagName())) {
+                                child.remove();
+                            }
+                        }
+                        String text = ele.html();
                         if (!isEmpty(text)) {
                             textS.add(text);
                         }
                     }
                     break;
-                case "textNodes":
-                    for (Element element : elements) {
-                        List<TextNode> contentEs = element.textNodes();
-                        for (int i = 0; i < contentEs.size(); i++) {
-                            String temp = contentEs.get(i).text().trim();
-                            if (!isEmpty(temp)) {
-                                textS.add(temp);
-                            }
-                        }
-                    }
-                    break;
                 case "html":
                     elements.select("script").remove();
-                    String html = elements.html();
-                    if (!isEmpty(html)) {
-                        textS.add(html);
+                    String text = elements.html();
+                    if (!isEmpty(text)) {
+                        textS.add(text);
                     }
                     break;
                 default:

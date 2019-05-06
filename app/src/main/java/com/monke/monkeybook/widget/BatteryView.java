@@ -10,16 +10,10 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.monke.monkeybook.utils.ColorUtil;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.ColorUtils;
 
 public class BatteryView extends View {
-
-    private static final int BACK_ALPHA = 85;
-    private static final int TEXT_ALPHA = 165;
 
     private static final int OUT_BORDER_WIDTH = 3;
     private static final int OUT_RECT_RADIUS = 4;
@@ -71,23 +65,13 @@ public class BatteryView extends View {
         //电量背景
         float left = mRect.left + INNER_SPACING + halfBorderWidth;
         float right = mRect.right - INNER_SPACING - halfBorderWidth;
-        mRect.set(left, mRect.top + INNER_SPACING + halfBorderWidth , right, mRect.bottom - INNER_SPACING - halfBorderWidth);
+        mRect.set(left, mRect.top + INNER_SPACING + halfBorderWidth, right, mRect.bottom - INNER_SPACING - halfBorderWidth);
         mPaint.setStyle(Paint.Style.FILL);
-        if (showBatteryNumber) {
-            mPaint.setColor(ColorUtils.setAlphaComponent(mColor, BACK_ALPHA));
-            canvas.drawRoundRect(mRect, 2, 2, mPaint);
-        }
-
-        //电量进度
-        float offset = (1 - 1.0f * mProgress / 100) * (right - left);
-        mRect.left += offset;
-        mPaint.setColor(mColor);
-        canvas.drawRoundRect(mRect, 2, 2, mPaint);
 
         //电量文字
         if (showBatteryNumber) {
             mTextPaint.setTextSize(mRect.height());
-            mTextPaint.setColor(ColorUtils.setAlphaComponent(mTextColor, TEXT_ALPHA));
+            mTextPaint.setColor(mTextColor);
             String progress = String.valueOf(mProgress);
             float centerX = (right - left) / 2 + left;
             float centerY = 1.0f * getHeight() / 2;
@@ -96,6 +80,13 @@ public class BatteryView extends View {
             float bottom = fontMetrics.bottom;//为基线到字体下边框的距离,即上图中的bottom
             float baseLineY = centerY - top / 2 - bottom / 2;//基线中间点的y轴计算公
             canvas.drawText(progress, centerX, baseLineY, mTextPaint);
+        }
+        //电量进度
+        else {
+            float offset = (1 - 1.0f * mProgress / 100) * (right - left);
+            mRect.left += offset;
+            mPaint.setColor(mColor);
+            canvas.drawRoundRect(mRect, 2, 2, mPaint);
         }
 
         //电极
@@ -109,8 +100,7 @@ public class BatteryView extends View {
 
     public void setColor(@ColorInt int color) {
         mColor = color;
-        boolean isDark = ColorUtil.isDark(mColor);
-        mTextColor = isDark ? Color.WHITE : Color.BLACK;
+        mTextColor = color;
         invalidate();
     }
 

@@ -227,7 +227,12 @@ public class Debug {
                     @Override
                     public void onNext(BookContentBean bookContentBean) {
                         printLog("●成功获取正文页» " + bookContentBean.getDurChapterUrl());
-                        printLog("●章节内容» " + bookContentBean.getDurChapterContent());
+                        final String content =  bookContentBean.getDurChapterContent();
+                        if(content != null && content.length() > 3000){
+                            printLog("●章节内容» " + content.substring(0, 3000) + "\u00B7\u00B7\u00B7");
+                        }else {
+                            printLog("●章节内容» " + content);
+                        }
                         printLog(String.format("★%s 正文结束", getDoTime()));
                     }
 

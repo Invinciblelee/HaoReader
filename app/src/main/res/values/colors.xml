@@ -28,6 +28,8 @@
     <color name="white_translucent">#66ffffff</color>
     <color name="dim_translucent">#66000000</color>
 
+    <color name="ic_launcher_background">#4f4f4f</color>
+
     <color name="background">#F5F5F5</color>
     <color name="card_background">#FFFFFF</color>
 

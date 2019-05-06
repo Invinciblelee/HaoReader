@@ -111,6 +111,7 @@ final class AlertController {
         }
     };
 
+
     private static class ButtonHandler extends Handler {
 
         private static final int MSG_DISMISS_DIALOG = 1;

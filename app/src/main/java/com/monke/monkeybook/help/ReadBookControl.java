@@ -11,6 +11,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.utils.BitmapUtil;
 import com.monke.monkeybook.widget.page.PageMode;
 
@@ -18,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 public class ReadBookControl {
     private static final int DEFAULT_BG = 1;
@@ -342,7 +342,7 @@ public class ReadBookControl {
         return spaceModeIndex;
     }
 
-    public int getSpacingByKey(String key){
+    public int getSpacingByKey(String key) {
         return readPreference.getInt(key, 0);
     }
 
@@ -627,7 +627,7 @@ public class ReadBookControl {
     public void setShowBatteryNumber(Boolean showBatteryNumber) {
         this.showBatteryNumber = showBatteryNumber;
         SharedPreferences.Editor editor = readPreference.edit();
-        editor.putBoolean("setShowBatteryNumber", showBatteryNumber);
+        editor.putBoolean("showBatteryNumber", showBatteryNumber);
         editor.apply();
     }
 

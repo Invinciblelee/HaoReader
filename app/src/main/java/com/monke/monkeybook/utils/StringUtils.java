@@ -275,13 +275,6 @@ public class StringUtils {
         return joiner.toString();
     }
 
-    public static boolean isEmpty(CharSequence charSequence) {
-        if (charSequence == null) {
-            return true;
-        }
-        return charSequence.length() == 0;
-    }
-
     public static boolean isContainNumber(String company) {
         Pattern p = Pattern.compile("[0-9]");
         Matcher m = p.matcher(company);
@@ -347,6 +340,10 @@ public class StringUtils {
         return text.trim().length() == 0;
     }
 
+    public static boolean isNotBlank(String text) {
+        return !isBlank(text);
+    }
+
     public static String trim(String string) {
         return string == null ? "" : string.trim();
     }
@@ -370,5 +367,14 @@ public class StringUtils {
             }
         }
         return result;
+    }
+
+    public static String formatHtml(String html) {
+        if (StringUtils.isBlank(html)) {
+            return "";
+        }
+        return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
+                .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
+                .replaceAll("\\s*\\n+\\s*", "\n　　");                   // 移除空行,并增加段前缩进2个汉字
     }
 }

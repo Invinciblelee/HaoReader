@@ -2,6 +2,7 @@
 package com.monke.monkeybook.view.adapter;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         }
         myViewHolder.tvName.setText(item.getName());
 
-        if (!StringUtils.isEmpty(item.getAuthor())) {
+        if (!TextUtils.isEmpty(item.getAuthor())) {
             myViewHolder.tvAuthor.setText(item.getAuthor());
         } else {
             myViewHolder.tvAuthor.setText(R.string.author_unknown);

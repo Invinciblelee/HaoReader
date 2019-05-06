@@ -164,7 +164,7 @@ public class WebBookModel implements IWebBookModel {
             if (!chapterList.isEmpty()) {
                 bookShelfBean.setChapterList(chapterList, true);
                 bookShelfBean.upLastChapterName();
-                if (!StringUtils.isEmpty(bookShelfBean.getDurChapterName())) {
+                if (!TextUtils.isEmpty(bookShelfBean.getDurChapterName())) {
                     bookShelfBean.upDurChapterName();
                 }
             }

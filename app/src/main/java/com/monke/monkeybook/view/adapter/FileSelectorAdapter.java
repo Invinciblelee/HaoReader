@@ -153,30 +153,29 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
                     return;
                 }
 
-                if(!item.isDirectory() && !holder.mChecker.isShown()){
+                if (!item.isDirectory() && !holder.mChecker.isShown()) {
                     return;
                 }
 
                 if (singleChoice) {
                     int index;
                     if (lastSelectedFile != null && (index = files.indexOf(lastSelectedFile)) >= 0) {
-                        lastSelectedFile.setSelected(false);
-                        notifyItemChanged(index, index);
+                        if(index != holder.getLayoutPosition()) {
+                            lastSelectedFile.setSelected(false);
+                            notifyItemChanged(index, index);
+                        }
                     }
 
-                    lastSelectedFile = item;
-
-                    if (!item.isSelected()) {
-                        item.setSelected(true);
-                    }
                     if (!item.isDirectory()) {
-                        holder.mChecker.setChecked(true);
+                        item.setSelected(!item.isSelected());
+                        holder.mChecker.setChecked(item.isSelected());
+                        lastSelectedFile = item;
                     }
                 } else {
                     if (!item.isDirectory()) {
-                        holder.mChecker.setChecked(!item.isSelected());
+                        item.setSelected(!item.isSelected());
+                        holder.mChecker.setChecked(item.isSelected());
                     }
-                    item.setSelected(!item.isSelected());
                 }
 
                 if (itemClickListener != null) {
@@ -203,7 +202,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
     }
 
     public String getSelectedFile() {
-        return lastSelectedFile == null ? null : lastSelectedFile.getPath();
+        return (lastSelectedFile == null || !lastSelectedFile.isSelected()) ? null : lastSelectedFile.getPath();
     }
 
     private boolean fileNotExists(RipeFile file, int position) {
