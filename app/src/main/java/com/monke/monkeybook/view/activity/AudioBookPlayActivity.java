@@ -324,8 +324,8 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             case AudioBookPlayService.ACTION_PREPARE:
                 updateIndex(info.getDurChapter().getDurChapterIndex());
                 setSubTitle(info.getDurChapter().getDurChapterName());
-                setMediaButtonEnabled(true);
                 setProgress(info.getProgress(), info.getDuration());
+                setMediaButtonEnabled(true);
                 break;
             case AudioBookPlayService.ACTION_PAUSE:
                 setPause();
@@ -336,11 +336,11 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             case AudioBookPlayService.ACTION_PROGRESS:
                 setProgress(info.getProgress(), info.getDuration());
                 break;
-            case AudioBookPlayService.ACTION_STOP:
-                finish();
-                break;
             case AudioBookPlayService.ACTION_SEEK_ENABLED:
                 seekBar.setEnabled(info.isSeekEnabled());
+                break;
+            case AudioBookPlayService.ACTION_STOP:
+                finish();
                 break;
         }
     }

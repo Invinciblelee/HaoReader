@@ -18,7 +18,6 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -102,8 +101,8 @@ public class AudioBookPlayService extends Service {
     private boolean isPrepared;
     private boolean isPause;
     private boolean isError;
-    private int targetPosition;
 
+    private int targetPosition;
     private int progress;
     private int duration;
 
@@ -206,7 +205,7 @@ public class AudioBookPlayService extends Service {
     public static void stop(Context context) {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
-        context.stopService(intent);
+        context.stopService(intent);//android8.0以后不能后台启动
     }
 
     public static void stopIfNotShelfBook(Context context) {
@@ -444,7 +443,7 @@ public class AudioBookPlayService extends Service {
         });
 
         mediaPlayer.setOnInfoListener((mp, what, extra) -> {
-            Log.d(TAG, "audio info --> " + what + "  " + extra);
+            Logger.d(TAG, "audio info --> " + what + "  " + extra);
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
@@ -454,7 +453,7 @@ public class AudioBookPlayService extends Service {
         });
 
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
-            Log.d(TAG, "audio error --> " + what + "  " + extra);
+            Logger.d(TAG, "audio error --> " + what + "  " + extra);
             isPrepared = false;
             if (what != -38) {
                 toastError("播放失败，请重试");
