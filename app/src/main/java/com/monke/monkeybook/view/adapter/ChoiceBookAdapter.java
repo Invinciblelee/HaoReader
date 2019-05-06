@@ -148,7 +148,9 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             tvOrigin = itemView.findViewById(R.id.tv_origin);
             btnAddShelf.setVisibility(View.VISIBLE);
 
-            tvOrigin.setPadding(0, 0, ScreenUtils.dpToPx(72), 0);
+            int paddingEnd = ScreenUtils.dpToPx(72);
+            tvAuthor.setPadding(0, 0, paddingEnd, 0);
+            tvOrigin.setPadding(0, 0, paddingEnd, 0);
         }
     }
 
