@@ -98,6 +98,8 @@ public class AjaxWebView {
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setBlockNetworkImage(true);
+        settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setUserAgentString(params.getUserAgent());
