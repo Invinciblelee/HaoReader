@@ -76,9 +76,9 @@ public class BatteryView extends View {
             float centerX = (right - left) / 2 + left;
             float centerY = 1.0f * getHeight() / 2;
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-            float top = fontMetrics.top;//为基线到字体上边框的距离,即上图中的top
-            float bottom = fontMetrics.bottom;//为基线到字体下边框的距离,即上图中的bottom
-            float baseLineY = centerY - top / 2 - bottom / 2;//基线中间点的y轴计算公
+            float top = fontMetrics.top;//为基线到字体上边框的距离
+            float bottom = fontMetrics.bottom;//为基线到字体下边框的距离
+            float baseLineY = centerY - top / 2 - bottom / 2;//基线中间点的y轴计算
             canvas.drawText(progress, centerX, baseLineY, mTextPaint);
         }
         //电量进度
