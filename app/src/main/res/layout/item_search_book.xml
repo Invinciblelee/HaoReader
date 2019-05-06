@@ -186,6 +186,6 @@
         android:text="@string/search"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </RelativeLayout>
 

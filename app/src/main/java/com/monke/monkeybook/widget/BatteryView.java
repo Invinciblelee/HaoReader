@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -13,6 +14,10 @@ import android.view.View;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
+
+import com.monke.monkeybook.help.ReadBookControl;
+
+import java.io.File;
 
 public class BatteryView extends View {
 
@@ -44,6 +49,10 @@ public class BatteryView extends View {
         mTextPaint.setDither(true);
         mTextPaint.setFakeBoldText(true);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
+        File file = new File(ReadBookControl.getInstance().getFontPath());
+        if(file.exists()){
+            mTextPaint.setTypeface(Typeface.createFromFile(file));
+        }
 
         mRect = new RectF();
         mPorPath = new Path();
@@ -107,6 +116,11 @@ public class BatteryView extends View {
 
     public void setProgress(int progress) {
         mProgress = progress;
+        invalidate();
+    }
+
+    public void setFontTypeface(Typeface typeface){
+        mTextPaint.setTypeface(typeface);
         invalidate();
     }
 
