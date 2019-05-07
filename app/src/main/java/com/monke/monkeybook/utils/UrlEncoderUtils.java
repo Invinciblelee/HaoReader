@@ -34,17 +34,18 @@ public class UrlEncoderUtils {
         /**
          * 对以下在 URI 中具有特殊含义的 ASCII 标点符号    ;/?:@&=+$,#  不需要转义
          */
-        dontNeedEncoding.set(';');
-        dontNeedEncoding.set('/');
-        dontNeedEncoding.set('?');
-        dontNeedEncoding.set(':');
-        dontNeedEncoding.set('@');
-        dontNeedEncoding.set('&');
-        dontNeedEncoding.set('=');
         dontNeedEncoding.set('+');
         dontNeedEncoding.set('$');
-        dontNeedEncoding.set(',');
+        dontNeedEncoding.set(':');
+        dontNeedEncoding.set('(');
+        dontNeedEncoding.set(')');
+        dontNeedEncoding.set('!');
+        dontNeedEncoding.set('@');
+        dontNeedEncoding.set('&');
         dontNeedEncoding.set('#');
+        dontNeedEncoding.set(',');
+        dontNeedEncoding.set('[');
+        dontNeedEncoding.set(']');
     }
 
     /**

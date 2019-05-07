@@ -290,7 +290,7 @@ public class PageView extends View {
         mPageAnim.scrollAnim();
         if (mPageAnim.isStarted() && !mPageAnim.getScroller().computeScrollOffset()) {
             mPageAnim.resetAnim();
-//            drawPageComputeScroll();
+            drawPageComputeScroll();
             if (mPageLoader.getPagePosition() != mPageIndex | mPageLoader.getChapterPosition() != mChapterIndex) {
                 mPageLoader.dispatchPagingEndEvent();
             }
