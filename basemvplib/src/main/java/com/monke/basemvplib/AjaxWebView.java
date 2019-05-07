@@ -78,14 +78,12 @@ public class AjaxWebView {
     }
 
     public void ajax(AjaxParams params, Callback callback) {
-        final AjaxHandler handler = new AjaxHandler(callback);
-        handler.obtainMessage(AjaxHandler.MSG_AJAX_START, params)
+        new AjaxHandler(callback).obtainMessage(AjaxHandler.MSG_AJAX_START, params)
                 .sendToTarget();
     }
 
     public void sniff(AjaxParams params, Callback callback) {
-        final AjaxHandler handler = new AjaxHandler(callback);
-        handler.obtainMessage(AjaxHandler.MSG_SNIFF_START, params)
+        new AjaxHandler(callback).obtainMessage(AjaxHandler.MSG_SNIFF_START, params)
                 .sendToTarget();
     }
 
