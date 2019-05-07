@@ -6,12 +6,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
+
+import com.monke.monkeybook.help.ReadBookControl;
+
+import java.io.File;
 
 public class BatteryView extends View {
 
@@ -43,6 +49,10 @@ public class BatteryView extends View {
         mTextPaint.setDither(true);
         mTextPaint.setFakeBoldText(true);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
+        File file = new File(ReadBookControl.getInstance().getFontPath());
+        if(file.exists()){
+            mTextPaint.setTypeface(Typeface.createFromFile(file));
+        }
 
         mRect = new RectF();
         mPorPath = new Path();
@@ -76,9 +86,9 @@ public class BatteryView extends View {
             float centerX = (right - left) / 2 + left;
             float centerY = 1.0f * getHeight() / 2;
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-            float top = fontMetrics.top;//为基线到字体上边框的距离,即上图中的top
-            float bottom = fontMetrics.bottom;//为基线到字体下边框的距离,即上图中的bottom
-            float baseLineY = centerY - top / 2 - bottom / 2;//基线中间点的y轴计算公
+            float top = fontMetrics.top;//为基线到字体上边框的距离
+            float bottom = fontMetrics.bottom;//为基线到字体下边框的距离
+            float baseLineY = centerY - top / 2 - bottom / 2;//基线中间点的y轴计算
             canvas.drawText(progress, centerX, baseLineY, mTextPaint);
         }
         //电量进度
@@ -106,6 +116,11 @@ public class BatteryView extends View {
 
     public void setProgress(int progress) {
         mProgress = progress;
+        invalidate();
+    }
+
+    public void setFontTypeface(Typeface typeface){
+        mTextPaint.setTypeface(typeface);
         invalidate();
     }
 

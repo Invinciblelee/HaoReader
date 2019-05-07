@@ -93,12 +93,16 @@ public class WebLoadConfig implements Parcelable {
     public void intoWebView(WebView webView) {
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, url);
-            if (analyzeUrl.getPostData() != null) {
-                webView.postUrl(analyzeUrl.getUrl(), analyzeUrl.getPostData());
-            } else if (analyzeUrl.getHeaderMap() != null) {
-                webView.loadUrl(analyzeUrl.getUrl(), analyzeUrl.getHeaderMap());
-            } else {
-                webView.loadUrl(analyzeUrl.getUrl());
+            switch (analyzeUrl.getRequestMethod()) {
+                case POST:
+                    webView.postUrl(analyzeUrl.getUrl(), analyzeUrl.getPostData());
+                    break;
+                case GET:
+                    webView.loadUrl(analyzeUrl.getUrlWithQuery(), analyzeUrl.getHeaderMap());
+                    break;
+                case DEFAULT:
+                    webView.loadUrl(analyzeUrl.getUrl(), analyzeUrl.getHeaderMap());
+
             }
         } catch (Exception e) {
             webView.loadUrl(url);

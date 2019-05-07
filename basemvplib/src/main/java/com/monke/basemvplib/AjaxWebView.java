@@ -77,6 +77,7 @@ public class AjaxWebView {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     public void ajax(AjaxParams params, Callback callback) {
         new AjaxHandler(callback).obtainMessage(AjaxHandler.MSG_AJAX_START, params)
                 .sendToTarget();
@@ -93,14 +94,7 @@ public class AjaxWebView {
         WebView webView = new WebView(params.context.getApplicationContext());
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setDatabaseEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setBlockNetworkImage(true);
-        settings.setBuiltInZoomControls(false);
-        settings.setDisplayZoomControls(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setUserAgentString(params.getUserAgent());
         if (params.isSniff()) {
             webView.setWebViewClient(new SnifferWebClient(params, handler));
@@ -112,10 +106,8 @@ public class AjaxWebView {
                 webView.postUrl(params.url, params.postData);
                 break;
             case GET:
-                webView.loadUrl(params.url, params.headerMap);
-                break;
             case DEFAULT:
-                webView.loadUrl(params.url);
+                webView.loadUrl(params.url, params.headerMap);
 
         }
         return webView;
@@ -230,9 +222,9 @@ public class AjaxWebView {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            evaluateJavascript(view, OUTER_HTML);
-
             params.setCookie(url);
+
+            evaluateJavascript(view, OUTER_HTML);
         }
 
         @Override
@@ -314,12 +306,12 @@ public class AjaxWebView {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            params.setCookie(url);
+
             if (params.hasJavaScript()) {
                 evaluateJavascript(view, params.javaScript);
                 params.clearJavaScript();
             }
-
-            params.setCookie(url);
         }
 
         private void evaluateJavascript(final WebView webView, final String javaScript) {
