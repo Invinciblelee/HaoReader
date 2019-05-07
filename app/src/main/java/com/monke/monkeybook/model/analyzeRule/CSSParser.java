@@ -96,8 +96,7 @@ final class CSSParser extends SourceParser<Element> {
         if (textS.isEmpty()) {
             return "";
         }
-        final String result = StringUtils.join("\n", textS);
-        return StringUtils.formatHtml(result);
+        return StringUtils.join("\n", textS);
     }
 
     @Override

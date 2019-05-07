@@ -29,8 +29,6 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
     //是否没下一页或者上一页
     private boolean noNext = false;
 
-    private boolean isLocked = false;
-
     private GestureDetector mDetector;
 
     HorizonPageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
@@ -62,18 +60,10 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
         mNextBitmap = bitmap;
     }
 
-    @Override
-    public void resetAnim() {
-        super.resetAnim();
-        isLocked = false;
-    }
-
     public abstract void drawMove(Canvas canvas);
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(isStarted) return true;
-
         if (isMove && event.getAction() == MotionEvent.ACTION_UP) {
                 // 是否取消翻页
                 if (isCancel) {
@@ -91,7 +81,6 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
 
     @Override
     public boolean onDown(MotionEvent e) {
-        if(isLocked) return true;
         //是否移动
         isMove = false;
         //是否存在下一章
@@ -114,7 +103,6 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
-        if(isLocked) return true;
         float x = e.getX();
         float y = e.getY();
         isNext = x > mViewWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
@@ -140,7 +128,7 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (!isLocked) {
+        if (!isMove) {
             if (distanceX < 0) {
                 //上一页的参数配置
                 isNext = false;
@@ -165,10 +153,9 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
                     return true;
                 }
             }
-            isLocked = true;
+            isMove = true;
         }
         isCancel = isNext ? distanceX < 0 : distanceX > 0;
-        isMove = true;
         isRunning = true;
         //设置触摸点
         setTouchPoint(e2.getX(), e2.getY());

@@ -9,18 +9,18 @@ class HybridAnalyzerPresenter extends DefaultAnalyzerPresenter {
 
     @Override
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
-        if(withVariableStore){
-            return RulePatterns.fromHybridRule(rawRule, getConfig().getVariableStore());
-        }else {
-            return RulePatterns.fromHybridRule(rawRule);
+        if (withVariableStore) {
+            return RulePatterns.fromHybridRule(rawRule, getConfig().getBaseURL(), getConfig().getVariableStore());
+        } else {
+            return RulePatterns.fromHybridRule(rawRule, getConfig().getBaseURL());
         }
     }
 
     @Override
     RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
-        if(withVariableStore){
+        if (withVariableStore) {
             return RulePattern.fromHybridRule(rawRule, getConfig().getVariableStore());
-        }else {
+        } else {
             return RulePattern.fromHybridRule(rawRule);
         }
     }

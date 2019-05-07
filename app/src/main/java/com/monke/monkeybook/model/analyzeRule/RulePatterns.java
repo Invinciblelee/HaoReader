@@ -1,16 +1,24 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.IntDef;
 
 import com.monke.monkeybook.bean.VariableStore;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+
+import javax.script.SimpleBindings;
 
 final class RulePatterns {
 
@@ -31,32 +39,82 @@ final class RulePatterns {
     int mergeType;
     List<RulePattern> patterns;
 
+    private String splitType;
+    private List<Integer> filters;
+
     private RuleMode mode;
 
-    private RulePatterns(String rawRule, VariableStore variableStore) {
+    private RulePatterns(String rawRule, String baseUrl, VariableStore variableStore) {
         Rule rule = RootRule.fromStringRule(rawRule);
         rawRule = rule.getRule();
         this.mode = rule.getMode();
 
+        rawRule = splitFilters(rawRule);
+
+        rawRule = replaceJavaScripts(rawRule, baseUrl);
+
         splitRulePattern(variableStore, splitRule(rawRule), this.mode);
     }
 
-    private RulePatterns(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
+    private RulePatterns(String rawRule, String baseUrl, VariableStore variableStore, RuleMode ruleMode) {
         this.mode = ruleMode;
 
+        rawRule = splitFilters(rawRule);
+
+        rawRule = replaceJavaScripts(rawRule, baseUrl);
+
         splitRulePattern(variableStore, splitRule(rawRule), this.mode);
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String replaceJavaScripts(String rawRule, String baseUrl) {
+        if (rawRule.contains("{{") && rawRule.contains("}}")) {
+            final StringBuffer buffer = new StringBuffer(rawRule.length());
+            final SimpleBindings simpleBindings = new SimpleBindings() {{
+                this.put("baseUrl", baseUrl);
+            }};
+            Matcher expMatcher = Patterns.PATTERN_EXP.matcher(rawRule);
+            while (expMatcher.find()) {
+                Object result = JSParser.evalObjectScript(expMatcher.group(1), simpleBindings);
+                if (result instanceof Double && ((Double) result) % 1.0 == 0) {
+                    expMatcher.appendReplacement(buffer, String.format("%.0f", (Double) result));
+                } else {
+                    expMatcher.appendReplacement(buffer, com.monke.monkeybook.utils.StringUtils.valueOf(result));
+                }
+            }
+            expMatcher.appendTail(buffer);
+            rawRule = buffer.toString();
+        }
+        return rawRule;
+    }
+
+    private String splitFilters(String rawRule) {
+        if (rawRule.contains("!!")) {
+            String[] rules = rawRule.split("\\!\\!");
+            rawRule = rules[0];
+
+            filters = new ArrayList<>();
+            final String[] arr = rules[1].split(":");
+            for (String string : arr) {
+                filters.add(Integer.parseInt(string));
+            }
+        }
+        return rawRule;
     }
 
     private String[] splitRule(String rawRule) {
         final String[] rules;
         if (rawRule.contains("&&")) {
             rules = rawRule.split("&&");
+            splitType = "&&";
             mergeType = RULE_MERGE_AND;
         } else if (rawRule.contains("%%")) {
             rules = rawRule.split("%%");
+            splitType = "%%";
             mergeType = RULE_MERGE_FILTER;
         } else {
             rules = rawRule.split("\\|\\|");
+            splitType = "||";
             mergeType = RULE_MERGE_OR;
         }
         return rules;
@@ -64,7 +122,26 @@ final class RulePatterns {
 
     private void splitRulePattern(VariableStore variableStore, String[] rules, RuleMode mode) {
         patterns = new ArrayList<>();
-        for (String ruleStr : rules) {
+
+        final List<String> ruleList = new ArrayList<>();
+        if (filters != null) {
+            if (Collections.max(filters) >= rules.length - 1) {
+                ruleList.add(StringUtils.join(splitType, rules));
+            } else {
+                final StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < rules.length; i++) {
+                    builder.append(splitType).append(rules[i]);
+                    if (!filters.contains(i)) {
+                        ruleList.add(builder.substring(2));
+                        builder.setLength(0);
+                    }
+                }
+            }
+        } else {
+            ruleList.addAll(Arrays.asList(rules));
+        }
+
+        for (String ruleStr : ruleList) {
             if (!StringUtils.isBlank(ruleStr)) {
                 patterns.add(RulePattern.fromRule(ruleStr, variableStore, mode));
             }
@@ -88,20 +165,20 @@ final class RulePatterns {
         }
     }
 
-    static RulePatterns fromRule(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
-        return new RulePatterns(rawRule.trim(), variableStore, ruleMode);
+    static RulePatterns fromRule(String rawRule, String baseUrl, VariableStore variableStore, RuleMode ruleMode) {
+        return new RulePatterns(rawRule.trim(), baseUrl, variableStore, ruleMode);
     }
 
-    static RulePatterns fromRule(String rawRule, RuleMode ruleMode) {
-        return fromRule(rawRule, null, ruleMode);
+    static RulePatterns fromRule(String rawRule, String baseUrl, RuleMode ruleMode) {
+        return fromRule(rawRule, baseUrl, null, ruleMode);
     }
 
-    static RulePatterns fromHybridRule(String rawRule, VariableStore variableStore) {
-        return new RulePatterns(rawRule.trim(), variableStore);
+    static RulePatterns fromHybridRule(String rawRule, String baseUrl, VariableStore variableStore) {
+        return new RulePatterns(rawRule.trim(), baseUrl, variableStore);
     }
 
-    static RulePatterns fromHybridRule(String rawRule) {
-        return fromHybridRule(rawRule, null);
+    static RulePatterns fromHybridRule(String rawRule, String baseUrl) {
+        return fromHybridRule(rawRule, baseUrl, null);
     }
 
 }

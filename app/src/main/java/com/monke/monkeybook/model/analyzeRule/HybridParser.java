@@ -1,5 +1,8 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import android.util.Log;
+
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;
@@ -106,7 +109,7 @@ final class HybridParser extends SourceParser<Object> {
         sourceChangedJS = true;
         sourceChangedJP = true;
         sourceChangedCS = true;
-        isJSon = StringUtils.isJsonType(StringUtils.valueOf(getSource()));
+        isJSon = Global.isJson(StringUtils.valueOf(source));
         return source;
     }
 

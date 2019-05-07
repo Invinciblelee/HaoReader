@@ -37,9 +37,9 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            return RulePatterns.fromRule(rawRule, getConfig().getVariableStore(), mode);
+            return RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), getConfig().getVariableStore(), mode);
         } else {
-            return RulePatterns.fromRule(rawRule, mode);
+            return RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), mode);
         }
     }
 
@@ -61,6 +61,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         }
         return string;
     }
+
 
     List<String> evalArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
         final List<String> list = new ArrayList<>();
@@ -98,7 +99,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
         result = evalReplace(result, rulePattern);
 
-        return result;
+        return formatHtml(result);
     }
 
 
