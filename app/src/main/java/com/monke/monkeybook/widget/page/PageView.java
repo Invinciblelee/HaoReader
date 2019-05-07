@@ -174,7 +174,7 @@ public class PageView extends View {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageAnim == null) {
+        if (mPageAnim == null || mPageAnim.isStarted()) {
             return true;
         }
 
@@ -290,7 +290,7 @@ public class PageView extends View {
         mPageAnim.scrollAnim();
         if (mPageAnim.isStarted() && !mPageAnim.getScroller().computeScrollOffset()) {
             mPageAnim.resetAnim();
-            drawPageComputeScroll();
+//            drawPageComputeScroll();
             if (mPageLoader.getPagePosition() != mPageIndex | mPageLoader.getChapterPosition() != mChapterIndex) {
                 mPageLoader.dispatchPagingEndEvent();
             }

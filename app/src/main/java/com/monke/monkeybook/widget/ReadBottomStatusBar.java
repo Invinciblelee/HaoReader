@@ -193,7 +193,6 @@ public class ReadBottomStatusBar extends FrameLayout {
         tvTitle.getPaint().setFakeBoldText(bold);
         tvTitleLeft.getPaint().setFakeBoldText(bold);
         tvChapterIndex.getPaint().setFakeBoldText(bold);
-        batteryProgress.setFontTypeface(typeface);
     }
 
     public void refreshUI() {

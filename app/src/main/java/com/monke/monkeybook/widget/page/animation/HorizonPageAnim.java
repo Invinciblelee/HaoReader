@@ -2,8 +2,8 @@ package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 
 import androidx.annotation.CallSuper;
 
@@ -16,14 +16,11 @@ import com.monke.monkeybook.widget.page.PageView;
  * 横向动画的模板
  */
 
-public abstract class HorizonPageAnim extends PageAnimation {
+public abstract class HorizonPageAnim extends PageAnimation implements GestureDetector.OnGestureListener {
     //动画速度
     Bitmap mCurBitmap;
     Bitmap mNextBitmap;
 
-    //可以使用 mLast代替
-    private int mMoveX = 0;
-    private int mMoveY = 0;
     //是否移动了
     private boolean isMove = false;
     //是否翻阅下一页。true表示翻到下一页，false表示上一页。
@@ -32,7 +29,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
-    private int mTouchSlop;
+    private boolean isLocked = false;
+
+    private GestureDetector mDetector;
 
     HorizonPageAnim(int w, int h, PageView view, OnPageChangeListener listener) {
         super(w, h, view, listener);
@@ -51,7 +50,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         }
 
-        mTouchSlop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
+        mDetector = new GestureDetector(view.getContext(), this);
     }
 
     /**
@@ -63,102 +62,19 @@ public abstract class HorizonPageAnim extends PageAnimation {
         mNextBitmap = bitmap;
     }
 
+    @Override
+    public void resetAnim() {
+        super.resetAnim();
+        isLocked = false;
+    }
+
     public abstract void drawMove(Canvas canvas);
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //获取点击位置
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-        //设置触摸点
-        setTouchPoint(x, y);
+        if(isStarted) return true;
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //移动的点击位置
-                mMoveX = 0;
-                mMoveY = 0;
-                //是否移动
-                isMove = false;
-                //是否存在下一章
-                noNext = false;
-                //是下一章还是前一章
-                isNext = false;
-                //是否正在执行动画
-                isRunning = false;
-                //取消
-                isCancel = false;
-                //设置起始位置的触摸点
-                setStartPoint(x, y);
-                abortAnim();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                //判断是否移动了
-                if (!isMove) {
-                    isMove = Math.abs(mStartX - x) > mTouchSlop || Math.abs(mStartX - y) > mTouchSlop;
-                }
-
-                if (isMove) {
-                    //判断是否是准备移动的状态(将要移动但是还没有移动)
-                    if (mMoveX == 0 && mMoveY == 0) {
-                        //判断翻得是上一页还是下一页
-                        if (x - mStartX > 0) {
-                            //上一页的参数配置
-                            isNext = false;
-                            boolean hasPrev = mListener.hasPrev();
-                            setDirection(Direction.PREV);
-                            //如果上一页不存在
-                            if (!hasPrev) {
-                                noNext = true;
-                                return true;
-                            }
-                        } else {
-                            //进行下一页的配置
-                            isNext = true;
-                            //判断是否下一页存在
-                            boolean hasNext = mListener.hasNext();
-                            //如果存在设置动画方向
-                            setDirection(Direction.NEXT);
-
-                            //如果不存在表示没有下一页了
-                            if (!hasNext) {
-                                noNext = true;
-                                return true;
-                            }
-                        }
-                    } else {
-                        //判断是否取消翻页
-                        isCancel = isNext ? x - mMoveX > 0 : x - mMoveX < 0;
-                    }
-
-                    mMoveX = x;
-                    mMoveY = y;
-                    isRunning = true;
-                    mView.invalidate();
-                }
-
-                break;
-            case MotionEvent.ACTION_UP:
-                if (!isMove) {
-                    isNext = x > mViewWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
-
-                    if (isNext) {
-                        //判断是否下一页存在
-                        boolean hasNext = mListener.hasNext();
-                        //设置动画方向
-                        setDirection(Direction.NEXT);
-                        if (!hasNext) {
-                            return true;
-                        }
-                    } else {
-                        boolean hasPrev = mListener.hasPrev();
-                        setDirection(Direction.PREV);
-                        if (!hasPrev) {
-                            return true;
-                        }
-                    }
-                }
-
+        if (isMove && event.getAction() == MotionEvent.ACTION_UP) {
                 // 是否取消翻页
                 if (isCancel) {
                     mListener.pageCancel();
@@ -168,9 +84,106 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 if (!noNext) {
                     startAnim();
                 }
-                break;
+            return true;
         }
+        return mDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        if(isLocked) return true;
+        //是否移动
+        isMove = false;
+        //是否存在下一章
+        noNext = false;
+        //是下一章还是前一章
+        isNext = false;
+        //是否正在执行动画
+        isRunning = false;
+        //取消
+        isCancel = false;
+        //设置起始位置的触摸点
+        setStartPoint(e.getX(), e.getY());
+        abortAnim();
         return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        if(isLocked) return true;
+        float x = e.getX();
+        float y = e.getY();
+        isNext = x > mViewWidth / 2 || ReadBookControl.getInstance().getClickAllNext();
+        if (isNext) {
+            //判断是否下一页存在
+            boolean hasNext = mListener.hasNext();
+            //设置动画方向
+            setDirection(Direction.NEXT);
+            if (!hasNext) {
+                return true;
+            }
+        } else {
+            boolean hasPrev = mListener.hasPrev();
+            setDirection(Direction.PREV);
+            if (!hasPrev) {
+                return true;
+            }
+        }
+        setTouchPoint(x, y);
+        startAnim();
+        return true;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        if (!isLocked) {
+            if (distanceX < 0) {
+                //上一页的参数配置
+                isNext = false;
+                boolean hasPrev = mListener.hasPrev();
+                setDirection(Direction.PREV);
+                //如果上一页不存在
+                if (!hasPrev) {
+                    noNext = true;
+                    return true;
+                }
+            } else {
+                //进行下一页的配置
+                isNext = true;
+                //判断是否下一页存在
+                boolean hasNext = mListener.hasNext();
+                //如果存在设置动画方向
+                setDirection(Direction.NEXT);
+
+                //如果不存在表示没有下一页了
+                if (!hasNext) {
+                    noNext = true;
+                    return true;
+                }
+            }
+            isLocked = true;
+        }
+        isCancel = isNext ? distanceX < 0 : distanceX > 0;
+        isMove = true;
+        isRunning = true;
+        //设置触摸点
+        setTouchPoint(e2.getX(), e2.getY());
+        mView.invalidate();
+        return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
     }
 
     @Override

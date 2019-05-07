@@ -151,7 +151,7 @@ public class AnalyzeUrl {
     @SuppressLint("DefaultLocale")
     private String analyzeJs(String ruleUrl, String baseUrl, String searchKey, Integer searchPage) {
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
-            final StringBuffer sb = new StringBuffer(ruleUrl.length());
+            final StringBuffer buffer = new StringBuffer(ruleUrl.length());
             final SimpleBindings simpleBindings = new SimpleBindings() {{
                 this.put("baseUrl", baseUrl);
                 this.put("searchKey", searchKey);
@@ -163,13 +163,13 @@ public class AnalyzeUrl {
             while (expMatcher.find()) {
                 Object result = JSParser.evalObjectScript(expMatcher.group(1), simpleBindings);
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {
-                    expMatcher.appendReplacement(sb, String.format("%.0f", (Double) result));
+                    expMatcher.appendReplacement(buffer, String.format("%.0f", (Double) result));
                 } else {
-                    expMatcher.appendReplacement(sb, StringUtils.valueOf(result));
+                    expMatcher.appendReplacement(buffer, StringUtils.valueOf(result));
                 }
             }
-            expMatcher.appendTail(sb);
-            ruleUrl = sb.toString();
+            expMatcher.appendTail(buffer);
+            ruleUrl = buffer.toString();
         }
         return ruleUrl;
     }
@@ -245,7 +245,6 @@ public class AnalyzeUrl {
             }
         }
     }
-
 
     public String getHost() {
         return hostUrl;
