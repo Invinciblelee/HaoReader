@@ -4,13 +4,6 @@
     tools:context=".view.activity.MainActivity">
 
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_large_black_24dp"
-        android:title="@string/action_search"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
-
-    <item
         android:id="@+id/action_library"
         android:icon="@drawable/ic_track_changes_black_24dp"
         android:title="@string/find_on_www"

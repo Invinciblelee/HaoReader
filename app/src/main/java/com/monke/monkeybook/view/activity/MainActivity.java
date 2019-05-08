@@ -70,6 +70,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     BookShelfSearchView drawerRight;
     @BindView(R.id.book_shelf_menu)
     BookFloatingActionMenu bookShelfMenu;
+    @BindView(R.id.tv_search_field)
+    View mSearchField;
 
     private Switch swNightTheme;
     private int group = -1;
@@ -195,6 +197,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             bookShelfMenu.postDelayed(() -> upGroup(index), 400L);
         });
 
+        mSearchField.setOnClickListener(v -> {
+            //点击搜索
+            Intent intent = new Intent(MainActivity.this, SearchBookActivity.class);
+            startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
+        });
+
         versionUpRun();
     }
 
@@ -262,10 +270,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         SharedPreferences.Editor editor = getPreferences().edit();
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_search:
-                //点击搜索
-                startActivityByAnim(new Intent(this, SearchBookActivity.class), R.anim.anim_alpha_in, R.anim.anim_alpha_out);
-                break;
             case R.id.action_library:
                 startActivity(new Intent(this, FindBookActivity.class));
                 break;

@@ -273,10 +273,6 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             disposables.remove(mPlayDisposable);
         }
 
-        if (mPlayCallback != null) {
-            mPlayCallback.onPrepare(chapter);
-        }
-
         Observable.just(chapter)
                 .subscribeOn(Schedulers.single())
                 .map(chapterBean -> {
@@ -285,12 +281,17 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                     }
                     return chapterBean;
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(chapterBean -> {
                     mPlayIndex = chapterBean.getDurChapterIndex();
                     bookShelf.setDurChapter(chapterBean.getDurChapterIndex());
                     bookShelf.setDurChapterName(chapterBean.getDurChapterName());
                     saveBookShelf(bookShelf);
+                    if (mPlayCallback != null) {
+                        mPlayCallback.onPrepare(chapter);
+                    }
                 })
+                .observeOn(Schedulers.single())
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (!NetworkUtil.isNetworkAvailable() || !TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
                         return Observable.just(chapterBean);

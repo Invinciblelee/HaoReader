@@ -1,6 +1,5 @@
 package com.monke.monkeybook.utils;
 
-import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -356,26 +355,15 @@ public class StringUtils {
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
 
-    public static boolean isJsonType(String str) {
-        boolean result = false;
-        if (!TextUtils.isEmpty(str)) {
-            str = str.trim();
-            if (str.startsWith("{") && str.endsWith("}")) {
-                result = true;
-            } else if (str.startsWith("[") && str.endsWith("]")) {
-                result = true;
-            }
-        }
-        return result;
-    }
-
     public static String formatHtml(String html) {
         if (StringUtils.isBlank(html)) {
             return "";
         }
         return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
                 .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
-                .replaceAll("\\s*\\n+\\s*", "\n　　")                   // 移除空行,并增加段前缩进2个汉字
-                .replaceAll("^[\\n\\s]*|[\\n\\s]*$", "");
+                .replaceAll("\\s*\\n+\\s*", "\n\u3000\u3000")                   // 移除空行,并增加段前缩进2个汉字
+                .replaceAll("^[\\n\\s]+", "\u3000\u3000")
+                .replaceAll("[\\n\\s]*$", "");
     }
+
 }

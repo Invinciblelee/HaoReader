@@ -100,6 +100,7 @@ public class AudioBookPlayService extends Service {
 
     private boolean isPrepared;
     private boolean isPause;
+    private boolean isLoading;
     private boolean isError;
 
     private int targetPosition;
@@ -347,7 +348,7 @@ public class AudioBookPlayService extends Service {
             @Override
             public void onStart() {
                 setPause(false);
-                sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
+                setLoading(true);
             }
 
             @Override
@@ -406,7 +407,7 @@ public class AudioBookPlayService extends Service {
                 @Override
                 public void onError(Throwable error) {
                     toastError("换源失败，请重新换源");
-                    sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
+                    setLoading(false);
                 }
             });
         }
@@ -442,9 +443,9 @@ public class AudioBookPlayService extends Service {
         mediaPlayer.setOnInfoListener((mp, what, extra) -> {
             Logger.d(TAG, "audio info --> " + what + "  " + extra);
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
-                sendEvent(ACTION_LOADING, AudioPlayInfo.loading(true));
+                setLoading(true);
             } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
-                sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
+                setLoading(false);
             }
             return true;
         });
@@ -509,7 +510,7 @@ public class AudioBookPlayService extends Service {
     private void sendWhenError() {
         isError = true;
         setPause(true);
-        sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
+        setLoading(false);
         sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(false));
     }
 
@@ -520,6 +521,7 @@ public class AudioBookPlayService extends Service {
         if (bookShelfBean != null) {
             AudioPlayInfo info = AudioPlayInfo.attach(bookShelfBean.getBookInfoBean());
             info.setPause(isPause);
+            info.setLoading(isLoading);
             info.setTimerMinute(timerMinute);
             info.setTimerMinuteUntilFinish(timerUntilFinish);
             if (!bookShelfBean.realChapterListEmpty()) {
@@ -595,6 +597,13 @@ public class AudioBookPlayService extends Service {
             Logger.d(TAG, "audio --> previousPlay");
             mModel.playPrevious();
             return true;
+        }
+    }
+
+    private void setLoading(boolean loading){
+        if(isLoading != loading){
+            isLoading = loading;
+            sendEvent(ACTION_LOADING, AudioPlayInfo.loading(isLoading));
         }
     }
 
@@ -699,8 +708,8 @@ public class AudioBookPlayService extends Service {
             }, 0, 1000, TimeUnit.MILLISECONDS);
         }
 
-        sendEvent(ACTION_LOADING, AudioPlayInfo.loading(false));
         sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(true));
+        setLoading(false);
         updateNotification();
     }
 

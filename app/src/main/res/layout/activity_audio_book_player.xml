@@ -39,7 +39,7 @@
         android:textColor="@color/dark_white"
         android:textSize="18sp" />
 
-    <com.monke.monkeybook.widget.SquareImageView
+    <com.monke.monkeybook.widget.SquareCircleImageView
         android:id="@+id/iv_circle_cover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

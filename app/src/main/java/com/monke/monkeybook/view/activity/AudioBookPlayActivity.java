@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -307,6 +308,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 setButtonEnabled(info.isChapterNotEmpty());
                 setMediaButtonEnabled(true);
                 setProgress(info.getProgress(), info.getDuration());
+                showLoading(info.isLoading());
                 if (info.isPause()) {
                     setPause();
                 } else {
@@ -314,7 +316,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 }
                 break;
             case AudioBookPlayService.ACTION_LOADING:
-                showProgress(info.isLoading());
+                showLoading(info.isLoading());
                 break;
             case AudioBookPlayService.ACTION_START:
                 setChapters(info.getChapterBeans(), info.getDurChapterIndex());
@@ -408,7 +410,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         btnNext.setEnabled(enabled);
     }
 
-    private void showProgress(boolean showProgress) {
+    private void showLoading(boolean showProgress) {
         progressBar.setVisibility(showProgress ? View.VISIBLE : View.INVISIBLE);
     }
 
