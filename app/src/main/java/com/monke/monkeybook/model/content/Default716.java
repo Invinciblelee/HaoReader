@@ -16,6 +16,10 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.model.impl.IStationBookModel;
+import com.monke.monkeybook.utils.StringUtils;
+
+import org.jsoup.nodes.Element;
+import org.seimicrawler.xpath.JXDocument;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -177,7 +181,13 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 chapterBean.setTag(bookShelfBean.getTag());
                 chapterBean.setNoteUrl(bookShelfBean.getNoteUrl());
                 chapterBean.setDurChapterName(chapter.get("title").getAsString());
-                chapterBean.setDurChapterUrl("http://chapterup.zhuishushenqi.com/chapter/" + URLEncoder.encode(chapter.get("link").getAsString(), "UTF-8"));
+                final String link = chapter.get("link").getAsString();
+                if (link.contains("vip.zhuishushenqi")
+                        || link.contains("xbiquge")) {
+                    chapterBean.setDurChapterUrl("http://chapterup.zhuishushenqi.com/chapter/" + URLEncoder.encode(link, "UTF-8"));
+                } else {
+                    chapterBean.setDurChapterUrl(link);
+                }
                 chapterList.add(chapterBean);
             }
             e.onNext(chapterList);
@@ -190,7 +200,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
      */
     @Override
     public Observable<BookContentBean> getBookContent(ChapterBean chapterBean) {
-        return OkHttpHelper.getInstance().createService("http://chapterup.zhuishushenqi.com", IHttpGetApi.class)
+        return OkHttpHelper.getInstance().createService(StringUtils.getBaseUrl(chapterBean.getDurChapterUrl()), IHttpGetApi.class)
                 .getWebContent(chapterBean.getDurChapterUrl(), AnalyzeHeaders.getMap(null))
                 .flatMap(response -> analyzeBookContent(response.body(), chapterBean));
     }
@@ -198,28 +208,36 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
     private Observable<BookContentBean> analyzeBookContent(String s, ChapterBean chapterBean) {
         return Observable.create(e -> {
             BookContentBean bookContentBean = new BookContentBean();
-            JsonObject root = new JsonParser().parse(s).getAsJsonObject();
-            if (root.get("ok").getAsBoolean()) {
-                JsonObject chapterJson = root.get("chapter").getAsJsonObject();
+            bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
+            bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
+            bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
+            bookContentBean.setTag(chapterBean.getTag());
+            bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
 
-                bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
-                bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
-                bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
-                bookContentBean.setTag(chapterBean.getTag());
-                bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
-                if (chapterJson.has("isVip")) {
-                    if (chapterJson.get("isVip").getAsBoolean()) {
-                        bookContentBean.setDurChapterContent("当前章节为VIP章节，无法阅读，请换源。");
+            if (chapterBean.getDurChapterUrl().contains("zhuishushenqi")) {
+                JsonObject root = new JsonParser().parse(s).getAsJsonObject();
+                if (root.get("ok").getAsBoolean()) {
+                    JsonObject chapterJson = root.get("chapter").getAsJsonObject();
+                    if (chapterJson.has("isVip")) {
+                        if (chapterJson.get("isVip").getAsBoolean()) {
+                            bookContentBean.setDurChapterContent("当前章节为VIP章节，无法阅读，请换源。");
+                        } else {
+                            bookContentBean.setDurChapterContent(chapterJson.get("cpContent").getAsString());
+                        }
                     } else {
-                        bookContentBean.setDurChapterContent(chapterJson.get("cpContent").getAsString());
+                        bookContentBean.setDurChapterContent(chapterJson.get("body").getAsString());
                     }
-                } else {
-                    bookContentBean.setDurChapterContent(chapterJson.get("body").getAsString());
                 }
-                e.onNext(bookContentBean);
             } else {
-                e.onError(new Exception("正文获取失败"));
+                JXDocument document = JXDocument.create(s);
+                Object object = document.selOne("//div[@name=\"content\"] or @id=\"content\" or @class=\"txt_tcontent\" or @id=\"htmlContent\"");
+                if (object instanceof Element) {
+                    bookContentBean.setDurChapterContent(StringUtils.formatHtml(((Element) object).html()));
+                } else {
+                    bookContentBean.setDurChapterContent(StringUtils.formatHtml(StringUtils.valueOf(object)));
+                }
             }
+            e.onNext(bookContentBean);
             e.onComplete();
         });
     }

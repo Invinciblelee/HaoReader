@@ -174,7 +174,7 @@ public class PageView extends View {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageAnim == null || mPageAnim.isStarted()) {
+        if (mPageAnim == null) {
             return true;
         }
 
