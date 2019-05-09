@@ -35,8 +35,9 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
         this.mConfig.apply(config);
     }
 
-    public final void setContent(Object source) {
+    public final OutAnalyzer<S> setContent(Object source) {
         getParser().setContent(source);
+        return this;
     }
 
     @RuleType

@@ -29,6 +29,8 @@ public class Patterns {
     public static final String RULE_REGEX_TRAIT = "##";
     public static final String RULE_BODY = "outerBody";
 
+    public static final String RULE_WHOLE = "@Whole:";
+
     public static final String RULE_JSON = "@JSon:";
     public static final String RULE_JSON_TRAIT = "$.";
     public static final String RULE_XPATH = "@XPath:";

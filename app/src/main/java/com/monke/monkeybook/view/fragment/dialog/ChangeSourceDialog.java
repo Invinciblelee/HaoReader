@@ -1,17 +1,20 @@
-package com.monke.monkeybook.widget.modialog;
+package com.monke.monkeybook.view.fragment.dialog;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.monke.basemvplib.BaseActivity;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -24,7 +27,6 @@ import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.ToastUtils;
-import com.monke.monkeybook.view.activity.BookInfoActivity;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -40,55 +42,95 @@ import io.reactivex.schedulers.Schedulers;
  * 换源
  */
 
-public class ChangeSourceView implements SearchBookModel.SearchListener {
+public class ChangeSourceDialog extends AppCompatDialog implements SearchBookModel.SearchListener {
     private TextView atvTitle;
     private ImageButton ibtStop;
     private RefreshRecyclerView rvSource;
 
-    private MoDialogView moDialogView;
-    private OnClickSource onClickSource;
-    private Context context;
     private ChangeSourceAdapter adapter;
     private SearchBookModel searchBookModel;
     private BookInfoBean bookInfo;
     private boolean selectCover;
+    private OnClickSource onClickSource;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final Runnable searchTask = new Runnable() {
         @Override
         public void run() {
-            rvSource.startRefresh(false);
-            searchBookModel.startSearch(bookInfo.getName());
+            if (rvSource != null) {
+                rvSource.startRefresh(false);
+                searchBookModel.startSearch(bookInfo.getName());
+            }
         }
     };
 
-    public static ChangeSourceView newInstance(BaseActivity activity, MoDialogView moDialogView) {
-        return new ChangeSourceView(activity, moDialogView);
+    public static void show(FragmentManager fragmentManager, BookInfoBean bookInfoBean, boolean selectCover, OnClickSource onClickSource) {
+        ChangeSourceDialog dialog = new ChangeSourceDialog();
+        Bundle args = new Bundle();
+        args.putBoolean("selectCover", selectCover);
+        args.putParcelable("bookInfo", bookInfoBean);
+        dialog.setArguments(args);
+        dialog.onClickSource = onClickSource;
+        dialog.show(fragmentManager, "changeSource");
     }
 
-    private ChangeSourceView(BaseActivity activity, MoDialogView moDialogView) {
-        this.moDialogView = moDialogView;
-        this.context = moDialogView.getContext();
-        this.selectCover = activity.getClass().equals(BookInfoActivity.class);
-        bindView();
-        adapter = new ChangeSourceAdapter(context, selectCover);
-        rvSource.setRefreshRecyclerViewAdapter(adapter, new LinearLayoutManager(context));
-        adapter.setOnItemClickListener((view, item) -> selectSource(item));
-        View viewRefreshError = LayoutInflater.from(context).inflate(R.layout.view_searchbook_refresh_error, null);
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        assert args != null;
+        selectCover = args.getBoolean("selectCover");
+        bookInfo = args.getParcelable("bookInfo");
+
+        searchBookModel = new SearchBookModel(getContext())
+                .onlyOnePage()
+                .setSearchBookType(bookInfo.getBookType())
+                .listener(this)
+                .setup();
+    }
+
+    @Override
+    public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.dialog_change_source, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        atvTitle = findViewById(R.id.atv_title);
+        ibtStop = findViewById(R.id.ibt_stop);
+        rvSource = findViewById(R.id.rf_rv_change_source);
+        ibtStop.setVisibility(View.INVISIBLE);
+
+        rvSource.setOnRefreshListener(this::reSearchBook);
+        ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
+
+        adapter = new ChangeSourceAdapter(getContext());
+        rvSource.setRefreshRecyclerViewAdapter(adapter, new LinearLayoutManager(getContext()));
+        adapter.setOnItemClickListener((v, item) -> selectSource(item));
+        View viewRefreshError = LayoutInflater.from(getContext()).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
             //刷新失败 ，重试
             reSearchBook();
         });
-        rvSource.setNoDataAndrRefreshErrorView(LayoutInflater.from(context).inflate(R.layout.view_searchbook_no_data, null),
+        rvSource.setNoDataAndrRefreshErrorView(LayoutInflater.from(getContext()).inflate(R.layout.view_searchbook_no_data, null),
                 viewRefreshError);
 
-        moDialogView.setOnDismissListener(() -> searchBookModel.shutdownSearch());
+        if (TextUtils.isEmpty(bookInfo.getAuthor())) {
+            atvTitle.setText(bookInfo.getName());
+        } else {
+            atvTitle.setText(String.format("%s(%s)", bookInfo.getName(), bookInfo.getAuthor()));
+        }
+
+        view.post(() -> {
+            getSearchBookInDb();
+            rvSource.startRefresh(false);
+        });
     }
 
     @Override
     public void searchSourceEmpty() {
-        ToastUtils.toast(context, "没有选中任何书源");
+        ToastUtils.toast(getContext(), "没有选中任何书源");
         ibtStop.setVisibility(View.INVISIBLE);
         rvSource.finishRefresh(true, false);
     }
@@ -117,35 +159,16 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
         rvSource.finishRefresh(false);
     }
 
-    void showChangeSource(BookInfoBean bookInfoBean, OnClickSource onClickSource) {
-        this.onClickSource = onClickSource;
-        this.bookInfo = bookInfoBean;
-        searchBookModel = new SearchBookModel(context)
-                .onlyOnePage()
-                .setSearchBookType(bookInfo.getBookType())
-                .listener(this)
-                .setup();
-        if (TextUtils.isEmpty(bookInfo.getAuthor())) {
-            atvTitle.setText(bookInfo.getName());
-        } else {
-            atvTitle.setText(String.format("%s(%s)", bookInfo.getName(), bookInfo.getAuthor()));
-        }
-        getSearchBookInDb();
-        rvSource.startRefresh(false);
-    }
-
     private void selectSource(SearchBookBean searchBook) {
-        moDialogView.getMoDialogHUD().dismiss();
-        moDialogView.post(() -> {
-            if (selectCover) {
+        if (selectCover) {
+            onClickSource.changeSource(searchBook);
+        } else {
+            if (!isCurrent(searchBook)) {
                 onClickSource.changeSource(searchBook);
-            } else {
-                if (!isCurrent(searchBook)) {
-                    onClickSource.changeSource(searchBook);
-                    incrementSourceWeightBySelection(searchBook);
-                }
+                incrementSourceWeightBySelection(searchBook);
             }
-        });
+        }
+        dismissAllowingStateLoss();
     }
 
     private void getSearchBookInDb() {
@@ -218,21 +241,6 @@ public class ChangeSourceView implements SearchBookModel.SearchListener {
     private boolean isCurrent(SearchBookBean searchBookBean) {
         return TextUtils.equals(searchBookBean.getRealNoteUrl(), bookInfo.getNoteUrl())
                 && TextUtils.equals(searchBookBean.getTag(), bookInfo.getTag());
-    }
-
-    private void bindView() {
-        moDialogView.removeAllViews();
-        LayoutInflater.from(context).inflate(R.layout.moprogress_dialog_change_source, moDialogView, true);
-
-        View llContent = moDialogView.findViewById(R.id.ll_content);
-        llContent.setOnClickListener(null);
-        atvTitle = moDialogView.findViewById(R.id.atv_title);
-        ibtStop = moDialogView.findViewById(R.id.ibt_stop);
-        rvSource = moDialogView.findViewById(R.id.rf_rv_change_source);
-        ibtStop.setVisibility(View.INVISIBLE);
-
-        rvSource.setOnRefreshListener(this::reSearchBook);
-        ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
     }
 
     /**

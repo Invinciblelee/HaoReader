@@ -17,6 +17,8 @@ import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.utils.StringUtils;
 
+import org.mozilla.javascript.NativeObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -46,31 +48,29 @@ class DefaultContentDelegate implements ContentDelegate {
 
     @Override
     public List<SearchBookBean> getSearchBooks(String source) {
-        mAnalyzer.setContent(source);
-
-        final AnalyzeCollection collection = mAnalyzer.getRawCollection(getBookSource().getRealRuleSearchList());
+        final AnalyzeCollection collection = mAnalyzer.setContent(source).getRawCollection(getBookSource().getRealRuleSearchList());
         List<SearchBookBean> books = new ArrayList<>();
         while (collection.hasNext()) {
+            mAnalyzer.setContent(collection.next());
             SearchBookBean item = new SearchBookBean();
             item.setTag(getConfig().getTag());
             item.setOrigin(getConfig().getName());
             item.setBookType(getBookSource().getBookSourceType());
-            item.setAuthor(FormatWebText.getAuthor(collection.mutable().getResultContent(getBookSource().getRuleSearchAuthor())));
-            item.setKind(StringUtils.join(",", collection.mutable().getResultContents(getBookSource().getRuleSearchKind())));
-            item.setLastChapter(FormatWebText.trim(collection.mutable().getResultContent(getBookSource().getRuleSearchLastChapter())));
-            item.setName(FormatWebText.getBookName(collection.mutable().getResultContent(getBookSource().getRuleSearchName())));
-            item.setNoteUrl(collection.mutable().getResultUrl(getBookSource().getRuleSearchNoteUrl()));
-            item.setIntroduce(collection.mutable().getResultContent(getBookSource().getRuleIntroduce()));
-            item.putVariableMap(collection.mutable().getVariableMap(getBookSource().getRulePersistedVariables()));
+            item.setAuthor(FormatWebText.getAuthor(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor())));
+            item.setKind(StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind())));
+            item.setLastChapter(FormatWebText.trim(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter())));
+            item.setName(FormatWebText.getBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName())));
+            item.setNoteUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl()));
+            item.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
+            item.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables()));
+            item.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl()));
             if (isEmpty(item.getNoteUrl())) {
                 item.setNoteUrl(getConfig().getBaseURL());
             }
-            item.setCoverUrl(collection.mutable().getResultUrl(getBookSource().getRuleSearchCoverUrl()));
             if (!isEmpty(item.getName())) {
                 books.add(item);
             }
         }
-
 
         if (getBookSource().reverseSearchList()) {
             Collections.reverse(books);
@@ -137,12 +137,21 @@ class DefaultContentDelegate implements ContentDelegate {
 
         String noteUrl = getConfig().getExtras().getString("noteUrl");
 
-        mAnalyzer.setContent(source);
-        AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
+        AnalyzeCollection collection = mAnalyzer.setContent(source).getRawCollection(ruleChapterList);
         List<ChapterBean> chapterList = new ArrayList<>();
         while (collection.hasNext()) {
-            String url = collection.mutable().getResultUrl(getBookSource().getRuleContentUrl());   //id
-            String name = collection.mutable().getResultContent(getBookSource().getRuleChapterName());
+            final Object content = collection.next();
+            final String name;
+            final String url;
+            if (content instanceof NativeObject) {
+                NativeObject object = (NativeObject) content;
+                name = StringUtils.valueOf(object.get("name"));
+                url = StringUtils.valueOf(object.get("url"));
+            } else {
+                mAnalyzer.setContent(content);
+                name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
+                url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
+            }
             if (!isEmpty(url) && !isEmpty(name)) {
                 ChapterBean chapterBean = new ChapterBean();
                 chapterBean.setDurChapterUrl(url);
@@ -210,8 +219,9 @@ class DefaultContentDelegate implements ContentDelegate {
         }
         final AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
         while (collection.hasNext()) {
-            String url = collection.mutable().getResultUrl(getBookSource().getRuleContentUrl());   //id
-            String name = collection.mutable().getResultContent(getBookSource().getRuleChapterName());
+            mAnalyzer.setContent(collection.next());
+            final String name = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());
+            final String url = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
             if (!isEmpty(url) && !isEmpty(name)) {
                 ChapterBean chapterBean = new ChapterBean();
                 chapterBean.setDurChapterUrl(url);
@@ -247,8 +257,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
         String content;
         try {
-            mAnalyzer.setContent(source);
-            content = mAnalyzer.getResultContent(getBookSource().getRuleBookContent());
+            content = mAnalyzer.setContent(source).getResultContent(getBookSource().getRuleBookContent());
         } catch (Exception ex) {
             Logger.e(TAG, "getBookContent", ex);
             String chapterUrl = bookContentBean.getDurChapterUrl();
@@ -329,8 +338,7 @@ class DefaultContentDelegate implements ContentDelegate {
     @Override
     public String getAudioLink(String source) {
         final String ruleBookContent = getBookSource().getRealRuleBookContent();
-        mAnalyzer.setContent(source);
-        return mAnalyzer.getResultUrl(ruleBookContent);
+        return mAnalyzer.setContent(source).getResultUrl(ruleBookContent);
     }
 
 }

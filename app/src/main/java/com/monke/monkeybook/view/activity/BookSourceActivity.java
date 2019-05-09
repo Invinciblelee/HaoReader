@@ -35,8 +35,9 @@ import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.InputDialog;
+import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.widget.AppCompat;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     private SubMenu groupMenu;
     private SubMenu sortMenu;
     private BookSourceAdapter adapter;
-    private MoDialogHUD moDialogHUD;
+    private ProgressDialog progressDialog;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private boolean isSearch;
 
@@ -114,7 +115,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         initSearchView();
         initRecyclerView();
         mPresenter.initData();
-        moDialogHUD = new MoDialogHUD(this);
     }
 
     private void initSearchView() {
@@ -225,12 +225,18 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     public void showLoading(String msg) {
-        moDialogHUD.showLoading(msg);
+       if(progressDialog == null){
+           progressDialog = ProgressDialog.show(this, msg);
+       }else {
+           progressDialog.show(this);
+       }
     }
 
     @Override
     public void dismissHUD() {
-        moDialogHUD.dismiss();
+        if(progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -348,7 +354,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void importBookSourceOnline() {
         String cacheUrl = ACache.get(this).getAsString("sourceUrl");
-        moDialogHUD.showInputBox("输入书源网址", cacheUrl, null,
+        InputDialog.show(getSupportFragmentManager(), "输入书源网址", cacheUrl, null,
                 inputText -> {
                     ACache.get(this).put("sourceUrl", inputText);
                     mPresenter.importBookSource(inputText);

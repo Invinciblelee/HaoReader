@@ -36,11 +36,12 @@ import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
+import com.monke.monkeybook.view.fragment.dialog.InputDialog;
+import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.util.List;
 
@@ -76,8 +77,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private Switch swNightTheme;
     private int group = -1;
     private boolean viewIsList;
-    private MoDialogHUD moDialogHUD;
     private long exitTime = 0;
+
+    private ProgressDialog progressDialog;
 
     private BookListFragment[] fragments = new BookListFragment[4];
 
@@ -170,8 +172,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             drawerLeft.getHeaderView(0).setPadding(0, insets.top, 0, 0);
             drawerRight.applyWindowInsets(insets);
         });
-
-        moDialogHUD = new MoDialogHUD(this);
     }
 
     @Override
@@ -182,7 +182,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // 这个必须要，没有的话进去的默认是个箭头。。正常应该是三横杠的
         if (swNightTheme != null) {
             swNightTheme.setChecked(isNightTheme());
         }
@@ -193,8 +192,19 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerRight.setOnItemClickListener(getAdapterListener());
         drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
 
-        bookShelfMenu.setOnActionMenuClickListener((index, menuView) -> {
-            bookShelfMenu.postDelayed(() -> upGroup(index), 400L);
+        bookShelfMenu.setOnActionMenuClickListener(new BookFloatingActionMenu.OnActionMenuClickListener() {
+            @Override
+            public void onMainLongClick(View fabMain) {
+                BookListFragment current = fragments[group];
+                if (current != null) {
+                    current.refreshBookShelf(true);
+                }
+            }
+
+            @Override
+            public void onMenuClick(int index, View menuView) {
+                bookShelfMenu.postDelayed(() -> upGroup(index), 400L);
+            }
         });
 
         mSearchField.setOnClickListener(v -> {
@@ -280,7 +290,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 requestPermissions(FILE_SELECT_RESULT);
                 break;
             case R.id.action_add_url:
-                moDialogHUD.showInputBox("添加书籍网址", null, null, inputText -> mPresenter.addBookUrl(inputText));
+                InputDialog.show(getSupportFragmentManager(), "添加书籍网址", null, null, inputText -> mPresenter.addBookUrl(inputText));
                 break;
             case R.id.action_list_grid:
                 viewIsList = !viewIsList;
@@ -542,12 +552,18 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void dismissHUD() {
-        moDialogHUD.dismiss();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
     public void showLoading(String msg) {
-        moDialogHUD.showLoading(msg);
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog.show(this, msg);
+        } else {
+            progressDialog.show(this);
+        }
     }
 
     @Override
@@ -579,24 +595,19 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Boolean mo = moDialogHUD.onKeyDown(keyCode, event);
-        if (mo) {
-            return true;
-        } else {
-            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (bookShelfMenu.isExpanded()) {
-                    bookShelfMenu.collapse();
-                    return true;
-                } else if (drawer.isDrawerOpen(GravityCompat.START)
-                        || drawer.isDrawerOpen(GravityCompat.END)) {
-                    drawer.closeDrawers();
-                    return true;
-                }
-                exit();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (bookShelfMenu.isExpanded()) {
+                bookShelfMenu.collapse();
+                return true;
+            } else if (drawer.isDrawerOpen(GravityCompat.START)
+                    || drawer.isDrawerOpen(GravityCompat.END)) {
+                drawer.closeDrawers();
                 return true;
             }
-            return super.onKeyDown(keyCode, event);
+            exit();
+            return true;
         }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

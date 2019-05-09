@@ -18,25 +18,29 @@ public class ToastUtils {
 
     }
 
-    public static void toast(@NonNull Context context, @NonNull CharSequence msg) {
+    public static void toast(Context context, @NonNull CharSequence msg) {
+        if(context == null) return;
         Toast toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
         toast.setView(createToastView(context, msg));
         toast.show();
     }
 
-    public static void toast(@NonNull Context context, @StringRes int resId) {
+    public static void toast(Context context, @StringRes int resId) {
+        if(context == null) return;
         Toast toast = Toast.makeText(context, resId, Toast.LENGTH_SHORT);
         toast.setView(createToastView(context, context.getText(resId)));
         toast.show();
     }
 
-    public static void longToast(@NonNull Context context, @NonNull CharSequence msg) {
+    public static void longToast(Context context, @NonNull CharSequence msg) {
+        if(context == null) return;
         Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
         toast.setView(createToastView(context, msg));
         toast.show();
     }
 
-    public static void longToast(@NonNull Context context, @StringRes int resId) {
+    public static void longToast(Context context, @StringRes int resId) {
+        if(context == null) return;
         Toast toast = Toast.makeText(context, resId, Toast.LENGTH_LONG);
         toast.setView(createToastView(context, context.getText(resId)));
         toast.show();

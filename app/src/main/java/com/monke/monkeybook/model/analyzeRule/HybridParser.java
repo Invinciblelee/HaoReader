@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.util.Log;
-
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
 

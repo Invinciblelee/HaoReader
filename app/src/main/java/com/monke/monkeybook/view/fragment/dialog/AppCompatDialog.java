@@ -31,7 +31,7 @@ public class AppCompatDialog extends AppCompatDialogFragment {
         if (mDialogView != null) {
             return mDialogView;
         }
-        ViewGroup containerView = (ViewGroup) inflater.inflate(R.layout.dialog_design_alert, container, false);
+        ViewGroup containerView = (ViewGroup) inflater.inflate(R.layout.dialog_design_container, container, false);
         containerView.addView(onCreateDialogContentView(inflater, containerView, savedInstanceState));
         mDialogView = containerView;
         return mDialogView;
@@ -51,10 +51,10 @@ public class AppCompatDialog extends AppCompatDialogFragment {
 
     @SuppressWarnings("unchecked")
     public final <T> T findViewById(@IdRes int id) {
-        if (mDialogView != null) {
-            return (T) mDialogView.findViewById(id);
+        if (mDialogView == null) {
+            throw new NullPointerException();
         }
-        return null;
+        return (T) mDialogView.findViewById(id);
     }
 
     public final View getDialogView() {
@@ -74,6 +74,9 @@ public class AppCompatDialog extends AppCompatDialogFragment {
     }
 
     public final boolean isShowing() {
+        if (isAdded()) {
+            return true;
+        }
         final Dialog dialog = getDialog();
         return dialog != null && dialog.isShowing();
     }

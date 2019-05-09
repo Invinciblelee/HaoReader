@@ -92,10 +92,6 @@ final class AlertController {
     private final View.OnClickListener mButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mHandler.obtainMessage(ButtonHandler.MSG_DISMISS_DIALOG, mDialog)
-                    .sendToTarget();
-
-
             final Message m;
             if (v == mButtonPositive && mButtonPositiveMessage != null) {
                 m = Message.obtain(mButtonPositiveMessage);
@@ -108,6 +104,9 @@ final class AlertController {
             if (m != null) {
                 m.sendToTarget();
             }
+
+            mHandler.obtainMessage(ButtonHandler.MSG_DISMISS_DIALOG, mDialog)
+                    .sendToTarget();
         }
     };
 
@@ -154,7 +153,7 @@ final class AlertController {
 
     View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         if (mAlertView == null) {
-            mAlertView = inflater.inflate(R.layout.moprogress_dialog_two, container, false);
+            mAlertView = inflater.inflate(R.layout.dialog_alert, container, false);
         }
         return mAlertView;
     }

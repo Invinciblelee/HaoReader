@@ -1,12 +1,17 @@
-package com.monke.monkeybook.widget.modialog;
+package com.monke.monkeybook.view.fragment.dialog;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.ToastUtils;
@@ -16,29 +21,48 @@ import com.monke.monkeybook.utils.ToastUtils;
  * 离线下载
  */
 
-class DownLoadView {
-    private MoDialogView moDialogView;
-    private Context context;
+public class DownLoadDialog extends AppCompatDialog {
 
     private EditText edtStart;
     private EditText edtEnd;
-    private TextView tvCancel;
-    private TextView tvDownload;
 
-    public static DownLoadView newInstance(MoDialogView moDialogView) {
-        return new DownLoadView(moDialogView);
+    private OnClickDownload clickDownload;
+
+    public static void show(FragmentManager fragmentManager, int start, int total, OnClickDownload clickDownload) {
+        DownLoadDialog dialog = new DownLoadDialog();
+        Bundle args = new Bundle();
+        args.putInt("start", start);
+        args.putInt("total", total);
+        dialog.setArguments(args);
+        dialog.clickDownload = clickDownload;
+        dialog.show(fragmentManager, "download");
     }
 
-    private DownLoadView(MoDialogView moDialogView) {
-        this.moDialogView = moDialogView;
-        this.context = moDialogView.getContext();
-        bindView();
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
-    void showDownloadList(int startIndex, int endIndex, final int all, final OnClickDownload clickDownload, View.OnClickListener cancel) {
-        tvCancel.setOnClickListener(cancel);
-        edtStart.setText(String.valueOf(startIndex + 1));
-        edtEnd.setText(String.valueOf(endIndex + 1));
+    @Override
+    public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.dialog_download_choice, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        assert args != null;
+        final int start = args.getInt("start");
+        final int total = args.getInt("total");
+
+        edtStart = findViewById(R.id.edt_start);
+        edtEnd = findViewById(R.id.edt_end);
+        TextView tvCancel = findViewById(R.id.btn_cancel);
+        TextView tvDownload = findViewById(R.id.tv_download);
+
+        edtStart.setText(String.valueOf(start + 1));
+        edtEnd.setText(String.valueOf(total - 1));
+
         edtStart.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -55,10 +79,10 @@ class DownLoadView {
                 if (edtStart.getText().length() > 0) {
                     try {
                         int temp = Integer.parseInt(edtStart.getText().toString().trim());
-                        if (temp > all) {
-                            edtStart.setText(String.valueOf(all));
+                        if (temp > total) {
+                            edtStart.setText(String.valueOf(total));
                             edtStart.setSelection(edtStart.getText().length());
-                            ToastUtils.toast(context, "不能超过总章节数");
+                            ToastUtils.toast(getContext(), "不能超过总章节数");
                         } else if (temp <= 0) {
                             edtStart.setText(String.valueOf(1));
                             edtStart.setSelection(edtStart.getText().length());
@@ -85,10 +109,10 @@ class DownLoadView {
                 if (edtEnd.getText().length() > 0) {
                     try {
                         int temp = Integer.parseInt(edtEnd.getText().toString().trim());
-                        if (temp > all) {
-                            edtEnd.setText(String.valueOf(all));
+                        if (temp > total) {
+                            edtEnd.setText(String.valueOf(total));
                             edtEnd.setSelection(edtEnd.getText().length());
-                            ToastUtils.toast(context, "不能超过总章节数");
+                            ToastUtils.toast(getContext(), "不能超过总章节数");
                         } else if (temp <= 0) {
                             edtEnd.setText(String.valueOf(1));
                             edtEnd.setSelection(edtEnd.getText().length());
@@ -102,30 +126,19 @@ class DownLoadView {
         tvDownload.setOnClickListener(v -> {
             if (edtStart.getText().length() > 0 && edtEnd.getText().length() > 0) {
                 if (Integer.parseInt(edtStart.getText().toString()) > Integer.parseInt(edtEnd.getText().toString())) {
-                    ToastUtils.toast(context, "输入错误");
+                    ToastUtils.toast(getContext(), "输入错误");
                 } else {
                     if (clickDownload != null) {
                         clickDownload.download(Integer.parseInt(edtStart.getText().toString()) - 1, Integer.parseInt(edtEnd.getText().toString()) - 1);
                     }
                 }
             } else {
-                ToastUtils.toast(context, "请输入要离线的章节数");
+                ToastUtils.toast(getContext(), "请输入要离线的章节数");
             }
         });
+
+        tvCancel.setOnClickListener(v -> dismissAllowingStateLoss());
     }
-
-    private void bindView() {
-        moDialogView.removeAllViews();
-        LayoutInflater.from(context).inflate(R.layout.moprogress_dialog_download_choice, moDialogView, true);
-
-        View llContent = moDialogView.findViewById(R.id.ll_content);
-        llContent.setOnClickListener(null);
-        edtStart = moDialogView.findViewById(R.id.edt_start);
-        edtEnd = moDialogView.findViewById(R.id.edt_end);
-        tvCancel = moDialogView.findViewById(R.id.btn_cancel);
-        tvDownload = moDialogView.findViewById(R.id.tv_download);
-    }
-
 
     /**
      * 离线下载确定

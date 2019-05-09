@@ -45,6 +45,17 @@ public class ListUtils {
         return new ArrayList<>(list);
     }
 
+    public static List<String> toStringList(List<Object> list){
+        if(list == null){
+            return new ArrayList<>();
+        }
+        final List<String> stringList = new ArrayList<>();
+        for (Object object: list){
+            stringList.add(StringUtils.valueOf(object));
+        }
+        return stringList;
+    }
+
     @SafeVarargs
     public static <T> List<T> mutableList(T... a) {
         if (a == null) {

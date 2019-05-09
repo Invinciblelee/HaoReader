@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     private Activity activity;
-    private List<SearchBookBean> searchBooks;
+    private final List<SearchBookBean> searchBooks;
 
     public interface OnItemClickListener {
         void clickToSearch(View clickView, int position, SearchBookBean searchBookBean);

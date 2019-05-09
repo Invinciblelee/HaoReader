@@ -31,7 +31,6 @@ import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
@@ -59,8 +58,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     private ExplosionField explosionField;
     private SearchBookAdapter searchBookAdapter;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
-
-    private MoDialogHUD moDialogHUD;
 
     private final Handler mHandler = new Handler();
 
@@ -417,10 +414,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     public void showBookSourceEmptyTip() {
         refreshFinish();
-
-        if (moDialogHUD == null) {
-            moDialogHUD = new MoDialogHUD(this);
-        }
 
         new AlertDialog.Builder(getSupportFragmentManager())
                 .setTitle(R.string.dialog_title)

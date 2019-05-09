@@ -31,13 +31,11 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements F
     private final List<SearchBookBean> searchBookBeans;
     private OnItemClickListener mOnItemClickListener;
     private LayoutInflater inflater;
-    private boolean noSelected;
     private int lastSelectIndex = -1;
 
-    public ChangeSourceAdapter(Context context, boolean noSelected) {
+    public ChangeSourceAdapter(Context context) {
         super(false);
         this.inflater = LayoutInflater.from(context);
-        this.noSelected = noSelected;
 
         searchBookBeans = new ArrayList<>();
     }
@@ -104,11 +102,9 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements F
                 myViewHolder.tvLastChapter.setText(item.getLastChapter());
             }
 
-            if (!noSelected) {
-                myViewHolder.ivChecked.setChecked(item.isCurrentSource());
-                if (myViewHolder.ivChecked.isChecked()) {
-                    lastSelectIndex = realPosition;
-                }
+            myViewHolder.ivChecked.setChecked(item.isCurrentSource());
+            if (myViewHolder.ivChecked.isChecked()) {
+                lastSelectIndex = realPosition;
             }
 
             final View.OnClickListener clickListener = view -> {

@@ -177,11 +177,6 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     }
 
     @Override
-    public void addBookShelfSuccess(List<SearchBookBean> datas) {
-        searchBookAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void addBookShelfFailed(String massage) {
         toast(massage);
     }

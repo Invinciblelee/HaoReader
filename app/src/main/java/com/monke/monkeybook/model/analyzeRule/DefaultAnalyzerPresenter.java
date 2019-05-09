@@ -61,7 +61,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
-                final List<String> list = evalArrayScript(getParser().getStringSource(), pattern);
+                final List<String> list = evalStringArrayScript(getParser().getStringSource(), pattern);
                 final String result = list.isEmpty() ? "" : list.get(0);
                 if (!isEmpty(result)) {
                     return evalJoinUrl(result, pattern);
@@ -93,7 +93,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         for (RulePattern pattern : rulePatterns.patterns) {
             boolean haveResult = false;
             if (pattern.isSimpleJS) {
-                final List<String> result = evalArrayScript(getParser().getStringSource(), pattern);
+                final List<String> result = evalStringArrayScript(getParser().getStringSource(), pattern);
                 if (!result.isEmpty()) {
                     evalReplace(result, pattern);
                     resultList.addAll(result);
@@ -161,7 +161,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
-                final List<String> list = evalArrayScript(source, pattern);
+                final List<String> list = evalStringArrayScript(source, pattern);
                 final String result = list.isEmpty() ? "" : list.get(0);
                 if (!isEmpty(result)) {
                     return evalJoinUrl(result, pattern);
@@ -186,7 +186,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         for (RulePattern pattern : rulePatterns.patterns) {
             boolean haveResult = false;
             if (pattern.isSimpleJS) {
-                final List<String> result = evalArrayScript(source, pattern);
+                final List<String> result = evalStringArrayScript(source, pattern);
                 if (!result.isEmpty()) {
                     evalReplace(result, pattern);
                     resultList.addAll(result);
@@ -231,9 +231,9 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     @Override
     public AnalyzeCollection getRawCollection(String rule) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
-            return new AnalyzeCollection(getAnalyzer(), new ArrayList<>());
+            return new AnalyzeCollection(new ArrayList<>());
         }
-        return new AnalyzeCollection(getAnalyzer(), getRawList(rule));
+        return new AnalyzeCollection(getRawList(rule));
     }
 
     private List<Object> getRawList(String rule) {
@@ -272,7 +272,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
 
     private List<Object> getSingleRawList(RulePattern rulePattern) {
         if (rulePattern.isSimpleJS) {
-            return ListUtils.toObjectList(evalArrayScript(getParser().getStringSource(), rulePattern));
+            return evalObjectArrayScript(getParser().getStringSource(), rulePattern);
         } else if (rulePattern.isRedirect) {
             String source = evalStringScript(getParser().getStringSource(), rulePattern);
             RulePattern pattern = fromSingleRule(rulePattern.redirectRule, false);

@@ -7,7 +7,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -39,11 +38,11 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.widget.AppCompat;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,8 +93,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     private CheckAddShelfPop checkAddShelfPop;
 
     private BookInfoBean bookInfoBean;
-
-    private MoDialogHUD moDialogHUD;
 
     public static void startThis(MBaseActivity activity, View transitionView, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, AudioBookPlayActivity.class);
@@ -248,10 +245,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (moDialogHUD != null && moDialogHUD.onKeyDown(keyCode, event)) {
-            return true;
-        }
-
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             onBackPressed();
             return true;
@@ -488,10 +481,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             return;
         }
 
-        if (moDialogHUD == null) {
-            moDialogHUD = new MoDialogHUD(this);
-        }
-        moDialogHUD.showChangeSource(this, bookInfoBean, searchBookBean -> {
+        ChangeSourceDialog.show(getSupportFragmentManager(), bookInfoBean, false, searchBookBean -> {
             AudioBookPlayService.changeSource(AudioBookPlayActivity.this, searchBookBean);
         });
     }

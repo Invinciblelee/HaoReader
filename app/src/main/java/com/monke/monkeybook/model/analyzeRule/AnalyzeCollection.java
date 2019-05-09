@@ -5,25 +5,18 @@ import java.util.List;
 
 final class AnalyzeCollection {
 
-    private OutAnalyzer mAnalyzer;
     private Iterator mIterator;
 
-    AnalyzeCollection(OutAnalyzer analyzer, List rawList) {
-        this.mAnalyzer = analyzer;
+    AnalyzeCollection(List rawList) {
         this.mIterator = rawList.iterator();
     }
 
     boolean hasNext() {
-        if (mIterator.hasNext()) {
-            Object o = mIterator.next();
-            mAnalyzer.setContent(o);
-            return true;
-        }
-        return false;
+        return mIterator.hasNext();
     }
 
-
-    OutAnalyzer<?> mutable() {
-        return mAnalyzer;
+    Object next() {
+        return mIterator.next();
     }
+
 }

@@ -54,6 +54,12 @@ import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.SystemUtil;
 import com.monke.monkeybook.view.fragment.ChapterDrawerFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
+import com.monke.monkeybook.view.fragment.dialog.BookmarkDialog;
+import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
+import com.monke.monkeybook.view.fragment.dialog.DownLoadDialog;
+import com.monke.monkeybook.view.fragment.dialog.InputDialog;
+import com.monke.monkeybook.view.fragment.dialog.LargeTextDialog;
+import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
@@ -61,8 +67,6 @@ import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.ReadBottomStatusBar;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
-import com.monke.monkeybook.widget.modialog.EditBookmarkView;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 import com.monke.monkeybook.widget.page.LocalPageLoader;
 import com.monke.monkeybook.widget.page.OnPageChangeListener;
 import com.monke.monkeybook.widget.page.PageLoader;
@@ -167,7 +171,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private ReadAdjustPop readAdjustPop;
     private ReadInterfacePop readInterfacePop;
     private MoreSettingPop moreSettingPop;
-    private MoDialogHUD moDialogHUD;
     private ThisBatInfoReceiver batInfoReceiver;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
 
@@ -179,6 +182,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private final Handler mHandler = new Handler();
     private Runnable keepScreenRunnable;
     private Runnable upHpbNextPage;
+
+    private ProgressDialog progressDialog;
 
     private ChapterDrawerFragment chapterFragment;
 
@@ -503,14 +508,17 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void showLoading(String msg) {
-        ensureDialogHUD();
-        moDialogHUD.showLoading(msg);
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog.show(this, msg);
+        } else {
+            progressDialog.show(this);
+        }
     }
 
     @Override
     public void dismissHUD() {
-        if (moDialogHUD != null) {
-            moDialogHUD.dismiss();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
     }
 
@@ -722,18 +730,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
 
         });
-    }
-
-    /**
-     * 弹窗
-     */
-    private void ensureDialogHUD() {
-        if (moDialogHUD != null) {
-            return;
-        }
-        moDialogHUD = new MoDialogHUD(this);
-
-        moDialogHUD.setOnDimissListener(this::initImmersionBar);
     }
 
     /**
@@ -1115,8 +1111,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 if (mPageLoader != null) {
                     String content = mPageLoader.getCurrentContent();
                     if (!TextUtils.isEmpty(content)) {
-                        ensureDialogHUD();
-                        moDialogHUD.showText(content);
+                        LargeTextDialog.show(getSupportFragmentManager(), content, false);
                     }
                 }
                 break;
@@ -1201,8 +1196,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 bookmarkBean.setChapterName(mPresenter.getChapterTitle(mPresenter.getBookShelf().getDurChapter()));
             }
 
-            ensureDialogHUD();
-            moDialogHUD.showBookmark(bookmarkBean, isAdd, new EditBookmarkView.OnBookmarkClick() {
+            BookmarkDialog.show(getSupportFragmentManager(), bookmarkBean, isAdd, new BookmarkDialog.OnBookmarkClick() {
                 @Override
                 public void saveBookmark(BookmarkBean bookmarkBean) {
                     mPresenter.saveBookmark(bookmarkBean);
@@ -1260,8 +1254,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
         popMenuOut();
         if (mPresenter.getBookShelf() != null) {
-            ensureDialogHUD();
-            moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(), searchBookBean -> {
+            ChangeSourceDialog.show(getSupportFragmentManager(), mPresenter.getBookShelf().getBookInfoBean(), false, searchBookBean -> {
                 mPageLoader.stopLoading();
                 mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
                 mPresenter.changeBookSource(searchBookBean);
@@ -1290,14 +1283,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         popMenuOut();
         if (mPresenter.getBookShelf() != null) {
-            //弹出离线下载界面
-            int endIndex = mPresenter.getBookShelf().getChapterListSize() - 1;
-
-            ensureDialogHUD();
-            moDialogHUD.showDownloadList(mPresenter.getBookShelf().getDurChapter(), endIndex,
-                    mPresenter.getBookShelf().getChapterListSize(),
-                    (start, end) -> {
-                        moDialogHUD.dismiss();
+            DownLoadDialog.show(getSupportFragmentManager(), mPresenter.getBookShelf().getDurChapter(), mPresenter.getBookShelf().getChapterListSize()
+                    , (start, end) -> {
                         mPresenter.addDownload(start, end);
                     });
         }
@@ -1310,12 +1297,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         popMenuOut();
 
         if (mPageLoader instanceof LocalPageLoader && mPresenter.getBookShelf() != null) {
-            ensureDialogHUD();
-            String charset = mPresenter.getBookShelf().getBookInfoBean().getCharset();
-            moDialogHUD.showInputBox(getString(R.string.edit_charset),
-                    charset,
-                    new String[]{"UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "ASCII"}
-                    , inputText -> {
+            final String charset = mPresenter.getBookShelf().getBookInfoBean().getCharset();
+            InputDialog.show(getSupportFragmentManager(), getString(R.string.edit_charset), charset,
+                    new String[]{"UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "ASCII"}, inputText -> {
                         if (!TextUtils.equals(charset, inputText)) {
                             mPresenter.getBookShelf().getBookInfoBean().setCharset(inputText);
                             mPresenter.saveProgress();
@@ -1453,59 +1437,54 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        boolean mo = moDialogHUD == null ? false : moDialogHUD.onKeyDown(keyCode, event);
-        if (mo) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (ReadAloudService.running && aloudStatus == PLAY) {
+                ReadAloudService.pause(this);
+                toast(getString(R.string.read_aloud_pause));
+                return true;
+            } else {
+                onBackPressed();
+                return true;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (isMenuShowing()) {
+                popMenuOut();
+            } else {
+                popMenuIn();
+            }
             return true;
-        } else {
-            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    return true;
-                } else if (ReadAloudService.running && aloudStatus == PLAY) {
-                    ReadAloudService.pause(this);
-                    toast(getString(R.string.read_aloud_pause));
-                    return true;
-                } else {
-                    onBackPressed();
-                    return true;
-                }
-            } else if (keyCode == KeyEvent.KEYCODE_MENU) {
-                if (isMenuShowing()) {
-                    popMenuOut();
-                } else {
-                    popMenuIn();
+        } else if (!isMenuShowing()) {
+            if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                if (mPageLoader != null) {
+                    mPageLoader.skipToNextPage();
                 }
                 return true;
-            } else if (!isMenuShowing()) {
-                if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                    if (mPageLoader != null) {
-                        mPageLoader.skipToNextPage();
-                    }
-                    return true;
-                } else if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                    if (mPageLoader != null) {
-                        mPageLoader.skipToPrePage();
-                    }
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_N) {
-                    if (mPageLoader != null) {
-                        mPageLoader.skipToNextPage();
-                    }
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_P) {
-                    if (mPageLoader != null) {
-                        mPageLoader.skipToPrePage();
-                    }
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_SPACE) {
-                    if (mPageLoader != null) {
-                        mPageLoader.skipToNextPage();
-                    }
-                    return true;
+            } else if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                if (mPageLoader != null) {
+                    mPageLoader.skipToPrePage();
                 }
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_N) {
+                if (mPageLoader != null) {
+                    mPageLoader.skipToNextPage();
+                }
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_P) {
+                if (mPageLoader != null) {
+                    mPageLoader.skipToPrePage();
+                }
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_SPACE) {
+                if (mPageLoader != null) {
+                    mPageLoader.skipToNextPage();
+                }
+                return true;
             }
-            return super.onKeyDown(keyCode, event);
         }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

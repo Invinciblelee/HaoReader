@@ -2,11 +2,11 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.IntDef;
 
 import com.monke.monkeybook.bean.VariableStore;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -75,7 +75,7 @@ final class RulePatterns {
             }};
             Matcher expMatcher = Patterns.PATTERN_EXP.matcher(rawRule);
             while (expMatcher.find()) {
-                Object result = JSParser.evalObjectScript(expMatcher.group(1), simpleBindings);
+                Object result = Global.evalObjectScript(expMatcher.group(1), simpleBindings);
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {
                     expMatcher.appendReplacement(buffer, String.format("%.0f", (Double) result));
                 } else {

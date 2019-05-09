@@ -2,7 +2,10 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import androidx.annotation.NonNull;
 
+import com.monke.monkeybook.help.MemoryCache;
 import com.monke.monkeybook.model.SimpleModel;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
@@ -35,39 +38,63 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
+        MemoryCache cache = MemoryCache.getInstance();
+        RulePatterns patterns = cache.getCache(rawRule);
+        if (patterns != null) {
+            return patterns;
+        }
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            return RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), getConfig().getVariableStore(), mode);
+            patterns = RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), getConfig().getVariableStore(), mode);
         } else {
-            return RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), mode);
+            patterns = RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), mode);
         }
+        cache.putCache(rawRule, patterns);
+        return patterns;
     }
 
 
     RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
+        MemoryCache cache = MemoryCache.getInstance();
+        RulePattern pattern = cache.getCache(rawRule);
+        if (pattern != null) {
+            return pattern;
+        }
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            return RulePattern.fromRule(rawRule, getConfig().getVariableStore(), mode);
+            pattern = RulePattern.fromRule(rawRule, getConfig().getVariableStore(), mode);
         } else {
-            return RulePattern.fromRule(rawRule, mode);
+            pattern = RulePattern.fromRule(rawRule, mode);
         }
+        cache.putCache(rawRule, pattern);
+        return pattern;
     }
 
     String evalStringScript(@NonNull String string, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                string = JSParser.evalStringScript(javaScript, this, string, getConfig().getBaseURL());
+                string = Global.evalStringScript(javaScript, this, string, getConfig().getBaseURL());
             }
         }
         return string;
     }
 
-
-    List<String> evalArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
+    List<String> evalStringArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
         final List<String> list = new ArrayList<>();
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                list.addAll(JSParser.evalArrayScript(javaScript, this, string, getConfig().getBaseURL()));
+                List<Object> result = Global.evalArrayScript(javaScript, this, string, getConfig().getBaseURL());
+                list.addAll(ListUtils.toStringList(result));
+            }
+        }
+        return list;
+    }
+
+    List<Object> evalObjectArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
+        final List<Object> list = new ArrayList<>();
+        if (!rulePattern.javaScripts.isEmpty()) {
+            for (String javaScript : rulePattern.javaScripts) {
+                list.addAll(Global.evalArrayScript(javaScript, this, string, getConfig().getBaseURL()));
             }
         }
         return list;

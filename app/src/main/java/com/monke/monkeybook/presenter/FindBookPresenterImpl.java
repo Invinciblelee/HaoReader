@@ -14,13 +14,18 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.FindKindBean;
 import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.MemoryCache;
 import com.monke.monkeybook.model.BookSourceManager;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.script.SimpleBindings;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -54,25 +59,44 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             final List<FindKindGroupBean> group = new ArrayList<>();
             for (BookSourceBean sourceBean : bookSourceBeans) {
                 try {
-                    if (!TextUtils.isEmpty(sourceBean.getRuleFindUrl())) {
-                        String[] kindA = sourceBean.getRuleFindUrl().split("(&&|\n)+");
-                        List<FindKindBean> children = new ArrayList<>();
-                        for (String kindB : kindA) {
-                            if (kindB.trim().isEmpty()) continue;
-                            String[] kind = kindB.split("::");
-                            FindKindBean findKindBean = new FindKindBean();
-                            findKindBean.setGroup(sourceBean.getBookSourceName());
-                            findKindBean.setTag(sourceBean.getBookSourceUrl());
-                            findKindBean.setKindName(kind[0]);
-                            findKindBean.setKindUrl(kind[1]);
-                            children.add(findKindBean);
+                    String findRule = sourceBean.getRuleFindUrl();
+                    if (!TextUtils.isEmpty(findRule)) {
+                        boolean isJavaScript = StringUtils.startWithIgnoreCase(sourceBean.getRuleFindUrl(), "<js>");
+
+                        if (isJavaScript) {
+                            String cacheRule = MemoryCache.getInstance().getCache(sourceBean.getBookSourceUrl());
+                            if(cacheRule != null){
+                                findRule = cacheRule;
+                            }else {
+                                SimpleBindings bindings = new SimpleBindings() {{
+                                    this.put("baseUrl", sourceBean.getBookSourceUrl());
+                                }};
+                                String javaScript = findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<"));
+                                findRule = (String) Global.evalObjectScript(javaScript, bindings);
+                                MemoryCache.getInstance().putCache(sourceBean.getBookSourceUrl(), findRule);
+                            }
                         }
-                        FindKindGroupBean groupBean = new FindKindGroupBean();
-                        groupBean.setGroupName(sourceBean.getBookSourceName());
-                        groupBean.setTag(sourceBean.getBookSourceUrl());
-                        groupBean.setChildrenCount(children.size());
-                        groupBean.setChildren(children);
-                        group.add(groupBean);
+
+                        if(findRule != null) {
+                            String[] kindA = findRule.split("(&&|\n)+");
+                            List<FindKindBean> children = new ArrayList<>();
+                            for (String kindB : kindA) {
+                                if (kindB.trim().isEmpty()) continue;
+                                String[] kind = kindB.split("::");
+                                FindKindBean findKindBean = new FindKindBean();
+                                findKindBean.setGroup(sourceBean.getBookSourceName());
+                                findKindBean.setTag(sourceBean.getBookSourceUrl());
+                                findKindBean.setKindName(kind[0]);
+                                findKindBean.setKindUrl(kind[1]);
+                                children.add(findKindBean);
+                            }
+                            FindKindGroupBean groupBean = new FindKindGroupBean();
+                            groupBean.setGroupName(sourceBean.getBookSourceName());
+                            groupBean.setTag(sourceBean.getBookSourceUrl());
+                            groupBean.setChildrenCount(children.size());
+                            groupBean.setChildren(children);
+                            group.add(groupBean);
+                        }
                     }
                 } catch (Exception ignore) {
                     sourceBean.setBookSourceGroup("发现规则语法错误");

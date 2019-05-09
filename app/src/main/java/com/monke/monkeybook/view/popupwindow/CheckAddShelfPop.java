@@ -33,7 +33,7 @@ public class CheckAddShelfPop extends PopupWindow {
         this.isAudioBook = isAudioBook;
         this.bookName = bookName;
         this.itemClick = itemClick;
-        view = LayoutInflater.from(mContext).inflate(R.layout.moprogress_dialog_two, null);
+        view = LayoutInflater.from(mContext).inflate(R.layout.dialog_alert, null);
         this.setContentView(view);
 
         initView();

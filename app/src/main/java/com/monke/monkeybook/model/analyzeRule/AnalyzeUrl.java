@@ -161,7 +161,7 @@ public class AnalyzeUrl {
             }};
             Matcher expMatcher = Patterns.PATTERN_EXP.matcher(ruleUrl);
             while (expMatcher.find()) {
-                Object result = JSParser.evalObjectScript(expMatcher.group(1), simpleBindings);
+                Object result = Global.evalObjectScript(expMatcher.group(1), simpleBindings);
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {
                     expMatcher.appendReplacement(buffer, String.format("%.0f", (Double) result));
                 } else {

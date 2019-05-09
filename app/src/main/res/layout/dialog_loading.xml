@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.CardView.Background"
+    android:layout_width="match_parent"
+    android:layout_height="168dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <com.monke.monkeybook.widget.RotateLoading
+        android:id="@+id/rl_loading"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+    <TextView
+        android:id="@+id/msg_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:singleLine="true"
+        android:text="@string/loading"
+        android:textColor="@color/tv_text_default"
+        android:textSize="16sp" />
+</LinearLayout>

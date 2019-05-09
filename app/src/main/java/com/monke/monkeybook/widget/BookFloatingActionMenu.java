@@ -12,11 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.material.animation.AnimationUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.monkeybook.R;
-
-import androidx.annotation.Nullable;
 
 public class BookFloatingActionMenu extends LinearLayout {
 
@@ -45,6 +45,13 @@ public class BookFloatingActionMenu extends LinearLayout {
             } else {
                 expand();
             }
+        });
+
+        fabMain.setOnLongClickListener(v -> {
+            if (mMenuClickListener != null) {
+                mMenuClickListener.onMainLongClick(v);
+            }
+            return true;
         });
 
         initFloatingActionMenu();
@@ -185,6 +192,8 @@ public class BookFloatingActionMenu extends LinearLayout {
     }
 
     public interface OnActionMenuClickListener {
+        void onMainLongClick(View fabMain);
+
         void onMenuClick(int index, View menuView);
     }
 }

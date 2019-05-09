@@ -30,7 +30,7 @@ import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
+import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,7 +65,6 @@ public class BookInfoActivity extends MBaseActivity {
 
     private BookShelfBean bookShelf;
     private BookInfoBean bookInfo;
-    private MoDialogHUD moDialogHUD;
 
     public static void startThis(MBaseActivity context, BookShelfBean bookShelf, View transitionView) {
         Intent intent = new Intent(context, BookInfoActivity.class);
@@ -114,7 +113,6 @@ public class BookInfoActivity extends MBaseActivity {
         tilBookAuthor.setHint("作者");
         tilCoverUrl.setHint("封面地址");
         tilBookJj.setHint("简介");
-        moDialogHUD = new MoDialogHUD(this);
     }
 
     /**
@@ -148,7 +146,7 @@ public class BookInfoActivity extends MBaseActivity {
                     .rationale("存储")
                     .onGranted(requestCode -> imageSelectorResult()).build().request();
         });
-        tvChangeCover.setOnClickListener(view -> moDialogHUD.showChangeSource(this, bookInfo, searchBookBean -> {
+        tvChangeCover.setOnClickListener(view -> ChangeSourceDialog.show(getSupportFragmentManager(), bookInfo, true, searchBookBean -> {
             tieCoverUrl.setText(searchBookBean.getCoverUrl());
             initCover(getTextString(tieCoverUrl));
         }));
@@ -217,11 +215,6 @@ public class BookInfoActivity extends MBaseActivity {
                 initCover(getTextString(tieCoverUrl));
             }
         });
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
     private void finishByTransition() {

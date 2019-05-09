@@ -34,8 +34,8 @@ import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.presenter.BookDetailPresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.widget.RotateLoading;
-import com.monke.monkeybook.widget.modialog.MoDialogHUD;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,7 +92,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
     private Animation animHideLoading;
     private Animation animShowInfo;
-    private MoDialogHUD moDialogHUD;
 
     public static void startThis(MBaseActivity activity, BookShelfBean bookShelf) {
         Intent intent = new Intent(activity, BookDetailActivity.class);
@@ -205,8 +204,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        //弹窗
-        moDialogHUD = new MoDialogHUD(this);
 
         final int screenHeight = getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) cardView.getLayoutParams();
@@ -454,7 +451,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             toast("网络不可用，无法换源");
             return;
         }
-        moDialogHUD.showChangeSource(this, mPresenter.getBookShelf().getBookInfoBean(),
+        ChangeSourceDialog.show(getSupportFragmentManager(), mPresenter.getBookShelf().getBookInfoBean(), false,
                 searchBookBean -> {
                     tvOrigin.setText(searchBookBean.getOrigin());
                     if (!TextUtils.isEmpty(searchBookBean.getLastChapter())) {
@@ -465,11 +462,6 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                     showLoading(true);
                     mPresenter.changeBookSource(searchBookBean);
                 });
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return moDialogHUD.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
     @Override
