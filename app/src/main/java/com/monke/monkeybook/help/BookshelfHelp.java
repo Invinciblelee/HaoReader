@@ -1,6 +1,7 @@
 package com.monke.monkeybook.help;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
@@ -205,6 +206,7 @@ public class BookshelfHelp {
         DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
                 .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
                 .buildDelete().executeDeleteWithoutDetachingEntities();
+
     }
 
     public static boolean hasCache(BookShelfBean bookShelfBean) {

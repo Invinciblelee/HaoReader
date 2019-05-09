@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,9 +49,9 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
                         .error(R.drawable.img_cover_default))
                 .into(holder.ivCover);
         if (item.getHasUpdate()) {
-            holder.ivHasNew.setVisibility(View.VISIBLE);
+            holder.tvHasNew.setVisibility(View.VISIBLE);
         } else {
-            holder.ivHasNew.setVisibility(View.INVISIBLE);
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
         }
 
         holder.content.setOnClickListener(v -> onClick(v, item));
@@ -70,7 +69,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         }
 
         if (item.isLoading()) {
-            holder.ivHasNew.setVisibility(View.INVISIBLE);
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {
             holder.rotateLoading.setVisibility(View.INVISIBLE);
@@ -79,7 +78,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
-        ImageView ivHasNew;
+        TextView tvHasNew;
         TextView tvName;
         RotateLoading rotateLoading;
         public View content;
@@ -87,7 +86,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         MyViewHolder(View itemView) {
             super(itemView);
             ivCover = itemView.findViewById(R.id.iv_cover);
-            ivHasNew = itemView.findViewById(R.id.iv_has_new);
+            tvHasNew = itemView.findViewById(R.id.tv_has_new);
             tvName = itemView.findViewById(R.id.tv_name);
             rotateLoading = itemView.findViewById(R.id.rl_loading);
             content = itemView.findViewById(R.id.content_card);

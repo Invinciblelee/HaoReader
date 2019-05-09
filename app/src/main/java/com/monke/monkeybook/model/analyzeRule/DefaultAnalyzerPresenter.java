@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.utils.ListUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,22 +23,22 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         for (RulePattern pattern : rulePatterns.patterns) {
             boolean haveResult = false;
             if (pattern.isSimpleJS) {
-                final String result = evalStringScript(getParser().getStringSource(), pattern);
-                if(!isEmpty(result)){
+                final String result = evalStringScript(getParser().getPrimitive(), pattern);
+                if (!isEmpty(result)) {
                     builder.append(evalReplace(result, pattern));
                     haveResult = true;
                 }
             } else if (pattern.isRedirect) {
-                final String source = evalStringScript(getParser().getStringSource(), pattern);
+                final String source = evalStringScript(getParser().getPrimitive(), pattern);
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, false);
                 final String result = getParser().parseString(source, newPattern.elementsRule);
-                if(!isEmpty(result)){
+                if (!isEmpty(result)) {
                     builder.append(processResultContent(result, newPattern));
                     haveResult = true;
                 }
             } else {
                 final String result = getParser().getString(pattern.elementsRule);
-                if(!isEmpty(result)){
+                if (!isEmpty(result)) {
                     builder.append(processResultContent(result, pattern));
                     haveResult = true;
                 }
@@ -61,13 +59,13 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
-                final List<String> list = evalStringArrayScript(getParser().getStringSource(), pattern);
+                final List<String> list = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 final String result = list.isEmpty() ? "" : list.get(0);
                 if (!isEmpty(result)) {
                     return evalJoinUrl(result, pattern);
                 }
             } else if (pattern.isRedirect) {
-                final String source = evalStringScript(getParser().getStringSource(), pattern);
+                final String source = evalStringScript(getParser().getPrimitive(), pattern);
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, true);
                 final String result = getParser().parseStringFirst(source, newPattern.elementsRule);
                 if (!isEmpty(result)) {
@@ -93,14 +91,14 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         for (RulePattern pattern : rulePatterns.patterns) {
             boolean haveResult = false;
             if (pattern.isSimpleJS) {
-                final List<String> result = evalStringArrayScript(getParser().getStringSource(), pattern);
+                final List<String> result = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 if (!result.isEmpty()) {
                     evalReplace(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
             } else if (pattern.isRedirect) {
-                final String source = evalStringScript(getParser().getStringSource(), pattern);
+                final String source = evalStringScript(getParser().getPrimitive(), pattern);
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, false);
                 final List<String> result = getParser().parseStringList(source, newPattern.elementsRule);
                 if (!result.isEmpty()) {
@@ -181,7 +179,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         if (source == null || isEmpty(rule)) {
             return new ArrayList<>();
         }
-        final RulePatterns rulePatterns = fromRule(rule.trim(), false);
+        final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         final List<String> resultList = new ArrayList<>();
         for (RulePattern pattern : rulePatterns.patterns) {
             boolean haveResult = false;
@@ -208,12 +206,12 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public Map<String, String> getVariableMap(String rule) {
+    public Map<String, String> getVariableMap(String rule, int flag) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return new HashMap<>();
         }
         final Map<String, String> resultMap = new HashMap<>();
-        final VariablesPattern variablesPattern = VariablesPattern.fromRule(rule);
+        final VariablesPattern variablesPattern = VariablesPattern.fromRule(rule, flag);
         if (variablesPattern.putterMap.isEmpty()) {
             return resultMap;
         } else {
@@ -224,6 +222,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 }
             }
         }
+        getVariableStore().putVariableMap(resultMap);
         return resultMap;
     }
 
@@ -237,7 +236,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     private List<Object> getRawList(String rule) {
-        final RulePatterns rulePatterns = fromRule(rule.trim(), false);
+        final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         final List<Object> resultList = new ArrayList<>();
         final List<List<Object>> resultsList = new ArrayList<>();
         for (RulePattern pattern : rulePatterns.patterns) {
@@ -272,9 +271,9 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
 
     private List<Object> getSingleRawList(RulePattern rulePattern) {
         if (rulePattern.isSimpleJS) {
-            return evalObjectArrayScript(getParser().getStringSource(), rulePattern);
+            return evalObjectArrayScript(getParser().getPrimitive(), rulePattern);
         } else if (rulePattern.isRedirect) {
-            String source = evalStringScript(getParser().getStringSource(), rulePattern);
+            String source = evalStringScript(getParser().getPrimitive(), rulePattern);
             RulePattern pattern = fromSingleRule(rulePattern.redirectRule, false);
             return getParser().parseList(source, pattern.elementsRule);
         } else {

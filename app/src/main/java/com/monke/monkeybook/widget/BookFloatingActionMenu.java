@@ -10,6 +10,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
@@ -19,6 +22,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.monkeybook.R;
 
 public class BookFloatingActionMenu extends LinearLayout {
+
+    private FloatingActionButton fabMain;
 
     private boolean isExpanded;
     private int mLastIndex;
@@ -37,7 +42,7 @@ public class BookFloatingActionMenu extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        FloatingActionButton fabMain = findViewById(R.id.fab_main);
+        fabMain = findViewById(R.id.fab_main);
 
         fabMain.setOnClickListener(v -> {
             if (isExpanded) {
@@ -51,12 +56,39 @@ public class BookFloatingActionMenu extends LinearLayout {
             if (mMenuClickListener != null) {
                 mMenuClickListener.onMainLongClick(v);
             }
+            startRefreshAnim();
             return true;
         });
 
         initFloatingActionMenu();
     }
 
+    private void startRefreshAnim() {
+        fabMain.setImageResource(R.drawable.ic_refresh_white_24dp);
+        AnimationSet animationSet = new AnimationSet(true);
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(1000);
+        animationSet.addAnimation(rotateAnimation);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fabMain.setImageResource(R.drawable.ic_library_books_black_24dp);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        fabMain.startAnimation(animationSet);
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initFloatingActionMenu() {

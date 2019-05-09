@@ -11,7 +11,7 @@ public interface IAnalyzerPresenter  {
 
     List<String> getResultContents(String rule);
 
-    Map<String, String> getVariableMap(String rule);
+    Map<String, String> getVariableMap(String rule, int flag);
 
     AnalyzeCollection getRawCollection(String rule);
 

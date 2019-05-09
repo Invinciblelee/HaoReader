@@ -80,9 +80,9 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
 
         if (item.getHasUpdate()) {
-            holder.ivHasNew.setVisibility(View.VISIBLE);
+            holder.tvHasNew.setVisibility(View.VISIBLE);
         } else {
-            holder.ivHasNew.setVisibility(View.INVISIBLE);
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
         }
 
         holder.content.setOnClickListener(v -> onClick(v, item));
@@ -100,7 +100,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
 
         if (item.isLoading()) {
-            holder.ivHasNew.setVisibility(View.INVISIBLE);
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {
             holder.rotateLoading.setVisibility(View.INVISIBLE);
@@ -121,7 +121,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
-        ImageView ivHasNew;
+        TextView tvHasNew;
         TextView tvName;
         TextView tvAuthor;
         TextView tvRead;
@@ -132,7 +132,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         MyViewHolder(View itemView) {
             super(itemView);
             ivCover = itemView.findViewById(R.id.iv_cover);
-            ivHasNew = itemView.findViewById(R.id.iv_has_new);
+            tvHasNew = itemView.findViewById(R.id.tv_has_new);
             tvName = itemView.findViewById(R.id.tv_name);
             tvAuthor = itemView.findViewById(R.id.tv_author);
             tvRead = itemView.findViewById(R.id.tv_read);

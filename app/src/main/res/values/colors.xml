@@ -30,6 +30,8 @@
 
     <color name="ic_launcher_background">#4f4f4f</color>
 
+    <color name="color_renew_label">#E678c68c</color>
+
     <color name="background">#F5F5F5</color>
     <color name="card_background">#FFFFFF</color>
 

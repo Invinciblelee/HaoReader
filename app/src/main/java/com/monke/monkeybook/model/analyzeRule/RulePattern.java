@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,6 +69,7 @@ final class RulePattern {
 
         //是否全部使用js
         isSimpleJS = !isRedirect && TextUtils.isEmpty(elementsRule.getRule()) && !javaScripts.isEmpty();
+
     }
 
     private String replaceVariableValue(VariableStore variableStore, String rawRule) {
@@ -77,6 +79,7 @@ final class RulePattern {
             while (getMatcher.find()) {
                 final String group = getMatcher.group();
                 final String value = variableStore.getVariable(group.substring(6, group.length() - 1));
+                Log.e("TAG", group + "  " + value);
                 rawRule = rawRule.replace(group, value != null ? value : "");
             }
         }

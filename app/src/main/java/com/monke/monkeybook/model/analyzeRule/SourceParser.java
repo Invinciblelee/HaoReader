@@ -7,9 +7,11 @@ import java.util.List;
 
 abstract class SourceParser<S> {
 
+    private Object mPrimitive;
     private S mSource;
 
     final void setContent(Object source) {
+        mPrimitive = source;
         mSource = fromObject(source);
     }
 
@@ -19,6 +21,10 @@ abstract class SourceParser<S> {
 
     final String getStringSource() {
         return parseObject(mSource);
+    }
+
+    final Object getPrimitive(){
+        return mPrimitive;
     }
 
     boolean isSourceEmpty() {

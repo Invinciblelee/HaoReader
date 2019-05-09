@@ -25,19 +25,28 @@
             android:transitionName="img_cover"
             tools:ignore="UnusedAttribute" />
 
+        <com.monke.monkeybook.widget.LabelView
+            android:id="@+id/tv_has_new"
+            android:layout_width="32dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingStart="0dp"
+            android:paddingEnd="4dp"
+            android:visibility="invisible"
+            android:text="@string/renew"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:labelColor="@color/color_renew_label"
+            app:labelSinkWidth="4dp"
+            tools:ignore="SmallSp" />
+
         <FrameLayout
             android:id="@+id/fl_has_new"
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_gravity="end">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_has_new"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp"
-                android:src="@drawable/ic_circle_red_24dp"
-                android:visibility="invisible" />
 
             <com.monke.monkeybook.widget.RotateLoading
                 android:id="@+id/rl_loading"

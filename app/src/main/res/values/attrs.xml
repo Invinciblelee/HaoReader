@@ -79,4 +79,9 @@
             <enum name="small" value="1"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="LabelView">
+        <attr name="labelColor" format="color|reference"/>
+        <attr name="labelSinkWidth" format="dimension|reference"/>
+    </declare-styleable>
 </resources>

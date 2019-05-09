@@ -42,7 +42,5 @@ public class LargeTextDialog extends AppCompatDialog {
         } else {
             tvContent.setText(text);
         }
-
-
     }
 }

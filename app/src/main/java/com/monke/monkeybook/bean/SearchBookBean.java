@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.gson.Gson;
 import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.utils.ObjectsCompat;
 import com.monke.monkeybook.utils.StringUtils;
@@ -19,11 +18,8 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 @Entity
 public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, VariableStore {
@@ -52,10 +48,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     @Transient
     private List<String> tags;
     @Transient
-    private Map<String, String> variableMap;
+    private final VariableStoreImpl variableStore = new VariableStoreImpl();
 
     public SearchBookBean() {
-
     }
 
 
@@ -349,39 +344,26 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     @Override
     public void setVariableString(String variableString) {
         this.variableString = variableString;
+        variableStore.setVariableString(variableString);
     }
 
+    @Override
     public Map<String, String> getVariableMap() {
-        return variableMap;
+        return variableStore.getVariableMap();
     }
 
     @Override
     public void putVariableMap(Map<String, String> variableMap) {
-        if (variableMap != null && !variableMap.isEmpty()) {
-            final Gson gson = new Gson();
-            if (this.variableMap == null) {
-                try {
-                    this.variableMap = gson.fromJson(variableString, STRING_MAP);
-                } catch (Exception ignore) {
-                }
-            }
-            if (this.variableMap == null) {
-                this.variableMap = new HashMap<>();
-            }
-            this.variableMap.putAll(variableMap);
-            this.variableString = gson.toJson(this.variableMap);
+        variableStore.putVariableMap(variableMap);
+        String variableString = variableStore.getVariableString();
+        if(variableString != null){
+            this.variableString = variableString;
         }
     }
 
     @Override
     public String getVariable(String key) {
-        if (this.variableMap == null) {
-            try {
-                this.variableMap = new Gson().fromJson(variableString, STRING_MAP);
-            } catch (Exception ignore) {
-            }
-        }
-        return (this.variableMap != null && !this.variableMap.isEmpty()) ? this.variableMap.get(key) : null;
+        return variableStore.getVariable(key);
     }
 
     @NonNull
@@ -406,7 +388,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
                 ", isCurrentSource=" + isCurrentSource +
                 ", originNum=" + originNum +
                 ", tags=" + tags +
-                ", variableMap=" + variableMap +
                 '}';
     }
 }

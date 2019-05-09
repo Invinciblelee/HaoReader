@@ -35,11 +35,7 @@ public final class Global {
         return false;
     }
 
-    public static String evalStringScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
-        return StringUtils.valueOf(evalObjectScript(jsStr, java, result, baseUrl));
-    }
-
-    public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
+    public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {
         final Object object = evalObjectScript(jsStr, java, result, baseUrl);
         final List<Object> resultList = new ArrayList<>();
         if (object instanceof List) {
@@ -59,7 +55,7 @@ public final class Global {
         return null;
     }
 
-    public static Object evalObjectScript(String jsStr, JavaExecutor java, String result, String baseUrl) {
+    public static Object evalObjectScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {
         try {
             SimpleBindings bindings = new SimpleBindings();
             bindings.put("java", java);

@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.VariableStore;
+import com.monke.monkeybook.bean.VariableStoreImpl;
 
 import java.io.Serializable;
 
@@ -120,6 +121,9 @@ public class AnalyzeConfig {
     }
 
     public final VariableStore getVariableStore() {
+        if(variableStore == null){
+            variableStore = new VariableStoreImpl();
+        }
         return variableStore;
     }
 

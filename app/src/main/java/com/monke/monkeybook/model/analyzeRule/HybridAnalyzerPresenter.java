@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.help.MemoryCache;
-
 class HybridAnalyzerPresenter extends DefaultAnalyzerPresenter {
 
     @SuppressWarnings("unchecked")
@@ -11,33 +9,31 @@ class HybridAnalyzerPresenter extends DefaultAnalyzerPresenter {
 
     @Override
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
-        MemoryCache cache = MemoryCache.getInstance();
-        RulePatterns patterns = cache.getCache(rawRule);
+        RulePatterns patterns = (RulePatterns) getCache(rawRule);
         if (patterns != null) {
             return patterns;
         }
         if (withVariableStore) {
-            patterns = RulePatterns.fromHybridRule(rawRule, getConfig().getBaseURL(), getConfig().getVariableStore());
+            patterns = RulePatterns.fromHybridRule(rawRule, getBaseURL(), getVariableStore());
         } else {
-            patterns = RulePatterns.fromHybridRule(rawRule, getConfig().getBaseURL());
+            patterns = RulePatterns.fromHybridRule(rawRule, getBaseURL());
         }
-        cache.putCache(rawRule, patterns);
+        putCache(rawRule, patterns);
         return patterns;
     }
 
     @Override
     RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
-        MemoryCache cache = MemoryCache.getInstance();
-        RulePattern pattern = cache.getCache(rawRule);
+        RulePattern pattern = (RulePattern) getCache(rawRule);
         if (pattern != null) {
             return pattern;
         }
         if (withVariableStore) {
-            pattern = RulePattern.fromHybridRule(rawRule, getConfig().getVariableStore());
+            pattern = RulePattern.fromHybridRule(rawRule, getVariableStore());
         } else {
             pattern = RulePattern.fromHybridRule(rawRule);
         }
-        cache.putCache(rawRule, pattern);
+        putCache(rawRule, pattern);
         return pattern;
     }
 

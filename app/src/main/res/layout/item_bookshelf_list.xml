@@ -26,6 +26,23 @@
             android:transitionName="@string/img_cover"
             tools:targetApi="lollipop" />
 
+        <com.monke.monkeybook.widget.LabelView
+            android:id="@+id/tv_has_new"
+            android:layout_width="26dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingStart="0dp"
+            android:visibility="invisible"
+            android:paddingEnd="4dp"
+            android:text="@string/renew"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            app:labelColor="@color/color_renew_label"
+            app:labelSinkWidth="4dp"
+            tools:ignore="SmallSp" />
+
     </com.monke.monkeybook.widget.CoverCardView>
 
     <LinearLayout
@@ -122,14 +139,6 @@
         android:layout_alignTop="@id/cover_card"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="2dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_has_new"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:src="@drawable/ic_circle_red_24dp"
-            android:visibility="invisible" />
 
         <com.monke.monkeybook.widget.RotateLoading
             android:id="@+id/rl_loading"

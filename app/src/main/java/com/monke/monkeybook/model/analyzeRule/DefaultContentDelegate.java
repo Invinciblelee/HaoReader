@@ -53,6 +53,7 @@ class DefaultContentDelegate implements ContentDelegate {
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
             SearchBookBean item = new SearchBookBean();
+            item.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables(), 0));
             item.setTag(getConfig().getTag());
             item.setOrigin(getConfig().getName());
             item.setBookType(getBookSource().getBookSourceType());
@@ -62,7 +63,6 @@ class DefaultContentDelegate implements ContentDelegate {
             item.setName(FormatWebText.getBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName())));
             item.setNoteUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl()));
             item.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
-            item.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables()));
             item.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl()));
             if (isEmpty(item.getNoteUrl())) {
                 item.setNoteUrl(getConfig().getBaseURL());
@@ -89,6 +89,8 @@ class DefaultContentDelegate implements ContentDelegate {
 
         mAnalyzer.setContent(source);
 
+        book.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables(), 1));
+
         if (isEmpty(bookInfoBean.getCoverUrl())) {
             bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleCoverUrl()));
         }
@@ -114,8 +116,6 @@ class DefaultContentDelegate implements ContentDelegate {
             book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter()));
         }
 
-        book.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables()));
-
         bookInfoBean.setNoteUrl(getConfig().getBaseURL());   //id
         bookInfoBean.setTag(getConfig().getTag());
         bookInfoBean.setOrigin(getConfig().getName());
@@ -125,52 +125,6 @@ class DefaultContentDelegate implements ContentDelegate {
 
     @Override
     public List<ChapterBean> getChapters(String source) {
-        if (mAnalyzer instanceof JsonAnalyzer) {
-            return getChaptersFromJson(source);
-        } else {
-            return getChaptersFromXJsoup(source);
-        }
-    }
-
-    private List<ChapterBean> getChaptersFromJson(String source) {
-        final String ruleChapterList = getBookSource().getRealRuleChapterList();
-
-        String noteUrl = getConfig().getExtras().getString("noteUrl");
-
-        AnalyzeCollection collection = mAnalyzer.setContent(source).getRawCollection(ruleChapterList);
-        List<ChapterBean> chapterList = new ArrayList<>();
-        while (collection.hasNext()) {
-            final Object content = collection.next();
-            final String name;
-            final String url;
-            if (content instanceof NativeObject) {
-                NativeObject object = (NativeObject) content;
-                name = StringUtils.valueOf(object.get("name"));
-                url = StringUtils.valueOf(object.get("url"));
-            } else {
-                mAnalyzer.setContent(content);
-                name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
-                url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
-            }
-            if (!isEmpty(url) && !isEmpty(name)) {
-                ChapterBean chapterBean = new ChapterBean();
-                chapterBean.setDurChapterUrl(url);
-                chapterBean.setDurChapterName(name);
-                chapterBean.setTag(getConfig().getTag());
-                chapterBean.setNoteUrl(noteUrl);
-                chapterList.add(chapterBean);
-            }
-        }
-        if (!getBookSource().reverseChapterList()) {
-            Collections.reverse(chapterList);
-        }
-        LinkedHashSet<ChapterBean> lh = new LinkedHashSet<>(chapterList);
-        chapterList = new ArrayList<>(lh);
-        Collections.reverse(chapterList);
-        return chapterList;
-    }
-
-    private List<ChapterBean> getChaptersFromXJsoup(String source) {
         final String noteUrl = getConfig().getExtras().getString("noteUrl");
 
         final String ruleChapterList = getBookSource().getRealRuleChapterList();
@@ -210,29 +164,39 @@ class DefaultContentDelegate implements ContentDelegate {
         return chapterList;
     }
 
+
     private RawResult<List<ChapterBean>> getRawChaptersResult(String s, String ruleChapterList, String noteUrl) {
         mAnalyzer.setContent(s);
         RawResult<List<ChapterBean>> webChapterBean = new RawResult<>();
-        List<ChapterBean> chapterBeans = new ArrayList<>();
         if (!isEmpty(getBookSource().getRuleChapterUrlNext())) {
             webChapterBean.nextUrl = mAnalyzer.getResultUrl(getBookSource().getRuleChapterUrlNext());
         }
         final AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
+        final List<ChapterBean> chapterList = new ArrayList<>();
         while (collection.hasNext()) {
-            mAnalyzer.setContent(collection.next());
-            final String name = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());
-            final String url = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
+            final Object content = collection.next();
+            final String name;
+            final String url;
+            if (content instanceof NativeObject) {
+                NativeObject object = (NativeObject) content;
+                name = StringUtils.valueOf(object.get("name"));
+                url = StringUtils.valueOf(object.get("url"));
+            } else {
+                mAnalyzer.setContent(content);
+                name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
+                url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
+            }
             if (!isEmpty(url) && !isEmpty(name)) {
                 ChapterBean chapterBean = new ChapterBean();
                 chapterBean.setDurChapterUrl(url);
                 chapterBean.setDurChapterName(name);
                 chapterBean.setTag(getConfig().getTag());
                 chapterBean.setNoteUrl(noteUrl);
-                chapterBeans.add(chapterBean);
+                chapterList.add(chapterBean);
             }
         }
 
-        webChapterBean.result = chapterBeans;
+        webChapterBean.result = chapterList;
         return webChapterBean;
     }
 

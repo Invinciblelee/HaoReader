@@ -90,8 +90,8 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Map<String, String> getVariableMap(String rule) {
-        return getPresenter().getVariableMap(rule);
+    public Map<String, String> getVariableMap(String rule, int flag) {
+        return getPresenter().getVariableMap(rule, flag);
     }
 
     @Override

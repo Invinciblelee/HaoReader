@@ -2,7 +2,7 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import androidx.annotation.NonNull;
 
-import com.monke.monkeybook.help.MemoryCache;
+import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.ListUtils;
@@ -10,8 +10,10 @@ import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import retrofit2.Response;
 
@@ -20,6 +22,8 @@ import static android.text.TextUtils.isEmpty;
 abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecutor {
 
     private final OutAnalyzer<S> mAnalyzer;
+
+    private final Map<String, Object> mCache = new HashMap<>();
 
     BaseAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         this.mAnalyzer = analyzer;
@@ -33,68 +37,78 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return mAnalyzer.getParser();
     }
 
-    final AnalyzeConfig getConfig() {
-        return mAnalyzer.getConfig();
+    final String getBaseURL() {
+        return mAnalyzer.getConfig().getBaseURL();
+    }
+
+    final VariableStore getVariableStore() {
+        return mAnalyzer.getConfig().getVariableStore();
+    }
+
+    Object getCache(String key) {
+        return mCache.get(key);
+    }
+
+    void putCache(String key, Object value) {
+        mCache.put(key, value);
     }
 
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
-        MemoryCache cache = MemoryCache.getInstance();
-        RulePatterns patterns = cache.getCache(rawRule);
+        RulePatterns patterns = (RulePatterns) getCache(rawRule);
         if (patterns != null) {
             return patterns;
         }
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            patterns = RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), getConfig().getVariableStore(), mode);
+            patterns = RulePatterns.fromRule(rawRule, getBaseURL(), getVariableStore(), mode);
         } else {
-            patterns = RulePatterns.fromRule(rawRule, getConfig().getBaseURL(), mode);
+            patterns = RulePatterns.fromRule(rawRule, getBaseURL(), mode);
         }
-        cache.putCache(rawRule, patterns);
+        putCache(rawRule, patterns);
         return patterns;
     }
 
 
     RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
-        MemoryCache cache = MemoryCache.getInstance();
-        RulePattern pattern = cache.getCache(rawRule);
+        RulePattern pattern = (RulePattern) getCache(rawRule);
         if (pattern != null) {
             return pattern;
         }
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
-            pattern = RulePattern.fromRule(rawRule, getConfig().getVariableStore(), mode);
+            pattern = RulePattern.fromRule(rawRule, getVariableStore(), mode);
         } else {
             pattern = RulePattern.fromRule(rawRule, mode);
         }
-        cache.putCache(rawRule, pattern);
+        putCache(rawRule, pattern);
         return pattern;
     }
 
-    String evalStringScript(@NonNull String string, @NonNull RulePattern rulePattern) {
+    String evalStringScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                string = Global.evalStringScript(javaScript, this, string, getConfig().getBaseURL());
+                result = Global.evalObjectScript(javaScript, this, result, getBaseURL());
             }
         }
-        return string;
+        return StringUtils.valueOf(result);
     }
 
-    List<String> evalStringArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
+    List<String> evalStringArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         final List<String> list = new ArrayList<>();
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                List<Object> result = Global.evalArrayScript(javaScript, this, string, getConfig().getBaseURL());
-                list.addAll(ListUtils.toStringList(result));
+                List<Object> resultList = Global.evalArrayScript(javaScript, this, result, getBaseURL());
+                list.addAll(ListUtils.toStringList(resultList));
             }
         }
         return list;
     }
 
-    List<Object> evalObjectArrayScript(@NonNull String string, @NonNull RulePattern rulePattern) {
+    List<Object> evalObjectArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         final List<Object> list = new ArrayList<>();
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                list.addAll(Global.evalArrayScript(javaScript, this, string, getConfig().getBaseURL()));
+                list.addAll(Global.evalArrayScript(javaScript, this, result, getBaseURL()));
             }
         }
         return list;
@@ -148,7 +162,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         result = evalReplace(result, rulePattern);
 
         if (!isEmpty(result)) {
-            result = URLUtils.getAbsoluteURL(getConfig().getBaseURL(), result);
+            result = URLUtils.getAbsoluteURL(getBaseURL(), result);
         }
         return result;
     }
@@ -158,7 +172,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     @Override
     public final String ajax(String urlStr) {
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), urlStr);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(getBaseURL(), urlStr);
             Response<String> response = SimpleModel.getResponse(analyzeUrl)
                     .blockingFirst();
             return response.body();

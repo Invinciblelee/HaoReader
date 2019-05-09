@@ -15,6 +15,9 @@ public class Patterns {
     public static final Pattern PATTERN_GET = Pattern.compile("@get:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
     public static final Pattern PATTERN_JS = Pattern.compile("(<js>[\\w\\W]*?</js>|@js:[\\w\\W]*$)", Pattern.CASE_INSENSITIVE);
 
+    public static final Pattern PATTERN_PUT_SEARCH = Pattern.compile("@search:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PATTERN_PUT_DETAIL = Pattern.compile("@detail:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
+
     public static final Pattern PATTERN_JSON = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})");
     public static final Pattern PATTERN_EXP = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}");
 
@@ -28,8 +31,6 @@ public class Patterns {
     public static final String RULE_REGEX = "#";
     public static final String RULE_REGEX_TRAIT = "##";
     public static final String RULE_BODY = "outerBody";
-
-    public static final String RULE_WHOLE = "@Whole:";
 
     public static final String RULE_JSON = "@JSon:";
     public static final String RULE_JSON_TRAIT = "$.";

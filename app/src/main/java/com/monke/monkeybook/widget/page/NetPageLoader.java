@@ -67,6 +67,7 @@ public class NetPageLoader extends PageLoader {
                         bookShelfBean.setNewChapters(0);
                         bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                         if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+                            BookshelfHelp.delChapterList(bookShelfBean.getNoteUrl());
                             BookshelfHelp.saveBookToShelf(bookShelfBean);
                         }
                     })
