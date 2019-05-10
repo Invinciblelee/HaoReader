@@ -9,14 +9,11 @@ import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
-import com.monke.monkeybook.model.annotation.BookType;
-import com.monke.monkeybook.model.annotation.RuleType;
-import com.monke.monkeybook.model.impl.IHttpGetApi;
+import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -25,9 +22,6 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.monke.monkeybook.help.Constant.BOOK_TYPES;
-import static com.monke.monkeybook.help.Constant.RULE_TYPES;
 
 /**
  * Created by GKF on 2017/12/15.
@@ -161,10 +155,10 @@ public class BookSourceManager extends BaseModelImpl {
         Collections.sort(groupList);
     }
 
-    public Observable<Boolean> importSourceFromWww(URL url) {
+    public Observable<Boolean> importSourceFromWww(String url) {
         try {
-            return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
-                    .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
+            return SimpleModel.getResponse(analyzeUrl)
                     .flatMap(rsp -> importBookSourceO(rsp.body()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());

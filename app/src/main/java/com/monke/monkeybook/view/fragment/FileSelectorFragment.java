@@ -74,7 +74,7 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
 
     @Override
     public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_file_selector, container, false);
+        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_file_selector, container, true);
     }
 
     @Override

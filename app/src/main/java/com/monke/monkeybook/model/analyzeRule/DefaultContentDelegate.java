@@ -83,9 +83,6 @@ class DefaultContentDelegate implements ContentDelegate {
     public BookShelfBean getBook(String source) {
         BookShelfBean book = (BookShelfBean) getConfig().getVariableStore();
         BookInfoBean bookInfoBean = book.getBookInfoBean();
-        if (bookInfoBean == null) {
-            bookInfoBean = new BookInfoBean();
-        }
 
         mAnalyzer.setContent(source);
 

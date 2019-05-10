@@ -183,16 +183,8 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void importBookSource(String sourceUrl) {
-        URL url;
-        try {
-            url = new URL(sourceUrl);
-        } catch (Exception e) {
-            e.printStackTrace();
-            mView.showSnackBar("URL格式不对");
-            return;
-        }
         mView.showLoading("正在导入书源");
-        BookSourceManager.getInstance().importSourceFromWww(url)
+        BookSourceManager.getInstance().importSourceFromWww(sourceUrl)
                 .subscribe(getImportObserver());
     }
 
@@ -212,7 +204,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             @Override
             public void onError(Throwable e) {
                 mView.dismissHUD();
-                mView.showSnackBar(e.getMessage());
+                mView.showSnackBar("书源导入失败");
             }
         };
     }

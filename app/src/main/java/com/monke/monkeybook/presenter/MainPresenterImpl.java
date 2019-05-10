@@ -26,6 +26,7 @@ import com.monke.monkeybook.model.ImportBookModelImpl;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.RxUtils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -136,7 +137,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public void addBookUrl(String bookUrl) {
-        if (TextUtils.isEmpty(bookUrl.trim())) return;
+        if (StringUtils.isBlank(bookUrl)) return;
         mView.showLoading("正在添加书籍");
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             BookInfoBean temp = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
@@ -172,7 +173,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.showSnackBar("网址格式错误");
+                        mView.showSnackBar("导入失败，请检查网址是否有误");
                     }
                 });
     }
