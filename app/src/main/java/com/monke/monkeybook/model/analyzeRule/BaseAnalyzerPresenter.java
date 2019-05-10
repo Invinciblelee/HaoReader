@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import androidx.annotation.NonNull;
 
+import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
@@ -44,12 +45,21 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return mAnalyzer.getConfig().getVariableStore();
     }
 
+    final BookSourceBean getBookSource() {
+        return mAnalyzer.getConfig().getBookSource();
+    }
+
     final Object getCache(String key) {
+        if (!getBookSource().getBookSourceCacheEnabled()) {
+            return null;
+        }
         return mCache.get(key);
     }
 
     final void putCache(String key, Object value) {
-        mCache.put(key, value);
+        if (getBookSource().getBookSourceCacheEnabled()) {
+            mCache.put(key, value);
+        }
     }
 
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {

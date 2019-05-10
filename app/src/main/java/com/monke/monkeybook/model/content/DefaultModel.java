@@ -100,7 +100,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 });
             }
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getHost()));
+                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
         } catch (Exception e) {
             Logger.e(TAG, "findBook: " + url, e);
             return Observable.just(ListUtils.mutableList());
@@ -126,7 +126,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             }
 
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getHost()));
+                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
         } catch (Exception e) {
             Logger.e(TAG, "searchBook: " + content, e);
             return Observable.just(ListUtils.mutableList());
@@ -253,14 +253,24 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     }
 
     private Observable<String> toObservable(AnalyzeUrl analyzeUrl) {
-        String cachedResponse = MemoryCache.INSTANCE.getCache(analyzeUrl.getUrlWithQuery());
+        String cachedResponse = MemoryCache.INSTANCE.getCache(analyzeUrl.getId());
         if (cachedResponse != null) {
             return Observable.just(cachedResponse);
         }
         return SimpleModel.getResponse(analyzeUrl)
                 .flatMap(response -> setCookie(response, tag))
+                .doOnNext(response -> {
+                    final String requestUrl;
+                    okhttp3.Response networkResponse = response.raw().networkResponse();
+                    if (networkResponse != null) {
+                        requestUrl = networkResponse.request().url().toString();
+                    } else {
+                        requestUrl = response.raw().request().url().toString();
+                    }
+                    analyzeUrl.setRequestUrl(requestUrl);
+                })
                 .map(Response::body)
-                .doOnNext(string -> MemoryCache.INSTANCE.putCache(analyzeUrl.getUrlWithQuery(), string));
+                .doOnNext(string -> MemoryCache.INSTANCE.putCache(analyzeUrl.getId(), string));
     }
 
 

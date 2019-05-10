@@ -65,6 +65,19 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_book_source_cache_enable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.monke.monkeybook.widget.TextInputSpinner
+                    android:id="@+id/tie_book_source_cache_enable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/cache_enabled"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_book_source_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

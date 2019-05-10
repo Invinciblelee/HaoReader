@@ -42,28 +42,12 @@ final class RulePatterns {
     private String splitType;
     private List<Integer> filters;
 
-    private RuleMode mode;
-
-    private RulePatterns(String rawRule, String baseUrl, VariableStore variableStore) {
-        Rule rule = RootRule.fromStringRule(rawRule);
-        rawRule = rule.getRule();
-        this.mode = rule.getMode();
-
-        rawRule = splitFilters(rawRule);
-
-        rawRule = replaceJavaScripts(rawRule, baseUrl);
-
-        splitRulePattern(variableStore, splitRule(rawRule), this.mode);
-    }
-
     private RulePatterns(String rawRule, String baseUrl, VariableStore variableStore, RuleMode ruleMode) {
-        this.mode = ruleMode;
-
         rawRule = splitFilters(rawRule);
 
         rawRule = replaceJavaScripts(rawRule, baseUrl);
 
-        splitRulePattern(variableStore, splitRule(rawRule), this.mode);
+        splitRulePattern(variableStore, splitRule(rawRule), ruleMode);
     }
 
     @SuppressLint("DefaultLocale")
@@ -148,6 +132,7 @@ final class RulePatterns {
         }
 
         if (patterns.size() > 1) {
+            RulePattern firstPattern = patterns.get(0);
             RulePattern lastPattern = patterns.get(patterns.size() - 1);
             for (RulePattern pattern : patterns) {
                 if (pattern == lastPattern || pattern.isKeep) {
@@ -161,6 +146,10 @@ final class RulePatterns {
                 if (pattern.javaScripts.isEmpty()) {
                     pattern.javaScripts = lastPattern.javaScripts;
                 }
+
+                if (pattern != firstPattern && pattern.elementsRule.getMode() == null) {
+                    pattern.elementsRule.setMode(firstPattern.elementsRule.getMode());
+                }
             }
         }
     }
@@ -173,12 +162,5 @@ final class RulePatterns {
         return fromRule(rawRule, baseUrl, null, ruleMode);
     }
 
-    static RulePatterns fromHybridRule(String rawRule, String baseUrl, VariableStore variableStore) {
-        return new RulePatterns(rawRule.trim(), baseUrl, variableStore);
-    }
-
-    static RulePatterns fromHybridRule(String rawRule, String baseUrl) {
-        return fromHybridRule(rawRule, baseUrl, null);
-    }
 
 }

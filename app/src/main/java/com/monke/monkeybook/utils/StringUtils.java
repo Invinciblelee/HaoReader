@@ -349,6 +349,13 @@ public class StringUtils {
         return text;
     }
 
+    public static String checkNull(String text, String defVal) {
+        if (text == null) {
+            return defVal == null ? "" : defVal;
+        }
+        return text;
+    }
+
     public static String trim(String string) {
         return string == null ? "" : string.trim();
     }

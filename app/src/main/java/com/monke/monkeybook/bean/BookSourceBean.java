@@ -33,6 +33,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String bookSourceGroup;
     private String bookSourceType = BookType.TEXT;
     private String bookSourceRuleType = RuleType.DEFAULT;
+    private boolean bookSourceCacheEnabled;
     private String checkUrl;
     @OrderBy
     private int serialNumber;
@@ -66,16 +67,16 @@ public class BookSourceBean implements Parcelable, Cloneable {
     @Transient
     private String ajaxJavaScript;
 
-    @Generated(hash = 1863804992)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl,
-                          String ruleSearchUrl, String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables,
-                          String ruleBookName, String ruleBookAuthor, String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl,
-                          String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+    @Generated(hash = 2065132802)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, boolean bookSourceCacheEnabled, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl, String ruleSearchUrl,
+            String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables, String ruleBookName, String ruleBookAuthor,
+            String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
         this.bookSourceType = bookSourceType;
         this.bookSourceRuleType = bookSourceRuleType;
+        this.bookSourceCacheEnabled = bookSourceCacheEnabled;
         this.checkUrl = checkUrl;
         this.serialNumber = serialNumber;
         this.weight = weight;
@@ -119,6 +120,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         serialNumber = in.readInt();
         weight = in.readInt();
         enable = in.readByte() != 0;
+        bookSourceCacheEnabled = in.readByte() != 0;
         ruleFindUrl = in.readString();
         ruleSearchUrl = in.readString();
         ruleSearchList = in.readString();
@@ -155,6 +157,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeInt(serialNumber);
         dest.writeInt(weight);
         dest.writeByte((byte) (enable ? 1 : 0));
+        dest.writeByte((byte) (bookSourceCacheEnabled ? 1 : 0));
         dest.writeString(ruleFindUrl);
         dest.writeString(ruleSearchUrl);
         dest.writeString(ruleSearchList);
@@ -229,7 +232,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(ruleSearchNoteUrl, bs.ruleSearchNoteUrl)
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
                     && stringEquals(checkUrl, bs.checkUrl)
-                    && stringEquals(rulePersistedVariables, bs.rulePersistedVariables);
+                    && stringEquals(rulePersistedVariables, bs.rulePersistedVariables)
+                    && bookSourceCacheEnabled == bs.bookSourceCacheEnabled;
         }
         return false;
     }
@@ -577,4 +581,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.weight = weight;
     }
 
+    public void setBookSourceCacheEnabled(boolean bookSourceCacheEnabled) {
+        this.bookSourceCacheEnabled = bookSourceCacheEnabled;
+    }
+
+    public boolean getBookSourceCacheEnabled() {
+        return this.bookSourceCacheEnabled;
+    }
 }

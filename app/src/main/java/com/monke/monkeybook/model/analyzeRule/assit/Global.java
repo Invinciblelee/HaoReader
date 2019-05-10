@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.analyzeRule.JavaExecutor;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +27,17 @@ public final class Global {
     }
 
     public static boolean isJson(Object object) {
-        try {
-            if (object instanceof String) {
-                GSON.fromJson((String) object, Object.class);
-            } else {
-                GSON.toJson(object);
+        boolean result = false;
+        String str = StringUtils.valueOf(object);
+        if (StringUtils.isNotBlank(str)) {
+            str = str.trim();
+            if (str.startsWith("{") && str.endsWith("}")) {
+                result = true;
+            } else if (str.startsWith("[") && str.endsWith("]")) {
+                result = true;
             }
-            return true;
-        } catch (Exception ignore) {
         }
-        return false;
+        return result;
     }
 
     public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {

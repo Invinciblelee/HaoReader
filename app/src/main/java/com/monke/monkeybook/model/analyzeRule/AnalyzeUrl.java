@@ -31,6 +31,8 @@ import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP
 
 public class AnalyzeUrl {
 
+    private String id;
+    private String requestUrl;
     private String url;
     private String hostUrl;
     private String urlPath;
@@ -92,6 +94,9 @@ public class AnalyzeUrl {
         if (requestMethod != RequestMethod.DEFAULT) {
             analyzeQuery(queryStr = ruleUrlS[1]);
         }
+
+        String rawUrl = getUrlWithQuery();
+        id = StringUtils.checkNull(MD5Utils.strToMd5By32(rawUrl), rawUrl);
     }
 
     /**
@@ -245,6 +250,21 @@ public class AnalyzeUrl {
                 urlPath = ruleUrl.substring(hostUrl.length());
             }
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
+    }
+
+    public String getRequestUrl() {
+        if(requestUrl == null){
+            return getUrlWithQuery();
+        }
+        return requestUrl;
     }
 
     public String getHost() {

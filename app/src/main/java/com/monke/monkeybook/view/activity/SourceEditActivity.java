@@ -71,6 +71,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieBookSourceRuleType;
     @BindView(R.id.til_book_source_rule_type)
     TextInputLayout tilBookSourceRuleType;
+    @BindView(R.id.tie_book_source_cache_enable)
+    TextInputEditText tieBookSourceCacheEnable;
+    @BindView(R.id.til_book_source_cache_enable)
+    TextInputLayout tilBookSourceCacheEnable;
     @BindView(R.id.tie_book_source_url)
     TextInputEditText tieBookSourceUrl;
     @BindView(R.id.til_book_source_url)
@@ -321,6 +325,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         BookSourceBean bookSourceBeanN = new BookSourceBean();
         bookSourceBeanN.setBookSourceType(trim(tieBookSourceType.getText()));
         bookSourceBeanN.setBookSourceRuleType(trim(tieBookSourceRuleType.getText()));
+        bookSourceBeanN.setBookSourceCacheEnabled(TextUtils.equals(trim(tieBookSourceCacheEnable.getText()), "TRUE"));
         bookSourceBeanN.setBookSourceName(trim(tieBookSourceName.getText()));
         bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText()));
         bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText()));
@@ -367,6 +372,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (!TextUtils.isEmpty(ruleType)) {
             tieBookSourceRuleType.setText(ruleType);
         }
+        boolean cache = bookSourceBean.getBookSourceCacheEnabled();
+        tieBookSourceCacheEnable.setText(cache ? "TRUE" : "FALSE");
         tieBookSourceName.setText(trim(bookSourceBean.getBookSourceName()));
         tieBookSourceUrl.setText(trim(bookSourceBean.getBookSourceUrl()));
         tieBookSourceGroup.setText(trim(bookSourceBean.getBookSourceGroup()));
@@ -406,6 +413,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private void setHint() {
         tilBookSourceType.setHint("书源类型(BookSourceType)");
         tilBookSourceRuleType.setHint("书源规则类型(BookSourceRuleType)");
+        tilBookSourceCacheEnable.setHint("书源解析缓存(BookSourceCacheEnabled)");
         tilBookSourceName.setHint("书源名称(BookSourceName)");
         tilBookSourceUrl.setHint("书源URL(BookSourceUrl)");
         tilBookSourceGroup.setHint("书源分组(BookSourceGroup)");

@@ -76,6 +76,11 @@
         <item>发现</item>
     </string-array>
 
+    <string-array name="cache_enabled">
+        <item>TRUE</item>
+        <item>FALSE</item>
+    </string-array>
+
     <string-array name="source_type">
         <item>TEXT</item>
         <item>AUDIO</item>

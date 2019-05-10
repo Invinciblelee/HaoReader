@@ -31,18 +31,17 @@ final class RulePattern {
     String replacement;
     List<String> javaScripts;
 
-    private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore) {
-        elementsRule = new Rule();
-        Rule rule = RootRule.fromStringRule(rawRule);
-        rawRule = rule.getRule();
-        elementsRule.setMode(rule.getMode());
-
-        initRulePattern(rawRule, variableStore, elementsRule.getMode());
-    }
-
     private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
         elementsRule = new Rule();
-        elementsRule.setMode(ruleMode);
+
+        if (ruleMode == null) {
+            Rule rule = RootRule.fromStringRule(rawRule);
+            elementsRule.setMode(rule.getMode());
+
+            rawRule = rule.getRule();
+        } else {
+            elementsRule.setMode(ruleMode);
+        }
 
         initRulePattern(rawRule, variableStore, elementsRule.getMode());
     }
@@ -58,7 +57,7 @@ final class RulePattern {
         rawRule = ensureRedirectRule(rawRule);
 
         //分离正则表达式
-        rawRule = ensureRegexRule(rawRule, ruleMode == RuleMode.CSS);
+        rawRule = ensureRegexRule(rawRule, ruleMode == RuleMode.CSS || ruleMode == RuleMode.XPath);
 
         //分离js
         int start = ensureJavaScripts(rawRule);
@@ -105,8 +104,8 @@ final class RulePattern {
         return rawRule;
     }
 
-    private String ensureRegexRule(String rawRule, boolean css) {
-        final String[] rules = rawRule.split(css ? Patterns.RULE_REGEX_TRAIT : Patterns.RULE_REGEX);
+    private String ensureRegexRule(String rawRule, boolean trait) {
+        final String[] rules = rawRule.split(trait ? Patterns.RULE_REGEX_TRAIT : Patterns.RULE_REGEX);
         rawRule = rules[0];
         if (rules.length > 1) {
             replaceRegex = rules[1];
@@ -146,14 +145,6 @@ final class RulePattern {
 
     static RulePattern fromRule(@NonNull String rawRule, @Nullable RuleMode ruleMode) {
         return fromRule(rawRule, null, ruleMode);
-    }
-
-    static RulePattern fromHybridRule(@NonNull String rawRule, @Nullable VariableStore variableStore) {
-        return new RulePattern(rawRule.trim(), variableStore);
-    }
-
-    static RulePattern fromHybridRule(@NonNull String rawRule) {
-        return fromHybridRule(rawRule, null);
     }
 
     @Override

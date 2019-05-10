@@ -14,9 +14,9 @@ class HybridAnalyzerPresenter extends DefaultAnalyzerPresenter {
             return patterns;
         }
         if (withVariableStore) {
-            patterns = RulePatterns.fromHybridRule(rawRule, getBaseURL(), getVariableStore());
+            patterns = RulePatterns.fromRule(rawRule, getBaseURL(), getVariableStore(), null);
         } else {
-            patterns = RulePatterns.fromHybridRule(rawRule, getBaseURL());
+            patterns = RulePatterns.fromRule(rawRule, getBaseURL(), null);
         }
         putCache(rawRule, patterns);
         return patterns;
@@ -29,9 +29,9 @@ class HybridAnalyzerPresenter extends DefaultAnalyzerPresenter {
             return pattern;
         }
         if (withVariableStore) {
-            pattern = RulePattern.fromHybridRule(rawRule, getVariableStore());
+            pattern = RulePattern.fromRule(rawRule, getVariableStore(), null);
         } else {
-            pattern = RulePattern.fromHybridRule(rawRule);
+            pattern = RulePattern.fromRule(rawRule, null);
         }
         putCache(rawRule, pattern);
         return pattern;

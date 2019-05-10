@@ -29,33 +29,34 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         public final static Property BookSourceGroup = new Property(2, String.class, "bookSourceGroup", false, "BOOK_SOURCE_GROUP");
         public final static Property BookSourceType = new Property(3, String.class, "bookSourceType", false, "BOOK_SOURCE_TYPE");
         public final static Property BookSourceRuleType = new Property(4, String.class, "bookSourceRuleType", false, "BOOK_SOURCE_RULE_TYPE");
-        public final static Property CheckUrl = new Property(5, String.class, "checkUrl", false, "CHECK_URL");
-        public final static Property SerialNumber = new Property(6, int.class, "serialNumber", false, "SERIAL_NUMBER");
-        public final static Property Weight = new Property(7, int.class, "weight", false, "WEIGHT");
-        public final static Property Enable = new Property(8, boolean.class, "enable", false, "ENABLE");
-        public final static Property RuleFindUrl = new Property(9, String.class, "ruleFindUrl", false, "RULE_FIND_URL");
-        public final static Property RuleSearchUrl = new Property(10, String.class, "ruleSearchUrl", false, "RULE_SEARCH_URL");
-        public final static Property RuleSearchList = new Property(11, String.class, "ruleSearchList", false, "RULE_SEARCH_LIST");
-        public final static Property RuleSearchName = new Property(12, String.class, "ruleSearchName", false, "RULE_SEARCH_NAME");
-        public final static Property RuleSearchAuthor = new Property(13, String.class, "ruleSearchAuthor", false, "RULE_SEARCH_AUTHOR");
-        public final static Property RuleSearchKind = new Property(14, String.class, "ruleSearchKind", false, "RULE_SEARCH_KIND");
-        public final static Property RuleSearchLastChapter = new Property(15, String.class, "ruleSearchLastChapter", false, "RULE_SEARCH_LAST_CHAPTER");
-        public final static Property RuleSearchCoverUrl = new Property(16, String.class, "ruleSearchCoverUrl", false, "RULE_SEARCH_COVER_URL");
-        public final static Property RuleSearchNoteUrl = new Property(17, String.class, "ruleSearchNoteUrl", false, "RULE_SEARCH_NOTE_URL");
-        public final static Property RulePersistedVariables = new Property(18, String.class, "rulePersistedVariables", false, "RULE_PERSISTED_VARIABLES");
-        public final static Property RuleBookName = new Property(19, String.class, "ruleBookName", false, "RULE_BOOK_NAME");
-        public final static Property RuleBookAuthor = new Property(20, String.class, "ruleBookAuthor", false, "RULE_BOOK_AUTHOR");
-        public final static Property RuleLastChapter = new Property(21, String.class, "ruleLastChapter", false, "RULE_LAST_CHAPTER");
-        public final static Property RuleChapterUrl = new Property(22, String.class, "ruleChapterUrl", false, "RULE_CHAPTER_URL");
-        public final static Property RuleChapterUrlNext = new Property(23, String.class, "ruleChapterUrlNext", false, "RULE_CHAPTER_URL_NEXT");
-        public final static Property RuleCoverUrl = new Property(24, String.class, "ruleCoverUrl", false, "RULE_COVER_URL");
-        public final static Property RuleIntroduce = new Property(25, String.class, "ruleIntroduce", false, "RULE_INTRODUCE");
-        public final static Property RuleChapterList = new Property(26, String.class, "ruleChapterList", false, "RULE_CHAPTER_LIST");
-        public final static Property RuleChapterName = new Property(27, String.class, "ruleChapterName", false, "RULE_CHAPTER_NAME");
-        public final static Property RuleContentUrl = new Property(28, String.class, "ruleContentUrl", false, "RULE_CONTENT_URL");
-        public final static Property RuleContentUrlNext = new Property(29, String.class, "ruleContentUrlNext", false, "RULE_CONTENT_URL_NEXT");
-        public final static Property RuleBookContent = new Property(30, String.class, "ruleBookContent", false, "RULE_BOOK_CONTENT");
-        public final static Property HttpUserAgent = new Property(31, String.class, "httpUserAgent", false, "HTTP_USER_AGENT");
+        public final static Property BookSourceCacheEnabled = new Property(5, boolean.class, "bookSourceCacheEnabled", false, "BOOK_SOURCE_CACHE_ENABLED");
+        public final static Property CheckUrl = new Property(6, String.class, "checkUrl", false, "CHECK_URL");
+        public final static Property SerialNumber = new Property(7, int.class, "serialNumber", false, "SERIAL_NUMBER");
+        public final static Property Weight = new Property(8, int.class, "weight", false, "WEIGHT");
+        public final static Property Enable = new Property(9, boolean.class, "enable", false, "ENABLE");
+        public final static Property RuleFindUrl = new Property(10, String.class, "ruleFindUrl", false, "RULE_FIND_URL");
+        public final static Property RuleSearchUrl = new Property(11, String.class, "ruleSearchUrl", false, "RULE_SEARCH_URL");
+        public final static Property RuleSearchList = new Property(12, String.class, "ruleSearchList", false, "RULE_SEARCH_LIST");
+        public final static Property RuleSearchName = new Property(13, String.class, "ruleSearchName", false, "RULE_SEARCH_NAME");
+        public final static Property RuleSearchAuthor = new Property(14, String.class, "ruleSearchAuthor", false, "RULE_SEARCH_AUTHOR");
+        public final static Property RuleSearchKind = new Property(15, String.class, "ruleSearchKind", false, "RULE_SEARCH_KIND");
+        public final static Property RuleSearchLastChapter = new Property(16, String.class, "ruleSearchLastChapter", false, "RULE_SEARCH_LAST_CHAPTER");
+        public final static Property RuleSearchCoverUrl = new Property(17, String.class, "ruleSearchCoverUrl", false, "RULE_SEARCH_COVER_URL");
+        public final static Property RuleSearchNoteUrl = new Property(18, String.class, "ruleSearchNoteUrl", false, "RULE_SEARCH_NOTE_URL");
+        public final static Property RulePersistedVariables = new Property(19, String.class, "rulePersistedVariables", false, "RULE_PERSISTED_VARIABLES");
+        public final static Property RuleBookName = new Property(20, String.class, "ruleBookName", false, "RULE_BOOK_NAME");
+        public final static Property RuleBookAuthor = new Property(21, String.class, "ruleBookAuthor", false, "RULE_BOOK_AUTHOR");
+        public final static Property RuleLastChapter = new Property(22, String.class, "ruleLastChapter", false, "RULE_LAST_CHAPTER");
+        public final static Property RuleChapterUrl = new Property(23, String.class, "ruleChapterUrl", false, "RULE_CHAPTER_URL");
+        public final static Property RuleChapterUrlNext = new Property(24, String.class, "ruleChapterUrlNext", false, "RULE_CHAPTER_URL_NEXT");
+        public final static Property RuleCoverUrl = new Property(25, String.class, "ruleCoverUrl", false, "RULE_COVER_URL");
+        public final static Property RuleIntroduce = new Property(26, String.class, "ruleIntroduce", false, "RULE_INTRODUCE");
+        public final static Property RuleChapterList = new Property(27, String.class, "ruleChapterList", false, "RULE_CHAPTER_LIST");
+        public final static Property RuleChapterName = new Property(28, String.class, "ruleChapterName", false, "RULE_CHAPTER_NAME");
+        public final static Property RuleContentUrl = new Property(29, String.class, "ruleContentUrl", false, "RULE_CONTENT_URL");
+        public final static Property RuleContentUrlNext = new Property(30, String.class, "ruleContentUrlNext", false, "RULE_CONTENT_URL_NEXT");
+        public final static Property RuleBookContent = new Property(31, String.class, "ruleBookContent", false, "RULE_BOOK_CONTENT");
+        public final static Property HttpUserAgent = new Property(32, String.class, "httpUserAgent", false, "HTTP_USER_AGENT");
     }
 
 
@@ -76,33 +77,34 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
                 "\"BOOK_SOURCE_GROUP\" TEXT," + // 2: bookSourceGroup
                 "\"BOOK_SOURCE_TYPE\" TEXT," + // 3: bookSourceType
                 "\"BOOK_SOURCE_RULE_TYPE\" TEXT," + // 4: bookSourceRuleType
-                "\"CHECK_URL\" TEXT," + // 5: checkUrl
-                "\"SERIAL_NUMBER\" INTEGER NOT NULL ," + // 6: serialNumber
-                "\"WEIGHT\" INTEGER NOT NULL ," + // 7: weight
-                "\"ENABLE\" INTEGER NOT NULL ," + // 8: enable
-                "\"RULE_FIND_URL\" TEXT," + // 9: ruleFindUrl
-                "\"RULE_SEARCH_URL\" TEXT," + // 10: ruleSearchUrl
-                "\"RULE_SEARCH_LIST\" TEXT," + // 11: ruleSearchList
-                "\"RULE_SEARCH_NAME\" TEXT," + // 12: ruleSearchName
-                "\"RULE_SEARCH_AUTHOR\" TEXT," + // 13: ruleSearchAuthor
-                "\"RULE_SEARCH_KIND\" TEXT," + // 14: ruleSearchKind
-                "\"RULE_SEARCH_LAST_CHAPTER\" TEXT," + // 15: ruleSearchLastChapter
-                "\"RULE_SEARCH_COVER_URL\" TEXT," + // 16: ruleSearchCoverUrl
-                "\"RULE_SEARCH_NOTE_URL\" TEXT," + // 17: ruleSearchNoteUrl
-                "\"RULE_PERSISTED_VARIABLES\" TEXT," + // 18: rulePersistedVariables
-                "\"RULE_BOOK_NAME\" TEXT," + // 19: ruleBookName
-                "\"RULE_BOOK_AUTHOR\" TEXT," + // 20: ruleBookAuthor
-                "\"RULE_LAST_CHAPTER\" TEXT," + // 21: ruleLastChapter
-                "\"RULE_CHAPTER_URL\" TEXT," + // 22: ruleChapterUrl
-                "\"RULE_CHAPTER_URL_NEXT\" TEXT," + // 23: ruleChapterUrlNext
-                "\"RULE_COVER_URL\" TEXT," + // 24: ruleCoverUrl
-                "\"RULE_INTRODUCE\" TEXT," + // 25: ruleIntroduce
-                "\"RULE_CHAPTER_LIST\" TEXT," + // 26: ruleChapterList
-                "\"RULE_CHAPTER_NAME\" TEXT," + // 27: ruleChapterName
-                "\"RULE_CONTENT_URL\" TEXT," + // 28: ruleContentUrl
-                "\"RULE_CONTENT_URL_NEXT\" TEXT," + // 29: ruleContentUrlNext
-                "\"RULE_BOOK_CONTENT\" TEXT," + // 30: ruleBookContent
-                "\"HTTP_USER_AGENT\" TEXT);"); // 31: httpUserAgent
+                "\"BOOK_SOURCE_CACHE_ENABLED\" INTEGER NOT NULL ," + // 5: bookSourceCacheEnabled
+                "\"CHECK_URL\" TEXT," + // 6: checkUrl
+                "\"SERIAL_NUMBER\" INTEGER NOT NULL ," + // 7: serialNumber
+                "\"WEIGHT\" INTEGER NOT NULL ," + // 8: weight
+                "\"ENABLE\" INTEGER NOT NULL ," + // 9: enable
+                "\"RULE_FIND_URL\" TEXT," + // 10: ruleFindUrl
+                "\"RULE_SEARCH_URL\" TEXT," + // 11: ruleSearchUrl
+                "\"RULE_SEARCH_LIST\" TEXT," + // 12: ruleSearchList
+                "\"RULE_SEARCH_NAME\" TEXT," + // 13: ruleSearchName
+                "\"RULE_SEARCH_AUTHOR\" TEXT," + // 14: ruleSearchAuthor
+                "\"RULE_SEARCH_KIND\" TEXT," + // 15: ruleSearchKind
+                "\"RULE_SEARCH_LAST_CHAPTER\" TEXT," + // 16: ruleSearchLastChapter
+                "\"RULE_SEARCH_COVER_URL\" TEXT," + // 17: ruleSearchCoverUrl
+                "\"RULE_SEARCH_NOTE_URL\" TEXT," + // 18: ruleSearchNoteUrl
+                "\"RULE_PERSISTED_VARIABLES\" TEXT," + // 19: rulePersistedVariables
+                "\"RULE_BOOK_NAME\" TEXT," + // 20: ruleBookName
+                "\"RULE_BOOK_AUTHOR\" TEXT," + // 21: ruleBookAuthor
+                "\"RULE_LAST_CHAPTER\" TEXT," + // 22: ruleLastChapter
+                "\"RULE_CHAPTER_URL\" TEXT," + // 23: ruleChapterUrl
+                "\"RULE_CHAPTER_URL_NEXT\" TEXT," + // 24: ruleChapterUrlNext
+                "\"RULE_COVER_URL\" TEXT," + // 25: ruleCoverUrl
+                "\"RULE_INTRODUCE\" TEXT," + // 26: ruleIntroduce
+                "\"RULE_CHAPTER_LIST\" TEXT," + // 27: ruleChapterList
+                "\"RULE_CHAPTER_NAME\" TEXT," + // 28: ruleChapterName
+                "\"RULE_CONTENT_URL\" TEXT," + // 29: ruleContentUrl
+                "\"RULE_CONTENT_URL_NEXT\" TEXT," + // 30: ruleContentUrlNext
+                "\"RULE_BOOK_CONTENT\" TEXT," + // 31: ruleBookContent
+                "\"HTTP_USER_AGENT\" TEXT);"); // 32: httpUserAgent
     }
 
     /** Drops the underlying database table. */
@@ -139,128 +141,129 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         if (bookSourceRuleType != null) {
             stmt.bindString(5, bookSourceRuleType);
         }
+        stmt.bindLong(6, entity.getBookSourceCacheEnabled() ? 1L: 0L);
  
         String checkUrl = entity.getCheckUrl();
         if (checkUrl != null) {
-            stmt.bindString(6, checkUrl);
+            stmt.bindString(7, checkUrl);
         }
-        stmt.bindLong(7, entity.getSerialNumber());
-        stmt.bindLong(8, entity.getWeight());
-        stmt.bindLong(9, entity.getEnable() ? 1L: 0L);
+        stmt.bindLong(8, entity.getSerialNumber());
+        stmt.bindLong(9, entity.getWeight());
+        stmt.bindLong(10, entity.getEnable() ? 1L: 0L);
  
         String ruleFindUrl = entity.getRuleFindUrl();
         if (ruleFindUrl != null) {
-            stmt.bindString(10, ruleFindUrl);
+            stmt.bindString(11, ruleFindUrl);
         }
  
         String ruleSearchUrl = entity.getRuleSearchUrl();
         if (ruleSearchUrl != null) {
-            stmt.bindString(11, ruleSearchUrl);
+            stmt.bindString(12, ruleSearchUrl);
         }
  
         String ruleSearchList = entity.getRuleSearchList();
         if (ruleSearchList != null) {
-            stmt.bindString(12, ruleSearchList);
+            stmt.bindString(13, ruleSearchList);
         }
  
         String ruleSearchName = entity.getRuleSearchName();
         if (ruleSearchName != null) {
-            stmt.bindString(13, ruleSearchName);
+            stmt.bindString(14, ruleSearchName);
         }
  
         String ruleSearchAuthor = entity.getRuleSearchAuthor();
         if (ruleSearchAuthor != null) {
-            stmt.bindString(14, ruleSearchAuthor);
+            stmt.bindString(15, ruleSearchAuthor);
         }
  
         String ruleSearchKind = entity.getRuleSearchKind();
         if (ruleSearchKind != null) {
-            stmt.bindString(15, ruleSearchKind);
+            stmt.bindString(16, ruleSearchKind);
         }
  
         String ruleSearchLastChapter = entity.getRuleSearchLastChapter();
         if (ruleSearchLastChapter != null) {
-            stmt.bindString(16, ruleSearchLastChapter);
+            stmt.bindString(17, ruleSearchLastChapter);
         }
  
         String ruleSearchCoverUrl = entity.getRuleSearchCoverUrl();
         if (ruleSearchCoverUrl != null) {
-            stmt.bindString(17, ruleSearchCoverUrl);
+            stmt.bindString(18, ruleSearchCoverUrl);
         }
  
         String ruleSearchNoteUrl = entity.getRuleSearchNoteUrl();
         if (ruleSearchNoteUrl != null) {
-            stmt.bindString(18, ruleSearchNoteUrl);
+            stmt.bindString(19, ruleSearchNoteUrl);
         }
  
         String rulePersistedVariables = entity.getRulePersistedVariables();
         if (rulePersistedVariables != null) {
-            stmt.bindString(19, rulePersistedVariables);
+            stmt.bindString(20, rulePersistedVariables);
         }
  
         String ruleBookName = entity.getRuleBookName();
         if (ruleBookName != null) {
-            stmt.bindString(20, ruleBookName);
+            stmt.bindString(21, ruleBookName);
         }
  
         String ruleBookAuthor = entity.getRuleBookAuthor();
         if (ruleBookAuthor != null) {
-            stmt.bindString(21, ruleBookAuthor);
+            stmt.bindString(22, ruleBookAuthor);
         }
  
         String ruleLastChapter = entity.getRuleLastChapter();
         if (ruleLastChapter != null) {
-            stmt.bindString(22, ruleLastChapter);
+            stmt.bindString(23, ruleLastChapter);
         }
  
         String ruleChapterUrl = entity.getRuleChapterUrl();
         if (ruleChapterUrl != null) {
-            stmt.bindString(23, ruleChapterUrl);
+            stmt.bindString(24, ruleChapterUrl);
         }
  
         String ruleChapterUrlNext = entity.getRuleChapterUrlNext();
         if (ruleChapterUrlNext != null) {
-            stmt.bindString(24, ruleChapterUrlNext);
+            stmt.bindString(25, ruleChapterUrlNext);
         }
  
         String ruleCoverUrl = entity.getRuleCoverUrl();
         if (ruleCoverUrl != null) {
-            stmt.bindString(25, ruleCoverUrl);
+            stmt.bindString(26, ruleCoverUrl);
         }
  
         String ruleIntroduce = entity.getRuleIntroduce();
         if (ruleIntroduce != null) {
-            stmt.bindString(26, ruleIntroduce);
+            stmt.bindString(27, ruleIntroduce);
         }
  
         String ruleChapterList = entity.getRuleChapterList();
         if (ruleChapterList != null) {
-            stmt.bindString(27, ruleChapterList);
+            stmt.bindString(28, ruleChapterList);
         }
  
         String ruleChapterName = entity.getRuleChapterName();
         if (ruleChapterName != null) {
-            stmt.bindString(28, ruleChapterName);
+            stmt.bindString(29, ruleChapterName);
         }
  
         String ruleContentUrl = entity.getRuleContentUrl();
         if (ruleContentUrl != null) {
-            stmt.bindString(29, ruleContentUrl);
+            stmt.bindString(30, ruleContentUrl);
         }
  
         String ruleContentUrlNext = entity.getRuleContentUrlNext();
         if (ruleContentUrlNext != null) {
-            stmt.bindString(30, ruleContentUrlNext);
+            stmt.bindString(31, ruleContentUrlNext);
         }
  
         String ruleBookContent = entity.getRuleBookContent();
         if (ruleBookContent != null) {
-            stmt.bindString(31, ruleBookContent);
+            stmt.bindString(32, ruleBookContent);
         }
  
         String httpUserAgent = entity.getHttpUserAgent();
         if (httpUserAgent != null) {
-            stmt.bindString(32, httpUserAgent);
+            stmt.bindString(33, httpUserAgent);
         }
     }
 
@@ -292,128 +295,129 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         if (bookSourceRuleType != null) {
             stmt.bindString(5, bookSourceRuleType);
         }
+        stmt.bindLong(6, entity.getBookSourceCacheEnabled() ? 1L: 0L);
  
         String checkUrl = entity.getCheckUrl();
         if (checkUrl != null) {
-            stmt.bindString(6, checkUrl);
+            stmt.bindString(7, checkUrl);
         }
-        stmt.bindLong(7, entity.getSerialNumber());
-        stmt.bindLong(8, entity.getWeight());
-        stmt.bindLong(9, entity.getEnable() ? 1L: 0L);
+        stmt.bindLong(8, entity.getSerialNumber());
+        stmt.bindLong(9, entity.getWeight());
+        stmt.bindLong(10, entity.getEnable() ? 1L: 0L);
  
         String ruleFindUrl = entity.getRuleFindUrl();
         if (ruleFindUrl != null) {
-            stmt.bindString(10, ruleFindUrl);
+            stmt.bindString(11, ruleFindUrl);
         }
  
         String ruleSearchUrl = entity.getRuleSearchUrl();
         if (ruleSearchUrl != null) {
-            stmt.bindString(11, ruleSearchUrl);
+            stmt.bindString(12, ruleSearchUrl);
         }
  
         String ruleSearchList = entity.getRuleSearchList();
         if (ruleSearchList != null) {
-            stmt.bindString(12, ruleSearchList);
+            stmt.bindString(13, ruleSearchList);
         }
  
         String ruleSearchName = entity.getRuleSearchName();
         if (ruleSearchName != null) {
-            stmt.bindString(13, ruleSearchName);
+            stmt.bindString(14, ruleSearchName);
         }
  
         String ruleSearchAuthor = entity.getRuleSearchAuthor();
         if (ruleSearchAuthor != null) {
-            stmt.bindString(14, ruleSearchAuthor);
+            stmt.bindString(15, ruleSearchAuthor);
         }
  
         String ruleSearchKind = entity.getRuleSearchKind();
         if (ruleSearchKind != null) {
-            stmt.bindString(15, ruleSearchKind);
+            stmt.bindString(16, ruleSearchKind);
         }
  
         String ruleSearchLastChapter = entity.getRuleSearchLastChapter();
         if (ruleSearchLastChapter != null) {
-            stmt.bindString(16, ruleSearchLastChapter);
+            stmt.bindString(17, ruleSearchLastChapter);
         }
  
         String ruleSearchCoverUrl = entity.getRuleSearchCoverUrl();
         if (ruleSearchCoverUrl != null) {
-            stmt.bindString(17, ruleSearchCoverUrl);
+            stmt.bindString(18, ruleSearchCoverUrl);
         }
  
         String ruleSearchNoteUrl = entity.getRuleSearchNoteUrl();
         if (ruleSearchNoteUrl != null) {
-            stmt.bindString(18, ruleSearchNoteUrl);
+            stmt.bindString(19, ruleSearchNoteUrl);
         }
  
         String rulePersistedVariables = entity.getRulePersistedVariables();
         if (rulePersistedVariables != null) {
-            stmt.bindString(19, rulePersistedVariables);
+            stmt.bindString(20, rulePersistedVariables);
         }
  
         String ruleBookName = entity.getRuleBookName();
         if (ruleBookName != null) {
-            stmt.bindString(20, ruleBookName);
+            stmt.bindString(21, ruleBookName);
         }
  
         String ruleBookAuthor = entity.getRuleBookAuthor();
         if (ruleBookAuthor != null) {
-            stmt.bindString(21, ruleBookAuthor);
+            stmt.bindString(22, ruleBookAuthor);
         }
  
         String ruleLastChapter = entity.getRuleLastChapter();
         if (ruleLastChapter != null) {
-            stmt.bindString(22, ruleLastChapter);
+            stmt.bindString(23, ruleLastChapter);
         }
  
         String ruleChapterUrl = entity.getRuleChapterUrl();
         if (ruleChapterUrl != null) {
-            stmt.bindString(23, ruleChapterUrl);
+            stmt.bindString(24, ruleChapterUrl);
         }
  
         String ruleChapterUrlNext = entity.getRuleChapterUrlNext();
         if (ruleChapterUrlNext != null) {
-            stmt.bindString(24, ruleChapterUrlNext);
+            stmt.bindString(25, ruleChapterUrlNext);
         }
  
         String ruleCoverUrl = entity.getRuleCoverUrl();
         if (ruleCoverUrl != null) {
-            stmt.bindString(25, ruleCoverUrl);
+            stmt.bindString(26, ruleCoverUrl);
         }
  
         String ruleIntroduce = entity.getRuleIntroduce();
         if (ruleIntroduce != null) {
-            stmt.bindString(26, ruleIntroduce);
+            stmt.bindString(27, ruleIntroduce);
         }
  
         String ruleChapterList = entity.getRuleChapterList();
         if (ruleChapterList != null) {
-            stmt.bindString(27, ruleChapterList);
+            stmt.bindString(28, ruleChapterList);
         }
  
         String ruleChapterName = entity.getRuleChapterName();
         if (ruleChapterName != null) {
-            stmt.bindString(28, ruleChapterName);
+            stmt.bindString(29, ruleChapterName);
         }
  
         String ruleContentUrl = entity.getRuleContentUrl();
         if (ruleContentUrl != null) {
-            stmt.bindString(29, ruleContentUrl);
+            stmt.bindString(30, ruleContentUrl);
         }
  
         String ruleContentUrlNext = entity.getRuleContentUrlNext();
         if (ruleContentUrlNext != null) {
-            stmt.bindString(30, ruleContentUrlNext);
+            stmt.bindString(31, ruleContentUrlNext);
         }
  
         String ruleBookContent = entity.getRuleBookContent();
         if (ruleBookContent != null) {
-            stmt.bindString(31, ruleBookContent);
+            stmt.bindString(32, ruleBookContent);
         }
  
         String httpUserAgent = entity.getHttpUserAgent();
         if (httpUserAgent != null) {
-            stmt.bindString(32, httpUserAgent);
+            stmt.bindString(33, httpUserAgent);
         }
     }
 
@@ -430,33 +434,34 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // bookSourceGroup
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // bookSourceType
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // bookSourceRuleType
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // checkUrl
-            cursor.getInt(offset + 6), // serialNumber
-            cursor.getInt(offset + 7), // weight
-            cursor.getShort(offset + 8) != 0, // enable
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // ruleFindUrl
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // ruleSearchUrl
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // ruleSearchList
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // ruleSearchName
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // ruleSearchAuthor
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // ruleSearchKind
-            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // ruleSearchLastChapter
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // ruleSearchCoverUrl
-            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // ruleSearchNoteUrl
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // rulePersistedVariables
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // ruleBookName
-            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // ruleBookAuthor
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // ruleLastChapter
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // ruleChapterUrl
-            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // ruleChapterUrlNext
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // ruleCoverUrl
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // ruleIntroduce
-            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // ruleChapterList
-            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // ruleChapterName
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // ruleContentUrl
-            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // ruleContentUrlNext
-            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // ruleBookContent
-            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31) // httpUserAgent
+            cursor.getShort(offset + 5) != 0, // bookSourceCacheEnabled
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // checkUrl
+            cursor.getInt(offset + 7), // serialNumber
+            cursor.getInt(offset + 8), // weight
+            cursor.getShort(offset + 9) != 0, // enable
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // ruleFindUrl
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // ruleSearchUrl
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // ruleSearchList
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // ruleSearchName
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // ruleSearchAuthor
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // ruleSearchKind
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // ruleSearchLastChapter
+            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // ruleSearchCoverUrl
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // ruleSearchNoteUrl
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // rulePersistedVariables
+            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // ruleBookName
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // ruleBookAuthor
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // ruleLastChapter
+            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // ruleChapterUrl
+            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // ruleChapterUrlNext
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // ruleCoverUrl
+            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // ruleIntroduce
+            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // ruleChapterList
+            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // ruleChapterName
+            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // ruleContentUrl
+            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // ruleContentUrlNext
+            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // ruleBookContent
+            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32) // httpUserAgent
         );
         return entity;
     }
@@ -468,33 +473,34 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         entity.setBookSourceGroup(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setBookSourceType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setBookSourceRuleType(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setCheckUrl(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setSerialNumber(cursor.getInt(offset + 6));
-        entity.setWeight(cursor.getInt(offset + 7));
-        entity.setEnable(cursor.getShort(offset + 8) != 0);
-        entity.setRuleFindUrl(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setRuleSearchUrl(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setRuleSearchList(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setRuleSearchName(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setRuleSearchAuthor(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setRuleSearchKind(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setRuleSearchLastChapter(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
-        entity.setRuleSearchCoverUrl(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
-        entity.setRuleSearchNoteUrl(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
-        entity.setRulePersistedVariables(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
-        entity.setRuleBookName(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setRuleBookAuthor(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
-        entity.setRuleLastChapter(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setRuleChapterUrl(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setRuleChapterUrlNext(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
-        entity.setRuleCoverUrl(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
-        entity.setRuleIntroduce(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
-        entity.setRuleChapterList(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
-        entity.setRuleChapterName(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
-        entity.setRuleContentUrl(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
-        entity.setRuleContentUrlNext(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
-        entity.setRuleBookContent(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
-        entity.setHttpUserAgent(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
+        entity.setBookSourceCacheEnabled(cursor.getShort(offset + 5) != 0);
+        entity.setCheckUrl(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSerialNumber(cursor.getInt(offset + 7));
+        entity.setWeight(cursor.getInt(offset + 8));
+        entity.setEnable(cursor.getShort(offset + 9) != 0);
+        entity.setRuleFindUrl(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setRuleSearchUrl(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setRuleSearchList(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setRuleSearchName(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setRuleSearchAuthor(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setRuleSearchKind(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setRuleSearchLastChapter(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setRuleSearchCoverUrl(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
+        entity.setRuleSearchNoteUrl(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
+        entity.setRulePersistedVariables(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setRuleBookName(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
+        entity.setRuleBookAuthor(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setRuleLastChapter(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setRuleChapterUrl(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
+        entity.setRuleChapterUrlNext(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
+        entity.setRuleCoverUrl(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
+        entity.setRuleIntroduce(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
+        entity.setRuleChapterList(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
+        entity.setRuleChapterName(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
+        entity.setRuleContentUrl(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
+        entity.setRuleContentUrlNext(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
+        entity.setRuleBookContent(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
+        entity.setHttpUserAgent(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
      }
     
     @Override
