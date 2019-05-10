@@ -64,20 +64,20 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                         boolean isJavaScript = StringUtils.startWithIgnoreCase(sourceBean.getRuleFindUrl(), "<js>");
 
                         if (isJavaScript) {
-                            String cacheRule = MemoryCache.getInstance().getCache(sourceBean.getBookSourceUrl());
-                            if(cacheRule != null){
+                            String cacheRule = MemoryCache.INSTANCE.getCache(sourceBean.getBookSourceUrl());
+                            if (cacheRule != null) {
                                 findRule = cacheRule;
-                            }else {
+                            } else {
                                 SimpleBindings bindings = new SimpleBindings() {{
                                     this.put("baseUrl", sourceBean.getBookSourceUrl());
                                 }};
                                 String javaScript = findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<"));
                                 findRule = (String) Global.evalObjectScript(javaScript, bindings);
-                                MemoryCache.getInstance().putCache(sourceBean.getBookSourceUrl(), findRule);
+                                MemoryCache.INSTANCE.putCache(sourceBean.getBookSourceUrl(), findRule);
                             }
                         }
 
-                        if(findRule != null) {
+                        if (findRule != null) {
                             String[] kindA = findRule.split("(&&|\n)+");
                             List<FindKindBean> children = new ArrayList<>();
                             for (String kindB : kindA) {

@@ -1,11 +1,15 @@
 package com.monke.monkeybook.help;
 
+import android.util.LruCache;
+
+import com.monke.monkeybook.utils.StringUtils;
+
 /**
  * LruCache 内存缓存
  */
-public class MemoryCache extends androidx.collection.LruCache<String, Object> {
+public enum MemoryCache {
 
-    private static MemoryCache mInstance;
+    INSTANCE;
 
     private static final int MAX_SIZE;
 
@@ -14,27 +18,22 @@ public class MemoryCache extends androidx.collection.LruCache<String, Object> {
         MAX_SIZE = maxMemory / 8;
     }
 
-    private MemoryCache() {
-        super(MAX_SIZE);
-    }
-
-    public static MemoryCache getInstance() {
-        if (mInstance == null) {
-            synchronized (MemoryCache.class) {
-                if (mInstance == null) {
-                    mInstance = new MemoryCache();
-                }
-            }
-        }
-        return mInstance;
-    }
+    private LruCache<String, Object> mCache;
 
     @SuppressWarnings("unchecked")
     public final <T> T getCache(String key) {
-        return (T) super.get(key);
+        if (mCache == null) {
+            return null;
+        }
+        return (T) mCache.get(key);
     }
 
     public final void putCache(String key, Object value) {
-        put(key, value);
+        if (mCache == null) {
+            mCache = new LruCache<>(MAX_SIZE);
+        }
+        if (StringUtils.isNotBlank(key)) {
+            mCache.put(key, value);
+        }
     }
 }

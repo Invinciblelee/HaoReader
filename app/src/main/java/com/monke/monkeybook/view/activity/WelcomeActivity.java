@@ -28,9 +28,19 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
 
     @Override
     public void initImmersionBar() {
-        mImmersionBar.fullScreen(true);
         mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
-        mImmersionBar.statusBarDarkFont(false);
+
+        if (isImmersionBarEnabled()) {
+            mImmersionBar.transparentStatusBar();
+        } else {
+            mImmersionBar.statusBarColor(R.color.status_bar_bag);
+        }
+
+        if(isImmersionBarEnabled()) {
+            mImmersionBar.statusBarDarkFont(!isNightTheme());
+        }else {
+            mImmersionBar.statusBarDarkFont(false);
+        }
         mImmersionBar.init();
     }
 

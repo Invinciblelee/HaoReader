@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.monke.basemvplib.RequestMethod;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.utils.MD5Utils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
 

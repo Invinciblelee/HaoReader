@@ -3,13 +3,16 @@ package com.monke.monkeybook.widget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.widget.ListPopupWindow;
 
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -60,6 +63,7 @@ public class TextInputSpinner extends TextInputEditText {
         mPopup.setModal(true);
 
         setSelection(0);
+
     }
 
     public void setSelection(int position) {
@@ -68,19 +72,33 @@ public class TextInputSpinner extends TextInputEditText {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if(hasWindowFocus && hasFocus()){
+            KeyboardUtil.hideKeyboard(TextInputSpinner.this);
+        }
+    }
+
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+        if(focused){
+            KeyboardUtil.hideKeyboard(TextInputSpinner.this);
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean touch = super.onTouchEvent(event);
-        post(() -> {
-            TextInputSpinner.this.requestFocus();
-            KeyboardUtil.hideKeyboard(TextInputSpinner.this);
-        });
-
         if(event.getAction()== MotionEvent.ACTION_DOWN){
-            if (!mPopup.isShowing()) {
-                mPopup.show();
-            }
+            post(() -> {
+                TextInputSpinner.this.requestFocus();
+                if (!mPopup.isShowing()) {
+                    mPopup.show();
+                }
+            });
         }
         return touch;
     }

@@ -14,6 +14,7 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.help.MemoryCache;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
@@ -99,7 +100,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 });
             }
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookList.analyzeSearchBook(response.body(), analyzeUrl.getHost()));
+                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getHost()));
         } catch (Exception e) {
             Logger.e(TAG, "findBook: " + url, e);
             return Observable.just(ListUtils.mutableList());
@@ -125,7 +126,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             }
 
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookList.analyzeSearchBook(response.body(), analyzeUrl.getHost()));
+                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getHost()));
         } catch (Exception e) {
             Logger.e(TAG, "searchBook: " + content, e);
             return Observable.just(ListUtils.mutableList());
@@ -144,7 +145,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getNoteUrl(), headerMap(true));
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookInfo.analyzeBookInfo(response.body(), bookShelfBean));
+                    .flatMap(response -> bookInfo.analyzeBookInfo(response, bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "书籍信息获取失败", e);
             return Observable.error(e);
@@ -163,7 +164,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookChapter.analyzeChapters(response.body(), bookShelfBean));
+                    .flatMap(response -> bookChapter.analyzeChapters(response, bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "目录获取失败", e);
             return Observable.error(e);
@@ -200,7 +201,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             } else {
                 return toObservable(analyzeUrl)
-                        .flatMap(response -> bookContent.analyzeBookContent(response.body(), chapter));
+                        .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             }
         } catch (Exception e) {
             Logger.e(TAG, "正文获取失败", e);
@@ -243,7 +244,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             } else {
                 return toObservable(analyzeUrl)
-                        .flatMap(response -> audioBookChapter.analyzeAudioChapter(response.body(), chapter));
+                        .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             }
         } catch (Exception e) {
             Logger.e(TAG, "播放链接获取失败", e);
@@ -251,9 +252,15 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
     }
 
-    private Observable<Response<String>> toObservable(AnalyzeUrl analyzeUrl) {
+    private Observable<String> toObservable(AnalyzeUrl analyzeUrl) {
+        String cachedResponse = MemoryCache.INSTANCE.getCache(analyzeUrl.getUrlWithQuery());
+        if (cachedResponse != null) {
+            return Observable.just(cachedResponse);
+        }
         return SimpleModel.getResponse(analyzeUrl)
-                .flatMap(response -> setCookie(response, tag));
+                .flatMap(response -> setCookie(response, tag))
+                .map(Response::body)
+                .doOnNext(string -> MemoryCache.INSTANCE.putCache(analyzeUrl.getUrlWithQuery(), string));
     }
 
 
