@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/background"
+        android:background="@color/card_background"
         android:orientation="vertical"
         android:stateListAnimator="@animator/design_bottombar_state_list_animator">
 

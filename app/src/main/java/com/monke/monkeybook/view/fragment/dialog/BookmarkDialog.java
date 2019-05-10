@@ -50,7 +50,7 @@ public class BookmarkDialog extends AppCompatDialog {
 
     @Override
     public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_bookmark, container, false);
+        return inflater.inflate(R.layout.dialog_bookmark, container, true);
     }
 
     @Override

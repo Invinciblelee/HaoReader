@@ -107,7 +107,7 @@ final class HybridParser extends SourceParser<Object> {
         sourceChangedJS = true;
         sourceChangedJP = true;
         sourceChangedCS = true;
-        isJSon = Global.isJson(StringUtils.valueOf(source));
+        isJSon = Global.isJson(source);
         return source;
     }
 

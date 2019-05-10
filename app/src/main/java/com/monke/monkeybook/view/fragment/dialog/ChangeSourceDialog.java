@@ -92,7 +92,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_change_source, container, false);
+        return inflater.inflate(R.layout.dialog_change_source, container, true);
     }
 
     @Override

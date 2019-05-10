@@ -47,7 +47,7 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
     }
 
     @Override
-    public void onError(String msg) {
+    public void onMessage(String msg) {
         mView.toast(msg);
     }
 

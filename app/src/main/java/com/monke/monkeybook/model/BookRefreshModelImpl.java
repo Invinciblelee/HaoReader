@@ -157,8 +157,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                     dispatchFinishEvent();
                 }
             } else {
-                bookShelfBean.setLoading(true);
-                dispatchRefreshEvent(bookShelfBean);
+                dispatchRefreshEvent(bookShelfBean, true);
                 refreshBookShelf(bookShelfBean);
             }
         }
@@ -190,8 +189,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     }
 
     private void whenRefreshNext(BookShelfBean bookShelfBean, boolean error) {
-        bookShelfBean.setLoading(false);
-        dispatchRefreshEvent(bookShelfBean);
+        dispatchRefreshEvent(bookShelfBean, false);
         if (error) {
             errBooks.add(bookShelfBean.getBookInfoBean().getName());
         }
@@ -213,7 +211,6 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     private Observable<BookShelfBean> saveBookToShelfO(BookShelfBean bookShelfBean) {
         return Observable.create(e -> {
             if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {//移出了书架
-                BookshelfHelp.delChapterList(bookShelfBean.getNoteUrl());
                 BookshelfHelp.saveBookToShelf(bookShelfBean);
             }
             bookShelfBean.setChapterList(null, false);
@@ -228,15 +225,16 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
     }
 
-    private void dispatchRefreshEvent(BookShelfBean bookShelfBean) {
+    private void dispatchRefreshEvent(BookShelfBean bookShelfBean, boolean loading) {
         if (refreshListener != null) {
+            bookShelfBean.setLoading(loading);
             refreshListener.onRefresh(bookShelfBean);
         }
     }
 
     private void dispatchErrorEvent(String msg) {
         if (refreshListener != null) {
-            refreshListener.onError(msg);
+            refreshListener.onMessage(msg);
         }
     }
 
@@ -286,7 +284,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     public interface OnBookRefreshListener {
         void onResult(List<BookShelfBean> bookShelfBeans);
 
-        void onError(String msg);
+        void onMessage(String msg);
 
         void onRefresh(BookShelfBean bookShelfBean);
 

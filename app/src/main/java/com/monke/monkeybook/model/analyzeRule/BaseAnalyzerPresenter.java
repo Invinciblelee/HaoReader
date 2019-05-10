@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
-import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
@@ -45,11 +44,11 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return mAnalyzer.getConfig().getVariableStore();
     }
 
-    Object getCache(String key) {
+    final Object getCache(String key) {
         return mCache.get(key);
     }
 
-    void putCache(String key, Object value) {
+    final void putCache(String key, Object value) {
         mCache.put(key, value);
     }
 
@@ -94,22 +93,29 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     List<String> evalStringArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
-        final List<String> list = new ArrayList<>();
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                List<Object> resultList = Global.evalArrayScript(javaScript, this, result, getBaseURL());
-                list.addAll(ListUtils.toStringList(resultList));
+                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
+            }
+        }
+        final List<String> list = new ArrayList<>();
+        if (result instanceof List) {
+            for (Object object : (List) result) {
+                list.add(StringUtils.valueOf(object));
             }
         }
         return list;
     }
 
     List<Object> evalObjectArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
-        final List<Object> list = new ArrayList<>();
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                list.addAll(Global.evalArrayScript(javaScript, this, result, getBaseURL()));
+                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
             }
+        }
+        final List<Object> list = new ArrayList<>();
+        if (result instanceof List) {
+            list.addAll((List) result);
         }
         return list;
     }

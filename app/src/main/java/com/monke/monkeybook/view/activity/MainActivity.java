@@ -610,11 +610,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    public void recreate() {
-        super.recreate();
-    }
-
     public void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             showSnackBar("再按一次退出程序");

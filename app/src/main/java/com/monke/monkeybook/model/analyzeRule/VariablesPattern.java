@@ -28,7 +28,6 @@ final class VariablesPattern {
         }
 
         analyzePutterMap(ruleStr);
-
     }
 
     private boolean findWhere(String ruleStr, Pattern pattern) {

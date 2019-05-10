@@ -1,6 +1,7 @@
 package com.monke.monkeybook.view.fragment.dialog;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ public class AppCompatDialog extends AppCompatDialogFragment {
             return mDialogView;
         }
         ViewGroup containerView = (ViewGroup) inflater.inflate(R.layout.dialog_design_container, container, false);
-        containerView.addView(onCreateDialogContentView(inflater, containerView, savedInstanceState));
+        onCreateDialogContentView(inflater, containerView, savedInstanceState);
         mDialogView = containerView;
         return mDialogView;
     }

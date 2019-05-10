@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.widget.DialogContainerLayout;
 
 public class CheckAddShelfPop extends PopupWindow {
     private Context mContext;
@@ -33,7 +34,7 @@ public class CheckAddShelfPop extends PopupWindow {
         this.isAudioBook = isAudioBook;
         this.bookName = bookName;
         this.itemClick = itemClick;
-        view = LayoutInflater.from(mContext).inflate(R.layout.dialog_alert, null);
+        view = LayoutInflater.from(mContext).inflate(R.layout.pop_check_add_shelf, null);
         this.setContentView(view);
 
         initView();

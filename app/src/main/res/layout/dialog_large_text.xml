@@ -1,7 +1,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/AppTheme.CardView.Background"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:padding="8dp"
     android:fillViewport="true"
     android:scrollbars="none">
 
@@ -12,7 +13,6 @@
         android:autoLink="all"
         android:lineSpacingMultiplier="1.2"
         android:linksClickable="true"
-        android:padding="10dp"
         android:textColor="@color/tv_text_default" />
 
 </ScrollView>

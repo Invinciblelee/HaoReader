@@ -179,8 +179,10 @@ class DefaultContentDelegate implements ContentDelegate {
             final String url;
             if (content instanceof NativeObject) {
                 NativeObject object = (NativeObject) content;
-                name = StringUtils.valueOf(object.get("name"));
-                url = StringUtils.valueOf(object.get("url"));
+                String nameKey = StringUtils.checkBlank(getBookSource().getRuleChapterName(), "name");
+                String urlKey = StringUtils.checkBlank(getBookSource().getRuleContentUrl(), "url");
+                name = StringUtils.valueOf(object.get(nameKey));
+                url = StringUtils.valueOf(object.get(urlKey));
             } else {
                 mAnalyzer.setContent(content);
                 name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());

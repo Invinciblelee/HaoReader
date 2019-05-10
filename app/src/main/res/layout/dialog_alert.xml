@@ -1,121 +1,113 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/AppTheme.CardView.Background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/alert_dialog_spacing">
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ll_content"
+        android:id="@+id/topPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/topPanel"
+            android:id="@+id/title_template"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/title_template"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|start"
-                android:orientation="horizontal"
-                android:paddingLeft="?attr/dialogPreferredPadding"
-                android:paddingTop="@dimen/abc_dialog_padding_top_material"
-                android:paddingRight="?attr/dialogPreferredPadding"
-                tools:ignore="PrivateResource">
-
-                <androidx.appcompat.widget.DialogTitle
-                    android:id="@+id/tv_title"
-                    style="?android:attr/windowTitleStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@string/dialog_title"
-                    android:textAlignment="viewStart" />
-
-            </LinearLayout>
-
-            <android.widget.Space
-                android:id="@+id/titleDividerNoCustom"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/abc_dialog_title_divider_material"
-                android:visibility="visible"
-                tools:ignore="PrivateResource" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/contentPanel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:orientation="vertical">
-
-            <android.widget.Space
-                android:id="@+id/textSpacerNoTitle"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/abc_dialog_padding_top_material"
-                android:visibility="gone"
-                tools:ignore="PrivateResource" />
-
-            <TextView
-                android:id="@+id/tv_msg"
-                style="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="?attr/dialogPreferredPadding"
-                android:paddingRight="?attr/dialogPreferredPadding"
-                android:text="@string/app_name" />
-
-            <android.widget.Space
-                android:id="@+id/textSpacerNoButtons"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/abc_dialog_padding_top_material"
-                android:visibility="gone"
-                tools:ignore="PrivateResource" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/customPanel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"/>
-
-        <androidx.appcompat.widget.ButtonBarLayout
-            android:id="@+id/buttonsBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:layoutDirection="locale"
+            android:gravity="center_vertical|start"
             android:orientation="horizontal"
-            android:paddingLeft="12dp"
-            android:paddingTop="4dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="4dp">
+            android:paddingLeft="?attr/dialogPreferredPadding"
+            android:paddingTop="@dimen/abc_dialog_padding_top_material"
+            android:paddingRight="?attr/dialogPreferredPadding"
+            tools:ignore="PrivateResource">
 
-            <android.widget.Space
-                android:id="@+id/spacer"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+            <androidx.appcompat.widget.DialogTitle
+                android:id="@+id/tv_title"
+                style="?android:attr/windowTitleStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/dialog_title"
+                android:textAlignment="viewStart" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_cancel"
-                style="?attr/buttonBarNegativeButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_done"
-                style="?attr/buttonBarPositiveButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </androidx.appcompat.widget.ButtonBarLayout>
+        <android.widget.Space
+            android:id="@+id/titleDividerNoCustom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/abc_dialog_title_divider_material"
+            android:visibility="visible"
+            tools:ignore="PrivateResource" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/contentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:orientation="vertical">
+
+        <android.widget.Space
+            android:id="@+id/textSpacerNoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/abc_dialog_padding_top_material"
+            android:visibility="gone"
+            tools:ignore="PrivateResource" />
+
+        <TextView
+            android:id="@+id/tv_msg"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="?attr/dialogPreferredPadding"
+            android:paddingRight="?attr/dialogPreferredPadding"
+            android:text="@string/app_name" />
+
+        <android.widget.Space
+            android:id="@+id/textSpacerNoButtons"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/abc_dialog_padding_top_material"
+            android:visibility="gone"
+            tools:ignore="PrivateResource" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/customPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.ButtonBarLayout
+        android:id="@+id/buttonsBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layoutDirection="locale"
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingTop="4dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="4dp">
+
+        <android.widget.Space
+            android:id="@+id/spacer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_cancel"
+            style="?attr/buttonBarNegativeButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_done"
+            style="?attr/buttonBarPositiveButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </androidx.appcompat.widget.ButtonBarLayout>
+</LinearLayout>

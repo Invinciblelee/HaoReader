@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.MarkdownUtils;
 
+import io.reactivex.schedulers.Schedulers;
+
 public class LargeTextDialog extends AppCompatDialog {
 
     public static void show(FragmentManager fragmentManager, String text, boolean markdown) {
@@ -26,21 +28,26 @@ public class LargeTextDialog extends AppCompatDialog {
 
     @Override
     public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_large_text, container, false);
+        return inflater.inflate(R.layout.dialog_large_text, container, true);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        AppCompatTextView tvContent = findViewById(R.id.tv_text);
+        final AppCompatTextView tvContent = findViewById(R.id.tv_text);
+
         Bundle args = getArguments();
         assert args != null;
         final String text = args.getString("text");
         final boolean markdown = args.getBoolean("markdown");
 
-        if (markdown) {
-            MarkdownUtils.setText(tvContent, text);
-        } else {
-            tvContent.setText(text);
-        }
+        Schedulers.single().scheduleDirect(() -> {
+            final CharSequence string;
+            if (markdown) {
+                string = MarkdownUtils.simpleMarkdownConverter(text);
+            } else {
+                string = text;
+            }
+            view.post(() -> tvContent.setText(string));
+        });
     }
 }

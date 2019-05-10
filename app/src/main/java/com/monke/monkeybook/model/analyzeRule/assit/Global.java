@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.analyzeRule.JavaExecutor;
-import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +25,13 @@ public final class Global {
     private Global() {
     }
 
-    public static boolean isJson(String string) {
+    public static boolean isJson(Object object) {
         try {
-            GSON.fromJson(string, Object.class);
+            if (object instanceof String) {
+                GSON.fromJson((String) object, Object.class);
+            } else {
+                GSON.toJson(object);
+            }
             return true;
         } catch (Exception ignore) {
         }
@@ -40,7 +43,7 @@ public final class Global {
         final List<Object> resultList = new ArrayList<>();
         if (object instanceof List) {
             resultList.addAll((List) object);
-        } else {
+        } else if (object != null) {
             resultList.add(object);
         }
         return resultList;

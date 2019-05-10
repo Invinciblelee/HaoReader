@@ -11,6 +11,7 @@ public class MarkdownUtils {
 
     @SuppressWarnings("deprecation")
     public static CharSequence simpleMarkdownConverter(String text) {
+        if(text == null) return "";
         Pattern listPtn = Pattern.compile("^[\\-*] ");
         Pattern headPtn = Pattern.compile("^(#{1,6}) ");
         String strongemPtn = "\\*\\*\\*([^*]+)\\*\\*\\*";

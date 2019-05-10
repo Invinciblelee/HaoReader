@@ -153,7 +153,7 @@ final class AlertController {
 
     View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         if (mAlertView == null) {
-            mAlertView = inflater.inflate(R.layout.dialog_alert, container, false);
+            mAlertView = inflater.inflate(R.layout.dialog_alert, container, true);
         }
         return mAlertView;
     }

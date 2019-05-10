@@ -22,8 +22,6 @@ import java.util.Map;
 public class BookShelfBean implements Parcelable, VariableStore {
     @Transient
     public static final String LOCAL_TAG = "loc_book";
-    @Transient
-    private boolean isLoading;
 
     @Id
     private String noteUrl; //对应BookInfoBean noteUrl;
@@ -52,6 +50,8 @@ public class BookShelfBean implements Parcelable, VariableStore {
     private List<BookmarkBean> bookmarkList = new ArrayList<>();    //书签列表
     @Transient
     private boolean changeSource;
+    @Transient
+    private boolean isLoading;
 
     public BookShelfBean() {
     }

@@ -382,6 +382,8 @@ public class ReadBookControl {
         editor.apply();
     }
 
+
+
     public int getTextSize() {
         return textSize;
     }

@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -79,7 +78,6 @@ final class RulePattern {
             while (getMatcher.find()) {
                 final String group = getMatcher.group();
                 final String value = variableStore.getVariable(group.substring(6, group.length() - 1));
-                Log.e("TAG", group + "  " + value);
                 rawRule = rawRule.replace(group, value != null ? value : "");
             }
         }

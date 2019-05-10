@@ -27,7 +27,10 @@ import java.util.Map;
 
 public class AjaxWebView {
 
-    public AjaxWebView() {
+    private final AjaxHandler mHandler;
+
+    public AjaxWebView(Callback callback) {
+        mHandler = new AjaxHandler(callback);
     }
 
     private static class AjaxHandler extends Handler {
@@ -78,13 +81,13 @@ public class AjaxWebView {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    public void ajax(AjaxParams params, Callback callback) {
-        new AjaxHandler(callback).obtainMessage(AjaxHandler.MSG_AJAX_START, params)
+    public void ajax(AjaxParams params) {
+        mHandler.obtainMessage(AjaxHandler.MSG_AJAX_START, params)
                 .sendToTarget();
     }
 
-    public void sniff(AjaxParams params, Callback callback) {
-        new AjaxHandler(callback).obtainMessage(AjaxHandler.MSG_SNIFF_START, params)
+    public void sniff(AjaxParams params) {
+        mHandler.obtainMessage(AjaxHandler.MSG_SNIFF_START, params)
                 .sendToTarget();
     }
 

@@ -46,7 +46,7 @@ public class AlertDialog extends AppCompatDialog {
     }
 
     @Override
-    public View onCreateDialogView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return mAlert.onCreateView(inflater, container);
     }
 

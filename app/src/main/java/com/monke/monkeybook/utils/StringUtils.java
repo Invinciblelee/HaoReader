@@ -212,7 +212,6 @@ public class StringUtils {
         return -1;
     }
 
-
     public static String clearString(String str) {
         if (str == null) {
             return "";
@@ -341,6 +340,13 @@ public class StringUtils {
 
     public static boolean isNotBlank(String text) {
         return !isBlank(text);
+    }
+
+    public static String checkBlank(String text, String defVal) {
+        if (isBlank(text)) {
+            return defVal == null ? "" : defVal;
+        }
+        return text;
     }
 
     public static String trim(String string) {

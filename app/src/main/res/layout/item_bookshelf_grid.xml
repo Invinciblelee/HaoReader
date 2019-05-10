@@ -42,22 +42,14 @@
             app:labelSinkWidth="4dp"
             tools:ignore="SmallSp" />
 
-        <FrameLayout
-            android:id="@+id/fl_has_new"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_gravity="end">
-
-            <com.monke.monkeybook.widget.RotateLoading
-                android:id="@+id/rl_loading"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_margin="2dp"
-                android:visibility="invisible"
-                app:loadingWidth="2dp" />
-
-        </FrameLayout>
+        <com.monke.monkeybook.widget.RotateLoading
+            android:id="@+id/rl_loading"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:layout_margin="2dp"
+            android:visibility="invisible"
+            app:loadingWidth="2dp" />
     </com.monke.monkeybook.widget.CoverCardView>
 
     <androidx.appcompat.widget.AppCompatTextView

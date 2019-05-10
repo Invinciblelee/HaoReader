@@ -722,14 +722,13 @@ public class AudioBookPlayService extends Service {
     private void setAlarmTimer() {
         if (mAlertTimer == null || mAlertTimer.isShutdown()) {
             mAlertTimer = Executors.newSingleThreadScheduledExecutor();
+            mAlertTimer.scheduleAtFixedRate(() -> {
+                Intent intent = new Intent(AudioBookPlayService.this, AudioBookPlayService.class);
+                intent.setAction(ACTION_TIMER_PROGRESS);
+                intent.putExtra("minute", -1);
+                startService(intent);
+            }, 60 * 1000, 60 * 1000, TimeUnit.MILLISECONDS);
         }
-
-        mAlertTimer.scheduleAtFixedRate(() -> {
-            Intent intent = new Intent(AudioBookPlayService.this, AudioBookPlayService.class);
-            intent.setAction(ACTION_TIMER_PROGRESS);
-            intent.putExtra("minute", -1);
-            startService(intent);
-        }, 60 * 1000, 60 * 1000, TimeUnit.MILLISECONDS);
 
         sendEvent(ACTION_TIMER_PROGRESS, AudioPlayInfo.timerDown(timerUntilFinish));
         updateNotification();

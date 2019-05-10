@@ -196,8 +196,8 @@
 
     <style name="Style.Custom.Dialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFrame">@color/transparent</item>
+        <item name="android:windowContentOverlay">@color/transparent</item>
         <item name="android:windowElevation">0dp</item>
         <item name="android:windowAnimationStyle">@style/anim_dialog</item>
     </style>
