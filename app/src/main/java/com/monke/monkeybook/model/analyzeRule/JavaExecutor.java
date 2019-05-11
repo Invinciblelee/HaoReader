@@ -12,9 +12,9 @@ public interface JavaExecutor {
 
     String formatHtml(String string);
 
-    String parseResultContent(String source, String rule);
+    String parseResultContent(Object source, String rule);
 
-    String parseResultUrl(String source, String rule);
+    String parseResultUrl(Object source, String rule);
 
-    List<String> parseResultContents(String source, String rule);
+    List<String> parseResultContents(Object source, String rule);
 }

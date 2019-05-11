@@ -395,6 +395,16 @@
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="4dp"
+                android:paddingTop="12dp"
+                android:paddingRight="4dp"
+                android:paddingBottom="12dp"
+                android:text="whole"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
     </HorizontalScrollView>

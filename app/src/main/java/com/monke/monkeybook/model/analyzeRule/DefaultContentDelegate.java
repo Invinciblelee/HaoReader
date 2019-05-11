@@ -17,8 +17,6 @@ import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
 import com.monke.monkeybook.utils.StringUtils;
 
-import org.mozilla.javascript.NativeObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -124,9 +122,10 @@ class DefaultContentDelegate implements ContentDelegate {
     public List<ChapterBean> getChapters(String source) {
         final String noteUrl = getConfig().getExtras().getString("noteUrl");
 
+        final boolean allInOne = getBookSource().allInOneChapterList();
         final String ruleChapterList = getBookSource().getRealRuleChapterList();
 
-        RawResult<List<ChapterBean>> webChapterBean = getRawChaptersResult(source, ruleChapterList, noteUrl);
+        RawResult<List<ChapterBean>> webChapterBean = getRawChaptersResult(source, ruleChapterList, noteUrl, allInOne);
         List<ChapterBean> chapterList = webChapterBean.result;
 
         List<String> nextUrls = new ArrayList<>();
@@ -149,7 +148,7 @@ class DefaultContentDelegate implements ContentDelegate {
                     continue;
                 }
             }
-            webChapterBean = getRawChaptersResult(response, ruleChapterList, noteUrl);
+            webChapterBean = getRawChaptersResult(response, ruleChapterList, noteUrl, allInOne);
             chapterList.addAll(webChapterBean.result);
         }
         if (!getBookSource().reverseChapterList()) {
@@ -162,7 +161,7 @@ class DefaultContentDelegate implements ContentDelegate {
     }
 
 
-    private RawResult<List<ChapterBean>> getRawChaptersResult(String s, String ruleChapterList, String noteUrl) {
+    private RawResult<List<ChapterBean>> getRawChaptersResult(String s, String ruleChapterList, String noteUrl, boolean allInOne) {
         mAnalyzer.setContent(s);
         RawResult<List<ChapterBean>> webChapterBean = new RawResult<>();
         if (!isEmpty(getBookSource().getRuleChapterUrlNext())) {
@@ -171,17 +170,13 @@ class DefaultContentDelegate implements ContentDelegate {
         final AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
         final List<ChapterBean> chapterList = new ArrayList<>();
         while (collection.hasNext()) {
-            final Object content = collection.next();
+            mAnalyzer.setContent(collection.next());
             final String name;
             final String url;
-            if (content instanceof NativeObject) {
-                NativeObject object = (NativeObject) content;
-                String nameKey = StringUtils.checkBlank(getBookSource().getRuleChapterName(), "name");
-                String urlKey = StringUtils.checkBlank(getBookSource().getRuleContentUrl(), "url");
-                name = StringUtils.valueOf(object.get(nameKey));
-                url = StringUtils.valueOf(object.get(urlKey));
-            } else {
-                mAnalyzer.setContent(content);
+            if(allInOne){
+                name = mAnalyzer.getResultContentInternal(getBookSource().getRuleChapterName());
+                url = mAnalyzer.getResultUrlInternal(getBookSource().getRuleContentUrl());   //id
+            }else {
                 name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
                 url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
             }

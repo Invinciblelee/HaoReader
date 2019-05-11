@@ -1,9 +1,12 @@
 package com.monke.monkeybook.view.fragment.dialog;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,5 +52,11 @@ public class LargeTextDialog extends AppCompatDialog {
             }
             view.post(() -> tvContent.setText(string));
         });
+    }
+
+    @Override
+    protected void onDialogAttachWindow(@NonNull Window window) {
+        window.setGravity(Gravity.CENTER);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
     }
 }

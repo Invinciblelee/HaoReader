@@ -69,8 +69,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     @Generated(hash = 2065132802)
     public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, boolean bookSourceCacheEnabled, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl, String ruleSearchUrl,
-            String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables, String ruleBookName, String ruleBookAuthor,
-            String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+                          String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables, String ruleBookName, String ruleBookAuthor,
+                          String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -489,11 +489,30 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getRealRuleChapterList() {
-        return reverseChapterList() ? ruleChapterList.substring(1) : ruleChapterList;
+        final String chapterListRule;
+        if (allInOneChapterList()) {
+            chapterListRule = ruleChapterList.substring(7);
+        } else {
+            chapterListRule = ruleChapterList;
+        }
+        return reverseChapterList() ? chapterListRule.substring(1) : chapterListRule;
     }
 
     public boolean reverseChapterList() {
-        return !TextUtils.isEmpty(ruleChapterList) && ruleChapterList.startsWith(Patterns.RULE_REVERSE);
+        if (TextUtils.isEmpty(ruleChapterList)) {
+            return false;
+        }
+        if (allInOneChapterList()) {
+            return ruleChapterList.startsWith(Patterns.RULE_REVERSE, 7);
+        }
+        return ruleChapterList.startsWith(Patterns.RULE_REVERSE);
+    }
+
+    public boolean allInOneChapterList() {
+        if (TextUtils.isEmpty(ruleChapterList)) {
+            return false;
+        }
+        return StringUtils.startWithIgnoreCase(ruleChapterList, Patterns.RULE_ALL_IN_ONE);
     }
 
     public void setRuleChapterList(String ruleChapterList) {

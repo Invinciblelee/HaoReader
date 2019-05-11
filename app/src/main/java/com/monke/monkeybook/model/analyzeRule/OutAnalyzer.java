@@ -85,6 +85,16 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
+    public String getResultContentInternal(String rule) {
+        return getPresenter().getResultContentInternal(rule);
+    }
+
+    @Override
+    public String getResultUrlInternal(String rule) {
+        return getPresenter().getResultUrlInternal(rule);
+    }
+
+    @Override
     public List<String> getResultContents(String rule) {
         return getPresenter().getResultContents(rule);
     }

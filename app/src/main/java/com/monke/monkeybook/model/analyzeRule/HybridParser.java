@@ -94,6 +94,15 @@ final class HybridParser extends SourceParser<Object> {
     }
 
     @Override
+    void onAttachSource(Object source) {
+        sourceChangedXP = true;
+        sourceChangedJS = true;
+        sourceChangedJP = true;
+        sourceChangedCS = true;
+        isJSon = Global.isJson(source);
+    }
+
+    @Override
     String parseObject(Object source) {
         if (currentParser == null) {
             return StringUtils.valueOf(source);
@@ -103,11 +112,6 @@ final class HybridParser extends SourceParser<Object> {
 
     @Override
     Object fromObject(Object source) {
-        sourceChangedXP = true;
-        sourceChangedJS = true;
-        sourceChangedJP = true;
-        sourceChangedCS = true;
-        isJSon = Global.isJson(source);
         return source;
     }
 
@@ -117,7 +121,7 @@ final class HybridParser extends SourceParser<Object> {
     }
 
     @Override
-    List<Object> parseList(String source, Rule rule) {
+    List<Object> parseList(Object source, Rule rule) {
         return getCurrentParser(rule.getMode()).parseList(source, rule);
     }
 
@@ -127,7 +131,7 @@ final class HybridParser extends SourceParser<Object> {
     }
 
     @Override
-    String parseString(String source, Rule rule) {
+    String parseString(Object source, Rule rule) {
         return getCurrentParser(rule.getMode()).parseString(source, rule);
     }
 
@@ -137,7 +141,7 @@ final class HybridParser extends SourceParser<Object> {
     }
 
     @Override
-    String parseStringFirst(String source, Rule rule) {
+    String parseStringFirst(Object source, Rule rule) {
         return getCurrentParser(rule.getMode()).parseStringFirst(source, rule);
     }
 
@@ -147,7 +151,7 @@ final class HybridParser extends SourceParser<Object> {
     }
 
     @Override
-    List<String> parseStringList(String source, Rule rule) {
+    List<String> parseStringList(Object source, Rule rule) {
         return getCurrentParser(rule.getMode()).parseStringList(source, rule);
     }
 

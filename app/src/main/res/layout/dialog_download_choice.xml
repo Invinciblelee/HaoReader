@@ -1,139 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme.CardView.Background"
     android:layout_width="match_parent"
-    android:layout_height="185dp"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingTop="15dp"
-        android:paddingBottom="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="离线章节"
-            android:textColor="@color/tv_text_default"
-            android:textSize="18sp" />
+        android:layout_height="185dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="离线章节"
+                android:textColor="@color/tv_text_default"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="第"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="16sp"
+                    tools:ignore="RtlHardcoded" />
+
+                <EditText
+                    android:id="@+id/edt_start"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/bg_edit"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="4"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="4dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:text="章 至 第"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/edt_end"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/bg_edit"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="4"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="4dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:text="章"
+                    android:textColor="@color/tv_text_default"
+                    android:textSize="16sp"
+                    tools:ignore="RtlHardcoded" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            style="@style/Style.Line"
+            android:layout_height="0.5dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
-            <View
+            <TextView
+                android:id="@+id/btn_cancel"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_book_detail_shelf_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="取消"
+                android:textColor="@color/tv_text_default"
+                android:textSize="15sp"
+                tools:ignore="KeyboardInaccessibleWidget" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="5dp"
-                android:text="第"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp"
-                tools:ignore="RtlHardcoded" />
-
-            <EditText
-                android:id="@+id/edt_start"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/bg_edit"
-                android:inputType="number"
-                android:lines="1"
-                android:maxLength="4"
-                android:paddingLeft="5dp"
-                android:paddingTop="4dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="4dp"
-                android:textColor="@color/tv_text_default"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:text="章 至 第"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/edt_end"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/bg_edit"
-                android:inputType="number"
-                android:lines="1"
-                android:maxLength="4"
-                android:paddingLeft="5dp"
-                android:paddingTop="4dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="4dp"
-                android:textColor="@color/tv_text_default"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:text="章"
-                android:textColor="@color/tv_text_default"
-                android:textSize="16sp"
-                tools:ignore="RtlHardcoded" />
-
-            <View
+                android:id="@+id/tv_download"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_book_detail_read_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="下载"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
-
-    <View
-        style="@style/Style.Line"
-        android:layout_height="0.5dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/btn_cancel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_book_detail_shelf_bg"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="取消"
-            android:textColor="@color/tv_text_default"
-            android:textSize="15sp"
-            tools:ignore="KeyboardInaccessibleWidget" />
-
-        <TextView
-            android:id="@+id/tv_download"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_book_detail_read_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="下载"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

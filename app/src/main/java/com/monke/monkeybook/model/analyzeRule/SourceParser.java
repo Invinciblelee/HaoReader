@@ -12,27 +12,35 @@ abstract class SourceParser<S> {
 
     final void setContent(Object source) {
         mPrimitive = source;
-        mSource = fromObject(source);
+        mSource = null;
+        onAttachSource(source);
     }
 
     final S getSource() {
+        if (mSource == null) {
+            mSource = fromObject(mPrimitive);
+        }
         return mSource;
     }
 
     final String getStringSource() {
-        return parseObject(mSource);
+        return parseObject(mPrimitive);
     }
 
-    final Object getPrimitive(){
+    final Object getPrimitive() {
         return mPrimitive;
     }
 
     boolean isSourceEmpty() {
-        return mSource == null;
+        return mPrimitive == null && mSource == null;
     }
 
     final boolean isOuterBody(String rule) {
         return Patterns.RULE_BODY.equals(rule);
+    }
+
+    void onAttachSource(Object source){
+
     }
 
     abstract String parseObject(Object source);
@@ -41,18 +49,18 @@ abstract class SourceParser<S> {
 
     abstract List<Object> getList(Rule rule);
 
-    abstract List<Object> parseList(String source, Rule rule);
+    abstract List<Object> parseList(Object source, Rule rule);
 
     abstract String getString(Rule rule);
 
-    abstract String parseString(String source, Rule rule);
+    abstract String parseString(Object source, Rule rule);
 
     abstract String getStringFirst(Rule rule);
 
-    abstract String parseStringFirst(String source, Rule rule);
+    abstract String parseStringFirst(Object source, Rule rule);
 
     abstract List<String> getStringList(Rule rule);
 
-    abstract List<String> parseStringList(String source, Rule rule);
+    abstract List<String> parseStringList(Object source, Rule rule);
 
 }

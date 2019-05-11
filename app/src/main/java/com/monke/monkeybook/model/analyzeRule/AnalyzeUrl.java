@@ -13,6 +13,7 @@ import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
 
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +82,6 @@ public class AnalyzeUrl {
         String[] ruleUrlS = ruleUrl.split("@");
         if (ruleUrlS.length > 1) {
             requestMethod = RequestMethod.POST;
-            postData = generatePostData();
         } else {
             //分离get参数
             ruleUrlS = ruleUrlS[0].split("\\?");
@@ -93,10 +93,11 @@ public class AnalyzeUrl {
         generateUrlPath(ruleUrlS[0]);
         if (requestMethod != RequestMethod.DEFAULT) {
             analyzeQuery(queryStr = ruleUrlS[1]);
+            postData = generatePostData();
         }
 
         String rawUrl = getUrlWithQuery();
-        id = StringUtils.checkNull(MD5Utils.strToMd5By32(rawUrl), rawUrl);
+        id = StringUtils.checkNull(MD5Utils.strToMd5By16(rawUrl), rawUrl);
     }
 
     /**
@@ -311,10 +312,13 @@ public class AnalyzeUrl {
     @Override
     public String toString() {
         return "AnalyzeUrl{" +
-                "url='" + url + '\'' +
+                "id='" + id + '\'' +
+                ", requestUrl='" + requestUrl + '\'' +
+                ", url='" + url + '\'' +
                 ", hostUrl='" + hostUrl + '\'' +
                 ", urlPath='" + urlPath + '\'' +
                 ", queryStr='" + queryStr + '\'' +
+                ", postData=" + Arrays.toString(postData) +
                 ", queryMap=" + queryMap +
                 ", headerMap=" + headerMap +
                 ", charCode='" + charCode + '\'' +

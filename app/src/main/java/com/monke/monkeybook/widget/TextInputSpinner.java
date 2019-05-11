@@ -63,7 +63,6 @@ public class TextInputSpinner extends TextInputEditText {
         mPopup.setModal(true);
 
         setSelection(0);
-
     }
 
     public void setSelection(int position) {

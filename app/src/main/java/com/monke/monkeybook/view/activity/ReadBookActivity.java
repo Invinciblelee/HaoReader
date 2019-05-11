@@ -1649,6 +1649,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             filter.addAction(android.content.Intent.ACTION_TIME_TICK);
             filter.addAction(android.content.Intent.ACTION_BATTERY_CHANGED);
             registerReceiver(batInfoReceiver, filter);
+            if(readStatusBar != null){
+                readStatusBar.updateTime();
+            }
         }
 
     }

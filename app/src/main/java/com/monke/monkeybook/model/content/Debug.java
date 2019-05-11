@@ -229,7 +229,7 @@ public class Debug {
                         printLog("●成功获取正文页» " + bookContentBean.getDurChapterUrl());
                         final String content =  bookContentBean.getDurChapterContent();
                         if(content != null && content.length() > 3000){
-                            printLog("●章节内容» \n" + content.substring(0, 3000) + "\u00B7\u00B7\u00B7");
+                            printLog("●章节内容» " + content.substring(0, 3000) + "\u00B7\u00B7\u00B7");
                         }else {
                             printLog("●章节内容» " + content);
                         }

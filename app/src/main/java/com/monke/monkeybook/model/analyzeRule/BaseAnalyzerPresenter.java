@@ -9,6 +9,10 @@ import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
+import org.jsoup.nodes.Element;
+import org.mozilla.javascript.NativeObject;
+import org.seimicrawler.xpath.JXNode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,16 +54,106 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     final Object getCache(String key) {
-        if (!getBookSource().getBookSourceCacheEnabled()) {
-            return null;
+        if (getBookSource().getBookSourceCacheEnabled()) {
+            return mCache.get(key);
         }
-        return mCache.get(key);
+        return null;
     }
 
     final void putCache(String key, Object value) {
         if (getBookSource().getBookSourceCacheEnabled()) {
             mCache.put(key, value);
         }
+    }
+
+    final String evalStringScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
+        if (!rulePattern.javaScripts.isEmpty()) {
+            for (String javaScript : rulePattern.javaScripts) {
+                result = Global.evalObjectScript(javaScript, this, result, getBaseURL());
+            }
+        }
+        return StringUtils.valueOf(result);
+    }
+
+    final List<String> evalStringArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
+        if (!rulePattern.javaScripts.isEmpty()) {
+            for (String javaScript : rulePattern.javaScripts) {
+                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
+            }
+        }
+        final List<String> list = new ArrayList<>();
+        if (result instanceof List) {
+            for (Object object : (List) result) {
+                list.add(StringUtils.valueOf(object));
+            }
+        }
+        return list;
+    }
+
+    final List<Object> evalObjectArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
+        if (!rulePattern.javaScripts.isEmpty()) {
+            for (String javaScript : rulePattern.javaScripts) {
+                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
+            }
+        }
+        final List<Object> list = new ArrayList<>();
+        if (result instanceof List) {
+            list.addAll((List) result);
+        }
+        return list;
+    }
+
+    final void evalReplace(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
+        if (!isEmpty(rulePattern.replaceRegex)) {
+            ListIterator<String> iterator = list.listIterator();
+            while (iterator.hasNext()) {
+                String string = iterator.next();
+                iterator.set(string.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
+            }
+        }
+    }
+
+    final void processResultContents(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
+        if (!rulePattern.javaScripts.isEmpty()) {
+            ListIterator<String> iterator = result.listIterator();
+            while (iterator.hasNext()) {
+                iterator.set(evalStringScript(iterator.next(), rulePattern));
+            }
+        }
+
+        evalReplace(result, rulePattern);
+    }
+
+    final String processResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
+        result = evalStringScript(result, rulePattern);
+
+        result = evalReplace(result, rulePattern);
+
+        return formatHtml(result);
+    }
+
+
+    final String processResultUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
+        result = evalStringScript(result, rulePattern);
+
+        result = evalJoinUrl(result, rulePattern);
+        return result;
+    }
+
+    final String evalReplace(@NonNull String result, @NonNull RulePattern rulePattern) {
+        if (!isEmpty(rulePattern.replaceRegex)) {
+            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
+        }
+        return result;
+    }
+
+    final String evalJoinUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
+        result = evalReplace(result, rulePattern);
+
+        if (!isEmpty(result)) {
+            result = URLUtils.getAbsoluteURL(getBaseURL(), result);
+        }
+        return result;
     }
 
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
@@ -93,94 +187,38 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return pattern;
     }
 
-    String evalStringScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
-        if (!rulePattern.javaScripts.isEmpty()) {
-            for (String javaScript : rulePattern.javaScripts) {
-                result = Global.evalObjectScript(javaScript, this, result, getBaseURL());
-            }
+    @Override
+    public String getResultContentInternal(String rule) {
+        final Object object = getParser().getPrimitive();
+        if (object instanceof NativeObject) {
+            return StringUtils.valueOf(((NativeObject) object).get(rule));
+        } else if (object instanceof Element) {
+            Element element = (Element) object;
+            Element find = element.selectFirst(rule);
+            return StringUtils.checkNull(find == null ? null : find.text(), element.text());
+        } else if (object instanceof JXNode) {
+            return StringUtils.valueOf(((JXNode) object).selOne(rule));
         }
-        return StringUtils.valueOf(result);
+        return getResultContent(rule);
     }
 
-    List<String> evalStringArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
-        if (!rulePattern.javaScripts.isEmpty()) {
-            for (String javaScript : rulePattern.javaScripts) {
-                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
-            }
+    @Override
+    public String getResultUrlInternal(String rule) {
+        final Object object = getParser().getPrimitive();
+        final String result;
+        if (object instanceof NativeObject) {
+            result = StringUtils.valueOf(((NativeObject) object).get(rule));
+        } else if (object instanceof Element) {
+            result = ((Element) object).attr(rule);
+        } else if (object instanceof JXNode) {
+            result = StringUtils.valueOf(((JXNode) object).selOne(rule));
+        } else {
+            result = null;
         }
-        final List<String> list = new ArrayList<>();
-        if (result instanceof List) {
-            for (Object object : (List) result) {
-                list.add(StringUtils.valueOf(object));
-            }
+        if (isEmpty(result)) {
+            return URLUtils.getAbsoluteURL(getBaseURL(), result);
         }
-        return list;
-    }
-
-    List<Object> evalObjectArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
-        if (!rulePattern.javaScripts.isEmpty()) {
-            for (String javaScript : rulePattern.javaScripts) {
-                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
-            }
-        }
-        final List<Object> list = new ArrayList<>();
-        if (result instanceof List) {
-            list.addAll((List) result);
-        }
-        return list;
-    }
-
-    void evalReplace(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            ListIterator<String> iterator = list.listIterator();
-            while (iterator.hasNext()) {
-                String string = iterator.next();
-                iterator.set(string.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
-            }
-        }
-    }
-
-    void processResultContents(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
-        if (!rulePattern.javaScripts.isEmpty()) {
-            ListIterator<String> iterator = result.listIterator();
-            while (iterator.hasNext()) {
-                iterator.set(evalStringScript(iterator.next(), rulePattern));
-            }
-        }
-
-        evalReplace(result, rulePattern);
-    }
-
-    String processResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
-        result = evalStringScript(result, rulePattern);
-
-        result = evalReplace(result, rulePattern);
-
-        return formatHtml(result);
-    }
-
-
-    String processResultUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
-        result = evalStringScript(result, rulePattern);
-
-        result = evalJoinUrl(result, rulePattern);
-        return result;
-    }
-
-    String evalReplace(@NonNull String result, @NonNull RulePattern rulePattern) {
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        return result;
-    }
-
-    String evalJoinUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
-        result = evalReplace(result, rulePattern);
-
-        if (!isEmpty(result)) {
-            result = URLUtils.getAbsoluteURL(getBaseURL(), result);
-        }
-        return result;
+        return getResultUrl(rule);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

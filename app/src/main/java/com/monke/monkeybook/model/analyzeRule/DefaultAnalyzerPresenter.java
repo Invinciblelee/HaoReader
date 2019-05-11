@@ -18,6 +18,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return "";
         }
+
         final RulePatterns rulePatterns = fromRule(rule.trim(), false);
         final StringBuilder builder = new StringBuilder();
         for (RulePattern pattern : rulePatterns.patterns) {
@@ -56,6 +57,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return "";
         }
+
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
@@ -123,7 +125,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
 
 
     @Override
-    public String parseResultContent(String source, String rule) {
+    public String parseResultContent(Object source, String rule) {
         if (source == null || isEmpty(rule)) {
             return "";
         }
@@ -152,7 +154,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public String parseResultUrl(String source, String rule) {
+    public String parseResultUrl(Object source, String rule) {
         if (source == null || isEmpty(rule)) {
             return "";
         }
@@ -175,7 +177,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public List<String> parseResultContents(String source, String rule) {
+    public List<String> parseResultContents(Object source, String rule) {
         if (source == null || isEmpty(rule)) {
             return new ArrayList<>();
         }

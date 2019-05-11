@@ -28,16 +28,13 @@ final class JsonParser extends SourceParser<ReadContext> {
             return "";
         }
 
-        if (source instanceof String) {
-            return (String) source;
-        }
-
         final ReadContext context = fromObject(source);
         Object json = context.json();
         if (json instanceof List || json instanceof Map) {
             return context.jsonString();
         }
-        return json.toString();
+
+        return StringUtils.valueOf(json);
     }
 
     @Override
@@ -63,7 +60,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     @Override
-    List<Object> parseList(String source, Rule rule) {
+    List<Object> parseList(Object source, Rule rule) {
         String ruleStr = rule.getRule();
         return parseList(fromObject(source), ruleStr);
     }
@@ -95,7 +92,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     @Override
-    String parseString(String source, Rule rule) {
+    String parseString(Object source, Rule rule) {
         String ruleStr = rule.getRule();
         if (TextUtils.isEmpty(ruleStr)) {
             return "";
@@ -109,7 +106,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     @Override
-    String parseStringFirst(String source, Rule rule) {
+    String parseStringFirst(Object source, Rule rule) {
         return parseString(source, rule);
     }
 
@@ -157,7 +154,7 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     @Override
-    List<String> parseStringList(String source, Rule rule) {
+    List<String> parseStringList(Object source, Rule rule) {
         String ruleStr = rule.getRule();
         if (TextUtils.isEmpty(ruleStr)) {
             return ListUtils.mutableList();

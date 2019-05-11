@@ -1,18 +1,26 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/AppTheme.CardView.Background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp"
-    android:fillViewport="true"
-    android:scrollbars="none">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoLink="all"
-        android:lineSpacingMultiplier="1.2"
-        android:linksClickable="true"
-        android:textColor="@color/tv_text_default" />
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="8dp"
+        android:scrollbars="none">
 
-</ScrollView>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:lineSpacingMultiplier="1.2"
+            android:linksClickable="true"
+            android:textColor="@color/tv_text_default" />
+
+    </ScrollView>
+
+</androidx.cardview.widget.CardView>
+
+

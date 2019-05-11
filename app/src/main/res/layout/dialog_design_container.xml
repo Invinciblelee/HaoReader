@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.DialogContainerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AppTheme.CardView.Background"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="@dimen/alert_dialog_spacing"
+    android:background="@color/transparent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>

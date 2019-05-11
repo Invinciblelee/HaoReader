@@ -84,7 +84,6 @@ public class AppCompatDialog extends AppCompatDialogFragment {
 
     protected void onDialogAttachWindow(@NonNull Window window) {
         window.setGravity(Gravity.CENTER);
-        int width = getResources().getDisplayMetrics().widthPixels - getResources().getDimensionPixelSize(R.dimen.alert_dialog_spacing) * 2;
-        window.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 }
