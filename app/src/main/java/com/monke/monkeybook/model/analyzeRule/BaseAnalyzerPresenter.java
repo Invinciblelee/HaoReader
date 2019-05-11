@@ -209,7 +209,9 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         if (object instanceof NativeObject) {
             result = StringUtils.valueOf(((NativeObject) object).get(rule));
         } else if (object instanceof Element) {
-            result = ((Element) object).attr(rule);
+            Element element = (Element) object;
+            Element find = element.selectFirst(rule);
+            result = StringUtils.checkNull(find == null ? null : find.text(), element.attr(rule));
         } else if (object instanceof JXNode) {
             result = StringUtils.valueOf(((JXNode) object).selOne(rule));
         } else {
