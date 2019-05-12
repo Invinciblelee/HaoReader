@@ -19,7 +19,8 @@
         android:focusable="true"
         app:cardBackgroundColor="@color/card_background"
         app:cardCornerRadius="6dp"
-        app:cardElevation="10dp">
+        app:cardElevation="10dp"
+        app:cardPreventCornerOverlap="true">
 
 
         <RelativeLayout
@@ -32,8 +33,7 @@
                 android:layout_height="140dp"
                 app:arc_cropDirection="cropInside"
                 app:arc_height="@dimen/book_detail_arc_height"
-                app:arc_position="bottom"
-                tools:visibility="invisible">
+                app:arc_position="bottom">
 
 
                 <androidx.appcompat.widget.AppCompatImageView

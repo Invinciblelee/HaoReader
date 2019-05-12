@@ -236,7 +236,7 @@ class ChapterProvider {
 
     private void ensureExecutor() {
         if (mExecutor == null || mExecutor.isShutdown()) {
-            mExecutor = Executors.newFixedThreadPool(8);
+            mExecutor = Executors.newFixedThreadPool(6);
             mScheduler = Schedulers.from(mExecutor);
         }
     }

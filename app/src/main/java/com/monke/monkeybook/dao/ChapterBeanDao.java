@@ -32,6 +32,7 @@ public class ChapterBeanDao extends AbstractDao<ChapterBean, String> {
         public final static Property Tag = new Property(5, String.class, "tag", false, "TAG");
         public final static Property Start = new Property(6, Integer.class, "start", false, "START");
         public final static Property End = new Property(7, Integer.class, "end", false, "END");
+        public final static Property NextChapterUrl = new Property(8, String.class, "nextChapterUrl", false, "NEXT_CHAPTER_URL");
     }
 
 
@@ -54,7 +55,8 @@ public class ChapterBeanDao extends AbstractDao<ChapterBean, String> {
                 "\"DUR_CHAPTER_PLAY_URL\" TEXT," + // 4: durChapterPlayUrl
                 "\"TAG\" TEXT," + // 5: tag
                 "\"START\" INTEGER," + // 6: start
-                "\"END\" INTEGER);"); // 7: end
+                "\"END\" INTEGER," + // 7: end
+                "\"NEXT_CHAPTER_URL\" TEXT);"); // 8: nextChapterUrl
     }
 
     /** Drops the underlying database table. */
@@ -106,6 +108,11 @@ public class ChapterBeanDao extends AbstractDao<ChapterBean, String> {
         if (end != null) {
             stmt.bindLong(8, end);
         }
+ 
+        String nextChapterUrl = entity.getNextChapterUrl();
+        if (nextChapterUrl != null) {
+            stmt.bindString(9, nextChapterUrl);
+        }
     }
 
     @Override
@@ -151,6 +158,11 @@ public class ChapterBeanDao extends AbstractDao<ChapterBean, String> {
         if (end != null) {
             stmt.bindLong(8, end);
         }
+ 
+        String nextChapterUrl = entity.getNextChapterUrl();
+        if (nextChapterUrl != null) {
+            stmt.bindString(9, nextChapterUrl);
+        }
     }
 
     @Override
@@ -168,7 +180,8 @@ public class ChapterBeanDao extends AbstractDao<ChapterBean, String> {
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // durChapterPlayUrl
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // tag
             cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // start
-            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7) // end
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // end
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // nextChapterUrl
         );
         return entity;
     }
@@ -183,6 +196,7 @@ public class ChapterBeanDao extends AbstractDao<ChapterBean, String> {
         entity.setTag(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setStart(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
         entity.setEnd(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setNextChapterUrl(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
      }
     
     @Override

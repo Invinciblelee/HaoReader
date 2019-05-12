@@ -153,7 +153,7 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     private static void incrementSourceWeight(String tag, long elapsedTime) {
-        Schedulers.single().createWorker().schedule(() -> {
+        Schedulers.io().createWorker().schedule(() -> {
             BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
             if (bookSourceBean != null && elapsedTime < 10000) {
                 bookSourceBean.increaseWeight((int) (10000 / (1000 + elapsedTime)));
@@ -163,7 +163,7 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     private static void decrementSourceWeight(String tag) {
-        Schedulers.single().createWorker().schedule(() -> {
+        Schedulers.io().createWorker().schedule(() -> {
             BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
             if (sourceBean != null) {
                 sourceBean.increaseWeight(-100);
@@ -173,7 +173,7 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     private static void saveData(List<SearchBookBean> searchBookBeans) {
-        Schedulers.single().createWorker().schedule(() ->
+        Schedulers.io().createWorker().schedule(() ->
                 DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().insertOrReplaceInTx(searchBookBeans));
     }
 

@@ -34,14 +34,12 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     private Integer start;
     //章节内容在文章中的终止位置(本地)
     private Integer end;
-    @Transient
-    @Expose
     private String nextChapterUrl;
 
 
-    @Generated(hash = 1104052855)
-    public ChapterBean(String noteUrl, Integer durChapterIndex, String durChapterUrl,
-                       String durChapterName, String durChapterPlayUrl, String tag, Integer start, Integer end) {
+    @Generated(hash = 126788321)
+    public ChapterBean(String noteUrl, Integer durChapterIndex, String durChapterUrl, String durChapterName,
+            String durChapterPlayUrl, String tag, Integer start, Integer end, String nextChapterUrl) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
@@ -50,6 +48,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
         this.tag = tag;
         this.start = start;
         this.end = end;
+        this.nextChapterUrl = nextChapterUrl;
     }
 
     public ChapterBean() {
@@ -63,6 +62,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
             durChapterIndex = in.readInt();
         }
         durChapterUrl = in.readString();
+        nextChapterUrl = in.readString();
         durChapterPlayUrl = in.readString();
         durChapterName = in.readString();
         tag = in.readString();
@@ -88,6 +88,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
             dest.writeInt(durChapterIndex);
         }
         dest.writeString(durChapterUrl);
+        dest.writeString(nextChapterUrl);
         dest.writeString(durChapterPlayUrl);
         dest.writeString(durChapterName);
         dest.writeString(tag);
