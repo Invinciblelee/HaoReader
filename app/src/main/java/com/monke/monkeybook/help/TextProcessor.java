@@ -7,7 +7,12 @@ import com.monke.monkeybook.utils.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChapterHelp {
+/**
+ * Created by GKF on 2017/12/27.
+ * 去除空格等
+ */
+
+public class TextProcessor {
 
     private static final String[] CHAPTER_PATTERNS = new String[]{
             "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节回])[、，。　：:.\\s]*",
@@ -16,7 +21,7 @@ public class ChapterHelp {
 
     private static final String SPECIAL_PATTERN = "第.*?[卷篇集].*?第.*[章节回].*?";
 
-    private ChapterHelp() {
+    private TextProcessor() {
     }
 
     public static int guessChapterNum(String name) {
@@ -41,5 +46,30 @@ public class ChapterHelp {
         String halfString = StringUtils.fullToHalf(chapterName);
         return StringUtils.trim(halfString.replaceAll("\\s+", " "));
     }
+
+    public static String formatBookName(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+
+        return StringUtils.trim(str.replace("&nbsp;", "")
+                .replace(":", "：")
+                .replace(",", "，")
+                .replaceAll("\\s+", " ")
+                .replaceAll("[?？!！。~]+", ""))
+                .replaceAll("([\\[【（(].*[)）】\\]])", "");
+    }
+
+    public static String formatAuthorName(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+
+        return StringUtils.trim(str.replace("&nbsp;", "")
+                .replaceAll("\\s+", " ")
+                .replaceAll("作.*?者", "")
+                .replaceAll("[?？!！。~：:()（）【】]+", ""));
+    }
+
 
 }

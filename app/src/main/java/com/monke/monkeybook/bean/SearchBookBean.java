@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.monke.monkeybook.help.ChapterHelp;
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.utils.ObjectsCompat;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -188,12 +188,12 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public void setLastChapter(String lastChapter) {
-        this.lastChapter = ChapterHelp.formatChapterName(lastChapter);
+        this.lastChapter = lastChapter;
     }
 
     public int getLastChapterNum() {
         if (this.lastChapterNum == 0) {
-            this.lastChapterNum = ChapterHelp.guessChapterNum(lastChapter);
+            this.lastChapterNum = TextProcessor.guessChapterNum(lastChapter);
         }
         return lastChapterNum;
     }
@@ -356,7 +356,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     public void putVariableMap(Map<String, String> variableMap) {
         variableStore.putVariableMap(variableMap);
         String variableString = variableStore.getVariableString();
-        if(variableString != null){
+        if (variableString != null) {
             this.variableString = variableString;
         }
     }

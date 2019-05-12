@@ -18,8 +18,8 @@ import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.ChapterHelp;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
@@ -67,7 +67,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(getAdapter() != null) {
+        if (getAdapter() != null) {
             outState.putInt("durIndex", getAdapter().getIndex());
         }
     }
@@ -118,7 +118,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
         if (bookShelf != null && tvChapterInfo != null) {
             final int durChapter = bookShelf.getDurChapter();
             getAdapter().upChapterIndex(durChapter);
-            String durChapterName = ChapterHelp.formatChapterName(bookShelf.getDurChapterName());
+            String durChapterName = TextProcessor.formatChapterName(bookShelf.getDurChapterName());
             if (getAdapter().getItemCount() == 0) {
                 tvChapterInfo.setText(durChapterName);
             } else {

@@ -10,8 +10,8 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
@@ -55,9 +55,9 @@ class DefaultContentDelegate implements ContentDelegate {
             item.setOrigin(getConfig().getName());
             item.setBookType(getBookSource().getBookSourceType());
             item.setKind(StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind())));
-            item.setLastChapter(StringUtils.trim(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter())));
-            item.setName(FormatWebText.getBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName())));
-            item.setAuthor(FormatWebText.getAuthor(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor())));
+            item.setLastChapter(TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter())));
+            item.setName(TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName())));
+            item.setAuthor(TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor())));
             item.setNoteUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl()));
             item.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
             item.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl()));
@@ -89,10 +89,10 @@ class DefaultContentDelegate implements ContentDelegate {
             bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleCoverUrl()));
         }
         if (isEmpty(bookInfoBean.getName())) {
-            bookInfoBean.setName(FormatWebText.getBookName(mAnalyzer.getResultContent(getBookSource().getRuleBookName())));
+            bookInfoBean.setName(TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleBookName())));
         }
         if (isEmpty(bookInfoBean.getAuthor())) {
-            bookInfoBean.setAuthor(FormatWebText.getAuthor(mAnalyzer.getResultContent(getBookSource().getRuleBookAuthor())));
+            bookInfoBean.setAuthor(TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleBookAuthor())));
         }
 
         if (isEmpty(bookInfoBean.getIntroduce())) {
@@ -107,7 +107,7 @@ class DefaultContentDelegate implements ContentDelegate {
         }
 
         if (isEmpty(book.getLastChapterName())) {
-            book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter()));
+            book.setLastChapterName(TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter())));
         }
 
         bookInfoBean.setNoteUrl(getConfig().getBaseURL());   //id
