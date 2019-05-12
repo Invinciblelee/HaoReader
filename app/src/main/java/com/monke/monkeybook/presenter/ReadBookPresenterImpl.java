@@ -154,7 +154,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     bookShelf.upDurChapterName();
                     bookShelf.upLastChapterName();
                 }
-                if(inBookShelf()) {
+                if (inBookShelf()) {
                     DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelf);
                 }
                 e.onNext(bookShelf);

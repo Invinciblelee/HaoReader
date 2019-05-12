@@ -38,16 +38,8 @@ public class ChapterHelp {
             return "";
         }
 
-        String halfString = StringUtils.fullToHalf(chapterName.trim());
-        return FormatWebText.trim(halfString.replaceAll(" +", " "));
-    }
-
-    public String getPureChapterName(String chapterName) {
-        return chapterName == null ? ""
-                : StringUtils.fullToHalf(chapterName).replaceAll("\\s", "")
-                .replaceAll("^第.*?章|[(\\[][^()\\[\\]]{2,}[)\\]]$", "")
-                .replaceAll("[^\\w\\u4E00-\\u9FEF〇\\u3400-\\u4DBF\\u20000-\\u2A6DF\\u2A700-\\u2EBEF]", "");
-        // 所有非字母数字中日韩文字 CJK区+扩展A-F区
+        String halfString = StringUtils.fullToHalf(chapterName);
+        return StringUtils.trim(halfString.replaceAll("\\s+", " "));
     }
 
 }

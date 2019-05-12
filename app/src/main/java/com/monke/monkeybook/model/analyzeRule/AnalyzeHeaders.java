@@ -1,9 +1,9 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -48,7 +48,7 @@ public class AnalyzeHeaders {
     }
 
     private static String getDefaultUserAgent() {
-        return AppConfigHelper.get().getString(MApplication.getInstance().getString(R.string.pk_user_agent),
-                MApplication.getInstance().getString(R.string.pv_user_agent));
+        return AppConfigHelper.get().getString(ContextHolder.getContext().getString(R.string.pk_user_agent),
+                ContextHolder.getContext().getString(R.string.pv_user_agent));
     }
 }

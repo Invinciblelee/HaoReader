@@ -9,12 +9,12 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.content.DefaultModel;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
-import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,8 +177,8 @@ public class WebBookModel implements IWebBookModel {
     private Observable<BookContentBean> saveChapterInfo(BookInfoBean bookInfo, BookContentBean bookContentBean) {
         return Observable.create(e -> {
             if (bookContentBean.getRight()) {
-                if (BookshelfHelp.saveChapterInfo(BookshelfHelp.getCacheFolderPath(bookInfo),
-                        BookshelfHelp.getCacheFileName(bookContentBean),
+                if (ChapterContentHelp.saveChapterInfo(ChapterContentHelp.getCacheFolderPath(bookInfo),
+                        ChapterContentHelp.getCacheFileName(bookContentBean),
                         bookContentBean.getDurChapterContent())) {
                     e.onNext(bookContentBean);
                     e.onComplete();

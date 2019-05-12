@@ -19,6 +19,7 @@ import com.jayway.jsonpath.Option;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.activity.MainActivity;
@@ -35,15 +36,11 @@ public class MApplication extends Application {
     public final static String channelIdReadAloud = "channel_read_aloud";
     public final static String channelIdAudioBook = "channel_audio_book";
 
-    private static MApplication instance;
     private static String versionName;
     private static int versionCode;
 
     private HttpProxyCacheServer proxyCacheServer;
 
-    public static MApplication getInstance() {
-        return instance;
-    }
 
     public static int getVersionCode() {
         return versionCode;
@@ -73,7 +70,6 @@ public class MApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
 
         try {
             versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
@@ -95,6 +91,8 @@ public class MApplication extends Application {
                 throwable.printStackTrace();
             }
         });
+
+        ContextHolder.initialize(this);
 
         CrashReport.initCrashReport(getApplicationContext(), Constant.BUGLY_APP_ID, DEBUG);
 

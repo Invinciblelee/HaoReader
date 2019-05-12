@@ -7,13 +7,12 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.core.util.ObjectsCompat;
 
-import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.help.ChapterHelp;
+import com.google.gson.annotations.Expose;
+import com.monke.monkeybook.help.ChapterContentHelp;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Objects;
@@ -36,12 +35,13 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     //章节内容在文章中的终止位置(本地)
     private Integer end;
     @Transient
+    @Expose
     private String nextChapterUrl;
 
 
     @Generated(hash = 1104052855)
     public ChapterBean(String noteUrl, Integer durChapterIndex, String durChapterUrl,
-            String durChapterName, String durChapterPlayUrl, String tag, Integer start, Integer end) {
+                       String durChapterName, String durChapterPlayUrl, String tag, Integer start, Integer end) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;
@@ -152,7 +152,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     }
 
     public Boolean getHasCache(BookInfoBean bookInfoBean) {
-        return BookshelfHelp.isChapterCached(bookInfoBean, this);
+        return ChapterContentHelp.isChapterCached(bookInfoBean, this);
     }
 
     public String getTag() {

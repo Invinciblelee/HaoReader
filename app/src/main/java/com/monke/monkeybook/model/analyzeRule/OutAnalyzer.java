@@ -100,6 +100,11 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
+    public List<String> getResultUrls(String rule) {
+        return getPresenter().getResultUrls(rule);
+    }
+
+    @Override
     public Map<String, String> getVariableMap(String rule, int flag) {
         return getPresenter().getVariableMap(rule, flag);
     }

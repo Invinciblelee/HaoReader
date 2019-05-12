@@ -1,6 +1,7 @@
 package com.monke.monkeybook.presenter;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -10,11 +11,11 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookRefreshModelImpl;
 import com.monke.monkeybook.presenter.contract.BookListContract;
@@ -50,7 +51,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public int getBookshelfPx() {
-        String bookPx = AppConfigHelper.get().getString(MApplication.getInstance().getString(R.string.pk_bookshelf_px), "0");
+        String bookPx = AppConfigHelper.get().getString(ContextHolder.getContext().getString(R.string.pk_bookshelf_px), "0");
         return bookPx == null ? 0 : Integer.parseInt(bookPx);
     }
 
@@ -61,7 +62,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public boolean getNeedAnim() {
-        return AppConfigHelper.get().getBoolean(MApplication.getInstance().getString(R.string.pk_bookshelf_anim), false);
+        return AppConfigHelper.get().getBoolean(ContextHolder.getContext().getString(R.string.pk_bookshelf_anim), false);
     }
 
     @Override

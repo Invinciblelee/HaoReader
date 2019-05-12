@@ -173,10 +173,10 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     public void updateUI(List<FindKindGroupBean> group) {
         if (group.size() > 0) {
             tvEmpty.setVisibility(View.GONE);
-            adapter.resetDataS(group);
         } else {
             tvEmpty.setVisibility(View.VISIBLE);
         }
+        adapter.resetDataS(group);
     }
 
     @Override

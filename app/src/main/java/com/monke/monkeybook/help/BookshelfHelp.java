@@ -1,33 +1,36 @@
 package com.monke.monkeybook.help;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.monke.monkeybook.MApplication;
-import com.monke.monkeybook.bean.BookContentBean;
+import com.google.gson.reflect.TypeToken;
+import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookmarkBean;
 import com.monke.monkeybook.bean.ChapterBean;
-import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookInfoBeanDao;
 import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.BookmarkBeanDao;
 import com.monke.monkeybook.dao.ChapterBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.service.DownloadService;
+import com.monke.monkeybook.utils.MD5Utils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DecimalFormat;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
+
+import static com.monke.monkeybook.help.ChapterContentHelp.getCacheFolderPath;
+import static com.monke.monkeybook.help.ChapterContentHelp.getChapterFolderName;
 
 /**
  * Created by GKF on 2018/1/18.
@@ -36,82 +39,8 @@ import java.util.Locale;
 
 public class BookshelfHelp {
 
-    public static String getCacheFolderPath(DownloadBookBean book) {
-        return getChapterFolderName(book.getName(), book.getAuthor()) + File.separator + formatFileName(book.getTag()) + File.separator;
-    }
-
-    public static String getCacheFolderPath(BookInfoBean book) {
-        return getChapterFolderName(book.getName(), book.getAuthor()) + File.separator + formatFileName(book.getTag()) + File.separator;
-    }
-
-    public static String getCacheFileName(ChapterBean chapter) {
-        return String.format(Locale.getDefault(), "%d-%s", chapter.getDurChapterIndex(), chapter.getDurChapterName());
-    }
-
-    public static String getCacheFileName(BookContentBean content) {
-        return String.format(Locale.getDefault(), "%d-%s", content.getDurChapterIndex(), content.getDurChapterName());
-    }
-
-    public static String getChapterFolderName(String name, String author) {
-        return formatFileName(String.format(Locale.getDefault(), "%s(%s)", name, author));
-    }
-
-    public static boolean isChapterCached(DownloadBookBean book, ChapterBean chapter) {
-        return isChapterCached(getCacheFolderPath(book), getCacheFileName(chapter));
-    }
-
-    public static boolean isChapterCached(BookInfoBean book, ChapterBean chapter) {
-        return isChapterCached(getCacheFolderPath(book), getCacheFileName(chapter));
-    }
-
-    /**
-     * 根据文件名判断是否被缓存过 (因为可能数据库显示被缓存过，但是文件中却没有的情况，所以需要根据文件判断是否被缓存过)
-     */
-    // be careful to use this method, the storage path (folderName) has been changed
-    private static boolean isChapterCached(String folderName, String fileName) {
-        File file = new File(Constant.BOOK_CACHE_PATH + folderName, formatFileName(fileName) + FileHelp.SUFFIX_NB);
-        return file.exists();
-    }
-
-    /**
-     * 删除章节文件
-     */
-    public static void delChapter(String folderName, String fileName) {
-        FileHelp.deleteFile(Constant.BOOK_CACHE_PATH + folderName
-                + File.separator + formatFileName(fileName) + FileHelp.SUFFIX_NB);
-    }
-
-    /**
-     * 存储章节
-     */
-    public static boolean saveChapterInfo(String folderName, String fileName, String content) {
-        if (content == null) {
-            return false;
-        }
-        File file = getBookFile(folderName, formatFileName(fileName));
-        //获取流并存储
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(content);
-            writer.flush();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * 创建或获取存储文件
-     */
-    public static File getBookFile(String folderName, String fileName) {
-        return FileHelp.getFile(Constant.BOOK_CACHE_PATH + folderName, formatFileName(fileName) + FileHelp.SUFFIX_NB);
-    }
-
-    private static String formatFileName(String fileName) {
-        return fileName.replace("/", "")
-                .replace(":", "")
-                .replace(".", "");
-    }
+    private static final Type CHAPTER_LIST = new TypeToken<List<ChapterBean>>() {
+    }.getType();
 
     public static List<BookShelfBean> queryAllBook() {
         List<BookShelfBean> bookShelfList = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
@@ -190,7 +119,7 @@ public class BookshelfHelp {
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().deleteByKey(bookShelfBean.getBookInfoBean().getNoteUrl());
         DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(bookShelfBean.getChapterList());
         //如果正在下载，则移除任务
-        DownloadService.removeDownload(MApplication.getInstance(), bookShelfBean.getNoteUrl());
+        DownloadService.removeDownload(ContextHolder.getContext(), bookShelfBean.getNoteUrl());
         cleanBookCache(bookShelfBean);
     }
 
@@ -201,12 +130,10 @@ public class BookshelfHelp {
         }
     }
 
-
     public static void delChapterList(String noteUrl) {
         DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
                 .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
                 .buildDelete().executeDeleteWithoutDetachingEntities();
-
     }
 
     public static boolean hasCache(BookShelfBean bookShelfBean) {
@@ -232,7 +159,7 @@ public class BookshelfHelp {
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().insertOrReplace(bookShelfBean.getBookInfoBean());
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelfBean);
         if (!bookShelfBean.realChapterListEmpty()) {
-            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplaceInTx(bookShelfBean.getChapterList());
+            saveChapters(bookShelfBean.getNoteUrl(), bookShelfBean.getChapterList());
         }
     }
 
@@ -271,10 +198,43 @@ public class BookshelfHelp {
     }
 
     public static List<ChapterBean> queryChapterList(String noteUrl) {
-        return DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
-                .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
-                .build()
-                .list();
+        if (chaptersUseDiskCache()) {
+            try {
+                File file = new File(FileHelp.getCachePath(), getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
+                if (file.exists()) {
+                    return Global.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
+                }
+            } catch (Exception ignore) {
+            }
+            return new ArrayList<>();
+        } else {
+            return DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
+                    .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
+                    .build()
+                    .list();
+        }
+    }
+
+
+    private static void saveChapters(String noteUrl, List<ChapterBean> chapterBeans) {
+        if (chaptersUseDiskCache()) {
+            File file = FileHelp.getFile(FileHelp.getCachePath(), getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(Global.GSON.toJson(chapterBeans));
+                writer.flush();
+            } catch (Exception ignore) {
+            }
+        } else {
+            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplaceInTx(chapterBeans);
+        }
+    }
+
+    private static String getChapterKey(String noteUrl) {
+        return StringUtils.checkNull(MD5Utils.strToMd5By32(noteUrl), noteUrl);
+    }
+
+    private static boolean chaptersUseDiskCache() {
+        return AppConfigHelper.get().getBoolean(ContextHolder.getContext().getString(R.string.pk_chapter_disk_cache), false);
     }
 
     public static void saveBookmark(BookmarkBean bookmarkBean) {

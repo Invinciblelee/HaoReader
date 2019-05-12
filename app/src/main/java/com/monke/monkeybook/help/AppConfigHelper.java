@@ -3,8 +3,6 @@ package com.monke.monkeybook.help;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.monke.monkeybook.MApplication;
-
 public class AppConfigHelper {
 
     private volatile static AppConfigHelper mInstance;
@@ -18,7 +16,7 @@ public class AppConfigHelper {
         if (mInstance == null) {
             synchronized (AppConfigHelper.class) {
                 if (mInstance == null) {
-                    mInstance = new AppConfigHelper(MApplication.getInstance());
+                    mInstance = new AppConfigHelper(ContextHolder.getContext());
                 }
             }
         }

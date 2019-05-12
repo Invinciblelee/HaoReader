@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.monke.basemvplib.OkHttpHelper;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -14,15 +13,15 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.SimpleModel;
-import com.monke.monkeybook.model.impl.IHttpGetApi;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-
-import retrofit2.Call;
+import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -55,10 +54,10 @@ class DefaultContentDelegate implements ContentDelegate {
             item.setTag(getConfig().getTag());
             item.setOrigin(getConfig().getName());
             item.setBookType(getBookSource().getBookSourceType());
-            item.setAuthor(FormatWebText.getAuthor(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor())));
             item.setKind(StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind())));
-            item.setLastChapter(FormatWebText.trim(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter())));
+            item.setLastChapter(StringUtils.trim(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter())));
             item.setName(FormatWebText.getBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName())));
+            item.setAuthor(FormatWebText.getAuthor(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor())));
             item.setNoteUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl()));
             item.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
             item.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl()));
@@ -90,7 +89,7 @@ class DefaultContentDelegate implements ContentDelegate {
             bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleCoverUrl()));
         }
         if (isEmpty(bookInfoBean.getName())) {
-            bookInfoBean.setName(mAnalyzer.getResultContent(getBookSource().getRuleBookName()));
+            bookInfoBean.setName(FormatWebText.getBookName(mAnalyzer.getResultContent(getBookSource().getRuleBookName())));
         }
         if (isEmpty(bookInfoBean.getAuthor())) {
             bookInfoBean.setAuthor(FormatWebText.getAuthor(mAnalyzer.getResultContent(getBookSource().getRuleBookAuthor())));
@@ -124,33 +123,48 @@ class DefaultContentDelegate implements ContentDelegate {
 
         final boolean allInOne = getBookSource().allInOneChapterList();
         final String ruleChapterList = getBookSource().getRealRuleChapterList();
+        final Map<String, String> headerMap = AnalyzeHeaders.getMap(getBookSource());
 
-        RawResult<List<ChapterBean>> webChapterBean = getRawChaptersResult(source, ruleChapterList, noteUrl, allInOne);
-        List<ChapterBean> chapterList = webChapterBean.result;
 
-        List<String> nextUrls = new ArrayList<>();
-        int retryCount = 0;
-        while (!isEmpty(webChapterBean.nextUrl) && !nextUrls.contains(webChapterBean.nextUrl)) {
-            String response = "";
-            try {
-                AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getTag(), webChapterBean.nextUrl, AnalyzeHeaders.getMap(getBookSource()));
-                response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
-            } catch (Exception ignore) {
-            }
-            if (!isEmpty(response)) {
-                nextUrls.add(webChapterBean.nextUrl);
-                retryCount = 0;
-            } else {
-                retryCount += 1;
-                if (retryCount > 5) {
-                    break;
-                } else {//失败重试
-                    continue;
+        WebChapterResult webChapter = getRawChaptersResult(source, ruleChapterList, noteUrl, allInOne);
+        List<ChapterBean> chapterList = webChapter.result;
+
+        if (webChapter.nextUrls != null) {
+            if (webChapter.nextUrls.size() > 1) {
+                final List<String> chapterUrls = new ArrayList<>(new HashSet<>(webChapter.nextUrls));
+                Collections.sort(chapterUrls, Global.STRING_COMPARATOR);
+                for (String nextUrl : chapterUrls) {
+                    try {
+                        AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), nextUrl, headerMap);
+                        String response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
+                        webChapter = getRawChaptersResult(response, ruleChapterList, noteUrl, allInOne);
+                        if (!webChapter.result.isEmpty()) {
+                            chapterList.addAll(webChapter.result);
+                        }
+                    } catch (Exception ignore) {
+                    }
+                }
+            } else if (webChapter.nextUrls.size() == 1) {
+                final List<String> usedUrls = new ArrayList<>();
+                final String nextUrl = webChapter.nextUrls.get(0);
+                usedUrls.add(noteUrl);
+                while (!isEmpty(nextUrl) && !usedUrls.contains(nextUrl)) {
+                    usedUrls.add(nextUrl);
+
+                    try {
+                        AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), nextUrl, headerMap);
+                        String response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
+                        webChapter = getRawChaptersResult(response, ruleChapterList, noteUrl, allInOne);
+                        if (!webChapter.result.isEmpty()) {
+                            chapterList.addAll(webChapter.result);
+                        }
+                    } catch (Exception ignore) {
+                    }
+
                 }
             }
-            webChapterBean = getRawChaptersResult(response, ruleChapterList, noteUrl, allInOne);
-            chapterList.addAll(webChapterBean.result);
         }
+
         if (!getBookSource().reverseChapterList()) {
             Collections.reverse(chapterList);
         }
@@ -161,27 +175,33 @@ class DefaultContentDelegate implements ContentDelegate {
     }
 
 
-    private RawResult<List<ChapterBean>> getRawChaptersResult(String s, String ruleChapterList, String noteUrl, boolean allInOne) {
+    private WebChapterResult getRawChaptersResult(String s, String ruleChapterList, String noteUrl, boolean allInOne) {
         mAnalyzer.setContent(s);
-        RawResult<List<ChapterBean>> webChapterBean = new RawResult<>();
+        WebChapterResult webChapter = new WebChapterResult();
         if (!isEmpty(getBookSource().getRuleChapterUrlNext())) {
-            webChapterBean.nextUrl = mAnalyzer.getResultUrl(getBookSource().getRuleChapterUrlNext());
+            webChapter.nextUrls = mAnalyzer.getResultUrls(getBookSource().getRuleChapterUrlNext());
         }
+
         final AnalyzeCollection collection = mAnalyzer.getRawCollection(ruleChapterList);
         final List<ChapterBean> chapterList = new ArrayList<>();
+
+        ChapterBean chapterBean = null;
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
             final String name;
             final String url;
-            if(allInOne){
+            if (allInOne) {
                 name = mAnalyzer.getResultContentInternal(getBookSource().getRuleChapterName());
                 url = mAnalyzer.getResultUrlInternal(getBookSource().getRuleContentUrl());   //id
-            }else {
+            } else {
                 name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
                 url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
             }
             if (!isEmpty(url) && !isEmpty(name)) {
-                ChapterBean chapterBean = new ChapterBean();
+                if (chapterBean != null) {
+                    chapterBean.setNextChapterUrl(url);
+                }
+                chapterBean = new ChapterBean();
                 chapterBean.setDurChapterUrl(url);
                 chapterBean.setDurChapterName(name);
                 chapterBean.setTag(getConfig().getTag());
@@ -189,9 +209,8 @@ class DefaultContentDelegate implements ContentDelegate {
                 chapterList.add(chapterBean);
             }
         }
-
-        webChapterBean.result = chapterList;
-        return webChapterBean;
+        webChapter.result = chapterList;
+        return webChapter;
     }
 
     @Override
@@ -236,41 +255,30 @@ class DefaultContentDelegate implements ContentDelegate {
         bookContentBean.setTag(chapter.getTag());
 
         final String ruleBookContent = getBookSource().getRealRuleBookContent();
+        final Map<String, String> headerMap = AnalyzeHeaders.getMap(getBookSource());
 
-        RawResult<String> webContentBean = getRawContentResult(source, bookContentBean.getDurChapterUrl(), ruleBookContent);
-        bookContentBean.setDurChapterContent(webContentBean.result);
+        WebContentResult webContent = getRawContentResult(source, bookContentBean.getDurChapterUrl(), ruleBookContent);
+        bookContentBean.appendDurChapterContent(webContent.result);
 
-        if (!StringUtils.isBlank(webContentBean.nextUrl)) {
-            List<String> nextUrls = new ArrayList<>();
-            int retryCount = 0;
-
+        if (!StringUtils.isBlank(webContent.nextUrl)) {
+            final List<String> usedUrls = new ArrayList<>();
             final String nextChapterUrl = chapter.getNextChapterUrl();
 
-            while (!TextUtils.isEmpty(webContentBean.nextUrl) && !nextUrls.contains(webContentBean.nextUrl)) {
-                if (webContentBean.nextUrl.equals(nextChapterUrl)) {
+            while (!TextUtils.isEmpty(webContent.nextUrl) && !usedUrls.contains(webContent.nextUrl)) {
+                usedUrls.add(webContent.nextUrl);
+
+                if (webContent.nextUrl.equals(nextChapterUrl)) {
                     break;
                 }
-                Call<String> call = OkHttpHelper.getInstance().createService(getBookSource().getBookSourceUrl(), IHttpGetApi.class)
-                        .getWebContentCall(webContentBean.nextUrl, AnalyzeHeaders.getMap(getBookSource()));
-                String response = "";
+
                 try {
-                    response = call.execute().body();
-                } catch (Exception ignore) {
-                }
-                if (!TextUtils.isEmpty(response)) {
-                    nextUrls.add(webContentBean.nextUrl);
-                    retryCount = 0;
-                } else {
-                    retryCount += 1;
-                    if (retryCount > 5) {
-                        break;
-                    } else {
-                        continue;
+                    AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), webContent.nextUrl, headerMap);
+                    String response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
+                    webContent = getRawContentResult(response, webContent.nextUrl, ruleBookContent);
+                    if (!TextUtils.isEmpty(webContent.result)) {
+                        bookContentBean.appendDurChapterContent(webContent.result);
                     }
-                }
-                webContentBean = getRawContentResult(response, webContentBean.nextUrl, ruleBookContent);
-                if (!TextUtils.isEmpty(webContentBean.result)) {
-                    bookContentBean.setDurChapterContent(bookContentBean.getDurChapterContent() + "\n" + webContentBean.result);
+                } catch (Exception ignore) {
                 }
             }
         }
@@ -278,8 +286,8 @@ class DefaultContentDelegate implements ContentDelegate {
         return bookContentBean;
     }
 
-    private RawResult<String> getRawContentResult(String s, String chapterUrl, String ruleContent) {
-        RawResult<String> webContentBean = new RawResult<>();
+    private WebContentResult getRawContentResult(String s, String chapterUrl, String ruleContent) {
+        WebContentResult webContentBean = new WebContentResult();
         try {
             mAnalyzer.setContent(s);
             webContentBean.result = mAnalyzer.getResultContent(ruleContent);
@@ -299,4 +307,23 @@ class DefaultContentDelegate implements ContentDelegate {
         return mAnalyzer.setContent(source).getResultUrl(ruleBookContent);
     }
 
+
+    private class WebContentResult {
+
+        String result;
+
+        String nextUrl;
+
+        private WebContentResult() {
+        }
+    }
+
+    private class WebChapterResult {
+        List<ChapterBean> result;
+
+        List<String> nextUrls;
+
+        private WebChapterResult() {
+        }
+    }
 }

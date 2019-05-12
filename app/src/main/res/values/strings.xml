@@ -5,7 +5,6 @@
     <string name="read_summary">让阅读成为一种习惯</string>
     <string name="update_log">更新日志</string>
 
-    <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载任务</string>
     <string name="action_list">列表视图</string>
@@ -32,7 +31,6 @@
     <string name="check_add_bookshelf">是否将《%s》放入书架？</string>
     <string name="import_books_count">共%s个Text文件</string>
     <string name="is_loading">加载中…</string>
-    <string name="get_data_error">获取数据失败！</string>
     <string name="retry">重试</string>
     <string name="download_offline">离线下载</string>
     <string name="change_origin">换源</string>
@@ -43,6 +41,8 @@
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
     <string name="pt_auto_clean_book">自动移除无效书籍</string>
     <string name="ps_auto_clean_book">清理本地已删除的书籍</string>
+    <string name="pt_chapter_disk_cache">章节列表使用磁盘缓存</string>
+    <string name="ps_chapter_disk_cache">开启将以文件形式缓存章节列表</string>
     <string name="backup">备份</string>
     <string name="restore">恢复</string>
     <string name="backup_permission">备份请给与存储权限</string>
@@ -165,7 +165,7 @@
     <string name="clear_font">默认字体</string>
     <string name="find_on_www">发现</string>
     <string name="find_source_manage">发现管理</string>
-    <string name="find_empty">没有内容,去书源里自定义吧!</string>
+    <string name="find_empty">没有内容，去书源里自定义吧~</string>
     <string name="del_all">删除所有</string>
     <string name="searchHistory">搜索历史</string>
     <string name="searchBook">搜索书名、作者</string>

@@ -7,7 +7,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
@@ -101,7 +100,7 @@ public class DataBackup {
 
     private void backupConfig(String file) {
         DocumentFile docFile = DocumentHelper.createFileIfNotExist("config.json", file);
-        SharedPreferences pref = MApplication.getInstance().getSharedPreferences("CONFIG", Context.MODE_PRIVATE);
+        SharedPreferences pref = ContextHolder.getContext().getSharedPreferences("CONFIG", Context.MODE_PRIVATE);
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()

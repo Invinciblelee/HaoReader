@@ -228,6 +228,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
        if(progressDialog == null){
            progressDialog = ProgressDialog.show(this, msg);
        }else {
+           progressDialog.setMessage(msg);
            progressDialog.show(this);
        }
     }

@@ -11,7 +11,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.impl.IDownloadTask;
@@ -158,15 +158,6 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                     @Override
                     public void onNext(ChapterBean chapterBean) {
                         if (!TextUtils.isEmpty(chapterBean.getDurChapterUrl())) {
-                            final ChapterBean nextChapter;
-                            if (chapterBean.getDurChapterIndex() < downloadChapters.size() - 1) {
-                                nextChapter = downloadChapters.get(chapterBean.getDurChapterIndex() + 1);
-                            } else {
-                                nextChapter = null;
-                            }
-
-                            chapterBean.setNextChapterUrl(nextChapter == null ? null : nextChapter.getDurChapterUrl());
-
                             downloading(chapterBean, scheduler);
                         }
                     }
@@ -199,7 +190,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     private void downloading(ChapterBean chapter, Scheduler scheduler) {
         whenProgress(downloadBook.getName(), chapter);
         Observable.create((ObservableOnSubscribe<ChapterBean>) e -> {
-            if (!BookshelfHelp.isChapterCached(downloadBook, chapter)) {
+            if (!ChapterContentHelp.isChapterCached(downloadBook, chapter)) {
                 e.onNext(chapter);
             } else {
                 e.onError(new Exception("chapter already cached"));

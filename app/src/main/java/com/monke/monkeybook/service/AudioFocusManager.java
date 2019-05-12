@@ -8,7 +8,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.monke.monkeybook.MApplication;
+import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.RunMediaPlayer;
 
@@ -29,7 +29,7 @@ public abstract class AudioFocusManager implements AudioManager.OnAudioFocusChan
     }
 
     public boolean requestAudioFocus() {
-        RunMediaPlayer.playSilentSound(MApplication.getInstance());
+        RunMediaPlayer.playSilentSound(ContextHolder.getContext());
         final int request;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mFocusRequest != null) {
             request = audioManager.requestAudioFocus(mFocusRequest);

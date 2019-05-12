@@ -24,11 +24,11 @@ import java.io.OutputStream;
 public class DocumentHelper {
 
     public static boolean isFileExist(String fileName, String rootPath, String... subDirs) {
-        return DocumentUtil.isFileExist(MApplication.getInstance(), fileName, rootPath, subDirs);
+        return DocumentUtil.isFileExist(ContextHolder.getContext(), fileName, rootPath, subDirs);
     }
 
     public static DocumentFile getDirDocument(String rootPath, String... subDirs) {
-        return DocumentUtil.getDirDocument(MApplication.getInstance(), rootPath, subDirs);
+        return DocumentUtil.getDirDocument(ContextHolder.getContext(), rootPath, subDirs);
     }
 
     public static DocumentFile createFileIfNotExist(String fileName, String path, String... subDirs) {
@@ -37,33 +37,33 @@ public class DocumentHelper {
         Logger.d("FileHelper", Uri.decode(TextUtils.join("/", subDirs)));
         if (!path.startsWith("content://"))
             path = "file://" + Uri.decode(path);
-        return DocumentUtil.createFileIfNotExist(MApplication.getInstance(), fileName, path, subDirs);
+        return DocumentUtil.createFileIfNotExist(ContextHolder.getContext(), fileName, path, subDirs);
     }
 
     public static DocumentFile createDirIfNotExist(String path, String... subDirs) {
         if (!path.startsWith("content://"))
             path = "file://" + Uri.decode(path);
-        return DocumentUtil.createDirIfNotExist(MApplication.getInstance(), path, subDirs);
+        return DocumentUtil.createDirIfNotExist(ContextHolder.getContext(), path, subDirs);
     }
 
     public static boolean deleteFile(String fileName, String rootPath, String... subDirs) {
         if (!rootPath.startsWith("content://"))
             rootPath = "file://" + Uri.decode(rootPath);
-        return DocumentUtil.deleteFile(MApplication.getInstance(), fileName, rootPath, subDirs);
+        return DocumentUtil.deleteFile(ContextHolder.getContext(), fileName, rootPath, subDirs);
     }
 
     public static boolean writeString(String string, DocumentFile file) {
-        return DocumentUtil.writeBytes(MApplication.getInstance(), string.getBytes(), file);
+        return DocumentUtil.writeBytes(ContextHolder.getContext(), string.getBytes(), file);
     }
 
     public static boolean writeString(String string, String fileName, String rootPath, String... subDirs) {
         if (!rootPath.startsWith("content://"))
             rootPath = "file://" + Uri.decode(rootPath);
-        return DocumentUtil.writeBytes(MApplication.getInstance(), string.getBytes(), fileName, rootPath, subDirs);
+        return DocumentUtil.writeBytes(ContextHolder.getContext(), string.getBytes(), fileName, rootPath, subDirs);
     }
 
     public static String readString(String fileName, String rootPath, String... subDirs) {
-        byte[] data = DocumentUtil.readBytes(MApplication.getInstance(), fileName, rootPath, subDirs);
+        byte[] data = DocumentUtil.readBytes(ContextHolder.getContext(), fileName, rootPath, subDirs);
         String string = null;
         try {
             string = new String(data, "utf-8");
@@ -74,7 +74,7 @@ public class DocumentHelper {
     }
 
     public static String readString(Uri uri) {
-        byte[] data = DocumentUtil.readBytes(MApplication.getInstance(), uri);
+        byte[] data = DocumentUtil.readBytes(ContextHolder.getContext(), uri);
         String string = null;
         try {
             string = new String(data, "utf-8");
@@ -85,7 +85,7 @@ public class DocumentHelper {
     }
 
     public static String readString(DocumentFile file) {
-        byte[] data = DocumentUtil.readBytes(MApplication.getInstance(), file);
+        byte[] data = DocumentUtil.readBytes(ContextHolder.getContext(), file);
         String string = null;
         try {
             string = new String(data, "utf-8");
@@ -98,20 +98,20 @@ public class DocumentHelper {
     public static boolean writeBytes(byte[] data, String fileName, String rootPath, String... subDirs) {
         if (!rootPath.startsWith("content://"))
             rootPath = "file://" + Uri.decode(rootPath);
-        return DocumentUtil.writeBytes(MApplication.getInstance(), data, fileName, rootPath, subDirs);
+        return DocumentUtil.writeBytes(ContextHolder.getContext(), data, fileName, rootPath, subDirs);
     }
 
     public static boolean writeBytes(byte[] data, DocumentFile file) {
         if (file == null)
             return false;
-        return DocumentUtil.writeBytes(MApplication.getInstance(), data, file);
+        return DocumentUtil.writeBytes(ContextHolder.getContext(), data, file);
     }
 
     public static boolean writeFromFile(File fromFile, DocumentFile file) {
         if (file == null)
             return false;
         try {
-            return DocumentUtil.writeFromInputStream(MApplication.getInstance(), new FileInputStream(fromFile), file);
+            return DocumentUtil.writeFromInputStream(ContextHolder.getContext(), new FileInputStream(fromFile), file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
@@ -121,7 +121,7 @@ public class DocumentHelper {
     public static boolean writeFromInputStream(InputStream inStream, DocumentFile file) {
         if (file == null)
             return false;
-        return DocumentUtil.writeFromInputStream(MApplication.getInstance(), inStream, file);
+        return DocumentUtil.writeFromInputStream(ContextHolder.getContext(), inStream, file);
     }
 
     public static void saveBitmapToFile(Bitmap bitmap, DocumentFile file) throws IOException {
@@ -129,7 +129,7 @@ public class DocumentHelper {
     }
 
     public static void saveBitmapToFile(Bitmap bitmap, Uri fileUri) throws IOException {
-        OutputStream out = MApplication.getInstance().getContentResolver().openOutputStream(fileUri);
+        OutputStream out = ContextHolder.getContext().getContentResolver().openOutputStream(fileUri);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
         out.flush();
         out.close();
@@ -138,13 +138,13 @@ public class DocumentHelper {
     public static OutputStream getFileOutputSteam(String fileName, String rootPath, String... subDirs) {
         if (!rootPath.startsWith("content://"))
             rootPath = "file://" + Uri.decode(rootPath);
-        return DocumentUtil.getFileOutputSteam(MApplication.getInstance(), fileName, rootPath, subDirs);
+        return DocumentUtil.getFileOutputSteam(ContextHolder.getContext(), fileName, rootPath, subDirs);
     }
 
     public static InputStream getFileInputSteam(String fileName, String rootPath, String... subDirs) {
         if (!rootPath.startsWith("content://"))
             rootPath = "file://" + Uri.decode(rootPath);
-        return DocumentUtil.getFileInputSteam(MApplication.getInstance(), fileName, rootPath, subDirs);
+        return DocumentUtil.getFileInputSteam(ContextHolder.getContext(), fileName, rootPath, subDirs);
     }
 
     public static String filenameFilter(String str) {

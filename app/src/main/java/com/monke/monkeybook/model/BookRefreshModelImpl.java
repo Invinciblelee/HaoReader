@@ -78,7 +78,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                                 .map(remove -> {
                                     if (!remove.isEmpty()) {
                                         bookShelfBeans.removeAll(remove);
-                                        dispatchErrorEvent("发现" + remove.size() + "本失效书籍，已自动清理");
+                                        dispatchMessageEvent("发现" + remove.size() + "本失效书籍，已自动清理");
                                     }
                                     return bookShelfBeans;
                                 });
@@ -99,7 +99,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                         dispatchResultEvent(value);
                         if (refresh && group != Constant.GROUP_BENDI) {
                             if (!NetworkUtil.isNetworkAvailable()) {
-                                dispatchErrorEvent("无网络，请打开网络后再试");
+                                dispatchMessageEvent("无网络，请打开网络后再试");
                             } else {
                                 bookShelfBeans = value;
                                 startRefreshBook();
@@ -196,7 +196,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
         if (loadingCount.decrementAndGet() == 0) {
             if (errBooks.size() > 0) {
-                dispatchErrorEvent(TextUtils.join("、", errBooks) + " 更新失败");
+                dispatchMessageEvent(TextUtils.join("、", errBooks) + " 更新失败");
                 errBooks.clear();
             }
             dispatchFinishEvent();
@@ -232,7 +232,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
     }
 
-    private void dispatchErrorEvent(String msg) {
+    private void dispatchMessageEvent(String msg) {
         if (refreshListener != null) {
             refreshListener.onMessage(msg);
         }

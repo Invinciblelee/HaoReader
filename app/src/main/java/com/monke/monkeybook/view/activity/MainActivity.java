@@ -564,6 +564,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         if (progressDialog == null) {
             progressDialog = ProgressDialog.show(this, msg);
         } else {
+            progressDialog.setMessage(msg);
             progressDialog.show(this);
         }
     }

@@ -11,30 +11,17 @@ import com.monke.monkeybook.utils.StringUtils;
 
 public class FormatWebText {
 
-    public static String getContent(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return "";
-        }
-        return trim(str.replace("\r", "")
-                .replace("\n", "")
-                .replace("\t", "")
-                .replace("&nbsp;", "")
-                .replaceAll("\\s", " "));
-    }
-
     public static String getBookName(String str) {
         if (TextUtils.isEmpty(str)) {
             return "";
         }
 
-        str = StringUtils.fullToHalf(str);
-
-        return trim(str.replace("&nbsp;", "")
+        return StringUtils.trim(str.replace("&nbsp;", "")
                 .replace(":", "：")
                 .replace(",", "，")
                 .replaceAll("\\s+", " ")
                 .replaceAll("[?？!！。~]+", ""))
-                .replaceAll("([\\[【(].*[)】\\]])", "");
+                .replaceAll("([\\[【（(].*[)）】\\]])", "");
     }
 
     public static String getAuthor(String str) {
@@ -42,19 +29,11 @@ public class FormatWebText {
             return "";
         }
 
-        return trim(str.replace("&nbsp;", "")
+        return StringUtils.trim(str.replace("&nbsp;", "")
                 .replaceAll("\\s+", " ")
                 .replaceAll("作.*?者", "")
                 .replaceAll("[?？!！。~：:()（）【】]+", ""));
     }
 
-
-    public static String trim(String string) {
-        String result = "";
-        if (null != string && !"".equals(string)) {
-            result = string.replaceAll("^[　*| *| *|//s*]*", "").replaceAll("[　*| *| *|//s*]*$", "");
-        }
-        return result;
-    }
 
 }

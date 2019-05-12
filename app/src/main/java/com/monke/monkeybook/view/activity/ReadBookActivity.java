@@ -511,6 +511,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (progressDialog == null) {
             progressDialog = ProgressDialog.show(this, msg);
         } else {
+            progressDialog.setMessage(msg);
             progressDialog.show(this);
         }
     }

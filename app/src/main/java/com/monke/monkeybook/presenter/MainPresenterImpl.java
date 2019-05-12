@@ -173,7 +173,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.showSnackBar("导入失败，请检查网址是否有误");
+                        mView.showSnackBar("书籍添加失败");
                     }
                 });
     }

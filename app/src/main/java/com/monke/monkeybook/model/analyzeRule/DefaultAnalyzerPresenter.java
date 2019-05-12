@@ -123,6 +123,46 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         return resultList;
     }
 
+    @Override
+    public List<String> getResultUrls(String rule) {
+        if (isEmpty(rule)) {
+            return new ArrayList<>();
+        }
+        final RulePatterns rulePatterns = fromRule(rule.trim(), false);
+        final List<String> resultList = new ArrayList<>();
+        for (RulePattern pattern : rulePatterns.patterns) {
+            boolean haveResult = false;
+            if (pattern.isSimpleJS) {
+                final List<String> result = evalStringArrayScript(getParser().getPrimitive(), pattern);
+                if (!result.isEmpty()) {
+                    evalJoinUrl(result, pattern);
+                    resultList.addAll(result);
+                    haveResult = true;
+                }
+            } else if (pattern.isRedirect) {
+                final String source = evalStringScript(getParser().getPrimitive(), pattern);
+                final RulePattern newPattern = fromSingleRule(pattern.redirectRule, false);
+                final List<String> result = getParser().parseStringList(source, newPattern.elementsRule);
+                if (!result.isEmpty()) {
+                    processResultUrls(result, newPattern);
+                    resultList.addAll(result);
+                    haveResult = true;
+                }
+            } else {
+                final List<String> result = getParser().getStringList(pattern.elementsRule);
+                if (!result.isEmpty()) {
+                    processResultUrls(result, pattern);
+                    resultList.addAll(result);
+                    haveResult = true;
+                }
+            }
+            if (haveResult && rulePatterns.mergeType == RulePatterns.RULE_MERGE_OR) {
+                break;
+            }
+        }
+        return resultList;
+    }
+
 
     @Override
     public String parseResultContent(Object source, String rule) {

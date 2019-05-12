@@ -14,7 +14,7 @@ import android.text.TextUtils;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
-import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.ScreenUtils;
@@ -351,8 +351,8 @@ public abstract class PageLoader {
 
         mCurChapter.reset();
 
-        BookshelfHelp.delChapter(BookshelfHelp.getCacheFolderPath(mCollBook.getBookInfoBean()),
-                BookshelfHelp.getCacheFileName(mCollBook.getChapter(mCurChapterPos)));
+        ChapterContentHelp.delChapter(ChapterContentHelp.getCacheFolderPath(mCollBook.getBookInfoBean()),
+                ChapterContentHelp.getCacheFileName(mCollBook.getChapter(mCurChapterPos)));
         skipToChapter(mCurChapterPos);
     }
 

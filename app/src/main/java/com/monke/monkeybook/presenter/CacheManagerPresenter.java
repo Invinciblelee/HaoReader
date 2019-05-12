@@ -4,6 +4,7 @@ import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.presenter.contract.CacheManagerContract;
@@ -87,7 +88,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                 bookFile.delete();
             }
             bookFile.createNewFile();
-            final File folder = new File(Constant.BOOK_CACHE_PATH, BookshelfHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()));
+            final File folder = new File(Constant.BOOK_CACHE_PATH, ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()));
             if (!folder.isDirectory()) {
                 emitter.onError(new NullPointerException("delete"));
                 return;

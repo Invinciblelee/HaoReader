@@ -7,7 +7,6 @@ import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.MD5Utils;
 
@@ -19,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +26,6 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.monke.monkeybook.help.FileHelp.BLANK;
@@ -50,7 +47,7 @@ public class LocalPageLoader extends PageLoader {
     private final static int MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024;
 
     //从序章找作者名称
-    private static final String AUTHOR_PATTERN = "(?<=作者[:：])(.*?)\r\n";
+    private static final String AUTHOR_PATTERN = "(?<=作者[:：])(.*?)(\r\n|,|。|；)";
 
     //正则表达式章节匹配模式
     // "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集卷])(.*)"
@@ -277,7 +274,7 @@ public class LocalPageLoader extends PageLoader {
             Pattern pattern = Pattern.compile(AUTHOR_PATTERN);
             Matcher m = pattern.matcher(firstChapter);
             if (m.find()) {
-                getCollBook().getBookInfoBean().setAuthor(FormatWebText.getAuthor(m.group()));
+                getCollBook().getBookInfoBean().setAuthor(m.group());
             }
         }
     }

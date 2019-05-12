@@ -26,6 +26,13 @@
         android:title="@string/pt_auto_clean_book" />
 
     <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pk_chapter_disk_cache"
+        android:layout="@layout/view_preference"
+        android:summary="@string/ps_chapter_disk_cache"
+        android:title="@string/pt_chapter_disk_cache" />
+
+    <SwitchPreference
         android:defaultValue="true"
         android:key="@string/pk_auto_refresh"
         android:layout="@layout/view_preference"

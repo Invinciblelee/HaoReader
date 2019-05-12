@@ -103,15 +103,6 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return list;
     }
 
-    final void evalReplace(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
-        if (!isEmpty(rulePattern.replaceRegex)) {
-            ListIterator<String> iterator = list.listIterator();
-            while (iterator.hasNext()) {
-                String string = iterator.next();
-                iterator.set(string.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
-            }
-        }
-    }
 
     final void processResultContents(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
@@ -122,6 +113,38 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         }
 
         evalReplace(result, rulePattern);
+    }
+
+
+    final void processResultUrls(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
+        if (!rulePattern.javaScripts.isEmpty()) {
+            ListIterator<String> iterator = result.listIterator();
+            while (iterator.hasNext()) {
+                iterator.set(evalStringScript(iterator.next(), rulePattern));
+            }
+        }
+
+        evalJoinUrl(result, rulePattern);
+    }
+
+    final void evalReplace(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
+        if (!isEmpty(rulePattern.replaceRegex)) {
+            ListIterator<String> iterator = list.listIterator();
+            while (iterator.hasNext()) {
+                String string = iterator.next();
+                iterator.set(string.replaceAll(rulePattern.replaceRegex, rulePattern.replacement));
+            }
+        }
+    }
+
+    final void evalJoinUrl(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
+        evalReplace(result, rulePattern);
+
+        ListIterator<String> iterator = result.listIterator();
+        while (iterator.hasNext()) {
+            String string = iterator.next();
+            iterator.set(URLUtils.getAbsoluteURL(getBaseURL(), string));
+        }
     }
 
     final String processResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {

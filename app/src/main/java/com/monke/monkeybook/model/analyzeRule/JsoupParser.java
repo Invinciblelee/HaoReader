@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
+import org.seimicrawler.xpath.JXNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +35,15 @@ final class JsoupParser extends SourceParser<Element> {
             return Jsoup.parse((String) source);
         } else if (source instanceof Element) {
             return (Element) source;
+        } else if (source instanceof JXNode) {
+            JXNode jxNode = (JXNode) source;
+            if (jxNode.isElement()) {
+                return jxNode.asElement();
+            } else {
+                return new Element(jxNode.toString());
+            }
         }
-        return null;
+        return Jsoup.parse(StringUtils.valueOf(source));
     }
 
     @Override

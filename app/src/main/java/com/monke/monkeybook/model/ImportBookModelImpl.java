@@ -6,7 +6,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.FileHelp;
-import com.monke.monkeybook.help.FormatWebText;
 import com.monke.monkeybook.model.impl.IImportBookModel;
 
 import java.io.File;
@@ -65,7 +64,7 @@ public class ImportBookModelImpl extends BaseModelImpl implements IImportBookMod
             String fileName = file.getName().replace(".txt", "").replace(".TXT", "");
             int authorIndex = fileName.indexOf("作者");
             if (authorIndex != -1) {
-                bookShelfBean.getBookInfoBean().setAuthor(FormatWebText.getAuthor(fileName.substring(authorIndex)));
+                bookShelfBean.getBookInfoBean().setAuthor(fileName.substring(authorIndex));
                 bookShelfBean.getBookInfoBean().setName(fileName.substring(0, authorIndex));
             } else {
                 bookShelfBean.getBookInfoBean().setAuthor("");

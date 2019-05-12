@@ -11,7 +11,6 @@ import org.jsoup.select.Elements;
 import org.seimicrawler.xpath.JXDocument;
 import org.seimicrawler.xpath.JXNode;
 
-import java.util.Iterator;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
@@ -28,8 +27,6 @@ final class XPathParser extends SourceParser<JXDocument> {
         if (source instanceof JXDocument) {
             Object object = ((JXDocument) source).selOne("//*");
             return StringUtils.valueOf(object);
-        } else if (source instanceof JXNode) {
-            return StringUtils.valueOf(((JXNode) source).value());
         }
         return StringUtils.valueOf(source);
     }
@@ -44,13 +41,11 @@ final class XPathParser extends SourceParser<JXDocument> {
             JXNode jxNode = (JXNode) source;
             if (jxNode.isElement()) {
                 return JXDocument.create(new Elements(jxNode.asElement()));
-            } else if (jxNode.isString()) {
-                return JXDocument.create(ensureTableNode(jxNode.asString()));
             }
         } else if (source instanceof JXDocument) {
             return (JXDocument) source;
         }
-        return null;
+        return JXDocument.create(ensureTableNode(StringUtils.valueOf(source)));
     }
 
     @Override
@@ -73,15 +68,7 @@ final class XPathParser extends SourceParser<JXDocument> {
             return ListUtils.mutableList();
         }
         try {
-            List<JXNode> jxNodes = source.selN(rule);
-            Iterator<JXNode> iterator = jxNodes.iterator();
-            while (iterator.hasNext()) {
-                JXNode jxNode = iterator.next();
-                if (!jxNode.isElement() && !jxNode.isString()) {
-                    iterator.remove();
-                }
-            }
-            return jxNodes;
+            return source.selN(rule);
         } catch (Exception e) {
             Logger.e(TAG, rule, e);
         }
@@ -115,13 +102,8 @@ final class XPathParser extends SourceParser<JXDocument> {
         final List<String> resultList = ListUtils.mutableList();
 
         try {
-            final List<Object> objects = source.sel(xPath);
-            for (Object object : objects) {
-                if (object instanceof String) {
-                    String result = (String) object;
-                    result = result.replaceAll("^,|,$", "");// 移除Xpath匹配结果首尾多余的逗号
-                    resultList.add(result);
-                }
+            for (JXNode jxNode : source.selN(xPath)) {
+                resultList.add(StringUtils.valueOf(jxNode));
             }
         } catch (Exception e) {
             Logger.e(TAG, xPath, e);

@@ -4,6 +4,7 @@ import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.NetworkUtil;
 
@@ -116,8 +117,8 @@ public class NetPageLoader extends PageLoader {
 
     @Override
     BufferedReader getChapterReader(ChapterBean chapter) throws Exception {
-        File file = BookshelfHelp.getBookFile(BookshelfHelp.getCacheFolderPath(getCollBook().getBookInfoBean()),
-                BookshelfHelp.getCacheFileName(chapter));
+        File file = ChapterContentHelp.getBookFile(ChapterContentHelp.getCacheFolderPath(getCollBook().getBookInfoBean()),
+                ChapterContentHelp.getCacheFileName(chapter));
         if (!file.exists()) return null;
         Reader reader = new FileReader(file);
         return new BufferedReader(reader);
@@ -125,7 +126,7 @@ public class NetPageLoader extends PageLoader {
 
     @Override
     boolean chapterNotCached(ChapterBean chapter) {
-        return !BookshelfHelp.isChapterCached(getCollBook().getBookInfoBean(), chapter);
+        return !ChapterContentHelp.isChapterCached(getCollBook().getBookInfoBean(), chapter);
     }
 
     @Override

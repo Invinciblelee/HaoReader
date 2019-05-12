@@ -2,7 +2,6 @@ package com.monke.monkeybook.help;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
@@ -53,7 +52,7 @@ public class DataRestore {
                     String key = it.next();
                     if (!filter.contains(key)) {
                         Object value = jsonObject.opt(key);
-                        SharedPreferencesUtil.saveData(MApplication.getInstance(), key, value);
+                        SharedPreferencesUtil.saveData(ContextHolder.getContext(), key, value);
                     }
                 }
             } catch (Exception e) {

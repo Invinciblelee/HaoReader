@@ -99,7 +99,7 @@ final class HybridParser extends SourceParser<Object> {
         sourceChangedJS = true;
         sourceChangedJP = true;
         sourceChangedCS = true;
-        isJSon = Global.isJson(source);
+        isJSon = Global.canConvertToJson(source);
     }
 
     @Override

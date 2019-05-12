@@ -3,9 +3,6 @@ package com.monke.monkeybook.utils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-
-import com.monke.monkeybook.MApplication;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -90,13 +87,6 @@ public class StringUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static String getString(@StringRes int id) {
-        return MApplication.getInstance().getResources().getString(id);
-    }
-
-    public static String getString(@StringRes int id, Object... formatArgs) {
-        return MApplication.getInstance().getString(id, formatArgs);
-    }
 
     /**
      * 将文本中的半角字符，转换成全角字符
@@ -212,13 +202,6 @@ public class StringUtils {
         return -1;
     }
 
-    public static String clearString(String str) {
-        if (str == null) {
-            return "";
-        }
-        return str.replaceAll("[\\p{P}\\p{S}\\p{Z}]", "");
-    }
-
     public static String escape(String src) {
         int i;
         char j;
@@ -327,6 +310,7 @@ public class StringUtils {
         if (obj.length() > src.length()) return false;
         return src.substring(0, obj.length()).equalsIgnoreCase(obj);
     }
+
 
     public static String nonNull(String string) {
         return string == null ? "" : string;

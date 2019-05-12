@@ -182,13 +182,6 @@ class ChapterProvider {
         final BookShelfBean bookShelf = mPageLoader.getCollBook();
         if (NetworkUtil.isNetworkAvailable() && null != bookShelf && !bookShelf.realChapterListEmpty()) {
             final ChapterBean chapter = bookShelf.getChapter(chapterIndex);
-            final ChapterBean nextChapter;
-            if (chapterIndex < bookShelf.getChapterList().size() - 1) {
-                nextChapter = bookShelf.getChapter(chapterIndex + 1);
-            } else {
-                nextChapter = null;
-            }
-            chapter.setNextChapterUrl(nextChapter == null ? null : nextChapter.getDurChapterUrl());
             if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
                 ensureExecutor();
                 WebBookModel.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
@@ -241,14 +234,14 @@ class ChapterProvider {
         return false;
     }
 
-    private void ensureExecutor(){
-        if(mExecutor == null || mExecutor.isShutdown()){
+    private void ensureExecutor() {
+        if (mExecutor == null || mExecutor.isShutdown()) {
             mExecutor = Executors.newFixedThreadPool(8);
             mScheduler = Schedulers.from(mExecutor);
         }
     }
 
-    private void ensureCompositeDisposable(){
+    private void ensureCompositeDisposable() {
         if (mCompositeDisposable == null || mCompositeDisposable.isDisposed()) {
             mCompositeDisposable = new CompositeDisposable();
         }
@@ -260,7 +253,7 @@ class ChapterProvider {
             mCompositeDisposable.dispose();
             mCompositeDisposable = null;
         }
-        if(mExecutor != null) {
+        if (mExecutor != null) {
             mExecutor.shutdown();
             mExecutor = null;
         }

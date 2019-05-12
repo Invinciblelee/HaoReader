@@ -1,14 +1,14 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 final class AnalyzeCollection {
 
-    private Iterator mIterator;
+    private ListIterator mIterator;
 
     AnalyzeCollection(List rawList) {
-        this.mIterator = rawList.iterator();
+        this.mIterator = rawList.listIterator();
     }
 
     boolean hasNext() {
@@ -18,5 +18,4 @@ final class AnalyzeCollection {
     Object next() {
         return mIterator.next();
     }
-
 }

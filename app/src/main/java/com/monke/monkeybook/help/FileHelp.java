@@ -2,7 +2,6 @@ package com.monke.monkeybook.help;
 
 import android.os.Environment;
 
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.utils.IOUtils;
 
 import java.io.BufferedReader;
@@ -25,6 +24,7 @@ public class FileHelp {
     //采用自己的格式去设置文件，防止文件被系统文件查询到
     public static final String SUFFIX_NB = ".nb";
     public static final String SUFFIX_TXT = ".txt";
+    public static final String SUFFIX_CHAP = ".chap";
 
     //获取文件夹
     public static File getFolder(String filePath) {
@@ -80,11 +80,11 @@ public class FileHelp {
     //获取Cache文件夹
     public static String getCachePath() {
         if (isSdCardExist()) {
-            return MApplication.getInstance()
+            return ContextHolder.getContext()
                     .getExternalCacheDir()
                     .getAbsolutePath();
         } else {
-            return MApplication.getInstance()
+            return ContextHolder.getContext()
                     .getCacheDir()
                     .getAbsolutePath();
         }

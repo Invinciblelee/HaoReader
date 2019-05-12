@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.monke.basemvplib.AjaxWebView;
 import com.monke.basemvplib.BaseModelImpl;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -12,6 +11,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.MemoryCache;
@@ -184,7 +184,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, chapter.getDurChapterUrl(), headerMap(true));
             if (bookContent.isAJAX()) {
-                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .postData(analyzeUrl.getPostData())
                         .headerMap(analyzeUrl.getHeaderMap())
@@ -225,7 +225,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, chapter.getDurChapterUrl(), headerMap(true));
             if (audioBookChapter.isAJAX()) {
-                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(MApplication.getInstance(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .suffix(audioBookChapter.getSuffix())
                         .cookieStore(CookieHelper.get())

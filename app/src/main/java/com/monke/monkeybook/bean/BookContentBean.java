@@ -96,6 +96,14 @@ public class BookContentBean implements Parcelable {
             this.isRight = false;
     }
 
+    public void appendDurChapterContent(String durChapterContent) {
+        if (this.durChapterContent == null) {
+            setDurChapterContent(durChapterContent);
+        } else {
+            this.durChapterContent = "\n" + durChapterContent;
+        }
+    }
+
     public String getTag() {
         return tag;
     }

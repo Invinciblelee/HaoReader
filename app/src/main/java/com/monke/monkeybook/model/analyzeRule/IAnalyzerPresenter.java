@@ -3,7 +3,7 @@ package com.monke.monkeybook.model.analyzeRule;
 import java.util.List;
 import java.util.Map;
 
-public interface IAnalyzerPresenter  {
+public interface IAnalyzerPresenter {
 
     String getResultContent(String rule);
 
@@ -14,6 +14,8 @@ public interface IAnalyzerPresenter  {
     String getResultUrlInternal(String rule);
 
     List<String> getResultContents(String rule);
+
+    List<String> getResultUrls(String rule);
 
     Map<String, String> getVariableMap(String rule, int flag);
 
