@@ -130,10 +130,10 @@ public class BookshelfHelp {
         }
     }
 
-    public static void delChapterList(String noteUrl) {
-        DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
-                .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
-                .buildDelete().executeDeleteWithoutDetachingEntities();
+    public static void delChapterList(List<ChapterBean> chapterBeanList) {
+        if(chapterBeanList != null && !chapterBeanList.isEmpty()) {
+            DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(chapterBeanList);
+        }
     }
 
     public static boolean hasCache(BookShelfBean bookShelfBean) {

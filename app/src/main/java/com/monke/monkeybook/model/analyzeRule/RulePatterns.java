@@ -163,4 +163,13 @@ final class RulePatterns {
     }
 
 
+    @Override
+    public String toString() {
+        return "RulePatterns{" +
+                "mergeType=" + mergeType +
+                ", patterns=" + patterns +
+                ", splitType='" + splitType + '\'' +
+                ", filters=" + filters +
+                '}';
+    }
 }

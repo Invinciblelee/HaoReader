@@ -292,6 +292,8 @@ final class JsoupParser extends SourceParser<Element> {
                         }
                         elements.addAll(elementsByText);
                         break;
+                    default:
+                        elements.addAll(temp.select(rulePcx[0]));
                 }
                 if (rulePcx.length > 1) {
                     String[] rulePcs = rulePcx[1].split(":");

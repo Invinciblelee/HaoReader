@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.text.TextUtils;
-
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
@@ -9,8 +7,6 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.functions.Function;
 
 
 /**
@@ -34,7 +30,7 @@ final class AudioBookChapter {
     private String suffix;
     private String javaScript;
 
-    private OutAnalyzer analyzer;
+    private OutAnalyzer<?> analyzer;
 
     AudioBookChapter(String tag, BookSourceBean bookSourceBean) {
         this.tag = tag;
@@ -50,28 +46,23 @@ final class AudioBookChapter {
     }
 
     Observable<ChapterBean> analyzeAudioChapter(final String s, final ChapterBean chapter) {
-        return Observable.create(e -> {
-            if (TextUtils.isEmpty(s)) {
-                e.onError(new Throwable("播放链接获取失败"));
-                e.onComplete();
-                return;
+        if (isSniff) {
+            chapter.setDurChapterPlayUrl(s);
+            return Observable.just(chapter);
+        } else {
+            if (analyzer == null) {
+                analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                        .tag(tag).bookSource(bookSourceBean));
             }
-
-            if (isSniff) {
-                chapter.setDurChapterPlayUrl(s);
-            } else {
-                if (analyzer == null) {
-                    analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                            .tag(tag).bookSource(bookSourceBean));
-                }
-                analyzer.apply(analyzer.newConfig()
-                        .baseURL(chapter.getDurChapterUrl())
-                        .extra("chapter", chapter));
-                chapter.setDurChapterPlayUrl(analyzer.getAudioLink(s));
-            }
-            e.onNext(chapter);
-            e.onComplete();
-        });
+            analyzer.apply(analyzer.newConfig()
+                    .baseURL(chapter.getDurChapterUrl())
+                    .extra("chapter", chapter));
+            return analyzer.getAudioLink(s)
+                    .map(url -> {
+                        chapter.setDurChapterPlayUrl(url);
+                        return chapter;
+                    });
+        }
     }
 
 

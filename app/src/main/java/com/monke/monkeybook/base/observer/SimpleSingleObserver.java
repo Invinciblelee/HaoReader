@@ -1,18 +1,15 @@
-//Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.base.observer;
 
-import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 
-public abstract class SimpleObserver<T> implements Observer<T> {
-
+public abstract class SimpleSingleObserver<T> implements SingleObserver<T> {
     @Override
     public void onSubscribe(Disposable d) {
-
     }
 
     @Override
-    public void onNext(T t) {
+    public void onSuccess(T t) {
 
     }
 
@@ -20,10 +17,4 @@ public abstract class SimpleObserver<T> implements Observer<T> {
     public void onError(Throwable e) {
 
     }
-
-    @Override
-    public void onComplete() {
-
-    }
-
 }

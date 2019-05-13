@@ -250,7 +250,6 @@ public class LocalPageLoader extends PageLoader {
             SubChapter chapter = chapters.get(i);
             ChapterBean bean = new ChapterBean();
             bean.setDurChapterIndex(i);
-            bean.setNoteUrl(getCollBook().getNoteUrl());
             bean.setDurChapterUrl(MD5Utils.strToMd5By16(mBookFile.getAbsolutePath() + i + chapter.title));
             bean.setDurChapterName(chapter.title);
             bean.setStart(chapter.start);

@@ -178,8 +178,6 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 JsonObject chapter = chapterArray.get(i).getAsJsonObject();
                 ChapterBean chapterBean = new ChapterBean();
                 chapterBean.setDurChapterIndex(i);
-                chapterBean.setTag(bookShelfBean.getTag());
-                chapterBean.setNoteUrl(bookShelfBean.getNoteUrl());
                 chapterBean.setDurChapterName(chapter.get("title").getAsString());
                 final String link = chapter.get("link").getAsString();
                 if (link.contains("vip.zhuishushenqi")
@@ -211,7 +209,6 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
             bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
             bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
             bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
-            bookContentBean.setTag(chapterBean.getTag());
             bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
 
             if (chapterBean.getDurChapterUrl().contains("zhuishushenqi")) {

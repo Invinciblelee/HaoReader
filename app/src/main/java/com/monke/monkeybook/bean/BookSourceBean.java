@@ -490,29 +490,36 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public String getRealRuleChapterList() {
         final String chapterListRule;
-        if (allInOneChapterList()) {
+        if (chapterListInWhole()) {
             chapterListRule = ruleChapterList.substring(7);
         } else {
             chapterListRule = ruleChapterList;
         }
-        return reverseChapterList() ? chapterListRule.substring(1) : chapterListRule;
+        return chapterListReverse() ? chapterListRule.substring(1) : chapterListRule;
     }
 
-    public boolean reverseChapterList() {
+    public boolean chapterListReverse() {
         if (TextUtils.isEmpty(ruleChapterList)) {
             return false;
         }
-        if (allInOneChapterList()) {
+        if (chapterListInWhole() || chapterListInRegex()) {
             return ruleChapterList.startsWith(Patterns.RULE_REVERSE, 7);
         }
         return ruleChapterList.startsWith(Patterns.RULE_REVERSE);
     }
 
-    public boolean allInOneChapterList() {
+    public boolean chapterListInWhole() {
         if (TextUtils.isEmpty(ruleChapterList)) {
             return false;
         }
-        return StringUtils.startWithIgnoreCase(ruleChapterList, Patterns.RULE_ALL_IN_ONE);
+        return StringUtils.startWithIgnoreCase(ruleChapterList, Patterns.RULE_IN_WHOLE);
+    }
+
+    public boolean chapterListInRegex() {
+        if (TextUtils.isEmpty(ruleChapterList)) {
+            return false;
+        }
+        return StringUtils.startWithIgnoreCase(ruleChapterList, Patterns.RULE_IN_REGEX);
     }
 
     public void setRuleChapterList(String ruleChapterList) {

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.text.TextUtils;
 import android.util.SparseArray;
 
 import androidx.annotation.Nullable;
@@ -87,8 +86,8 @@ public class DownloadService extends Service {
                         }
                         break;
                     case removeDownloadAction:
-                        String noteUrl = intent.getStringExtra("noteUrl");
-                        removeDownload(noteUrl);
+                        int id = intent.getIntExtra("taskId", -1);
+                        removeDownload(id);
                         break;
                     case cancelAction:
                         cancelDownload();
@@ -174,15 +173,14 @@ public class DownloadService extends Service {
         finishSelf();
     }
 
-    private void removeDownload(String noteUrl) {
-        if (noteUrl == null) {
+    private void removeDownload(int id) {
+        if (id == -1) {
             return;
         }
 
         for (int i = downloadTasks.size() - 1; i >= 0; i--) {
             IDownloadTask downloadTask = downloadTasks.valueAt(i);
-            DownloadBookBean downloadBook = downloadTask.getDownloadBook();
-            if (downloadBook != null && TextUtils.equals(noteUrl, downloadBook.getNoteUrl())) {
+            if (downloadTask.getId() == id) {
                 downloadTask.stopDownload();
                 break;
             }
@@ -267,10 +265,10 @@ public class DownloadService extends Service {
         ToastUtils.longToast(this, msg);
     }
 
-    private PendingIntent getRemovePendingIntent(int notificationId, String noteUrl) {
+    private PendingIntent getRemovePendingIntent(int notificationId) {
         Intent intent = new Intent(this, DownloadService.class);
         intent.setAction(DownloadService.removeDownloadAction);
-        intent.putExtra("noteUrl", noteUrl);
+        intent.putExtra("taskId", notificationId);
         return PendingIntent.getService(this, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -293,7 +291,7 @@ public class DownloadService extends Service {
                 .setContentTitle("正在下载：" + bookName)
                 .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
                 .setContentIntent(mainPendingIntent);
-        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(notificationId, downloadChapterBean.getNoteUrl()));
+        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(notificationId));
         //发送通知
         managerCompat.notify(notificationId, builder.build());
     }

@@ -4,6 +4,8 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 /**
  * 书本缓存内容
  */
@@ -18,8 +20,6 @@ public class BookContentBean implements Parcelable {
 
     private String durChapterContent; //当前章节内容
 
-    private String tag;   //来源  某个网站/本地
-
     private Boolean isRight = true;
 
     public BookContentBean() {
@@ -30,7 +30,6 @@ public class BookContentBean implements Parcelable {
         durChapterUrl = in.readString();
         durChapterIndex = in.readInt();
         durChapterContent = in.readString();
-        tag = in.readString();
         isRight = in.readByte() != 0;
         noteUrl = in.readString();
     }
@@ -40,7 +39,6 @@ public class BookContentBean implements Parcelable {
         dest.writeString(durChapterUrl);
         dest.writeInt(durChapterIndex);
         dest.writeString(durChapterContent);
-        dest.writeString(tag);
         dest.writeByte((byte) (isRight ? 1 : 0));
         dest.writeString(noteUrl);
     }
@@ -104,14 +102,6 @@ public class BookContentBean implements Parcelable {
         }
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     public Boolean getRight() {
         return isRight;
     }
@@ -124,6 +114,7 @@ public class BookContentBean implements Parcelable {
         this.noteUrl = noteUrl;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "BookContentBean{" +
@@ -132,7 +123,6 @@ public class BookContentBean implements Parcelable {
                 ", durChapterIndex=" + durChapterIndex +
                 ", durChapterName='" + durChapterName + '\'' +
                 ", durChapterContent='" + durChapterContent + '\'' +
-                ", tag='" + tag + '\'' +
                 ", isRight=" + isRight +
                 '}';
     }

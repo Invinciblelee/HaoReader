@@ -49,6 +49,7 @@ public class LargeTextDialog extends AppCompatDialog {
                 string = MarkdownUtils.simpleMarkdownConverter(text);
             } else {
                 string = text;
+                tvContent.setTextIsSelectable(true);
             }
             view.post(() -> tvContent.setText(string));
         });

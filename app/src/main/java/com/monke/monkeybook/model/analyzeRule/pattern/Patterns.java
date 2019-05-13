@@ -28,7 +28,8 @@ public class Patterns {
     public static final String RULE_SNIFF = "$$";
     public static final String RULE_KEEP = "^";
     public static final String RULE_REVERSE = "-";
-    public static final String RULE_ALL_IN_ONE = "@whole:";
+    public static final String RULE_IN_WHOLE = "@whole:";
+    public static final String RULE_IN_REGEX = "@regex:";
     public static final String RULE_REGEX = "#";
     public static final String RULE_REGEX_TRAIT = "##";
     public static final String RULE_BODY = "outerBody";

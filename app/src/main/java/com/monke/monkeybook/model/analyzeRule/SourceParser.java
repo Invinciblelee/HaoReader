@@ -39,7 +39,7 @@ abstract class SourceParser<S> {
         return Patterns.RULE_BODY.equals(rule);
     }
 
-    void onAttachSource(Object source){
+    void onAttachSource(Object source) {
 
     }
 

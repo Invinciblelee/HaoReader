@@ -7,13 +7,11 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.core.util.ObjectsCompat;
 
-import com.google.gson.annotations.Expose;
 import com.monke.monkeybook.help.ChapterContentHelp;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Objects;
 
@@ -23,39 +21,43 @@ import java.util.Objects;
 @Entity
 public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBean> {
 
-    private String noteUrl; //对应BookInfoBean noteUrl;
-    private Integer durChapterIndex;  //当前章节数
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址
+    private String nextChapterUrl; //下一章
     private String durChapterName;  //当前章节名称
     private String durChapterPlayUrl; //听书章节播放地址
-    private String tag;
+    private String noteUrl;
+    private Integer durChapterIndex;  //当前章节数
     //章节内容在文章中的起始位置(本地)
     private Integer start;
     //章节内容在文章中的终止位置(本地)
     private Integer end;
-    private String nextChapterUrl;
 
 
-    @Generated(hash = 126788321)
-    public ChapterBean(String noteUrl, Integer durChapterIndex, String durChapterUrl, String durChapterName,
-            String durChapterPlayUrl, String tag, Integer start, Integer end, String nextChapterUrl) {
-        this.noteUrl = noteUrl;
-        this.durChapterIndex = durChapterIndex;
+    @Generated(hash = 256775330)
+    public ChapterBean(String durChapterUrl, String nextChapterUrl, String durChapterName,
+            String durChapterPlayUrl, String noteUrl, Integer durChapterIndex, Integer start,
+            Integer end) {
         this.durChapterUrl = durChapterUrl;
+        this.nextChapterUrl = nextChapterUrl;
         this.durChapterName = durChapterName;
         this.durChapterPlayUrl = durChapterPlayUrl;
-        this.tag = tag;
+        this.noteUrl = noteUrl;
+        this.durChapterIndex = durChapterIndex;
         this.start = start;
         this.end = end;
-        this.nextChapterUrl = nextChapterUrl;
     }
 
     public ChapterBean() {
     }
 
+    public ChapterBean(String noteUrl, String durChapterName, String durChapterUrl) {
+        this.noteUrl = noteUrl;
+        this.durChapterName = durChapterName;
+        this.durChapterUrl = durChapterUrl;
+    }
+
     protected ChapterBean(Parcel in) {
-        noteUrl = in.readString();
         if (in.readByte() == 0) {
             durChapterIndex = null;
         } else {
@@ -65,7 +67,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
         nextChapterUrl = in.readString();
         durChapterPlayUrl = in.readString();
         durChapterName = in.readString();
-        tag = in.readString();
+        noteUrl = in.readString();
         if (in.readByte() == 0) {
             start = null;
         } else {
@@ -80,7 +82,6 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(noteUrl);
         if (durChapterIndex == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -91,7 +92,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
         dest.writeString(nextChapterUrl);
         dest.writeString(durChapterPlayUrl);
         dest.writeString(durChapterName);
-        dest.writeString(tag);
+        dest.writeString(noteUrl);
         if (start == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -125,13 +126,12 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
 
     protected ChapterBean copy() {
         ChapterBean chapterBean = new ChapterBean();
-        chapterBean.noteUrl = noteUrl;
         chapterBean.durChapterIndex = durChapterIndex;
         chapterBean.durChapterUrl = durChapterUrl;
         chapterBean.durChapterPlayUrl = durChapterPlayUrl;
         chapterBean.nextChapterUrl = nextChapterUrl;
         chapterBean.durChapterName = durChapterName;
-        chapterBean.tag = tag;
+        chapterBean.noteUrl = noteUrl;
         chapterBean.start = start;
         chapterBean.end = end;
         return chapterBean;
@@ -156,12 +156,12 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
         return ChapterContentHelp.isChapterCached(bookInfoBean, this);
     }
 
-    public String getTag() {
-        return this.tag;
+    public String getNoteUrl() {
+        return noteUrl;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setNoteUrl(String noteUrl) {
+        this.noteUrl = noteUrl;
     }
 
     public String getDurChapterName() {
@@ -190,14 +190,6 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
 
     public int getDurChapterIndex() {
         return this.durChapterIndex == null ? 0 : this.durChapterIndex;
-    }
-
-    public String getNoteUrl() {
-        return this.noteUrl;
-    }
-
-    public void setNoteUrl(String noteUrl) {
-        this.noteUrl = noteUrl;
     }
 
     public int getStart() {
@@ -237,12 +229,10 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     @Override
     public String toString() {
         return "ChapterBean{" +
-                "noteUrl='" + noteUrl + '\'' +
                 ", durChapterIndex=" + durChapterIndex +
                 ", durChapterUrl='" + durChapterUrl + '\'' +
                 ", durChapterName='" + durChapterName + '\'' +
                 ", durChapterPlayUrl='" + durChapterPlayUrl + '\'' +
-                ", tag='" + tag + '\'' +
                 ", start=" + start +
                 ", end=" + end +
                 ", nextChapterUrl='" + nextChapterUrl + '\'' +

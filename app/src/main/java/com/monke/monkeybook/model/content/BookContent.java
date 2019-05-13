@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.text.TextUtils;
-
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -24,18 +22,10 @@ final class BookContent {
     }
 
     Observable<BookContentBean> analyzeBookContent(final String s, final ChapterBean chapter) {
-        return Observable.create(e -> {
-            if (TextUtils.isEmpty(s)) {
-                e.onError(new Throwable("内容获取失败"));
-                e.onComplete();
-                return;
-            }
-            analyzer.apply(analyzer.newConfig()
-                    .baseURL(chapter.getDurChapterUrl())
-                    .extra("chapter", chapter));
-            e.onNext(analyzer.getContent(s));
-            e.onComplete();
-        });
+        analyzer.apply(analyzer.newConfig()
+                .baseURL(chapter.getDurChapterUrl())
+                .extra("chapter", chapter));
+        return analyzer.getContent(s);
     }
 
 

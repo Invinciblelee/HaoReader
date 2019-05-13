@@ -7,15 +7,17 @@ import com.monke.monkeybook.bean.SearchBookBean;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+
 public interface ContentDelegate {
 
-    List<SearchBookBean> getSearchBooks(String source);
+    Observable<List<SearchBookBean>> getSearchBooks(String source);
 
-    BookShelfBean getBook(String source);
+    Observable<BookShelfBean> getBook(String source);
 
-    List<ChapterBean> getChapters(String source);
+    Observable<List<ChapterBean>> getChapters(String source);
 
-    BookContentBean getContent(String source);
+    Observable<BookContentBean> getContent(String source);
 
-    String getAudioLink(String source);
+    Observable<String> getAudioLink(String source);
 }

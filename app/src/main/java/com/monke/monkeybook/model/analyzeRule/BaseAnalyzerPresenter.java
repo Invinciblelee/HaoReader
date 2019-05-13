@@ -112,7 +112,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             }
         }
 
-        evalReplace(result, rulePattern);
+        matchRegexes(result, rulePattern);
     }
 
 
@@ -124,10 +124,19 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             }
         }
 
-        evalJoinUrl(result, rulePattern);
+        processRawUrls(result, rulePattern);
     }
 
-    final void evalReplace(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
+    final void processRawUrls(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
+        matchRegexes(result, rulePattern);
+
+        ListIterator<String> iterator = result.listIterator();
+        while (iterator.hasNext()) {
+            iterator.set(URLUtils.getAbsoluteURL(getBaseURL(), iterator.next()));
+        }
+    }
+
+    final void matchRegexes(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
         if (!isEmpty(rulePattern.replaceRegex)) {
             ListIterator<String> iterator = list.listIterator();
             while (iterator.hasNext()) {
@@ -137,20 +146,10 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         }
     }
 
-    final void evalJoinUrl(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
-        evalReplace(result, rulePattern);
-
-        ListIterator<String> iterator = result.listIterator();
-        while (iterator.hasNext()) {
-            String string = iterator.next();
-            iterator.set(URLUtils.getAbsoluteURL(getBaseURL(), string));
-        }
-    }
-
     final String processResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
         result = evalStringScript(result, rulePattern);
 
-        result = evalReplace(result, rulePattern);
+        result = matchRegex(result, rulePattern);
 
         return formatHtml(result);
     }
@@ -159,22 +158,22 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     final String processResultUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
         result = evalStringScript(result, rulePattern);
 
-        result = evalJoinUrl(result, rulePattern);
+        result = processRawUrl(result, rulePattern);
+
         return result;
     }
 
-    final String evalReplace(@NonNull String result, @NonNull RulePattern rulePattern) {
+    final String processRawUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
+        result = matchRegex(result, rulePattern);
+
+        result = URLUtils.getAbsoluteURL(getBaseURL(), result);
+
+        return result;
+    }
+
+    final String matchRegex(@NonNull String result, @NonNull RulePattern rulePattern) {
         if (!isEmpty(rulePattern.replaceRegex)) {
             result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
-        }
-        return result;
-    }
-
-    final String evalJoinUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
-        result = evalReplace(result, rulePattern);
-
-        if (!isEmpty(result)) {
-            result = URLUtils.getAbsoluteURL(getBaseURL(), result);
         }
         return result;
     }
@@ -228,20 +227,14 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     @Override
     public String getResultUrlInternal(String rule) {
         final Object object = getParser().getPrimitive();
-        final String result;
         if (object instanceof NativeObject) {
-            result = StringUtils.valueOf(((NativeObject) object).get(rule));
+            return StringUtils.valueOf(((NativeObject) object).get(rule));
         } else if (object instanceof Element) {
             Element element = (Element) object;
             Element find = element.selectFirst(rule);
-            result = StringUtils.checkNull(find == null ? null : find.text(), element.attr(rule));
+            return StringUtils.checkNull(find == null ? null : find.text(), element.attr(rule));
         } else if (object instanceof JXNode) {
-            result = StringUtils.valueOf(((JXNode) object).selOne(rule));
-        } else {
-            result = null;
-        }
-        if (isEmpty(result)) {
-            return URLUtils.getAbsoluteURL(getBaseURL(), result);
+            return StringUtils.valueOf(((JXNode) object).selOne(rule));
         }
         return getResultUrl(rule);
     }

@@ -61,6 +61,7 @@
                     android:autoLink="web"
                     android:clickable="true"
                     android:focusable="true"
+                    android:linksClickable="true"
                     android:textIsSelectable="true" />
             </ScrollView>
 

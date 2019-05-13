@@ -26,7 +26,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final String result = evalStringScript(getParser().getPrimitive(), pattern);
                 if (!isEmpty(result)) {
-                    builder.append(evalReplace(result, pattern));
+                    builder.append(matchRegex(result, pattern));
                     haveResult = true;
                 }
             } else if (pattern.isRedirect) {
@@ -64,7 +64,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 final List<String> list = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 final String result = list.isEmpty() ? "" : list.get(0);
                 if (!isEmpty(result)) {
-                    return evalJoinUrl(result, pattern);
+                    return processRawUrl(result, pattern);
                 }
             } else if (pattern.isRedirect) {
                 final String source = evalStringScript(getParser().getPrimitive(), pattern);
@@ -95,7 +95,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final List<String> result = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 if (!result.isEmpty()) {
-                    evalReplace(result, pattern);
+                    matchRegexes(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
@@ -135,7 +135,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final List<String> result = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 if (!result.isEmpty()) {
-                    evalJoinUrl(result, pattern);
+                    processRawUrls(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
@@ -176,7 +176,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final String result = evalStringScript(source, pattern);
                 if (!isEmpty(result)) {
-                    builder.append(evalReplace(result, pattern));
+                    builder.append(matchRegex(result, pattern));
                     haveResult = true;
                 }
             } else {
@@ -204,7 +204,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 final List<String> list = evalStringArrayScript(source, pattern);
                 final String result = list.isEmpty() ? "" : list.get(0);
                 if (!isEmpty(result)) {
-                    return evalJoinUrl(result, pattern);
+                    return processRawUrl(result, pattern);
                 }
             } else {
                 final String result = getParser().parseStringFirst(source, pattern.elementsRule);
@@ -228,7 +228,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final List<String> result = evalStringArrayScript(source, pattern);
                 if (!result.isEmpty()) {
-                    evalReplace(result, pattern);
+                    matchRegexes(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }

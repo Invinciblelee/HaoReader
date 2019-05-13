@@ -11,6 +11,8 @@ import com.monke.monkeybook.model.annotation.RuleType;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
+
 public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDelegate {
 
     private SourceParser<S> mSourceParser;
@@ -117,27 +119,27 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public List<SearchBookBean> getSearchBooks(String source) {
+    public Observable<List<SearchBookBean>> getSearchBooks(String source) {
         return getDelegate().getSearchBooks(source);
     }
 
     @Override
-    public BookShelfBean getBook(String source) {
+    public Observable<BookShelfBean> getBook(String source) {
         return getDelegate().getBook(source);
     }
 
     @Override
-    public List<ChapterBean> getChapters(String source) {
+    public Observable<List<ChapterBean>> getChapters(String source) {
         return getDelegate().getChapters(source);
     }
 
     @Override
-    public BookContentBean getContent(String source) {
+    public Observable<BookContentBean> getContent(String source) {
         return getDelegate().getContent(source);
     }
 
     @Override
-    public String getAudioLink(String source) {
+    public Observable<String> getAudioLink(String source) {
         return getDelegate().getAudioLink(source);
     }
 }

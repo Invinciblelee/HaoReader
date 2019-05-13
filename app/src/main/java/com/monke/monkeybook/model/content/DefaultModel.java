@@ -162,7 +162,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookChapter.analyzeChapters(response, bookShelfBean));
         } catch (Exception e) {
@@ -182,7 +182,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
         final BookContent bookContent = new BookContent(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, chapter.getDurChapterUrl(), headerMap(true));
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getNoteUrl(), chapter.getDurChapterUrl(), headerMap(true));
             if (bookContent.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
@@ -195,7 +195,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         params.url(analyzeUrl.getUrl());
                         break;
                     case GET:
-                        params.url(analyzeUrl.getUrlWithQuery());
+                        params.url(analyzeUrl.getQueryUrl());
                 }
                 return ajax(params)
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
@@ -223,7 +223,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
         final AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, chapter.getDurChapterUrl(), headerMap(true));
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getNoteUrl(), chapter.getDurChapterUrl(), headerMap(true));
             if (audioBookChapter.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
@@ -238,7 +238,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         params.url(analyzeUrl.getUrl());
                         break;
                     case GET:
-                        params.url(analyzeUrl.getUrlWithQuery());
+                        params.url(analyzeUrl.getQueryUrl());
                 }
                 return sniff(params)
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));

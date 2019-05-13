@@ -10,6 +10,7 @@ import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.MD5Utils;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
 
 import java.net.URLEncoder;
@@ -34,14 +35,15 @@ public class AnalyzeUrl {
 
     private String id;
     private String requestUrl;
+    private String baseUrl;
     private String url;
-    private String hostUrl;
+    private String host;
     private String urlPath;
     private String queryStr;
     private byte[] postData;
+    private String encoding;
     private Map<String, String> queryMap = new HashMap<>();
     private Map<String, String> headerMap = new HashMap<>();
-    private String charCode;
     private RequestMethod requestMethod = RequestMethod.DEFAULT;
 
     public AnalyzeUrl(String baseUrl, String urlRule) throws Exception {
@@ -57,7 +59,10 @@ public class AnalyzeUrl {
     }
 
     public AnalyzeUrl(String baseUrl, String ruleUrl, String key, Integer page, Map<String, String> headerMap) throws Exception {
-        this.hostUrl = baseUrl;
+        if (!TextUtils.isEmpty(baseUrl)) {
+            this.baseUrl = PATTERN_HEADER.matcher(baseUrl).replaceAll("");
+        }
+
         //解析Header
         ruleUrl = analyzeHeader(ruleUrl, headerMap);
         //替换关键字
@@ -96,8 +101,8 @@ public class AnalyzeUrl {
             postData = generatePostData();
         }
 
-        String rawUrl = getUrlWithQuery();
-        id = StringUtils.checkNull(MD5Utils.strToMd5By16(rawUrl), rawUrl);
+        String queryUrl = getQueryUrl();
+        id = StringUtils.checkNull(MD5Utils.strToMd5By16(queryUrl), queryUrl);
     }
 
     /**
@@ -193,7 +198,7 @@ public class AnalyzeUrl {
                 for (String qt : qtS) {
                     String[] gz = qt.split("=");
                     if (gz[0].equals("char")) {
-                        charCode = gz[1];
+                        encoding = gz[1];
                     }
                 }
             }
@@ -209,16 +214,16 @@ public class AnalyzeUrl {
         for (String query : queryS) {
             String[] queryM = query.split("=");
             String value = queryM.length > 1 ? queryM[1] : "";
-            if (TextUtils.isEmpty(charCode)) {
+            if (TextUtils.isEmpty(encoding)) {
                 if (UrlEncoderUtils.hasUrlEncoded(value)) {
                     queryMap.put(queryM[0], value);
                 } else {
                     queryMap.put(queryM[0], URLEncoder.encode(value, "UTF-8"));
                 }
-            } else if (charCode.equals("escape")) {
+            } else if (encoding.equals("escape")) {
                 queryMap.put(queryM[0], StringUtils.escape(value));
             } else {
-                queryMap.put(queryM[0], URLEncoder.encode(value, charCode));
+                queryMap.put(queryM[0], URLEncoder.encode(value, encoding));
             }
         }
     }
@@ -240,17 +245,9 @@ public class AnalyzeUrl {
     }
 
     private void generateUrlPath(String ruleUrl) {
-        String baseUrl = StringUtils.getBaseUrl(ruleUrl);
-        if (StringUtils.isBlank(baseUrl) && hostUrl != null) {
-            url = hostUrl + ruleUrl;
-            urlPath = ruleUrl;
-        } else {
-            url = ruleUrl;
-            hostUrl = baseUrl;
-            if (hostUrl != null) {
-                urlPath = ruleUrl.substring(hostUrl.length());
-            }
-        }
+        url = URLUtils.getAbsoluteURL(baseUrl, ruleUrl);
+        host = StringUtils.getBaseUrl(url);
+        urlPath = url.substring(host.length());
     }
 
     public String getId() {
@@ -262,14 +259,18 @@ public class AnalyzeUrl {
     }
 
     public String getRequestUrl() {
-        if(requestUrl == null){
-            return getUrlWithQuery();
+        if (requestUrl == null) {
+            return getQueryUrl();
         }
         return requestUrl;
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
     public String getHost() {
-        return hostUrl;
+        return host;
     }
 
     public String getPath() {
@@ -280,7 +281,7 @@ public class AnalyzeUrl {
         return url;
     }
 
-    public String getUrlWithQuery() {
+    public String getQueryUrl() {
         if (StringUtils.isBlank(queryStr)) {
             return url;
         }
@@ -295,10 +296,6 @@ public class AnalyzeUrl {
         return headerMap;
     }
 
-    public String getQueryStr() {
-        return queryStr;
-    }
-
     public byte[] getPostData() {
         return postData;
     }
@@ -307,7 +304,6 @@ public class AnalyzeUrl {
         return requestMethod == null ? RequestMethod.DEFAULT : requestMethod;
     }
 
-
     @NonNull
     @Override
     public String toString() {
@@ -315,13 +311,13 @@ public class AnalyzeUrl {
                 "id='" + id + '\'' +
                 ", requestUrl='" + requestUrl + '\'' +
                 ", url='" + url + '\'' +
-                ", hostUrl='" + hostUrl + '\'' +
+                ", host='" + host + '\'' +
                 ", urlPath='" + urlPath + '\'' +
                 ", queryStr='" + queryStr + '\'' +
                 ", postData=" + Arrays.toString(postData) +
                 ", queryMap=" + queryMap +
                 ", headerMap=" + headerMap +
-                ", charCode='" + charCode + '\'' +
+                ", encoding='" + encoding + '\'' +
                 ", requestMethod=" + requestMethod +
                 '}';
     }

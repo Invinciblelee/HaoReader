@@ -6,11 +6,9 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
 import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
 
 final class BookList {
 
@@ -22,13 +20,9 @@ final class BookList {
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {
-        return Observable.create(e -> {
-            analyzer.apply(analyzer.newConfig().baseURL(baseUrl));
-
-            List<SearchBookBean> searchBookBeans = analyzer.getSearchBooks(response);
-            e.onNext(searchBookBeans);
-            e.onComplete();
-        });
+        analyzer.apply(analyzer.newConfig()
+                .baseURL(baseUrl));
+        return analyzer.getSearchBooks(response);
     }
 
 }
