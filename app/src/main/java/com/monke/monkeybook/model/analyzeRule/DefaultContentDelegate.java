@@ -14,7 +14,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -143,7 +142,7 @@ class DefaultContentDelegate implements ContentDelegate {
             if (webChapter.nextUrls != null) {
                 if (webChapter.nextUrls.size() > 1) {
                     final List<String> chapterUrls = new ArrayList<>(new HashSet<>(webChapter.nextUrls));
-                    Collections.sort(chapterUrls, Global.STRING_COMPARATOR);
+                    Collections.sort(chapterUrls, StringUtils.STRING_COMPARATOR);
                     getWebChapterResultList(ruleChapterList, headerMap, chapterUrls)
                             .subscribe(new SimpleObserver<List<WebChapterResult>>() {
                                 @Override
