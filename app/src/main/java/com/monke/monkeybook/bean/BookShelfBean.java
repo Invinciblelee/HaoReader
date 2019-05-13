@@ -490,7 +490,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
     public void setVariableString(String variableString) {
         this.variableString = variableString;
         variableStore.setVariableString(variableString);
-
     }
 
     @Override
@@ -502,7 +501,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
     public void putVariableMap(Map<String, String> variableMap) {
         variableStore.putVariableMap(variableMap);
         String variableString = variableStore.getVariableString();
-        if(variableString != null){
+        if (variableString != null) {
             this.variableString = variableString;
         }
     }

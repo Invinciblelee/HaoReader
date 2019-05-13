@@ -248,7 +248,7 @@ class DefaultContentDelegate implements ContentDelegate {
             Object obj = collection.next();
             mAnalyzer.setContent(obj);
             String name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
-            String url = mAnalyzer.getResultContent(getBookSource().getRuleContentUrl());   //id
+            String url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
             if (!isEmpty(url) && !isEmpty(name)) {
                 if (chapterBean != null) {
                     chapterBean.setNextChapterUrl(url);
