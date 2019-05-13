@@ -103,11 +103,15 @@ final class XPathParser extends SourceParser<JXDocument> {
 
         try {
             for (JXNode jxNode : source.selN(xPath)) {
-                resultList.add(StringUtils.valueOf(jxNode));
+                String string = StringUtils.valueOf(jxNode);
+                if (StringUtils.isNotBlank(string)) {
+                    resultList.add(string);
+                }
             }
         } catch (Exception e) {
             Logger.e(TAG, xPath, e);
         }
+
         return resultList;
     }
 

@@ -490,7 +490,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public String getRealRuleChapterList() {
         final String chapterListRule;
-        if (chapterListInWhole()) {
+        if (chapterListInWhole() || chapterListInRegex()) {
             chapterListRule = ruleChapterList.substring(7);
         } else {
             chapterListRule = ruleChapterList;

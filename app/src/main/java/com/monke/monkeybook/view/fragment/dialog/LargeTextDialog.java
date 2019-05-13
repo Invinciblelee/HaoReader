@@ -51,7 +51,7 @@ public class LargeTextDialog extends AppCompatDialog {
                 string = text;
                 tvContent.setTextIsSelectable(true);
             }
-            view.post(() -> tvContent.setText(string));
+            tvContent.post(() -> tvContent.setText(string));
         });
     }
 

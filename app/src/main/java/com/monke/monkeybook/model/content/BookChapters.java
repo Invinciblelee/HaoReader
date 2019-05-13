@@ -23,6 +23,7 @@ final class BookChapters {
     Observable<List<ChapterBean>> analyzeChapters(final String s, final BookShelfBean bookShelfBean) {
         analyzer.apply(analyzer.newConfig()
                 .baseURL(bookShelfBean.getBookInfoBean().getChapterListUrl())
+                .extra("noteUrl", bookShelfBean.getNoteUrl())
                 .variableStore(bookShelfBean));
         return analyzer.getChapters(s);
     }

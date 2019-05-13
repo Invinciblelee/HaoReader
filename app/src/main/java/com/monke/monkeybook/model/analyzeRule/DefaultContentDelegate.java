@@ -18,7 +18,6 @@ import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -136,21 +135,27 @@ class DefaultContentDelegate implements ContentDelegate {
             final Map<String, String> headerMap = AnalyzeHeaders.getMap(getBookSource());
 
             WebChapterResult webChapter = new WebChapterResult();
-            toWebChaptersResult(source, ruleChapterList, webChapter);
-            List<ChapterBean> chapterList = webChapter.result;
+            toWebChaptersResult(source, ruleChapterList, webChapter, true);
+            final List<ChapterBean> chapterList;
+            if (webChapter.result != null) {
+                chapterList = webChapter.result;
+            } else {
+                chapterList = new ArrayList<>();
+            }
 
             if (webChapter.nextUrls != null) {
                 if (webChapter.nextUrls.size() > 1) {
-                    final List<String> chapterUrls = new ArrayList<>(new HashSet<>(webChapter.nextUrls));
-                    Collections.sort(chapterUrls, StringUtils.STRING_COMPARATOR);
+                    final List<String> chapterUrls = new ArrayList<>(new LinkedHashSet<>(webChapter.nextUrls));
+                    chapterUrls.remove(getConfig().getBaseURL());
                     getWebChapterResultList(ruleChapterList, headerMap, chapterUrls)
                             .subscribe(new SimpleObserver<List<WebChapterResult>>() {
                                 @Override
                                 public void onNext(List<WebChapterResult> webChapterResults) {
                                     Collections.sort(webChapterResults);
-                                    final List<ChapterBean> chapterList = new ArrayList<>();
                                     for (WebChapterResult webChapter : webChapterResults) {
-                                        chapterList.addAll(webChapter.result);
+                                        if (webChapter.result != null) {
+                                            chapterList.addAll(webChapter.result);
+                                        }
                                     }
                                     doOnChapterListFinish(chapterList, emitter);
                                 }
@@ -161,7 +166,7 @@ class DefaultContentDelegate implements ContentDelegate {
                     usedUrls.add(getConfig().getBaseURL());
                     while (!isEmpty(nextUrl) && !usedUrls.contains(nextUrl)) {
                         usedUrls.add(nextUrl);
-                        webChapter = getSingleWebChapterResult(0, nextUrl, ruleChapterList, headerMap).blockingFirst();
+                        webChapter = getSingleWebChapterResult(0, nextUrl, ruleChapterList, headerMap, true).blockingFirst();
                         if (webChapter.result != null && !webChapter.result.isEmpty()) {
                             chapterList.addAll(webChapter.result);
                         }
@@ -183,11 +188,11 @@ class DefaultContentDelegate implements ContentDelegate {
             webRequests.add(new WebChapterRequest(i, chapterUrls.get(i)));
         }
         return Observable.fromIterable(webRequests)
-                .flatMap(request -> getSingleWebChapterResult(request.id, request.url, ruleChapterList, headerMap))
+                .flatMap(request -> getSingleWebChapterResult(request.id, request.url, ruleChapterList, headerMap, false))
                 .toList().toObservable();
     }
 
-    private Observable<WebChapterResult> getSingleWebChapterResult(int index, String nextUrl, String ruleChapterList, Map<String, String> headerMap) {
+    private Observable<WebChapterResult> getSingleWebChapterResult(int index, String nextUrl, String ruleChapterList, Map<String, String> headerMap, boolean readUrls) {
         return Observable.create((ObservableOnSubscribe<AnalyzeUrl>) emitter -> {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), nextUrl, headerMap);
             emitter.onNext(analyzeUrl);
@@ -197,10 +202,11 @@ class DefaultContentDelegate implements ContentDelegate {
                 .flatMap(analyzeUrl -> SimpleModel.getResponse(analyzeUrl)
                         .flatMap(response -> Observable.create((ObservableOnSubscribe<WebChapterResult>) emitter -> {
                             WebChapterResult result = new WebChapterResult(index);
-                            toWebChaptersResult(response.body(), ruleChapterList, result);
+                            toWebChaptersResult(response.body(), ruleChapterList, result, readUrls);
                             emitter.onNext(result);
                             emitter.onComplete();
                         }).observeOn(Schedulers.io())))
+                .retry(2)
                 .onErrorReturnItem(new WebChapterResult(index));
     }
 
@@ -215,25 +221,27 @@ class DefaultContentDelegate implements ContentDelegate {
         emitter.onComplete();
     }
 
-    private synchronized void toWebChaptersResult(String s, String ruleChapterList, WebChapterResult webChapter) {
+    private synchronized void toWebChaptersResult(String s, String ruleChapterList, WebChapterResult webChapter, boolean readUrls) {
         mAnalyzer.setContent(s);
-        if (!isEmpty(getBookSource().getRuleChapterUrlNext())) {
+        if (readUrls && !isEmpty(getBookSource().getRuleChapterUrlNext())) {
             webChapter.nextUrls = mAnalyzer.getResultUrls(getBookSource().getRuleChapterUrlNext());
         }
 
+        final String noteUrl = getConfig().getExtras().getString("noteUrl");
+
         if (getBookSource().chapterListInRegex()) {
-            webChapter.result = getChaptersInRegex(s, ruleChapterList);
+            webChapter.result = getChaptersInRegex(s, ruleChapterList, noteUrl);
         } else if (getBookSource().chapterListInWhole()) {
-            webChapter.result = getChaptersInWhole(mAnalyzer.getRawCollection(ruleChapterList));
+            webChapter.result = getChaptersInWhole(mAnalyzer.getRawCollection(ruleChapterList), noteUrl);
         } else {
-            webChapter.result = getChaptersInDefault(mAnalyzer.getRawCollection(ruleChapterList));
+            webChapter.result = getChaptersInDefault(mAnalyzer.getRawCollection(ruleChapterList), noteUrl);
         }
     }
 
     /**
      * 默认规则解析
      */
-    private List<ChapterBean> getChaptersInDefault(AnalyzeCollection collection) {
+    private List<ChapterBean> getChaptersInDefault(AnalyzeCollection collection, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
         ChapterBean chapterBean = null;
         while (collection.hasNext()) {
@@ -245,7 +253,7 @@ class DefaultContentDelegate implements ContentDelegate {
                 if (chapterBean != null) {
                     chapterBean.setNextChapterUrl(url);
                 }
-                chapterBean = new ChapterBean(getConfig().getBaseURL(), name, url);
+                chapterBean = new ChapterBean(noteUrl, name, url);
                 chapterList.add(chapterBean);
             }
         }
@@ -255,7 +263,7 @@ class DefaultContentDelegate implements ContentDelegate {
     /**
      * all in one 模式
      */
-    private List<ChapterBean> getChaptersInWhole(AnalyzeCollection collection) {
+    private List<ChapterBean> getChaptersInWhole(AnalyzeCollection collection, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
         ChapterBean chapterBean = null;
         while (collection.hasNext()) {
@@ -266,7 +274,7 @@ class DefaultContentDelegate implements ContentDelegate {
                 if (chapterBean != null) {
                     chapterBean.setNextChapterUrl(url);
                 }
-                chapterBean = new ChapterBean(getConfig().getBaseURL(), name, url);
+                chapterBean = new ChapterBean(noteUrl, name, url);
                 chapterList.add(chapterBean);
             }
         }
@@ -276,25 +284,25 @@ class DefaultContentDelegate implements ContentDelegate {
     /**
      * 正则表达式解析
      */
-    private List<ChapterBean> getChaptersInRegex(String source, String ruleChapterList) {
+    private List<ChapterBean> getChaptersInRegex(String source, String ruleChapterList, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
-        matchRegex(source, ruleChapterList.split("&&"), 0,
+        matchRegex(source, noteUrl, ruleChapterList.split("&&"), 0,
                 Integer.parseInt(getBookSource().getRuleChapterName()),
                 Integer.parseInt(getBookSource().getRuleContentUrl()),
                 chapterList);
         return chapterList;
     }
 
-    private void matchRegex(String string, String[] regex, int index, int s1, int s2, List<ChapterBean> chapterBeans) {
-        Matcher m = Pattern.compile(regex[index]).matcher(string);
+    private void matchRegex(String string, String noteUrl, String[] regex, int index, int s1, int s2, List<ChapterBean> chapterBeans) {
+        Matcher matcher = Pattern.compile(regex[index]).matcher(string);
         if (index + 1 == regex.length) {
-            while (m.find()) {
-                chapterBeans.add(new ChapterBean(getConfig().getBaseURL(), m.group(s1), m.group(s2)));
+            while (matcher.find()) {
+                chapterBeans.add(new ChapterBean(noteUrl, matcher.group(s1), matcher.group(s2)));
             }
         } else {
             StringBuilder builder = new StringBuilder();
-            while (m.find()) builder.append(m.group(0));
-            matchRegex(builder.toString(), regex, ++index, s1, s2, chapterBeans);
+            while (matcher.find()) builder.append(matcher.group(0));
+            matchRegex(builder.toString(), noteUrl, regex, ++index, s1, s2, chapterBeans);
         }
     }
 

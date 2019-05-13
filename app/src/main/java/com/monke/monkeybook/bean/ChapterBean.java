@@ -229,7 +229,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     @Override
     public String toString() {
         return "ChapterBean{" +
-                ", durChapterIndex=" + durChapterIndex +
+                "durChapterIndex=" + durChapterIndex +
                 ", durChapterUrl='" + durChapterUrl + '\'' +
                 ", durChapterName='" + durChapterName + '\'' +
                 ", durChapterPlayUrl='" + durChapterPlayUrl + '\'' +

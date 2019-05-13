@@ -99,7 +99,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                     emitter.onComplete();
                 });
             }
-            return toObservable(analyzeUrl)
+            return toObservable(analyzeUrl, true)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
         } catch (Exception e) {
             Logger.e(TAG, "findBook: " + url, e);
@@ -125,7 +125,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return Observable.just(ListUtils.mutableList());
             }
 
-            return toObservable(analyzeUrl)
+            return toObservable(analyzeUrl, true)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
         } catch (Exception e) {
             Logger.e(TAG, "searchBook: " + content, e);
@@ -144,7 +144,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getNoteUrl(), headerMap(true));
-            return toObservable(analyzeUrl)
+            return toObservable(analyzeUrl, true)
                     .flatMap(response -> bookInfo.analyzeBookInfo(response, bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "书籍信息获取失败", e);
@@ -163,7 +163,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
-            return toObservable(analyzeUrl)
+            return toObservable(analyzeUrl, true)
                     .flatMap(response -> bookChapter.analyzeChapters(response, bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "目录获取失败", e);
@@ -200,7 +200,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return ajax(params)
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             } else {
-                return toObservable(analyzeUrl)
+                return toObservable(analyzeUrl, false)
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             }
         } catch (Exception e) {
@@ -243,7 +243,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return sniff(params)
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             } else {
-                return toObservable(analyzeUrl)
+                return toObservable(analyzeUrl, false)
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             }
         } catch (Exception e) {
@@ -252,10 +252,12 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
     }
 
-    private Observable<String> toObservable(AnalyzeUrl analyzeUrl) {
-        String cachedResponse = MemoryCache.INSTANCE.getCache(analyzeUrl.getId());
-        if (cachedResponse != null) {
-            return Observable.just(cachedResponse);
+    private Observable<String> toObservable(AnalyzeUrl analyzeUrl, boolean cache) {
+        if (cache) {
+            String cachedResponse = MemoryCache.INSTANCE.getCache(analyzeUrl.getId());
+            if (cachedResponse != null) {
+                return Observable.just(cachedResponse);
+            }
         }
         return SimpleModel.getResponse(analyzeUrl)
                 .flatMap(response -> setCookie(response, tag))
@@ -270,7 +272,11 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                     analyzeUrl.setRequestUrl(requestUrl);
                 })
                 .map(Response::body)
-                .doOnNext(string -> MemoryCache.INSTANCE.putCache(analyzeUrl.getId(), string));
+                .doOnNext(string -> {
+                    if (cache) {
+                        MemoryCache.INSTANCE.putCache(analyzeUrl.getId(), string);
+                    }
+                });
     }
 
 
