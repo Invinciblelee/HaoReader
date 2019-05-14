@@ -171,7 +171,7 @@
             android:id="@+id/btn_catalog"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:padding="15dp"
+            android:padding="14dp"
             android:src="@drawable/ic_format_list_bulleted_black_24dp"
             android:tint="@color/dark_white" />
     </LinearLayout>
