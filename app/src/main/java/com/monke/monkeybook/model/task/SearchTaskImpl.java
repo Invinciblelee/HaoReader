@@ -13,21 +13,21 @@ import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class SearchTaskImpl implements ISearchTask {
 
     private CompositeDisposable disposables;
     private final OnSearchingListener listener;
+
+    private int index;
 
     private int successCount;
 
@@ -38,10 +38,12 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     @Override
-    public void startSearch(String query, Scheduler scheduler) {
+    public void startSearch(int index, String query, Scheduler scheduler) {
         if (TextUtils.isEmpty(query) || isDisposed()) {
             return;
         }
+
+        this.index = index;
 
         successCount = 0;
 
@@ -80,9 +82,10 @@ public class SearchTaskImpl implements ISearchTask {
                             incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
                         })
                         .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
+                        .delay(index * 100L, TimeUnit.MILLISECONDS)
                         .flatMap(searchBookBeans -> Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
                             boolean hasMore = true;
-                            if (!isDisposed() && searchBookBeans != null && !searchBookBeans.isEmpty()) {
+                            if (!isDisposed() && !searchBookBeans.isEmpty()) {
                                 listener.onSearchResult(searchBookBeans);
 
                                 if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
@@ -93,7 +96,7 @@ public class SearchTaskImpl implements ISearchTask {
                             }
                             emitter.onNext(hasMore);
                             emitter.onComplete();
-                        }).subscribeOn(Schedulers.io()))
+                        }))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<Boolean>() {
                             @Override

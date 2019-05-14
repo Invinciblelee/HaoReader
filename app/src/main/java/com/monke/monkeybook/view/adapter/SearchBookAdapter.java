@@ -28,11 +28,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchBookAdapter extends RefreshRecyclerViewAdapter implements SearchBookHelp.DataObserver {
+public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
     private WeakReference<Activity> activityRef;
     private final List<SearchBookBean> searchBooks;
-
-    private final SearchBookHelp searchBookHelp;
 
     public interface OnItemClickListener {
         void clickItem(View animView, int position, SearchBookBean searchBookBean);
@@ -44,7 +42,6 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter implements Sea
         super(needLoadMore);
         this.activityRef = new WeakReference<>(activity);
         searchBooks = new ArrayList<>();
-        searchBookHelp = new SearchBookHelp(this);
     }
 
     @Override
@@ -171,32 +168,21 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter implements Sea
     }
 
     public void addAll(List<SearchBookBean> newDataS, String keyWord) {
-        Activity activity = activityRef.get();
-        if (activity != null && !activity.isFinishing()) {
-            activity.runOnUiThread(() -> searchBookHelp.addSearchBooks(searchBooks, newDataS, keyWord));
+        synchronized (searchBooks) {
+            Activity activity = activityRef.get();
+            if (activity != null && !activity.isFinishing()) {
+                SearchBookHelp.addSearchBooks(searchBooks, newDataS, keyWord);
+                activity.runOnUiThread(this::notifyDataSetChanged);
+            }
         }
     }
 
 
-    @Override
-    public void onChanged(int count) {
-        notifyItemRangeInserted(0, count);
-    }
-
-    @Override
-    public void onItemInserted(int position) {
-        notifyItemInserted(position);
-    }
-
-    @Override
-    public void onItemChanged(int position) {
-        notifyItemChanged(position, 0);
-    }
-
-
     public void clearAll() {
-        searchBooks.clear();
-        notifyDataSetChanged();
+       synchronized (searchBooks){
+           searchBooks.clear();
+           notifyDataSetChanged();
+       }
     }
 
 }

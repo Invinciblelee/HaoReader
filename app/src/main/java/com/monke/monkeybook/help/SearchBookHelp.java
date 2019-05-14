@@ -10,13 +10,11 @@ import java.util.List;
 
 public class SearchBookHelp {
 
-    private final DataObserver observer;
 
-    public SearchBookHelp(DataObserver observer) {
-        this.observer = observer;
+    private SearchBookHelp() {
     }
 
-    public synchronized void addSearchBooks(List<SearchBookBean> originalList, List<SearchBookBean> newDataS, String keyWord) {
+    public static void addSearchBooks(List<SearchBookBean> originalList, List<SearchBookBean> newDataS, String keyWord) {
         if (originalList == null) {
             return;
         }
@@ -25,7 +23,6 @@ public class SearchBookHelp {
             if (originalList.size() == 0) {
                 originalList.addAll(newDataS);
                 sortSearchBooks(newDataS, keyWord);
-                observer.onChanged(originalList.size());
             } else {
                 //存在
                 for (SearchBookBean temp : newDataS) {
@@ -35,7 +32,6 @@ public class SearchBookHelp {
                         if (temp.isSimilarTo(searchBook)) {
                             hasSame = true;
                             searchBook.addTag(temp.getTag());
-                            observer.onItemChanged(i);
                             break;
                         }
                     }
@@ -50,7 +46,6 @@ public class SearchBookHelp {
                             SearchBookBean searchBook = originalList.get(i);
                             if (!TextUtils.equals(keyWord, searchBook.getName())) {
                                 originalList.add(i, temp);
-                                observer.onItemInserted(i);
                                 break;
                             }
                         }
@@ -59,7 +54,6 @@ public class SearchBookHelp {
                             SearchBookBean searchBook = originalList.get(i);
                             if (!TextUtils.equals(keyWord, searchBook.getName()) && !TextUtils.equals(keyWord, searchBook.getAuthor())) {
                                 originalList.add(i, temp);
-                                observer.onItemInserted(i);
                                 break;
                             }
                         }
@@ -68,20 +62,18 @@ public class SearchBookHelp {
                             SearchBookBean searchBook = originalList.get(i);
                             if (!TextUtils.equals(keyWord, searchBook.getName()) && !TextUtils.equals(keyWord, searchBook.getAuthor())) {
                                 originalList.add(i, temp);
-                                observer.onItemInserted(i);
                                 break;
                             }
                         }
                     } else {
                         originalList.add(temp);
-                        observer.onItemInserted(originalList.size() - 1);
                     }
                 }
             }
         }
     }
 
-    private void sortSearchBooks(List<SearchBookBean> searchBookBeans, String keyWord) {
+    private static void sortSearchBooks(List<SearchBookBean> searchBookBeans, String keyWord) {
         Collections.sort(searchBookBeans, (o1, o2) -> {
             if (TextUtils.equals(keyWord, o1.getName())
                     || TextUtils.equals(keyWord, o1.getAuthor())) {
@@ -97,13 +89,5 @@ public class SearchBookHelp {
                 return 0;
             }
         });
-    }
-
-    public interface DataObserver {
-        void onChanged(int count);
-
-        void onItemInserted(int position);
-
-        void onItemChanged(int position);
     }
 }

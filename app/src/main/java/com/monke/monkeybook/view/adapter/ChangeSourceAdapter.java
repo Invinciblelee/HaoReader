@@ -40,16 +40,20 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements F
         searchBookBeans = new ArrayList<>();
     }
 
-    public synchronized void addAllSourceAdapter(List<SearchBookBean> value) {
-        searchBookBeans.addAll(value);
-        ListUtils.removeDuplicate(searchBookBeans);
-        Collections.sort(searchBookBeans);
-        notifyDataSetChanged();
+    public void addAllSourceAdapter(List<SearchBookBean> value) {
+        synchronized (searchBookBeans) {
+            searchBookBeans.addAll(value);
+            ListUtils.removeDuplicate(searchBookBeans);
+            Collections.sort(searchBookBeans);
+            notifyDataSetChanged();
+        }
     }
 
-    public synchronized void reSetSourceAdapter() {
-        searchBookBeans.clear();
-        notifyDataSetChanged();
+    public void reSetSourceAdapter() {
+        synchronized (searchBookBeans) {
+            searchBookBeans.clear();
+            notifyDataSetChanged();
+        }
     }
 
     public interface OnItemClickListener {

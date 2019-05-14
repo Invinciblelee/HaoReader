@@ -12,6 +12,7 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.impl.IHttpGetApi;
@@ -78,7 +79,8 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                     searchBookBean.setName(book.get("title").getAsString());
                     searchBookBean.setAuthor(book.get("author").getAsString());
                     searchBookBean.setNoteUrl("@716:http://api.zhuishushenqi.com/atoc?view=summary&book=" + book.get("_id").getAsString());
-                    searchBookBean.setLastChapter(book.get("lastChapter").getAsString().replaceAll("^\\s*正文[卷：\\s]+", ""));
+                    String lastChapter = book.get("lastChapter").getAsString().replaceAll("^\\s*正文[卷：\\s]+", "");
+                    searchBookBean.setLastChapter(TextProcessor.formatChapterName(lastChapter));
                     searchBookBean.setCoverUrl("http://statics.zhuishushenqi.com" + book.get("cover").getAsString());
                     searchBookBean.setIntroduce(book.get("shortIntro").getAsString());
                     searchBookList.add(searchBookBean);

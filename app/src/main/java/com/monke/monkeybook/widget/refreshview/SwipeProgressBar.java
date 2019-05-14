@@ -10,16 +10,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import androidx.core.view.ViewCompat;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+import androidx.core.view.ViewCompat;
+
 final class SwipeProgressBar {
-    private static final int COLOR1 = Color.RED;
-    private static final int COLOR2 = Color.YELLOW;
-    private static final int COLOR3 = Color.BLUE;
-    private static final int COLOR4 = Color.GREEN;
+    private static final int COLOR1 = Color.parseColor("#05c1e0");
+    private static final int COLOR2 = Color.parseColor("#81b002");
+    private static final int COLOR3 = Color.parseColor("#e0a020");
+    private static final int COLOR4 = Color.parseColor("#dc3232");
     private static final int ANIMATION_DURATION_MS = 2000;
     private static final int FINISH_ANIMATION_DURATION_MS = 1000;
     private static final Interpolator INTERPOLATOR = BakedBezierInterpolator.getInstance();
@@ -38,10 +39,10 @@ final class SwipeProgressBar {
 
     public SwipeProgressBar(View parent) {
         this.mParent = parent;
-        this.mColor1 = Color.parseColor("#05c1e0");
-        this.mColor2 = Color.parseColor("#81b002");
-        this.mColor3 = Color.parseColor("#e0a020");
-        this.mColor4 = Color.parseColor("#dc3232");
+        this.mColor1 = COLOR1;
+        this.mColor2 = COLOR2;
+        this.mColor3 = COLOR3;
+        this.mColor4 = COLOR4;
     }
 
     void setColorScheme(int color1, int color2, int color3, int color4) {
@@ -62,7 +63,7 @@ final class SwipeProgressBar {
             this.mTriggerPercentage = 0.0F;
             this.mStartTime = AnimationUtils.currentAnimationTimeMillis();
             this.mRunning = true;
-            this.mParent.postInvalidate();
+            ViewCompat.postInvalidateOnAnimation(this.mParent);
         }
 
     }
@@ -72,7 +73,7 @@ final class SwipeProgressBar {
             this.mTriggerPercentage = 0.0F;
             this.mFinishTime = AnimationUtils.currentAnimationTimeMillis();
             this.mRunning = false;
-            this.mParent.postInvalidate();
+            ViewCompat.postInvalidateOnAnimation(this.mParent);
         }
 
     }
@@ -90,25 +91,25 @@ final class SwipeProgressBar {
         int restoreCount = canvas.save();
         canvas.clipRect(this.mBounds);
         if (!this.mRunning && this.mFinishTime <= 0L) {
-            if (this.mTriggerPercentage > 0.0F && (double)this.mTriggerPercentage <= 1.0D) {
+            if (this.mTriggerPercentage > 0.0F && (double) this.mTriggerPercentage <= 1.0D) {
                 this.drawTrigger(canvas, cx, cy);
             }
         } else {
             long now = AnimationUtils.currentAnimationTimeMillis();
-            long elapsed = (now - this.mStartTime) % 2000L;
-            long iterations = (now - this.mStartTime) / 2000L;
-            float rawProgress = (float)elapsed / 20.0F;
+            long elapsed = (now - this.mStartTime) % ANIMATION_DURATION_MS;
+            long iterations = (now - this.mStartTime) / ANIMATION_DURATION_MS;
+            float rawProgress = (float) elapsed / 20.0F;
             if (!this.mRunning) {
-                if (now - this.mFinishTime >= 1000L) {
+                if (now - this.mFinishTime >= FINISH_ANIMATION_DURATION_MS) {
                     this.mFinishTime = 0L;
                     return;
                 }
 
-                long finishElapsed = (now - this.mFinishTime) % 1000L;
-                float finishProgress = (float)finishElapsed / 10.0F;
+                long finishElapsed = (now - this.mFinishTime) % FINISH_ANIMATION_DURATION_MS;
+                float finishProgress = (float) finishElapsed / 10.0F;
                 float pct = finishProgress / 100.0F;
-                float clearRadius = (float)(width / 2) * INTERPOLATOR.getInterpolation(pct);
-                this.mClipRect.set((float)cx - clearRadius, 0.0F, (float)cx + clearRadius, (float)height);
+                float clearRadius = (float) (width / 2) * INTERPOLATOR.getInterpolation(pct);
+                this.mClipRect.set((float) cx - clearRadius, 0.0F, (float) cx + clearRadius, (float) height);
                 canvas.saveLayerAlpha(this.mClipRect, 0, 0);
                 drawTriggerWhileFinishing = true;
             }
@@ -128,27 +129,27 @@ final class SwipeProgressBar {
             float pct;
             if (rawProgress >= 0.0F && rawProgress <= 25.0F) {
                 pct = (rawProgress + 25.0F) * 2.0F / 100.0F;
-                this.drawCircle(canvas, (float)cx, (float)cy, this.mColor1, pct);
+                this.drawCircle(canvas, (float) cx, (float) cy, this.mColor1, pct);
             }
 
             if (rawProgress >= 0.0F && rawProgress <= 50.0F) {
                 pct = rawProgress * 2.0F / 100.0F;
-                this.drawCircle(canvas, (float)cx, (float)cy, this.mColor2, pct);
+                this.drawCircle(canvas, (float) cx, (float) cy, this.mColor2, pct);
             }
 
             if (rawProgress >= 25.0F && rawProgress <= 75.0F) {
                 pct = (rawProgress - 25.0F) * 2.0F / 100.0F;
-                this.drawCircle(canvas, (float)cx, (float)cy, this.mColor3, pct);
+                this.drawCircle(canvas, (float) cx, (float) cy, this.mColor3, pct);
             }
 
             if (rawProgress >= 50.0F && rawProgress <= 100.0F) {
                 pct = (rawProgress - 50.0F) * 2.0F / 100.0F;
-                this.drawCircle(canvas, (float)cx, (float)cy, this.mColor4, pct);
+                this.drawCircle(canvas, (float) cx, (float) cy, this.mColor4, pct);
             }
 
             if (rawProgress >= 75.0F && rawProgress <= 100.0F) {
                 pct = (rawProgress - 75.0F) * 2.0F / 100.0F;
-                this.drawCircle(canvas, (float)cx, (float)cy, this.mColor1, pct);
+                this.drawCircle(canvas, (float) cx, (float) cy, this.mColor1, pct);
             }
 
             if (this.mTriggerPercentage > 0.0F && drawTriggerWhileFinishing) {
@@ -166,7 +167,7 @@ final class SwipeProgressBar {
 
     private void drawTrigger(Canvas canvas, int cx, int cy) {
         this.mPaint.setColor(this.mColor1);
-        canvas.drawCircle((float)cx, (float)cy, (float)cx * this.mTriggerPercentage, this.mPaint);
+        canvas.drawCircle((float) cx, (float) cy, (float) cx * this.mTriggerPercentage, this.mPaint);
     }
 
     private void drawCircle(Canvas canvas, float cx, float cy, int color, float pct) {

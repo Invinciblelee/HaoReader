@@ -28,6 +28,7 @@ import android.widget.AbsListView;
 public class SwipeRefreshLayout extends ViewGroup {
     private static final String LOG_TAG = SwipeRefreshLayout.class.getSimpleName();
     private static final long RETURN_TO_ORIGINAL_POSITION_TIMEOUT = 300L;
+    private static final long ANIMATION_DURATION_MS = 400L;
     private static final float ACCELERATE_INTERPOLATION_FACTOR = 1.5F;
     private static final float DECELERATE_INTERPOLATION_FACTOR = 2.0F;
     private static final float PROGRESS_BAR_HEIGHT = 4.0F;
@@ -42,7 +43,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     private boolean mRefreshing;
     private int mTouchSlop;
     private float mDistanceToTriggerSync;
-    private int mMediumAnimationDuration;
+    private long mAnimationDuration;
     private float mFromPercentage;
     private float mCurrPercentage;
     private int mProgressBarHeight;
@@ -73,7 +74,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         this.mDistanceToTriggerSync = -1.0F;
         this.mFromPercentage = 0.0F;
         this.mCurrPercentage = 0.0F;
-        this.mActivePointerId = -1;
+        this.mActivePointerId = INVALID_POINTER;
         this.mAnimateToStartPosition = new Animation() {
             public void applyTransformation(float interpolatedTime, Transformation t) {
                 int targetTop = 0;
@@ -119,7 +120,7 @@ public class SwipeRefreshLayout extends ViewGroup {
                 SwipeRefreshLayout.this.mReturningToStart = true;
                 if (SwipeRefreshLayout.this.mProgressBar != null) {
                     SwipeRefreshLayout.this.mFromPercentage = SwipeRefreshLayout.this.mCurrPercentage;
-                    SwipeRefreshLayout.this.mShrinkTrigger.setDuration((long) SwipeRefreshLayout.this.mMediumAnimationDuration);
+                    SwipeRefreshLayout.this.mShrinkTrigger.setDuration((long) SwipeRefreshLayout.this.mAnimationDuration);
                     SwipeRefreshLayout.this.mShrinkTrigger.setAnimationListener(SwipeRefreshLayout.this.mShrinkAnimationListener);
                     SwipeRefreshLayout.this.mShrinkTrigger.reset();
                     SwipeRefreshLayout.this.mShrinkTrigger.setInterpolator(SwipeRefreshLayout.this.mDecelerateInterpolator);
@@ -132,13 +133,13 @@ public class SwipeRefreshLayout extends ViewGroup {
             }
         };
         this.mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-        this.mMediumAnimationDuration = this.getResources().getInteger(android.R.integer.config_longAnimTime);
+        this.mAnimationDuration = ANIMATION_DURATION_MS;
         this.setWillNotDraw(false);
         this.mProgressBar = new SwipeProgressBar(this);
         DisplayMetrics metrics = this.getResources().getDisplayMetrics();
-        this.mProgressBarHeight = (int) (metrics.density * 4.0F);
-        this.mDecelerateInterpolator = new DecelerateInterpolator(2.0F);
-        this.mAccelerateInterpolator = new AccelerateInterpolator(1.5F);
+        this.mProgressBarHeight = (int) (metrics.density * PROGRESS_BAR_HEIGHT);
+        this.mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
+        this.mAccelerateInterpolator = new AccelerateInterpolator(ACCELERATE_INTERPOLATION_FACTOR);
         TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
         this.setEnabled(a.getBoolean(0, true));
         a.recycle();
@@ -159,7 +160,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     private void animateOffsetToStartPosition(int from, AnimationListener listener) {
         this.mFrom = from;
         this.mAnimateToStartPosition.reset();
-        this.mAnimateToStartPosition.setDuration((long) this.mMediumAnimationDuration);
+        this.mAnimateToStartPosition.setDuration((long) this.mAnimationDuration);
         this.mAnimateToStartPosition.setAnimationListener(listener);
         this.mAnimateToStartPosition.setInterpolator(this.mDecelerateInterpolator);
         this.mTarget.startAnimation(this.mAnimateToStartPosition);
@@ -236,7 +237,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
         if (this.mDistanceToTriggerSync == -1.0F && this.getParent() != null && ((View) this.getParent()).getHeight() > 0) {
             DisplayMetrics metrics = this.getResources().getDisplayMetrics();
-            this.mDistanceToTriggerSync = (float) ((int) Math.min((float) ((View) this.getParent()).getHeight() * 0.6F, 120.0F * metrics.density));
+            this.mDistanceToTriggerSync = (float) ((int) Math.min((float) ((View) this.getParent()).getHeight() * MAX_SWIPE_DISTANCE_FACTOR, REFRESH_TRIGGER_DISTANCE * metrics.density));
         }
 
     }
@@ -305,10 +306,10 @@ public class SwipeRefreshLayout extends ViewGroup {
                 case MotionEvent.ACTION_CANCEL:
                     this.mIsBeingDragged = false;
                     this.mCurrPercentage = 0.0F;
-                    this.mActivePointerId = -1;
+                    this.mActivePointerId = INVALID_POINTER;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (this.mActivePointerId == -1) {
+                    if (this.mActivePointerId == INVALID_POINTER) {
                         Log.e(LOG_TAG, "Got ACTION_MOVE event but don't have an active pointer id.");
                         return false;
                     }
@@ -360,7 +361,7 @@ public class SwipeRefreshLayout extends ViewGroup {
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     this.mIsBeingDragged = false;
-                    this.mActivePointerId = -1;
+                    this.mActivePointerId = INVALID_POINTER;
                     if(!this.mRefreshing && this.mCurrPercentage != 0.0F){
                         updatePositionTimeout(50L);
                     }
@@ -389,7 +390,7 @@ public class SwipeRefreshLayout extends ViewGroup {
                             if (this.mLastMotionY > y && this.mTarget.getTop() == this.getPaddingTop()) {
                                 this.removeCallbacks(this.mCancel);
                             } else {
-                                this.updatePositionTimeout(300L);
+                                this.updatePositionTimeout(RETURN_TO_ORIGINAL_POSITION_TIMEOUT);
                             }
                         }
 

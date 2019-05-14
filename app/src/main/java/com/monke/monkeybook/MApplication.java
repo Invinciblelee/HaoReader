@@ -102,7 +102,6 @@ public class MApplication extends Application {
         AppCompatDelegate.setDefaultNightMode(nightTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
         registerActivityCallback();
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

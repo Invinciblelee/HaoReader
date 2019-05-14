@@ -143,18 +143,21 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
         ToastUtils.toast(getContext(), "没有选中任何书源");
         ibtStop.setVisibility(View.INVISIBLE);
         rvSource.finishRefresh(true, false);
+        rvSource.setEnabled(true);
     }
 
     @Override
     public void resetSearchBook() {
         ibtStop.setVisibility(View.VISIBLE);
         adapter.reSetSourceAdapter();
+        rvSource.setEnabled(false);
     }
 
     @Override
     public void searchBookFinish() {
         ibtStop.setVisibility(View.INVISIBLE);
         rvSource.finishRefresh(true, false);
+        rvSource.setEnabled(true);
     }
 
     @Override
@@ -167,6 +170,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     public void searchBookError() {
         ibtStop.setVisibility(View.INVISIBLE);
         rvSource.finishRefresh(false);
+        rvSource.setEnabled(true);
     }
 
     private void selectSource(SearchBookBean searchBook) {

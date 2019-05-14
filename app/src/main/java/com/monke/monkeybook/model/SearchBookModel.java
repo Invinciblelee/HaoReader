@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -67,7 +66,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             if (msg.what == MSG_SEARCH) {
                 model.search((String) msg.obj);
             } else if (msg.what == MSG_QUERY) {
-                new SearchTaskImpl(model).startSearch((String) msg.obj, scheduler);
+                new SearchTaskImpl(model).startSearch(msg.arg1, (String) msg.obj, scheduler);
             }
         }
     }
@@ -75,6 +74,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     public SearchBookModel(Context context) {
         AppConfigHelper configHelper = AppConfigHelper.get();
         threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
+        threadsNum = Math.min(50, threadsNum);
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
         executor = Executors.newFixedThreadPool(threadsNum);
         searchHandler = new SearchHandler(this, Schedulers.from(executor));
@@ -140,7 +140,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
         searchHandler.removeMessages(SearchHandler.MSG_QUERY);
         for (int i = 0, size = Math.min(searchEngineS.size(), threadsNum); i < size; i++) {
-            searchHandler.obtainMessage(SearchHandler.MSG_QUERY, query).sendToTarget();
+            Message msg = searchHandler.obtainMessage(SearchHandler.MSG_QUERY, query);
+            msg.arg1 = i;
+            searchHandler.sendMessageDelayed(msg, 50L * i);
         }
     }
 
