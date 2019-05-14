@@ -123,6 +123,7 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     @Override
     public void refreshBookShelf(boolean update) {
+        updateLayoutType(mPresenter.viewIsList());
         mPresenter.queryBookShelf(update);
     }
 
