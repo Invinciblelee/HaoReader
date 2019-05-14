@@ -12,13 +12,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -33,6 +26,7 @@ import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
+import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
@@ -43,6 +37,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -293,6 +293,9 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 break;
             case R.id.action_check_book_source:
                 mPresenter.checkBookSource();
+                break;
+            case R.id.action_web_start:
+                WebService.startThis(this);
                 break;
             case R.id.sort_manual:
                 upSourceSort(0);

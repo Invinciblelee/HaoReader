@@ -42,11 +42,6 @@
             android:id="@+id/action_about"
             android:icon="@drawable/ic_about_black_24dp"
             android:title="@string/about" />
-
-        <item
-            android:id="@+id/action_donate"
-            android:icon="@drawable/ic_local_cafe_black_24dp"
-            android:title="@string/donate" />
     </group>
 
     <group android:id="@+id/drawer_menu_backup">

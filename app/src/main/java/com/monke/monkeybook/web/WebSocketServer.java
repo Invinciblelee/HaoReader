@@ -1,0 +1,23 @@
+package com.monke.monkeybook.web;
+
+import com.monke.monkeybook.web.controller.SourceDebugWebSocket;
+
+import java.io.IOException;
+
+import fi.iki.elonen.NanoWSD;
+import okhttp3.WebSocket;
+
+public class WebSocketServer extends NanoWSD {
+
+    public WebSocketServer(int port) {
+        super(port);
+    }
+
+    @Override
+    protected WebSocket openWebSocket(IHTTPSession handshake) {
+        if (handshake.getUri().equals("/sourceDebug")) {
+            return new SourceDebugWebSocket(handshake);
+        }
+        return null;
+    }
+}
