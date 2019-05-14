@@ -88,7 +88,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                 bookFile.delete();
             }
             bookFile.createNewFile();
-            final File folder = new File(Constant.BOOK_CACHE_PATH, ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()));
+            final File folder = new File(Constant.BOOK_CHAPTER_PATH, ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()));
             if (!folder.isDirectory()) {
                 emitter.onError(new NullPointerException("delete"));
                 return;

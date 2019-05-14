@@ -849,22 +849,22 @@ public class AudioBookPlayService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         RxBus.get().unregister(this);
+        if (mModel != null) {
+            mModel.saveProgress(progress, duration);
+            mModel.destroy();
+        }
         running = false;
         mediaPlayer.stop();
         mediaPlayer.release();
         cancelProgressTimer();
         cancelAlarmTimer();
-        if (mModel != null) {
-            mModel.saveProgress(progress, duration);
-            mModel.destroy();
-        }
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
         unregisterMediaButton();
         sendEvent(ACTION_STOP, AudioPlayInfo.empty());
+        super.onDestroy();
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD,

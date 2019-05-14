@@ -126,12 +126,12 @@ public class BookshelfHelp {
     public static void cleanBookCache(BookShelfBean bookShelfBean) {
         BookInfoBean bookInfo = bookShelfBean.getBookInfoBean();
         if (bookInfo != null) {
-            FileHelp.deleteFile(Constant.BOOK_CACHE_PATH + getChapterFolderName(bookInfo.getName(), bookInfo.getAuthor()));
+            FileHelp.deleteFile(Constant.BOOK_CHAPTER_PATH + getChapterFolderName(bookInfo.getName(), bookInfo.getAuthor()));
         }
     }
 
     public static void delChapterList(List<ChapterBean> chapterBeanList) {
-        if(chapterBeanList != null && !chapterBeanList.isEmpty()) {
+        if (chapterBeanList != null && !chapterBeanList.isEmpty()) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(chapterBeanList);
         }
     }
@@ -142,7 +142,7 @@ public class BookshelfHelp {
 
     public static int getCacheChapterCount(BookShelfBean bookShelfBean) {
         BookInfoBean bookInfo = bookShelfBean.getBookInfoBean();
-        File folder = new File(Constant.BOOK_CACHE_PATH, getCacheFolderPath(bookInfo));
+        File folder = new File(Constant.BOOK_CHAPTER_PATH, getCacheFolderPath(bookInfo));
         if (folder.exists() && folder.isDirectory()) {
             String[] files = folder.list();
             if (files != null) {
@@ -199,14 +199,7 @@ public class BookshelfHelp {
 
     public static List<ChapterBean> queryChapterList(String noteUrl) {
         if (chaptersUseDiskCache()) {
-            try {
-                File file = new File(FileHelp.getCachePath(), getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
-                if (file.exists()) {
-                    return Global.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
-                }
-            } catch (Exception ignore) {
-            }
-            return new ArrayList<>();
+            return queryChapterListFromFile(noteUrl);
         } else {
             return DbHelper.getInstance().getDaoSession().getChapterBeanDao().queryBuilder()
                     .where(ChapterBeanDao.Properties.NoteUrl.eq(noteUrl))
@@ -215,17 +208,45 @@ public class BookshelfHelp {
         }
     }
 
-
-    private static void saveChapters(String noteUrl, List<ChapterBean> chapterBeans) {
-        if (chaptersUseDiskCache()) {
-            File file = FileHelp.getFile(FileHelp.getCachePath(), getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                writer.write(Global.GSON.toJson(chapterBeans));
-                writer.flush();
-            } catch (Exception ignore) {
+    private static List<ChapterBean> queryChapterListFromFile(String noteUrl) {
+        try {
+            File file = new File(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
+            if (file.exists()) {
+                return Global.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
             }
+        } catch (Exception ignore) {
+        }
+        return new ArrayList<>();
+    }
+
+    public static void saveChapters(String noteUrl, List<ChapterBean> chapterBeans) {
+        if (chaptersUseDiskCache()) {
+            saveChaptersToFile(noteUrl, chapterBeans);
         } else {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplaceInTx(chapterBeans);
+        }
+    }
+
+    private static void saveChaptersToFile(String noteUrl, List<ChapterBean> chapterBeans) {
+        File file = FileHelp.getFile(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(Global.GSON.toJson(chapterBeans));
+            writer.flush();
+        } catch (Exception ignore) {
+        }
+    }
+
+    public static void saveChapter(ChapterBean chapterBean) {
+        if (chapterBean == null) return;
+        if (chaptersUseDiskCache()) {
+            List<ChapterBean> chapterBeans = queryChapterListFromFile(chapterBean.getNoteUrl());
+            int index = chapterBeans.indexOf(chapterBean);
+            if (index >= 0) {
+                chapterBeans.set(index, chapterBean);
+                saveChaptersToFile(chapterBean.getNoteUrl(), chapterBeans);
+            }
+        } else {
+            DbHelper.getInstance().getDaoSession().getChapterBeanDao().insertOrReplace(chapterBean);
         }
     }
 
@@ -280,7 +301,7 @@ public class BookshelfHelp {
     }
 
     public static void cleanCaches() {
-        FileHelp.deleteFile(Constant.BOOK_CACHE_PATH);
-        FileHelp.getFolder(Constant.BOOK_CACHE_PATH);
+        FileHelp.deleteFile(Constant.BOOK_CHAPTER_PATH);
+        FileHelp.getFolder(Constant.BOOK_CHAPTER_PATH);
     }
 }

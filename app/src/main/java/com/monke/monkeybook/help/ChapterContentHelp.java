@@ -51,7 +51,7 @@ public class ChapterContentHelp {
      */
     // be careful to use this method, the storage path (folderName) has been changed
     private static boolean isChapterCached(String folderName, String fileName) {
-        File file = new File(Constant.BOOK_CACHE_PATH + folderName, formatFileName(fileName) + FileHelp.SUFFIX_NB);
+        File file = new File(Constant.BOOK_CHAPTER_PATH + folderName, formatFileName(fileName) + FileHelp.SUFFIX_NB);
         return file.exists();
     }
 
@@ -59,7 +59,7 @@ public class ChapterContentHelp {
      * 删除章节文件
      */
     public static void delChapter(String folderName, String fileName) {
-        FileHelp.deleteFile(Constant.BOOK_CACHE_PATH + folderName
+        FileHelp.deleteFile(Constant.BOOK_CHAPTER_PATH + folderName
                 + File.separator + formatFileName(fileName) + FileHelp.SUFFIX_NB);
     }
 
@@ -67,7 +67,7 @@ public class ChapterContentHelp {
      * 创建或获取存储文件
      */
     public static File getBookFile(String folderName, String fileName) {
-        return FileHelp.getFile(Constant.BOOK_CACHE_PATH + folderName, formatFileName(fileName) + FileHelp.SUFFIX_NB);
+        return FileHelp.getFile(Constant.BOOK_CHAPTER_PATH + folderName, formatFileName(fileName) + FileHelp.SUFFIX_NB);
     }
 
     private static String formatFileName(String fileName) {

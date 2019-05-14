@@ -20,7 +20,7 @@ public class Constant {
     public static final String BUGLY_APP_ID = "d4ef8e5fa4";
 
     //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
-    public static String BOOK_CACHE_PATH = FileUtil.getSdCardPath() + File.separator
+    public static String BOOK_CHAPTER_PATH = FileUtil.getSdCardPath() + File.separator
             + "YueDu" + File.separator + "chapters" + File.separator;
     public static String AUDIO_CACHE_PATH = FileUtil.getSdCardPath() + File.separator
             + "YueDu" + File.separator + "audios" + File.separator;

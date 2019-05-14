@@ -25,7 +25,7 @@ import java.util.List;
 
 public class DataRestore {
 
-    private static final String[] FILTER = {"versionCode", "nightTheme", "shelfGroup", "bookshelfIsList"};
+    private static final String[] FILTER = {"versionCode", "nightTheme", "shelfGroup"};
 
     public static DataRestore getInstance() {
         return new DataRestore();
