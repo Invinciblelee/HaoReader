@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -147,19 +146,14 @@ class DefaultContentDelegate implements ContentDelegate {
                 if (webChapter.nextUrls.size() > 1) {
                     final List<String> chapterUrls = new ArrayList<>(new LinkedHashSet<>(webChapter.nextUrls));
                     chapterUrls.remove(getConfig().getBaseURL());
-                    getWebChapterResultList(ruleChapterList, headerMap, chapterUrls)
-                            .subscribe(new SimpleObserver<List<WebChapterResult>>() {
-                                @Override
-                                public void onNext(List<WebChapterResult> webChapterResults) {
-                                    Collections.sort(webChapterResults);
-                                    for (WebChapterResult webChapter : webChapterResults) {
-                                        if (webChapter.result != null) {
-                                            chapterList.addAll(webChapter.result);
-                                        }
-                                    }
-                                    doOnChapterListFinish(chapterList, emitter);
-                                }
-                            });
+                    List<WebChapterResult> webChapterResults = getWebChapterResultList(ruleChapterList, headerMap, chapterUrls).blockingFirst();
+                    Collections.sort(webChapterResults);
+                    for (WebChapterResult webChapterResult : webChapterResults) {
+                        if (webChapterResult.result != null) {
+                            chapterList.addAll(webChapterResult.result);
+                        }
+                    }
+                    doOnChapterListFinish(chapterList, emitter);
                 } else if (webChapter.nextUrls.size() == 1) {
                     final List<String> usedUrls = new ArrayList<>();
                     String nextUrl = webChapter.nextUrls.get(0);
@@ -180,7 +174,6 @@ class DefaultContentDelegate implements ContentDelegate {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<List<WebChapterResult>> getWebChapterResultList(String ruleChapterList, Map<String, String> headerMap, List<String> chapterUrls) {
         final int size = chapterUrls.size();
         final List<WebChapterRequest> webRequests = new ArrayList<>();
@@ -245,16 +238,16 @@ class DefaultContentDelegate implements ContentDelegate {
         final List<ChapterBean> chapterList = new ArrayList<>();
         ChapterBean chapterBean = null;
         while (collection.hasNext()) {
-            Object obj = collection.next();
-            mAnalyzer.setContent(obj);
+            mAnalyzer.setContent(collection.next());
             String name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
             String url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
-            if (!isEmpty(url) && !isEmpty(name)) {
+
+            ChapterBean chapter = addChapter(chapterList, noteUrl, name, url);
+            if (chapter != null) {
                 if (chapterBean != null) {
-                    chapterBean.setNextChapterUrl(url);
+                    chapterBean.setNextChapterUrl(chapter.getDurChapterUrl());
                 }
-                chapterBean = new ChapterBean(noteUrl, name, url);
-                chapterList.add(chapterBean);
+                chapterBean = chapter;
             }
         }
         return chapterList;
@@ -270,12 +263,13 @@ class DefaultContentDelegate implements ContentDelegate {
             mAnalyzer.setContent(collection.next());
             String name = mAnalyzer.getResultContentInternal(getBookSource().getRuleChapterName());
             String url = mAnalyzer.getResultUrlInternal(getBookSource().getRuleContentUrl());   //id
-            if (!isEmpty(url) && !isEmpty(name)) {
+
+            ChapterBean chapter = addChapter(chapterList, noteUrl, name, url);
+            if (chapter != null) {
                 if (chapterBean != null) {
-                    chapterBean.setNextChapterUrl(url);
+                    chapterBean.setNextChapterUrl(chapter.getDurChapterUrl());
                 }
-                chapterBean = new ChapterBean(noteUrl, name, url);
-                chapterList.add(chapterBean);
+                chapterBean = chapter;
             }
         }
         return chapterList;
@@ -287,23 +281,58 @@ class DefaultContentDelegate implements ContentDelegate {
     private List<ChapterBean> getChaptersInRegex(String source, String ruleChapterList, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
         matchRegex(source, noteUrl, ruleChapterList.split("&&"), 0,
-                Integer.parseInt(getBookSource().getRuleChapterName()),
-                Integer.parseInt(getBookSource().getRuleContentUrl()),
+                getBookSource().getRuleChapterName(),
+                getBookSource().getRuleContentUrl(),
                 chapterList);
         return chapterList;
     }
 
-    private void matchRegex(String string, String noteUrl, String[] regex, int index, int s1, int s2, List<ChapterBean> chapterBeans) {
+    private void matchRegex(String string, String noteUrl, String[] regex, int index, String nameRule, String urlRule, List<ChapterBean> chapterBeans) {
         Matcher matcher = Pattern.compile(regex[index]).matcher(string);
         if (index + 1 == regex.length) {
-            while (matcher.find()) {
-                chapterBeans.add(new ChapterBean(noteUrl, matcher.group(s1), matcher.group(s2)));
+            String baseUrl = "";
+            int vipGroup = 0, nameGroup = 0, urlGroup = 0;
+            // 分离标题正则参数
+            Matcher nameMatcher = Pattern.compile("((?<=\\$)\\d)?\\$(\\d$)").matcher(nameRule);
+            while (nameMatcher.find()) {
+                String sVipGroup = nameMatcher.group(1);
+                vipGroup = sVipGroup == null ? 0 : Integer.parseInt(sVipGroup);
+                nameGroup = Integer.parseInt(nameMatcher.group(2));
+            }
+            // 分离网址正则参数
+            Matcher urlMatcher = Pattern.compile("(.*?)\\$(\\d$)").matcher(urlRule);
+            while (urlMatcher.find()) {
+                baseUrl = VariablesPattern.fromGetterRule(urlMatcher.group(1), getConfig().getVariableStore()).rule;
+                urlGroup = Integer.parseInt(urlMatcher.group(2));
+            }
+            // 提取目录信息
+            if (vipGroup == 0) {
+                while (matcher.find()) {
+                    addChapter(chapterBeans, noteUrl,
+                            matcher.group(nameGroup),
+                            baseUrl + matcher.group(urlGroup));
+                }
+            } else {
+                while (matcher.find()) {
+                    addChapter(chapterBeans, noteUrl,
+                            (matcher.group(vipGroup) == null ? "" : "\uD83D\uDD12") + matcher.group(nameGroup),
+                            baseUrl + matcher.group(urlGroup));
+                }
             }
         } else {
-            StringBuilder builder = new StringBuilder();
-            while (matcher.find()) builder.append(matcher.group(0));
-            matchRegex(builder.toString(), noteUrl, regex, ++index, s1, s2, chapterBeans);
+            StringBuilder result = new StringBuilder();
+            while (matcher.find()) result.append(matcher.group());
+            matchRegex(result.toString(), noteUrl, regex, ++index, nameRule, urlRule, chapterBeans);
         }
+    }
+
+    private ChapterBean addChapter(List<ChapterBean> chapterBeans, String noteUrl, String chapterName, String chapterUrl) {
+        if (!TextUtils.isEmpty(chapterName)) {
+            ChapterBean chapterBean = new ChapterBean(noteUrl, chapterName, StringUtils.checkNull(chapterUrl, noteUrl));
+            chapterBeans.add(chapterBean);
+            return chapterBean;
+        }
+        return null;
     }
 
     @Override

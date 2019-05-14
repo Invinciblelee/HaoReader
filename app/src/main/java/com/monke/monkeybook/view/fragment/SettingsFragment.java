@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.view.View;
+import android.widget.ListView;
+
+import androidx.annotation.Nullable;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
@@ -30,6 +34,20 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         settingActivity = (SettingActivity) this.getActivity();
 
         bindPreferenceSummaryToValue(findPreference(mContext.getString(R.string.pk_bookshelf_px)));
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        View rootView = getView();
+        if(rootView != null) {
+            ListView listView = rootView.findViewById(android.R.id.list);
+            if(listView != null){
+                listView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+                listView.setVerticalScrollBarEnabled(false);
+            }
+        }
     }
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (Preference preference, Object value) -> {

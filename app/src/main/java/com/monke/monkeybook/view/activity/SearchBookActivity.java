@@ -151,6 +151,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         rfRvSearchBooks.getRecyclerView().setItemAnimator(null);
         rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
         rfRvSearchBooks.setEnabled(false);
+        rfRvSearchBooks.getRecyclerView().setItemViewCacheSize(6);
 
         View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
@@ -342,10 +343,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         }
     }
 
-    private void showFabButton(long delay) {
+    private void showFabButton() {
         mHandler.removeCallbacks(mHideRunnable);
         mHandler.removeCallbacks(mShowRunnable);
-        mHandler.postDelayed(mShowRunnable, delay);
+        mHandler.postDelayed(mShowRunnable, 200L);
     }
 
     private void hideFabButton() {
@@ -374,7 +375,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void resetSearchBook() {
-        showFabButton(200L);
+        showFabButton();
         searchBookAdapter.clearAll();
     }
 

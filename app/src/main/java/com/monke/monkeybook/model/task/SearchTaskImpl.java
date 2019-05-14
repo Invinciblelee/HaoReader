@@ -16,10 +16,12 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class SearchTaskImpl implements ISearchTask {
@@ -42,6 +44,7 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         successCount = 0;
+
         listener.onSearchStart(this);
 
         toSearch(query, scheduler);
@@ -49,7 +52,7 @@ public class SearchTaskImpl implements ISearchTask {
 
     @Override
     public void stopSearch() {
-        if (!disposables.isDisposed()) {
+        if (disposables != null && !disposables.isDisposed()) {
             disposables.dispose();
         }
 
@@ -72,9 +75,25 @@ public class SearchTaskImpl implements ISearchTask {
                 WebBookModel.getInstance()
                         .searchBook(searchEngine.getTag(), query, searchEngine.getPage())
                         .subscribeOn(scheduler)
-                        .flatMap(this::dispatchResult)
-                        .doAfterNext(bool -> incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime()))
+                        .doOnNext(result -> {
+                            saveData(result);
+                            incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
+                        })
                         .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
+                        .flatMap(searchBookBeans -> Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+                            boolean hasMore = true;
+                            if (!isDisposed() && searchBookBeans != null && !searchBookBeans.isEmpty()) {
+                                listener.onSearchResult(searchBookBeans);
+
+                                if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
+                                    hasMore = false;
+                                }
+                            } else {
+                                hasMore = false;
+                            }
+                            emitter.onNext(hasMore);
+                            emitter.onComplete();
+                        }).subscribeOn(Schedulers.io()))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<Boolean>() {
                             @Override
@@ -85,8 +104,8 @@ public class SearchTaskImpl implements ISearchTask {
                             }
 
                             @Override
-                            public void onNext(Boolean hasMore) {
-                                whenNext(searchEngine, hasMore, query, scheduler);
+                            public void onNext(Boolean result) {
+                                whenNext(searchEngine, result, query, scheduler);
                                 successCount += 1;
                             }
 
@@ -131,50 +150,28 @@ public class SearchTaskImpl implements ISearchTask {
         }
     }
 
-    private Observable<Boolean> dispatchResult(final List<SearchBookBean> searchBookBeans) {
-        return Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            boolean hasMore = true;
-            if (!isDisposed() && searchBookBeans != null && !searchBookBeans.isEmpty()) {
-                listener.onSearchResult(searchBookBeans);
-                saveData(searchBookBeans);
-
-                if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
-                    hasMore = false;
-                }
-            } else {
-                hasMore = false;
-            }
-            emitter.onNext(hasMore);
-        }).onErrorReturnItem(false);
-    }
-
     private boolean isDisposed() {
         return disposables == null || disposables.isDisposed();
     }
 
-    private static void incrementSourceWeight(String tag, long elapsedTime) {
-        Schedulers.io().createWorker().schedule(() -> {
-            BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
-            if (bookSourceBean != null && elapsedTime < 10000) {
-                bookSourceBean.increaseWeight((int) (10000 / (1000 + elapsedTime)));
-                BookSourceManager.getInstance().saveBookSource(bookSourceBean);
-            }
-        });
+    private void incrementSourceWeight(String tag, long elapsedTime) {
+        BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
+        if (bookSourceBean != null && elapsedTime < 10000) {
+            bookSourceBean.increaseWeight((int) (10000 / (1000 + elapsedTime)));
+            BookSourceManager.getInstance().saveBookSource(bookSourceBean);
+        }
     }
 
-    private static void decrementSourceWeight(String tag) {
-        Schedulers.io().createWorker().schedule(() -> {
-            BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
-            if (sourceBean != null) {
-                sourceBean.increaseWeight(-100);
-                BookSourceManager.getInstance().saveBookSource(sourceBean);
-            }
-        });
+    private void decrementSourceWeight(String tag) {
+        BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
+        if (sourceBean != null) {
+            sourceBean.increaseWeight(-100);
+            BookSourceManager.getInstance().saveBookSource(sourceBean);
+        }
     }
 
-    private static void saveData(List<SearchBookBean> searchBookBeans) {
-        Schedulers.io().createWorker().schedule(() ->
-                DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().insertOrReplaceInTx(searchBookBeans));
+    private void saveData(List<SearchBookBean> searchBookBeans) {
+        DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().insertOrReplaceInTx(searchBookBeans);
     }
 
 }

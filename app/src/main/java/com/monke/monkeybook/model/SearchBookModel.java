@@ -1,7 +1,10 @@
 package com.monke.monkeybook.model;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -35,21 +38,46 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
     private boolean useMy716 = true;
+    private boolean hasData = false;
 
     private ExecutorService executor;
-    private Scheduler scheduler;
 
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
+    private final SearchHandler searchHandler;
+
     private SearchIterator searchIterator;
+
+    private static class SearchHandler extends Handler {
+
+        private static final int MSG_SEARCH = 1;
+        private static final int MSG_QUERY = 2;
+
+        private SearchBookModel model;
+        private Scheduler scheduler;
+
+        private SearchHandler(SearchBookModel model, Scheduler scheduler) {
+            this.model = model;
+            this.scheduler = scheduler;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == MSG_SEARCH) {
+                model.search((String) msg.obj);
+            } else if (msg.what == MSG_QUERY) {
+                new SearchTaskImpl(model).startSearch((String) msg.obj, scheduler);
+            }
+        }
+    }
 
     public SearchBookModel(Context context) {
         AppConfigHelper configHelper = AppConfigHelper.get();
-        threadsNum = configHelper.getInt(context.getString(R.string.pk_threads_num), 6);
+        threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
         executor = Executors.newFixedThreadPool(threadsNum);
-        scheduler = Schedulers.from(executor);
+        searchHandler = new SearchHandler(this, Schedulers.from(executor));
     }
 
     /**
@@ -100,19 +128,24 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             searchListener.searchSourceEmpty();
         } else {
             searchListener.resetSearchBook();
-            search(query);
+
+            searchHandler.removeMessages(SearchHandler.MSG_SEARCH);
+            Message msg = searchHandler.obtainMessage(SearchHandler.MSG_SEARCH, query);
+            searchHandler.sendMessageDelayed(msg, 400L);
         }
     }
 
     private void search(String query) {
         searchIterator = new SearchIterator(searchEngineS, searchPageCount);
 
+        searchHandler.removeMessages(SearchHandler.MSG_QUERY);
         for (int i = 0, size = Math.min(searchEngineS.size(), threadsNum); i < size; i++) {
-            new SearchTaskImpl(this).startSearch(query, scheduler);
+            searchHandler.obtainMessage(SearchHandler.MSG_QUERY, query).sendToTarget();
         }
     }
 
     private boolean clearSearch() {
+        hasData = false;
         if (isLoading()) {
             for (ISearchTask searchTask : searchTasks) {
                 searchTask.stopSearch();
@@ -182,10 +215,6 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         searchIterator.moveToNext();
     }
 
-    @Override
-    public void onSearchResult(List<SearchBookBean> searchBooks) {
-        searchListener.loadMoreSearchBook(searchBooks);
-    }
 
     @Override
     public void onSearchStart(ISearchTask searchTask) {
@@ -195,9 +224,15 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     }
 
     @Override
+    public void onSearchResult(List<SearchBookBean> searchBooks) {
+        searchListener.loadMoreSearchBook(searchBooks);
+        hasData = true;
+    }
+
+    @Override
     public void onSearchError(ISearchTask searchTask) {
         searchTasks.remove(searchTask);
-        if (searchTasks.size() == 0) {
+        if (searchTasks.size() == 0 && !hasData) {
             searchListener.searchBookError();
         }
     }

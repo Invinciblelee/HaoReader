@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_GET;
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JS;
 
 final class RulePattern {
@@ -48,7 +47,7 @@ final class RulePattern {
 
     private void initRulePattern(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
         //分离get规则
-        rawRule = replaceVariableValue(variableStore, rawRule);
+        rawRule = VariablesPattern.fromGetterRule(rawRule, variableStore).rule;
 
         //不共用js规则和正则
         rawRule = ensureKeepRule(rawRule);
@@ -68,19 +67,6 @@ final class RulePattern {
         //是否全部使用js
         isSimpleJS = !isRedirect && TextUtils.isEmpty(elementsRule.getRule()) && !javaScripts.isEmpty();
 
-    }
-
-    private String replaceVariableValue(VariableStore variableStore, String rawRule) {
-        //分离get规则
-        if (variableStore != null) {
-            Matcher getMatcher = PATTERN_GET.matcher(rawRule);
-            while (getMatcher.find()) {
-                final String group = getMatcher.group();
-                final String value = variableStore.getVariable(group.substring(6, group.length() - 1));
-                rawRule = rawRule.replace(group, value != null ? value : "");
-            }
-        }
-        return rawRule;
     }
 
     private String ensureKeepRule(String rawRule) {

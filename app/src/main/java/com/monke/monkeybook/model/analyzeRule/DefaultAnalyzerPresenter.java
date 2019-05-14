@@ -253,11 +253,11 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             return new HashMap<>();
         }
         final Map<String, String> resultMap = new HashMap<>();
-        final VariablesPattern variablesPattern = VariablesPattern.fromRule(rule, flag);
-        if (variablesPattern.putterMap.isEmpty()) {
+        final VariablesPattern variablesPattern = VariablesPattern.fromPutterRule(rule, flag);
+        if (variablesPattern.map.isEmpty()) {
             return resultMap;
         } else {
-            for (Map.Entry<String, String> entry : variablesPattern.putterMap.entrySet()) {
+            for (Map.Entry<String, String> entry : variablesPattern.map.entrySet()) {
                 String value = getResultContent(entry.getValue());
                 if (!isEmpty(value)) {
                     resultMap.put(entry.getKey(), value);

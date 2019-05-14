@@ -90,6 +90,6 @@
         android:layout="@layout/view_preference"
         android:summary="@string/threads_num"
         android:title="@string/update_search_threads_num"
-        app:MaxValue="10"
+        app:MaxValue="50"
         app:MinValue="1" />
 </PreferenceScreen>

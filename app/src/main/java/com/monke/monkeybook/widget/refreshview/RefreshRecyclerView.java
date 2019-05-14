@@ -130,6 +130,7 @@ public class RefreshRecyclerView extends FrameLayout {
                 refreshErrorView.setVisibility(VISIBLE);
             }
         }
+        setEnabled(true);
     }
 
     public void refreshError(){
@@ -150,6 +151,8 @@ public class RefreshRecyclerView extends FrameLayout {
         if (refreshErrorView != null) {
             refreshErrorView.setVisibility(GONE);
         }
+
+        setEnabled(false);
     }
 
     public void startRefresh() {
@@ -200,6 +203,7 @@ public class RefreshRecyclerView extends FrameLayout {
                 refreshErrorView.setVisibility(GONE);
             }
         }
+        setEnabled(true);
     }
 
     public void finishLoadMore(Boolean isAll, Boolean needNoti) {

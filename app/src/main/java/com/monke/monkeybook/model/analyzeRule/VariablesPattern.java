@@ -2,6 +2,7 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import androidx.annotation.NonNull;
 
+import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 
@@ -10,14 +11,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_GET;
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 final class VariablesPattern {
 
-    final Map<String, String> putterMap;
+    Map<String, String> map;
+    String rule;
 
     private VariablesPattern(@NonNull String ruleStr, int flag) {
-        putterMap = new HashMap<>();
+        map = new HashMap<>();
 
         if (flag == 0 && findWhere(ruleStr, Patterns.PATTERN_PUT_SEARCH)) {
             return;
@@ -29,6 +32,20 @@ final class VariablesPattern {
 
         analyzePutterMap(ruleStr);
     }
+
+    private VariablesPattern(@NonNull String ruleStr, VariableStore variableStore) {
+        //分离get规则
+        if (variableStore != null) {
+            Matcher getMatcher = PATTERN_GET.matcher(ruleStr);
+            while (getMatcher.find()) {
+                final String group = getMatcher.group();
+                final String value = variableStore.getVariable(group.substring(6, group.length() - 1));
+                ruleStr = ruleStr.replace(group, value != null ? value : "");
+            }
+        }
+        rule = ruleStr;
+    }
+
 
     private boolean findWhere(String ruleStr, Pattern pattern) {
         Matcher matcher = pattern.matcher(ruleStr);
@@ -44,13 +61,16 @@ final class VariablesPattern {
     private void analyzePutterMap(String rule) {
         try {
             Map<String, String> putVariable = Global.GSON.fromJson(rule, STRING_MAP);
-            putterMap.putAll(putVariable);
+            map.putAll(putVariable);
         } catch (Exception ignore) {
         }
     }
 
-    static VariablesPattern fromRule(@NonNull String ruleStr, int flag) {
+    static VariablesPattern fromPutterRule(@NonNull String ruleStr, int flag) {
         return new VariablesPattern(ruleStr, flag);
     }
 
+    static VariablesPattern fromGetterRule(@NonNull String ruleStr, VariableStore variableStore) {
+        return new VariablesPattern(ruleStr, variableStore);
+    }
 }
