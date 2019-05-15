@@ -22,10 +22,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="\@"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -33,10 +33,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="&amp;"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -44,10 +44,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="|"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -55,10 +55,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="%"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -66,10 +66,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="/"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -77,10 +77,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="\\"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -88,10 +88,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text=":"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -100,10 +100,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="("
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -111,10 +111,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text=")"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -122,10 +122,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="["
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -133,10 +133,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="]"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -145,10 +145,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="{"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -156,10 +156,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="}"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -167,10 +167,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="$"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -178,10 +178,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="#"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -189,10 +189,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="!"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -200,10 +200,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="\?"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -211,10 +211,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="="
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -222,10 +222,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="."
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -233,10 +233,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="*"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -244,10 +244,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="^"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -255,10 +255,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="-"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -266,10 +266,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="id"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -277,10 +277,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="class"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -288,10 +288,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="tag"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -299,10 +299,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="children"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -310,10 +310,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="href"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -321,10 +321,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="src"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -332,10 +332,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="textNodes"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -343,10 +343,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="html"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -354,10 +354,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="text"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -365,10 +365,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="ownText"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -376,10 +376,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="outerBody"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -387,10 +387,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="redirect"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -398,10 +398,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="whole"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -409,10 +409,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="14dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="14dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="16dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="16dp"
                 android:text="regex"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
