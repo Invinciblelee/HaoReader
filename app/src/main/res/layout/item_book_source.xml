@@ -43,18 +43,6 @@
             android:textColor="@color/tv_text_secondary"
             android:textSize="13sp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/iv_del_source"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="5dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/delete"
-            android:textColor="@color/tv_text_secondary"
-            android:textSize="13sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/iv_top_source"
@@ -66,6 +54,20 @@
             android:focusable="true"
             android:gravity="center"
             android:text="@string/to_top"
+            android:textColor="@color/tv_text_secondary"
+            android:textSize="13sp" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/iv_del_source"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/delete"
             android:textColor="@color/tv_text_secondary"
             android:textSize="13sp" />
     </LinearLayout>

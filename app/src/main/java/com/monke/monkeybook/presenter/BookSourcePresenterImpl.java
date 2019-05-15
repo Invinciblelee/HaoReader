@@ -1,11 +1,10 @@
 package com.monke.monkeybook.presenter;
 
 import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import androidx.documentfile.provider.DocumentFile;
-
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -23,7 +22,6 @@ import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.service.CheckSourceService;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -48,7 +46,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
@@ -62,7 +60,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(bookSourceBeans);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
@@ -73,7 +71,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(BookSourceManager.getInstance().getAllBookSource());
             e.onComplete();
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
@@ -95,7 +93,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(bookSourceBean);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -128,7 +126,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             }
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -151,7 +149,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             BookSourceManager.getInstance().addBookSource(bookSourceBean);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -173,7 +171,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         if (!isEmpty(json)) {
             mView.showLoading("正在导入书源");
             BookSourceManager.getInstance().importBookSourceO(json)
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(getImportObserver());
         } else {

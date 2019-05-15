@@ -22,6 +22,7 @@ import com.monke.monkeybook.bean.DownloadInfo;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.DownloadService;
 import com.monke.monkeybook.view.adapter.DownloadAdapter;
+import com.monke.monkeybook.widget.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,13 +46,6 @@ public class DownloadActivity extends MBaseActivity {
         context.startActivity(new Intent(context, DownloadActivity.class));
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -72,16 +66,14 @@ public class DownloadActivity extends MBaseActivity {
     @Override
     protected void onCreateActivity() {
         setContentView(R.layout.activity_recycler_vew);
-        ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
     }
 
     /**
      * 数据初始化
      */
     @Override
-    protected void initData() {
+    protected void bindView() {
+        ButterKnife.bind(this);
         initRecyclerView();
     }
 
@@ -93,7 +85,10 @@ public class DownloadActivity extends MBaseActivity {
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

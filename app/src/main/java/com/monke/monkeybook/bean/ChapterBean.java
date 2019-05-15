@@ -13,13 +13,16 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * 章节列表
  */
 @Entity
-public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBean> {
+public class ChapterBean implements Parcelable, Serializable, FilterBean, Comparable<ChapterBean> {
+
+    private static final long serialVersionUID = 536871008;
 
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址

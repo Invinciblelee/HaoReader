@@ -159,8 +159,8 @@ public class BookSourceManager extends BaseModelImpl {
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
             return SimpleModel.getResponse(analyzeUrl)
+                    .subscribeOn(Schedulers.single())
                     .flatMap(rsp -> importBookSourceO(rsp.body()))
-                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
         } catch (Exception e) {
             return Observable.error(e);

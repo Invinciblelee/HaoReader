@@ -1,5 +1,6 @@
 package com.monke.monkeybook.presenter;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -70,7 +71,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             BookSourceManager.getInstance().addBookSource(bookSource);
             BookSourceManager.getInstance().refreshBookSource();
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -119,6 +120,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
         }
     }
 
+    @SuppressLint("SetWorldReadable")
     @Override
     public void handleSourceShare() {
         Single.create((SingleOnSubscribe<File>) emitter -> {

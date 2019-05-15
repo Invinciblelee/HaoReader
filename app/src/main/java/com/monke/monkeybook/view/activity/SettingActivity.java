@@ -2,14 +2,16 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.MenuItem;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import android.view.MenuItem;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.view.fragment.SettingsFragment;
+import com.monke.monkeybook.widget.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,8 +38,6 @@ public class SettingActivity extends MBaseActivity {
     protected void onCreateActivity() {
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
         SettingsFragment settingsFragment = new SettingsFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.settingsFrameLayout, settingsFragment)
@@ -45,13 +45,11 @@ public class SettingActivity extends MBaseActivity {
 
     }
 
-    @Override
-    protected void initData() {
-
-    }
-
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

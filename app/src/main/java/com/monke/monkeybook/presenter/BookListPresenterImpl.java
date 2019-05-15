@@ -109,7 +109,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
                 }
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe();
         }

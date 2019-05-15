@@ -158,7 +158,7 @@ public class BookshelfHelp {
         }
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().insertOrReplace(bookShelfBean.getBookInfoBean());
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelfBean);
-        if (!bookShelfBean.realChapterListEmpty()) {
+        if(!bookShelfBean.realChapterListEmpty()) {
             saveChapters(bookShelfBean.getNoteUrl(), bookShelfBean.getChapterList());
         }
     }
@@ -230,7 +230,7 @@ public class BookshelfHelp {
     private static void saveChaptersToFile(String noteUrl, List<ChapterBean> chapterBeans) {
         File file = FileHelp.getFile(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(Global.GSON.toJson(chapterBeans));
+            writer.write(Global.GSON.toJson(new ArrayList<>(chapterBeans)));
             writer.flush();
         } catch (Exception ignore) {
         }

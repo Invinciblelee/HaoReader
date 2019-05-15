@@ -106,13 +106,13 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
             e.onNext(bookShelf);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(bookShelfBean -> {
                     bookShelf = bookShelfBean;
                     mView.updateView(false);
                 })
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getBookInfo(bookShelfBean))
                 .flatMap(bookShelfBean -> {
                     if (refresh && inBookShelf) {
@@ -122,10 +122,8 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 })
                 .doAfterNext(bookShelfBean -> {
                     if (inBookShelf) {
-                        Schedulers.single().createWorker().schedule(() -> {
-                            BookshelfHelp.saveBookToShelf(bookShelfBean);
-                            RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
-                        });
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                        RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -158,7 +156,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 inBookShelf = true;
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -188,7 +186,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 inBookShelf = false;
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -218,7 +216,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     BookshelfHelp.saveBookToShelf(bookShelf);
                     e.onNext(true);
                     e.onComplete();
-                }).subscribeOn(Schedulers.io())
+                }).subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new SimpleObserver<Boolean>() {
                             @Override
@@ -253,7 +251,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setFinalDate(bookShelf.getFinalDate());
         WebBookModel.getInstance().getBookInfo(target)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .flatMap(bookShelfBean -> {
                     if (inBookShelf) {
                         return WebBookModel.getInstance().getChapterList(bookShelfBean);
@@ -301,7 +299,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
             e.onNext(bookShelfBean);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 

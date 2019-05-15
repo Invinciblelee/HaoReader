@@ -104,8 +104,6 @@ public class AboutActivity extends MBaseActivity {
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
         tvVersion.setText(getString(R.string.version_name, MApplication.getVersionName()));
         tvQq.setText(getString(R.string.qq_group, qq));
 
@@ -166,7 +164,10 @@ public class AboutActivity extends MBaseActivity {
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

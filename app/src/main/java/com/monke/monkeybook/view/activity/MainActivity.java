@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +28,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
-import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
@@ -162,8 +160,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        setupActionBar();
         initDrawer();
         upGroup(group);
 
@@ -339,13 +335,15 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorMenuText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
     }
 
     //初始化侧边栏

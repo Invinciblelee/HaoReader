@@ -168,10 +168,10 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
     public Observable<List<ChapterBean>> getChapterList(BookShelfBean bookShelfBean) {
         return OkHttpHelper.getInstance().createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getBookInfoBean().getChapterListUrl(), AnalyzeHeaders.getMap(null))
-                .flatMap(response -> analyzeChapterList(response.body(), bookShelfBean));
+                .flatMap(response -> analyzeChapterList(response.body()));
     }
 
-    private Observable<List<ChapterBean>> analyzeChapterList(String s, BookShelfBean bookShelfBean) {
+    private Observable<List<ChapterBean>> analyzeChapterList(String s) {
         return Observable.create(e -> {
             List<ChapterBean> chapterList = new ArrayList<>();
             JsonObject root = new JsonParser().parse(s).getAsJsonObject();

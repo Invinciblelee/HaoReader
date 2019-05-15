@@ -27,6 +27,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.widget.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,8 +83,6 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
     protected void onCreateActivity() {
         setContentView(R.layout.activity_read_style);
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
         setTextKind(readBookControl);
     }
 
@@ -167,7 +166,10 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

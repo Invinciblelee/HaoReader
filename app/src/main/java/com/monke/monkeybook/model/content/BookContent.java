@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.content;
 
+import android.os.Parcelable;
+
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -24,7 +26,7 @@ final class BookContent {
     Observable<BookContentBean> analyzeBookContent(final String s, final ChapterBean chapter) {
         analyzer.apply(analyzer.newConfig()
                 .baseURL(chapter.getDurChapterUrl())
-                .extra("chapter", chapter));
+                .extra("chapter", (Parcelable) chapter));
         return analyzer.getContent(s);
     }
 

@@ -7,10 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.cardview.widget.CardView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.impl.IPresenter;
@@ -19,6 +20,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.Donate;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.widget.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,13 +71,6 @@ public class DonateActivity extends MBaseActivity {
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
-    }
-
-    @Override
-    protected void initData() {
-
     }
 
     @Override
@@ -130,7 +125,10 @@ public class DonateActivity extends MBaseActivity {
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

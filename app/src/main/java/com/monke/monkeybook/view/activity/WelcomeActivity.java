@@ -22,11 +22,6 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
     }
 
     @Override
-    protected void onCreateActivity() {
-
-    }
-
-    @Override
     public void initImmersionBar() {
         mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
 

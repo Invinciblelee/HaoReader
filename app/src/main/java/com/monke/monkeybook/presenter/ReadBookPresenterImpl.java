@@ -24,7 +24,6 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
-import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
@@ -47,7 +46,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
 
-    private ReadBookControl readBookControl = ReadBookControl.getInstance();
     private BookShelfBean bookShelf;
     private BookSourceBean bookSource;
 
@@ -159,7 +157,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 }
                 e.onNext(bookShelf);
                 e.onComplete();
-            }).subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.single())
                     .subscribe(new SimpleObserver<BookShelfBean>() {
                         @Override
                         public void onNext(BookShelfBean value) {
@@ -217,7 +215,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         WebBookModel.getInstance().getBookInfo(target)
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(bookShelfBean -> {
                     bookShelfBean.setHasUpdate(false);
@@ -258,7 +256,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             e.onNext(bookmarkBean);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookmarkBean>() {
                     @Override
@@ -281,7 +279,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             e.onNext(bookmarkBean);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookmarkBean>() {
                     @Override
@@ -306,7 +304,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             e.onNext(bookShelfBean);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doAfterNext(bookShelfBean1 -> bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelfBean1.getTag()))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
@@ -406,7 +404,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 BookshelfHelp.saveBookToShelf(bookShelf);
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -430,7 +428,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 BookshelfHelp.removeFromBookShelf(bookShelf);
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override

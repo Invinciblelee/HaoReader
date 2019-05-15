@@ -15,6 +15,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
@@ -141,7 +142,7 @@ public class AudioBookPlayService extends Service {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_PLAY);
-        intent.putExtra("chapter", chapterBean);
+        intent.putExtra("chapter", (Parcelable) chapterBean);
         context.startService(intent);
     }
 
@@ -870,7 +871,7 @@ public class AudioBookPlayService extends Service {
     @Subscribe(thread = EventThread.MAIN_THREAD,
             tags = {@Tag(RxBusTag.HAD_REMOVE_BOOK)})
     public void removeBookShelf(BookShelfBean bookShelf) {
-        if (bookShelfBean != null && !bookShelf.isChangeSource() && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
+        if (bookShelfBean != null && !bookShelf.isFlag() && TextUtils.equals(bookShelfBean.getNoteUrl(), bookShelf.getNoteUrl())) {
             stopPlay();
         }
     }

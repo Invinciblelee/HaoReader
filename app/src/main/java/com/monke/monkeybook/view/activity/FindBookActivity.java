@@ -57,8 +57,6 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     protected void onCreateActivity() {
         setContentView(R.layout.activity_expandable_list_vew);
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        setupActionBar();
 
         initExpandableList();
     }
@@ -110,7 +108,10 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

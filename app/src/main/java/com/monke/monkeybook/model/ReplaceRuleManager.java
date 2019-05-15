@@ -107,7 +107,7 @@ public class ReplaceRuleManager extends BaseModelImpl {
             return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
                     .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
                     .flatMap(rsp -> importReplaceRuleO(rsp.body()))
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread());
         } catch (Exception e) {
             return Observable.error(e);

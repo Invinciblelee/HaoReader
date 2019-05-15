@@ -49,9 +49,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
     @Transient
     private List<BookmarkBean> bookmarkList = new ArrayList<>();    //书签列表
     @Transient
-    private boolean changeSource;
-    @Transient
-    private boolean isLoading;
+    private boolean flag;
 
     public BookShelfBean() {
     }
@@ -80,7 +78,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
 
 
     protected BookShelfBean(Parcel in) {
-        isLoading = in.readByte() != 0;
         noteUrl = in.readString();
         if (in.readByte() == 0) {
             durChapter = null;
@@ -137,7 +134,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (isLoading ? 1 : 0));
         dest.writeString(noteUrl);
         if (durChapter == null) {
             dest.writeByte((byte) 0);
@@ -246,14 +242,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return bookShelfBean;
     }
 
-    public boolean isChangeSource() {
-        return changeSource;
-    }
-
-    public void setChangeSource(boolean changeSource) {
-        this.changeSource = changeSource;
-    }
-
     public String getNoteUrl() {
         return noteUrl;
     }
@@ -333,12 +321,13 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return this.finalRefreshData;
     }
 
-    public boolean isLoading() {
-        return isLoading;
+    public boolean isFlag() {
+        return flag;
     }
 
-    public void setLoading(boolean loading) {
-        isLoading = loading;
+    public BookShelfBean setFlag(boolean flag) {
+        this.flag = flag;
+        return this;
     }
 
     public int getGroup() {

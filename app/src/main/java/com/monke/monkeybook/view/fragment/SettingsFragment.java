@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.view.activity.SettingActivity;
 
@@ -41,9 +42,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onActivityCreated(savedInstanceState);
 
         View rootView = getView();
-        if(rootView != null) {
+        if (rootView != null) {
             ListView listView = rootView.findViewById(android.R.id.list);
-            if(listView != null){
+            if (listView != null) {
                 listView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
                 listView.setVerticalScrollBarEnabled(false);
             }
@@ -89,8 +90,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             settingActivity.initImmersionBar();
             RxBus.get().post(RxBusTag.IMMERSION_CHANGE, true);
         } else if (key.equals(getString(R.string.pk_bookshelf_px))) {
-            String bookPx = sharedPreferences.getString(key, "0");
-            RxBus.get().post(RxBusTag.UPDATE_BOOK_PX, Integer.parseInt(bookPx));
+            String value = sharedPreferences.getString(key, "0");
+            if (value != null) {
+                Integer bookPx = Integer.parseInt(value);
+                RxBus.get().post(RxBusTag.UPDATE_BOOK_PX, bookPx);
+            }
+        } else if (key.equals(getResources().getString(R.string.pk_chapter_disk_cache))) {
+            DbHelper.getInstance().getDaoSession().getChapterBeanDao().detachAll();
         }
     }
 }

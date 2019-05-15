@@ -58,7 +58,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
     private void searchBook(final long searchTime) {
         WebBookModel.getInstance().findBook(tag, url, page)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .map((Function<List<SearchBookBean>, List<SearchBookBean>>) searchBookBeans -> {
                     boolean hasMore = true;
                     for (SearchBookBean searchBook : searchBookBeans) {

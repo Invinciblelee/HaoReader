@@ -34,6 +34,7 @@ import com.monke.monkeybook.presenter.contract.AudioBookContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
+import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.CircleProgressBar;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
@@ -79,7 +80,6 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        setupActionBar();
         setCoverImage(null);
 
         rvBookshelf.setHasFixedSize(true);
@@ -135,8 +135,10 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         mPresenter.loadAudioBooks(false);
     }
 
-    private void setupActionBar() {
-        setSupportActionBar(toolbar);
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

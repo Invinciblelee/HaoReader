@@ -21,6 +21,7 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.utils.ListUtils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -273,7 +274,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 })
                 .map(Response::body)
                 .doOnNext(string -> {
-                    if (cache) {
+                    if (cache && StringUtils.isNotBlank(string)) {
                         MemoryCache.INSTANCE.putCache(analyzeUrl.getId(), string);
                     }
                 });

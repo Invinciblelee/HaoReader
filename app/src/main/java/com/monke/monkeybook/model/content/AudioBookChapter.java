@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.content;
 
+import android.os.Parcelable;
+
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
@@ -56,7 +58,7 @@ final class AudioBookChapter {
             }
             analyzer.apply(analyzer.newConfig()
                     .baseURL(chapter.getDurChapterUrl())
-                    .extra("chapter", chapter));
+                    .extra("chapter", (Parcelable) chapter));
             return analyzer.getAudioLink(s)
                     .map(url -> {
                         chapter.setDurChapterPlayUrl(url);

@@ -142,8 +142,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
         initSearchView();
 
         int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
@@ -183,7 +181,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);

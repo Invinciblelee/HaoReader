@@ -275,10 +275,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         isFirstIn = false;
     }
 
-    @Override
-    protected void initToolbar() {
-    }
-
     /**
      * 状态栏
      */
@@ -422,7 +418,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        setupActionBar();
+        this.setSupportActionBar(toolbar);
 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
@@ -466,8 +462,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     //设置ToolBar
-    private void setupActionBar() {
-        setSupportActionBar(toolbar);
+    @Override
+    protected void setupActionBar() {
         AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorReadBarText));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -502,8 +498,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void updateTitle(String title) {
-        assert getSupportActionBar() != null;
-        getSupportActionBar().setTitle(title);
+       ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     @Override

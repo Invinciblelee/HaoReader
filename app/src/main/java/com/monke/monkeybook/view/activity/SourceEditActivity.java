@@ -40,6 +40,7 @@ import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.popupwindow.KeyboardToolPop;
+import com.monke.monkeybook.widget.AppCompat;
 
 import java.io.File;
 
@@ -263,8 +264,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
 
         setHint();
         setText(bookSourceBean);
@@ -465,7 +464,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

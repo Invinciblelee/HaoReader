@@ -59,11 +59,6 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
     }
 
     @Override
-    protected void initData() {
-
-    }
-
-    @Override
     protected void bindView() {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
