@@ -1,8 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.presenter;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 
 import com.hwangjr.rxbus.RxBus;
@@ -314,7 +312,6 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
      */
     private Observable<BookShelfBean> saveBookToShelfO(BookShelfBean bookShelfBean) {
         return Observable.create(e -> {
-            bookShelfBean.setLoading(false);
             BookshelfHelp.saveBookToShelf(bookShelfBean);
             e.onNext(bookShelfBean);
             e.onComplete();

@@ -103,8 +103,6 @@ public class SourceDebugActivity extends MBaseActivity {
     protected void bindView() {
         super.bindView();
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
         initSearchView();
         loading.setEnabled(false);
     }
@@ -155,7 +153,10 @@ public class SourceDebugActivity extends MBaseActivity {
     }
 
     //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

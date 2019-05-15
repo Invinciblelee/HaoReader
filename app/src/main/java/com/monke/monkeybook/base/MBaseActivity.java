@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.gyf.immersionbar.ImmersionBar;
@@ -36,8 +34,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     protected ImmersionBar mImmersionBar;
     private SharedPreferences preferences;
 
-    private boolean mDayNight;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         preferences = AppConfigHelper.get().getPreferences();
@@ -45,7 +41,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getWindow().getDecorView().setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
         }
-        initToolbar();
     }
 
     @Override
@@ -55,44 +50,11 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         initImmersionBar();
     }
 
-    protected void initToolbar() {
-        Toolbar toolbar = findToolbar();
-        if (toolbar != null) {
-            int color = getResources().getColor(R.color.colorToolBarText);
-            toolbar.setTitleTextColor(color);
-            AppCompat.setToolbarNavIconTint(toolbar, color);
-        }
-    }
-
-    private Toolbar findToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            return toolbar;
-        } else {
-            ViewGroup viewGroup = getWindow().getDecorView().findViewById(android.R.id.content);
-            return findToolbar(viewGroup);
-        }
-    }
-
-    private Toolbar findToolbar(ViewGroup viewGroup) {
-        if (viewGroup == null) {
-            return null;
-        }
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            View child = viewGroup.getChildAt(i);
-            if (child instanceof Toolbar) {
-                return (Toolbar) child;
-            } else if (child instanceof ViewGroup) {
-                return findToolbar((ViewGroup) child);
-            }
-        }
-        return null;
-    }
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && mDayNight != isNightTheme()) {
+        boolean isNightMode = getDelegate().getLocalNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
+        if (hasFocus && isNightMode != isNightTheme()) {
             applyNightTheme();
         }
     }
@@ -206,13 +168,12 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     }
 
     public void applyNightTheme() {
-        mDayNight = isNightTheme();
-        if (mDayNight) {
+        if (isNightTheme()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
-        if(!isFinishing()) {
+        if (!isFinishing()) {
             getDelegate().applyDayNight();
         }
     }

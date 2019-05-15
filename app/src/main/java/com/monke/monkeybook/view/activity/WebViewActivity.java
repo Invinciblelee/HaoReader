@@ -29,6 +29,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
+import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
@@ -107,8 +108,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void bindView() {
-        setupActionBar();
-
         rlContent.setOnInsetsCallback(insets -> appBar.setPadding(0, insets.top, 0, 0));
 
         refreshLayout.setOnRefreshListener(this);
@@ -205,7 +204,10 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         }
     }
 
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

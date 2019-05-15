@@ -103,15 +103,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     @Override
-    protected void initData() {
-
-    }
-
-    @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        this.setSupportActionBar(toolbar);
-        setupActionBar();
         initSearchView();
         initRecyclerView();
         mPresenter.initData();
@@ -245,8 +238,10 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         return rlContent;
     }
 
-    //设置ToolBar
-    private void setupActionBar() {
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);

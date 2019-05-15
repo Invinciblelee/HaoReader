@@ -154,7 +154,12 @@ public class WebBookModel implements IWebBookModel {
             }
 
             if (bookShelfBean.getChapterListSize() < chapterList.size()) {
-                int newChapters = bookShelfBean.getNewChapters() + (chapterList.size() - bookShelfBean.getChapterListSize());
+                final int newChapters;
+                if (bookShelfBean.getChapterListSize() > 0) {
+                    newChapters = bookShelfBean.getNewChapters() + (chapterList.size() - bookShelfBean.getChapterListSize());
+                } else {
+                    newChapters = 0;
+                }
                 bookShelfBean.setNewChapters(Math.min(newChapters, chapterList.size()));
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                 bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());

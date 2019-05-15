@@ -48,7 +48,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             ReplaceRuleManager.getInstance().saveDataS(replaceRuleBeans);
             e.onNext(ReplaceRuleManager.getInstance().getAll());
             e.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
@@ -59,7 +59,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             ReplaceRuleManager.getInstance().delData(replaceRuleBean);
             e.onNext(ReplaceRuleManager.getInstance().getAll());
             e.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<ReplaceRuleBean>>() {
                     @Override
@@ -84,7 +84,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             ReplaceRuleManager.getInstance().delDataS(replaceRuleBeans);
             e.onNext(true);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -105,7 +105,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
             ReplaceRuleManager.getInstance().saveData(replaceRuleBean);
             e.onNext(ReplaceRuleManager.getInstance().getAll());
             e.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<ReplaceRuleBean>>() {
                     @Override

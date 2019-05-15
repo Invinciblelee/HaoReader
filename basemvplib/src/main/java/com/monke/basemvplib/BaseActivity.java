@@ -22,6 +22,7 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
         attachView();
         initData();
         bindView();
+        setupActionBar();
         bindEvent();
         firstRequest();
     }
@@ -44,6 +45,10 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
      * 控件绑定
      */
     protected void bindView() {
+
+    }
+
+    protected void setupActionBar(){
 
     }
 
@@ -73,19 +78,25 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
     }
 
     /**
+     * 数据初始化
+     */
+    protected void initData(){
+
+    }
+
+    /**
      * P层绑定   若无则返回null;
      */
-    protected abstract T initInjector();
+    protected T initInjector(){
+        return null;
+    }
 
     /**
      * 布局载入  setContentView()
      */
-    protected abstract void onCreateActivity();
+    protected void onCreateActivity(){
+    }
 
-    /**
-     * 数据初始化
-     */
-    protected abstract void initData();
 
 
     @Override

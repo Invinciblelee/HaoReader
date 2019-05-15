@@ -39,11 +39,10 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private boolean useMy716 = true;
     private boolean hasData = false;
 
-    private ExecutorService executor;
-
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
+    private final Scheduler scheduler;
     private final SearchHandler searchHandler;
 
     private SearchIterator searchIterator;
@@ -76,8 +75,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
         threadsNum = Math.min(50, threadsNum);
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
-        executor = Executors.newFixedThreadPool(threadsNum);
-        searchHandler = new SearchHandler(this, Schedulers.from(executor));
+        scheduler = Schedulers.from(Executors.newFixedThreadPool(threadsNum));
+        searchHandler = new SearchHandler(this, scheduler);
     }
 
     /**
@@ -166,7 +165,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     public void shutdownSearch() {
         clearSearch();
-        executor.shutdown();
+        scheduler.shutdown();
     }
 
     public SearchBookModel onlyOnePage() {

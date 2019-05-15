@@ -103,7 +103,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
             e.onNext(FileUtil.getFilePathFromUri(activity, uri));
             e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(File::new)
                 .flatMap((Function<File, ObservableSource<LocBookShelfBean>>) file -> ImportBookModelImpl.getInstance().importBook(file))

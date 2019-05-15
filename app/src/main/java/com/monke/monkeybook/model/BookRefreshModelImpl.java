@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
@@ -29,18 +31,20 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BookRefreshModelImpl implements IBookRefreshModel {
 
-    private static final int THREADS_NUM = 4;
+    private static final int THREADS_NUM = 6;
 
     private List<BookShelfBean> bookShelfBeans;
     private List<String> errBooks = new ArrayList<>();
     private CompositeDisposable refreshingDisps = new CompositeDisposable();
     private RefreshingIterator refreshingIterator;
 
+    private final Scheduler scheduler;
     private AtomicInteger loadingCount = new AtomicInteger();
 
     private OnBookRefreshListener refreshListener;
 
     private BookRefreshModelImpl() {
+        scheduler = Schedulers.from(Executors.newFixedThreadPool(THREADS_NUM));
     }
 
     public static BookRefreshModelImpl newInstance() {
@@ -131,16 +135,17 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     @Override
     public void stopRefreshBook() {
-        refreshingDisps.dispose();
-        refreshingDisps = null;
+        if (refreshingDisps != null) {
+            refreshingDisps.dispose();
+            refreshingDisps = null;
+        }
+        scheduler.shutdown();
     }
 
     private Function<List<BookShelfBean>, List<BookShelfBean>> ensureNotLoading() {
         return bookShelfBeans -> {
             for (BookShelfBean bookShelfBean : bookShelfBeans) {
-                if (bookShelfBean.isLoading()) {
-                    bookShelfBean.setLoading(false);
-                }
+                bookShelfBean.setFlag(false);
             }
             return bookShelfBeans;
         };
@@ -165,7 +170,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void refreshBookShelf(BookShelfBean bookShelfBean) {
         WebBookModel.getInstance().getChapterList(bookShelfBean)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
                 .flatMap(this::saveBookToShelfO)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
@@ -227,7 +232,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void dispatchRefreshEvent(BookShelfBean bookShelfBean, boolean loading) {
         if (refreshListener != null) {
-            bookShelfBean.setLoading(loading);
+            bookShelfBean.setFlag(loading);
             refreshListener.onRefresh(bookShelfBean);
         }
     }

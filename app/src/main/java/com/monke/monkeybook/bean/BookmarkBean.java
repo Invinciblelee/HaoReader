@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.OrderBy;
 
 @Entity
@@ -35,7 +34,7 @@ public class BookmarkBean implements Parcelable, FilterBean {
 
     @Generated(hash = 1176037419)
     public BookmarkBean(Long id, String noteUrl, String bookName, String chapterName,
-                        Integer chapterIndex, Integer pageIndex, String content) {
+            Integer chapterIndex, Integer pageIndex, String content) {
         this.id = id;
         this.noteUrl = noteUrl;
         this.bookName = bookName;

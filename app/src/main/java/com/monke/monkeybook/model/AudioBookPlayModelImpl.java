@@ -80,7 +80,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                         bookShelf.setChapterList(chapterBeans);
                         return Observable.just(bookShelf);
                     })
-                    .doAfterNext(this::saveBookShelf)
+                    .doOnNext(this::saveBookShelf)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<BookShelfBean>() {
 
@@ -142,7 +142,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setFinalDate(bookShelf.getFinalDate());
         WebBookModel.getInstance().getBookInfo(target)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
                 .map(bookShelfBean -> {
@@ -157,8 +157,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                             if (inBookShelf()) {
                                 BookshelfHelp.removeFromBookShelf(bookShelf);
                                 BookshelfHelp.saveBookToShelf(bookShelfBean);
-                                bookShelf.setChangeSource(true);
-                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
+                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.setFlag(true));
                                 RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
                             }
                             emitter.onNext(bookShelfBean);
@@ -397,7 +396,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             }
             emitter.onNext(bookShelfBean);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {

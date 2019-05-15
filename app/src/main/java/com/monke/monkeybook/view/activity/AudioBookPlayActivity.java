@@ -122,10 +122,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     }
 
     @Override
-    protected void initToolbar() {
-    }
-
-    @Override
     protected IPresenter initInjector() {
         return null;
     }
@@ -142,12 +138,6 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     @Override
     protected void bindView() {
         ButterKnife.bind(this);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.white));
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
         setCoverImage(null);
         setButtonEnabled(false);
         setMediaButtonEnabled(false);
@@ -157,6 +147,16 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
 
         audioChapterPop = new AudioChapterPop(this, this);
         audioTimerPop = new AudioTimerPop(this, this);
+    }
+
+    @Override
+    protected void setupActionBar() {
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.white));
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
     }
 
     @Override

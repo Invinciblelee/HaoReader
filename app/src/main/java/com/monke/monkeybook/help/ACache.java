@@ -58,10 +58,10 @@ public class ACache {
 		return get(cacheDir, MAX_SIZE, MAX_COUNT);
 	}
 
-	public static ACache get(Context ctx, long max_zise, int max_count) {
+	public static ACache get(Context ctx, long max_size, int max_count) {
 		try{
 			File f = new File(ctx.getCacheDir(), "ACache");
-			return get(f, max_zise, max_count);
+			return get(f, max_size, max_count);
 		}catch (Exception e){
 			e.printStackTrace();
 		}

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -26,7 +28,6 @@ import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -97,7 +98,8 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                 DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().insert(searchHistoryBean);
             }
             e.onNext(searchHistoryBean);
-        }).subscribeOn(Schedulers.io())
+            e.onComplete();
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<SearchHistoryBean>() {
                     @Override
@@ -120,7 +122,8 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                     SearchHistoryBeanDao.Properties.Type.columnName + "=? and " + SearchHistoryBeanDao.Properties.Content.columnName + " like ?",
                     new String[]{String.valueOf(SearchBookPresenterImpl.BOOK), "%" + content + "%"});
             e.onNext(a);
-        }).subscribeOn(Schedulers.io())
+            e.onComplete();
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Integer>() {
                     @Override
@@ -143,7 +146,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().delete(searchHistoryBean);
             e.onNext(true);
             e.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -170,8 +173,9 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                     .limit(100)
                     .build().list();
             e.onNext(data);
+            e.onComplete();
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchHistoryBean>>() {
                     @Override
