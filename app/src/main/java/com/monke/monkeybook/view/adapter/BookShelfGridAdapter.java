@@ -69,7 +69,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
             });
         }
 
-        if (item.isLoading()) {
+        if (item.isFlag()) {
             holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {

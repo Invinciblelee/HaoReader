@@ -241,22 +241,11 @@ public class BookShelfBean implements Parcelable, VariableStore {
         }
         return bookShelfBean;
     }
-<<<<<<< HEAD
-	
+
     public int getUnreadChapterNum() {
         int num = getChapterListSize() - getDurChapter() - 1;
         return num < 0 ? 0 : num;
     }
-	
-    public boolean isChangeSource() {
-        return changeSource;
-    }
-
-    public void setChangeSource(boolean changeSource) {
-        this.changeSource = changeSource;
-    }
-=======
->>>>>>> eb17ab10cd836d433ee6fc3143a17782802c6807
 
     public String getNoteUrl() {
         return noteUrl;
