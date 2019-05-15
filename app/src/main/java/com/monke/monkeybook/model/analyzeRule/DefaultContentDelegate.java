@@ -194,6 +194,7 @@ class DefaultContentDelegate implements ContentDelegate {
             emitter.onNext(analyzeUrl);
             emitter.onComplete();
         })
+                .subscribeOn(scheduler)
                 .flatMap(analyzeUrl -> SimpleModel.getResponse(analyzeUrl)
                         .flatMap(response -> Observable.create((ObservableOnSubscribe<WebChapterResult>) emitter -> {
                             WebChapterResult result = new WebChapterResult(index);
