@@ -147,7 +147,7 @@ class DefaultContentDelegate implements ContentDelegate {
             if (webChapter.nextUrls != null) {
                 if (webChapter.nextUrls.size() > 1) {
                     final List<String> chapterUrls = new ArrayList<>(new LinkedHashSet<>(webChapter.nextUrls));
-                    final Scheduler scheduler = Schedulers.from(Executors.newFixedThreadPool(Math.min(50, chapterUrls.size())));
+                    final Scheduler scheduler = Schedulers.from(Executors.newFixedThreadPool(Math.min(100, chapterUrls.size())));
                     chapterUrls.remove(getConfig().getBaseURL());
                     List<WebChapterResult> webChapterResults = getWebChapterResultList(ruleChapterList, headerMap, chapterUrls, scheduler).blockingFirst();
                     Collections.sort(webChapterResults);
