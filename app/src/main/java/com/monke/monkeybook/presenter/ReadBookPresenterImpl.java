@@ -36,12 +36,15 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
@@ -215,13 +218,29 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         WebBookModel.getInstance().getBookInfo(target)
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(bookShelfBean -> {
                     bookShelfBean.setHasUpdate(false);
                     bookShelfBean.setNewChapters(0);
                     return bookShelfBean;
                 })
+                .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
+                    if (!bookShelfBean.realChapterListEmpty()) {
+                        return Observable.create(emitter -> {
+                            if (inBookShelf()) {
+                                BookshelfHelp.removeFromBookShelf(bookShelf);
+                                BookshelfHelp.saveBookToShelf(bookShelfBean);
+                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
+                                RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                            }
+                            emitter.onNext(bookShelfBean);
+                            emitter.onComplete();
+                        });
+                    }
+                    return Observable.error(new Exception("目录获取失败"));
+                })
+                .doOnNext(bookShelfBean -> bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelfBean.getTag()))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
                     @Override
@@ -231,14 +250,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
-                        bookShelfBean.setHasUpdate(false);
-
-                        if (inBookShelf()) {
-                            saveChangedBook(bookShelfBean);
-                        } else {
-                            bookShelf = bookShelfBean;
-                            mView.changeSourceFinish(true);
-                        }
+                        bookShelf = bookShelfBean;
+                        mView.changeSourceFinish(true);
                     }
 
                     @Override
@@ -290,41 +303,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     @Override
                     public void onError(Throwable e) {
 
-                    }
-                });
-    }
-
-    /**
-     * 保存换源后book
-     */
-    private void saveChangedBook(BookShelfBean bookShelfBean) {
-        Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
-            BookshelfHelp.removeFromBookShelf(bookShelf);
-            BookshelfHelp.saveBookToShelf(bookShelfBean);
-            e.onNext(bookShelfBean);
-            e.onComplete();
-        })
-                .subscribeOn(Schedulers.single())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doAfterNext(bookShelfBean1 -> bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelfBean1.getTag()))
-                .subscribe(new SimpleObserver<BookShelfBean>() {
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        changeSourceDisp.add(d);
-                    }
-
-                    @Override
-                    public void onNext(BookShelfBean value) {
-                        RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                        RxBus.get().post(RxBusTag.HAD_ADD_BOOK, value);
-                        bookShelf = value;
-                        mView.changeSourceFinish(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.changeSourceFinish(false);
                     }
                 });
     }

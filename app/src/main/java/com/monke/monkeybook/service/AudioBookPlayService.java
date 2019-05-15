@@ -563,6 +563,8 @@ public class AudioBookPlayService extends Service {
         }
         isPrepared = false;
         mediaPlayer.reset();
+        sendEvent(ACTION_SEEK_ENABLED, AudioPlayInfo.seekEnabled(false));
+
     }
 
     private boolean nextPlay() {
@@ -601,8 +603,8 @@ public class AudioBookPlayService extends Service {
         }
     }
 
-    private void setLoading(boolean loading){
-        if(isLoading != loading){
+    private void setLoading(boolean loading) {
+        if (isLoading != loading) {
             isLoading = loading;
             sendEvent(ACTION_LOADING, AudioPlayInfo.loading(isLoading));
         }
@@ -892,6 +894,15 @@ public class AudioBookPlayService extends Service {
             bookShelfBean.setBookInfoBean(bookShelf.getBookInfoBean());
             mModel.updateBookShelf(bookShelfBean);
             sendWhenAttach(false);
+        }
+    }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.CHANGE_SOURCE)})
+    public void changeSource(BookShelfBean bookShelf) {
+        if (bookShelfBean != null) {
+            bookShelfBean = bookShelf;
+            initModel();
         }
     }
 

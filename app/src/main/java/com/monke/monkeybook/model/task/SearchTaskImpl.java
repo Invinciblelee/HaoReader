@@ -82,7 +82,7 @@ public class SearchTaskImpl implements ISearchTask {
                             incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
                         })
                         .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
-                        .delay(index * 100L, TimeUnit.MILLISECONDS)
+                        .delay(index * 50L, TimeUnit.MILLISECONDS)
                         .flatMap(searchBookBeans -> Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
                             boolean hasMore = true;
                             if (!isDisposed() && !searchBookBeans.isEmpty()) {

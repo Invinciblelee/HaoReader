@@ -399,7 +399,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public void loadMoreSearchBook(final List<SearchBookBean> books) {
-        searchBookAdapter.addAll(books, mSearchAutoComplete.getText().toString().trim());
+        searchBookAdapter.addAll(books, getEdtContent());
     }
 
     @Override
