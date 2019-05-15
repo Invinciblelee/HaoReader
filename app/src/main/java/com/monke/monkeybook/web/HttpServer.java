@@ -1,6 +1,7 @@
 package com.monke.monkeybook.web;
 
 import com.google.gson.Gson;
+import com.monke.monkeybook.web.controller.BookshelfController;
 import com.monke.monkeybook.web.controller.SourceController;
 import com.monke.monkeybook.web.utils.AssetsWeb;
 import com.monke.monkeybook.web.utils.ReturnData;
@@ -17,6 +18,7 @@ public class HttpServer extends NanoHTTPD {
     public HttpServer(int port) {
         super(port);
     }
+
 
     @Override
     public Response serve(IHTTPSession session) {
@@ -43,7 +45,10 @@ public class HttpServer extends NanoHTTPD {
                             returnData = new SourceController().saveSource(postData);
                             break;
                         case "/saveSources":
-                            returnData = new SourceController().saveSources(postData);
+                            returnData =  new SourceController().saveSources(postData);
+                            break;
+                        case "/saveBook":
+                            returnData = new BookshelfController().saveBook(postData);
                             break;
                         case "/deleteSources":
                             returnData = new SourceController().deleteSources(postData);
@@ -60,6 +65,15 @@ public class HttpServer extends NanoHTTPD {
                             break;
                         case "/getSources":
                             returnData = new SourceController().getSources();
+                            break;
+                        case "/getBookshelf":
+                            returnData = new BookshelfController().getBookshelf();
+                            break;
+                        case "/getChapterList":
+                            returnData = new BookshelfController().getChapterList(parameters);
+                            break;
+                        case "/getBookContent":
+                            returnData = new BookshelfController().getBookContent(parameters);
                             break;
                     }
                     break;

@@ -1,5 +1,6 @@
 package com.monke.monkeybook.help;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -217,6 +219,16 @@ public class BookshelfHelp {
         } catch (Exception ignore) {
         }
         return new ArrayList<>();
+    }
+
+    public static String getChapterCache(BookShelfBean bookShelfBean, ChapterBean chapter) {
+        @SuppressLint("DefaultLocale")
+        File file = ChapterContentHelp.getBookFile(ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()),
+                ChapterContentHelp.getCacheFileName(chapter));
+        if (!file.exists()) return null;
+
+        byte[] contentByte = DocumentHelper.getBytes(file);
+        return new String(contentByte, StandardCharsets.UTF_8);
     }
 
     public static void saveChapters(String noteUrl, List<ChapterBean> chapterBeans) {
