@@ -131,6 +131,7 @@ public class DownLoadDialog extends AppCompatDialog {
                     if (clickDownload != null) {
                         clickDownload.download(Integer.parseInt(edtStart.getText().toString()) - 1, Integer.parseInt(edtEnd.getText().toString()) - 1);
                     }
+                    dismissAllowingStateLoss();
                 }
             } else {
                 ToastUtils.toast(getContext(), "请输入要离线的章节数");

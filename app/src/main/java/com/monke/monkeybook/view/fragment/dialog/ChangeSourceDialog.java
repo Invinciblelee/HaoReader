@@ -47,7 +47,6 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ChangeSourceDialog extends AppCompatDialog implements SearchBookModel.SearchListener {
-    private TextView atvTitle;
     private ImageButton ibtStop;
     private RefreshRecyclerView rvSource;
 
@@ -101,7 +100,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        atvTitle = findViewById(R.id.atv_title);
+        TextView atvTitle = findViewById(R.id.atv_title);
         ibtStop = findViewById(R.id.ibt_stop);
         rvSource = findViewById(R.id.rf_rv_change_source);
         ibtStop.setVisibility(View.INVISIBLE);

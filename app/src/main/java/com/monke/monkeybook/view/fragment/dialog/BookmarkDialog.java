@@ -65,26 +65,26 @@ public class BookmarkDialog extends AppCompatDialog {
         TextView tvChapterName = findViewById(R.id.tvChapterName);
         tvChapterName.setOnClickListener(v -> {
             bookmarkClick.openBookmark(bookmarkBean);
-            dismiss();
+            dismissAllowingStateLoss();
         });
 
         View tvOk = findViewById(R.id.tv_ok);
         tvOk.setOnClickListener(v -> {
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
             bookmarkClick.saveBookmark(bookmarkBean);
-            dismiss();
+            dismissAllowingStateLoss();
         });
 
         View tvSave = findViewById(R.id.tv_save);
         tvSave.setOnClickListener(v -> {
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
             bookmarkClick.saveBookmark(bookmarkBean);
-            dismiss();
+            dismissAllowingStateLoss();
         });
         View tvDel = findViewById(R.id.tv_del);
         tvDel.setOnClickListener(v -> {
             bookmarkClick.delBookmark(bookmarkBean);
-            dismiss();
+            dismissAllowingStateLoss();
         });
 
         View llEdit = findViewById(R.id.llEdit);
