@@ -136,7 +136,8 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             } else {
                 emitter.onError(new IllegalArgumentException("string data covert to bitmap failed！"));
             }
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<File>() {
                     @Override
                     public void onSubscribe(Disposable d) {

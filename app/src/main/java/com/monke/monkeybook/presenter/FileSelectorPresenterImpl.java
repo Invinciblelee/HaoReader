@@ -26,8 +26,10 @@ import java.util.Stack;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorContract.View> implements FileSelectorContract.Presenter, FileFilter {
 
@@ -108,7 +110,8 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             } else {
                 emitter.onError(new Exception("file load failed!"));
             }
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -141,7 +144,8 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                     emitter.onError(new Exception("snapshot pop failed!"));
                 }
             }
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -175,7 +179,8 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             } else {
                 emitter.onError(new Exception("snapshot push failed!"));
             }
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -219,7 +224,8 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             } else {
                 emitter.onError(new Exception("file load failed!"));
             }
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
                     public void onSubscribe(Disposable d) {

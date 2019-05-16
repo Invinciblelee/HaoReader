@@ -141,15 +141,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
 
     @Override
     public void importDataS(String sourceUrl) {
-        URL url;
-        try {
-            url = new URL(sourceUrl);
-        } catch (Exception e) {
-            e.printStackTrace();
-            mView.showSnackBar("URL格式不对");
-            return;
-        }
-        ReplaceRuleManager.getInstance().importReplaceRuleFromWww(url)
+        ReplaceRuleManager.getInstance().importReplaceRuleFromWww(sourceUrl)
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {

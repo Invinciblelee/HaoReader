@@ -127,7 +127,7 @@ public class AboutActivity extends MBaseActivity {
     @Override
     protected void bindEvent() {
         vwScoring.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "market://details?id=" + getPackageName()));
-        vwMail.setOnClickListener(view -> openIntent(Intent.ACTION_SENDTO, "mailto:kunfei.ge@gmail.com"));
+        vwMail.setOnClickListener(view -> openIntent(Intent.ACTION_SENDTO, "1760316362@qq.com"));
         vwGit.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, getString(R.string.this_github_url)));
         vwSourceRule.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, getString(R.string.source_rule_url)));
         vwDisclaimer.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, getString(R.string.disclaimer_url)));
@@ -146,11 +146,6 @@ public class AboutActivity extends MBaseActivity {
             String content = ReadAssets.getText(AboutActivity.this, "updateLog.md");
             LargeTextDialog.show(getSupportFragmentManager(), content, true);
         });
-    }
-
-    @Override
-    protected void firstRequest() {
-
     }
 
     void openIntent(String intentName, String address) {

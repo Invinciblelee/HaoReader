@@ -10,7 +10,10 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -157,11 +160,23 @@ public class BookSourceManager extends BaseModelImpl {
 
     public Observable<Boolean> importSourceFromWww(String url) {
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
-            return SimpleModel.getResponse(analyzeUrl)
-                    .subscribeOn(Schedulers.single())
-                    .flatMap(rsp -> importBookSourceO(rsp.body()))
-                    .observeOn(AndroidSchedulers.mainThread());
+            url = url.trim();
+            if (NetworkUtil.isIPv4Address(url)) {
+                url = String.format("http://%s:65501", url);
+            }
+            if (StringUtils.isJsonType(url)) {
+                return importBookSourceO(url.trim())
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+            if (URLUtils.isUrl(url)) {
+                AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
+                return SimpleModel.getResponse(analyzeUrl)
+                        .flatMap(rsp -> importBookSourceO(rsp.body()))
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+            throw new IllegalArgumentException("url is invalid");
         } catch (Exception e) {
             return Observable.error(e);
         }

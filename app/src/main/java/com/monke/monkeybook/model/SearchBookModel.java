@@ -19,6 +19,7 @@ import com.monke.monkeybook.utils.NetworkUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.reactivex.Scheduler;
@@ -40,7 +41,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
-    private Scheduler scheduler;
+    private ExecutorService executor;
     private final SearchHandler searchHandler;
 
     private SearchIterator searchIterator;
@@ -55,11 +56,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         private static final int MSG_RESET = 7;
 
         private SearchBookModel model;
-        private Scheduler scheduler;
 
-        private SearchHandler(SearchBookModel model, Scheduler scheduler) {
+        private SearchHandler(SearchBookModel model) {
             this.model = model;
-            this.scheduler = scheduler;
         }
 
         @Override
@@ -67,7 +66,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             if (msg.what == MSG_SEARCH) {
                 model.search((String) msg.obj);
             } else if (msg.what == MSG_QUERY) {
-                new SearchTaskImpl(model).startSearch(msg.arg1, (String) msg.obj, scheduler);
+                new SearchTaskImpl(model).startSearch(msg.arg1, (String) msg.obj, model.getScheduler());
             } else if (msg.what == MSG_EMPTY && model.searchListener != null) {
                 model.searchListener.searchSourceEmpty();
             } else if (msg.what == MSG_ERROR && model.searchListener != null) {
@@ -78,6 +77,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 model.searchListener.searchBookReset();
             }
         }
+
     }
 
     public SearchBookModel(Context context) {
@@ -85,8 +85,14 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
         threadsNum = Math.min(30, threadsNum);
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
-        scheduler = Schedulers.from(Executors.newFixedThreadPool(threadsNum));
-        searchHandler = new SearchHandler(this, scheduler);
+        searchHandler = new SearchHandler(this);
+    }
+
+    private Scheduler getScheduler() {
+        if (executor == null || executor.isShutdown()) {
+            executor = Executors.newFixedThreadPool(threadsNum);
+        }
+        return Schedulers.from(executor);
     }
 
     /**
@@ -176,9 +182,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     public void shutdownSearch() {
         clearSearch();
-        if (scheduler != null) {
-            scheduler.shutdown();
-            scheduler = null;
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
         }
     }
 

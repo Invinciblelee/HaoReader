@@ -438,8 +438,20 @@ public class StringUtils {
         if (base == null) {
             return false;
         }
-
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
+    }
+
+    public static boolean isJsonType(String string){
+        boolean result = false;
+        if (StringUtils.isNotBlank(string)) {
+            string = string.trim();
+            if (string.startsWith("{") && string.endsWith("}")) {
+                result = true;
+            } else if (string.startsWith("[") && string.endsWith("]")) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     public static String formatHtml(String html) {
@@ -450,7 +462,6 @@ public class StringUtils {
                 .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
                 .replaceAll("\\s*\\n+\\s*", "\n\u3000\u3000")                   // 移除空行,并增加段前缩进2个汉字
                 .replaceAll("^[\\n\\s]+", "\u3000\u3000")
-                .replaceAll("[\\n\\s]*$", "");
+                .replaceAll("[\\n\\s]+$", "");
     }
-
 }
