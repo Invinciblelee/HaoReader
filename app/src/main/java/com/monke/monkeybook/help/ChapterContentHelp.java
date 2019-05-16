@@ -1,10 +1,12 @@
 package com.monke.monkeybook.help;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import com.luhuiguo.chinese.ChineseUtils;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
+import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.DownloadBookBean;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
@@ -14,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 public class ChapterContentHelp {
@@ -93,6 +96,16 @@ public class ChapterContentHelp {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static String getChapterCache(BookShelfBean bookShelfBean, ChapterBean chapter) {
+        @SuppressLint("DefaultLocale")
+        File file = ChapterContentHelp.getBookFile(ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()),
+                ChapterContentHelp.getCacheFileName(chapter));
+        if (!file.exists()) return null;
+
+        byte[] contentByte = DocumentHelper.getBytes(file);
+        return new String(contentByte, StandardCharsets.UTF_8);
     }
 
     /**

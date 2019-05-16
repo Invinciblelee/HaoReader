@@ -77,7 +77,7 @@ function rule2json() {
 	RuleJSON.serialNumber = RuleJSON.serialNumber == '' ? 0 : parseInt(RuleJSON.serialNumber);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.enable = RuleJSON.enable == '' || RuleJSON.enable.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
-	RuleJSON.bookSourceType = RuleJSON.bookSourceType == '' || RuleJSON.bookSourceType.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.bookSourceCacheEnabled = RuleJSON.bookSourceCacheEnabled == '' || RuleJSON.bookSourceCacheEnabled.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	return RuleJSON;
 }
 // 将书源对象填充到书源表单

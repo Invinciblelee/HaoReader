@@ -22,6 +22,7 @@ import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.view.activity.MainActivity;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -42,11 +43,7 @@ public class MApplication extends Application {
     private static int versionCode;
 
     private HttpProxyCacheServer proxyCacheServer;
-    private static MApplication instance;
 
-    public static MApplication getInstance() {
-        return instance;
-    }
 
     public static int getVersionCode() {
         return versionCode;
@@ -76,7 +73,7 @@ public class MApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
+
         try {
             versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
             versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
@@ -90,6 +87,7 @@ public class MApplication extends Application {
             createChannelIdDownload();
             createChannelIdReadAloud();
             createChannelIdAudioBook();
+            createChannelIdWeb();
         }
 
         RxJavaPlugins.setErrorHandler(throwable -> {
@@ -161,6 +159,23 @@ public class MApplication extends Application {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannelIdWeb() {
+        //用唯一的ID创建渠道对象
+        NotificationChannel firstChannel = new NotificationChannel(channelIdWeb,
+                getString(R.string.web_menu),
+                NotificationManager.IMPORTANCE_LOW);
+        //初始化channel
+        firstChannel.enableLights(false);
+        firstChannel.enableVibration(false);
+        firstChannel.setSound(null, null);
+        //向notification manager 提交channel
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(firstChannel);
+        }
+    }
+
     private void registerActivityCallback() {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
@@ -200,6 +215,7 @@ public class MApplication extends Application {
                     Intent intent = activity.getIntent();
                     if (intent != null && !intent.getBooleanExtra("isRecreate", false)) {
                         AudioBookPlayService.stop(activity);
+                        WebService.stopThis(activity);
                     }
                 }
             }

@@ -2,7 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <SwitchPreference
         android:defaultValue="false"
         android:key="@string/pk_ImmersionStatusBar"
@@ -17,20 +16,6 @@
         android:summary="@string/s_bookshelf_anim"
         android:title="@string/t_bookshelf_anim" />
 
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pk_auto_clean_book"
-        android:layout="@layout/view_preference"
-        android:summary="@string/ps_auto_clean_book"
-        android:title="@string/pt_auto_clean_book" />
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pk_chapter_disk_cache"
-        android:layout="@layout/view_preference"
-        android:summary="@string/ps_chapter_disk_cache"
-        android:title="@string/pt_chapter_disk_cache" />
 
     <SwitchPreference
         android:defaultValue="true"
@@ -48,6 +33,28 @@
 
     <SwitchPreference
         android:defaultValue="false"
+        android:key="@string/pk_auto_clean_book"
+        android:layout="@layout/view_preference"
+        android:summary="@string/ps_auto_clean_book"
+        android:title="@string/pt_auto_clean_book" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pk_chapter_disk_cache"
+        android:layout="@layout/view_preference"
+        android:summary="@string/ps_chapter_disk_cache"
+        android:title="@string/pt_chapter_disk_cache" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pk_audio_cache"
+        android:layout="@layout/view_preference"
+        android:summary="@string/audio_cache_s"
+        android:title="@string/audio_cache" />
+
+
+    <SwitchPreference
+        android:defaultValue="false"
         android:key="@string/pk_find_expand_group"
         android:layout="@layout/view_preference"
         android:summary="@string/default_expand_first"
@@ -60,13 +67,6 @@
         android:summary="@string/show_all_find_s"
         android:title="@string/show_all_find" />
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pk_audio_cache"
-        android:layout="@layout/view_preference"
-        android:summary="@string/audio_cache_s"
-        android:title="@string/audio_cache" />
-
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/bookshelf_px_title"
@@ -74,6 +74,14 @@
         android:key="@string/pk_bookshelf_px"
         android:layout="@layout/view_preference"
         android:title="@string/bookshelf_px" />
+
+    <com.monke.monkeybook.widget.number.NumberPickerPreference
+        android:defaultValue="1123"
+        android:key="@string/pk_web_port"
+        android:summary="@string/web_port_summary"
+        android:title="@string/web_port_title"
+        app:MaxValue="60000"
+        app:MinValue="1024" />
 
     <com.monke.monkeybook.widget.number.NumberPickerPreference
         android:defaultValue="1"
@@ -92,4 +100,5 @@
         android:title="@string/update_search_threads_num"
         app:MaxValue="30"
         app:MinValue="1" />
+
 </PreferenceScreen>

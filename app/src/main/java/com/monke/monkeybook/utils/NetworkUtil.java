@@ -10,9 +10,7 @@ import com.monke.monkeybook.help.ContextHolder;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URL;
 import java.util.Enumeration;
-
 import java.util.regex.Pattern;
 
 public class NetworkUtil {
