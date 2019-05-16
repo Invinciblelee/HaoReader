@@ -312,4 +312,11 @@
     <string name="tip_permission_denied">应用需要【%s】权限，请前往“设置”—”应用权限“—打开所需权限</string>
     <string name="goto_setting">去设置</string>
     <string name="renew">更新</string>
+	<string name="wifi_repshare">wifi分享</string>
+    <string name="wifi_share">wifi分享</string>
+    <string name="web_menu">Web写源</string>
+    <string name="web_port_title">web端口</string>
+    <string name="web_port_summary">当前端口 %s</string>
+    <string name="web_edit_source">Web编辑书源</string>
+    <string name="http_ip">http://%s:%d</string>
 </resources>

@@ -10,7 +10,6 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
@@ -63,6 +62,16 @@ public class BookSourceManager extends BaseModelImpl {
                     .list();
         }
         return selectedBookSource;
+    }
+
+    public BookSourceBean getBookSourceByUrl(String url) {
+        if (url == null) return null;
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().load(url);
+    }
+
+    public void removeBookSource(BookSourceBean sourceBean) {
+        if (sourceBean == null) return;
+        DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(sourceBean);
     }
 
     public List<BookSourceBean> getAllBookSource() {
@@ -164,8 +173,11 @@ public class BookSourceManager extends BaseModelImpl {
             if (NetworkUtil.isIPv4Address(url)) {
                 url = String.format("http://%s:65501", url);
             }
-            if (StringUtils.isJsonType(url)) {
-                return importBookSourceO(url.trim())
+
+            if (NetworkUtil.isUrl(url)) {
+                AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
+                return SimpleModel.getResponse(analyzeUrl)
+                        .flatMap(rsp -> importBookSourceO(rsp.body()))
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread());
             }

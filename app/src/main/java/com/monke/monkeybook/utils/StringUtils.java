@@ -1,8 +1,7 @@
 package com.monke.monkeybook.utils;
 
+import android.text.TextUtils;
 import android.util.Base64;
-
-import androidx.annotation.NonNull;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -16,6 +15,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by newbiechen on 17-4-22.
@@ -441,19 +442,6 @@ public class StringUtils {
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
 
-    public static boolean isJsonType(String string){
-        boolean result = false;
-        if (StringUtils.isNotBlank(string)) {
-            string = string.trim();
-            if (string.startsWith("{") && string.endsWith("}")) {
-                result = true;
-            } else if (string.startsWith("[") && string.endsWith("]")) {
-                result = true;
-            }
-        }
-        return result;
-    }
-
     public static String formatHtml(String html) {
         if (StringUtils.isBlank(html)) {
             return "";
@@ -464,4 +452,23 @@ public class StringUtils {
                 .replaceAll("^[\\n\\s]+", "\u3000\u3000")
                 .replaceAll("[\\n\\s]+$", "");
     }
+
+    public static boolean isJsonType(String str) {
+        boolean result = false;
+        if (!TextUtils.isEmpty(str)) {
+            str = str.trim();
+            if (str.startsWith("{") && str.endsWith("}")) {
+                result = true;
+            } else if (str.startsWith("[") && str.endsWith("]")) {
+                result = true;
+            }
+        }
+        return result;
+    }
+    public static boolean isTrimEmpty(String text) {
+        if (text == null) return true;
+        if (text.length() == 0) return true;
+        return text.trim().length() == 0;
+    }
+
 }

@@ -14,9 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
@@ -25,10 +22,14 @@ import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
+import com.monke.monkeybook.widget.BadgeView;
 import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapter.MyViewHolder> {
 
@@ -80,12 +81,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvLast.setText(TextProcessor.formatChapterName(lastChapterName));
         }
 
-        if (item.getHasUpdate()) {
-            holder.tvHasNew.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvHasNew.setVisibility(View.INVISIBLE);
-        }
-
         holder.content.setOnClickListener(v -> onClick(v, item));
 
         if (getBookshelfPx() == 2) {
@@ -101,8 +96,15 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
 
         if (item.isFlag()) {
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {
+            if (item.getHasUpdate()) {
+                holder.tvHasNew.setBadgeCount(item.getNewChapters());
+            } else {
+                holder.tvHasNew.setBadgeCount(item.getUnreadChapterNum());
+            }
+            holder.tvHasNew.setHighlight(item.getHasUpdate());
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
     }
@@ -121,7 +123,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
-        TextView tvHasNew;
+        BadgeView tvHasNew;
         TextView tvName;
         TextView tvAuthor;
         TextView tvRead;

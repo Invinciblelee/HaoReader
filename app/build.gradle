@@ -62,7 +62,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gedoor.monkeybook.super"
+        applicationId "com.nick.monkeybook.super"
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
         versionCode currentVersionCode
@@ -151,6 +151,9 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.8.6'
     //Rhino
     implementation 'com.github.gedoor:rhino-android:1.2'
+	//webServer
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
 }
 
 greendao {

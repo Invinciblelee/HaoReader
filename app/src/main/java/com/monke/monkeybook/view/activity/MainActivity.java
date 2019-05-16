@@ -445,9 +445,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 case R.id.action_about:
                     drawerLeft.postDelayed(() -> AboutActivity.startThis(this), 220L);
                     break;
-                case R.id.action_donate:
-                    drawerLeft.postDelayed(() -> DonateActivity.startThis(this), 220L);
-                    break;
                 case R.id.action_cache_manager:
                     drawerLeft.postDelayed(() -> CacheManagerActivity.startThis(this), 220L);
                     break;
