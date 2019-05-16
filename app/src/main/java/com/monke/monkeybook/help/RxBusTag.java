@@ -10,6 +10,7 @@ public class RxBusTag {
     public final static String UPDATE_BOOK_PX = "update_book_px";
     public final static String UPDATE_READ = "update_read";
     public final static String CHAPTER_CHANGE = "chapter_change";
+    public final static String CHANGE_SOURCE = "change_source";
     public final static String MEDIA_BUTTON = "media_button";
     public final static String ALOUD_MSG = "aloud_string";
     public final static String ALOUD_STATE = "aloud_state";

@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +25,6 @@ import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.text.TextUtils.isEmpty;
@@ -146,23 +144,21 @@ class DefaultContentDelegate implements ContentDelegate {
             if (webChapter.nextUrls != null) {
                 if (webChapter.nextUrls.size() > 1) {
                     final List<String> chapterUrls = new ArrayList<>(new LinkedHashSet<>(webChapter.nextUrls));
-                    final Scheduler scheduler = Schedulers.from(Executors.newFixedThreadPool(Math.min(100, chapterUrls.size())));
                     chapterUrls.remove(getConfig().getBaseURL());
-                    List<WebChapterResult> webChapterResults = getWebChapterResultList(ruleChapterList, headerMap, chapterUrls, scheduler).blockingFirst();
+                    List<WebChapterResult> webChapterResults = getWebChapterResultList(ruleChapterList, headerMap, chapterUrls).blockingFirst();
                     Collections.sort(webChapterResults);
                     for (WebChapterResult webChapterResult : webChapterResults) {
                         if (webChapterResult.result != null) {
                             chapterList.addAll(webChapterResult.result);
                         }
                     }
-                    scheduler.shutdown();
                 } else if (webChapter.nextUrls.size() == 1) {
                     final List<String> usedUrls = new ArrayList<>();
                     String nextUrl = webChapter.nextUrls.get(0);
                     usedUrls.add(getConfig().getBaseURL());
                     while (!isEmpty(nextUrl) && !usedUrls.contains(nextUrl)) {
                         usedUrls.add(nextUrl);
-                        webChapter = getSingleWebChapterResult(0, nextUrl, ruleChapterList, headerMap, true, Schedulers.single()).blockingFirst();
+                        webChapter = getSingleWebChapterResult(0, nextUrl, ruleChapterList, headerMap, true).blockingFirst();
                         if (webChapter.result != null && !webChapter.result.isEmpty()) {
                             chapterList.addAll(webChapter.result);
                         }
@@ -176,31 +172,31 @@ class DefaultContentDelegate implements ContentDelegate {
         });
     }
 
-    private Observable<List<WebChapterResult>> getWebChapterResultList(String ruleChapterList, Map<String, String> headerMap, List<String> chapterUrls, Scheduler scheduler) {
+    private Observable<List<WebChapterResult>> getWebChapterResultList(String ruleChapterList, Map<String, String> headerMap, List<String> chapterUrls) {
         final int size = chapterUrls.size();
         final List<WebChapterRequest> webRequests = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             webRequests.add(new WebChapterRequest(i, chapterUrls.get(i)));
         }
         return Observable.fromIterable(webRequests)
-                .flatMap(request -> getSingleWebChapterResult(request.id, request.url, ruleChapterList, headerMap, false, scheduler))
+                .flatMap(request -> getSingleWebChapterResult(request.id, request.url, ruleChapterList, headerMap, false))
                 .toList().toObservable();
     }
 
-    private Observable<WebChapterResult> getSingleWebChapterResult(int index, String nextUrl, String ruleChapterList, Map<String, String> headerMap, boolean readUrls, Scheduler scheduler) {
+    private Observable<WebChapterResult> getSingleWebChapterResult(int index, String nextUrl, String ruleChapterList, Map<String, String> headerMap, boolean readUrls) {
         return Observable.create((ObservableOnSubscribe<AnalyzeUrl>) emitter -> {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), nextUrl, headerMap);
             emitter.onNext(analyzeUrl);
             emitter.onComplete();
         })
-                .subscribeOn(scheduler)
+                .subscribeOn(Schedulers.io())
                 .flatMap(analyzeUrl -> SimpleModel.getResponse(analyzeUrl)
                         .flatMap(response -> Observable.create((ObservableOnSubscribe<WebChapterResult>) emitter -> {
                             WebChapterResult result = new WebChapterResult(index);
                             toWebChaptersResult(response.body(), ruleChapterList, result, readUrls);
                             emitter.onNext(result);
                             emitter.onComplete();
-                        }).observeOn(scheduler)))
+                        }).observeOn(Schedulers.io())))
                 .retry(2)
                 .onErrorReturnItem(new WebChapterResult(index));
     }

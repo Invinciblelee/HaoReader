@@ -119,7 +119,7 @@ public class BookshelfHelp {
     public static void removeFromBookShelf(BookShelfBean bookShelfBean) {
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().deleteByKey(bookShelfBean.getNoteUrl());
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().deleteByKey(bookShelfBean.getBookInfoBean().getNoteUrl());
-        DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(bookShelfBean.getChapterList());
+        delChapterList(bookShelfBean.getNoteUrl(), bookShelfBean.getChapterList());
         //如果正在下载，则移除任务
         DownloadService.removeDownload(ContextHolder.getContext(), bookShelfBean.getNoteUrl());
         cleanBookCache(bookShelfBean);
@@ -132,10 +132,12 @@ public class BookshelfHelp {
         }
     }
 
-    public static void delChapterList(List<ChapterBean> chapterBeanList) {
+    public static void delChapterList(String noteUrl, List<ChapterBean> chapterBeanList) {
         if (chapterBeanList != null && !chapterBeanList.isEmpty()) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(chapterBeanList);
         }
+        File file = new File(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + ".chap");
+        FileHelp.deleteFile(file.getAbsolutePath());
     }
 
     public static boolean hasCache(BookShelfBean bookShelfBean) {
@@ -160,7 +162,7 @@ public class BookshelfHelp {
         }
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().insertOrReplace(bookShelfBean.getBookInfoBean());
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().insertOrReplace(bookShelfBean);
-        if(!bookShelfBean.realChapterListEmpty()) {
+        if (!bookShelfBean.realChapterListEmpty()) {
             saveChapters(bookShelfBean.getNoteUrl(), bookShelfBean.getChapterList());
         }
     }

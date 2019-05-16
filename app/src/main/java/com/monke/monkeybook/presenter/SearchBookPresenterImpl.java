@@ -225,7 +225,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     }
 
     @Override
-    public void resetSearchBook() {
+    public void searchBookReset() {
         mView.resetSearchBook();
     }
 

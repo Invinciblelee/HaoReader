@@ -1,5 +1,6 @@
 package com.monke.monkeybook.model;
 
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;

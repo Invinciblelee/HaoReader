@@ -33,7 +33,6 @@ public class KeyboardToolPop extends PopupWindow {
 
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             TextView tv = (TextView) linearLayout.getChildAt(i);
-            tv.setMinWidth(ScreenUtils.dpToPx(40));
             tv.setBackground(getSelectorDrawable(context));
             tv.setGravity(Gravity.CENTER);
             tv.setOnClickListener(v -> {

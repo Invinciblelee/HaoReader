@@ -19,7 +19,6 @@ import com.monke.monkeybook.utils.NetworkUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.reactivex.Scheduler;
@@ -37,12 +36,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
     private boolean useMy716 = true;
-    private boolean hasData = false;
 
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
-    private final Scheduler scheduler;
+    private Scheduler scheduler;
     private final SearchHandler searchHandler;
 
     private SearchIterator searchIterator;
@@ -51,6 +49,10 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
         private static final int MSG_SEARCH = 1;
         private static final int MSG_QUERY = 2;
+        private static final int MSG_EMPTY = 3;
+        private static final int MSG_ERROR = 4;
+        private static final int MSG_FINISH = 6;
+        private static final int MSG_RESET = 7;
 
         private SearchBookModel model;
         private Scheduler scheduler;
@@ -66,6 +68,14 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 model.search((String) msg.obj);
             } else if (msg.what == MSG_QUERY) {
                 new SearchTaskImpl(model).startSearch(msg.arg1, (String) msg.obj, scheduler);
+            } else if (msg.what == MSG_EMPTY && model.searchListener != null) {
+                model.searchListener.searchSourceEmpty();
+            } else if (msg.what == MSG_ERROR && model.searchListener != null) {
+                model.searchListener.searchBookError();
+            } else if (msg.what == MSG_FINISH && model.searchListener != null) {
+                model.searchListener.searchBookFinish();
+            } else if (msg.what == MSG_RESET && model.searchListener != null) {
+                model.searchListener.searchBookReset();
             }
         }
     }
@@ -73,7 +83,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     public SearchBookModel(Context context) {
         AppConfigHelper configHelper = AppConfigHelper.get();
         threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
-        threadsNum = Math.min(50, threadsNum);
+        threadsNum = Math.min(30, threadsNum);
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
         scheduler = Schedulers.from(Executors.newFixedThreadPool(threadsNum));
         searchHandler = new SearchHandler(this, scheduler);
@@ -124,9 +134,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
 
         if (searchEngineS.isEmpty()) {
-            searchListener.searchSourceEmpty();
+            searchHandler.obtainMessage(SearchHandler.MSG_EMPTY).sendToTarget();
         } else {
-            searchListener.resetSearchBook();
+            searchHandler.obtainMessage(SearchHandler.MSG_RESET).sendToTarget();
 
             searchHandler.removeMessages(SearchHandler.MSG_SEARCH);
             Message msg = searchHandler.obtainMessage(SearchHandler.MSG_SEARCH, query);
@@ -139,14 +149,15 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
         searchHandler.removeMessages(SearchHandler.MSG_QUERY);
         for (int i = 0, size = Math.min(searchEngineS.size(), threadsNum); i < size; i++) {
-            Message msg = searchHandler.obtainMessage(SearchHandler.MSG_QUERY, query);
+            Message msg = Message.obtain();
+            msg.what = SearchHandler.MSG_QUERY;
             msg.arg1 = i;
-            searchHandler.sendMessageDelayed(msg, 50L * i);
+            msg.obj = query;
+            searchHandler.sendMessageDelayed(msg, i * 50L);
         }
     }
 
     private boolean clearSearch() {
-        hasData = false;
         if (isLoading()) {
             for (ISearchTask searchTask : searchTasks) {
                 searchTask.stopSearch();
@@ -159,13 +170,16 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     public void stopSearch() {
         if (clearSearch()) {
-            searchListener.searchBookFinish();
+            searchHandler.obtainMessage(SearchHandler.MSG_FINISH).sendToTarget();
         }
     }
 
     public void shutdownSearch() {
         clearSearch();
-        scheduler.shutdown();
+        if (scheduler != null) {
+            scheduler.shutdown();
+            scheduler = null;
+        }
     }
 
     public SearchBookModel onlyOnePage() {
@@ -227,14 +241,13 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     @Override
     public void onSearchResult(List<SearchBookBean> searchBooks) {
         searchListener.loadMoreSearchBook(searchBooks);
-        hasData = true;
     }
 
     @Override
     public void onSearchError(ISearchTask searchTask) {
         searchTasks.remove(searchTask);
-        if (searchTasks.size() == 0 && !hasData) {
-            searchListener.searchBookError();
+        if (searchTasks.size() == 0) {
+            searchHandler.obtainMessage(SearchHandler.MSG_ERROR).sendToTarget();
         }
     }
 
@@ -242,14 +255,14 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     public void onSearchComplete(ISearchTask searchTask) {
         searchTasks.remove(searchTask);
         if (searchTasks.size() == 0) {
-            searchListener.searchBookFinish();
+            searchHandler.obtainMessage(SearchHandler.MSG_FINISH).sendToTarget();
         }
     }
 
     public interface SearchListener {
         void searchSourceEmpty();
 
-        void resetSearchBook();
+        void searchBookReset();
 
         void searchBookFinish();
 

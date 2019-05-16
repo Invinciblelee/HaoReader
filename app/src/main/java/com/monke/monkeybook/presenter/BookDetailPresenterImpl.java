@@ -23,9 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContract.View> implements BookDetailContract.Presenter {
@@ -251,7 +253,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setFinalDate(bookShelf.getFinalDate());
         WebBookModel.getInstance().getBookInfo(target)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .flatMap(bookShelfBean -> {
                     if (inBookShelf) {
                         return WebBookModel.getInstance().getChapterList(bookShelfBean);
@@ -265,6 +267,22 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     bookShelfBean.setNewChapters(0);
                     return bookShelfBean;
                 })
+                .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
+                    if (!bookShelfBean.realChapterListEmpty()) {
+                        return Observable.create(emitter -> {
+                            if (inBookShelf()) {
+                                BookshelfHelp.removeFromBookShelf(bookShelf);
+                                BookshelfHelp.saveBookToShelf(bookShelfBean);
+                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.setFlag(true));
+                                RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                                RxBus.get().post(RxBusTag.CHANGE_SOURCE, bookShelfBean);
+                            }
+                            emitter.onNext(bookShelfBean);
+                            emitter.onComplete();
+                        });
+                    }
+                    return Observable.error(new Exception("目录获取失败"));
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
@@ -275,43 +293,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
-                        if (inBookShelf) {
-                            saveChangedBook(bookShelfBean);
-                        } else {
-                            bookShelf = bookShelfBean;
-                            mView.updateView(true);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mView.updateView(true);
-                        mView.toast("书源更换失败");
-                    }
-                });
-    }
-
-    private void saveChangedBook(BookShelfBean bookShelfBean) {
-        Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
-            BookshelfHelp.removeFromBookShelf(bookShelf);
-            BookshelfHelp.saveBookToShelf(bookShelfBean);
-            e.onNext(bookShelfBean);
-            e.onComplete();
-        })
-                .subscribeOn(Schedulers.single())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<BookShelfBean>() {
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposables.add(d);
-                    }
-
-                    @Override
-                    public void onNext(BookShelfBean bookShelfBean) {
-                        RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                        RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
                         bookShelf = bookShelfBean;
                         mView.updateView(true);
                     }

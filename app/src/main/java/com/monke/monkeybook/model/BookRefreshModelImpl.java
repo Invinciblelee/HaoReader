@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
@@ -128,7 +129,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             refreshingIterator = new RefreshingIterator(bookShelfBeans);
 
             for (int i = 0, size = Math.min(THREADS_NUM, bookShelfBeans.size()); i < size; i++) {
-                newRefreshTask();
+                newRefreshTask(i);
             }
         }
     }
@@ -151,27 +152,28 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         };
     }
 
-    private void newRefreshTask() {
+    private void newRefreshTask(int index) {
         BookShelfBean bookShelfBean = refreshingIterator.next();
         if (bookShelfBean != null) {
             if (bookShelfBean.getUpdateOff()) {
                 refreshingIterator.moveToNext();
                 if (refreshingIterator.hasNext()) {
-                    newRefreshTask();
+                    newRefreshTask(index);
                 } else {
                     dispatchFinishEvent();
                 }
             } else {
                 dispatchRefreshEvent(bookShelfBean, true);
-                refreshBookShelf(bookShelfBean);
+                refreshBookShelf(index, bookShelfBean);
             }
         }
     }
 
-    private void refreshBookShelf(BookShelfBean bookShelfBean) {
+    private void refreshBookShelf(int index, BookShelfBean bookShelfBean) {
         WebBookModel.getInstance().getChapterList(bookShelfBean)
                 .subscribeOn(scheduler)
                 .flatMap(this::saveBookToShelfO)
+                .delay(index * 100L, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
@@ -183,17 +185,17 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
                     @Override
                     public void onNext(BookShelfBean value) {
-                        whenRefreshNext(bookShelfBean, false);
+                        whenRefreshNext(index, bookShelfBean, false);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        whenRefreshNext(bookShelfBean, true);
+                        whenRefreshNext(index, bookShelfBean, true);
                     }
                 });
     }
 
-    private void whenRefreshNext(BookShelfBean bookShelfBean, boolean error) {
+    private void whenRefreshNext(int index, BookShelfBean bookShelfBean, boolean error) {
         dispatchRefreshEvent(bookShelfBean, false);
         if (error) {
             errBooks.add(bookShelfBean.getBookInfoBean().getName());
@@ -206,7 +208,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             }
             dispatchFinishEvent();
         } else {
-            newRefreshTask();
+            newRefreshTask(index);
         }
     }
 
