@@ -2,6 +2,8 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -21,7 +23,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
