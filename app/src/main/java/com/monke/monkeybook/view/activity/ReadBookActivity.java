@@ -24,15 +24,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.appcompat.widget.AppCompatSeekBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.gyf.immersionbar.BarHide;
 import com.monke.basemvplib.AppActivityManager;
@@ -47,6 +38,7 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.model.content.Default716;
+import com.monke.monkeybook.model.content.Defaultsq;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.ReadAloudService;
@@ -75,6 +67,14 @@ import com.monke.monkeybook.widget.page.PageView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -1072,7 +1072,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     menu.getItem(i).setEnabled(true);
                 }
             }
-
+            final boolean defaultSourcesq = Defaultsq.TAG.equals(mPresenter.getBookShelf().getTag());
+            MenuItem disableSourceItemsq = menu.findItem(R.id.disable_book_source);
+            if (defaultSourcesq) {
+                disableSourceItemsq.setVisible(false);
+                disableSourceItemsq.setEnabled(false);
+            } else {
+                disableSourceItemsq.setVisible(true);
+                disableSourceItemsq.setEnabled(true);
+            }
             final boolean defaultSource = Default716.TAG.equals(mPresenter.getBookShelf().getTag());
             MenuItem disableSourceItem = menu.findItem(R.id.disable_book_source);
             if (defaultSource) {

@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -28,6 +26,7 @@ import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,6 +43,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         searchBookModel = new SearchBookModel(context)
                 .listener(this)
                 .useMy716(AppConfigHelper.get().getBoolean("useMy716", true))
+                .useShuqi(AppConfigHelper.get().getBoolean("useShuqi", true))
                 .setup();
     }
 
@@ -219,6 +219,11 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         searchBookModel.notifySearchEngineChanged();
     }
 
+    @Override
+    public void useShuqi(Boolean bool) {
+        searchBookModel.useShuqi(bool);
+        searchBookModel.notifySearchEngineChanged();
+    }
     @Override
     public void searchSourceEmpty() {
         mView.showBookSourceEmptyTip();

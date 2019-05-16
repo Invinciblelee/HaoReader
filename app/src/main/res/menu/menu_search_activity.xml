@@ -15,4 +15,10 @@
         android:title="@string/book_inner_source"
         android:checkable="true"
         app:showAsAction="never" />
+	<item
+        android:id="@+id/action_book_shuqi"
+        android:icon="@drawable/ic_source_manager_black_24dp"
+        android:title="@string/book_inner_sourcesq"
+        android:checkable="true"
+        app:showAsAction="never" />
 </menu>

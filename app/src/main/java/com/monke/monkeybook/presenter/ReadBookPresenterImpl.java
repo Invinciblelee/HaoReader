@@ -4,8 +4,6 @@ package com.monke.monkeybook.presenter;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -28,12 +26,14 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
+import com.monke.monkeybook.model.content.Defaultsq;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
 import com.monke.monkeybook.utils.RxUtils;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
@@ -43,7 +43,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -98,6 +97,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             switch (bookShelf.getTag()) {
                 case BookShelfBean.LOCAL_TAG:
                 case Default716.TAG:
+                    break;
+                case Defaultsq.TAG:
                     break;
                 default:
                     BookSourceBean bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
@@ -309,6 +310,9 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     private void checkShowMenu() {
         if (TextUtils.equals(bookShelf.getTag(), Default716.TAG)
+                || bookShelf.isLocalBook()) {
+            mView.upMenu();
+        } else if (TextUtils.equals(bookShelf.getTag(), Defaultsq.TAG)
                 || bookShelf.isLocalBook()) {
             mView.upMenu();
         } else {

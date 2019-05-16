@@ -11,12 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.basemvplib.AppActivityManager;
@@ -35,6 +29,11 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -205,6 +204,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         if (my716 != null) {
             my716.setChecked(getPreferences().getBoolean("useMy716", true));
         }
+        MenuItem shuqi = menu.findItem(R.id.action_book_shuqi);
+        if (shuqi != null) {
+            shuqi.setChecked(getPreferences().getBoolean("useShuqi", true));
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -220,6 +223,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 item.setChecked(!item.isChecked());
                 getPreferences().edit().putBoolean("useMy716", item.isChecked()).apply();
                 mPresenter.useMy716(item.isChecked());
+                break;
+            case R.id.action_book_shuqi:
+                item.setChecked(!item.isChecked());
+                getPreferences().edit().putBoolean("useShuqi", item.isChecked()).apply();
+                mPresenter.useShuqi(item.isChecked());
                 break;
             case android.R.id.home:
                 finish();

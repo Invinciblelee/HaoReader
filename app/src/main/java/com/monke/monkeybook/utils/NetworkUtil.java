@@ -10,9 +10,7 @@ import com.monke.monkeybook.help.ContextHolder;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URL;
 import java.util.Enumeration;
-
 import java.util.regex.Pattern;
 
 public class NetworkUtil {
@@ -36,7 +34,10 @@ public class NetworkUtil {
   public static boolean isIPv4Address(String input) {
         return IPV4_PATTERN.matcher(input).matches();
     }
-
+    public static boolean isUrl(String urlStr) {
+        String regex = "^(https?)://.+$";//设置正则表达式
+        return urlStr.matches(regex);
+    }
     /**
      * Get local Ip address.
      */
