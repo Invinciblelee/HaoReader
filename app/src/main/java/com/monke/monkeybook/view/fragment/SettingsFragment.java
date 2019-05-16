@@ -15,7 +15,6 @@ import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.view.activity.SettingActivity;
 
 /**
@@ -98,8 +97,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         } else if (key.equals(getResources().getString(R.string.pk_chapter_disk_cache))) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().detachAll();
-        }else if(key.equals(getString(R.string.pk_web_port))){
-            WebService.upHttpServer(settingActivity);
         }
     }
 }

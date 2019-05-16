@@ -16,7 +16,6 @@
     <string name="pk_audio_cache">audio_cache</string>
     <string name="pk_auto_clean_book">auto_clean_book</string>
     <string name="pk_chapter_disk_cache">chapter_disk_cache</string>
-    <string name="pk_web_port">web_port</string>
 
     <string name="pv_user_agent">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36</string>
 

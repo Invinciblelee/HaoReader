@@ -13,7 +13,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.web.HttpServer;
@@ -34,14 +33,6 @@ public class WebService extends Service {
         Intent intent = new Intent(activity, WebService.class);
         intent.setAction(ActionStartService);
         activity.startService(intent);
-    }
-
-    public static void upHttpServer(Activity activity) {
-        if (isRunning) {
-            Intent intent = new Intent(activity, WebService.class);
-            intent.setAction(ActionStartService);
-            activity.startService(intent);
-        }
     }
 
     public static void stopThis(Context context) {
@@ -118,11 +109,7 @@ public class WebService extends Service {
     }
 
     private int getPort() {
-        int port = AppConfigHelper.get().getInt(getString(R.string.pk_web_port), 1223);
-        if (port > 65530 || port < 1024) {
-            port = 1123;
-        }
-        return port;
+        return 1223;
     }
 
     /**

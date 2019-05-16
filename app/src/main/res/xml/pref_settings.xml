@@ -76,14 +76,6 @@
         android:title="@string/bookshelf_px" />
 
     <com.monke.monkeybook.widget.number.NumberPickerPreference
-        android:defaultValue="1123"
-        android:key="@string/pk_web_port"
-        android:summary="@string/web_port_summary"
-        android:title="@string/web_port_title"
-        app:MaxValue="60000"
-        app:MinValue="1024" />
-
-    <com.monke.monkeybook.widget.number.NumberPickerPreference
         android:defaultValue="1"
         android:key="@string/pk_search_page_count"
         android:layout="@layout/view_preference"
