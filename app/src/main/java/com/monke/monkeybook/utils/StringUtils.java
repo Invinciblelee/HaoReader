@@ -439,7 +439,6 @@ public class StringUtils {
         if (base == null) {
             return false;
         }
-
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
 
@@ -451,8 +450,9 @@ public class StringUtils {
                 .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
                 .replaceAll("\\s*\\n+\\s*", "\n\u3000\u3000")                   // 移除空行,并增加段前缩进2个汉字
                 .replaceAll("^[\\n\\s]+", "\u3000\u3000")
-                .replaceAll("[\\n\\s]*$", "");
+                .replaceAll("[\\n\\s]+$", "");
     }
+
     public static boolean isJsonType(String str) {
         boolean result = false;
         if (!TextUtils.isEmpty(str)) {
@@ -470,4 +470,5 @@ public class StringUtils {
         if (text.length() == 0) return true;
         return text.trim().length() == 0;
     }
+
 }

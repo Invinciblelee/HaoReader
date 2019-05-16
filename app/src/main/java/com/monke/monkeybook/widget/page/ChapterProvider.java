@@ -41,7 +41,6 @@ class ChapterProvider {
     private PageLoader mPageLoader;
 
     private ExecutorService mExecutor;
-    private Scheduler mScheduler;
 
     ChapterProvider(PageLoader pageLoader) {
         this.mPageLoader = pageLoader;
@@ -183,9 +182,8 @@ class ChapterProvider {
         if (NetworkUtil.isNetworkAvailable() && null != bookShelf && !bookShelf.realChapterListEmpty()) {
             final ChapterBean chapter = bookShelf.getChapter(chapterIndex);
             if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
-                ensureExecutor();
                 WebBookModel.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
-                        .subscribeOn(mScheduler)
+                        .subscribeOn(getScheduler())
                         .doAfterNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
                         .timeout(30, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
@@ -234,11 +232,11 @@ class ChapterProvider {
         return false;
     }
 
-    private void ensureExecutor() {
+    private Scheduler getScheduler() {
         if (mExecutor == null || mExecutor.isShutdown()) {
             mExecutor = Executors.newFixedThreadPool(6);
-            mScheduler = Schedulers.from(mExecutor);
         }
+        return Schedulers.from(mExecutor);
     }
 
     private void ensureCompositeDisposable() {

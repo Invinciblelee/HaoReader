@@ -54,7 +54,8 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                 }
             }
             emitter.onSuccess(bookShelfBeans);
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<BookShelfBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -185,7 +186,8 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                 accessFile.write("\r\n".getBytes());
             }
             emitter.onSuccess(wrappedFile.index);
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Integer>() {
                     @Override
                     public void onSubscribe(Disposable d) {

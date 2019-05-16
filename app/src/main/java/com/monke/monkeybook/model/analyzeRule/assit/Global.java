@@ -6,11 +6,8 @@ import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.analyzeRule.JavaExecutor;
 import com.monke.monkeybook.utils.StringUtils;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.script.ScriptEngine;
@@ -31,21 +28,11 @@ public final class Global {
     }
 
     public static boolean canConvertToJson(Object object) {
-        boolean result = false;
         if (object instanceof List || object instanceof Map) {
-            result = true;
+            return true;
         } else {
-            String str = StringUtils.valueOf(object);
-            if (StringUtils.isNotBlank(str)) {
-                str = str.trim();
-                if (str.startsWith("{") && str.endsWith("}")) {
-                    result = true;
-                } else if (str.startsWith("[") && str.endsWith("]")) {
-                    result = true;
-                }
-            }
+            return StringUtils.isJsonType(StringUtils.valueOf(object));
         }
-        return result;
     }
 
     public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {

@@ -11,8 +11,8 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.utils.NetworkUtil;
-import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -169,26 +169,29 @@ public class BookSourceManager extends BaseModelImpl {
 
     public Observable<Boolean> importSourceFromWww(String url) {
         try {
-            if (StringUtils.isTrimEmpty(url)) return null;
             url = url.trim();
             if (NetworkUtil.isIPv4Address(url)) {
                 url = String.format("http://%s:65501", url);
             }
-            if (StringUtils.isJsonType(url)) {
-                return importBookSourceO(url.trim())
-                        .compose(RxUtils::toSimpleSingle);
-            }
+
             if (NetworkUtil.isUrl(url)) {
                 AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
                 return SimpleModel.getResponse(analyzeUrl)
                         .flatMap(rsp -> importBookSourceO(rsp.body()))
-                        .subscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread());
             }
+            if (URLUtils.isUrl(url)) {
+                AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
+                return SimpleModel.getResponse(analyzeUrl)
+                        .flatMap(rsp -> importBookSourceO(rsp.body()))
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+            throw new IllegalArgumentException("url is invalid");
         } catch (Exception e) {
             return Observable.error(e);
         }
-        return Observable.error(new Exception("不是Json或Url格式"));
     }
 
     public Observable<Boolean> importBookSourceO(String json) {

@@ -16,7 +16,6 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.ReadBookControl;
-import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.ToastUtils;
@@ -26,11 +25,16 @@ import com.monke.monkeybook.widget.page.animation.Direction;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_FINISH;
@@ -81,7 +85,7 @@ public abstract class PageLoader {
     // 绘制小说内容的画笔
     private TextPaint mTextPaint;
 
-
+    private ExecutorService mExecutor;
     private Disposable mPreLoadPrevDisposable;
     private Disposable mPreLoadNextDisposable;
     private Disposable mCurLoadDisposable;
@@ -928,7 +932,9 @@ public abstract class PageLoader {
         }
 
         Single.create((SingleOnSubscribe<TxtChapter>) emitter ->
-                emitter.onSuccess(mChapterProvider.provideChapter(chapterPos))).compose(RxUtils::toSimpleSingle)
+                emitter.onSuccess(mChapterProvider.provideChapter(chapterPos)))
+                .subscribeOn(getScheduler())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<TxtChapter>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -971,7 +977,7 @@ public abstract class PageLoader {
 
         //调用异步进行预加载加载
         Single.create((SingleOnSubscribe<TxtChapter>) e -> e.onSuccess(mChapterProvider.provideChapter(nextChapter)))
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(getScheduler())
                 .subscribe(new SingleObserver<TxtChapter>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -1011,7 +1017,7 @@ public abstract class PageLoader {
 
         //调用异步进行预加载加载
         Single.create((SingleOnSubscribe<TxtChapter>) e -> e.onSuccess(mChapterProvider.provideChapter(prevChapter)))
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(getScheduler())
                 .subscribe(new SingleObserver<TxtChapter>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -1030,6 +1036,13 @@ public abstract class PageLoader {
                         //无视错误
                     }
                 });
+    }
+
+    private Scheduler getScheduler() {
+        if (mExecutor == null || mExecutor.isShutdown()) {
+            mExecutor = Executors.newFixedThreadPool(6);
+        }
+        return Schedulers.from(mExecutor);
     }
 
     private void preload() {
@@ -1261,6 +1274,11 @@ public abstract class PageLoader {
         mNextChapter = null;
 
         mChapterProvider.stop();
+
+        if (mExecutor != null) {
+            mExecutor.shutdown();
+            mExecutor = null;
+        }
     }
 
     interface OnChapterPreparedCallback {

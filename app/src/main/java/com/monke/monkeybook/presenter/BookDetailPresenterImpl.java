@@ -144,7 +144,6 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         mView.getBookShelfError(refresh);
                     }
                 });

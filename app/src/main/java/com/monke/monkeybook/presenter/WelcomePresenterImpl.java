@@ -67,7 +67,8 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
                 bookShelfBean = BookshelfHelp.queryBookByUrl(noteUrl);
             }
             e.onSuccess(bookShelfBean == null ? new BookShelfBean() : bookShelfBean);
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<BookShelfBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {

@@ -12,6 +12,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.Enumeration;
+
 import java.util.regex.Pattern;
 
 public class NetworkUtil {
@@ -28,37 +29,12 @@ public class NetworkUtil {
         return false;
     }
 
-    /**
-     * 获取绝对地址
-     */
-    public static String getAbsoluteURL(String baseURL, String relativePath) {
-        String header = null;
-        if (StringUtils.startWithIgnoreCase(relativePath, "@header:")) {
-            header = relativePath.substring(0, relativePath.indexOf("}") + 1);
-            relativePath = relativePath.substring(header.length());
-        }
-        try {
-            URL absoluteUrl = new URL(baseURL);
-            URL parseUrl = new URL(absoluteUrl, relativePath);
-            relativePath = parseUrl.toString();
-            if (header != null) {
-                relativePath = header + relativePath;
-            }
-            return relativePath;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return relativePath;
-    }
     private static final Pattern IPV4_PATTERN = Pattern.compile(
             "^(" + "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}" +
                     "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
-    public static boolean isIPv4Address(String input) {
+    
+  public static boolean isIPv4Address(String input) {
         return IPV4_PATTERN.matcher(input).matches();
-    }
-    public static boolean isUrl(String urlStr) {
-        String regex = "^(https?)://.+$";//设置正则表达式
-        return urlStr.matches(regex);
     }
 
     /**

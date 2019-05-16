@@ -6,10 +6,10 @@ import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.ReplaceRuleBeanDao;
-import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
-import com.monke.monkeybook.model.impl.IHttpGetApi;
+import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
+import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
-import java.net.URL;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -102,13 +102,17 @@ public class ReplaceRuleManager extends BaseModelImpl {
                 .list();
     }
 
-    public Observable<Boolean> importReplaceRuleFromWww(URL url) {
+    public Observable<Boolean> importReplaceRuleFromWww(String url) {
         try {
-            return createService(String.format("%s://%s", url.getProtocol(), url.getHost()), "utf-8", IHttpGetApi.class)
-                    .getWebContent(url.getPath(), AnalyzeHeaders.getMap(null))
-                    .flatMap(rsp -> importReplaceRuleO(rsp.body()))
-                    .subscribeOn(Schedulers.single())
-                    .observeOn(AndroidSchedulers.mainThread());
+            url = url.trim();
+            if (URLUtils.isUrl(url)) {
+                AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
+                return SimpleModel.getResponse(analyzeUrl)
+                        .flatMap(rsp -> importReplaceRuleO(rsp.body()))
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+            throw new IllegalArgumentException("url is invalid");
         } catch (Exception e) {
             return Observable.error(e);
         }
