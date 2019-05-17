@@ -98,7 +98,7 @@ public class BookContentBean implements Parcelable {
         if (this.durChapterContent == null) {
             setDurChapterContent(durChapterContent);
         } else {
-            this.durChapterContent = "\n" + durChapterContent;
+            this.durChapterContent = this.durChapterContent + "\n" + durChapterContent;
         }
     }
 

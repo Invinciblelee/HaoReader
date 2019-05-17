@@ -272,7 +272,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                             if (inBookShelf()) {
                                 BookshelfHelp.removeFromBookShelf(bookShelf);
                                 BookshelfHelp.saveBookToShelf(bookShelfBean);
-                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.setFlag(true));
+                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.withFlag(true));
                                 RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
                                 RxBus.get().post(RxBusTag.CHANGE_SOURCE, bookShelfBean);
                             }

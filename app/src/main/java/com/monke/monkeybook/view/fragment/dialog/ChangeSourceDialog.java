@@ -88,6 +88,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
         searchBookModel = new SearchBookModel(getContext())
                 .onlyOnePage()
+                .useMy716(true)
                 .setSearchBookType(selectCover ? null : bookInfo.getBookType())
                 .listener(this)
                 .setup();

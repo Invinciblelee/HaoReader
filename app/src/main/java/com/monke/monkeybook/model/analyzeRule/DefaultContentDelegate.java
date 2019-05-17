@@ -340,9 +340,9 @@ class DefaultContentDelegate implements ContentDelegate {
     @Override
     public Observable<BookContentBean> getContent(String source) {
         return Observable.create(emitter -> {
-            ChapterBean chapter = getConfig().getExtras().getParcelable("chapter");
+            final ChapterBean chapter = getConfig().getExtras().getParcelable("chapter");
             assert chapter != null;
-            BookContentBean bookContentBean = new BookContentBean();
+            final BookContentBean bookContentBean = new BookContentBean();
             bookContentBean.setDurChapterName(chapter.getDurChapterName());
             bookContentBean.setDurChapterIndex(chapter.getDurChapterIndex());
             bookContentBean.setDurChapterUrl(chapter.getDurChapterUrl());

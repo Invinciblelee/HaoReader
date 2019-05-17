@@ -75,6 +75,21 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         }
     };
 
+    private final Runnable mSearchRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String query = searchView.getQuery().toString().trim();
+            if (!TextUtils.isEmpty(query)) {
+                openOrCloseHistory(false);
+                searchView.clearFocus();
+                mPresenter.insertSearchHistory();
+                rfRvSearchBooks.startRefresh();
+                //执行搜索请求
+                mPresenter.toSearchBooks(query);
+            }
+        }
+    };
+
     private final View.OnClickListener historyItemClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -88,23 +103,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         SearchHistoryBean searchHistoryBean = (SearchHistoryBean) v.getTag();
         mPresenter.cleanSearchHistory(searchHistoryBean);
         return false;
-    };
-
-    private final Handler handler = new Handler();
-
-    private final Runnable searchTask = new Runnable() {
-        @Override
-        public void run() {
-            String query = searchView.getQuery().toString().trim();
-            if (!TextUtils.isEmpty(query)) {
-                openOrCloseHistory(false);
-                searchView.clearFocus();
-                mPresenter.insertSearchHistory();
-                rfRvSearchBooks.startRefresh();
-                //执行搜索请求
-                mPresenter.toSearchBooks(query);
-            }
-        }
     };
 
     public static void startByKey(MBaseActivity activity, String searchKey) {
@@ -149,7 +147,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         rfRvSearchBooks.getRecyclerView().setItemAnimator(null);
         rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
         rfRvSearchBooks.setEnabled(false);
-        rfRvSearchBooks.getRecyclerView().setItemViewCacheSize(6);
 
         View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
         viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
@@ -310,8 +307,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
      * 开始搜索
      */
     private void toSearch() {
-        handler.removeCallbacks(searchTask);
-        handler.post(searchTask);
+        mHandler.removeCallbacks(mSearchRunnable);
+        mHandler.post(mSearchRunnable);
     }
 
     private void openOrCloseHistory(boolean open) {

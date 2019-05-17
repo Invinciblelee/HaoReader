@@ -135,7 +135,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
 
         if (!NetworkUtil.isNetworkAvailable()) {
-            searchListener.searchBookError();
+            searchHandler.obtainMessage(SearchHandler.MSG_ERROR).sendToTarget();
             return;
         }
 

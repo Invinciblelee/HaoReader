@@ -325,7 +325,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return flag;
     }
 
-    public BookShelfBean setFlag(boolean flag) {
+    public BookShelfBean withFlag(boolean flag) {
         this.flag = flag;
         return this;
     }
