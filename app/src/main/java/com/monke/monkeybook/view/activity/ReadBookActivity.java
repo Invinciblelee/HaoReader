@@ -1262,7 +1262,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         popMenuOut();
         if (mPresenter.getBookShelf() != null) {
             ChangeSourceDialog.show(getSupportFragmentManager(), mPresenter.getBookShelf().getBookInfoBean(), false, searchBookBean -> {
-                mPageLoader.stopLoading();
+                mPageLoader.cancelRequest();
                 mPageLoader.setCurrentStatus(PageStatus.STATUS_HY);
                 mPresenter.changeBookSource(searchBookBean);
             });
@@ -1613,7 +1613,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void stopRefreshChapterList() {
         if (mPageLoader != null) {
-            mPageLoader.stopLoading();
+            mPageLoader.cancelRequest();
         }
     }
 

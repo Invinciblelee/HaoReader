@@ -9,6 +9,7 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.monkeybook.base.observer.SimpleObserver;
+import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.model.content.Debug;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -26,9 +27,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SourceDebugWebSocket extends NanoWSD.WebSocket {
     private CompositeDisposable compositeDisposable;
-    public static Type MAP_STRING = new TypeToken<Map<String, String>>() {
-    }.getType();
-    public final static String PRINT_DEBUG_LOG = "printDebugLog";
     public SourceDebugWebSocket(NanoHTTPD.IHTTPSession handshakeRequest) {
         super(handshakeRequest);
     }
@@ -66,7 +64,7 @@ public class SourceDebugWebSocket extends NanoWSD.WebSocket {
     @Override
     protected void onMessage(NanoWSD.WebSocketFrame message) {
         if (!StringUtils.isJsonType(message.getTextPayload())) return;
-        Map<String, String> debugBean = new Gson().fromJson(message.getTextPayload(), MAP_STRING);
+        Map<String, String> debugBean = new Gson().fromJson(message.getTextPayload(), Patterns.STRING_MAP);
         String tag = debugBean.get("tag");
         String key = debugBean.get("key");
         Debug.newDebug(tag, key, compositeDisposable, new Debug.CallBack() {

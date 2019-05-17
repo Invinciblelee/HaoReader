@@ -2,6 +2,8 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -21,7 +23,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -339,9 +340,9 @@ class DefaultContentDelegate implements ContentDelegate {
     @Override
     public Observable<BookContentBean> getContent(String source) {
         return Observable.create(emitter -> {
-            ChapterBean chapter = getConfig().getExtras().getParcelable("chapter");
+            final ChapterBean chapter = getConfig().getExtras().getParcelable("chapter");
             assert chapter != null;
-            BookContentBean bookContentBean = new BookContentBean();
+            final BookContentBean bookContentBean = new BookContentBean();
             bookContentBean.setDurChapterName(chapter.getDurChapterName());
             bookContentBean.setDurChapterIndex(chapter.getDurChapterIndex());
             bookContentBean.setDurChapterUrl(chapter.getDurChapterUrl());

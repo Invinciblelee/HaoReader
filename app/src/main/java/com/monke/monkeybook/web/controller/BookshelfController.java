@@ -2,11 +2,12 @@ package com.monke.monkeybook.web.controller;
 
 import android.text.TextUtils;
 
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.GsonUtils;
 import com.monke.monkeybook.web.utils.ReturnData;
@@ -49,7 +50,7 @@ public class BookshelfController {
         if (bookShelfBean == null) {
             return returnData.setErrorMsg("未找到");
         }
-        String content = BookshelfHelp.getChapterCache(bookShelfBean, chapter);
+        String content = ChapterContentHelp.getChapterCache(bookShelfBean, chapter);
         if (!TextUtils.isEmpty(content)) {
             return returnData.setData(content);
         }

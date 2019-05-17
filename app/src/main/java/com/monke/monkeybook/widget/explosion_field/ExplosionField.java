@@ -62,7 +62,6 @@ public class ExplosionField extends View {
     }
 
     private void init() {
-
         Arrays.fill(mExpandInset, Utils.dp2Px(32));
     }
 

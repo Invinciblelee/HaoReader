@@ -13,7 +13,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.annotation.BookType;
-import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
@@ -27,6 +26,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class Debug {
     public static String SOURCE_DEBUG_TAG;
@@ -76,7 +76,8 @@ public class Debug {
     private void searchDebug(String key) {
         printLog(String.format("★%s 搜索开始", getDoTime()));
         WebBookModel.getInstance().searchBook(Debug.SOURCE_DEBUG_TAG, key, 1)
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<SearchBookBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -128,7 +129,8 @@ public class Debug {
         }
         printLog(String.format("★%s 详情开始", getDoTime()));
         WebBookModel.getInstance().getBookInfo(bookShelfBean)
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BookShelfBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -167,7 +169,8 @@ public class Debug {
         printLog("\n");
         printLog(String.format("★%s 目录开始", getDoTime()));
         WebBookModel.getInstance().getChapterList(bookShelfBean)
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BookShelfBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -215,7 +218,7 @@ public class Debug {
         }
 
         WebBookModel.getInstance().getBookContent(bookInfoBean, chapterBean)
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
                 .timeout(30L, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BookContentBean>() {
@@ -227,10 +230,10 @@ public class Debug {
                     @Override
                     public void onNext(BookContentBean bookContentBean) {
                         printLog("●成功获取正文页» " + bookContentBean.getDurChapterUrl());
-                        final String content =  bookContentBean.getDurChapterContent();
-                        if(content != null && content.length() > 3000){
+                        final String content = bookContentBean.getDurChapterContent();
+                        if (content != null && content.length() > 3000) {
                             printLog("●章节内容» " + content.substring(0, 3000) + "\u00B7\u00B7\u00B7");
-                        }else {
+                        } else {
                             printLog("●章节内容» " + content);
                         }
                         printLog(String.format("★%s 正文结束", getDoTime()));
@@ -251,7 +254,7 @@ public class Debug {
 
     private void bookAudioDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
         WebBookModel.getInstance().processAudioChapter(bookInfoBean.getTag(), chapterBean)
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
                 .timeout(30L, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ChapterBean>() {

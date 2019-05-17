@@ -242,11 +242,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return bookShelfBean;
     }
 
-    public int getUnreadChapterNum() {
-        int num = getChapterListSize() - getDurChapter() - 1;
-        return num < 0 ? 0 : num;
-    }
-
     public String getNoteUrl() {
         return noteUrl;
     }
@@ -330,7 +325,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return flag;
     }
 
-    public BookShelfBean setFlag(boolean flag) {
+    public BookShelfBean withFlag(boolean flag) {
         this.flag = flag;
         return this;
     }

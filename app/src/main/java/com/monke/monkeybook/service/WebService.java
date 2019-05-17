@@ -6,28 +6,26 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.web.HttpServer;
 import com.monke.monkeybook.web.WebSocketServer;
 
 import java.io.IOException;
 import java.net.InetAddress;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 public class WebService extends Service {
     private static boolean isRunning = false;
     private HttpServer httpServer;
     private WebSocketServer webSocketServer;
-    private int notificationId = 1222;
+    private static final int notificationId = 19901145;
     public static final String ActionStartService = "startService";
     public static final String ActionDoneService = "doneService";
 
@@ -37,19 +35,10 @@ public class WebService extends Service {
         activity.startService(intent);
     }
 
-    public static void upHttpServer(Activity activity) {
-        if (isRunning) {
-            Intent intent = new Intent(activity, WebService.class);
-            intent.setAction(ActionStartService);
-            activity.startService(intent);
-        }
-    }
-
     public static void stopThis(Context context) {
         if (isRunning) {
             Intent intent = new Intent(context, WebService.class);
-            intent.setAction(ActionDoneService);
-            context.startService(intent);
+            context.stopService(intent);
         }
     }
 
@@ -57,8 +46,7 @@ public class WebService extends Service {
     public void onCreate() {
         super.onCreate();
         updateNotification("正在启动服务");
-        new Handler(Looper.getMainLooper())
-                .post(() -> Toast.makeText(this, "正在启动服务\n具体信息查看通知栏", Toast.LENGTH_SHORT).show());
+        ToastUtils.toast(this, "已启动Web写源服务");
     }
 
     @Override
@@ -121,13 +109,7 @@ public class WebService extends Service {
     }
 
     private int getPort() {
-        /*int port = MApplication.getConfigPreferences().getInt("webPort", 1122);
-        if (port > 65530 || port < 1024) {
-            port = 1122;
-        }*/
-        int port = 1222;
-        notificationId = port;
-        return port;
+        return 1223;
     }
 
     /**
@@ -135,14 +117,13 @@ public class WebService extends Service {
      */
     private void updateNotification(String content) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MApplication.channelIdWeb)
-                .setSmallIcon(R.drawable.ic_speaker_phone_black_24dp)
+                .setSmallIcon(R.drawable.ic_wifi_tethering_white_24dp)
                 .setOngoing(true)
                 .setContentTitle(getString(R.string.web_edit_source))
                 .setContentText(content);
-        builder.addAction(R.drawable.ic_stop_black_24dp, getString(R.string.cancel), getThisServicePendingIntent());
+        builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getThisServicePendingIntent());
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         Notification notification = builder.build();
-        //int notificationId = 1122;
         startForeground(notificationId, notification);
     }
 

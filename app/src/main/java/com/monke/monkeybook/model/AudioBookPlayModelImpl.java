@@ -1,6 +1,5 @@
 package com.monke.monkeybook.model;
 
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
@@ -158,7 +157,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                             if (inBookShelf()) {
                                 BookshelfHelp.removeFromBookShelf(bookShelf);
                                 BookshelfHelp.saveBookToShelf(bookShelfBean);
-                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.setFlag(true));
+                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.withFlag(true));
                                 RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
                             }
                             emitter.onNext(bookShelfBean);

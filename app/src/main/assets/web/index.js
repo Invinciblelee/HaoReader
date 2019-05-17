@@ -25,6 +25,8 @@ const RuleJSON = (() => {
 	ruleJson.serialNumber = 0;
 	ruleJson.weight = 0;
 	ruleJson.enable = true;
+	ruleJson.bookSourceType = 'TEXT';
+	ruleJson.bookSourceRuleType = 'DEFAULT';
 	ruleJson.bookSourceCacheEnabled = true;
 	return ruleJson;
 })();
@@ -77,7 +79,14 @@ function rule2json() {
 	RuleJSON.serialNumber = RuleJSON.serialNumber == '' ? 0 : parseInt(RuleJSON.serialNumber);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.enable = RuleJSON.enable == '' || RuleJSON.enable.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
-	RuleJSON.bookSourceType = RuleJSON.bookSourceType == '' || RuleJSON.bookSourceType.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.bookSourceCacheEnabled = RuleJSON.bookSourceCacheEnabled == '' || RuleJSON.bookSourceCacheEnabled.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	if(RuleJSON.bookSourceType != 'TEXT' && RuleJSON.bookSourceType != 'AUDIO'){
+	    RuleJSON.bookSourceType = 'TEXT';
+	}
+	if(RuleJSON.bookSourceRuleType != 'DEFAULT' && RuleJSON.bookSourceRuleType != 'XPATH' && RuleJSON.bookSourceRuleType != 'JSON'
+	&& RuleJSON.bookSourceRuleType != 'CSS' && RuleJSON.bookSourceRuleType != 'HYBRID'){
+	    RuleJSON.bookSourceRuleType = 'DEFAULT';
+	}
 	return RuleJSON;
 }
 // 将书源对象填充到书源表单

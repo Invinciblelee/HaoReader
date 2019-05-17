@@ -146,7 +146,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     private Function<List<BookShelfBean>, List<BookShelfBean>> ensureNotLoading() {
         return bookShelfBeans -> {
             for (BookShelfBean bookShelfBean : bookShelfBeans) {
-                bookShelfBean.setFlag(false);
+                bookShelfBean.withFlag(false);
             }
             return bookShelfBeans;
         };
@@ -234,7 +234,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void dispatchRefreshEvent(BookShelfBean bookShelfBean, boolean loading) {
         if (refreshListener != null) {
-            bookShelfBean.setFlag(loading);
+            bookShelfBean.withFlag(loading);
             refreshListener.onRefresh(bookShelfBean);
         }
     }

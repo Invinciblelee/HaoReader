@@ -16,6 +16,8 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
     private Drawable mInsetForeground;
     private boolean mConsumeInsets;
 
+    private boolean mFitTop, mFitBottom, mFitLeft, mFitRight;
+
     private Rect mInsets;
     private Rect mTempRect = new Rect();
 
@@ -39,11 +41,12 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
     private void init(Context context, AttributeSet attrs, int defStyle) {
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ScrimInsetsRelativeLayout, defStyle, 0);
-        if (a == null) {
-            return;
-        }
         mInsetForeground = a.getDrawable(R.styleable.ScrimInsetsRelativeLayout_appInsetForeground);
         mConsumeInsets = a.getBoolean(R.styleable.ScrimInsetsRelativeLayout_appConsumeInsets, true);
+        mFitTop = a.getBoolean(R.styleable.ScrimInsetsRelativeLayout_fitTop, true);
+        mFitBottom = a.getBoolean(R.styleable.ScrimInsetsRelativeLayout_fitBottom, false);
+        mFitLeft = a.getBoolean(R.styleable.ScrimInsetsRelativeLayout_fitLeft, false);
+        mFitRight = a.getBoolean(R.styleable.ScrimInsetsRelativeLayout_fitRight, false);
         a.recycle();
 
         setWillNotDraw(true);
@@ -78,24 +81,32 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
             canvas.translate(getScrollX(), getScrollY());
 
             // Top
-            mTempRect.set(0, 0, width, mInsets.top);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
+            if(mFitTop) {
+                mTempRect.set(0, 0, width, mInsets.top);
+                mInsetForeground.setBounds(mTempRect);
+                mInsetForeground.draw(canvas);
+            }
 
             // Bottom
-            mTempRect.set(0, height - mInsets.bottom, width, height);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
+            if(mFitBottom) {
+                mTempRect.set(0, height - mInsets.bottom, width, height);
+                mInsetForeground.setBounds(mTempRect);
+                mInsetForeground.draw(canvas);
+            }
 
             // Left
-            mTempRect.set(0, mInsets.top, mInsets.left, height - mInsets.bottom);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
+            if(mFitLeft) {
+                mTempRect.set(0, mInsets.top, mInsets.left, height - mInsets.bottom);
+                mInsetForeground.setBounds(mTempRect);
+                mInsetForeground.draw(canvas);
+            }
 
             // Right
-            mTempRect.set(width - mInsets.right, mInsets.top, width, height - mInsets.bottom);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
+            if(mFitRight) {
+                mTempRect.set(width - mInsets.right, mInsets.top, width, height - mInsets.bottom);
+                mInsetForeground.setBounds(mTempRect);
+                mInsetForeground.draw(canvas);
+            }
 
             canvas.restoreToCount(sc);
         }

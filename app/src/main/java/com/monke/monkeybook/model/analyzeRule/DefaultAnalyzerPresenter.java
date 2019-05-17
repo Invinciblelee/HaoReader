@@ -61,8 +61,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
-                final List<String> list = evalStringArrayScript(getParser().getPrimitive(), pattern);
-                final String result = list.isEmpty() ? "" : list.get(0);
+                final String result = evalStringScript(getParser().getPrimitive(), pattern);
                 if (!isEmpty(result)) {
                     return processRawUrl(result, pattern);
                 }
@@ -201,8 +200,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
-                final List<String> list = evalStringArrayScript(source, pattern);
-                final String result = list.isEmpty() ? "" : list.get(0);
+                final String result = evalStringScript(source, pattern);
                 if (!isEmpty(result)) {
                     return processRawUrl(result, pattern);
                 }

@@ -207,7 +207,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
 
     private Observable<BookContentBean> analyzeBookContent(String s, ChapterBean chapterBean) {
         return Observable.create(e -> {
-            BookContentBean bookContentBean = new BookContentBean();
+            final BookContentBean bookContentBean = new BookContentBean();
             bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
             bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
             bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
@@ -217,24 +217,28 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 JsonObject root = new JsonParser().parse(s).getAsJsonObject();
                 if (root.get("ok").getAsBoolean()) {
                     JsonObject chapterJson = root.get("chapter").getAsJsonObject();
+                    final String result;
                     if (chapterJson.has("isVip")) {
                         if (chapterJson.get("isVip").getAsBoolean()) {
-                            bookContentBean.setDurChapterContent("当前章节为VIP章节，无法阅读，请换源。");
+                            result = "当前章节为VIP章节，无法阅读，请换源。";
                         } else {
-                            bookContentBean.setDurChapterContent(chapterJson.get("cpContent").getAsString());
+                            result = chapterJson.get("cpContent").getAsString();
                         }
                     } else {
-                        bookContentBean.setDurChapterContent(chapterJson.get("body").getAsString());
+                        result = chapterJson.get("body").getAsString();
                     }
+                    bookContentBean.setDurChapterContent(result.replaceAll("\\\\r\\\\n", ""));
                 }
             } else {
                 JXDocument document = JXDocument.create(s);
                 Object object = document.selOne("//div[@name=\"content\"] or @id=\"content\" or @class=\"txt_tcontent\" or @id=\"htmlContent\"");
+                final String result;
                 if (object instanceof Element) {
-                    bookContentBean.setDurChapterContent(StringUtils.formatHtml(((Element) object).html()));
+                    result = StringUtils.formatHtml(((Element) object).html());
                 } else {
-                    bookContentBean.setDurChapterContent(StringUtils.formatHtml(StringUtils.valueOf(object)));
+                    result = StringUtils.formatHtml(StringUtils.valueOf(object));
                 }
+                bookContentBean.setDurChapterContent(result.replaceAll("\\\\r\\\\n", ""));
             }
             e.onNext(bookContentBean);
             e.onComplete();

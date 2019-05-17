@@ -25,14 +25,22 @@
             android:transitionName="img_cover"
             tools:ignore="UnusedAttribute" />
 
-        <com.monke.monkeybook.widget.BadgeView
+        <com.monke.monkeybook.widget.LabelView
             android:id="@+id/tv_has_new"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="5dp"
+            android:layout_width="32dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
             android:includeFontPadding="false"
-            tools:ignore="RtlHardcoded" />
+            android:paddingStart="0dp"
+            android:paddingEnd="4dp"
+            android:visibility="invisible"
+            android:text="@string/renew"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:labelColor="@color/color_renew_label"
+            app:labelSinkWidth="4dp"
+            tools:ignore="SmallSp" />
 
         <com.monke.monkeybook.widget.RotateLoading
             android:id="@+id/rl_loading"

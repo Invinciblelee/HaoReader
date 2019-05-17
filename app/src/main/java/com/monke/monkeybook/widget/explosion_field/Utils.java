@@ -18,7 +18,6 @@ package com.monke.monkeybook.widget.explosion_field;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -36,16 +35,20 @@ public class Utils {
     }
 
     public static Bitmap createBitmapFromView(View view) {
-        if (view instanceof ImageView) {
-            Drawable drawable = ((ImageView) view).getDrawable();
-            if (drawable instanceof BitmapDrawable) {
-                return ((BitmapDrawable) drawable).getBitmap();
+        try {
+            if (view instanceof ImageView) {
+                Drawable drawable = ((ImageView) view).getDrawable();
+                if (drawable instanceof BitmapDrawable) {
+                    return ((BitmapDrawable) drawable).getBitmap();
+                }
             }
+            view.setDrawingCacheEnabled(true);
+            Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+            view.setDrawingCacheEnabled(false);
+            return bitmap;
+        } catch (Exception ignore){
         }
-        view.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
-        return bitmap;
+        return null;
     }
 
     public static Bitmap createBitmapSafely(int width, int height, Bitmap.Config config, int retryCount) {

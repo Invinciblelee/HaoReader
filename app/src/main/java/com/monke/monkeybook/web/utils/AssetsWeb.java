@@ -3,7 +3,7 @@ package com.monke.monkeybook.web.utils;
 import android.content.res.AssetManager;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.MApplication;
+import com.monke.monkeybook.help.ContextHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class AssetsWeb {
         if (!TextUtils.isEmpty(rootPath)) {
             this.rootPath = rootPath;
         }
-        assetManager = MApplication.getInstance().getAssets();
+        assetManager = ContextHolder.getContext().getAssets();
     }
 
     public NanoHTTPD.Response getResponse(String path) throws IOException {

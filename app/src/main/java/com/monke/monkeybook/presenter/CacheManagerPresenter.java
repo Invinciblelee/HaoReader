@@ -9,7 +9,6 @@ import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.presenter.contract.CacheManagerContract;
 import com.monke.monkeybook.utils.IOUtils;
-import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.BufferedReader;

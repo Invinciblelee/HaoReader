@@ -173,11 +173,8 @@ public class BookSourceManager extends BaseModelImpl {
             if (NetworkUtil.isIPv4Address(url)) {
                 url = String.format("http://%s:65501", url);
             }
-
-            if (NetworkUtil.isUrl(url)) {
-                AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
-                return SimpleModel.getResponse(analyzeUrl)
-                        .flatMap(rsp -> importBookSourceO(rsp.body()))
+            if (StringUtils.isJsonType(url)) {
+                return importBookSourceO(url.trim())
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread());
             }

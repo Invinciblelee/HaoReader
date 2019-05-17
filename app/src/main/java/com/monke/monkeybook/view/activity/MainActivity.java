@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.Switch;
 
 import androidx.appcompat.app.ActionBar;
@@ -57,8 +56,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @BindView(R.id.layout_container)
     ScrimInsetsRelativeLayout container;
-    @BindView(R.id.book_list_frame)
-    FrameLayout frameContent;
     @BindView(R.id.drawer)
     DrawerLayout drawer;
     @BindView(R.id.navigation_view)

@@ -600,7 +600,7 @@ public abstract class PageLoader {
      */
     public abstract void refreshChapterList();
 
-    public void stopLoading() {
+    public void cancelRequest() {
 
     }
 

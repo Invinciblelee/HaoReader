@@ -110,7 +110,7 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    public void stopLoading() {
+    public void cancelRequest() {
         getChapterProvider().stop();
         if (mChapterDisp != null) {
             mChapterDisp.dispose();

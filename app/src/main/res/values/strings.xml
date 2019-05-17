@@ -144,7 +144,7 @@
     <string name="download_cancel">取消下载</string>
     <string name="no_download">暂无任务</string>
     <string name="import_select_book">导入选择书籍</string>
-    <string name="update_search_threads_num">更新和搜索线程数</string>
+    <string name="update_search_threads_num">搜索线程数</string>
     <string name="change_icon">切换图标</string>
     <string name="add_shelf">放入书架</string>
     <string name="remove_shelf">移出书架</string>
@@ -313,10 +313,8 @@
     <string name="tip_permission_denied">应用需要【%s】权限，请前往“设置”—”应用权限“—打开所需权限</string>
     <string name="goto_setting">去设置</string>
     <string name="renew">更新</string>
-	<string name="wifi_repshare">wifi分享</string>
-    <string name="wifi_share">wifi分享</string>
     <string name="web_menu">Web写源</string>
-    <string name="web_port_title">web端口</string>
+    <string name="web_port_title">Web端口</string>
     <string name="web_port_summary">当前端口 %s</string>
     <string name="web_edit_source">Web编辑书源</string>
     <string name="http_ip">http://%s:%d</string>

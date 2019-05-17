@@ -5,25 +5,15 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.ChecksumException;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.FormatException;
-import com.google.zxing.MultiFormatReader;
 import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.RGBLuminanceSource;
-import com.google.zxing.Reader;
-import com.google.zxing.Result;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
@@ -31,15 +21,10 @@ import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
-import com.monke.monkeybook.model.annotation.BookType;
-import com.monke.monkeybook.model.annotation.RuleType;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
-import com.monke.monkeybook.utils.BitmapUtil;
-import com.monke.monkeybook.utils.RxUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Objects;
 
@@ -51,9 +36,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.monke.monkeybook.help.Constant.BOOK_TYPES;
-import static com.monke.monkeybook.help.Constant.RULE_TYPES;
 
 /**
  * Created by GKF on 2018/1/28.

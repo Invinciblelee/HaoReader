@@ -23,7 +23,6 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.ImportBookModelImpl;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.MainContract;
-import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.File;
@@ -56,7 +55,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooks(query);
             e.onNext(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
             e.onComplete();
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookShelfBean>>() {
                     @Override
                     public void onNext(List<BookShelfBean> bookShelfBeans) {
@@ -80,7 +80,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 e.onNext(false);
             }
             e.onComplete();
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
@@ -112,7 +113,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             }
             e.onComplete();
         })
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
@@ -156,7 +158,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             }
             e.onComplete();
         })
-                .compose(RxUtils::toSimpleSingle)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
@@ -183,7 +186,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 BookshelfHelp.removeFromBookShelf(bookShelf);
                 e.onNext(true);
                 e.onComplete();
-            }).compose(RxUtils::toSimpleSingle)
+            }).subscribeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onNext(Boolean value) {
@@ -209,7 +213,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             BookshelfHelp.clearBookshelf();
             e.onNext(true);
             e.onComplete();
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
@@ -232,7 +237,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             BookshelfHelp.cleanCaches();
             e.onNext(true);
             e.onComplete();
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
