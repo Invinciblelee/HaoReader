@@ -92,12 +92,6 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, url, page, headerMap(false));
-            if (analyzeUrl.getHost() == null) {
-                return Observable.create(emitter -> {
-                    emitter.onNext(ListUtils.mutableList());
-                    emitter.onComplete();
-                });
-            }
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
         } catch (Exception e) {
@@ -120,10 +114,6 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookSourceBean.getRuleSearchUrl(), content, page, headerMap(false));
-            if (analyzeUrl.getHost() == null) {
-                return Observable.just(ListUtils.mutableList());
-            }
-
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
         } catch (Exception e) {
