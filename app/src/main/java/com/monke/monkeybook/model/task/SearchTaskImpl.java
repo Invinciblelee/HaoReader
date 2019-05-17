@@ -10,6 +10,7 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
+import com.monke.monkeybook.model.content.Defaultsq;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
 import java.util.List;
@@ -89,6 +90,9 @@ public class SearchTaskImpl implements ISearchTask {
                                 listener.onSearchResult(searchBookBeans);
 
                                 if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
+                                    hasMore = false;
+                                }
+                                if (TextUtils.equals(searchBookBeans.get(0).getTag(), Defaultsq.TAG)) {
                                     hasMore = false;
                                 }
                             } else {

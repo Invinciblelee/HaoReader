@@ -34,7 +34,10 @@ public class NetworkUtil {
   public static boolean isIPv4Address(String input) {
         return IPV4_PATTERN.matcher(input).matches();
     }
-
+    public static boolean isUrl(String urlStr) {
+        String regex = "^(https?)://.+$";//设置正则表达式
+        return urlStr.matches(regex);
+    }
     /**
      * Get local Ip address.
      */

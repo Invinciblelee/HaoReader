@@ -13,7 +13,8 @@
     <string name="book_library">书城</string>
     <string name="book_local">添加本地</string>
     <string name="book_source_manage">书源管理</string>
-    <string name="book_inner_source">内置书源</string>
+    <string name="book_inner_source">内置My716</string>
+	<string name="book_inner_sourcesq">内置书旗</string>
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="donate">捐赠</string>
