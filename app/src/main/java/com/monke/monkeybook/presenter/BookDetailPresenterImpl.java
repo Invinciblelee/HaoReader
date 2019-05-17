@@ -269,7 +269,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                 .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
                     if (!bookShelfBean.realChapterListEmpty()) {
                         return Observable.create(emitter -> {
-                            if (inBookShelf()) {
+                            if (inBookShelf) {
                                 BookshelfHelp.removeFromBookShelf(bookShelf);
                                 BookshelfHelp.saveBookToShelf(bookShelfBean);
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.withFlag(true));
