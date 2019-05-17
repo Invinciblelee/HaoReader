@@ -89,6 +89,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
         searchBookModel = new SearchBookModel(getContext())
                 .onlyOnePage()
                 .useMy716(true)
+                .useShuqi(true)
                 .setSearchBookType(selectCover ? null : bookInfo.getBookType())
                 .listener(this)
                 .setup();
@@ -180,6 +181,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     }
 
     private void selectSource(SearchBookBean searchBook) {
+        dismissAllowingStateLoss();
         if (selectCover) {
             onClickSource.changeSource(searchBook);
         } else {
@@ -188,7 +190,6 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
                 incrementSourceWeightBySelection(searchBook);
             }
         }
-        dismissAllowingStateLoss();
     }
 
     private void getSearchBookInDb() {

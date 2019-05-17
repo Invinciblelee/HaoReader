@@ -362,6 +362,15 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     @Override
+    public void putVariable(String key, String value) {
+        variableStore.putVariable(key, value);
+        String variableString = variableStore.getVariableString();
+        if (variableString != null) {
+            this.variableString = variableString;
+        }
+    }
+
+    @Override
     public String getVariable(String key) {
         return variableStore.getVariable(key);
     }

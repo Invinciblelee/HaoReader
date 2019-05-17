@@ -26,6 +26,8 @@ public class Constant {
             + "YueDu" + File.separator + "audios" + File.separator;
     public static String AUDIO_BOOK_PATH = FileUtil.getSdCardPath() + File.separator
             + "YueDu" + File.separator + "books" + File.separator;
+    public static String AUDIO_BOOK_ERROR = FileUtil.getSdCardPath() + File.separator
+            + "YueDu" + File.separator + "errors" + File.separator;
 
 
     public static final String[] BOOK_TYPES = {

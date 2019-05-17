@@ -26,7 +26,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
-import com.monke.monkeybook.model.content.Defaultsq;
+import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
 
@@ -97,7 +97,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 case BookShelfBean.LOCAL_TAG:
                 case Default716.TAG:
                     break;
-                case Defaultsq.TAG:
+                case DefaultShuqi.TAG:
                     break;
                 default:
                     BookSourceBean bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
@@ -312,7 +312,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         if (TextUtils.equals(bookShelf.getTag(), Default716.TAG)
                 || bookShelf.isLocalBook()) {
             mView.upMenu();
-        } else if (TextUtils.equals(bookShelf.getTag(), Defaultsq.TAG)
+        } else if (TextUtils.equals(bookShelf.getTag(), DefaultShuqi.TAG)
                 || bookShelf.isLocalBook()) {
             mView.upMenu();
         } else {

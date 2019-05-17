@@ -3,6 +3,7 @@ package com.monke.monkeybook.model.content;
 import android.text.TextUtils;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.monke.basemvplib.BaseModelImpl;
@@ -168,18 +169,17 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
     public Observable<List<ChapterBean>> getChapterList(BookShelfBean bookShelfBean) {
         return OkHttpHelper.getInstance().createService("http://api.zhuishushenqi.com", IHttpGetApi.class)
                 .getWebContent(bookShelfBean.getBookInfoBean().getChapterListUrl(), AnalyzeHeaders.getMap(null))
-                .flatMap(response -> analyzeChapterList(response.body()));
+                .flatMap(response -> analyzeChapterList(response.body(), bookShelfBean.getNoteUrl()));
     }
 
-    private Observable<List<ChapterBean>> analyzeChapterList(String s) {
+    private Observable<List<ChapterBean>> analyzeChapterList(String s, String noteUrl) {
         return Observable.create(e -> {
             List<ChapterBean> chapterList = new ArrayList<>();
             JsonObject root = new JsonParser().parse(s).getAsJsonObject();
             JsonArray chapterArray = root.get("chapters").getAsJsonArray();
-            for (int i = 0, size = chapterArray.size(); i < size; i++) {
-                JsonObject chapter = chapterArray.get(i).getAsJsonObject();
+            for (JsonElement element : chapterArray) {
+                JsonObject chapter = element.getAsJsonObject();
                 ChapterBean chapterBean = new ChapterBean();
-                chapterBean.setDurChapterIndex(i);
                 chapterBean.setDurChapterName(chapter.get("title").getAsString());
                 final String link = chapter.get("link").getAsString();
                 if (link.contains("vip.zhuishushenqi")
@@ -188,6 +188,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                 } else {
                     chapterBean.setDurChapterUrl(link);
                 }
+                chapterBean.setNoteUrl(noteUrl);
                 chapterList.add(chapterBean);
             }
             e.onNext(chapterList);

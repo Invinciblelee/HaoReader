@@ -24,6 +24,15 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.gyf.immersionbar.BarHide;
 import com.monke.basemvplib.AppActivityManager;
@@ -38,7 +47,7 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.model.content.Default716;
-import com.monke.monkeybook.model.content.Defaultsq;
+import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.ReadAloudService;
@@ -67,14 +76,6 @@ import com.monke.monkeybook.widget.page.PageView;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.appcompat.widget.AppCompatSeekBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -164,8 +165,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private int chapterProgressMax;
     private int chapterDurProgress;
     private boolean chapterDraggable;
-    private boolean nextChapterEnabled;
-    private boolean preChapterEnabled;
 
     private CheckAddShelfPop checkAddShelfPop;
     private ReadAdjustPop readAdjustPop;
@@ -219,8 +218,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             chapterProgressMax = savedInstanceState.getInt("chapterPageMax");
             chapterDurProgress = savedInstanceState.getInt("chapterDurPage");
             chapterDraggable = savedInstanceState.getBoolean("chapterDraggable");
-            nextChapterEnabled = savedInstanceState.getBoolean("nextChapterEnabled");
-            preChapterEnabled = savedInstanceState.getBoolean("preChapterEnabled");
             aloudStatus = savedInstanceState.getInt("aloudStatus");
             isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
             getWindow().setWindowAnimations(isWindowAnimTranslucent ? R.style.Animation_Activity_Translucent : R.style.Animation_Activity);
@@ -250,8 +247,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         outState.putInt("chapterPageMax", hpbReadProgress.getMax());
         outState.putInt("chapterDurPage", hpbReadProgress.getProgress());
         outState.putBoolean("chapterDraggable", hpbReadProgress.isEnabled());
-        outState.putBoolean("nextChapterEnabled", tvNext.isEnabled());
-        outState.putBoolean("preChapterEnabled", tvPre.isEnabled());
         if (mPresenter.getBookShelf() != null) {
             BitIntentDataManager dataManager = BitIntentDataManager.getInstance();
             dataManager.putData("inBookShelf", mPresenter.inBookShelf());
@@ -498,7 +493,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void updateTitle(String title) {
-       ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             getSupportActionBar().setTitle(title);
         }
@@ -1031,8 +1026,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         hpbReadProgress.setMax(chapterProgressMax);
         hpbReadProgress.setProgress(chapterDurProgress);
         hpbReadProgress.setEnabled(chapterDraggable);
-        tvPre.setEnabled(preChapterEnabled);
-        tvNext.setEnabled(nextChapterEnabled);
 
         initPageView();
     }
@@ -1072,18 +1065,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     menu.getItem(i).setEnabled(true);
                 }
             }
-            final boolean defaultSourcesq = Defaultsq.TAG.equals(mPresenter.getBookShelf().getTag());
-            MenuItem disableSourceItemsq = menu.findItem(R.id.disable_book_source);
-            if (defaultSourcesq) {
-                disableSourceItemsq.setVisible(false);
-                disableSourceItemsq.setEnabled(false);
-            } else {
-                disableSourceItemsq.setVisible(true);
-                disableSourceItemsq.setEnabled(true);
-            }
-            final boolean defaultSource = Default716.TAG.equals(mPresenter.getBookShelf().getTag());
+            final boolean defaultShuqi = DefaultShuqi.TAG.equals(mPresenter.getBookShelf().getTag());
+            final boolean default716 = Default716.TAG.equals(mPresenter.getBookShelf().getTag());
             MenuItem disableSourceItem = menu.findItem(R.id.disable_book_source);
-            if (defaultSource) {
+            if (default716 || defaultShuqi) {
                 disableSourceItem.setVisible(false);
                 disableSourceItem.setEnabled(false);
             } else {
@@ -1656,7 +1641,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             filter.addAction(android.content.Intent.ACTION_TIME_TICK);
             filter.addAction(android.content.Intent.ACTION_BATTERY_CHANGED);
             registerReceiver(batInfoReceiver, filter);
-            if(readStatusBar != null){
+            if (readStatusBar != null) {
                 readStatusBar.updateTime();
             }
         }

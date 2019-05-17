@@ -2,6 +2,7 @@ package com.monke.monkeybook.widget.page.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -65,15 +66,15 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (isMove && event.getAction() == MotionEvent.ACTION_UP) {
-                // 是否取消翻页
-                if (isCancel) {
-                    mListener.pageCancel();
-                }
+            // 是否取消翻页
+            if (isCancel) {
+                mListener.pageCancel();
+            }
 
-                // 开启翻页效果
-                if (!noNext) {
-                    startAnim();
-                }
+            // 开启翻页效果
+            if (!noNext) {
+                startAnim();
+            }
             return true;
         }
         return mDetector.onTouchEvent(event);
@@ -128,7 +129,7 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (!isMove) {
+        if (!isMove && Math.abs(distanceX) > Math.abs(distanceY)) {
             if (distanceX < 0) {
                 //上一页的参数配置
                 isNext = false;
@@ -155,12 +156,14 @@ public abstract class HorizonPageAnim extends PageAnimation implements GestureDe
             }
             isMove = true;
         }
-        isCancel = isNext ? distanceX < 0 : distanceX > 0;
-        isRunning = true;
-        //设置触摸点
-        setTouchPoint(e2.getX(), e2.getY());
-        mView.invalidate();
-        return true;
+        if (isMove) {
+            isCancel = isNext ? distanceX < 0 : distanceX > 0;
+            isRunning = true;
+            //设置触摸点
+            setTouchPoint(e2.getX(), e2.getY());
+            mView.invalidate();
+        }
+        return isMove;
     }
 
     @Override

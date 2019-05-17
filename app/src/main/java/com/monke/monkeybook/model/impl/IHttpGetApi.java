@@ -26,19 +26,4 @@ public interface IHttpGetApi {
     Observable<Response<String>> searchBook(@Url String url,
                                             @QueryMap(encoded = true) Map<String, String> queryMap,
                                             @HeaderMap Map<String, String> headers);
-
-    @GET
-    Call<String> getWebContentCall(@Url String url,
-                                   @HeaderMap Map<String, String> headers);
-
-    @GET("/webapi/book/info.php")
-    @Headers("Content-Type:application/x-www-form-urlencoded")
-    Observable<Response<String>> getbookdetail(@QueryMap Map<String, String> fieldMap);
-
-    @GET("/webapi/book/chapterlist.php")
-    @Headers("Content-Type:application/x-www-form-urlencoded")
-    Observable<Response<String>> getchapterlist(@QueryMap Map<String, String> fieldMap);
-
-    @GET("/novel/i.php")
-    Observable<Response<String>> getsearchBook(@Query("do") String doo, @Query("p") String pp, @Query("q") String content, @Query("page") int page, @Query("size") String size);
 }

@@ -234,8 +234,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void dispatchRefreshEvent(BookShelfBean bookShelfBean, boolean loading) {
         if (refreshListener != null) {
-            bookShelfBean.withFlag(loading);
-            refreshListener.onRefresh(bookShelfBean);
+            refreshListener.onRefresh(bookShelfBean.withFlag(loading));
         }
     }
 
