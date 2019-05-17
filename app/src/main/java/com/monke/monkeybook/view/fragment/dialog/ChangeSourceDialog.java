@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +12,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -36,6 +30,10 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -89,6 +87,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
         searchBookModel = new SearchBookModel(getContext())
                 .onlyOnePage()
                 .useMy716(true)
+                .useShuqi(true)
                 .setSearchBookType(selectCover ? null : bookInfo.getBookType())
                 .listener(this)
                 .setup();
