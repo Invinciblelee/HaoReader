@@ -266,22 +266,17 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     bookShelfBean.setNewChapters(0);
                     return bookShelfBean;
                 })
-                .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {
-                    if (!bookShelfBean.realChapterListEmpty()) {
-                        return Observable.create(emitter -> {
-                            if (inBookShelf) {
-                                BookshelfHelp.removeFromBookShelf(bookShelf);
-                                BookshelfHelp.saveBookToShelf(bookShelfBean);
-                                RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.withFlag(true));
-                                RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
-                                RxBus.get().post(RxBusTag.CHANGE_SOURCE, bookShelfBean);
-                            }
-                            emitter.onNext(bookShelfBean);
-                            emitter.onComplete();
-                        });
+                .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> Observable.create(emitter -> {
+                    if (inBookShelf) {
+                        BookshelfHelp.removeFromBookShelf(bookShelf);
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                        RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf.withFlag(true));
+                        RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                        RxBus.get().post(RxBusTag.CHANGE_SOURCE, bookShelfBean);
                     }
-                    return Observable.error(new Exception("目录获取失败"));
-                })
+                    emitter.onNext(bookShelfBean);
+                    emitter.onComplete();
+                }))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
