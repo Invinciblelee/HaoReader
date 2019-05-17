@@ -152,7 +152,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         };
     }
 
-    private synchronized void newRefreshTask(int index) {
+    private void newRefreshTask(int index) {
         BookShelfBean bookShelfBean = refreshingIterator.next();
         if (bookShelfBean == null) {
             if (refreshingIterator.hasNext()) {

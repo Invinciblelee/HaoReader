@@ -62,7 +62,7 @@ public class SearchTaskImpl implements ISearchTask {
         disposables = null;
     }
 
-    private synchronized void toSearch(String query, Scheduler scheduler) {
+    private void toSearch(String query, Scheduler scheduler) {
         final SearchEngine searchEngine = listener.nextSearchEngine();
         if (searchEngine == null) {
             if (listener.hasNextSearchEngine()) {
