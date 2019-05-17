@@ -19,6 +19,7 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -207,7 +208,14 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             searchBookModel.startSearch(key);
         }
     }
-
+    @Override
+    public void initSearchEngineS(String group) {
+        if (TextUtils.isEmpty(group)) {
+            searchBookModel.initSearchEngineS1(BookSourceManager.getInstance().getSelectedBookSource(), group);
+        } else {
+            searchBookModel.initSearchEngineS1(BookSourceManager.getInstance().getEnableSourceByGroup(group), group);
+        }
+    }
     @Override
     public void stopSearch() {
         searchBookModel.stopSearch();

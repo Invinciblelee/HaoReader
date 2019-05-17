@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
@@ -37,8 +38,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private String searchBookType;
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
-    private boolean useMy716 = true;
-    private boolean useShuqi = true;
+    private boolean useMy716;
+    private boolean useShuqi;
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
@@ -78,7 +79,6 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 model.searchListener.searchBookReset();
             }
         }
-
     }
 
     public SearchBookModel(Context context) {
@@ -99,7 +99,30 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     /**
      * 搜索引擎初始化
      */
-    private void initSearchEngineS() {
+    public void initSearchEngineS1(@NonNull List<BookSourceBean> sourceBeanList,String group) {
+        if (!searchEngineS.isEmpty()) {
+            searchEngineS.clear();
+        }
+        if (group == "有声") {
+            if (useMy716) {
+                searchEngineS.add(new SearchEngine(Default716.TAG));
+            }
+            if (useShuqi) {
+                searchEngineS.add(new SearchEngine(Defaultsq.TAG));
+            }
+        }
+        for (BookSourceBean bookSourceBean : sourceBeanList) {
+            if (bookSourceBean.getEnable()) {
+                SearchEngine se = new SearchEngine(bookSourceBean.getBookSourceUrl());
+                searchEngineS.add(se);
+            }
+        }
+        searchEngineChanged = false;
+    }
+    /**
+     * 搜索引擎初始化
+     */
+    public void initSearchEngineS() {
         if (!searchEngineS.isEmpty()) {
             searchEngineS.clear();
         }
@@ -216,6 +239,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return this;
     }
     public SearchBookModel setup() {
+        useMy716(AppConfigHelper.get().getBoolean("useMy716", true));
+        useShuqi(AppConfigHelper.get().getBoolean("useShuqi", true));
         initSearchEngineS();
         return this;
     }
