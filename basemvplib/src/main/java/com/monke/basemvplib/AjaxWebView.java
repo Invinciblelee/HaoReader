@@ -111,7 +111,6 @@ public class AjaxWebView {
             case GET:
             case DEFAULT:
                 webView.loadUrl(params.url, params.headerMap);
-
         }
         return webView;
     }

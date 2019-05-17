@@ -199,7 +199,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
                             SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
             e.onNext(searchBookBeans);
             e.onComplete();
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
                     @Override

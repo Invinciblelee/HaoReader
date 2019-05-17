@@ -68,7 +68,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                 downloadBook.setValid(false);
             }
             emitter.onNext(downloadBook);
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<DownloadBookBean>() {
                     @Override

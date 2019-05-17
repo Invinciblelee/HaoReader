@@ -30,7 +30,6 @@ import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
-import com.monke.monkeybook.utils.RxUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +42,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -124,7 +122,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         Single.create((SingleOnSubscribe<Boolean>) emitter -> {
             BookshelfHelp.cleanBookCache(bookShelf);
             emitter.onSuccess(true);
-        }).compose(RxUtils::toSimpleSingle)
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {

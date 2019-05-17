@@ -51,15 +51,12 @@ public class CheckSourceService extends Service {
     private int threadsNum;
     private int checkIndex;
     private CompositeDisposable compositeDisposable;
-    private ExecutorService executorService;
-    private Scheduler scheduler;
+    private ExecutorService executor;
 
     @Override
     public void onCreate() {
         super.onCreate();
         threadsNum = AppConfigHelper.get().getInt(this.getString(R.string.pk_threads_num), 6);
-        executorService = Executors.newFixedThreadPool(threadsNum);
-        scheduler = Schedulers.from(executorService);
         compositeDisposable = new CompositeDisposable();
         bookSourceBeanList = BookSourceManager.getInstance().getAllBookSource();
         updateNotification(0);
@@ -84,7 +81,10 @@ public class CheckSourceService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        executorService.shutdown();
+        if(executor != null){
+            executor.shutdown();
+            executor = null;
+        }
     }
 
     @Nullable
@@ -145,6 +145,13 @@ public class CheckSourceService extends Service {
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    private Scheduler getScheduler() {
+        if (executor == null || executor.isShutdown()) {
+            executor = Executors.newFixedThreadPool(threadsNum);
+        }
+        return Schedulers.from(executor);
+    }
+
     public void startCheck() {
         if (bookSourceBeanList != null && bookSourceBeanList.size() > 0) {
             RxBus.get().post(CHECK_SOURCE_STATE, 0);
@@ -192,7 +199,7 @@ public class CheckSourceService extends Service {
                     bookShelfBean.setDurChapter(0);
                     bookShelfBean.setDurChapterPage(0);
                     WebBookModel.getInstance().getBookInfo(bookShelfBean)
-                            .subscribeOn(Schedulers.io())
+                            .subscribeOn(getScheduler())
                             .observeOn(AndroidSchedulers.mainThread())
                             .timeout(30, TimeUnit.SECONDS)
                             .subscribe(getObserver());
@@ -208,7 +215,7 @@ public class CheckSourceService extends Service {
                     OkHttpHelper.getInstance()
                             .createService(sourceBean.getBookSourceUrl(), IHttpGetApi.class)
                             .getWebContent(sourceBean.getBookSourceUrl(), AnalyzeHeaders.getMap(null))
-                            .subscribeOn(scheduler)
+                            .subscribeOn(getScheduler())
                             .observeOn(AndroidSchedulers.mainThread())
                             .timeout(30, TimeUnit.SECONDS)
                             .subscribe(getObserver());
