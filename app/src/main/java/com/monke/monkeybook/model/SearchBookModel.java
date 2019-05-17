@@ -12,6 +12,7 @@ import com.monke.monkeybook.bean.SearchEngine;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.content.Default716;
+import com.monke.monkeybook.model.content.Defaultsq;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -37,7 +38,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
     private boolean useMy716 = true;
-
+    private boolean useShuqi = true;
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
@@ -106,7 +107,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (useMy716) {
             searchEngineS.add(new SearchEngine(Default716.TAG));
         }
-
+        if (useShuqi) {
+            searchEngineS.add(new SearchEngine(Defaultsq.TAG));
+        }
         List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
         if (bookSourceBeans != null && !bookSourceBeans.isEmpty()) {
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
@@ -208,6 +211,10 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return this;
     }
 
+    public SearchBookModel useShuqi(boolean useShuqi) {
+        this.useShuqi = useShuqi;
+        return this;
+    }
     public SearchBookModel setup() {
         initSearchEngineS();
         return this;
