@@ -146,7 +146,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
             searchHandler.removeMessages(SearchHandler.MSG_SEARCH);
             Message msg = searchHandler.obtainMessage(SearchHandler.MSG_SEARCH, query);
-            searchHandler.sendMessageDelayed(msg, 400L);
+            searchHandler.sendMessageDelayed(msg, 200L);
         }
     }
 
