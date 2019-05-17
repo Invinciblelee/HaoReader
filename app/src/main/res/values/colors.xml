@@ -81,4 +81,7 @@
     <!--statusBarBackground-->
     <color name="status_bar_bag">#33000000</color>
     <color name="navigation_bar_bag">@color/colorPrimary</color>
+	
+	<color name="highlight">#d3321b</color>
+	<color name="darker_gray">#aaaaaaaa</color>
 </resources>
