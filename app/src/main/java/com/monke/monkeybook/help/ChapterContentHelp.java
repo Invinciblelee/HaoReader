@@ -92,8 +92,7 @@ public class ChapterContentHelp {
             writer.write(content);
             writer.flush();
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
         return false;
     }

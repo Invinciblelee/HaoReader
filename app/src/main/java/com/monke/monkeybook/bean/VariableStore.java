@@ -10,6 +10,8 @@ public interface VariableStore {
 
     void putVariableMap(Map<String, String> variableMap);
 
+    void putVariable(String key, String value);
+
     Map<String, String> getVariableMap();
 
     String getVariable(String key);

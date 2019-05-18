@@ -45,6 +45,23 @@ public class VariableStoreImpl implements VariableStore {
     }
 
     @Override
+    public void putVariable(String key, String value) {
+        if (key != null) {
+            if (this.variableMap == null) {
+                try {
+                    this.variableMap = Global.GSON.fromJson(variableString, STRING_MAP);
+                } catch (Exception ignore) {
+                }
+            }
+            if (this.variableMap == null) {
+                this.variableMap = new HashMap<>();
+            }
+            this.variableMap.put(key, value);
+            this.variableString = Global.GSON.toJson(this.variableMap);
+        }
+    }
+
+    @Override
     public String getVariable(String key) {
         if (this.variableMap == null) {
             try {

@@ -184,6 +184,7 @@ public class PageView extends View {
 
         int x = (int) event.getX();
         int y = (int) event.getY();
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mStartX = x;

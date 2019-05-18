@@ -4,6 +4,8 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.monke.monkeybook.help.TextProcessor;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -372,7 +374,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
     public String getDurChapterName() {
-        return this.durChapterName;
+        return TextProcessor.formatChapterName(this.durChapterName);
     }
 
     public void setDurChapterName(String durChapterName) {
@@ -380,7 +382,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
     public String getLastChapterName() {
-        return this.lastChapterName;
+        return TextProcessor.formatChapterName(this.lastChapterName);
     }
 
     public void setLastChapterName(String lastChapterName) {
@@ -494,6 +496,15 @@ public class BookShelfBean implements Parcelable, VariableStore {
     @Override
     public void putVariableMap(Map<String, String> variableMap) {
         variableStore.putVariableMap(variableMap);
+        String variableString = variableStore.getVariableString();
+        if (variableString != null) {
+            this.variableString = variableString;
+        }
+    }
+
+    @Override
+    public void putVariable(String key, String value) {
+        variableStore.putVariable(key, value);
         String variableString = variableStore.getVariableString();
         if (variableString != null) {
             this.variableString = variableString;

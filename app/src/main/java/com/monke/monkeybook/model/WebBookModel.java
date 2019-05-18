@@ -12,7 +12,7 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.content.DefaultModel;
-import com.monke.monkeybook.model.content.Defaultsq;
+import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
@@ -139,8 +139,8 @@ public class WebBookModel implements IWebBookModel {
             return null;
         } else if (TextUtils.equals(tag, Default716.TAG)) {
             return Default716.newInstance();
-        } else if (TextUtils.equals(tag, Defaultsq.TAG)) {
-            return Defaultsq.newInstance();
+        } else if (TextUtils.equals(tag, DefaultShuqi.TAG)) {
+            return DefaultShuqi.newInstance();
         } else {
             return DefaultModel.newInstance(tag);
         }

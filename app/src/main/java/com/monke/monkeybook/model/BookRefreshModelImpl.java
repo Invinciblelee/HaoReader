@@ -154,18 +154,25 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void newRefreshTask(int index) {
         BookShelfBean bookShelfBean = refreshingIterator.next();
-        if (bookShelfBean != null) {
-            if (bookShelfBean.getUpdateOff()) {
-                refreshingIterator.moveToNext();
-                if (refreshingIterator.hasNext()) {
-                    newRefreshTask(index);
-                } else {
-                    dispatchFinishEvent();
-                }
-            } else {
-                dispatchRefreshEvent(bookShelfBean, true);
-                refreshBookShelf(index, bookShelfBean);
+        if (bookShelfBean == null) {
+            if (refreshingIterator.hasNext()) {
+                newRefreshTask(index);
+            } else if (loadingCount.get() == 0) {
+                dispatchFinishEvent();
             }
+            return;
+        }
+
+        if (bookShelfBean.getUpdateOff()) {
+            refreshingIterator.moveToNext();
+            if (refreshingIterator.hasNext()) {
+                newRefreshTask(index);
+            } else {
+                dispatchFinishEvent();
+            }
+        } else {
+            dispatchRefreshEvent(bookShelfBean, true);
+            refreshBookShelf(index, bookShelfBean);
         }
     }
 
@@ -234,8 +241,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void dispatchRefreshEvent(BookShelfBean bookShelfBean, boolean loading) {
         if (refreshListener != null) {
-            bookShelfBean.withFlag(loading);
-            refreshListener.onRefresh(bookShelfBean);
+            refreshListener.onRefresh(bookShelfBean.withFlag(loading));
         }
     }
 

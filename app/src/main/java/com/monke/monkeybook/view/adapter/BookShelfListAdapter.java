@@ -71,13 +71,13 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvRead.setText(getContext().getString(TextUtils.equals(bookType, BookType.AUDIO) ?
                     R.string.play_dur_progress : R.string.read_dur_progress, getContext().getString(R.string.text_placeholder)));
         } else {
-            holder.tvRead.setText(TextProcessor.formatChapterName(durChapterName));
+            holder.tvRead.setText(durChapterName);
         }
         String lastChapterName = item.getLastChapterName();
         if (TextUtils.isEmpty(lastChapterName)) {
             holder.tvLast.setText(getContext().getString(R.string.book_search_last, getContext().getString(R.string.text_placeholder)));
         } else {
-            holder.tvLast.setText(TextProcessor.formatChapterName(lastChapterName));
+            holder.tvLast.setText(lastChapterName);
         }
 
         holder.content.setOnClickListener(v -> onClick(v, item));

@@ -179,6 +179,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     }
 
     private void selectSource(SearchBookBean searchBook) {
+        dismissAllowingStateLoss();
         if (selectCover) {
             onClickSource.changeSource(searchBook);
         } else {
@@ -187,7 +188,6 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
                 incrementSourceWeightBySelection(searchBook);
             }
         }
-        dismissAllowingStateLoss();
     }
 
     private void getSearchBookInDb() {

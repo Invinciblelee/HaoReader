@@ -10,7 +10,7 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.content.Default716;
-import com.monke.monkeybook.model.content.Defaultsq;
+import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
 import java.util.List;
@@ -64,64 +64,72 @@ public class SearchTaskImpl implements ISearchTask {
 
     private void toSearch(String query, Scheduler scheduler) {
         final SearchEngine searchEngine = listener.nextSearchEngine();
-        if (searchEngine != null) {
-            if (!searchEngine.getHasMore()) {
-                listener.moveToNextSearchEngine();
-                if (listener.hasNextSearchEngine()) {
-                    toSearch(query, scheduler);
-                } else {
-                    stopSearch();
-                    listener.onSearchComplete(this);
-                }
+        if (searchEngine == null) {
+            if (listener.hasNextSearchEngine()) {
+                toSearch(query, scheduler);
             } else {
-                searchEngine.searchBegin();
-                WebBookModel.getInstance()
-                        .searchBook(searchEngine.getTag(), query, searchEngine.getPage())
-                        .subscribeOn(scheduler)
-                        .doOnNext(result -> {
-                            saveData(result);
-                            incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
-                        })
-                        .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
-                        .delay(index * 50L, TimeUnit.MILLISECONDS)
-                        .flatMap(searchBookBeans -> Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-                            boolean hasMore = true;
-                            if (!isDisposed() && !searchBookBeans.isEmpty()) {
-                                listener.onSearchResult(searchBookBeans);
+                stopSearch();
+                listener.onSearchComplete(this);
+            }
+            return;
+        }
 
-                                if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
-                                    hasMore = false;
-                                }
-                                if (TextUtils.equals(searchBookBeans.get(0).getTag(), Defaultsq.TAG)) {
-                                    hasMore = false;
-                                }
-                            } else {
+        if (!searchEngine.getHasMore()) {
+            listener.moveToNextSearchEngine();
+            if (listener.hasNextSearchEngine()) {
+                toSearch(query, scheduler);
+            } else {
+                stopSearch();
+                listener.onSearchComplete(this);
+            }
+        } else {
+            searchEngine.searchBegin();
+            WebBookModel.getInstance()
+                    .searchBook(searchEngine.getTag(), query, searchEngine.getPage())
+                    .subscribeOn(scheduler)
+                    .doOnNext(result -> {
+                        saveData(result);
+                        incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
+                    })
+                    .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
+                    .delay(index * 50L, TimeUnit.MILLISECONDS)
+                    .flatMap(searchBookBeans -> Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+                        boolean hasMore = true;
+                        if (!isDisposed() && !searchBookBeans.isEmpty()) {
+                            listener.onSearchResult(searchBookBeans);
+
+                            if (TextUtils.equals(searchBookBeans.get(0).getTag(), Default716.TAG)) {
                                 hasMore = false;
                             }
-                            emitter.onNext(hasMore);
-                            emitter.onComplete();
-                        }))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new SimpleObserver<Boolean>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-                                if (!isDisposed()) {
-                                    disposables.add(d);
-                                }
+                            if (TextUtils.equals(searchBookBeans.get(0).getTag(), DefaultShuqi.TAG)) {
+                                hasMore = false;
                             }
+                        } else {
+                            hasMore = false;
+                        }
+                        emitter.onNext(hasMore);
+                        emitter.onComplete();
+                    }))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SimpleObserver<Boolean>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            if (!isDisposed()) {
+                                disposables.add(d);
+                            }
+                        }
 
-                            @Override
-                            public void onNext(Boolean result) {
-                                whenNext(searchEngine, result, query, scheduler);
-                                successCount += 1;
-                            }
+                        @Override
+                        public void onNext(Boolean result) {
+                            whenNext(searchEngine, result, query, scheduler);
+                            successCount += 1;
+                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                whenError(searchEngine, query, scheduler);
-                            }
-                        });
-            }
+                        @Override
+                        public void onError(Throwable e) {
+                            whenError(searchEngine, query, scheduler);
+                        }
+                    });
         }
     }
 

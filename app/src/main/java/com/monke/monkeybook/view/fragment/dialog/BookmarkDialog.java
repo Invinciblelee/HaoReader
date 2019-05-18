@@ -70,21 +70,21 @@ public class BookmarkDialog extends AppCompatDialog {
 
         View tvOk = findViewById(R.id.tv_ok);
         tvOk.setOnClickListener(v -> {
+            dismissAllowingStateLoss();
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
             bookmarkClick.saveBookmark(bookmarkBean);
-            dismissAllowingStateLoss();
         });
 
         View tvSave = findViewById(R.id.tv_save);
         tvSave.setOnClickListener(v -> {
+            dismissAllowingStateLoss();
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
             bookmarkClick.saveBookmark(bookmarkBean);
-            dismissAllowingStateLoss();
         });
         View tvDel = findViewById(R.id.tv_del);
         tvDel.setOnClickListener(v -> {
-            bookmarkClick.delBookmark(bookmarkBean);
             dismissAllowingStateLoss();
+            bookmarkClick.delBookmark(bookmarkBean);
         });
 
         View llEdit = findViewById(R.id.llEdit);
