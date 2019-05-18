@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
+import com.monke.monkeybook.widget.BadgeView;
 import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
@@ -48,11 +49,6 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
                         .centerCrop().placeholder(R.drawable.img_cover_default)
                         .error(R.drawable.img_cover_default))
                 .into(holder.ivCover);
-        if (item.getHasUpdate()) {
-            holder.tvHasNew.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvHasNew.setVisibility(View.INVISIBLE);
-        }
 
         holder.content.setOnClickListener(v -> onClick(v, item));
 
@@ -69,15 +65,22 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         }
 
         if (item.isFlag()) {
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {
+            if (item.getHasUpdate()) {
+                holder.tvHasNew.setBadgeCount(item.getNewChapters());
+            } else {
+                holder.tvHasNew.setBadgeCount(item.getUnreadChapterNum());
+            }
+            holder.tvHasNew.setHighlight(item.getHasUpdate());
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
-        TextView tvHasNew;
+        BadgeView tvHasNew;
         TextView tvName;
         RotateLoading rotateLoading;
         public View content;

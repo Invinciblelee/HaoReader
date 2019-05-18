@@ -21,6 +21,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
+import com.monke.monkeybook.widget.BadgeView;
 import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
@@ -79,12 +80,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvLast.setText(lastChapterName);
         }
 
-        if (item.getHasUpdate()) {
-            holder.tvHasNew.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvHasNew.setVisibility(View.INVISIBLE);
-        }
-
         holder.content.setOnClickListener(v -> onClick(v, item));
 
         if (getBookshelfPx() == 2) {
@@ -100,8 +95,15 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
 
         if (item.isFlag()) {
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {
+            if (item.getHasUpdate()) {
+                holder.tvHasNew.setBadgeCount(item.getNewChapters());
+            } else {
+                holder.tvHasNew.setBadgeCount(item.getUnreadChapterNum());
+            }
+            holder.tvHasNew.setHighlight(item.getHasUpdate());
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
     }
@@ -120,7 +122,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
-        TextView tvHasNew;
+        BadgeView tvHasNew;
         TextView tvName;
         TextView tvAuthor;
         TextView tvRead;

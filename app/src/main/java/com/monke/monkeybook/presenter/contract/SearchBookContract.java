@@ -24,6 +24,8 @@ public interface SearchBookContract {
 
         void toSearchBooks(String key);
 
+        void initSearchEngineS(String group);
+
         void stopSearch();
 
         void useMy716(Boolean bool);

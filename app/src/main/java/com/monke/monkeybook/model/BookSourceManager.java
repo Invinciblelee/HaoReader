@@ -1,5 +1,6 @@
 package com.monke.monkeybook.model;
 
+import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -62,6 +63,34 @@ public class BookSourceManager extends BaseModelImpl {
                     .list();
         }
         return selectedBookSource;
+    }
+
+    public List<BookSourceBean> getEnableSourceByGroup(String group) {
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .where(BookSourceBeanDao.Properties.Enable.eq(true))
+                .where(BookSourceBeanDao.Properties.BookSourceGroup.like("%" + group + "%"))
+                .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                .list();
+    }
+
+    public List<String> getEnableGroupList() {
+        List<String> groupList = new ArrayList<>();
+        String sql = "SELECT DISTINCT "
+                + BookSourceBeanDao.Properties.BookSourceGroup.columnName
+                + " FROM " + BookSourceBeanDao.TABLENAME
+                + " WHERE " + BookSourceBeanDao.Properties.Enable.name + " = 1";
+        Cursor cursor = DbHelper.getInstance().getDaoSession().getDatabase().rawQuery(sql, null);
+        if (!cursor.moveToFirst()) return groupList;
+        do {
+            String group = cursor.getString(0);
+            if (TextUtils.isEmpty(group) || TextUtils.isEmpty(group.trim())) continue;
+            for (String item : group.split("\\s*[,;，；]\\s*")) {
+                if (TextUtils.isEmpty(item) || groupList.contains(item)) continue;
+                groupList.add(item);
+            }
+        } while (cursor.moveToNext());
+        Collections.sort(groupList);
+        return groupList;
     }
 
     public BookSourceBean getBookSourceByUrl(String url) {

@@ -12,12 +12,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.view.menu.MenuItemImpl;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.gyf.immersionbar.ImmersionBar;
 import com.monke.basemvplib.BaseActivity;
@@ -28,6 +22,12 @@ import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.AppCompat;
 
 import java.lang.reflect.Method;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.menu.MenuItemImpl;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
 
