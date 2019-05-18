@@ -87,7 +87,9 @@
         <item name="android:textSize">15sp</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"></style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
 
     <style name="AppTheme.CardView.Background" parent="CardView.Light">
         <item name="cardBackgroundColor">@color/card_background</item>
@@ -140,10 +142,10 @@
         <item name="android:textColor">@color/colorReadBarText</item>
     </style>
 
-    <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
+    <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
         <item name="overlapAnchor">false</item>
-        <item name="android:popupBackground">@drawable/bg_popup_background</item>
+        <item name="android:colorBackground">@color/card_background</item>
     </style>
 
     <style name="Overflow.Menu.Text.style" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">

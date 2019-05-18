@@ -412,6 +412,22 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchUrl = ruleSearchUrl;
     }
 
+    public boolean ajaxSearch(){
+        if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
+                || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON)
+                || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON_TRAIT)) {
+            return false;
+        }
+        return !TextUtils.isEmpty(ruleSearchUrl) && ruleSearchUrl.startsWith(Patterns.RULE_AJAX);
+    }
+
+    public String getRealRuleSearchUrl(){
+        if(ajaxSearch()){
+            return ruleSearchUrl.substring(1);
+        }
+        return ruleSearchUrl;
+    }
+
     public String getRuleContentUrl() {
         return this.ruleContentUrl;
     }

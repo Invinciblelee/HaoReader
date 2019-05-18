@@ -289,9 +289,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
             case R.id.action_check_book_source:
                 mPresenter.checkBookSource();
                 break;
-            case R.id.action_web_start:
-                WebService.startThis(this);
-                break;
             case R.id.sort_manual:
                 upSourceSort(0);
                 break;

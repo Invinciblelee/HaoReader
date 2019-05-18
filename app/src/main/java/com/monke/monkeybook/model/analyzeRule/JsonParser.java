@@ -112,20 +112,12 @@ final class JsonParser extends SourceParser<ReadContext> {
 
     private String parseString(ReadContext source, String rule) {
         if (!rule.contains("{$.")) {
-            final StringBuilder content = new StringBuilder();
             try {
-                final Object object = source.read(rule);
-                if (object instanceof List) {
-                    for (Object o : (List) object) {
-                        content.append(StringUtils.valueOf(o)).append("\n");
-                    }
-                } else {
-                    content.append(StringUtils.valueOf(object));
-                }
+                return StringUtils.join("\n", ListUtils.toStringList(source.read(rule)));
             } catch (Exception e) {
                 Logger.e(TAG, rule, e);
             }
-            return content.toString();
+            return "";
         } else {
             String result = rule;
             Matcher matcher = PATTERN_JSON.matcher(rule);
@@ -163,22 +155,15 @@ final class JsonParser extends SourceParser<ReadContext> {
     }
 
     private List<String> parseStringList(ReadContext source, String rule) {
-        final List<String> resultList = new ArrayList<>();
-
         if (!rule.contains("{$.")) {
             try {
-                Object object = source.read(rule);
-                if (object instanceof List) {
-                    for (Object o : (List) object)
-                        resultList.add(StringUtils.valueOf(o));
-                } else {
-                    resultList.add(StringUtils.valueOf(object));
-                }
+                return ListUtils.toStringList(source.read(rule));
             } catch (Exception e) {
                 Logger.e(TAG, rule, e);
             }
-            return resultList;
+            return ListUtils.mutableList();
         } else {
+            final List<String> resultList = new ArrayList<>();
             Matcher matcher = PATTERN_JSON.matcher(rule);
             while (matcher.find()) {
                 final String group = matcher.group();

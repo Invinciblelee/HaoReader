@@ -30,6 +30,7 @@ import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
@@ -314,11 +315,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                         .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.clearBookshelf())
                         .show();
                 break;
-            case R.id.action_refreshBookshelf:
-                BookListFragment current = fragments[this.group];
-                if (current != null) {
-                    current.refreshBookShelf(true);
-                }
+            case R.id.action_web_start:
+                WebService.startThis(this);
                 break;
             case android.R.id.home:
                 if (drawer.isDrawerOpen(GravityCompat.START)) {

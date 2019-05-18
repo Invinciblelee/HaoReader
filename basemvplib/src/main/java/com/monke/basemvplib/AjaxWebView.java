@@ -2,12 +2,14 @@ package com.monke.basemvplib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -61,6 +63,7 @@ public class AjaxWebView {
                     mWebView = createAjaxWebView(params, this);
                     break;
                 case MSG_SUCCESS:
+                    System.out.println(msg.obj);
                     mCallback.onResult((String) msg.obj);
                     mCallback.onComplete();
                     destroyWebView();
@@ -222,6 +225,7 @@ public class AjaxWebView {
             this.handler = handler;
         }
 
+
         @Override
         public void onPageFinished(WebView view, String url) {
             params.setCookie(url);
@@ -316,9 +320,16 @@ public class AjaxWebView {
             }
         }
 
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            Log.e("TAG", url);
+        }
+
         private void evaluateJavascript(final WebView webView, final String javaScript) {
+            Log.e("TAG", javaScript);
             final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript, value -> {
-                if (!TextUtils.isEmpty(value) || "false".equals(value)) {
+                if (TextUtils.isEmpty(value)) {
                     evaluateJavascript(webView, javaScript);
                 }
             });

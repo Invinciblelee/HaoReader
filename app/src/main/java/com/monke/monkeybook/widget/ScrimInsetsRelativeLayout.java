@@ -81,28 +81,28 @@ public class ScrimInsetsRelativeLayout extends RelativeLayout {
             canvas.translate(getScrollX(), getScrollY());
 
             // Top
-            if(mFitTop) {
+            if (mFitTop) {
                 mTempRect.set(0, 0, width, mInsets.top);
                 mInsetForeground.setBounds(mTempRect);
                 mInsetForeground.draw(canvas);
             }
 
             // Bottom
-            if(mFitBottom) {
+            if (mFitBottom) {
                 mTempRect.set(0, height - mInsets.bottom, width, height);
                 mInsetForeground.setBounds(mTempRect);
                 mInsetForeground.draw(canvas);
             }
 
             // Left
-            if(mFitLeft) {
+            if (mFitLeft) {
                 mTempRect.set(0, mInsets.top, mInsets.left, height - mInsets.bottom);
                 mInsetForeground.setBounds(mTempRect);
                 mInsetForeground.draw(canvas);
             }
 
             // Right
-            if(mFitRight) {
+            if (mFitRight) {
                 mTempRect.set(width - mInsets.right, mInsets.top, width, height - mInsets.bottom);
                 mInsetForeground.setBounds(mTempRect);
                 mInsetForeground.draw(canvas);

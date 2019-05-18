@@ -14,9 +14,13 @@ final class BookList {
 
     private final OutAnalyzer<?> analyzer;
 
+    private boolean isAJAX;
+
     BookList(String tag, String name, BookSourceBean bookSourceBean) {
         this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
                 .tag(tag).name(name).bookSource(bookSourceBean));
+
+        isAJAX = bookSourceBean.ajaxSearch();
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {
@@ -25,4 +29,7 @@ final class BookList {
         return analyzer.getSearchBooks(response);
     }
 
+    public boolean isAJAX() {
+        return isAJAX;
+    }
 }

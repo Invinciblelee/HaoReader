@@ -113,9 +113,27 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
         }
         final BookList bookList = new BookList(tag, name, bookSourceBean);
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookSourceBean.getRuleSearchUrl(), content, page, headerMap(false));
-            return toObservable(analyzeUrl)
-                    .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookSourceBean.getRealRuleSearchUrl(), content, page, headerMap(false));
+            if(bookList.isAJAX()){
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
+                        .requestMethod(analyzeUrl.getRequestMethod())
+                        .postData(analyzeUrl.getPostData())
+                        .headerMap(analyzeUrl.getHeaderMap())
+                        .cookieStore(CookieHelper.get());
+                switch (analyzeUrl.getRequestMethod()) {
+                    case DEFAULT:
+                    case POST:
+                        params.url(analyzeUrl.getUrl());
+                        break;
+                    case GET:
+                        params.url(analyzeUrl.getQueryUrl());
+                }
+                return ajax(params)
+                        .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
+            }else {
+                return toObservable(analyzeUrl)
+                        .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
+            }
         } catch (Exception e) {
             Logger.e(TAG, "searchBook: " + content, e);
             return Observable.just(ListUtils.mutableList());
