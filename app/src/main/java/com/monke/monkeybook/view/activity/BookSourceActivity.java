@@ -155,7 +155,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         }
         adapter.notifyDataSetChanged();
         selectAll = !selectAll;
-        saveDate(adapter.getDataList());
+        recyclerView.post(() -> saveDate(adapter.getDataList()));
     }
 
     private void setDragEnable(int sort) {

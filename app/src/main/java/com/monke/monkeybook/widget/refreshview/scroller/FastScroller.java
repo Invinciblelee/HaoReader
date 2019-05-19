@@ -508,6 +508,10 @@ public class FastScroller extends LinearLayout {
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
         super.onSizeChanged(w, h, oldW, oldH);
         viewHeight = h;
+        post(() -> {
+            // set initial positions for bubble and handle
+            setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false);
+        });
     }
 
     private void setRecyclerViewPosition(float y) {
@@ -559,14 +563,14 @@ public class FastScroller extends LinearLayout {
         return Math.min(minimum, max);
     }
 
-    private void setViewPositions(float y, boolean fromTouch) {
+    private void setViewPositions(float y, boolean fromDrag) {
         bubbleHeight = bubbleView.getMeasuredHeight();
         handleHeight = handleView.getMeasuredHeight();
 
         int bubbleY = getValueInRange(0, viewHeight - bubbleHeight - handleHeight / 2, (int) (y - bubbleHeight));
         int handleY = getValueInRange(0, viewHeight - handleHeight, (int) (y - handleHeight / 2));
 
-        if (!fromTouch) {
+        if (!fromDrag) {
             if (recyclerView == null) {
                 return;
             }
