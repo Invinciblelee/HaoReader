@@ -347,10 +347,8 @@ public class FastScroller extends LinearLayout {
 
         recyclerView.addOnScrollListener(scrollListener);
 
-        post(() -> {
-            // set initial positions for bubble and handle
-            setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false);
-        });
+        recyclerView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
+                -> setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false));
     }
 
     /**
@@ -508,10 +506,6 @@ public class FastScroller extends LinearLayout {
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
         super.onSizeChanged(w, h, oldW, oldH);
         viewHeight = h;
-        post(() -> {
-            // set initial positions for bubble and handle
-            setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false);
-        });
     }
 
     private void setRecyclerViewPosition(float y) {
