@@ -129,11 +129,11 @@ public class ChapterContentHelp {
      * 替换净化
      */
     public static String replaceContent(String bookName, String bookTag, String content) {
-        if (ReplaceRuleManager.getInstance().getEnabled().size() == 0) {
+        if (ReplaceRuleManager.getEnabledCount() == 0) {
             return toTraditional(content);
         }
         //替换
-        for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getInstance().getEnabled()) {
+        for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getEnabled()) {
             if (isUseTo(replaceRule.getUseTo(), bookTag, bookName)) {
                 try {
                     content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement()).trim();

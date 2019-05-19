@@ -12,12 +12,17 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.dao.BookSourceBeanDao;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
@@ -26,7 +31,6 @@ import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
-import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
@@ -34,15 +38,8 @@ import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.widget.AppCompat;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -124,7 +121,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
             @Override
             public boolean onQueryTextChange(String newText) {
                 isSearch = !TextUtils.isEmpty(newText);
-                refreshBookSource();
+                mPresenter.refresh();
                 return false;
             }
         });
@@ -187,19 +184,12 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     @Override
-    public void refreshBookSource() {
-        if (isSearch) {
-            String term = "%" + searchView.getQuery() + "%";
-            List<BookSourceBean> sourceBeanList = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .whereOr(BookSourceBeanDao.Properties.BookSourceName.like(term),
-                            BookSourceBeanDao.Properties.BookSourceGroup.like(term),
-                            BookSourceBeanDao.Properties.BookSourceUrl.like(term))
-                    .orderRaw(BookSourceManager.getInstance().getBookSourceSort())
-                    .list();
-            adapter.resetDataS(sourceBeanList);
-        } else {
-            adapter.resetDataS(BookSourceManager.getInstance().getAllBookSource());
-        }
+    public String getQuery() {
+        return searchView.getQuery().toString();
+    }
+
+    @Override
+    public void upMenu() {
         supportInvalidateOptionsMenu();
     }
 
@@ -218,17 +208,17 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     public void showLoading(String msg) {
-       if(progressDialog == null){
-           progressDialog = ProgressDialog.show(this, msg);
-       }else {
-           progressDialog.setMessage(msg);
-           progressDialog.show(this);
-       }
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog.show(this, msg);
+        } else {
+            progressDialog.setMessage(msg);
+            progressDialog.show(this);
+        }
     }
 
     @Override
     public void dismissHUD() {
-        if(progressDialog != null && progressDialog.isShowing()){
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }
@@ -311,11 +301,12 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     public void upGroupMenu() {
         if (groupMenu == null) return;
         groupMenu.removeGroup(R.id.source_group);
-        if (BookSourceManager.getInstance().getGroupList().size() == 0) {
+        List<String> groupList = BookSourceManager.getGroupList();
+        if (groupList.size() == 0) {
             groupItem.setVisible(false);
         } else {
             groupItem.setVisible(true);
-            for (String groupName : new ArrayList<>(BookSourceManager.getInstance().getGroupList())) {
+            for (String groupName : groupList) {
                 groupMenu.add(R.id.source_group, Menu.NONE, Menu.NONE, groupName);
             }
         }
@@ -331,8 +322,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         editor.apply();
         upSortMenu();
         setDragEnable(sort);
-        BookSourceManager.getInstance().refreshBookSource();
-        refreshBookSource();
+        mPresenter.refresh();
     }
 
     private void addBookSource() {
@@ -370,7 +360,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SourceEditActivity.EDIT_SOURCE && resultCode == RESULT_OK) {
-            refreshBookSource();
+            mPresenter.refresh();
         }
     }
 

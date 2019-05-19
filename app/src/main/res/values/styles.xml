@@ -9,7 +9,7 @@
         <item name="colorButtonNormal">@color/tv_text_secondary</item>
         <item name="actionOverflowMenuStyle">@style/AppTheme.PopupMenu.Overflow</item>
         <item name="actionOverflowButtonStyle">@style/Overflow.Menu.Button</item>
-        <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text.style</item>
+        <item name="textAppearanceLargePopupMenu">@style/Overflow.Menu.Text</item>
         <item name="android:listDivider">@drawable/bg_list_divider</item>
         <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
         <item name="android:textColorPrimary">@color/tv_text_default</item>
@@ -79,16 +79,27 @@
 
     </style>
 
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
+
+    <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu">
+        <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
+        <item name="overlapAnchor">false</item>
+        <item name="android:colorBackground">@color/card_background</item>
+    </style>
+
+    <style name="Overflow.Menu.Text" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/colorMenuText</item>
+    </style>
+
     <style name="Overflow.Menu.Button" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/colorToolBarText</item>
     </style>
 
-    <style name="CAppTheme.Navigation.Text" parent="TextAppearance.AppCompat.Large">
+    <style name="AppTheme.Navigation.Text" parent="TextAppearance.AppCompat.Large">
         <item name="android:textSize">15sp</item>
-    </style>
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
-
     </style>
 
     <style name="AppTheme.CardView.Background" parent="CardView.Light">
@@ -136,20 +147,6 @@
 
     <style name="AppTheme.ScaleDrawableTextView">
         <item name="drawableSize">16sp</item>
-    </style>
-
-    <style name="Overflow.Menu.Text.style.Read" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
-        <item name="android:textColor">@color/colorReadBarText</item>
-    </style>
-
-    <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu">
-        <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
-        <item name="overlapAnchor">false</item>
-        <item name="android:colorBackground">@color/card_background</item>
-    </style>
-
-    <style name="Overflow.Menu.Text.style" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
-        <item name="android:textColor">@color/colorMenuText</item>
     </style>
 
     <style name="Widget.AppCompat.CompoundButton.Light" parent="ThemeOverlay.AppCompat.Dark.ActionBar">

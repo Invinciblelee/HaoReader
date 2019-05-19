@@ -19,56 +19,48 @@ public class SourceController {
         if (TextUtils.isEmpty(bookSourceBean.getBookSourceName()) || TextUtils.isEmpty(bookSourceBean.getBookSourceUrl())) {
             return returnData.setErrorMsg("书源名称和URL不能为空");
         }
-        BookSourceManager.getInstance().addBookSource(bookSourceBean);
+        BookSourceManager.add(bookSourceBean);
         return returnData.setData("");
     }
 
     public ReturnData saveSources(String postData) {
         List<BookSourceBean> bookSourceBeans = GsonUtils.parseJArray(postData, BookSourceBean.class);
-        List<BookSourceBean> okSources= new ArrayList<>();
+        List<BookSourceBean> okSources = new ArrayList<>();
         for (BookSourceBean bookSourceBean : bookSourceBeans) {
             if (TextUtils.isEmpty(bookSourceBean.getBookSourceName()) || TextUtils.isEmpty(bookSourceBean.getBookSourceUrl())) {
                 continue;
             }
-            BookSourceManager.getInstance().addBookSource(bookSourceBean);
+            BookSourceManager.add(bookSourceBean);
             okSources.add(bookSourceBean);
         }
         return (new ReturnData()).setData(okSources);
     }
 
-    public ReturnData getSource(Map<String,List<String>> parameters) {
+    public ReturnData getSource(Map<String, List<String>> parameters) {
         List<String> strings = parameters.get("url");
         ReturnData returnData = new ReturnData();
-        if(strings == null){
+        if (strings == null) {
             return returnData.setErrorMsg("参数url不能为空，请指定书源地址");
         }
-        BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByUrl(strings.get(0));
-        if(bookSourceBean == null){
+        BookSourceBean bookSourceBean = BookSourceManager.getByUrl(strings.get(0));
+        if (bookSourceBean == null) {
             return returnData.setErrorMsg("未找到书源，请检查书源地址");
         }
         return returnData.setData(bookSourceBean);
     }
 
     public ReturnData getSources() {
-        List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getAllBookSource();
+        List<BookSourceBean> bookSourceBeans = BookSourceManager.getAll();
         ReturnData returnData = new ReturnData();
-        if(bookSourceBeans.size() == 0){
+        if (bookSourceBeans.size() == 0) {
             return returnData.setErrorMsg("设备书源列表为空");
         }
-        return returnData.setData(BookSourceManager.getInstance().getAllBookSource());
+        return returnData.setData(BookSourceManager.getAll());
     }
+
     public ReturnData deleteSources(String postData) {
         List<BookSourceBean> bookSourceBeans = GsonUtils.parseJArray(postData, BookSourceBean.class);
-        /*List<BookSourceBean> okSources= new ArrayList<>();*/
-        for (BookSourceBean bookSourceBean : bookSourceBeans) {
-            /*if (TextUtils.isEmpty(bookSourceBean.getBookSourceName()) || TextUtils.isEmpty(bookSourceBean.getBookSourceUrl())) {
-                continue;
-            }*/
-            BookSourceManager.getInstance().removeBookSource(bookSourceBean);
-            /*if(BookSourceManager.getBookSourceByUrl(bookSourceBean.getBookSourceUrl()) == null){
-                okSources.add(bookSourceBean);
-            }*/
-        }
+        BookSourceManager.deleteAll(bookSourceBeans);
         return (new ReturnData()).setData("已执行"/*okSources*/);
     }
 }

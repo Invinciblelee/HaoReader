@@ -95,7 +95,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         });
 
         adapter.setOnGroupItemClickListener(groupBean -> {
-            BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(groupBean.getTag());
+            BookSourceBean sourceBean = BookSourceManager.getByTag(groupBean.getTag());
             if (sourceBean != null) {
                 SourceEditActivity.startThis(FindBookActivity.this, sourceBean);
             }

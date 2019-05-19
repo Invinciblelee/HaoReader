@@ -32,16 +32,20 @@ import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
+import com.monke.monkeybook.utils.ReadAssets;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
+import com.monke.monkeybook.view.fragment.dialog.LargeTextDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.widget.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
+
+import org.mozilla.javascript.tools.jsc.Main;
 
 import java.util.List;
 
@@ -53,7 +57,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private static final int RESTORE_RESULT = 12;
     private static final int FILE_SELECT_RESULT = 13;
 
-    private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj, R.string.item_group_bd};
+    private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj,
+            R.string.item_group_bd, R.string.item_group_ys, R.string.item_group_mh};
 
     @BindView(R.id.layout_container)
     ScrimInsetsRelativeLayout container;
@@ -79,8 +84,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     private ProgressDialog progressDialog;
 
-    private BookListFragment[] fragments = new BookListFragment[4];
-
+    private BookListFragment[] fragments = new BookListFragment[6];
 
     private final OnPermissionsGrantedCallback grantedCallback = requestCode -> {
         switch (requestCode) {
@@ -111,6 +115,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             fragments[1] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[1]));
             fragments[2] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[2]));
             fragments[3] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[3]));
+            fragments[4] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[4]));
+            fragments[5] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[5]));
 
             for (BookListFragment fragment : fragments) {
                 if (fragment != null) {
@@ -173,6 +179,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected void firstRequest() {
         requestPermissions(9999);
+
+        versionUpRun();
     }
 
     @Override
@@ -209,14 +217,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
         });
 
-        versionUpRun();
     }
 
     private OnBookItemClickListenerTwo getAdapterListener() {
         return new OnBookItemClickListenerTwo() {
             @Override
             public void onClick(View view, BookShelfBean bookShelf) {
-                KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     new AlertDialog.Builder(getSupportFragmentManager())
                             .setTitle(R.string.dialog_title)
@@ -378,6 +384,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     private void upGroup(int group) {
+        group = Math.max(0, group);
+        group = Math.min(group, fragments.length - 1);
         if (this.group != group) {
             showFragment(group);
 
@@ -506,9 +514,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             SharedPreferences.Editor editor = getPreferences().edit();
             editor.putInt("versionCode", MApplication.getVersionCode());
             editor.apply();
+
+            String content = ReadAssets.getText(MainActivity.this, "updateLog.md");
+            LargeTextDialog.show(getSupportFragmentManager(), content, true);
         }
     }
-
 
     @Override
     public void clearBookshelf() {

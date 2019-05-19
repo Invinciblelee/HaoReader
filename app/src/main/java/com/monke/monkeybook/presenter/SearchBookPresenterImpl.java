@@ -19,6 +19,7 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -207,7 +208,11 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             searchBookModel.startSearch(key);
         }
     }
-
+    @Override
+    public void initSearchEngineS(String group) {
+        searchBookModel.group(group);
+        searchBookModel.notifySearchEngineChanged();
+    }
     @Override
     public void stopSearch() {
         searchBookModel.stopSearch();
@@ -272,6 +277,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
     public void sourceListChange(Boolean change) {
         searchBookModel.notifySearchEngineChanged();
+        mView.upMenu();
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.IMMERSION_CHANGE)})

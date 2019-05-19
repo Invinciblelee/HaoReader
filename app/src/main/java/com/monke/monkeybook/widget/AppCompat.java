@@ -187,8 +187,7 @@ public class AppCompat {
 
     public static void setTint(View view, int color) {
         if (view instanceof ImageView) {
-            Drawable drawable = ((ImageView) view).getDrawable();
-            setTint(drawable, color);
+            ((ImageView) view).setImageTintList(ColorStateList.valueOf(color));
         } else if (view instanceof TextView) {
             Drawable[] drawables = ((TextView) view).getCompoundDrawables();
             for (Drawable drawable : drawables) {

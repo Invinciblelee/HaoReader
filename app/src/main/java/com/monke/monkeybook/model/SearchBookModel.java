@@ -35,10 +35,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private int threadsNum;
     private int searchPageCount;
     private String searchBookType;
+    private String group;
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
-    private boolean useMy716 = true;
-    private boolean useShuqi = true;
+    private boolean useMy716;
+    private boolean useShuqi;
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
@@ -78,7 +79,6 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 model.searchListener.searchBookReset();
             }
         }
-
     }
 
     public SearchBookModel(Context context) {
@@ -110,7 +110,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (useShuqi) {
             searchEngineS.add(new SearchEngine(DefaultShuqi.TAG));
         }
-        List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
+        final List<BookSourceBean> bookSourceBeans = BookSourceManager.getEnabledByGroup(group);
         if (bookSourceBeans != null && !bookSourceBeans.isEmpty()) {
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
                 if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
@@ -213,6 +213,11 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     public SearchBookModel useShuqi(boolean useShuqi) {
         this.useShuqi = useShuqi;
+        return this;
+    }
+
+    public SearchBookModel group(String group) {
+        this.group = group;
         return this;
     }
 

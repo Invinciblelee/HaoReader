@@ -807,7 +807,7 @@ public class AudioBookPlayService extends Service {
                 .setSmallIcon(R.drawable.ic_volume_up_black_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(contentTitle)
-                .setContentText(contentText)
+                .setContentText(TextUtils.isEmpty(contentText) ? "即将为您播放" : contentText)
                 .setOngoing(true)
                 .setWhen(System.currentTimeMillis())
                 .setCustomBigContentView(remoteViews)

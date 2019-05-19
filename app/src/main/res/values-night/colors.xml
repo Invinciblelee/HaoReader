@@ -10,18 +10,11 @@
     <color name="colorAccentLight">#FFD75E</color>
     <color name="colorAccentTranslucent">#66D9AB23</color>
 
-    <color name="colorFloatingButton">@color/colorAccent</color>
-    <color name="colorFloatingButtonText">#ffffff</color>
-
     <color name="colorToolBarText">#f3f3f3</color>
     <color name="colorMenuText">#f3f3f3</color>
 
-    <color name="colorReadBar">@color/colorPrimary</color>
-    <color name="colorReadBarText">#f3f3f3</color>
-    <color name="colorReadProgress">@color/colorAccent</color>
-    <color name="colorReadProgressBack">#e3e3e3</color>
-
-    <color name="progress_back_color">#e3e3e3</color>
+    <color name="progress_back_color_light">#898989</color>
+    <color name="progress_back_color">#a1a1a1</color>
     <color name="progress_color">@color/colorAccent</color>
 
     <color name="tv_text_default">#f3f3f3</color>

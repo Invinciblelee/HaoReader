@@ -91,10 +91,11 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
     @Override
     public Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean) {
         String bid = bookShelfBean.getVariable("bookId");
-        String Data = bid + "1514984538213800000037e81a9d8f02596e1b895d07c171d5c9";
-        String Sign = MD5Utils.strToMd5By32(Data);
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String data = bid + timestamp + "800000037e81a9d8f02596e1b895d07c171d5c9";
+        String Sign = MD5Utils.strToMd5By32(data);
         HashMap<String, String> fieldMap = new HashMap<>();
-        fieldMap.put("timestamp", "1514984538213");
+        fieldMap.put("timestamp", timestamp);
         fieldMap.put("user_id", "8000000");
         fieldMap.put("bookId", bid);
         fieldMap.put("sign", Sign);
@@ -136,10 +137,11 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
     @Override
     public Observable<List<ChapterBean>> getChapterList(BookShelfBean bookShelfBean) {
         String bid = bookShelfBean.getVariable("bookId");
-        String Data = bid + "1514984538213800000037e81a9d8f02596e1b895d07c171d5c9";
-        String Sign = MD5Utils.strToMd5By32(Data);
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String data = bid + timestamp + "800000037e81a9d8f02596e1b895d07c171d5c9";
+        String Sign = MD5Utils.strToMd5By32(data);
         HashMap<String, String> fieldMap = new HashMap<>();
-        fieldMap.put("timestamp", "1514984538213");
+        fieldMap.put("timestamp", timestamp);
         fieldMap.put("user_id", "8000000");
         fieldMap.put("bookId", bid);
         fieldMap.put("sign", Sign);

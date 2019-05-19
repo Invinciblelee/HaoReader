@@ -142,7 +142,7 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             activity.upSearchView(dataList.size());
         });
         holder.topView.setOnClickListener(view -> {
-            setAllDataList(BookSourceManager.getInstance().getAllBookSource());
+            setAllDataList(BookSourceManager.getAll());
             BookSourceBean moveData = dataList.get(position);
             dataList.remove(position);
             notifyItemRemoved(position);

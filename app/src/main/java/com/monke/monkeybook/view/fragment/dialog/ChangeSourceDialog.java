@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -169,7 +168,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public void loadMoreSearchBook(List<SearchBookBean> value) {
-        ListUtils.filter(value, searchBookBean -> searchBookBean.isSimilarTo(bookInfo));
+        ListUtils.filter(value, searchBookBean -> searchBookBean.isSimilarTo(bookInfo, selectCover));
         addSearchBook(value);
     }
 
@@ -251,10 +250,10 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     private void incrementSourceWeightBySelection(SearchBookBean searchBook) {
         Schedulers.single().createWorker().schedule(() -> {
-            BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(searchBook.getTag());
+            BookSourceBean sourceBean = BookSourceManager.getByTag(searchBook.getTag());
             if (sourceBean != null) {
                 sourceBean.increaseWeightBySelection();
-                BookSourceManager.getInstance().saveBookSource(sourceBean);
+                BookSourceManager.save(sourceBean);
             }
         });
     }

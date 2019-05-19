@@ -4,6 +4,8 @@ package com.monke.monkeybook.presenter;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -32,7 +34,6 @@ import com.monke.monkeybook.service.DownloadService;
 
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
@@ -106,7 +107,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     if (TextUtils.isEmpty(bookSource.getBookSourceGroup()))
                         bookSource.setBookSourceGroup("禁用");
                     mView.toast("已禁用" + bookSource.getBookSourceName());
-                    BookSourceManager.getInstance().saveBookSource(bookSource);
+                    BookSourceManager.save(bookSource);
                     break;
             }
         } catch (Exception e) {
@@ -241,7 +242,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     }
                     return Observable.error(new Exception("目录获取失败"));
                 })
-                .doOnNext(bookShelfBean -> bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelfBean.getTag()))
+                .doOnNext(bookShelfBean -> bookSource = BookSourceManager.getByTag(bookShelfBean.getTag()))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
                     @Override
@@ -317,7 +318,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             mView.upMenu();
         } else {
             Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-                bookSource = BookSourceManager.getInstance().getBookSourceByTag(bookShelf.getTag());
+                bookSource = BookSourceManager.getByTag(bookShelf.getTag());
                 e.onNext(bookSource != null);
                 e.onComplete();
             }).subscribeOn(Schedulers.single())

@@ -14,20 +14,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapter.MyViewHolder> {
 
@@ -79,12 +78,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvLast.setText(lastChapterName);
         }
 
-        if (item.getHasUpdate()) {
-            holder.tvHasNew.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvHasNew.setVisibility(View.INVISIBLE);
-        }
-
         holder.content.setOnClickListener(v -> onClick(v, item));
 
         if (getBookshelfPx() == 2) {
@@ -104,6 +97,13 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         } else {
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
+
+        if (item.getHasUpdate()) {
+            holder.tvHasNew.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     private SpannableStringBuilder getBookName(String name, int newChapters) {

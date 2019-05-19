@@ -58,7 +58,7 @@ public class CheckSourceService extends Service {
         super.onCreate();
         threadsNum = AppConfigHelper.get().getInt(this.getString(R.string.pk_threads_num), 6);
         compositeDisposable = new CompositeDisposable();
-        bookSourceBeanList = BookSourceManager.getInstance().getAllBookSource();
+        bookSourceBeanList = BookSourceManager.getAll();
         updateNotification(0);
         startCheck();
     }
@@ -81,7 +81,7 @@ public class CheckSourceService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(executor != null){
+        if (executor != null) {
             executor.shutdown();
             executor = null;
         }
@@ -205,8 +205,7 @@ public class CheckSourceService extends Service {
                             .subscribe(getObserver());
                 } catch (Exception exception) {
                     sourceBean.setBookSourceGroup("失效");
-                    BookSourceManager.getInstance().addBookSource(sourceBean);
-                    BookSourceManager.getInstance().refreshBookSource();
+                    BookSourceManager.add(sourceBean);
                     nextCheck();
                 }
             } else {
@@ -221,8 +220,7 @@ public class CheckSourceService extends Service {
                             .subscribe(getObserver());
                 } catch (Exception e) {
                     sourceBean.setBookSourceGroup("失效");
-                    BookSourceManager.getInstance().addBookSource(sourceBean);
-                    BookSourceManager.getInstance().refreshBookSource();
+                    BookSourceManager.add(sourceBean);
                     nextCheck();
                 }
             }
@@ -239,8 +237,7 @@ public class CheckSourceService extends Service {
                 public void onNext(Object value) {
                     if (Objects.equals(sourceBean.getBookSourceGroup(), "失效")) {
                         sourceBean.setBookSourceGroup("");
-                        BookSourceManager.getInstance().addBookSource(sourceBean);
-                        BookSourceManager.getInstance().refreshBookSource();
+                        BookSourceManager.add(sourceBean);
                     }
                     nextCheck();
                 }
@@ -249,8 +246,7 @@ public class CheckSourceService extends Service {
                 public void onError(Throwable e) {
                     sourceBean.setBookSourceGroup("失效");
                     sourceBean.setSerialNumber(10000 + checkIndex);
-                    BookSourceManager.getInstance().addBookSource(sourceBean);
-                    BookSourceManager.getInstance().refreshBookSource();
+                    BookSourceManager.add(sourceBean);
                     nextCheck();
                 }
 

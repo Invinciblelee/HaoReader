@@ -170,18 +170,18 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     private void incrementSourceWeight(String tag, long elapsedTime) {
-        BookSourceBean bookSourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
+        BookSourceBean bookSourceBean = BookSourceManager.getByTag(tag);
         if (bookSourceBean != null && elapsedTime < 10000) {
             bookSourceBean.increaseWeight((int) (10000 / (1000 + elapsedTime)));
-            BookSourceManager.getInstance().saveBookSource(bookSourceBean);
+            BookSourceManager.save(bookSourceBean);
         }
     }
 
     private void decrementSourceWeight(String tag) {
-        BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(tag);
+        BookSourceBean sourceBean = BookSourceManager.getByTag(tag);
         if (sourceBean != null) {
             sourceBean.increaseWeight(-100);
-            BookSourceManager.getInstance().saveBookSource(sourceBean);
+            BookSourceManager.save(sourceBean);
         }
     }
 

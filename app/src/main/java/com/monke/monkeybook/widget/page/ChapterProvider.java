@@ -12,7 +12,6 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
-import com.monke.monkeybook.help.ErrorReport;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.IOUtils;

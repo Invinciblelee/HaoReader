@@ -22,7 +22,7 @@
             android:layout_height="?attr/actionBarSize"
             android:transitionName="sharedView"
             app:contentInsetStartWithNavigation="0dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
 
             <FrameLayout
@@ -33,19 +33,19 @@
                     android:id="@+id/tv_search_field"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="7dp"
                     android:layout_marginBottom="7dp"
+                    android:background="@drawable/bg_search_field"
                     android:drawablePadding="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:includeFontPadding="false"
-                    android:text="@string/search_label"
-                    app:drawableStartCompat="@drawable/ic_search_black_24dp"
-                    app:drawableTint="@color/white"
-                    app:drawableScale="1.05"
                     android:gravity="center_vertical"
+                    android:includeFontPadding="false"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:background="@drawable/bg_search_field"/>
+                    android:text="@string/search_label"
+                    app:drawableScale="1.05"
+                    app:drawableStartCompat="@drawable/ic_search_black_24dp"
+                    app:drawableTint="@color/white" />
             </FrameLayout>
 
 
@@ -57,15 +57,16 @@
         android:id="@+id/book_list_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:layout_below="@id/appBar" />
+        android:layout_below="@id/appBar"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
 
-    <include layout="@layout/view_floating_menu"
-        app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior"
+    <include
         android:id="@+id/book_shelf_menu"
+        layout="@layout/view_floating_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"/>
+        android:layout_gravity="end|bottom"
+        app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,7 +29,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -214,23 +215,29 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Window window = getWindow();
         if (savedInstanceState != null) {
             chapterProgressMax = savedInstanceState.getInt("chapterPageMax");
             chapterDurProgress = savedInstanceState.getInt("chapterDurPage");
             chapterDraggable = savedInstanceState.getBoolean("chapterDraggable");
             aloudStatus = savedInstanceState.getInt("aloudStatus");
             isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
-            getWindow().setWindowAnimations(isWindowAnimTranslucent ? R.style.Animation_Activity_Translucent : R.style.Animation_Activity);
+            window.setWindowAnimations(isWindowAnimTranslucent ? R.style.Animation_Activity_Translucent : R.style.Animation_Activity);
         } else {
             if (getIntent().getBooleanExtra("fromDetail", false)) {
-                getWindow().setWindowAnimations(R.style.Animation_Activity_Translucent);
+                window.setWindowAnimations(R.style.Animation_Activity_Translucent);
                 isWindowAnimTranslucent = true;
             } else {
-                getWindow().setWindowAnimations(R.style.Animation_Activity);
+                window.setWindowAnimations(R.style.Animation_Activity);
             }
         }
         readBookControl.initPageConfiguration();
         screenTimeOut = getResources().getIntArray(R.array.screen_time_out_value)[readBookControl.getScreenTimeOut()];
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            window.setAttributes(params);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -459,7 +466,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorReadBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -495,7 +502,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     public void updateTitle(String title) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            getSupportActionBar().setTitle(title);
+            actionBar.setTitle(title);
         }
     }
 
@@ -1033,15 +1040,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_book_read_activity, menu);
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-            if (item.requiresOverflow()) {
-                AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
-            } else {
-                AppCompat.setTint(item, getResources().getColor(R.color.colorReadBarText));
-            }
-        }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

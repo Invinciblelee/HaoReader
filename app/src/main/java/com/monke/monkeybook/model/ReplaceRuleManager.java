@@ -22,93 +22,69 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ReplaceRuleManager extends BaseModelImpl {
-    private List<ReplaceRuleBean> replaceRuleBeansEnabled;
-    private List<ReplaceRuleBean> replaceRuleBeansAll;
 
-    private ReplaceRuleManager() {
+    private static List<ReplaceRuleBean> sReplaceRuleBeansEnabled;
 
-    }
-
-    private volatile static ReplaceRuleManager mInstance;
-
-    public static ReplaceRuleManager getInstance() {
-        if (mInstance == null) {
-            synchronized (ReplaceRuleManager.class) {
-                if (mInstance == null) {
-                    mInstance = new ReplaceRuleManager();
-                }
-            }
-        }
-        return mInstance;
-    }
-
-    public List<ReplaceRuleBean> getEnabled() {
-        if (replaceRuleBeansEnabled == null) {
-            replaceRuleBeansEnabled = DbHelper.getInstance().getDaoSession()
+    public static List<ReplaceRuleBean> getEnabled() {
+        if (sReplaceRuleBeansEnabled == null) {
+            sReplaceRuleBeansEnabled = DbHelper.getInstance().getDaoSession()
                     .getReplaceRuleBeanDao().queryBuilder()
                     .where(ReplaceRuleBeanDao.Properties.Enable.eq(true))
                     .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                     .list();
         }
-        return replaceRuleBeansEnabled;
+        return sReplaceRuleBeansEnabled;
     }
 
-    public List<ReplaceRuleBean> getAll() {
-        if (replaceRuleBeansAll == null) {
-            replaceRuleBeansAll = DbHelper.getInstance().getDaoSession()
-                    .getReplaceRuleBeanDao().queryBuilder()
-                    .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
-                    .list();
-        }
-        return replaceRuleBeansAll;
+    public static long getEnabledCount() {
+        return getEnabled().size();
     }
 
-    public void saveData(ReplaceRuleBean replaceRuleBean) {
-        if (replaceRuleBean.getSerialNumber() == 0) {
-            replaceRuleBean.setSerialNumber(replaceRuleBeansAll.size() + 1);
-        }
-        DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().insertOrReplace(replaceRuleBean);
-        refreshDataS();
-    }
-
-    public void delData(ReplaceRuleBean replaceRuleBean) {
-        DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
-        refreshDataS();
-    }
-
-    public void saveDataS(List<ReplaceRuleBean> replaceRuleBeans) {
-        if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
-            DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().insertOrReplaceInTx(replaceRuleBeans);
-            refreshDataS();
-        }
-    }
-
-    public void delDataS(List<ReplaceRuleBean> replaceRuleBeans) {
-        for (ReplaceRuleBean replaceRuleBean : replaceRuleBeans) {
-            DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
-        }
-        refreshDataS();
-    }
-
-    private void refreshDataS() {
-        replaceRuleBeansEnabled = DbHelper.getInstance().getDaoSession()
+    public static List<ReplaceRuleBean> getAll() {
+        sReplaceRuleBeansEnabled = DbHelper.getInstance().getDaoSession()
                 .getReplaceRuleBeanDao().queryBuilder()
                 .where(ReplaceRuleBeanDao.Properties.Enable.eq(true))
                 .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                 .list();
-        replaceRuleBeansAll = DbHelper.getInstance().getDaoSession()
+
+        return DbHelper.getInstance().getDaoSession()
                 .getReplaceRuleBeanDao().queryBuilder()
                 .orderAsc(ReplaceRuleBeanDao.Properties.SerialNumber)
                 .list();
     }
 
-    public Observable<Boolean> importReplaceRuleFromWww(String url) {
+    public static void save(ReplaceRuleBean replaceRuleBean) {
+        if (replaceRuleBean.getSerialNumber() == 0) {
+            long count = DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().count();
+            replaceRuleBean.setSerialNumber((int) count + 1);
+        }
+        DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().insertOrReplace(replaceRuleBean);
+    }
+
+    public static void delete(ReplaceRuleBean replaceRuleBean) {
+        if (replaceRuleBean == null) return;
+        DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
+    }
+
+    public static void saveAll(List<ReplaceRuleBean> replaceRuleBeans) {
+        if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
+            DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().insertOrReplaceInTx(replaceRuleBeans);
+        }
+    }
+
+    public static void deleteAll(List<ReplaceRuleBean> replaceRuleBeans) {
+        for (ReplaceRuleBean replaceRuleBean : replaceRuleBeans) {
+            DbHelper.getInstance().getDaoSession().getReplaceRuleBeanDao().delete(replaceRuleBean);
+        }
+    }
+
+    public static Observable<Boolean> importFromNet(String url) {
         try {
             url = url.trim();
             if (URLUtils.isUrl(url)) {
                 AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
                 return SimpleModel.getResponse(analyzeUrl)
-                        .flatMap(rsp -> importReplaceRuleO(rsp.body()))
+                        .flatMap(rsp -> importOne(rsp.body()))
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -118,17 +94,12 @@ public class ReplaceRuleManager extends BaseModelImpl {
         }
     }
 
-    private Observable<Boolean> importReplaceRuleO(String json) {
+    private static Observable<Boolean> importOne(String json) {
         return Observable.create(e -> {
-            try {
-                List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
-                }.getType());
-                saveDataS(replaceRuleBeans);
-                e.onNext(true);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                e.onNext(false);
-            }
+            List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
+            }.getType());
+            saveAll(replaceRuleBeans);
+            e.onNext(true);
             e.onComplete();
         });
     }

@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
@@ -17,9 +20,6 @@ import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapter.MyViewHolder> {
 
@@ -48,11 +48,6 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
                         .centerCrop().placeholder(R.drawable.img_cover_default)
                         .error(R.drawable.img_cover_default))
                 .into(holder.ivCover);
-        if (item.getHasUpdate()) {
-            holder.tvHasNew.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvHasNew.setVisibility(View.INVISIBLE);
-        }
 
         holder.content.setOnClickListener(v -> onClick(v, item));
 
@@ -73,6 +68,13 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         } else {
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
+
+        if (item.getHasUpdate()) {
+            holder.tvHasNew.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

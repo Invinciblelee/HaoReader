@@ -3,13 +3,22 @@ package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,6 +27,8 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
+import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -28,12 +39,8 @@ import com.monke.monkeybook.widget.explosion_field.ExplosionField;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -53,6 +60,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     RefreshRecyclerView rfRvSearchBooks;
     @BindView(R.id.fabStop)
     FloatingActionButton fabStop;
+
+    private String group;
 
     private ExplosionField explosionField;
     private SearchBookAdapter searchBookAdapter;
@@ -118,6 +127,20 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void onCreateActivity() {
         setContentView(R.layout.activity_search_book);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            group = savedInstanceState.getString("group");
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("group", group);
     }
 
     @Override
@@ -195,16 +218,48 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void initMenu(Menu menu) {
+        if (menu == null) return;
+        MenuItem item = menu.findItem(R.id.action_outer_source);
+        SubMenu subMenu = item.getSubMenu();
+        subMenu.removeGroup(R.id.book_source_group);
+        if (BookSourceManager.getEnabledCount() > 0) {
+            item.setVisible(true);
+            item.setEnabled(true);
+            MenuItem subItem = subMenu.add(R.id.book_source_group, Menu.NONE, Menu.NONE, R.string.book_all_source);
+            if (group == null) {
+                subItem.setChecked(true);
+            }
+            List<String> groupList = BookSourceManager.getEnableGroupList();
+            for (String groupName : groupList) {
+                subItem = subMenu.add(R.id.book_source_group, Menu.NONE, Menu.NONE, groupName);
+                if (TextUtils.equals(group, subItem.getTitle())) {
+                    subItem.setChecked(true);
+                }
+            }
+            subMenu.setGroupCheckable(R.id.book_source_group, true, true);
+        } else {
+            item.setVisible(false);
+            item.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void upMenu() {
+        supportInvalidateOptionsMenu();
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem my716 = menu.findItem(R.id.action_book_my716);
         if (my716 != null) {
-            my716.setChecked(getPreferences().getBoolean("useMy716", true));
+            my716.setChecked(AppConfigHelper.get().getBoolean("useMy716", true));
         }
         MenuItem shuqi = menu.findItem(R.id.action_book_shuqi);
         if (shuqi != null) {
-            shuqi.setChecked(getPreferences().getBoolean("useShuqi", true));
+            shuqi.setChecked(AppConfigHelper.get().getBoolean("useShuqi", true));
         }
+        initMenu(menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -218,17 +273,28 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 break;
             case R.id.action_book_my716:
                 item.setChecked(!item.isChecked());
-                getPreferences().edit().putBoolean("useMy716", item.isChecked()).apply();
+                AppConfigHelper.get().edit().putBoolean("useMy716", item.isChecked()).apply();
                 mPresenter.useMy716(item.isChecked());
                 break;
             case R.id.action_book_shuqi:
                 item.setChecked(!item.isChecked());
-                getPreferences().edit().putBoolean("useShuqi", item.isChecked()).apply();
+                AppConfigHelper.get().edit().putBoolean("useShuqi", item.isChecked()).apply();
                 mPresenter.useShuqi(item.isChecked());
                 break;
             case android.R.id.home:
                 finish();
                 break;
+            default:
+                if (item.getGroupId() == R.id.book_source_group) {
+                    item.setChecked(true);
+                    if (Objects.equals(getString(R.string.book_all_source), item.getTitle().toString())) {
+                        group = null;
+                        mPresenter.initSearchEngineS(null);
+                    } else {
+                        group = item.getTitle().toString();
+                        mPresenter.initSearchEngineS(item.getTitle().toString());
+                    }
+                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -429,4 +495,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 .setPositiveButton(R.string.goto_select, (dialog, which) -> BookSourceActivity.startThis(SearchBookActivity.this))
                 .show();
     }
+
+
 }

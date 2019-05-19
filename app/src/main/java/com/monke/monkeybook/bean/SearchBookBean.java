@@ -48,7 +48,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     @Transient
     private List<String> tags;
     @Transient
-    private final VariableStoreImpl variableStore = new VariableStoreImpl();
+    private VariableStoreImpl variableStore;
 
     public SearchBookBean() {
     }
@@ -291,11 +291,11 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         this.addTime = addTime;
     }
 
-    public boolean isSimilarTo(BookInfoBean book) {
+    public boolean isSimilarTo(BookInfoBean book, boolean ignoreType) {
         if (book == null) {
             return false;
         }
-        return TextUtils.equals(bookType, book.getBookType())
+        return (ignoreType || TextUtils.equals(bookType, book.getBookType()))
                 && TextUtils.equals(name, book.getName())
                 && TextUtils.equals(author, book.getAuthor());
     }
@@ -344,16 +344,18 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     @Override
     public void setVariableString(String variableString) {
         this.variableString = variableString;
-        variableStore.setVariableString(variableString);
     }
 
     @Override
     public Map<String, String> getVariableMap() {
-        return variableStore.getVariableMap();
+        return variableStore == null ? null : variableStore.getVariableMap();
     }
 
     @Override
     public void putVariableMap(Map<String, String> variableMap) {
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(variableString);
+        }
         variableStore.putVariableMap(variableMap);
         String variableString = variableStore.getVariableString();
         if (variableString != null) {
@@ -363,6 +365,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Override
     public void putVariable(String key, String value) {
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(variableString);
+        }
         variableStore.putVariable(key, value);
         String variableString = variableStore.getVariableString();
         if (variableString != null) {
@@ -372,6 +377,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Override
     public String getVariable(String key) {
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(variableString);
+        }
         return variableStore.getVariable(key);
     }
 

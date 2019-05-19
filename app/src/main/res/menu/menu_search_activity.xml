@@ -30,6 +30,7 @@
 
 
     <item
+        android:id="@+id/action_outer_source"
         android:icon="@drawable/ic_source_manager_black_24dp"
         android:title="@string/book_outer_source"
         >

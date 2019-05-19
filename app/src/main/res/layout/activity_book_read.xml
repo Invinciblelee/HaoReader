@@ -26,7 +26,7 @@
             android:fitsSystemWindows="true"
             android:visibility="invisible"
             app:appConsumeInsets="false"
-            app:appInsetForeground="@color/colorReadBar">
+            app:appInsetForeground="@color/colorPrimary">
 
 
             <LinearLayout
@@ -41,7 +41,7 @@
                     android:id="@+id/appBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorReadBar"
+                    android:background="@color/colorPrimary"
                     android:orientation="vertical"
                     android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -50,8 +50,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:theme="@style/AppTheme.AppBarOverlay"
+                        app:popupTheme="@style/AppTheme.PopupOverlay"
                         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-                        app:titleTextColor="@color/colorReadBarText" />
+                        app:titleTextColor="@color/colorToolBarText" />
 
                     <View
                         android:id="@+id/atv_divider"
@@ -77,7 +78,7 @@
                             android:paddingStart="10dp"
                             android:paddingEnd="3dp"
                             android:singleLine="true"
-                            android:textColor="@color/colorReadBarText"
+                            android:textColor="@color/colorToolBarText"
                             android:textSize="12sp" />
 
                         <TextView
@@ -88,7 +89,7 @@
                             android:includeFontPadding="false"
                             android:paddingStart="3dp"
                             android:paddingEnd="10dp"
-                            android:textColor="@color/colorReadBarText"
+                            android:textColor="@color/colorToolBarText"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -121,8 +122,8 @@
                         android:layout_margin="12dp"
                         android:contentDescription="@string/set_timer"
                         android:src="@drawable/ic_timer_black_24dp"
-                        android:tint="@color/colorReadBarText"
-                        app:backgroundTint="@color/colorReadBar"
+                        android:tint="@color/colorToolBarText"
+                        app:backgroundTint="@color/colorPrimary"
                         app:elevation="3dp"
                         app:fabSize="mini" />
 
@@ -130,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        app:cardBackgroundColor="@color/colorReadBar"
+                        app:cardBackgroundColor="@color/colorPrimary"
                         app:cardElevation="3dp">
 
                         <TextView
@@ -143,7 +144,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
                             android:text="@string/read_aloud_timer"
-                            android:textColor="@color/colorReadBarText" />
+                            android:textColor="@color/colorToolBarText" />
                     </androidx.cardview.widget.CardView>
 
                 </LinearLayout>
@@ -164,8 +165,8 @@
                         android:layout_margin="12dp"
                         android:contentDescription="@string/read_aloud"
                         android:src="@drawable/ic_headset_black_24dp"
-                        android:tint="@color/colorReadBarText"
-                        app:backgroundTint="@color/colorReadBar"
+                        android:tint="@color/colorToolBarText"
+                        app:backgroundTint="@color/colorPrimary"
                         app:elevation="3dp"
                         app:fabSize="mini" />
 
@@ -181,8 +182,8 @@
                         android:layout_margin="12dp"
                         android:contentDescription="@string/auto_next_page"
                         android:src="@drawable/ic_auto_page_black_24dp"
-                        android:tint="@color/colorReadBarText"
-                        app:backgroundTint="@color/colorReadBar"
+                        android:tint="@color/colorToolBarText"
+                        app:backgroundTint="@color/colorPrimary"
                         app:elevation="3dp"
                         app:fabSize="mini" />
 
@@ -198,8 +199,8 @@
                         android:layout_margin="12dp"
                         android:contentDescription="@string/replace_rule_title"
                         android:src="@drawable/ic_find_replace_black_24dp"
-                        android:tint="@color/colorReadBarText"
-                        app:backgroundTint="@color/colorReadBar"
+                        android:tint="@color/colorToolBarText"
+                        app:backgroundTint="@color/colorPrimary"
                         app:elevation="3dp"
                         app:fabSize="mini" />
 
@@ -215,8 +216,8 @@
                         android:layout_margin="12dp"
                         android:contentDescription="@string/night_theme"
                         android:src="@drawable/ic_night_border_black_24dp"
-                        android:tint="@color/colorReadBarText"
-                        app:backgroundTint="@color/colorReadBar"
+                        android:tint="@color/colorToolBarText"
+                        app:backgroundTint="@color/colorPrimary"
                         app:elevation="3dp"
                         app:fabSize="mini" />
 
@@ -228,9 +229,9 @@
                     android:id="@+id/rlNavigationBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
                     android:clickable="true"
-                    android:focusable="true"
-                    android:background="@color/colorReadBar">
+                    android:focusable="true">
                     <!--章节设置-->
                     <TextView
                         android:id="@+id/tv_pre"
@@ -244,7 +245,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:text="@string/previous_chapter"
-                        android:textColor="@color/colorReadBarText"
+                        android:textColor="@color/colorToolBarText"
                         android:textSize="14sp" />
 
                     <androidx.appcompat.widget.AppCompatSeekBar
@@ -256,9 +257,9 @@
                         android:layout_gravity="center_vertical"
                         android:layout_toStartOf="@id/tv_next"
                         android:layout_toEndOf="@id/tv_pre"
-                        android:progressBackgroundTint="@color/colorReadProgressBack"
-                        android:progressTint="@color/colorReadProgress"
-                        android:thumbTint="@color/colorReadProgress" />
+                        android:progressBackgroundTint="@color/progress_back_color_light"
+                        android:progressTint="@color/progress_color"
+                        android:thumbTint="@color/progress_color" />
 
                     <TextView
                         android:id="@+id/tv_next"
@@ -272,7 +273,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:text="@string/next_chapter"
-                        android:textColor="@color/colorReadBarText"
+                        android:textColor="@color/colorToolBarText"
                         android:textSize="14sp" />
 
                     <LinearLayout
@@ -302,9 +303,9 @@
                             android:focusable="true"
                             android:gravity="center_horizontal"
                             android:text="@string/table_of_contents"
-                            android:textColor="@color/colorReadBarText"
+                            android:textColor="@color/colorToolBarText"
                             android:textSize="12sp"
-                            app:drawableTint="@color/colorReadBarText" />
+                            app:drawableTint="@color/colorToolBarText" />
 
                         <Space
                             android:layout_width="0dp"
@@ -325,9 +326,9 @@
                             android:focusable="true"
                             android:gravity="center_horizontal"
                             android:text="@string/adjust"
-                            android:textColor="@color/colorReadBarText"
+                            android:textColor="@color/colorToolBarText"
                             android:textSize="12sp"
-                            app:drawableTint="@color/colorReadBarText" />
+                            app:drawableTint="@color/colorToolBarText" />
 
                         <Space
                             android:layout_width="0dp"
@@ -347,9 +348,9 @@
                             android:focusable="true"
                             android:gravity="center_horizontal"
                             android:text="@string/interface_setting"
-                            android:textColor="@color/colorReadBarText"
+                            android:textColor="@color/colorToolBarText"
                             android:textSize="12sp"
-                            app:drawableTint="@color/colorReadBarText" />
+                            app:drawableTint="@color/colorToolBarText" />
 
                         <Space
                             android:layout_width="0dp"
@@ -369,9 +370,9 @@
                             android:focusable="true"
                             android:gravity="center_horizontal"
                             android:text="@string/setting"
-                            android:textColor="@color/colorReadBarText"
+                            android:textColor="@color/colorToolBarText"
                             android:textSize="12sp"
-                            app:drawableTint="@color/colorReadBarText" />
+                            app:drawableTint="@color/colorToolBarText" />
 
                         <Space
                             android:layout_width="0dp"
@@ -390,10 +391,10 @@
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="3dp"
             android:maxHeight="3dp"
+            android:minHeight="3dp"
             android:progressBackgroundTint="@color/transparent"
-            android:progressTint="@color/colorReadProgress"
+            android:progressTint="@color/progress_color"
             android:visibility="invisible" />
 
     </FrameLayout>

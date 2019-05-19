@@ -18,6 +18,8 @@ public interface ReplaceRuleContract {
 
         void delData(List<ReplaceRuleBean> replaceRuleBeans);
 
+        void editData(ReplaceRuleBean replaceRuleBean);
+
         void importDataS(File file);
 
         void importDataS(String url);
@@ -25,9 +27,13 @@ public interface ReplaceRuleContract {
 
     interface View extends IView {
 
-        void refresh();
+        void refresh(List<ReplaceRuleBean> replaceRuleBeans);
 
         Snackbar getSnackBar(String msg);
+
+        void showLoading(String msg);
+
+        void dismissLoading();
 
         void showSnackBar(String msg);
     }

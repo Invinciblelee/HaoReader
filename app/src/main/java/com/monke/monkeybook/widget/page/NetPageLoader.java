@@ -1,7 +1,5 @@
 package com.monke.monkeybook.widget.page;
 
-import android.util.Log;
-
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
