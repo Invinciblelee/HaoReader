@@ -11,7 +11,6 @@ import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
-import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
@@ -150,7 +149,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 URL url = new URL(bookUrl);
                 BookShelfBean bookShelfBean = new BookShelfBean();
                 bookShelfBean.setGroup(0);
-                bookShelfBean.setTag(String.format("%s://%s", url.getProtocol(), url.getHost()));
+                bookShelfBean.setTag(StringUtils.getBaseUrl(bookUrl));
                 bookShelfBean.setNoteUrl(url.toString());
                 bookShelfBean.setDurChapter(0);
                 bookShelfBean.setDurChapterPage(0);
@@ -160,22 +159,30 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             e.onComplete();
         })
                 .subscribeOn(Schedulers.single())
+                .flatMap(bookShelfBean -> {
+                    if (bookShelfBean.getTag() == null) {
+                        return Observable.error(new Exception("exists"));
+                    } else {
+                        return getBook(bookShelfBean);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
-                        if (bookShelfBean.getTag() != null) {
-                            getBook(bookShelfBean);
-                        } else {
-                            mView.dismissHUD();
-                            mView.showSnackBar("该书已在书架中");
-                        }
+                        mView.dismissHUD();
+                        RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
+                        mView.showSnackBar("添加书籍成功");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.showSnackBar("书籍添加失败");
+                        if ("exists".equals(e.getMessage())) {
+                            mView.showSnackBar("该书已在书架中");
+                        } else {
+                            mView.showSnackBar("书籍添加失败");
+                        }
                     }
                 });
     }
@@ -286,44 +293,22 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 });
     }
 
-    private void getBook(BookShelfBean bookShelfBean) {
-        WebBookModel.getInstance()
-                .getBookInfo(bookShelfBean)
-                .subscribeOn(Schedulers.single())
-                .flatMap(bookShelfBean1 -> WebBookModel.getInstance().getChapterList(bookShelfBean1))
-                .flatMap(this::saveBookToShelfO)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<BookShelfBean>() {
-                    @Override
-                    public void onNext(BookShelfBean value) {
-                        mView.dismissHUD();
-                        if (value.getBookInfoBean().getChapterListUrl() == null) {
-                            mView.showSnackBar("添加书籍失败");
-                        } else {
-                            //成功   //发送RxBus
-                            RxBus.get().post(RxBusTag.HAD_ADD_BOOK, value);
-                            mView.showSnackBar("添加书籍成功");
-                        }
+    private Observable<BookShelfBean> getBook(BookShelfBean bookShelf) {
+        return WebBookModel.getInstance()
+                .getBookInfo(bookShelf)
+                .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
+                .flatMap(bookShelfBean -> {
+                    if (bookShelfBean.getBookInfoBean().getChapterListUrl() == null) {
+                        return Observable.error(new Exception("add book failed"));
                     }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.dismissHUD();
-                        mView.showSnackBar("添加书籍失败");
-                    }
+                    return Observable.create(e -> {
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                        e.onNext(bookShelfBean);
+                        e.onComplete();
+                    });
                 });
     }
 
-    /**
-     * 保存数据
-     */
-    private Observable<BookShelfBean> saveBookToShelfO(BookShelfBean bookShelfBean) {
-        return Observable.create(e -> {
-            BookshelfHelp.saveBookToShelf(bookShelfBean);
-            e.onNext(bookShelfBean);
-            e.onComplete();
-        });
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -41,7 +41,6 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final BookShelfBean item = getItem(holder.getLayoutPosition());
-        assert item != null;
         holder.tvName.setText(item.getBookInfoBean().getName());
         Glide.with(getContext()).load(item.getBookInfoBean().getRealCoverUrl())
                 .apply(new RequestOptions().dontAnimate()
@@ -69,7 +68,7 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
 
-        if (item.getHasUpdate()) {
+        if (item.getHasUpdate() && !item.isLocalBook()) {
             holder.tvHasNew.setVisibility(View.VISIBLE);
         } else {
             holder.tvHasNew.setVisibility(View.INVISIBLE);

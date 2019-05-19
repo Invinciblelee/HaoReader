@@ -98,7 +98,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
 
-        if (item.getHasUpdate()) {
+        if (item.getHasUpdate() && !item.isLocalBook()) {
             holder.tvHasNew.setVisibility(View.VISIBLE);
         } else {
             holder.tvHasNew.setVisibility(View.INVISIBLE);

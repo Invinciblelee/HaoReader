@@ -221,7 +221,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         super.onDestroy();
         stopRotationAnim();
         RxBus.get().unregister(this);
-        AudioBookPlayService.stopIfNotShelfBook(this);
+        AudioBookPlayService.stopNotShelfExists(this);
     }
 
     @Override

@@ -204,17 +204,20 @@ public class AudioBookPlayService extends Service {
         context.startService(intent);
     }
 
-    public static void stop(Context context) {
-        if (!running) return;
-        Intent intent = new Intent(context, AudioBookPlayService.class);
-        context.stopService(intent);//android8.0以后不能后台启动
-    }
-
-    public static void stopIfNotShelfBook(Context context) {
+    public static void stopNotShelfExists(Context context) {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_STOP_NOT_IN_SHELF);
         context.startService(intent);
+    }
+
+    public static void stop(Context context) {
+        if (!running) return;
+        try {
+            Intent intent = new Intent(context, AudioBookPlayService.class);
+            context.stopService(intent);
+        }catch (Exception ignore){
+        }
     }
 
     @Nullable

@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
-import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -32,18 +31,16 @@ import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.utils.ReadAssets;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.BookListFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
-import com.monke.monkeybook.view.fragment.dialog.LargeTextDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
 
@@ -82,7 +79,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     private ProgressDialog progressDialog;
 
-    private BookListFragment[] fragments = new BookListFragment[6];
+    private BookListFragment[] fragments = new BookListFragment[4];
 
     private final OnPermissionsGrantedCallback grantedCallback = requestCode -> {
         switch (requestCode) {
@@ -113,8 +110,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             fragments[1] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[1]));
             fragments[2] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[2]));
             fragments[3] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[3]));
-            fragments[4] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[4]));
-            fragments[5] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[5]));
 
             for (BookListFragment fragment : fragments) {
                 if (fragment != null) {
@@ -177,8 +172,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected void firstRequest() {
         requestPermissions(9999);
-
-        versionUpRun();
     }
 
     @Override
@@ -504,18 +497,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 mPresenter.importBooks(paths);
             }
         });
-    }
-
-    private void versionUpRun() {
-        if (getPreferences().getInt("versionCode", 0) != MApplication.getVersionCode()) {
-            //保存版本号
-            SharedPreferences.Editor editor = getPreferences().edit();
-            editor.putInt("versionCode", MApplication.getVersionCode());
-            editor.apply();
-
-            String content = ReadAssets.getText(MainActivity.this, "updateLog.md");
-            LargeTextDialog.show(getSupportFragmentManager(), content, true);
-        }
     }
 
     @Override
