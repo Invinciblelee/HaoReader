@@ -3,7 +3,6 @@ package com.monke.monkeybook.model;
 import android.database.Cursor;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -11,6 +10,7 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
@@ -76,6 +76,20 @@ public class BookSourceManager extends BaseModelImpl {
         } while (cursor.moveToNext());
         Collections.sort(groupList);
         return groupList;
+    }
+
+    public static List<BookSourceBean> fuzzyQuery(String query) {
+        if (StringUtils.isNotBlank(query)) {
+            String term = "%" + query + "%";
+            return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                    .whereOr(BookSourceBeanDao.Properties.BookSourceName.like(term),
+                            BookSourceBeanDao.Properties.BookSourceGroup.like(term),
+                            BookSourceBeanDao.Properties.BookSourceUrl.like(term))
+                    .orderRaw(BookSourceManager.getSort())
+                    .list();
+        } else {
+            return getAll();
+        }
     }
 
     public static BookSourceBean getByUrl(String url) {
@@ -150,8 +164,7 @@ public class BookSourceManager extends BaseModelImpl {
             bookSourceBean.setBookSourceUrl(bookSourceBean.getBookSourceUrl().substring(0, bookSourceBean.getBookSourceUrl().lastIndexOf("/")));
         }
 
-        BookSourceBean temp = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookSourceBean.getBookSourceUrl())).unique();
+        BookSourceBean temp = getByUrl(bookSourceBean.getBookSourceUrl());
         if (temp != null) {
             bookSourceBean.setSerialNumber(temp.getSerialNumber());
             bookSourceBean.setEnable(temp.getEnable());
@@ -160,7 +173,7 @@ public class BookSourceManager extends BaseModelImpl {
         }
 
         if (bookSourceBean.getSerialNumber() == 0) {
-            long count = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder().count();
+            long count = getCount();
             bookSourceBean.setSerialNumber((int) count + 1);
         }
         DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
@@ -180,15 +193,13 @@ public class BookSourceManager extends BaseModelImpl {
                 url = String.format("http://%s:65501", url);
             }
             if (StringUtils.isJsonType(url)) {
-                return importOne(url.trim())
-                        .subscribeOn(Schedulers.single())
-                        .observeOn(AndroidSchedulers.mainThread());
+                return importFromJson(url.trim());
             }
             if (URLUtils.isUrl(url)) {
                 AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
                 return SimpleModel.getResponse(analyzeUrl)
-                        .flatMap(rsp -> importOne(rsp.body()))
                         .subscribeOn(Schedulers.single())
+                        .flatMap(rsp -> importFromJson(rsp.body()))
                         .observeOn(AndroidSchedulers.mainThread());
             }
             throw new IllegalArgumentException("url is invalid");
@@ -197,9 +208,9 @@ public class BookSourceManager extends BaseModelImpl {
         }
     }
 
-    public static Observable<Boolean> importOne(String json) {
+    public static Observable<Boolean> importFromJson(String json) {
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            List<BookSourceBean> bookSourceBeans = new Gson().fromJson(json, new TypeToken<List<BookSourceBean>>() {
+            List<BookSourceBean> bookSourceBeans = Global.GSON.fromJson(json.trim(), new TypeToken<List<BookSourceBean>>() {
             }.getType());
             int index = 0;
             for (BookSourceBean bookSourceBean : bookSourceBeans) {

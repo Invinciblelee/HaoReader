@@ -150,11 +150,10 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     }
 
     private void delSource(int position, BookSourceBean bookSourceBean) {
-        activity.delBookSource(bookSourceBean);
         dataList.remove(position);
         notifyDataSetChanged();
         activity.upSearchView(dataList.size());
-        final Runnable runnable = () -> activity.saveDate(dataList);
+        final Runnable runnable = () ->  activity.delBookSource(bookSourceBean);
         if (mRecyclerView != null) {
             mRecyclerView.post(runnable);
         } else {

@@ -3,8 +3,6 @@ package com.monke.monkeybook.presenter;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.monkeybook.base.observer.SimpleObserver;
@@ -17,8 +15,11 @@ import java.io.File;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -143,16 +144,19 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
     @Override
     public void importDataS(File file) {
         mView.showLoading("正在导入规则");
-        Observable.create((ObservableOnSubscribe<List<ReplaceRuleBean>>) emitter -> {
+        Observable.create((ObservableOnSubscribe<String>) emitter -> {
             DocumentFile documentFile = DocumentFile.fromFile(file);
             String json = DocumentHelper.readString(documentFile);
-            List<ReplaceRuleBean> dataS = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
-            }.getType());
-            ReplaceRuleManager.saveAll(dataS);
-            emitter.onNext(ReplaceRuleManager.getAll());
+            emitter.onNext(json);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
-                .observeOn(AndroidSchedulers.mainThread())
+        }).flatMap(json -> ReplaceRuleManager.importFromNet(json)
+                .flatMap(aBoolean -> {
+                    if (aBoolean) {
+                        return Observable.just(ReplaceRuleManager.getAll());
+                    } else {
+                        return Observable.error(new Exception("import rule failed"));
+                    }
+                }))
                 .subscribe(new SimpleObserver<List<ReplaceRuleBean>>() {
                     @Override
                     public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
@@ -168,6 +172,7 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                     }
                 });
     }
+
 
     @Override
     public void importDataS(String sourceUrl) {
