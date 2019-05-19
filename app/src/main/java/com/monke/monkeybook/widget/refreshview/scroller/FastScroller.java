@@ -123,6 +123,8 @@ public class FastScroller extends LinearLayout {
     private ViewPropertyAnimator scrollbarAnimator;
     private ViewPropertyAnimator bubbleAnimator;
 
+    private OnLayoutChangeListener layoutChangeListener;
+
     private FastScrollListener fastScrollListener;
     private SectionIndexer sectionIndexer;
 
@@ -226,6 +228,10 @@ public class FastScroller extends LinearLayout {
                     fastScrollListener.onFastScrollStart(this);
                 }
             case MotionEvent.ACTION_MOVE:
+                if (layoutChangeListener != null) {
+                    recyclerView.removeOnLayoutChangeListener(layoutChangeListener);
+                    layoutChangeListener = null;
+                }
                 final float y = event.getY();
                 setViewPositions(y, true);
                 setRecyclerViewPosition(y);
@@ -347,8 +353,11 @@ public class FastScroller extends LinearLayout {
 
         recyclerView.addOnScrollListener(scrollListener);
 
-        recyclerView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
-                -> setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false));
+
+        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
+                -> setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false);
+
+        recyclerView.addOnLayoutChangeListener(layoutChangeListener);
     }
 
     /**

@@ -33,6 +33,8 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     private BookSourceActivity activity;
     private boolean canTop;
 
+    private RecyclerView mRecyclerView;
+
     private final Object lock = new Object();
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
@@ -78,11 +80,9 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     }
 
     private void setAllDataList(List<BookSourceBean> bookSourceBeanList) {
-        synchronized (lock) {
-            this.allDataList = bookSourceBeanList;
-            notifyDataSetChanged();
-            activity.upDateSelectAll();
-        }
+        this.allDataList = bookSourceBeanList;
+        notifyDataSetChanged();
+        activity.upDateSelectAll();
     }
 
     public List<BookSourceBean> getDataList() {
@@ -143,12 +143,23 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
         holder.topView.setOnClickListener(view -> topSource(realPosition));
     }
 
-    private void delSource(int position, BookSourceBean bookSourceBean){
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
+    private void delSource(int position, BookSourceBean bookSourceBean) {
         activity.delBookSource(bookSourceBean);
         dataList.remove(position);
         notifyDataSetChanged();
-        activity.saveDate(dataList);
         activity.upSearchView(dataList.size());
+        final Runnable runnable = () -> activity.saveDate(dataList);
+        if (mRecyclerView != null) {
+            mRecyclerView.post(runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     private void topSource(int position) {
@@ -165,12 +176,19 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             int maxNumber = first.getSerialNumber();
             moveData.setSerialNumber(maxNumber + 1);
         }
-        if (dataList.size() != allDataList.size()) {
-            allDataList.remove(moveData);
-            allDataList.add(0, moveData);
-            activity.saveDate(allDataList);
+        final Runnable runnable = () -> {
+            if (dataList.size() != allDataList.size()) {
+                allDataList.remove(moveData);
+                allDataList.add(0, moveData);
+                activity.saveDate(allDataList);
+            } else {
+                activity.saveDate(dataList);
+            }
+        };
+        if (mRecyclerView != null) {
+            mRecyclerView.post(runnable);
         } else {
-            activity.saveDate(dataList);
+            runnable.run();
         }
     }
 
