@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="16sp"
             android:text="@string/audio_timer"/>
 
@@ -39,8 +39,8 @@
         android:id="@+id/btn_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/card_background"
-        android:textColor="@color/tv_text_default"
+        android:background="@color/colorCardBackground"
+        android:textColor="@color/colorTextDefault"
         android:textSize="18sp"
         android:text="@string/close"/>
 </LinearLayout>

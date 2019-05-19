@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/colorBackground">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_blur_cover"
@@ -78,9 +78,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:progressBackgroundTint="@color/white"
-            android:progressTint="@color/progress_color"
+            android:progressTint="@color/colorProgress"
             android:secondaryProgressTint="@color/colorAccentDark"
-            android:thumbTint="@color/progress_color" />
+            android:thumbTint="@color/colorProgress" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_duration"

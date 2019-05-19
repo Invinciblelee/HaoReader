@@ -91,7 +91,7 @@ public class Debug {
                             printError("搜索列表为空");
                             printLog(String.format("★%s 搜索结束", getDoTime()));
                         } else {
-                            printLog("●成功获取搜索列表» 共" + searchBookBeans.size() + "个结果");
+                            printLog("●成功获取搜索结果» 共" + searchBookBeans.size() + "个结果");
                             SearchBookBean searchBookBean = searchBookBeans.get(0);
                             printLog("●书籍名称» " + searchBookBean.getName());
                             printLog("●书籍作者» " + searchBookBean.getAuthor());
@@ -253,7 +253,7 @@ public class Debug {
     }
 
     private void bookAudioDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
-        WebBookModel.getInstance().processAudioChapter(bookInfoBean.getTag(), chapterBean)
+        WebBookModel.getInstance().getAudioBookContent(bookInfoBean, chapterBean)
                 .subscribeOn(Schedulers.single())
                 .timeout(30L, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())

@@ -23,6 +23,6 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="正在加载..."
-        android:textColor="@color/tv_text_summary"
+        android:textColor="@color/colorTextSummary"
         android:textSize="14sp" />
 </LinearLayout>

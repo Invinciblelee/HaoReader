@@ -19,14 +19,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
-import com.monke.basemvplib.AppActivityManager;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -42,7 +39,7 @@ import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
 import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,7 +107,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     public void initImmersionBar() {
         mImmersionBar.transparentStatusBar();
 
-        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -202,7 +199,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         getMenuInflater().inflate(R.menu.menu_audio_play_activity, menu);
         for (int i = 0; i < menu.size(); i++) {
             MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-            AppCompat.setTint(item, getResources().getColor(R.color.colorToolBarText));
+            AppCompat.setTint(item, getResources().getColor(R.color.colorBarText));
         }
         return true;
     }

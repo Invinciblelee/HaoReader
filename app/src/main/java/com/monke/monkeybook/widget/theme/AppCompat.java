@@ -1,4 +1,4 @@
-package com.monke.monkeybook.widget;
+package com.monke.monkeybook.widget.theme;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -39,7 +39,7 @@ public class AppCompat {
     }
 
     public static void useCustomIconForSearchView(SearchView searchView, String hint, boolean showSearchHintIcon, boolean showBg) {
-        final int normalColor = searchView.getResources().getColor(R.color.colorToolBarText);
+        final int normalColor = searchView.getResources().getColor(R.color.colorBarText);
         AppCompatImageView search = searchView.findViewById(androidx.appcompat.R.id.search_button);
         search.setImageResource(R.drawable.ic_search_large_black_24dp);
         setTint(search, normalColor);
@@ -99,7 +99,7 @@ public class AppCompat {
 
 
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText, boolean showIcon) {
-        searchText.setTextColor(searchText.getResources().getColor(R.color.colorToolBarText));
+        searchText.setTextColor(searchText.getResources().getColor(R.color.colorBarText));
         if (showIcon) {
             final int textSize = (int) (searchText.getTextSize() * DRAWABLE_SCALE);
             Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
@@ -160,8 +160,7 @@ public class AppCompat {
 
     public static void setTintList(View view, ColorStateList tint) {
         if (view instanceof ImageView) {
-            Drawable drawable = ((ImageView) view).getDrawable();
-            setTintList(drawable, tint);
+            ((ImageView) view).setImageTintList(tint);
         } else if (view instanceof TextView) {
             Drawable[] drawables = ((TextView) view).getCompoundDrawables();
             for (Drawable drawable : drawables) {

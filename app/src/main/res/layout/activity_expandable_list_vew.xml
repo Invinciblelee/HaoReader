@@ -4,7 +4,7 @@
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="16sp" />
 
         <androidx.core.widget.ContentLoadingProgressBar

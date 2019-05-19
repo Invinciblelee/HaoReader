@@ -30,7 +30,7 @@ import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -166,7 +166,7 @@ public class BookInfoActivity extends MBaseActivity {
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

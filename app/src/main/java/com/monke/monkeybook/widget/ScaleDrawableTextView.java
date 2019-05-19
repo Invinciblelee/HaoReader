@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 public class ScaleDrawableTextView extends androidx.appcompat.widget.AppCompatTextView {
 

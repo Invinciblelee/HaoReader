@@ -17,7 +17,7 @@ import com.monke.monkeybook.presenter.ChoiceBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.ChoiceBookAdapter;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.refreshview.OnLoadMoreListener;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -81,7 +81,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

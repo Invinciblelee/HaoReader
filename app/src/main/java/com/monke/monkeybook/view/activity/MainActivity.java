@@ -40,12 +40,10 @@ import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.LargeTextDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
-
-import org.mozilla.javascript.tools.jsc.Main;
 
 import java.util.List;
 
@@ -344,7 +342,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
     }
 
     //初始化侧边栏

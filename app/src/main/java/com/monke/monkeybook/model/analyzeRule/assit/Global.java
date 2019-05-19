@@ -3,7 +3,6 @@ package com.monke.monkeybook.model.analyzeRule.assit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.monke.monkeybook.help.Logger;
-import com.monke.monkeybook.model.analyzeRule.JavaExecutor;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;

@@ -27,7 +27,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,7 +90,7 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
     public void initImmersionBar() {
         mImmersionBar.transparentStatusBar();
 
-        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -168,7 +168,7 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

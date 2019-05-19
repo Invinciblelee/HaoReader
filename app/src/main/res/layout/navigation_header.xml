@@ -15,7 +15,7 @@
         android:paddingEnd="48dp"
         android:paddingBottom="16dp"
         android:src="@drawable/ic_read"
-        android:tint="@color/colorToolBarText" />
+        android:tint="@color/colorBarText" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_user"

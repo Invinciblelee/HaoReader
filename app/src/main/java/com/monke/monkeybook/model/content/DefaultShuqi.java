@@ -177,7 +177,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(ChapterBean chapterBean) {
+    public Observable<BookContentBean> getBookContent(String chapterUrl, ChapterBean chapterBean) {
         if (StringUtils.isBlank(chapterBean.getDurChapterUrl())) {
             return Observable.error(new NullPointerException("chapter url is invalid"));
         }

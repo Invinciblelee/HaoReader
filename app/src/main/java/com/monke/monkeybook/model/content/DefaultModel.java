@@ -9,23 +9,22 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.dao.BookSourceBeanDao;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.ContextHolder;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.help.Logger;
+import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
-import com.monke.monkeybook.utils.ListUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import retrofit2.Response;
 
 import static android.text.TextUtils.isEmpty;
@@ -52,8 +51,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
     private Boolean initBookSourceBean() {
         if (bookSourceBean == null) {
-            bookSourceBean = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                    .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
+            bookSourceBean = BookSourceManager.getByUrl(tag);
             if (bookSourceBean != null) {
                 name = bookSourceBean.getBookSourceName();
                 headerMap = AnalyzeHeaders.getMap(bookSourceBean);
@@ -83,21 +81,19 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
      */
     @Override
     public Observable<List<SearchBookBean>> findBook(String url, int page) {
-        if (!initBookSourceBean() || isEmpty(url)) {
-            return Observable.create(emitter -> {
-                emitter.onNext(ListUtils.mutableList());
+        return Observable.create((ObservableOnSubscribe<BookList>) emitter -> {
+            if (!initBookSourceBean() || isEmpty(url)) {
+                emitter.onError(new IllegalArgumentException("find Book failed for: " + url));
+            } else {
+                emitter.onNext(new BookList(tag, name, bookSourceBean));
                 emitter.onComplete();
-            });
-        }
-        final BookList bookList = new BookList(tag, name, bookSourceBean);
-        try {
+            }
+        }).flatMap(bookList -> {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, url, page, headerMap(false));
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
-        } catch (Exception e) {
-            Logger.e(TAG, "findBook: " + url, e);
-            return Observable.just(ListUtils.mutableList());
-        }
+        }).doOnError(throwable -> Logger.e(TAG, "findBook", throwable));
+
     }
 
     /**
@@ -105,16 +101,16 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
      */
     @Override
     public Observable<List<SearchBookBean>> searchBook(String content, int page) {
-        if (!initBookSourceBean() || isEmpty(bookSourceBean.getRuleSearchUrl())) {
-            return Observable.create(emitter -> {
-                emitter.onNext(ListUtils.mutableList());
+        return Observable.create((ObservableOnSubscribe<BookList>) emitter -> {
+            if (!initBookSourceBean() || isEmpty(bookSourceBean.getRuleSearchUrl())) {
+                emitter.onError(new IllegalArgumentException("search Book failed for: " + bookSourceBean.getRuleSearchUrl()));
+            } else {
+                emitter.onNext(new BookList(tag, name, bookSourceBean));
                 emitter.onComplete();
-            });
-        }
-        final BookList bookList = new BookList(tag, name, bookSourceBean);
-        try {
+            }
+        }).flatMap(bookList -> {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookSourceBean.getRealRuleSearchUrl(), content, page, headerMap(false));
-            if(bookList.isAJAX()){
+            if (bookList.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .postData(analyzeUrl.getPostData())
@@ -130,14 +126,12 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 }
                 return ajax(params)
                         .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
-            }else {
+            } else {
                 return toObservable(analyzeUrl)
                         .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
             }
-        } catch (Exception e) {
-            Logger.e(TAG, "searchBook: " + content, e);
-            return Observable.just(ListUtils.mutableList());
-        }
+        }).doOnError(throwable -> Logger.e(TAG, "searchBook", throwable));
+
     }
 
     /**
@@ -145,18 +139,19 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
      */
     @Override
     public Observable<BookShelfBean> getBookInfo(final BookShelfBean bookShelfBean) {
-        if (!initBookSourceBean()) {
-            return Observable.error(new Exception("没有找到当前书源"));
-        }
-        final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
-        try {
+        return Observable.create((ObservableOnSubscribe<BookInfo>) emitter -> {
+            if (!initBookSourceBean()) {
+                emitter.onError(new Exception("没有找到当前书源"));
+            } else {
+                emitter.onNext(new BookInfo(tag, name, bookSourceBean));
+                emitter.onComplete();
+            }
+        }).flatMap(bookInfo -> {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getNoteUrl(), headerMap(true));
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookInfo.analyzeBookInfo(response, bookShelfBean));
-        } catch (Exception e) {
-            Logger.e(TAG, "书籍信息获取失败", e);
-            return Observable.error(e);
-        }
+        }).doOnError(throwable -> Logger.e(TAG, "bookInfo", throwable));
+
     }
 
     /**
@@ -164,32 +159,34 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
      */
     @Override
     public Observable<List<ChapterBean>> getChapterList(final BookShelfBean bookShelfBean) {
-        if (!initBookSourceBean()) {
-            return Observable.error(new Exception("没有找到当前书源"));
-        }
-        final BookChapters bookChapter = new BookChapters(tag, bookSourceBean);
-        try {
+        return Observable.create((ObservableOnSubscribe<BookChapters>) emitter -> {
+            if (!initBookSourceBean()) {
+                emitter.onError(new Exception("没有找到当前书源"));
+            } else {
+                emitter.onNext(new BookChapters(tag, bookSourceBean));
+                emitter.onComplete();
+            }
+        }).flatMap(bookChapters -> {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookChapter.analyzeChapters(response, bookShelfBean));
-        } catch (Exception e) {
-            Logger.e(TAG, "目录获取失败", e);
-            return Observable.error(e);
-        }
+                    .flatMap(response -> bookChapters.analyzeChapters(response, bookShelfBean));
+        }).doOnError(throwable -> Logger.e(TAG, "chapterList", throwable));
     }
 
     /**
      * 获取正文
      */
     @Override
-    public Observable<BookContentBean> getBookContent(final ChapterBean chapter) {
-        if (!initBookSourceBean()) {
-            return Observable.error(new Exception("没有找到当前书源"));
-        }
-
-        final BookContent bookContent = new BookContent(tag, bookSourceBean);
-        try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getNoteUrl(), chapter.getDurChapterUrl(), headerMap(true));
+    public Observable<BookContentBean> getBookContent(final String chapterUrl, final ChapterBean chapter) {
+        return Observable.create((ObservableOnSubscribe<BookContent>) emitter -> {
+            if (!initBookSourceBean()) {
+                emitter.onError(new Exception("没有找到当前书源"));
+            } else {
+                emitter.onNext(new BookContent(tag, bookSourceBean));
+                emitter.onComplete();
+            }
+        }).flatMap(bookContent -> {
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapterUrl, chapter.getDurChapterUrl(), headerMap(true));
             if (bookContent.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
@@ -210,27 +207,25 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return toObservable(analyzeUrl)
                         .flatMap(response -> bookContent.analyzeBookContent(response, chapter));
             }
-        } catch (Exception e) {
-            Logger.e(TAG, "正文获取失败", e);
-            return Observable.error(e);
-        }
-
+        }).doOnError(throwable -> Logger.e(TAG, "bookContent", throwable));
     }
 
     @Override
-    public Observable<ChapterBean> processAudioChapter(ChapterBean chapter) {
-        if (!initBookSourceBean()) {
-            return Observable.error(new Exception("没有找到书源"));
-        }
+    public Observable<ChapterBean> getAudioBookContent(final String chapterUrl, final ChapterBean chapter) {
+        return Observable.create((ObservableOnSubscribe<AudioBookChapter>) emitter -> {
+            if (!initBookSourceBean()) {
+                emitter.onError(new Exception("没有找到书源"));
+            } else {
+                emitter.onNext(new AudioBookChapter(tag, bookSourceBean));
+                emitter.onComplete();
+            }
+        }).flatMap(audioBookChapter -> {
+            if (audioBookChapter.isDirect()) {
+                chapter.setDurChapterPlayUrl(chapter.getDurChapterUrl());
+                return Observable.just(chapter);
+            }
 
-        if (isEmpty(bookSourceBean.getRuleBookContent())) {
-            chapter.setDurChapterPlayUrl(chapter.getDurChapterUrl());
-            return Observable.just(chapter);
-        }
-
-        final AudioBookChapter audioBookChapter = new AudioBookChapter(tag, bookSourceBean);
-        try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapter.getNoteUrl(), chapter.getDurChapterUrl(), headerMap(true));
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapterUrl, chapter.getDurChapterUrl(), headerMap(true));
             if (audioBookChapter.isAJAX()) {
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
@@ -253,10 +248,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return toObservable(analyzeUrl)
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, chapter));
             }
-        } catch (Exception e) {
-            Logger.e(TAG, "播放链接获取失败", e);
-            return Observable.error(e);
-        }
+        }).doOnError(throwable -> Logger.e(TAG, "audioBookContent", throwable));
     }
 
     private Observable<String> toObservable(AnalyzeUrl analyzeUrl) {

@@ -44,7 +44,7 @@
             android:layout_height="26dp"
             android:layout_gravity="center_horizontal|bottom"
             android:text="@string/tv_book_name"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -54,7 +54,7 @@
             android:layout_gravity="center_horizontal|bottom"
             android:singleLine="true"
             android:text="@string/download_offline"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="14sp" />
 
     </LinearLayout>
@@ -70,7 +70,7 @@
         android:focusable="true"
         android:scaleType="center"
         android:src="@drawable/ic_delete_forever_black_24dp"
-        app:tint="@color/tv_text_secondary" />
+        app:tint="@color/colorTextSecondary" />
 
 
 </LinearLayout>

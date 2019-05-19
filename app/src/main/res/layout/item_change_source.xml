@@ -30,7 +30,7 @@
         android:layout_marginRight="2dp"
         android:layout_toEndOf="@id/iv_checked"
         android:singleLine="true"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/colorTextDefault"
         android:textSize="16sp" />
 
     <TextView
@@ -45,7 +45,7 @@
         android:layout_marginBottom="2dp"
         android:layout_toEndOf="@id/iv_checked"
         android:singleLine="true"
-        android:textColor="@color/tv_text_summary"
+        android:textColor="@color/colorTextSummary"
         android:textSize="12sp" />
 
 </RelativeLayout>

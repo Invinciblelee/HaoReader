@@ -24,7 +24,7 @@
             android:paddingTop="16dp"
             android:singleLine="true"
             android:text="@string/loading"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="16sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

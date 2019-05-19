@@ -20,7 +20,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.Donate;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -127,7 +127,7 @@ public class DonateActivity extends MBaseActivity {
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

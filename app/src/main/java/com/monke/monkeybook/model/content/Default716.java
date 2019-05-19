@@ -200,7 +200,7 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
      * 章节缓存
      */
     @Override
-    public Observable<BookContentBean> getBookContent(ChapterBean chapterBean) {
+    public Observable<BookContentBean> getBookContent(String chapterUrl, ChapterBean chapterBean) {
         return OkHttpHelper.getInstance().createService(StringUtils.getBaseUrl(chapterBean.getDurChapterUrl()), IHttpGetApi.class)
                 .getWebContent(chapterBean.getDurChapterUrl(), AnalyzeHeaders.getMap(null))
                 .flatMap(response -> analyzeBookContent(response.body(), chapterBean));

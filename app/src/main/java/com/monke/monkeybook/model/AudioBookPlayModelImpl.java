@@ -288,7 +288,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                         return Observable.just(chapterBean);
                     }
                     return WebBookModel.getInstance()
-                            .processAudioChapter(bookShelf.getTag(), chapterBean);
+                            .getAudioBookContent(bookShelf.getBookInfoBean(), chapterBean);
                 })
                 .timeout(20L, TimeUnit.SECONDS)
                 .retry(RETRY_COUNT)

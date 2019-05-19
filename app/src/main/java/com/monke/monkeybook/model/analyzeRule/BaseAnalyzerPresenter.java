@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.VariableStore;
-import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.JavaExecutor;
+import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutor;
+import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutorImpl;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
@@ -19,18 +21,18 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import retrofit2.Response;
-
 import static android.text.TextUtils.isEmpty;
 
 abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecutor {
 
     private final OutAnalyzer<S> mAnalyzer;
+    private final SimpleJavaExecutor mSimpleJavaExecutor;
 
     private final Map<String, Object> mCache = new HashMap<>();
 
     BaseAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         this.mAnalyzer = analyzer;
+        mSimpleJavaExecutor = new SimpleJavaExecutorImpl(getBaseURL());
     }
 
     final OutAnalyzer<S> getAnalyzer() {
@@ -216,6 +218,9 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             return StringUtils.valueOf(((NativeObject) object).get(rule));
         } else if (object instanceof Element) {
             Element element = (Element) object;
+            if (StringUtils.isBlank(rule)) {
+                return element.text();
+            }
             Element find = element.selectFirst(rule);
             return StringUtils.checkNull(find == null ? null : find.text(), element.text());
         } else if (object instanceof JXNode) {
@@ -231,8 +236,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             return StringUtils.valueOf(((NativeObject) object).get(rule));
         } else if (object instanceof Element) {
             Element element = (Element) object;
-            Element find = element.selectFirst(rule);
-            return StringUtils.checkNull(find == null ? null : find.text(), element.attr(rule));
+            return element.attr(rule);
         } else if (object instanceof JXNode) {
             return StringUtils.valueOf(((JXNode) object).selOne(rule));
         }
@@ -243,29 +247,22 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     @Override
     public final String ajax(String urlStr) {
-        try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(getBaseURL(), urlStr);
-            Response<String> response = SimpleModel.getResponse(analyzeUrl)
-                    .blockingFirst();
-            return response.body();
-        } catch (Exception e) {
-            return e.getLocalizedMessage();
-        }
+        return mSimpleJavaExecutor.ajax(urlStr);
     }
 
     @Override
-    public final String base64Decode(String base64) {
-        return StringUtils.base64Decode(base64);
+    public final String base64Decode(String string) {
+        return mSimpleJavaExecutor.base64Decode(string);
     }
 
 
     @Override
     public String base64Encode(String string) {
-        return StringUtils.base64Encode(string);
+        return mSimpleJavaExecutor.base64Encode(string);
     }
 
     @Override
     public final String formatHtml(String string) {
-        return StringUtils.formatHtml(string);
+        return mSimpleJavaExecutor.formatHtml(string);
     }
 }

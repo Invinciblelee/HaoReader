@@ -10,6 +10,6 @@ public interface IAudioBookChapterModel {
     /**
      * 处理听书章节
      */
-    Observable<ChapterBean> processAudioChapter(ChapterBean chapter);
+    Observable<ChapterBean> getAudioBookContent(String chapterUrl, ChapterBean chapter);
 
 }

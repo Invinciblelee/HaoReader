@@ -228,17 +228,17 @@ public class ChapterBean implements Parcelable, Serializable, FilterBean, Compar
         return new String[]{durChapterName};
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "ChapterBean{" +
-                "durChapterIndex=" + durChapterIndex +
-                ", durChapterUrl='" + durChapterUrl + '\'' +
+                "durChapterUrl='" + durChapterUrl + '\'' +
+                ", nextChapterUrl='" + nextChapterUrl + '\'' +
                 ", durChapterName='" + durChapterName + '\'' +
                 ", durChapterPlayUrl='" + durChapterPlayUrl + '\'' +
+                ", noteUrl='" + noteUrl + '\'' +
+                ", durChapterIndex=" + durChapterIndex +
                 ", start=" + start +
                 ", end=" + end +
-                ", nextChapterUrl='" + nextChapterUrl + '\'' +
                 '}';
     }
 

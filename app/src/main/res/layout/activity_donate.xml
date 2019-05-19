@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -50,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:text="你的支持是我更新的动力"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -75,7 +75,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="支付宝红包口令"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -100,7 +100,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="支付宝红包搜索码"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -125,7 +125,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="支付宝收款,支持红包"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -150,7 +150,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="支付宝红包二维码"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -175,7 +175,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="支付宝收款二维码"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -200,7 +200,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="微信赞赏码"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 
@@ -225,7 +225,7 @@
                         android:layout_margin="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:text="QQ收款码"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
 
                 </LinearLayout>
 

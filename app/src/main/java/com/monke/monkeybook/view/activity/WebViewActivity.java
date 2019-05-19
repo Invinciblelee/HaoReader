@@ -29,7 +29,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
@@ -88,7 +88,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     public void initImmersionBar() {
         mImmersionBar.transparentStatusBar();
 
-        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -206,7 +206,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
 
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         setSupportActionBar(toolbar);
 

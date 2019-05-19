@@ -40,7 +40,7 @@ import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.view.popupwindow.KeyboardToolPop;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.io.File;
 
@@ -466,7 +466,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

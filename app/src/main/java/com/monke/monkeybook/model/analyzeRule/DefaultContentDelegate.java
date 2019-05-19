@@ -155,8 +155,8 @@ class DefaultContentDelegate implements ContentDelegate {
                     }
                 } else if (webChapter.nextUrls.size() == 1) {
                     final List<String> usedUrls = new ArrayList<>();
-                    String nextUrl = webChapter.nextUrls.get(0);
                     usedUrls.add(getConfig().getBaseURL());
+                    String nextUrl = webChapter.nextUrls.get(0);
                     while (!isEmpty(nextUrl) && !usedUrls.contains(nextUrl)) {
                         usedUrls.add(nextUrl);
                         webChapter = getSingleWebChapterResult(0, nextUrl, ruleChapterList, headerMap, true).blockingFirst();
@@ -398,7 +398,7 @@ class DefaultContentDelegate implements ContentDelegate {
     }
 
     @Override
-    public Observable<String> getAudioLink(String source) {
+    public Observable<String> getAudioContent(String source) {
         return Observable.create(emitter -> {
             final String ruleBookContent = getBookSource().getRealRuleBookContent();
             emitter.onNext(mAnalyzer.setContent(source).getResultUrl(ruleBookContent));

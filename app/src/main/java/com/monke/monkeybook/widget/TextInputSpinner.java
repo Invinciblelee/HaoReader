@@ -10,15 +10,14 @@ import androidx.appcompat.widget.ListPopupWindow;
 
 import android.text.InputType;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 public class TextInputSpinner extends TextInputEditText {
 

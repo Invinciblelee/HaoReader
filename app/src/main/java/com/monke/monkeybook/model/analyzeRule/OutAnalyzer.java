@@ -52,19 +52,20 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
         return mSourceParser;
     }
 
-    final IAnalyzerPresenter getPresenter() {
-        if (mPresenter == null) {
-            mPresenter = onCreateAnalyzerPresenter(this);
-        }
-        return mPresenter;
-    }
-
     private ContentDelegate getDelegate() {
         if (mDelegate == null) {
             mDelegate = onCreateContentDelegate(this);
         }
         return mDelegate;
     }
+
+    public final IAnalyzerPresenter getPresenter() {
+        if (mPresenter == null) {
+            mPresenter = onCreateAnalyzerPresenter(this);
+        }
+        return mPresenter;
+    }
+
 
     abstract SourceParser<S> onCreateSourceParser();
 
@@ -139,7 +140,7 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Observable<String> getAudioLink(String source) {
-        return getDelegate().getAudioLink(source);
+    public Observable<String> getAudioContent(String source) {
+        return getDelegate().getAudioContent(source);
     }
 }

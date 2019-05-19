@@ -2,9 +2,9 @@ package com.monke.monkeybook.model.analyzeRule;
 
 import com.monke.monkeybook.model.annotation.RuleType;
 
-final class HybridAnalyzer extends OutAnalyzer {
+public final class HybridAnalyzer extends OutAnalyzer {
 
-    HybridAnalyzer(AnalyzeConfig config) {
+    public HybridAnalyzer(AnalyzeConfig config) {
         super(config);
     }
 

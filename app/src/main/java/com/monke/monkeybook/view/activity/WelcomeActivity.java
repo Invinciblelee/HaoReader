@@ -28,7 +28,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();
         } else {
-            mImmersionBar.statusBarColor(R.color.status_bar_bag);
+            mImmersionBar.statusBarColor(R.color.colorStatusBar);
         }
 
         if(isImmersionBarEnabled()) {

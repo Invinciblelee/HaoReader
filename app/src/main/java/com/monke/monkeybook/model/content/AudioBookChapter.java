@@ -7,6 +7,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;
 import com.monke.monkeybook.model.analyzeRule.AnalyzerFactory;
 import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
+import com.monke.monkeybook.utils.StringUtils;
 
 import io.reactivex.Observable;
 
@@ -29,6 +30,7 @@ final class AudioBookChapter {
 
     private boolean isAJAX;
     private boolean isSniff;
+    private boolean isDirect;
     private String suffix;
     private String javaScript;
 
@@ -45,6 +47,8 @@ final class AudioBookChapter {
             isSniff = true;
             suffix = bookSourceBean.getRealRuleBookContent();
         }
+
+        isDirect = StringUtils.isBlank(bookSourceBean.getRuleBookContent());
     }
 
     Observable<ChapterBean> analyzeAudioChapter(final String s, final ChapterBean chapter) {
@@ -59,7 +63,7 @@ final class AudioBookChapter {
             analyzer.apply(analyzer.newConfig()
                     .baseURL(chapter.getDurChapterUrl())
                     .extra("chapter", (Parcelable) chapter));
-            return analyzer.getAudioLink(s)
+            return analyzer.getAudioContent(s)
                     .map(url -> {
                         chapter.setDurChapterPlayUrl(url);
                         return chapter;
@@ -75,6 +79,10 @@ final class AudioBookChapter {
 
     boolean isAJAX() {
         return isAJAX;
+    }
+
+    public boolean isDirect() {
+        return isDirect;
     }
 
     String getJavaScript() {

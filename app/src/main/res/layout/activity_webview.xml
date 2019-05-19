@@ -4,7 +4,7 @@
     android:id="@+id/rl_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/colorBackground"
     app:appConsumeInsets="false"
     app:appInsetForeground="@color/transparent">
 
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appBar"
-        android:background="@color/background">
+        android:background="@color/colorBackground">
 
         <WebView
             android:id="@+id/webView"
@@ -50,7 +50,7 @@
             android:id="@+id/web_html_code"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background"
+            android:background="@color/colorBackground"
             android:fillViewport="true"
             android:scrollbars="none"
             android:visibility="gone">
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textIsSelectable="true"
                 android:textSize="16sp" />
 

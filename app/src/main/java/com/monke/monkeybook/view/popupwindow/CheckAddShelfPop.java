@@ -40,7 +40,7 @@ public class CheckAddShelfPop extends PopupWindow {
         setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
         setFocusable(true);
         setTouchable(true);
-        setAnimationStyle(R.style.anim_pop_checkaddshelf);
+        setAnimationStyle(R.style.Animation_Pop_AddShelf);
     }
 
     private void initView() {

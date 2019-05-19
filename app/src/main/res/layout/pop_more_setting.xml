@@ -9,7 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="256dp"
-        android:background="@color/card_background"
+        android:background="@color/colorCardBackground"
         android:overScrollMode="ifContentScrolls"
         android:scrollbars="none">
 
@@ -33,7 +33,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="@string/keep_light"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
                 <TextView
                     android:id="@+id/tv_screen_time_out"
@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/keep_light"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </LinearLayout>
 
@@ -61,7 +61,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="@string/jf_convert"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
                 <TextView
                     android:id="@+id/tvJFConvert"
@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/jf_convert"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </LinearLayout>
 
@@ -88,7 +88,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/ps_hide_status_bar"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -116,7 +116,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/immersion_status_bar"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -143,7 +143,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/volume_open_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -171,7 +171,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/aloud_volume_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -199,7 +199,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/click_open_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -226,7 +226,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/click_all_next_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -253,7 +253,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/showTimeBattery"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -280,7 +280,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/showBatteryNumber"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch
@@ -308,7 +308,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="0dp"
                     android:text="@string/showLine"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
 
                 <Switch

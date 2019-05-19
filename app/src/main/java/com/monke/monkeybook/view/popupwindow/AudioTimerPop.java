@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.adapter.AudioTimerAdapter;
 
 import butterknife.BindView;
@@ -43,7 +42,7 @@ public class AudioTimerPop extends PopupWindow implements AudioTimerAdapter.OnIt
         setBackgroundDrawable(context.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
         setFocusable(true);
         setTouchable(true);
-        setAnimationStyle(R.style.anim_pop_windowslide);
+        setAnimationStyle(R.style.Animation_Pop_Sheet);
     }
 
 

@@ -166,11 +166,6 @@ public class BookSourceManager extends BaseModelImpl {
         DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
     }
 
-    public static BookSourceBean getByTag(String tag) {
-        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(tag)).unique();
-    }
-
     public static void save(BookSourceBean sourceBean) {
         if (sourceBean != null) {
             DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(sourceBean);

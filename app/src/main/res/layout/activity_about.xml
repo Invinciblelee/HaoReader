@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/app_name"
-                        android:textColor="@color/tv_text_default"
+                        android:textColor="@color/colorTextDefault"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -60,7 +60,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/about_description"
-                        android:textColor="@color/tv_text_default" />
+                        android:textColor="@color/colorTextDefault" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -81,7 +81,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/version_name"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -102,7 +102,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/update_url"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -123,7 +123,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/update_log"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -144,7 +144,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/qqq"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -165,7 +165,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/scoring"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -186,7 +186,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/send_mail"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -207,7 +207,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/git_hub"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -228,7 +228,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/home_page"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -249,7 +249,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/source_rule_s"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
 
@@ -270,7 +270,7 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/disclaimer"
-                    android:textColor="@color/tv_text_default" />
+                    android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>

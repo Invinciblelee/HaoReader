@@ -13,5 +13,5 @@
     android:paddingEnd="12dp"
     android:minWidth="58dp"
     android:gravity="center"
-    android:textColor="@color/tv_text_default"
+    android:textColor="@color/colorTextDefault"
     android:textSize="15sp" />

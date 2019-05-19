@@ -34,7 +34,7 @@ import com.monke.monkeybook.presenter.contract.AudioBookContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.CircleProgressBar;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
@@ -137,7 +137,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
 
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="离线章节"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -43,7 +43,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="第"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="16sp"
                     tools:ignore="RtlHardcoded" />
 
@@ -60,7 +60,7 @@
                     android:paddingTop="4dp"
                     android:paddingRight="5dp"
                     android:paddingBottom="4dp"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <TextView
@@ -70,7 +70,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:text="章 至 第"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="16sp" />
 
                 <EditText
@@ -86,7 +86,7 @@
                     android:paddingTop="4dp"
                     android:paddingRight="5dp"
                     android:paddingBottom="4dp"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <TextView
@@ -95,7 +95,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
                     android:text="章"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="16sp"
                     tools:ignore="RtlHardcoded" />
 
@@ -124,7 +124,7 @@
                 android:clickable="true"
                 android:gravity="center"
                 android:text="取消"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="15sp"
                 tools:ignore="KeyboardInaccessibleWidget" />
 

@@ -1,38 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#000000</color>
-    <color name="white">#ffffff</color>
-    <color name="bright_pink">#FF007F</color>
-    <color name="red">#FF0000</color>
-    <color name="orange">#FF7F00</color>
-    <color name="yellow">#FFFF00</color>
-    <color name="green">#00FF00</color>
-    <color name="cyan">#00FFFF</color>
-    <color name="azure">#007FFF</color>
-    <color name="blue">#0000FF</color>
-    <color name="violet">#7F00FF</color>
-    <color name="magenta">#FF00FF</color>
-    <color name="d_blue">#82A6F5</color>
-    <color name="gray">#b8b8b8</color>
-    <color name="light_gray">#dddddd</color>
-    <color name="light_pink">#fb9090</color>
-    <color name="light_white">#EEEEEE</color>
-    <color name="light_coffee">#A58D5E</color>
-    <color name="light_red">#EC4A48</color>
-    <color name="light_blue">#039BE5</color>
-    <color name="common_gray">#EEEEEE</color>
-    <color name="dark_white">#f3f3f3</color>
-    <color name="transparent">#00000000</color>
-    <color name="light_translucent">#23000000</color>
-    <color name="dark_translucent">#66000000</color>
-    <color name="white_translucent">#66ffffff</color>
-    <color name="dim_translucent">#66000000</color>
-    <color name="dim_gray">#66dddddd</color>
 
-    <color name="ic_launcher_background">#4f4f4f</color>
-
-    <color name="background">#F5F5F5</color>
-    <color name="card_background">#FFFFFF</color>
+    <color name="colorBackground">#F5F5F5</color>
+    <color name="colorCardBackground">#FFFFFF</color>
 
     <color name="colorPrimary">#7a92ac</color>
     <color name="colorPrimaryDark">#7a92ac</color>
@@ -41,38 +11,35 @@
     <color name="colorAccentLight">#FFD75E</color>
     <color name="colorAccentTranslucent">#66D9AB23</color>
 
-    <color name="colorToolBarText">#ffffff</color>
+    <color name="colorBarText">#ffffff</color>
     <color name="colorMenuText">#4a4a4a</color>
 
-    <color name="tv_text_default">#4a4a4a</color>
-    <color name="tv_text_secondary">#636363</color>
-    <color name="tv_text_summary">#8a8a8a</color>
+    <color name="colorTextDefault">#4a4a4a</color>
+    <color name="colorTextSecondary">#636363</color>
+    <color name="colorTextSummary">#8a8a8a</color>
 
-    <color name="progress_back_color_light">#ffffff</color>
-    <color name="progress_back_color">#767676</color>
-    <color name="progress_color">@color/colorAccent</color>
+    <color name="colorProgressTrackLight">#ffffff</color>
+    <color name="colorProgressTrack">#767676</color>
+    <color name="colorProgress">@color/colorAccent</color>
 
-    <color name="tv_text_button_neg_nor">@color/card_background</color>
-    <color name="tv_text_button_neg_pre">#cecece</color>
+    <color name="colorNegativeButton">@color/colorCardBackground</color>
+    <color name="colorNegativeButtonPressed">#cecece</color>
 
-    <color name="tv_text_button_pos_nor">@color/colorAccent</color>
-    <color name="tv_text_button_pos_pre">@color/colorAccentDark</color>
-    <color name="tv_text_button_disable">#dddddd</color>
+    <color name="colorPositiveButton">@color/colorAccent</color>
+    <color name="colorPositiveButtonPressed">@color/colorAccentDark</color>
+    <color name="colorButtonDisabled">#dddddd</color>
 
-    <color name="tv_tag_nor">#eeeeee</color>
-    <color name="tv_tag_nor_dark">#e1e1e1</color>
-    <color name="tv_tag_press">#36000000</color>
+    <color name="colorTag">#eeeeee</color>
+    <color name="colorTagDark">#e1e1e1</color>
+    <color name="colorTagPressed">#36000000</color>
 
-    <color name="tv_chapter_color_selected">#5e5e5e</color>
-    <color name="tv_chapter_color_normal">#737373</color>
-    <color name="scroller_track_color">#337e7e7e</color>
+    <color name="colorChapterTextHighlight">#5e5e5e</color>
+    <color name="colorChapterText">#737373</color>
 
-    <color name="bg_read_divider">#29efefef</color>
-    <color name="bg_divider_line">#29acacac</color>
-
-    <color name="color_renew_label">#E678c68c</color>
+    <color name="colorDividerLight">#29efefef</color>
+    <color name="colorDivider">#29acacac</color>
 
     <!--statusBarBackground-->
-    <color name="status_bar_bag">#33000000</color>
-    <color name="navigation_bar_bag">@color/colorPrimary</color>
+    <color name="colorStatusBar">#33000000</color>
+    <color name="colorNavigationBar">@color/colorPrimary</color>
 </resources>
