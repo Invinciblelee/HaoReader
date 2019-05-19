@@ -8,9 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.NetworkUtil;
@@ -20,6 +17,9 @@ import com.monke.monkeybook.web.WebSocketServer;
 
 import java.io.IOException;
 import java.net.InetAddress;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class WebService extends Service {
     private static boolean isRunning = false;
@@ -109,7 +109,7 @@ public class WebService extends Service {
     }
 
     private int getPort() {
-        return 1223;
+        return 1222;
     }
 
     /**

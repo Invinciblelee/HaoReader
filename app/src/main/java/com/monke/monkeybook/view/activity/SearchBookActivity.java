@@ -41,7 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SearchBookActivity extends MBaseActivity<SearchBookContract.Presenter> implements SearchBookContract.View {
-
+    private final int requestSource = 14;
     @BindView(R.id.searchView)
     SearchView searchView;
     @BindView(R.id.toolbar)
@@ -203,14 +203,14 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     }
     private void initMenu() {
         if (menu == null) return;
-        menu.removeGroup(R.id.source_group);
-        menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source).setIcon(R.drawable.ic_source_manager_black_24dp);
+        menu.removeGroup(R.id.source_group_so);
+        menu.add(R.id.source_group_so, Menu.NONE, Menu.NONE, R.string.all_source).setIcon(R.drawable.ic_source_manager_black_24dp);
         List<String> groupList = BookSourceManager.getInstance().getEnableGroupList();
         for (String groupName : groupList) {
-            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, groupName).setIcon(R.drawable.ic_source_manager_black_24dp);
+            menu.add(R.id.source_group_so, Menu.NONE, Menu.NONE, groupName).setIcon(R.drawable.ic_source_manager_black_24dp);
         }
-        menu.setGroupCheckable(R.id.source_group, true, true);
-        menu.getItem(1).setChecked(true);
+        menu.setGroupCheckable(R.id.source_group_so, true, true);
+        menu.getItem(3).setChecked(true);
     }
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -247,7 +247,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 finish();
                 break;
             default:
-                if (item.getGroupId() == R.id.source_group) {
+                if (item.getGroupId() == R.id.source_group_so) {
                     item.setChecked(true);
                     if (Objects.equals(getString(R.string.all_source), item.getTitle().toString())) {
                         group = null;
@@ -458,4 +458,14 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == requestSource) {
+                initMenu();
+                mPresenter.initSearchEngineS(group);
+            }
+        }
+    }
 }

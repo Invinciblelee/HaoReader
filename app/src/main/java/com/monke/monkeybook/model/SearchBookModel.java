@@ -108,10 +108,13 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 searchEngineS.add(new SearchEngine(Default716.TAG));
             }
             if (useShuqi) {
-                searchEngineS.add(new SearchEngine(Defaultsq.TAG));
+                searchEngineS.add(new SearchEngine(DefaultShuqi.TAG));
             }
         }
         for (BookSourceBean bookSourceBean : sourceBeanList) {
+            if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
+                continue;
+            }
             if (bookSourceBean.getEnable()) {
                 SearchEngine se = new SearchEngine(bookSourceBean.getBookSourceUrl());
                 searchEngineS.add(se);
@@ -139,7 +142,9 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
                     continue;
                 }
-                searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
+                if (bookSourceBean.getEnable()) {
+                    searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
+                }
             }
         }
         searchEngineChanged = false;
@@ -153,7 +158,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         clearSearch();
 
         if (searchEngineChanged || searchEngineS.isEmpty()) {
-            initSearchEngineS();
+            //initSearchEngineS();
+            searchHandler.obtainMessage(SearchHandler.MSG_EMPTY).sendToTarget();
         } else {
             for (SearchEngine searchEngine : searchEngineS) {
                 searchEngine.searchReset();
