@@ -58,13 +58,34 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
     private Observable<List<SearchBookBean>> analyzeSearchBook(final String response) {
         return Observable.create(e -> {
             List<SearchBookBean> searchBooks = new ArrayList<>();
+            SearchBookBean item;
             JsonObject root = new JsonParser().parse(response).getAsJsonObject();
+            JsonObject info = root.getAsJsonObject("info");
+                int pageI = info.get("page").getAsInt();
+                if (pageI == 1) {
+                    if (root.has("aladdin")) {
+                        JsonObject aladdin = root.getAsJsonObject("aladdin");
+                        item = new SearchBookBean();
+                        item.setTag(TAG);
+                        item.setOrigin(TAG);
+                        item.setBookType(BookType.TEXT);
+                        item.setWeight(Integer.MAX_VALUE);
+                        item.setAuthor(aladdin.get("author").getAsString());
+                        item.setKind(aladdin.get("category").getAsString());
+                        item.setLastChapter(aladdin.get("latest_chapter").getAsJsonObject().get("cname").getAsString());
+                        item.setName(aladdin.get("title").getAsString());
+                        item.setNoteUrl(aladdin.get("bid").getAsString());
+                        item.setCoverUrl(aladdin.get("cover").getAsString().replace("\\/", "/"));
+                        item.setIntroduce(aladdin.get("desc").getAsString());
+                        searchBooks.add(item);
+                    }
+                }
+
             if (root.has("data")) {
                 JsonArray booksArray = root.getAsJsonArray("data");
                 for (JsonElement element : booksArray) {
                     JsonObject book = element.getAsJsonObject();
-                    String bookId = book.get("bid").getAsString();
-                    SearchBookBean item = new SearchBookBean();
+                    item = new SearchBookBean();
                     item.setTag(TAG);
                     item.setOrigin(TAG);
                     item.setBookType(BookType.TEXT);
@@ -73,10 +94,9 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
                     item.setKind(book.get("category").getAsString());
                     item.setLastChapter(book.get("first_chapter").getAsString());
                     item.setName(book.get("title").getAsString());
-                    item.setNoteUrl("http://c1.shuqireader.com/httpserver/filecache/get_book_content_" + bookId);
+                    item.setNoteUrl(book.get("bid").getAsString());
                     item.setCoverUrl(book.get("cover").getAsString().replace("\\/", "/"));
                     item.setIntroduce(book.get("desc").getAsString());
-                    item.putVariable("bookId", bookId);
                     searchBooks.add(item);
                 }
             }
@@ -90,7 +110,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
      */
     @Override
     public Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean) {
-        String bid = bookShelfBean.getVariable("bookId");
+        String bid = bookShelfBean.getNoteUrl();
         String Data = bid + "1514984538213800000037e81a9d8f02596e1b895d07c171d5c9";
         String Sign = MD5Utils.strToMd5By32(Data);
         HashMap<String, String> fieldMap = new HashMap<>();
@@ -135,7 +155,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
      */
     @Override
     public Observable<List<ChapterBean>> getChapterList(BookShelfBean bookShelfBean) {
-        String bid = bookShelfBean.getVariable("bookId");
+        String bid = bookShelfBean.getNoteUrl();
         String Data = bid + "1514984538213800000037e81a9d8f02596e1b895d07c171d5c9";
         String Sign = MD5Utils.strToMd5By32(Data);
         HashMap<String, String> fieldMap = new HashMap<>();
@@ -160,7 +180,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
                     String chapterId = ele.getAsJsonObject().get("chapterId").getAsString();
                     String chapterName = ele.getAsJsonObject().get("chapterName").getAsString();
                     ChapterBean temp = new ChapterBean();
-                    temp.setDurChapterUrl(noteUrl + "_" + chapterId + ".xml");   //id
+                    temp.setDurChapterUrl("http://c1.shuqireader.com/httpserver/filecache/get_book_content_" + noteUrl + "_" + chapterId + ".xml");   //id
                     temp.setDurChapterName(chapterName);
                     temp.setNoteUrl(noteUrl);
                     chapterBeans.add(temp);

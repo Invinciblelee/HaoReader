@@ -24,5 +24,7 @@
         android:title="@string/book_inner_source_sq"
         app:showAsAction="never" />
 
+    <group android:id="@+id/source_group_so">
 
+    </group>
 </menu>
