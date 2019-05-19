@@ -46,7 +46,7 @@ public class WebService extends Service {
     public void onCreate() {
         super.onCreate();
         updateNotification("正在启动服务");
-        ToastUtils.toast(this, "已启动Web写源服务");
+        ToastUtils.toast(this, "已启动Web服务");
     }
 
     @Override

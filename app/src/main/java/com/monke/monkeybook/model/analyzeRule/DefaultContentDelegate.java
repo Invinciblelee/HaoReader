@@ -10,7 +10,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.ErrorReport;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
@@ -392,7 +391,6 @@ class DefaultContentDelegate implements ContentDelegate {
                 webContentBean.nextUrl = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrlNext());
             }
         } catch (Exception ex) {
-            ErrorReport.saveError(ex.toString());
             Logger.e(TAG, "getBookContent", ex);
             webContentBean.result = chapterUrl.substring(0, chapterUrl.indexOf('/', 8)) + " : " + ex.getMessage();
         }

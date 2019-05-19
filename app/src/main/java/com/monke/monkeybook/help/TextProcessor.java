@@ -57,7 +57,7 @@ public class TextProcessor {
                 .replace(",", "，")
                 .replaceAll("\\s+", " ")
                 .replaceAll("[?？!！。~]+", ""))
-                .replaceAll("([\\[【（(].*[)）】\\]])", "");
+                .replaceAll("([\\[［【（(].*[)）】］\\]])", "");
     }
 
     public static String formatAuthorName(String str) {
@@ -68,7 +68,7 @@ public class TextProcessor {
         return StringUtils.trim(str.replace("&nbsp;", "")
                 .replaceAll("\\s+", " ")
                 .replaceAll("作.*?者", "")
-                .replaceAll("[?？!！。~：:()（）【】]+", ""));
+                .replaceAll("[?？!！。~：:()（）［］\\[\\]【】]+", ""));
     }
 
 

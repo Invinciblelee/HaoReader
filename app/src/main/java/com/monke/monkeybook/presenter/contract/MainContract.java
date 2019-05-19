@@ -1,13 +1,12 @@
 package com.monke.monkeybook.presenter.contract;
 
+import androidx.annotation.StringRes;
+
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.bean.BookShelfBean;
 
 import java.util.List;
-
-import androidx.annotation.StringDef;
-import androidx.annotation.StringRes;
 
 public interface MainContract {
 

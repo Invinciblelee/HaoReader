@@ -1,6 +1,7 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -144,6 +145,7 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.getBookShelfError(refresh);
                     }
                 });

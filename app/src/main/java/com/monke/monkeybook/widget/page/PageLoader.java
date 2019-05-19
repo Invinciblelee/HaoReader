@@ -1040,7 +1040,7 @@ public abstract class PageLoader {
 
     private Scheduler getScheduler() {
         if (mExecutor == null || mExecutor.isShutdown()) {
-            mExecutor = Executors.newFixedThreadPool(6);
+            mExecutor = Executors.newFixedThreadPool(8);
         }
         return Schedulers.from(mExecutor);
     }

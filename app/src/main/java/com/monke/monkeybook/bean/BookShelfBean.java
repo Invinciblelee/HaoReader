@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.monke.monkeybook.help.TextProcessor;
+import com.monke.monkeybook.model.annotation.BookType;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -43,7 +44,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
     private String variableString;
 
     @Transient
-    private final VariableStoreImpl variableStore = new VariableStoreImpl();
+    private VariableStoreImpl variableStore;
     @Transient
     private BookInfoBean bookInfoBean = new BookInfoBean();
     @Transient
@@ -296,16 +297,15 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return LOCAL_TAG.equals(tag);
     }
 
+    public boolean isAudioBook(){
+        return BookType.AUDIO.equals(bookInfoBean.getBookType());
+    }
+
     public BookInfoBean getBookInfoBean() {
         if (bookInfoBean == null) {
             bookInfoBean = new BookInfoBean();
         }
         return bookInfoBean;
-    }
-
-    public int getUnreadChapterNum() {
-        int num = getChapterListSize() - getDurChapter() - 1;
-        return num < 0 ? 0 : num;
     }
 
     public void setBookInfoBean(BookInfoBean bookInfoBean) {
@@ -477,6 +477,8 @@ public class BookShelfBean implements Parcelable, VariableStore {
         this.durChapterPage = durChapterPage;
     }
 
+
+
     @Override
     public String getVariableString() {
         return this.variableString;
@@ -485,16 +487,18 @@ public class BookShelfBean implements Parcelable, VariableStore {
     @Override
     public void setVariableString(String variableString) {
         this.variableString = variableString;
-        variableStore.setVariableString(variableString);
     }
 
     @Override
     public Map<String, String> getVariableMap() {
-        return variableStore.getVariableMap();
+        return variableStore == null ? null : variableStore.getVariableMap();
     }
 
     @Override
     public void putVariableMap(Map<String, String> variableMap) {
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(variableString);
+        }
         variableStore.putVariableMap(variableMap);
         String variableString = variableStore.getVariableString();
         if (variableString != null) {
@@ -504,6 +508,9 @@ public class BookShelfBean implements Parcelable, VariableStore {
 
     @Override
     public void putVariable(String key, String value) {
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(variableString);
+        }
         variableStore.putVariable(key, value);
         String variableString = variableStore.getVariableString();
         if (variableString != null) {
@@ -513,6 +520,9 @@ public class BookShelfBean implements Parcelable, VariableStore {
 
     @Override
     public String getVariable(String key) {
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(variableString);
+        }
         return variableStore.getVariable(key);
     }
 }

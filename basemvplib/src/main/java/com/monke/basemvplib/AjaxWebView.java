@@ -61,6 +61,7 @@ public class AjaxWebView {
                     mWebView = createAjaxWebView(params, this);
                     break;
                 case MSG_SUCCESS:
+                    System.out.println(msg.obj);
                     mCallback.onResult((String) msg.obj);
                     mCallback.onComplete();
                     destroyWebView();
@@ -98,7 +99,9 @@ public class AjaxWebView {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
+        settings.setBlockNetworkImage(true);
         settings.setUserAgentString(params.getUserAgent());
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         if (params.isSniff()) {
             webView.setWebViewClient(new SnifferWebClient(params, handler));
         } else {
@@ -222,12 +225,14 @@ public class AjaxWebView {
             this.handler = handler;
         }
 
+
         @Override
         public void onPageFinished(WebView view, String url) {
             params.setCookie(url);
 
             evaluateJavascript(view, OUTER_HTML);
         }
+
 
         @Override
         public void onReceivedError(android.webkit.WebView view, int errorCode, String description, String failingUrl) {
@@ -318,7 +323,7 @@ public class AjaxWebView {
 
         private void evaluateJavascript(final WebView webView, final String javaScript) {
             final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript, value -> {
-                if (!TextUtils.isEmpty(value) || "false".equals(value)) {
+                if (TextUtils.isEmpty(value)) {
                     evaluateJavascript(webView, javaScript);
                 }
             });

@@ -83,9 +83,5 @@
         android:icon="@drawable/ic_network_check_black_24dp"
         android:title="@string/check_book_source"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_web_start"
-        android:icon="@drawable/ic_wifi_tethering_black_24dp"
-        android:title="@string/web_menu"
-        app:showAsAction="never" />
+
 </menu>

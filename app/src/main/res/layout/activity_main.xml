@@ -24,7 +24,7 @@
             android:background="@color/background"
             app:headerLayout="@layout/navigation_header"
             app:itemIconTint="@color/navigation_icon_color"
-            app:itemTextAppearance="@style/CAppTheme.Navigation.Text"
+            app:itemTextAppearance="@style/AppTheme.Navigation.Text"
             app:itemTextColor="@color/navigation_color"
             app:menu="@menu/menu_drawer" />
 

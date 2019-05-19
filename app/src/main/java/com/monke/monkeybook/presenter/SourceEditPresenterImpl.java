@@ -50,8 +50,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             if (bookSourceOld != null && !Objects.equals(bookSource.getBookSourceUrl(), bookSourceOld.getBookSourceUrl())) {
                 DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(bookSourceOld);
             }
-            BookSourceManager.getInstance().addBookSource(bookSource);
-            BookSourceManager.getInstance().refreshBookSource();
+            BookSourceManager.add(bookSource);
             e.onNext(true);
         }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -28,13 +28,17 @@ public interface BookSourceContract {
         void importBookSource(String url);
 
         void checkBookSource();
+
+        void refresh();
     }
 
     interface View extends IView {
 
-        void refreshBookSource();
-
         Snackbar getSnackBar(String msg);
+
+        String getQuery();
+
+        void upMenu();
 
         void resetData(List<BookSourceBean> bookSourceBeans);
 

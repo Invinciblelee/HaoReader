@@ -254,6 +254,7 @@ public class LocalPageLoader extends PageLoader {
             bean.setDurChapterName(chapter.title);
             bean.setStart(chapter.start);
             bean.setEnd(chapter.end);
+            bean.setNoteUrl(mBookFile.getAbsolutePath());
             chapterList.add(bean);
         }
         IOUtils.close(bookStream);
@@ -273,7 +274,7 @@ public class LocalPageLoader extends PageLoader {
             Pattern pattern = Pattern.compile(AUTHOR_PATTERN);
             Matcher m = pattern.matcher(firstChapter);
             if (m.find()) {
-                getCollBook().getBookInfoBean().setAuthor(m.group());
+                getCollBook().getBookInfoBean().setAuthor(m.group().trim());
             }
         }
     }

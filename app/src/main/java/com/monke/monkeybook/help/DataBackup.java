@@ -59,7 +59,7 @@ public class DataBackup {
     }
 
     private void backupBookSource(String file) {
-        List<BookSourceBean> bookSourceList = BookSourceManager.getInstance().getAllBookSource();
+        List<BookSourceBean> bookSourceList = BookSourceManager.getAll();
         if (bookSourceList != null && bookSourceList.size() > 0) {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
@@ -86,7 +86,7 @@ public class DataBackup {
     }
 
     private void backupReplaceRule(String file) {
-        List<ReplaceRuleBean> replaceRuleBeans = ReplaceRuleManager.getInstance().getAll();
+        List<ReplaceRuleBean> replaceRuleBeans = ReplaceRuleManager.getAll();
         if (replaceRuleBeans != null && replaceRuleBeans.size() > 0) {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()

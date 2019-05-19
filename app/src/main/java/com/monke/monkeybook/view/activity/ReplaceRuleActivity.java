@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.hwangjr.rxbus.RxBus;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
-import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.MyItemTouchHelpCallback;
@@ -31,6 +30,7 @@ import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
+import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.view.fragment.dialog.ReplaceRuleDialog;
 import com.monke.monkeybook.widget.AppCompat;
 
@@ -39,10 +39,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by GKF on 2017/12/16.
@@ -60,6 +56,8 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
 
     private ReplaceRuleAdapter adapter;
     private boolean selectAll = true;
+
+    private ProgressDialog progressDialog;
 
     public static void startThis(Context context) {
         context.startActivity(new Intent(context, ReplaceRuleActivity.class));
@@ -90,7 +88,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
         recyclerViewBookSource.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ReplaceRuleAdapter(this);
         recyclerViewBookSource.setAdapter(adapter);
-        adapter.resetDataS(ReplaceRuleManager.getInstance().getAll());
+        adapter.resetDataS(ReplaceRuleManager.getAll());
         MyItemTouchHelpCallback itemTouchHelpCallback = new MyItemTouchHelpCallback();
         itemTouchHelpCallback.setOnItemTouchCallbackListener(adapter.getItemTouchCallbackListener());
         itemTouchHelpCallback.setDragEnable(true);
@@ -100,25 +98,8 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     }
 
     public void editReplaceRule(ReplaceRuleBean replaceRuleBean) {
-        ReplaceRuleDialog.show(getSupportFragmentManager(), replaceRuleBean, ruleBean -> {
-            Observable.create((ObservableOnSubscribe<List<ReplaceRuleBean>>) e -> {
-                ReplaceRuleManager.getInstance().saveData(ruleBean);
-                e.onNext(ReplaceRuleManager.getInstance().getAll());
-                e.onComplete();
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SimpleObserver<List<ReplaceRuleBean>>() {
-                        @Override
-                        public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
-                            adapter.resetDataS(replaceRuleBeans);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-                    });
-        });
+        ReplaceRuleDialog.show(getSupportFragmentManager(), replaceRuleBean, ruleBean ->
+                mPresenter.editData(ruleBean));
     }
 
     public void upDateSelectAll() {
@@ -137,7 +118,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
         }
         adapter.notifyDataSetChanged();
         selectAll = !selectAll;
-        ReplaceRuleManager.getInstance().saveDataS(adapter.getDataList());
+        ReplaceRuleManager.saveAll(adapter.getDataList());
     }
 
     public void delData(ReplaceRuleBean replaceRuleBean) {
@@ -232,8 +213,25 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     }
 
     @Override
-    public void refresh() {
-        adapter.resetDataS(ReplaceRuleManager.getInstance().getAll());
+    public void refresh(List<ReplaceRuleBean> replaceRuleBeans) {
+        adapter.resetDataS(replaceRuleBeans);
+    }
+
+    @Override
+    public void dismissLoading() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void showLoading(String msg) {
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog.show(this, msg);
+        } else {
+            progressDialog.setMessage(msg);
+            progressDialog.show(this);
+        }
     }
 
     @Override

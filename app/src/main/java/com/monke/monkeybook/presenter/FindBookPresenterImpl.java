@@ -52,9 +52,9 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         Observable.create((ObservableOnSubscribe<List<FindKindGroupBean>>) e -> {
             List<BookSourceBean> bookSourceBeans;
             if (AppConfigHelper.get().getBoolean(mView.getContext().getString(R.string.pk_show_all_find), true)) {
-                bookSourceBeans = BookSourceManager.getInstance().getAllBookSource();
+                bookSourceBeans = BookSourceManager.getAll();
             } else {
-                bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
+                bookSourceBeans = BookSourceManager.getEnabled();
             }
             final List<FindKindGroupBean> group = new ArrayList<>();
             for (BookSourceBean sourceBean : bookSourceBeans) {
@@ -100,7 +100,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     }
                 } catch (Exception ignore) {
                     sourceBean.setBookSourceGroup("发现规则语法错误");
-                    BookSourceManager.getInstance().saveBookSource(sourceBean);
+                    BookSourceManager.save(sourceBean);
                 }
             }
             Collections.sort(group, (o1, o2) -> collator.compare(o1.getGroupName(), o2.getGroupName()));

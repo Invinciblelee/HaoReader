@@ -45,14 +45,19 @@ public class ListUtils {
         return new ArrayList<>(list);
     }
 
-    public static List<String> toStringList(List<Object> list){
-        if(list == null){
+    public static List<String> toStringList(Object object) {
+        if (object == null) {
             return new ArrayList<>();
         }
         final List<String> stringList = new ArrayList<>();
-        for (Object object: list){
+        if (object instanceof List) {
+            for (Object obj : (List) object) {
+                stringList.add(StringUtils.valueOf(obj));
+            }
+        } else {
             stringList.add(StringUtils.valueOf(object));
         }
+
         return stringList;
     }
 

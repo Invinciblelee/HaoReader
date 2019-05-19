@@ -27,8 +27,13 @@ public class BookFloatingActionMenu extends LinearLayout {
 
     private boolean isExpanded;
     private int mLastIndex;
-    private final Handler mAnimationHandler = new Handler();
     private OnActionMenuClickListener mMenuClickListener;
+    
+    private final Handler mAnimateHandler = new Handler();
+
+    private final Runnable mExpandRunnable = this::expandInternal;
+
+    private final Runnable mCollapseRunnable = this::collapseInternal;
 
     public BookFloatingActionMenu(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -93,8 +98,8 @@ public class BookFloatingActionMenu extends LinearLayout {
     @SuppressLint("ClickableViewAccessibility")
     private void initFloatingActionMenu() {
         for (int i = 0; i <= getChildCount() - 2; i++) {
-            final int index = i;
-            ViewGroup childGroup = (ViewGroup) getChildAt(index);
+            ViewGroup childGroup = (ViewGroup) getChildAt(i);
+            final int index = Integer.parseInt(String.valueOf(childGroup.getTag()));
             childGroup.setVisibility(INVISIBLE);
             View labelView = childGroup.getChildAt(0);
             labelView.setVisibility(INVISIBLE);
@@ -104,20 +109,12 @@ public class BookFloatingActionMenu extends LinearLayout {
                 btnView.setImageResource(R.drawable.ic_check_black_24dp);
             }
             labelView.setOnClickListener(v -> btnView.callOnClick());
-            labelView.setOnTouchListener((v, event) -> {
-                btnView.onTouchEvent(event);
-                return false;
-            });
             btnView.setOnClickListener(v -> {
                 setSelection(index);
                 collapse();
                 if (mMenuClickListener != null) {
                     mMenuClickListener.onMenuClick(index, v);
                 }
-            });
-            btnView.setOnTouchListener((v, event) -> {
-                labelView.onTouchEvent(event);
-                return false;
             });
             btnView.post(btnView::hide);
         }
@@ -137,22 +134,32 @@ public class BookFloatingActionMenu extends LinearLayout {
     }
 
     public void setSelection(int index) {
-        ViewGroup childLast = (ViewGroup) getChildAt(mLastIndex);
-        if (childLast != null) {
-            FloatingActionButton lastBtn = (FloatingActionButton) childLast.getChildAt(1);
-            lastBtn.setImageDrawable((Drawable) lastBtn.getTag());
-        }
+        if (mLastIndex != index) {
+            ViewGroup childLast = findViewWithTag(String.valueOf(mLastIndex));
+            if (childLast != null) {
+                FloatingActionButton lastBtn = (FloatingActionButton) childLast.getChildAt(1);
+                lastBtn.setImageDrawable((Drawable) lastBtn.getTag());
+            }
 
-        ViewGroup child = (ViewGroup) getChildAt(index);
-        if (child != null) {
-            FloatingActionButton lastBtn = (FloatingActionButton) child.getChildAt(1);
-            lastBtn.setImageResource(R.drawable.ic_check_black_24dp);
-        }
+            ViewGroup child = findViewWithTag(String.valueOf(index));
+            if (child != null) {
+                FloatingActionButton lastBtn = (FloatingActionButton) child.getChildAt(1);
+                lastBtn.setImageResource(R.drawable.ic_check_black_24dp);
+            }
 
-        mLastIndex = index;
+            mLastIndex = index;
+        }
     }
 
     public void expand() {
+        mAnimateHandler.post(mExpandRunnable);
+    }
+
+    public void collapse() {
+        mAnimateHandler.post(mCollapseRunnable);
+    }
+
+    private void expandInternal() {
         if (!isExpanded) {
             isExpanded = true;
 
@@ -164,7 +171,7 @@ public class BookFloatingActionMenu extends LinearLayout {
                 }
                 View labelView = childGroup.getChildAt(0);
                 FloatingActionButton btnView = (FloatingActionButton) childGroup.getChildAt(1);
-                mAnimationHandler.postDelayed(() -> {
+                mAnimateHandler.postDelayed(() -> {
                     btnView.show();
                     animateShowLabelView(labelView);
                 }, 50 * index);
@@ -173,7 +180,7 @@ public class BookFloatingActionMenu extends LinearLayout {
         }
     }
 
-    public void collapse() {
+    private void collapseInternal() {
         if (isExpanded) {
             isExpanded = false;
 
@@ -182,7 +189,7 @@ public class BookFloatingActionMenu extends LinearLayout {
                 ViewGroup childGroup = (ViewGroup) getChildAt(i);
                 View labelView = childGroup.getChildAt(0);
                 FloatingActionButton btnView = (FloatingActionButton) childGroup.getChildAt(1);
-                mAnimationHandler.postDelayed(() -> {
+                mAnimateHandler.postDelayed(() -> {
                     btnView.hide();
                     animateHideLabelView(labelView);
                 }, 50 * index);

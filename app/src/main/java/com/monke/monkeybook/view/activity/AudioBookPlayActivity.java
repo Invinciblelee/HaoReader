@@ -236,11 +236,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             }
         }
 
-        if (AppActivityManager.getInstance().isExist(AudioBookActivity.class)) {
-            supportFinishAfterTransition();
-        } else {
-            finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
-        }
+        supportFinishAfterTransition();
     }
 
     @Override
@@ -430,7 +426,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     private void setCoverImage(String image) {
         Glide.with(AudioBookPlayActivity.this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
-                        .transforms(new CenterCrop(), new CircleCrop())
+                        .centerCrop()
                         .error(R.drawable.img_cover_default)
                         .placeholder(R.drawable.img_cover_default)
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))

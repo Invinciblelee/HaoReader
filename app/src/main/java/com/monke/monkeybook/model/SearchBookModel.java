@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
@@ -36,6 +35,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private int threadsNum;
     private int searchPageCount;
     private String searchBookType;
+    private String group;
     private SearchListener searchListener;
     private boolean searchEngineChanged = false;
     private boolean useMy716;
@@ -99,32 +99,6 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     /**
      * 搜索引擎初始化
      */
-    public void initSearchEngineS1(@NonNull List<BookSourceBean> sourceBeanList,String group) {
-        if (!searchEngineS.isEmpty()) {
-            searchEngineS.clear();
-        }
-        if (group == "有声") {
-            if (useMy716) {
-                searchEngineS.add(new SearchEngine(Default716.TAG));
-            }
-            if (useShuqi) {
-                searchEngineS.add(new SearchEngine(DefaultShuqi.TAG));
-            }
-        }
-        for (BookSourceBean bookSourceBean : sourceBeanList) {
-            if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
-                continue;
-            }
-            if (bookSourceBean.getEnable()) {
-                SearchEngine se = new SearchEngine(bookSourceBean.getBookSourceUrl());
-                searchEngineS.add(se);
-            }
-        }
-        searchEngineChanged = false;
-    }
-    /**
-     * 搜索引擎初始化
-     */
     public void initSearchEngineS() {
         if (!searchEngineS.isEmpty()) {
             searchEngineS.clear();
@@ -136,7 +110,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         if (useShuqi) {
             searchEngineS.add(new SearchEngine(DefaultShuqi.TAG));
         }
-        List<BookSourceBean> bookSourceBeans = BookSourceManager.getInstance().getSelectedBookSource();
+        final List<BookSourceBean> bookSourceBeans = BookSourceManager.getEnabledByGroup(group);
         if (bookSourceBeans != null && !bookSourceBeans.isEmpty()) {
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
                 if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
@@ -245,9 +219,12 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         return this;
     }
 
+    public SearchBookModel group(String group) {
+        this.group = group;
+        return this;
+    }
+
     public SearchBookModel setup() {
-        useMy716(AppConfigHelper.get().getBoolean("useMy716", true));
-        useShuqi(AppConfigHelper.get().getBoolean("useShuqi", true));
         initSearchEngineS();
         return this;
     }

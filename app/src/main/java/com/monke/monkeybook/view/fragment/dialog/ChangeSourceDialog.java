@@ -13,6 +13,11 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -30,10 +35,6 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -167,7 +168,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public void loadMoreSearchBook(List<SearchBookBean> value) {
-        ListUtils.filter(value, searchBookBean -> searchBookBean.isSimilarTo(bookInfo));
+        ListUtils.filter(value, searchBookBean -> searchBookBean.isSimilarTo(bookInfo, selectCover));
         addSearchBook(value);
     }
 
@@ -249,10 +250,10 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     private void incrementSourceWeightBySelection(SearchBookBean searchBook) {
         Schedulers.single().createWorker().schedule(() -> {
-            BookSourceBean sourceBean = BookSourceManager.getInstance().getBookSourceByTag(searchBook.getTag());
+            BookSourceBean sourceBean = BookSourceManager.getByTag(searchBook.getTag());
             if (sourceBean != null) {
                 sourceBean.increaseWeightBySelection();
-                BookSourceManager.getInstance().saveBookSource(sourceBean);
+                BookSourceManager.save(sourceBean);
             }
         });
     }

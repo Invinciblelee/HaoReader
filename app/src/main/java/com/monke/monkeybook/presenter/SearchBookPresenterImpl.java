@@ -210,11 +210,8 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     }
     @Override
     public void initSearchEngineS(String group) {
-        if (TextUtils.isEmpty(group)) {
-            searchBookModel.initSearchEngineS1(BookSourceManager.getInstance().getSelectedBookSource(), group);
-        } else {
-            searchBookModel.initSearchEngineS1(BookSourceManager.getInstance().getEnableSourceByGroup(group), group);
-        }
+        searchBookModel.group(group);
+        searchBookModel.notifySearchEngineChanged();
     }
     @Override
     public void stopSearch() {
@@ -280,6 +277,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
     public void sourceListChange(Boolean change) {
         searchBookModel.notifySearchEngineChanged();
+        mView.upMenu();
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.IMMERSION_CHANGE)})

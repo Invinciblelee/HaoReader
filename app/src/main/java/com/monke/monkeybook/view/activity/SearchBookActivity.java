@@ -3,11 +3,13 @@ package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,6 +34,7 @@ import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -57,11 +60,11 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @BindView(R.id.fabStop)
     FloatingActionButton fabStop;
 
+    private String group;
+
     private ExplosionField explosionField;
     private SearchBookAdapter searchBookAdapter;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
-    private Menu menu;
-    private String group;
 
     private final Handler mHandler = new Handler();
 
@@ -123,6 +126,20 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void onCreateActivity() {
         setContentView(R.layout.activity_search_book);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            group = savedInstanceState.getString("group");
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("group", group);
     }
 
     @Override
@@ -197,21 +214,40 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search_activity, menu);
-        this.menu = menu;
-        initMenu();
         return super.onCreateOptionsMenu(menu);
     }
-    private void initMenu() {
+
+    private void initMenu(Menu menu) {
         if (menu == null) return;
-        menu.removeGroup(R.id.source_group_so);
-        menu.add(R.id.source_group_so, Menu.NONE, Menu.NONE, R.string.all_source).setIcon(R.drawable.ic_source_manager_black_24dp);
-        List<String> groupList = BookSourceManager.getInstance().getEnableGroupList();
-        for (String groupName : groupList) {
-            menu.add(R.id.source_group_so, Menu.NONE, Menu.NONE, groupName).setIcon(R.drawable.ic_source_manager_black_24dp);
+        MenuItem item = menu.findItem(R.id.action_outer_source);
+        SubMenu subMenu = item.getSubMenu();
+        subMenu.removeGroup(R.id.book_source_group);
+        if (BookSourceManager.getEnabledCount() > 0) {
+            item.setVisible(true);
+            item.setEnabled(true);
+            MenuItem subItem = subMenu.add(R.id.book_source_group, Menu.NONE, Menu.NONE, R.string.book_all_source);
+            if (group == null) {
+                subItem.setChecked(true);
+            }
+            List<String> groupList = BookSourceManager.getEnableGroupList();
+            for (String groupName : groupList) {
+                subItem = subMenu.add(R.id.book_source_group, Menu.NONE, Menu.NONE, groupName);
+                if (TextUtils.equals(group, subItem.getTitle())) {
+                    subItem.setChecked(true);
+                }
+            }
+            subMenu.setGroupCheckable(R.id.book_source_group, true, true);
+        } else {
+            item.setVisible(false);
+            item.setEnabled(false);
         }
-        menu.setGroupCheckable(R.id.source_group_so, true, true);
-        menu.getItem(3).setChecked(true);
     }
+
+    @Override
+    public void upMenu() {
+        supportInvalidateOptionsMenu();
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem my716 = menu.findItem(R.id.action_book_my716);
@@ -222,6 +258,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         if (shuqi != null) {
             shuqi.setChecked(AppConfigHelper.get().getBoolean("useShuqi", true));
         }
+        initMenu(menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -247,14 +284,15 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 finish();
                 break;
             default:
-                if (item.getGroupId() == R.id.source_group_so) {
+                if (item.getGroupId() == R.id.book_source_group) {
                     item.setChecked(true);
-                    if (Objects.equals(getString(R.string.all_source), item.getTitle().toString())) {
+                    if (Objects.equals(getString(R.string.book_all_source), item.getTitle().toString())) {
                         group = null;
+                        mPresenter.initSearchEngineS(null);
                     } else {
                         group = item.getTitle().toString();
+                        mPresenter.initSearchEngineS(item.getTitle().toString());
                     }
-                    mPresenter.initSearchEngineS(group);
                 }
         }
         return super.onOptionsItemSelected(item);
@@ -455,17 +493,5 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.goto_select, (dialog, which) -> BookSourceActivity.startThis(SearchBookActivity.this))
                 .show();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == requestSource) {
-                initMenu();
-                mPresenter.initSearchEngineS(group);
-            }
-        }
     }
 }

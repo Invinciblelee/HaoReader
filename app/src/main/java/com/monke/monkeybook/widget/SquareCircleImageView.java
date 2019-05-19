@@ -1,10 +1,10 @@
 package com.monke.monkeybook.widget;
 
 import android.content.Context;
-import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class SquareCircleImageView extends CircleImageView {
 

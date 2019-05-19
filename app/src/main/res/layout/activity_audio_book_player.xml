@@ -77,9 +77,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/progress_color"
             android:secondaryProgressTint="@color/colorAccentDark"
-            android:progressBackgroundTint="@color/colorReadProgressBack"
-            android:progressTint="@color/colorReadProgress"
             android:thumbTint="@color/progress_color" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -107,8 +107,8 @@
             android:id="@+id/btn_timer"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:scaleType="fitCenter"
             android:padding="10dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_alarm_black_24dp"
             android:tint="@color/dark_white" />
 

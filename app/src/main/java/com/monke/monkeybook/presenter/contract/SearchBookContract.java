@@ -37,6 +37,8 @@ public interface SearchBookContract {
 
         void initImmersionBar();
 
+        void upMenu();
+
         void searchBook(String searchKey);
 
         /**

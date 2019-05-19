@@ -25,7 +25,7 @@ import java.util.List;
 
 public class DataRestore {
 
-    private static final String[] FILTER = {"versionCode", "nightTheme", "shelfGroup"};
+    private static final String[] FILTER = {"nightTheme", "shelfGroup"};
 
     public static DataRestore getInstance() {
         return new DataRestore();
@@ -85,7 +85,7 @@ public class DataRestore {
             for (int i = 0; i < bookSourceBeans.size(); i++) {
                 bookSourceBeans.get(i).setSerialNumber(i + 1);
             }
-            BookSourceManager.getInstance().addBookSource(bookSourceBeans);
+            BookSourceManager.addAll(bookSourceBeans);
         }
     }
 
@@ -105,7 +105,7 @@ public class DataRestore {
         if (json != null) {
             List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
             }.getType());
-            ReplaceRuleManager.getInstance().saveDataS(replaceRuleBeans);
+            ReplaceRuleManager.saveAll(replaceRuleBeans);
         }
     }
 }
