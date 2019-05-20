@@ -132,8 +132,8 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         clearSearch();
 
         if (searchEngineChanged || searchEngineS.isEmpty()) {
-            //initSearchEngineS();
-            searchHandler.obtainMessage(SearchHandler.MSG_EMPTY).sendToTarget();
+            initSearchEngineS();
+            //searchHandler.obtainMessage(SearchHandler.MSG_EMPTY).sendToTarget();
         } else {
             for (SearchEngine searchEngine : searchEngineS) {
                 searchEngine.searchReset();

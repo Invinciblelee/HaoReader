@@ -44,7 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SearchBookActivity extends MBaseActivity<SearchBookContract.Presenter> implements SearchBookContract.View {
-    private final int requestSource = 14;
+
     @BindView(R.id.searchView)
     SearchView searchView;
     @BindView(R.id.toolbar)
