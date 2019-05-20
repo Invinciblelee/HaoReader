@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/card_background"
+        android:background="@color/colorCardBackground"
         android:orientation="vertical">
 
         <LinearLayout
@@ -36,7 +36,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/brightness"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <TextView
@@ -46,7 +46,7 @@
                     android:layout_marginLeft="7dp"
                     android:layout_marginRight="7dp"
                     android:text="@string/flow_sys"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <com.monke.monkeybook.widget.checkbox.SmoothCheckBox
@@ -56,7 +56,7 @@
                     android:layout_gravity="center_vertical"
                     app:color_checked="@color/colorAccent"
                     app:color_tick="@color/white"
-                    app:color_unchecked="@color/card_background"
+                    app:color_unchecked="@color/colorCardBackground"
                     app:color_unchecked_stroke="?colorControlNormal"
                     app:duration="150"
                     app:stroke_width="2dp" />
@@ -70,9 +70,9 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:max="225"
-                android:progressBackgroundTint="@color/progress_back_color"
-                android:progressTint="@color/progress_color"
-                android:thumbTint="@color/progress_color" />
+                android:progressBackgroundTint="@color/colorProgressTrack"
+                android:progressTint="@color/colorProgress"
+                android:thumbTint="@color/colorProgress" />
 
         </LinearLayout>
 
@@ -97,7 +97,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/read_aloud_speed"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <TextView
@@ -107,7 +107,7 @@
                     android:layout_marginLeft="7dp"
                     android:layout_marginRight="7dp"
                     android:text="@string/flow_sys"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <com.monke.monkeybook.widget.checkbox.SmoothCheckBox
@@ -117,7 +117,7 @@
                     android:layout_gravity="center_vertical"
                     app:color_checked="@color/colorAccent"
                     app:color_tick="@color/white"
-                    app:color_unchecked="@color/card_background"
+                    app:color_unchecked="@color/colorCardBackground"
                     app:color_unchecked_stroke="?colorControlNormal"
                     app:duration="150"
                     app:stroke_width="2dp" />
@@ -131,9 +131,9 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:max="20"
-                android:progressBackgroundTint="@color/progress_back_color"
-                android:progressTint="@color/progress_color"
-                android:thumbTint="@color/progress_color" />
+                android:progressBackgroundTint="@color/colorProgressTrack"
+                android:progressTint="@color/colorProgress"
+                android:thumbTint="@color/colorProgress" />
 
         </LinearLayout>
 
@@ -158,7 +158,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/auto_next_page_speed"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <TextView
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="%dS"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp"
                     tools:ignore="HardcodedText" />
 
@@ -181,9 +181,9 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:max="180"
-                android:progressBackgroundTint="@color/progress_back_color"
-                android:progressTint="@color/progress_color"
-                android:thumbTint="@color/progress_color" />
+                android:progressBackgroundTint="@color/colorProgressTrack"
+                android:progressTint="@color/colorProgress"
+                android:thumbTint="@color/colorProgress" />
 
         </LinearLayout>
 
@@ -209,7 +209,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="@string/page_anim_duration"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp" />
 
                 <TextView
@@ -218,7 +218,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="%dMS"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/colorTextDefault"
                     android:textSize="14sp"
                     tools:ignore="HardcodedText" />
 
@@ -232,9 +232,9 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:max="800"
-                android:progressBackgroundTint="@color/progress_back_color"
-                android:progressTint="@color/progress_color"
-                android:thumbTint="@color/progress_color" />
+                android:progressBackgroundTint="@color/colorProgressTrack"
+                android:progressTint="@color/colorProgress"
+                android:thumbTint="@color/colorProgress" />
 
         </LinearLayout>
     </LinearLayout>

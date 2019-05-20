@@ -15,7 +15,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="-"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/colorTextDefault"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="1"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/colorTextDefault"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="+"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/colorTextDefault"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>

@@ -98,7 +98,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
 
-        if (item.getHasUpdate()) {
+        if (item.getHasUpdate() && !item.isLocalBook()) {
             holder.tvHasNew.setVisibility(View.VISIBLE);
         } else {
             holder.tvHasNew.setVisibility(View.INVISIBLE);
@@ -113,7 +113,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
         SpannableString chaptersSpan = new SpannableString(String.format(Locale.getDefault(), "(新增%d章)", newChapters));
         chaptersSpan.setSpan(new RelativeSizeSpan(0.75f), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        chaptersSpan.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.tv_text_secondary)), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        chaptersSpan.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.colorTextSecondary)), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         sbs.append(chaptersSpan);
         return sbs;
     }

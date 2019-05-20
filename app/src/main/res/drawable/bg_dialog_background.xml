@@ -9,7 +9,7 @@
         <corners
             android:radius="2dp" />
         <solid
-            android:color="@color/card_background" />
+            android:color="@color/colorCardBackground" />
     </shape>
 
 </inset>

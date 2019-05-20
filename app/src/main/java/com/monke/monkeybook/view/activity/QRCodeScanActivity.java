@@ -19,7 +19,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

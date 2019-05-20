@@ -116,11 +116,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
         bookSourceGroup = in.readString();
         bookSourceType = in.readString();
         bookSourceRuleType = in.readString();
+        bookSourceCacheEnabled = in.readByte() != 0;
         checkUrl = in.readString();
         serialNumber = in.readInt();
         weight = in.readInt();
         enable = in.readByte() != 0;
-        bookSourceCacheEnabled = in.readByte() != 0;
         ruleFindUrl = in.readString();
         ruleSearchUrl = in.readString();
         ruleSearchList = in.readString();
@@ -144,6 +144,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         ruleContentUrlNext = in.readString();
         ruleBookContent = in.readString();
         httpUserAgent = in.readString();
+        ajaxJavaScript = in.readString();
     }
 
     @Override
@@ -153,11 +154,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(bookSourceGroup);
         dest.writeString(bookSourceType);
         dest.writeString(bookSourceRuleType);
+        dest.writeByte((byte) (bookSourceCacheEnabled ? 1 : 0));
         dest.writeString(checkUrl);
         dest.writeInt(serialNumber);
         dest.writeInt(weight);
         dest.writeByte((byte) (enable ? 1 : 0));
-        dest.writeByte((byte) (bookSourceCacheEnabled ? 1 : 0));
         dest.writeString(ruleFindUrl);
         dest.writeString(ruleSearchUrl);
         dest.writeString(ruleSearchList);
@@ -181,6 +182,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(ruleContentUrlNext);
         dest.writeString(ruleBookContent);
         dest.writeString(httpUserAgent);
+        dest.writeString(ajaxJavaScript);
     }
 
     @Override
@@ -248,8 +250,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
             Gson gson = new Gson();
             String json = gson.toJson(this);
             return gson.fromJson(json, BookSourceBean.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
         }
         return this;
     }
@@ -412,7 +413,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchUrl = ruleSearchUrl;
     }
 
-    public boolean ajaxSearch(){
+    public boolean ajaxSearch() {
         if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
                 || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON)
                 || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON_TRAIT)) {
@@ -421,8 +422,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
         return !TextUtils.isEmpty(ruleSearchUrl) && ruleSearchUrl.startsWith(Patterns.RULE_AJAX);
     }
 
-    public String getRealRuleSearchUrl(){
-        if(ajaxSearch()){
+    public String getRealRuleSearchUrl() {
+        if (ajaxSearch()) {
             return ruleSearchUrl.substring(1);
         }
         return ruleSearchUrl;

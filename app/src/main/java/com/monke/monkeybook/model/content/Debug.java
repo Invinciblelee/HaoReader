@@ -91,7 +91,7 @@ public class Debug {
                             printError("搜索列表为空");
                             printLog(String.format("★%s 搜索结束", getDoTime()));
                         } else {
-                            printLog("●成功获取搜索列表» 共" + searchBookBeans.size() + "个结果");
+                            printLog("●成功获取搜索结果» 共" + searchBookBeans.size() + "个结果");
                             SearchBookBean searchBookBean = searchBookBeans.get(0);
                             printLog("●书籍名称» " + searchBookBean.getName());
                             printLog("●书籍作者» " + searchBookBean.getAuthor());
@@ -185,7 +185,7 @@ public class Debug {
                             printLog("●成功获取目录列表» 共" + size + "个章节");
                             ChapterBean chapterBean = bookShelfBean.getChapter(0);
                             printLog("●章节名称» " + chapterBean.getDurChapterName());
-                            printLog("●章节网址» " + chapterBean.getDurChapterUrl());
+                            printLog("●章节网址» " + URLUtils.getAbsoluteURL(bookShelfBean.getBookInfoBean().getChapterListUrl(), chapterBean.getDurChapterUrl()));
                             printLog(String.format("★%s 目录结束", getDoTime()));
                             bookContentDebug(bookShelfBean.getBookInfoBean(), chapterBean);
                         } else {
@@ -229,7 +229,7 @@ public class Debug {
 
                     @Override
                     public void onNext(BookContentBean bookContentBean) {
-                        printLog("●成功获取正文页» " + bookContentBean.getDurChapterUrl());
+                        printLog("●成功获取正文页» " + URLUtils.getAbsoluteURL(bookInfoBean.getChapterListUrl(), bookContentBean.getDurChapterUrl()));
                         final String content = bookContentBean.getDurChapterContent();
                         if (content != null && content.length() > 3000) {
                             printLog("●章节内容» " + content.substring(0, 3000) + "\u00B7\u00B7\u00B7");
@@ -253,7 +253,7 @@ public class Debug {
     }
 
     private void bookAudioDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
-        WebBookModel.getInstance().processAudioChapter(bookInfoBean.getTag(), chapterBean)
+        WebBookModel.getInstance().getAudioBookContent(bookInfoBean, chapterBean)
                 .subscribeOn(Schedulers.single())
                 .timeout(30L, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())

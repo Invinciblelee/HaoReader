@@ -40,5 +40,5 @@ public interface IWebBookModel {
     /**
      * 听书章节
      */
-    Observable<ChapterBean> processAudioChapter(String tag, ChapterBean chapter);
+    Observable<ChapterBean> getAudioBookContent(BookInfoBean bookInfo, ChapterBean chapter);
 }

@@ -1,7 +1,6 @@
 package com.monke.monkeybook.view.fragment.dialog;
 
 import android.app.Dialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.monke.monkeybook.R;
 
@@ -58,8 +58,22 @@ public class AppCompatDialog extends AppCompatDialogFragment {
         return (T) mDialogView.findViewById(id);
     }
 
-    public final View getDialogView() {
-        return mDialogView;
+    @Override
+    public void show(@NonNull FragmentManager manager, @Nullable String tag) {
+        if (isAdded()) {
+            dismiss();
+        } else {
+            super.show(manager, tag);
+        }
+    }
+
+    @Override
+    public void showNow(@NonNull FragmentManager manager, @Nullable String tag) {
+        if (isAdded()) {
+            dismiss();
+        } else {
+            super.showNow(manager, tag);
+        }
     }
 
     @Override

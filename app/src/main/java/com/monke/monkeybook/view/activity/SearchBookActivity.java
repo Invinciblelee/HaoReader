@@ -27,7 +27,7 @@ import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -201,7 +201,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

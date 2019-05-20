@@ -19,7 +19,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.utils.ReadAssets;
 import com.monke.monkeybook.view.fragment.dialog.LargeTextDialog;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -121,7 +121,7 @@ public class AboutActivity extends MBaseActivity {
     }
 
     private void setTextViewIconColor(TextView textView) {
-        AppCompat.setTint(textView, getResources().getColor(R.color.tv_text_default));
+        AppCompat.setTint(textView, getResources().getColor(R.color.colorTextDefault));
     }
 
     @Override
@@ -161,7 +161,7 @@ public class AboutActivity extends MBaseActivity {
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

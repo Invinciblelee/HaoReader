@@ -19,7 +19,7 @@ import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.utils.ToastUtils;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.lang.reflect.Method;
 
@@ -93,7 +93,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
                 if (item.requiresOverflow()) {
                     AppCompat.setTint(item, getResources().getColor(R.color.colorMenuText));
                 } else {
-                    AppCompat.setTint(item, getResources().getColor(R.color.colorToolBarText));
+                    AppCompat.setTint(item, getResources().getColor(R.color.colorBarText));
                 }
             }
         }
@@ -107,10 +107,10 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();
         } else {
-            mImmersionBar.statusBarColor(R.color.status_bar_bag);
+            mImmersionBar.statusBarColor(R.color.colorStatusBar);
         }
 
-        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -207,8 +207,8 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
         Snackbar snackbar = Snackbar.make(getSnackBarView(), msg, Snackbar.LENGTH_SHORT);
         View view = snackbar.getView();
-        view.setBackgroundResource(R.color.card_background);
-        ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(getResources().getColor(R.color.tv_text_default));
+        view.setBackgroundResource(R.color.colorCardBackground);
+        ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(getResources().getColor(R.color.colorTextDefault));
         return snackbar;
     }
 

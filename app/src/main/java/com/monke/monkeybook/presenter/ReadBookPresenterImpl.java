@@ -242,7 +242,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     }
                     return Observable.error(new Exception("目录获取失败"));
                 })
-                .doOnNext(bookShelfBean -> bookSource = BookSourceManager.getByTag(bookShelfBean.getTag()))
+                .doOnNext(bookShelfBean -> bookSource = BookSourceManager.getByUrl(bookShelfBean.getTag()))
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
                     @Override
@@ -318,7 +318,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             mView.upMenu();
         } else {
             Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-                bookSource = BookSourceManager.getByTag(bookShelf.getTag());
+                bookSource = BookSourceManager.getByUrl(bookShelf.getTag());
                 e.onNext(bookSource != null);
                 e.onComplete();
             }).subscribeOn(Schedulers.single())

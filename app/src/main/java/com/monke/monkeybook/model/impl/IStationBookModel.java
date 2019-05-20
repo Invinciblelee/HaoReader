@@ -35,7 +35,7 @@ public interface IStationBookModel {
     /**
      * 章节缓存
      */
-    Observable<BookContentBean> getBookContent(ChapterBean chapter);
+    Observable<BookContentBean> getBookContent(String chapterUrl, ChapterBean chapter);
 
 
 }

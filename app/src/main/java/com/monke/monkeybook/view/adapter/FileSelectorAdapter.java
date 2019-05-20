@@ -24,7 +24,7 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.ToastUtils;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -68,7 +68,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
         this.inflater = LayoutInflater.from(context);
 
         placeholder = fragment.getResources().getDrawable(R.drawable.ic_image_placeholder);
-        AppCompat.setTint(placeholder, fragment.getResources().getColor(R.color.tv_text_summary));
+        AppCompat.setTint(placeholder, fragment.getResources().getColor(R.color.colorTextSummary));
 
         files = new ArrayList<>();
     }
@@ -140,7 +140,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
                     holder.mAdded.setVisibility(View.INVISIBLE);
                     holder.mCover.setVisibility(View.INVISIBLE);
                     holder.mIcon.setImageResource(R.drawable.ic_file_black_24dp);
-                    AppCompat.setTint(holder.mIcon, holder.mChecker.getResources().getColor(R.color.tv_text_secondary));
+                    AppCompat.setTint(holder.mIcon, holder.mChecker.getResources().getColor(R.color.colorTextSecondary));
                 }
                 holder.mTvTag.setText(item.getSuffix());
                 holder.mTvInfo.setText(String.format(Locale.getDefault(), "%s | %s", item.getSize(), item.getDate()));

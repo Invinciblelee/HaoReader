@@ -66,7 +66,7 @@ import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
 import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.ReadBottomStatusBar;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.page.LocalPageLoader;
@@ -288,10 +288,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();
         } else {
-            mImmersionBar.statusBarColor(R.color.status_bar_bag);
+            mImmersionBar.statusBarColor(R.color.colorStatusBar);
         }
 
-        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -466,7 +466,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

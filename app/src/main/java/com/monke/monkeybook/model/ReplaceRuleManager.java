@@ -1,18 +1,20 @@
 package com.monke.monkeybook.model;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.monkeybook.bean.ReplaceRuleBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.ReplaceRuleBeanDao;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
+import com.monke.monkeybook.model.analyzeRule.assit.Global;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -81,11 +83,16 @@ public class ReplaceRuleManager extends BaseModelImpl {
     public static Observable<Boolean> importFromNet(String url) {
         try {
             url = url.trim();
+
+            if (StringUtils.isJsonType(url)) {
+                return importFromJson(url.trim());
+            }
+
             if (URLUtils.isUrl(url)) {
                 AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
                 return SimpleModel.getResponse(analyzeUrl)
-                        .flatMap(rsp -> importOne(rsp.body()))
                         .subscribeOn(Schedulers.single())
+                        .flatMap(rsp -> importFromJson(rsp.body()))
                         .observeOn(AndroidSchedulers.mainThread());
             }
             throw new IllegalArgumentException("url is invalid");
@@ -94,13 +101,14 @@ public class ReplaceRuleManager extends BaseModelImpl {
         }
     }
 
-    private static Observable<Boolean> importOne(String json) {
-        return Observable.create(e -> {
-            List<ReplaceRuleBean> replaceRuleBeans = new Gson().fromJson(json, new TypeToken<List<ReplaceRuleBean>>() {
+    private static Observable<Boolean> importFromJson(String json) {
+        return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            List<ReplaceRuleBean> replaceRuleBeans = Global.GSON.fromJson(json.trim(), new TypeToken<List<ReplaceRuleBean>>() {
             }.getType());
             saveAll(replaceRuleBeans);
             e.onNext(true);
             e.onComplete();
-        });
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

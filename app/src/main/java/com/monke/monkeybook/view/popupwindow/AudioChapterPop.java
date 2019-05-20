@@ -49,7 +49,7 @@ public class AudioChapterPop extends PopupWindow {
         setBackgroundDrawable(context.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
         setFocusable(true);
         setTouchable(true);
-        setAnimationStyle(R.style.anim_pop_windowslide);
+        setAnimationStyle(R.style.Animation_Pop_Sheet);
 
         View contentView = LayoutInflater.from(context).inflate(R.layout.pop_audio_chapter, null);
         setContentView(contentView);

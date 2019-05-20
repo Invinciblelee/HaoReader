@@ -23,7 +23,7 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.view.adapter.FindKindAdapter;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.refreshview.scroller.TopLinearSmoothScroller;
 
 import java.util.List;
@@ -95,7 +95,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
         });
 
         adapter.setOnGroupItemClickListener(groupBean -> {
-            BookSourceBean sourceBean = BookSourceManager.getByTag(groupBean.getTag());
+            BookSourceBean sourceBean = BookSourceManager.getByUrl(groupBean.getTag());
             if (sourceBean != null) {
                 SourceEditActivity.startThis(FindBookActivity.this, sourceBean);
             }
@@ -110,7 +110,7 @@ public class FindBookActivity extends MBaseActivity<FindBookContract.Presenter> 
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

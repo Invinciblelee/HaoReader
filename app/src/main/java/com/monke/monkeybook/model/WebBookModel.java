@@ -80,13 +80,23 @@ public class WebBookModel implements IWebBookModel {
     public Observable<BookContentBean> getBookContent(BookInfoBean bookInfo, ChapterBean chapter) {
         IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
         if (bookModel != null) {
-            return bookModel.getBookContent(chapter)
+            return bookModel.getBookContent(bookInfo.getChapterListUrl(), chapter)
                     .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
         } else
             return Observable.create(e -> {
                 e.onNext(new BookContentBean());
                 e.onComplete();
             });
+    }
+
+    @Override
+    public Observable<ChapterBean> getAudioBookContent(BookInfoBean bookInfo, ChapterBean chapter) {
+        IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
+        if (bookModel instanceof IAudioBookChapterModel) {
+            return ((IAudioBookChapterModel) bookModel).getAudioBookContent(bookInfo.getChapterListUrl(), chapter);
+        } else {
+            return Observable.error(new IllegalAccessException("the model is not IAudioBookChapterModel."));
+        }
     }
 
     /**
@@ -121,17 +131,6 @@ public class WebBookModel implements IWebBookModel {
             });
         }
     }
-
-    @Override
-    public Observable<ChapterBean> processAudioChapter(String tag, ChapterBean chapter) {
-        IStationBookModel bookModel = getBookSourceModel(tag);
-        if (bookModel instanceof IAudioBookChapterModel) {
-            return ((IAudioBookChapterModel) bookModel).processAudioChapter(chapter);
-        } else {
-            return Observable.error(new IllegalAccessException("the model is not IAudioBookChapterModel."));
-        }
-    }
-
 
     //获取book source class
     private IStationBookModel getBookSourceModel(String tag) {

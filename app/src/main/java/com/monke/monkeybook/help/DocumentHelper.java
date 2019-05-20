@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -66,7 +67,7 @@ public class DocumentHelper {
         byte[] data = DocumentUtil.readBytes(ContextHolder.getContext(), fileName, rootPath, subDirs);
         String string = null;
         try {
-            string = new String(data, "utf-8");
+            string = new String(data, StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,7 +78,7 @@ public class DocumentHelper {
         byte[] data = DocumentUtil.readBytes(ContextHolder.getContext(), uri);
         String string = null;
         try {
-            string = new String(data, "utf-8");
+            string = new String(data, StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,7 +89,7 @@ public class DocumentHelper {
         byte[] data = DocumentUtil.readBytes(ContextHolder.getContext(), file);
         String string = null;
         try {
-            string = new String(data, "utf-8");
+            string = new String(data, StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }

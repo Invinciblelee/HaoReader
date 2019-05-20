@@ -37,7 +37,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="12sp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -50,7 +50,7 @@
             android:contentDescription="@string/swap_vert"
             android:padding="2dp"
             android:src="@drawable/ic_swap_vert_black_24dp"
-            app:tint="@color/tv_text_default" />
+            app:tint="@color/colorTextDefault" />
     </LinearLayout>
 
     <View

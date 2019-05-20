@@ -2,7 +2,6 @@ package com.monke.monkeybook.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,7 +21,7 @@ import com.monke.monkeybook.bean.DownloadInfo;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.DownloadService;
 import com.monke.monkeybook.view.adapter.DownloadAdapter;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,7 +86,7 @@ public class DownloadActivity extends MBaseActivity {
     //设置ToolBar
     @Override
     protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

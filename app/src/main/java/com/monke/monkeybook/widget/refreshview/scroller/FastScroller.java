@@ -123,6 +123,8 @@ public class FastScroller extends LinearLayout {
     private ViewPropertyAnimator scrollbarAnimator;
     private ViewPropertyAnimator bubbleAnimator;
 
+    private OnLayoutChangeListener layoutChangeListener;
+
     private FastScrollListener fastScrollListener;
     private SectionIndexer sectionIndexer;
 
@@ -226,6 +228,10 @@ public class FastScroller extends LinearLayout {
                     fastScrollListener.onFastScrollStart(this);
                 }
             case MotionEvent.ACTION_MOVE:
+                if (layoutChangeListener != null) {
+                    recyclerView.removeOnLayoutChangeListener(layoutChangeListener);
+                    layoutChangeListener = null;
+                }
                 final float y = event.getY();
                 setViewPositions(y, true);
                 setRecyclerViewPosition(y);
@@ -347,10 +353,11 @@ public class FastScroller extends LinearLayout {
 
         recyclerView.addOnScrollListener(scrollListener);
 
-        post(() -> {
-            // set initial positions for bubble and handle
-            setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false);
-        });
+
+        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
+                -> setViewPositions(getScrollProportion(FastScroller.this.recyclerView), false);
+
+        recyclerView.addOnLayoutChangeListener(layoutChangeListener);
     }
 
     /**
@@ -559,14 +566,14 @@ public class FastScroller extends LinearLayout {
         return Math.min(minimum, max);
     }
 
-    private void setViewPositions(float y, boolean fromTouch) {
+    private void setViewPositions(float y, boolean fromDrag) {
         bubbleHeight = bubbleView.getMeasuredHeight();
         handleHeight = handleView.getMeasuredHeight();
 
         int bubbleY = getValueInRange(0, viewHeight - bubbleHeight - handleHeight / 2, (int) (y - bubbleHeight));
         int handleY = getValueInRange(0, viewHeight - handleHeight, (int) (y - handleHeight / 2));
 
-        if (!fromTouch) {
+        if (!fromDrag) {
             if (recyclerView == null) {
                 return;
             }

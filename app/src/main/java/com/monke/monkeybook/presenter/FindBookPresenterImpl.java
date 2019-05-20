@@ -17,6 +17,8 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.MemoryCache;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutor;
+import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutorImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -35,6 +37,8 @@ import io.reactivex.schedulers.Schedulers;
 public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.View> implements FindBookContract.Presenter {
 
     private final Collator collator = Collator.getInstance(java.util.Locale.CHINA);
+
+    private SimpleJavaExecutor mJavaExecutor;
 
     @Override
     public void attachView(@NonNull IView iView) {
@@ -70,6 +74,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                             } else {
                                 SimpleBindings bindings = new SimpleBindings() {{
                                     this.put("baseUrl", sourceBean.getBookSourceUrl());
+                                    this.put("java", getJavaExecutor());
                                 }};
                                 String javaScript = findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<"));
                                 findRule = (String) Global.evalObjectScript(javaScript, bindings);
@@ -124,4 +129,12 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     }
                 });
     }
+
+    public SimpleJavaExecutor getJavaExecutor() {
+        if (mJavaExecutor == null) {
+            mJavaExecutor = new SimpleJavaExecutorImpl();
+        }
+        return mJavaExecutor;
+    }
+
 }

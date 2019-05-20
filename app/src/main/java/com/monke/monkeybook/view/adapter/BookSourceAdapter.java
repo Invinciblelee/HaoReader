@@ -31,8 +31,11 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     private List<BookSourceBean> dataList;
     private List<BookSourceBean> allDataList;
     private BookSourceActivity activity;
-    private int index;
     private boolean canTop;
+
+    private RecyclerView mRecyclerView;
+
+    private final Object lock = new Object();
 
     private MyItemTouchHelpCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new MyItemTouchHelpCallback.OnItemTouchCallbackListener() {
         @Override
@@ -67,11 +70,13 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
     }
 
     public void resetDataS(List<BookSourceBean> bookSourceBeanList) {
-        this.dataList = bookSourceBeanList;
-        notifyDataSetChanged();
-        activity.upDateSelectAll();
-        activity.upSearchView(dataList.size());
-        activity.upGroupMenu();
+        synchronized (lock) {
+            this.dataList = bookSourceBeanList;
+            notifyDataSetChanged();
+            activity.upDateSelectAll();
+            activity.upSearchView(dataList.size());
+            activity.upGroupMenu();
+        }
     }
 
     private void setAllDataList(List<BookSourceBean> bookSourceBeanList) {
@@ -134,36 +139,56 @@ public class BookSourceAdapter extends RecyclerView.Adapter<BookSourceAdapter.My
             activity.upDateSelectAll();
         });
         holder.editView.setOnClickListener(view -> SourceEditActivity.startThis(activity, item));
-        holder.delView.setOnClickListener(view -> {
-            activity.delBookSource(item);
-            dataList.remove(realPosition);
-            notifyDataSetChanged();
-            activity.saveDate(dataList);
-            activity.upSearchView(dataList.size());
-        });
-        holder.topView.setOnClickListener(view -> {
-            setAllDataList(BookSourceManager.getAll());
-            BookSourceBean moveData = dataList.get(position);
-            dataList.remove(position);
-            notifyItemRemoved(position);
-            dataList.add(0, moveData);
-            notifyItemInserted(0);
-            if (canTop) {
-                BookSourceBean first = allDataList.get(0);
-                int maxWeight = first.getWeight();
-                moveData.setWeight(maxWeight + 1);
-                int maxNumber = first.getSerialNumber();
-                moveData.setSerialNumber(maxNumber + 1);
-            }
+        holder.delView.setOnClickListener(view -> delSource(realPosition, item));
+        holder.topView.setOnClickListener(view -> topSource(realPosition));
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
+    private void delSource(int position, BookSourceBean bookSourceBean) {
+        dataList.remove(position);
+        notifyDataSetChanged();
+        activity.upSearchView(dataList.size());
+        final Runnable runnable = () ->  activity.delBookSource(bookSourceBean);
+        if (mRecyclerView != null) {
+            mRecyclerView.post(runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
+    private void topSource(int position) {
+        setAllDataList(BookSourceManager.getAll());
+        BookSourceBean moveData = dataList.get(position);
+        dataList.remove(position);
+        notifyItemRemoved(position);
+        dataList.add(0, moveData);
+        notifyItemInserted(0);
+        if (canTop) {
+            BookSourceBean first = allDataList.get(0);
+            int maxWeight = first.getWeight();
+            moveData.setWeight(maxWeight + 1);
+            int maxNumber = first.getSerialNumber();
+            moveData.setSerialNumber(maxNumber + 1);
+        }
+        final Runnable runnable = () -> {
             if (dataList.size() != allDataList.size()) {
-                index = allDataList.indexOf(moveData);
-                allDataList.remove(index);
+                allDataList.remove(moveData);
                 allDataList.add(0, moveData);
                 activity.saveDate(allDataList);
             } else {
                 activity.saveDate(dataList);
             }
-        });
+        };
+        if (mRecyclerView != null) {
+            mRecyclerView.post(runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     @Override

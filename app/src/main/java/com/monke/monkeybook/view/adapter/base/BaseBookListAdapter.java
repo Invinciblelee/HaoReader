@@ -96,7 +96,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
     }
 
     public final BookShelfBean getItem(int position) {
-        return books.isEmpty() ? null : books.get(position);
+        return books.get(position);
     }
 
     public BaseBookListAdapter(Context context, int group, int bookshelfPx) {

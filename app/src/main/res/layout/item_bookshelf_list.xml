@@ -39,7 +39,7 @@
             android:textColor="@color/white"
             android:textSize="8sp"
             android:visibility="invisible"
-            app:labelColor="@color/color_renew_label"
+            app:labelColor="@color/light_green"
             app:labelSinkWidth="2dp"
             tools:ignore="SmallSp" />
 
@@ -64,7 +64,7 @@
             android:paddingTop="2dp"
             android:singleLine="true"
             android:text="@string/tv_book_name"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="16sp" />
 
         <Space
@@ -84,7 +84,7 @@
             android:includeFontPadding="false"
             android:singleLine="true"
             android:text="@string/author"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="13sp" />
 
         <Space
@@ -104,7 +104,7 @@
             android:includeFontPadding="false"
             android:singleLine="true"
             android:text="@string/book_search_last"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="13sp" />
 
         <Space
@@ -123,7 +123,7 @@
             android:includeFontPadding="false"
             android:singleLine="true"
             android:text="@string/read_dur_progress"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="13sp" />
 
         <Space

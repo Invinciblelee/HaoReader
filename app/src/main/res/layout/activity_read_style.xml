@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/colorBackground"
     tools:context="com.monke.monkeybook.view.activity.ReadStyleActivity">
 
     <LinearLayout
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/card_background"
+        android:background="@color/colorCardBackground"
         android:orientation="vertical"
         android:stateListAnimator="@animator/design_bottombar_state_list_animator">
 
@@ -69,7 +69,7 @@
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="文字颜色"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
@@ -85,7 +85,7 @@
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="背景颜色"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
@@ -101,7 +101,7 @@
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="背景图片"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
 
@@ -117,7 +117,7 @@
                 android:padding="6dp"
                 android:singleLine="true"
                 android:text="恢复默认"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
         </LinearLayout>

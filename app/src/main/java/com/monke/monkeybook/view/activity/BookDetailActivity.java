@@ -137,7 +137,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     public void initImmersionBar() {
         mImmersionBar.transparentStatusBar();
 
-        mImmersionBar.navigationBarColor(R.color.navigation_bar_bag);
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -239,7 +239,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             showLoading(true);
         }
 
-        final Animation animation = AnimationUtils.loadAnimation(this, R.anim.moprogress_in);
+        final Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_dialog_in);
         cardView.post(() -> cardView.startAnimation(animation));
     }
 

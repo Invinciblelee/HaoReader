@@ -3,13 +3,13 @@
 
     <item android:state_pressed="true">
         <shape android:shape="oval">
-            <solid android:color="@color/tv_text_button_pos_pre"/>
+            <solid android:color="@color/colorPositiveButtonPressed"/>
         </shape>
     </item>
 
     <item >
         <shape android:shape="oval">
-            <solid android:color="@color/tv_text_button_pos_nor"/>
+            <solid android:color="@color/colorPositiveButton"/>
         </shape>
     </item>
 </selector>

@@ -28,7 +28,7 @@
         android:persistent="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/CAppTheme"
+        android:theme="@style/AppTheme"
         tools:ignore="AllowBackup"
         tools:targetApi="n">
 
@@ -36,7 +36,7 @@
             android:name=".view.activity.WelcomeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity.Welcome">
+            android:theme="@style/AppTheme.Activity.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -54,21 +54,21 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.ReadBookActivity"
             android:configChanges="locale|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity.Read" />
+            android:theme="@style/AppTheme.Activity.Read" />
 
         <activity
             android:name=".view.activity.QRCodeScanActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
-            android:theme="@style/CAppTheme.Activity"
+            android:theme="@style/AppTheme.Activity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
@@ -77,7 +77,7 @@
             android:label="@string/search_label"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity.Search"
+            android:theme="@style/AppTheme.Activity.Search"
             android:windowSoftInputMode="stateHidden|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
@@ -95,26 +95,26 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"
+            android:theme="@style/AppTheme.Activity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".view.activity.ChoiceBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.BookDetailActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
-            android:theme="@style/CAppTheme.Activity.BookDetail" />
+            android:theme="@style/AppTheme.Activity.BookDetail" />
         <activity
             android:name=".view.activity.BookSourceActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"
+            android:theme="@style/AppTheme.Activity"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
@@ -122,99 +122,99 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
         <activity
             android:name=".view.activity.SettingActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
         <activity
             android:name=".view.activity.AboutActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
         <activity
             android:name=".view.activity.DonateActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
         <activity
             android:name=".view.activity.SourceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"
+            android:theme="@style/AppTheme.Activity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".view.activity.ReadStyleActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
         <activity
             android:name=".view.activity.DownloadActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
         <activity
             android:name=".view.activity.BookInfoActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.BigImageActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.AudioBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.AudioBookPlayActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.WebViewActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.CacheManagerActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.SourceDebugActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CAppTheme.Activity"
+            android:theme="@style/AppTheme.Activity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
 
         <activity
             android:name=".help.permission.PermissionActivity"
             android:launchMode="singleTask"
-            android:theme="@style/CAppTheme.Activity.Permission"
+            android:theme="@style/AppTheme.Activity.Permission"
             android:windowSoftInputMode="adjustNothing|stateAlwaysHidden" />
 
         <service android:name=".service.DownloadService" />

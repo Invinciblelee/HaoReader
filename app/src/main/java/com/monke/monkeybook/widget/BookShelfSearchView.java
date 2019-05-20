@@ -20,6 +20,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class BookShelfSearchView extends LinearLayout {
     private void initView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_search_bookshelf, this, true);
         ButterKnife.bind(this);
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorToolBarText));
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         toolbar.inflateMenu(R.menu.menu_search_view);
         MenuItem search = toolbar.getMenu().findItem(R.id.action_search);
         searchView = (SearchView) search.getActionView();

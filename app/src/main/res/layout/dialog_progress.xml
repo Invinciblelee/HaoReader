@@ -23,7 +23,7 @@
             android:id="@+id/tv_progress_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="14sp" />
 
 
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="14sp" />
     </FrameLayout>
 

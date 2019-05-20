@@ -250,7 +250,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     private void incrementSourceWeightBySelection(SearchBookBean searchBook) {
         Schedulers.single().createWorker().schedule(() -> {
-            BookSourceBean sourceBean = BookSourceManager.getByTag(searchBook.getTag());
+            BookSourceBean sourceBean = BookSourceManager.getByUrl(searchBook.getTag());
             if (sourceBean != null) {
                 sourceBean.increaseWeightBySelection();
                 BookSourceManager.save(sourceBean);

@@ -4,14 +4,14 @@
     <item android:state_pressed="true">
         <shape  android:shape="rectangle">
             <corners android:radius="2dp"/>
-            <solid android:color="@color/tv_tag_press"/>
+            <solid android:color="@color/colorTagPressed"/>
         </shape>
     </item>
 
     <item >
         <shape  android:shape="rectangle">
             <corners android:radius="2dp"/>
-            <solid android:color="@color/tv_tag_nor_dark"/>
+            <solid android:color="@color/colorTagDark"/>
         </shape>
     </item>
 </selector>

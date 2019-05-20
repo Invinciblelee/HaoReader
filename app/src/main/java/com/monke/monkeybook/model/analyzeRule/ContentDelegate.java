@@ -19,5 +19,5 @@ public interface ContentDelegate {
 
     Observable<BookContentBean> getContent(String source);
 
-    Observable<String> getAudioLink(String source);
+    Observable<String> getAudioContent(String source);
 }

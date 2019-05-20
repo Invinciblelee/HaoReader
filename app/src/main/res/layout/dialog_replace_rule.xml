@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:text="@string/replace_rule_edit"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="20sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="2"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/colorTextDefault"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,7 +98,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:text="@string/use_regex"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="13sp" />
 
         <androidx.appcompat.widget.AppCompatButton

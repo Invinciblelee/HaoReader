@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -120,7 +120,7 @@
                 android:background="@drawable/shape_style_rect_bg"
                 android:padding="5dp"
                 android:text="选择本地图片"
-                android:textColor="@color/tv_text_default" />
+                android:textColor="@color/colorTextDefault" />
 
             <TextView
                 android:id="@+id/tv_change_cover"
@@ -130,7 +130,7 @@
                 android:background="@drawable/shape_style_rect_bg"
                 android:padding="5dp"
                 android:text="封面换源"
-                android:textColor="@color/tv_text_default" />
+                android:textColor="@color/colorTextDefault" />
 
             <TextView
                 android:id="@+id/tv_refresh_cover"
@@ -140,7 +140,7 @@
                 android:background="@drawable/shape_style_rect_bg"
                 android:padding="5dp"
                 android:text="刷新封面"
-                android:textColor="@color/tv_text_default" />
+                android:textColor="@color/colorTextDefault" />
 
         </LinearLayout>
 

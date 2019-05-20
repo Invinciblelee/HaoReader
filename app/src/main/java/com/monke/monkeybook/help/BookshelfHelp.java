@@ -1,7 +1,6 @@
 package com.monke.monkeybook.help;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 import com.monke.monkeybook.R;
@@ -218,7 +217,6 @@ public class BookshelfHelp {
                 return Global.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
             }
         } catch (Exception ignore) {
-            ignore.printStackTrace();
         }
         return new ArrayList<>();
     }
@@ -233,13 +231,11 @@ public class BookshelfHelp {
     }
 
     private static void saveChaptersToFile(String noteUrl, List<ChapterBean> chapterBeans) {
-        Log.e("TAG", noteUrl + "   " + chapterBeans.size());
         File file = FileHelp.getFile(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(Global.GSON.toJson(new ArrayList<>(chapterBeans)));
             writer.flush();
         } catch (Exception ignore) {
-            ignore.printStackTrace();
         }
     }
 

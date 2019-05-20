@@ -28,7 +28,7 @@
             android:paddingBottom="10dp"
             android:singleLine="true"
             android:text="My716"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatImageView

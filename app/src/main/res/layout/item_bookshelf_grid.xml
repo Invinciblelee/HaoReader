@@ -38,7 +38,7 @@
             android:text="@string/renew"
             android:textColor="@color/white"
             android:textSize="10sp"
-            app:labelColor="@color/color_renew_label"
+            app:labelColor="@color/light_green"
             app:labelSinkWidth="4dp"
             tools:ignore="SmallSp" />
 
@@ -62,7 +62,7 @@
         android:gravity="center_horizontal"
         android:paddingTop="2dp"
         android:singleLine="true"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/colorTextDefault"
         android:textSize="13sp" />
 
 </LinearLayout>

@@ -36,9 +36,11 @@ public class WebService extends Service {
     }
 
     public static void stopThis(Context context) {
-        if (isRunning) {
+        if (!isRunning) return;
+        try {
             Intent intent = new Intent(context, WebService.class);
             context.stopService(intent);
+        } catch (Exception ignore) {
         }
     }
 

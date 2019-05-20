@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:visibility="invisible"
             android:layout_margin="14dp"
-            app:tint="@color/tv_text_secondary"
+            app:tint="@color/colorTextSecondary"
             android:src="@drawable/ic_book_added_black_24dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:text="@string/app_name"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/colorTextDefault"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:singleLine="true"
-                android:textColor="@color/tv_text_secondary"
+                android:textColor="@color/colorTextSecondary"
                 android:textSize="13sp"
                 tools:text="2017-05-22" />
         </LinearLayout>

@@ -25,7 +25,7 @@ import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BigImageActivity;
 import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AppCompatDialog;
-import com.monke.monkeybook.widget.AppCompat;
+import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 import java.util.ArrayList;

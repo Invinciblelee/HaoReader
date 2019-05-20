@@ -102,7 +102,7 @@ public class ReadInterfacePop extends PopupWindow {
         setBackgroundDrawable(readBookActivity.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
         setFocusable(true);
         setTouchable(true);
-        setAnimationStyle(R.style.anim_pop_windowlight);
+        setAnimationStyle(R.style.Animation_Pop_Grow);
     }
 
     private void initData() {
@@ -285,11 +285,11 @@ public class ReadInterfacePop extends PopupWindow {
     }
 
     private void updateBg(int index) {
-        civBgWhite.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
-        civBgYellow.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
-        civBgGreen.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
-        civBgBlack.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
-        civBgBlue.setBorderColor(activity.getResources().getColor(R.color.tv_text_default));
+        civBgWhite.setBorderColor(activity.getResources().getColor(R.color.colorTextDefault));
+        civBgYellow.setBorderColor(activity.getResources().getColor(R.color.colorTextDefault));
+        civBgGreen.setBorderColor(activity.getResources().getColor(R.color.colorTextDefault));
+        civBgBlack.setBorderColor(activity.getResources().getColor(R.color.colorTextDefault));
+        civBgBlue.setBorderColor(activity.getResources().getColor(R.color.colorTextDefault));
         int selectColor = activity.getResources().getColor(R.color.colorAccent);
         switch (index) {
             case 0:
@@ -326,7 +326,7 @@ public class ReadInterfacePop extends PopupWindow {
             mSpacePop.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.shape_pop_checkaddshelf_bg));
             mSpacePop.setFocusable(true);
             mSpacePop.setTouchable(true);
-            mSpacePop.setAnimationStyle(R.style.anim_pop_windowslide);
+            mSpacePop.setAnimationStyle(R.style.Animation_Pop_Sheet);
         }
 
         initCustomSpaceView(mSpacePop.getContentView());
