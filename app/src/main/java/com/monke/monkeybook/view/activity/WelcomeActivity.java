@@ -23,7 +23,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
 
     @Override
     public void initImmersionBar() {
-        mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
+        mImmersionBar.transparentNavigationBar();
 
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();

@@ -13,9 +13,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 
-public final class Global {
+public final class Assistant {
 
-    private static final String TAG = Global.class.getSimpleName();
+    private static final String TAG = Assistant.class.getSimpleName();
 
     private static final ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("rhino");
 
@@ -23,7 +23,7 @@ public final class Global {
             .setLenient()
             .create();
 
-    private Global() {
+    private Assistant() {
     }
 
     public static boolean canConvertToJson(Object object) {
@@ -32,6 +32,28 @@ public final class Global {
         } else {
             return StringUtils.isJsonType(StringUtils.valueOf(object));
         }
+    }
+
+    public static String[] splitRegexRule(String str) {
+        int start = 0, index = 0, len = str.length();
+        List<String> list = new ArrayList<>();
+        while (start < len) {
+            if ((str.charAt(start) == '$') && (str.charAt(start + 1) >= '0') && (str.charAt(start + 1) <= '9')) {
+                if (start > index) list.add(str.substring(index, start));
+                if ((start + 2 < len) && (str.charAt(start + 2) >= '0') && (str.charAt(start + 2) <= '9')) {
+                    list.add(str.substring(start, start + 3));
+                    index = start += 3;
+                } else {
+                    list.add(str.substring(start, start + 2));
+                    index = start += 2;
+                }
+            } else {
+                ++start;
+            }
+        }
+        if (start > index) list.add(str.substring(index, start));
+        String[] arr = new String[list.size()];
+        return list.toArray(arr);
     }
 
     public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {
@@ -47,7 +69,7 @@ public final class Global {
 
     public static Object evalObjectScript(String jsStr, SimpleBindings bindings) {
         try {
-            return Global.SCRIPT_ENGINE.eval(jsStr, bindings);
+            return Assistant.SCRIPT_ENGINE.eval(jsStr, bindings);
         } catch (Exception e) {
             Logger.e(TAG, jsStr, e);
         }
@@ -60,7 +82,7 @@ public final class Global {
             bindings.put("java", java);
             bindings.put("result", result);
             bindings.put("baseUrl", baseUrl);
-            return Global.SCRIPT_ENGINE.eval(jsStr, bindings);
+            return Assistant.SCRIPT_ENGINE.eval(jsStr, bindings);
         } catch (Exception e) {
             Logger.e(TAG, jsStr, e);
         }

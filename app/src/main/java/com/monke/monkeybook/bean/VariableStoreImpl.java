@@ -1,6 +1,6 @@
 package com.monke.monkeybook.bean;
 
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class VariableStoreImpl implements VariableStore {
         if (variableMap != null && !variableMap.isEmpty()) {
             if (this.variableMap == null) {
                 try {
-                    this.variableMap = Global.GSON.fromJson(variableString, STRING_MAP);
+                    this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
                 } catch (Exception ignore) {
                 }
             }
@@ -47,7 +47,7 @@ public class VariableStoreImpl implements VariableStore {
                 this.variableMap = new HashMap<>();
             }
             this.variableMap.putAll(variableMap);
-            this.variableString = Global.GSON.toJson(this.variableMap);
+            this.variableString = Assistant.GSON.toJson(this.variableMap);
         }
     }
 
@@ -56,7 +56,7 @@ public class VariableStoreImpl implements VariableStore {
         if (key != null && value != null) {
             if (this.variableMap == null) {
                 try {
-                    this.variableMap = Global.GSON.fromJson(variableString, STRING_MAP);
+                    this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
                 } catch (Exception ignore) {
                 }
             }
@@ -64,7 +64,7 @@ public class VariableStoreImpl implements VariableStore {
                 this.variableMap = new HashMap<>();
             }
             this.variableMap.put(key, value);
-            this.variableString = Global.GSON.toJson(this.variableMap);
+            this.variableString = Assistant.GSON.toJson(this.variableMap);
         }
     }
 
@@ -72,7 +72,7 @@ public class VariableStoreImpl implements VariableStore {
     public String getVariable(String key) {
         if (this.variableMap == null) {
             try {
-                this.variableMap = Global.GSON.fromJson(variableString, STRING_MAP);
+                this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
             } catch (Exception ignore) {
             }
         }

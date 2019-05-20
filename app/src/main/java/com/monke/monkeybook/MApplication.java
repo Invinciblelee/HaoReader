@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MApplication extends Application {
 
-    public final static boolean DEBUG = BuildConfig.DEBUG;
+    public final static boolean DEBUG = false;
     public final static String channelIdDownload = "channel_download";
     public final static String channelIdReadAloud = "channel_read_aloud";
     public final static String channelIdAudioBook = "channel_audio_book";

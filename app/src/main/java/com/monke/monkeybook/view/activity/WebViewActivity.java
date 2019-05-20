@@ -112,9 +112,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
 
         refreshLayout.setOnRefreshListener(this);
 
-        webView.setVerticalScrollBarEnabled(false);
-        webView.setHorizontalScrollBarEnabled(false);
-
         WebSettings settings = webView.getSettings();
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
@@ -122,7 +119,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setSupportZoom(true);
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override

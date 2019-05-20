@@ -9,14 +9,19 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 import io.reactivex.Observable;
 
 final class BookInfo {
-    private final OutAnalyzer<?> analyzer;
+    private String tag;
+    private String name;
+    private BookSourceBean bookSourceBean;
 
     BookInfo(String tag, String name, BookSourceBean bookSourceBean) {
-        this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).name(name).bookSource(bookSourceBean));
+        this.tag = tag;
+        this.name = name;
+        this.bookSourceBean = bookSourceBean;
     }
 
     Observable<BookShelfBean> analyzeBookInfo(String s, final BookShelfBean bookShelfBean) {
+        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                .tag(tag).name(name).bookSource(bookSourceBean));
         analyzer.apply(analyzer.newConfig()
                 .baseURL(bookShelfBean.getNoteUrl())
                 .variableStore(bookShelfBean));

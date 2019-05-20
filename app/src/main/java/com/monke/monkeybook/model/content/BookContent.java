@@ -12,18 +12,22 @@ import com.monke.monkeybook.model.analyzeRule.OutAnalyzer;
 import io.reactivex.Observable;
 
 final class BookContent {
-    private final OutAnalyzer<?> analyzer;
+
+    private String tag;
+    private BookSourceBean bookSourceBean;
 
     private boolean isAJAX;
 
     BookContent(String tag, BookSourceBean bookSourceBean) {
-        analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).bookSource(bookSourceBean));
+        this.tag = tag;
+        this.bookSourceBean = bookSourceBean;
 
         isAJAX = bookSourceBean.ajaxRuleBookContent();
     }
 
     Observable<BookContentBean> analyzeBookContent(final String s, final ChapterBean chapter) {
+        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                .tag(tag).bookSource(bookSourceBean));
         analyzer.apply(analyzer.newConfig()
                 .baseURL(chapter.getDurChapterUrl())
                 .extra("chapter", (Parcelable) chapter));

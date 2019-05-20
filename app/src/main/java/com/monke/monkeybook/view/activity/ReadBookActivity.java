@@ -36,6 +36,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.gyf.immersionbar.BarHide;
+import com.gyf.immersionbar.ImmersionBar;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -66,7 +67,6 @@ import com.monke.monkeybook.view.popupwindow.CheckAddShelfPop;
 import com.monke.monkeybook.view.popupwindow.MoreSettingPop;
 import com.monke.monkeybook.view.popupwindow.ReadAdjustPop;
 import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.ReadBottomStatusBar;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.page.LocalPageLoader;
@@ -74,6 +74,7 @@ import com.monke.monkeybook.widget.page.OnPageChangeListener;
 import com.monke.monkeybook.widget.page.PageLoader;
 import com.monke.monkeybook.widget.page.PageStatus;
 import com.monke.monkeybook.widget.page.PageView;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
 
@@ -177,11 +178,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private boolean autoPage = false;
     private boolean isOrWillShow = false;
     private boolean isWindowAnimTranslucent = false;
-    private boolean isFirstIn = true;
+    private boolean mFirstVisible = true;
 
     private final Handler mHandler = new Handler();
-    private Runnable keepScreenRunnable;
-    private Runnable upHpbNextPage;
+    private Runnable mScreenOnRunnable;
+    private Runnable mNextPageRunnable;
 
     private ProgressDialog progressDialog;
 
@@ -266,7 +267,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (!isFirstIn && hasFocus) {
+        if (!mFirstVisible && hasFocus) {
             initImmersionBar();
         }
     }
@@ -274,7 +275,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        isFirstIn = false;
+        mFirstVisible = false;
     }
 
     /**
@@ -283,7 +284,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void initImmersionBar() {
         mImmersionBar.fullScreen(true);
-
 
         if (isImmersionBarEnabled()) {
             mImmersionBar.transparentStatusBar();
@@ -299,14 +299,18 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             mImmersionBar.statusBarDarkFont(false);
-            if (readBookControl.getHideStatusBar()) {
+            if (ImmersionBar.hasNotchScreen(this)) {
+                mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
+            } else if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         } else if (isMenuShowing() || isPopShowing()) {
             mImmersionBar.statusBarDarkFont(false);
-            if (isMenuShowing()) {
+            if (ImmersionBar.hasNotchScreen(this)) {
+                mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
+            } else if (isMenuShowing()) {
                 mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {
                 if (readBookControl.getHideStatusBar()) {
@@ -324,7 +328,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 mImmersionBar.statusBarDarkFont(false);
             }
 
-            if (readBookControl.getHideStatusBar()) {
+            if (readBookControl.getHideStatusBar() || ImmersionBar.hasNotchScreen(this)) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
@@ -351,15 +355,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             keepScreenOn(true);
             return;
         }
-        if (keepScreenRunnable == null) {
-            keepScreenRunnable = () -> keepScreenOn(false);
+        if (mScreenOnRunnable == null) {
+            mScreenOnRunnable = () -> keepScreenOn(false);
         }
 
         int screenOffTime = screenTimeOut * 1000 - SystemUtil.getScreenOffTime(this);
         if (screenOffTime > 0) {
-            mHandler.removeCallbacks(keepScreenRunnable);
+            mHandler.removeCallbacks(mScreenOnRunnable);
             keepScreenOn(true);
-            mHandler.postDelayed(keepScreenRunnable, screenOffTime);
+            mHandler.postDelayed(mScreenOnRunnable, screenOffTime);
         } else {
             keepScreenOn(false);
         }
@@ -369,17 +373,17 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      * 自动翻页
      */
     private void autoPage() {
-        if (upHpbNextPage != null) {
-            mHandler.removeCallbacks(upHpbNextPage);
+        if (mNextPageRunnable != null) {
+            mHandler.removeCallbacks(mNextPageRunnable);
         }
         if (autoPage) {
             hpbNextPageProgress.setVisibility(View.VISIBLE);
             nextPageTime = readBookControl.getClickSensitivity() * 1000;
             hpbNextPageProgress.setMax(nextPageTime);
-            if (upHpbNextPage == null) {
-                upHpbNextPage = this::upHpbNextPage;
+            if (mNextPageRunnable == null) {
+                mNextPageRunnable = this::upHpbNextPage;
             }
-            mHandler.postDelayed(upHpbNextPage, HPB_UPDATE_INTERVAL);
+            mHandler.postDelayed(mNextPageRunnable, HPB_UPDATE_INTERVAL);
             fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop_black_24dp);
             fabAutoPage.setContentDescription(getString(R.string.auto_next_page_stop));
         } else {
@@ -392,7 +396,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private void upHpbNextPage() {
         nextPageTime = nextPageTime - HPB_UPDATE_INTERVAL;
         hpbNextPageProgress.setProgress(nextPageTime);
-        mHandler.postDelayed(upHpbNextPage, HPB_UPDATE_INTERVAL);
+        mHandler.postDelayed(mNextPageRunnable, HPB_UPDATE_INTERVAL);
         if (nextPageTime <= 0) {
             nextPage();
             nextPageTime = readBookControl.getClickSensitivity() * 1000;
@@ -1547,11 +1551,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     protected void onDestroy() {
-        if (upHpbNextPage != null) {
-            mHandler.removeCallbacks(upHpbNextPage);
+        if (mNextPageRunnable != null) {
+            mHandler.removeCallbacks(mNextPageRunnable);
         }
-        if (keepScreenRunnable != null) {
-            mHandler.removeCallbacks(keepScreenRunnable);
+        if (mScreenOnRunnable != null) {
+            mHandler.removeCallbacks(mScreenOnRunnable);
         }
         super.onDestroy();
         if (mPresenter.inBookShelf()) {

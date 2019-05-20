@@ -37,8 +37,20 @@ import retrofit2.Response;
 public class Default716 extends BaseModelImpl implements IStationBookModel {
     public static final String TAG = "My716";
 
-    public static Default716 newInstance() {
-        return new Default716();
+    private volatile static Default716 sInstance;
+
+    private Default716() {
+    }
+
+    public static Default716 getInstance() {
+        if(sInstance == null){
+            synchronized (Default716.class){
+                if(sInstance == null){
+                    sInstance = new Default716();
+                }
+            }
+        }
+        return sInstance;
     }
 
     /**

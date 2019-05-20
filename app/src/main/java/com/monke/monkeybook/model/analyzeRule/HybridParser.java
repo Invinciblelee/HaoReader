@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;
@@ -99,7 +99,7 @@ final class HybridParser extends SourceParser<Object> {
         sourceChangedJS = true;
         sourceChangedJP = true;
         sourceChangedCS = true;
-        isJSon = Global.canConvertToJson(source);
+        isJSon = Assistant.canConvertToJson(source);
     }
 
     @Override

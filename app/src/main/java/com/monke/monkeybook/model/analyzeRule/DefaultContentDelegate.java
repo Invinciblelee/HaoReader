@@ -13,6 +13,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
     private static final String TAG = DefaultContentDelegate.class.getSimpleName();
 
-    private final OutAnalyzer<?> mAnalyzer;
+    private OutAnalyzer<?> mAnalyzer;
 
     DefaultContentDelegate(@NonNull OutAnalyzer<?> mAnalyzer) {
         this.mAnalyzer = mAnalyzer;
@@ -51,36 +52,135 @@ class DefaultContentDelegate implements ContentDelegate {
     @Override
     public Observable<List<SearchBookBean>> getSearchBooks(String source) {
         return Observable.create(emitter -> {
-            final AnalyzeCollection collection = mAnalyzer.setContent(source).getRawCollection(getBookSource().getRealRuleSearchList());
-            List<SearchBookBean> books = new ArrayList<>();
-            while (collection.hasNext()) {
-                mAnalyzer.setContent(collection.next());
-                SearchBookBean item = new SearchBookBean();
-                item.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables(), 0));
-                item.setTag(getConfig().getTag());
-                item.setOrigin(getConfig().getName());
-                item.setBookType(getBookSource().getBookSourceType());
-                item.setKind(StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind())));
-                item.setLastChapter(TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter())));
-                item.setName(TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName())));
-                item.setAuthor(TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor())));
-                item.setNoteUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl()));
-                item.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
-                item.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl()));
-                if (isEmpty(item.getNoteUrl())) {
-                    item.setNoteUrl(getConfig().getBaseURL());
-                }
-                if (!isEmpty(item.getName())) {
-                    books.add(item);
-                }
+            final String ruleSearchList = getBookSource().getRealRuleSearchList();
+            final List<SearchBookBean> books;
+
+            if (getBookSource().searchListInRegex()) {
+                books = getSearchListInRegex(source, ruleSearchList);
+            } else if (getBookSource().searchListInWhole()) {
+                books = getSearchListInWhole(mAnalyzer.setContent(source).toRawCollection(ruleSearchList));
+            } else {
+                books = getSearchListInDefault(mAnalyzer.setContent(source).toRawCollection(ruleSearchList));
             }
 
-            if (getBookSource().reverseSearchList()) {
+            if (getBookSource().searchListReverse()) {
                 Collections.reverse(books);
             }
             emitter.onNext(books);
             emitter.onComplete();
         });
+    }
+
+    private List<SearchBookBean> getSearchListInWhole(AnalyzeCollection collection) {
+        final List<SearchBookBean> searchBookBeans = new ArrayList<>();
+        while (collection.hasNext()) {
+            mAnalyzer.setContent(collection.next());
+            Map<String, String> variableMap = mAnalyzer.toVariableMapInternal(getBookSource().getRulePersistedVariables(), 0);
+            String name = TextProcessor.formatBookName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchName()));
+            String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchAuthor()));
+            String kind = StringUtils.join(",", mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchKind()));
+            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchLastChapter()));
+            String introduce = mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchIntroduce());
+            String coverUrl = mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchCoverUrl());
+            String noteUrl = mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchNoteUrl());
+            addSearchBook(searchBookBeans, name, author, kind, lastChapter, introduce, coverUrl, noteUrl, variableMap);
+        }
+        return searchBookBeans;
+    }
+
+    private List<SearchBookBean> getSearchListInRegex(String source, String ruleSearchList) {
+        final List<SearchBookBean> searchBookBeans = new ArrayList<>();
+        matchSearchListRegex(searchBookBeans, source, ruleSearchList.split("&&"), 0);
+        return searchBookBeans;
+    }
+
+    private List<SearchBookBean> getSearchListInDefault(AnalyzeCollection collection) {
+        final List<SearchBookBean> searchBookBeans = new ArrayList<>();
+        while (collection.hasNext()) {
+            mAnalyzer.setContent(collection.next());
+            Map<String, String> variableMap = mAnalyzer.toVariableMap(getBookSource().getRulePersistedVariables(), 0);
+            String name = TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName()));
+            String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor()));
+            String kind = StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind()));
+            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter()));
+            String introduce = mAnalyzer.getResultContent(getBookSource().getRuleSearchIntroduce());
+            String coverUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl());
+            String noteUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl());
+            addSearchBook(searchBookBeans, name, author, kind, lastChapter, introduce, coverUrl, noteUrl, variableMap);
+        }
+        return searchBookBeans;
+    }
+
+    private void matchSearchListRegex(List<SearchBookBean> searchBooks, String res, String[] regs, int index) {
+        Matcher resM = Pattern.compile(regs[index]).matcher(res);
+        // 判断索引的规则是最后一个规则
+        if (index + 1 == regs.length) {
+            // 获取规则列表
+            String[] ruleList = new String[]{
+                    getBookSource().getRuleSearchName(),       // 获取书名规则
+                    getBookSource().getRuleSearchAuthor(),     // 获取作者规则
+                    getBookSource().getRuleSearchKind(),       // 获取分类规则
+                    getBookSource().getRuleSearchLastChapter(),// 获取终章规则
+                    getBookSource().getRuleSearchIntroduce(),  // 获取简介规则
+                    getBookSource().getRuleSearchCoverUrl(),   // 获取封面规则
+                    getBookSource().getRuleSearchNoteUrl()     // 获取详情规则
+            };
+            // 创建拆分规则容器
+            List<String[]> ruleGroups = new ArrayList<>();
+            // 提取规则信息
+            for (String rule : ruleList) {
+                ruleGroups.add(Assistant.splitRegexRule(rule));
+            }
+            // 提取书籍列表信息
+            do {
+                // 获取列表规则分组数
+                int resCount = resM.groupCount();
+                // 新建规则结果容器
+                String[] infoList = new String[ruleList.length];
+                // 合并规则结果内容
+                for (int i = 0; i < infoList.length; i++) {
+                    StringBuilder infoVal = new StringBuilder();
+                    for (String ruleGroup : ruleGroups.get(i)) {
+                        if (ruleGroup.startsWith("$")) {
+                            int groupIndex = StringUtils.parseInt(ruleGroup);
+                            if (groupIndex <= resCount) {
+                                infoVal.append(StringUtils.trim(resM.group(groupIndex)));
+                                continue;
+                            }
+                        }
+                        infoVal.append(ruleGroup);
+                    }
+                    infoList[i] = infoVal.toString();
+                }
+                // 保存当前节点的书籍信息
+                addSearchBook(searchBooks, infoList[0], infoList[1], infoList[2], infoList[3], infoList[4], infoList[5], infoList[6], null);
+            } while (resM.find());
+        } else {
+            StringBuilder result = new StringBuilder();
+            while (resM.find()) result.append(resM.group());
+            matchSearchListRegex(searchBooks, result.toString(), regs, ++index);
+        }
+    }
+
+    private void addSearchBook(List<SearchBookBean> searchBookBeans, String name, String author, String kind, String lastChapter, String introduce, String coverUrl, String noteUrl, Map<String, String> variableMap) {
+        if (StringUtils.isBlank(name)) return;
+        SearchBookBean item = new SearchBookBean();
+        item.setTag(getConfig().getTag());
+        item.setOrigin(getConfig().getName());
+        item.setBookType(getBookSource().getBookSourceType());
+        item.setName(name);
+        item.setAuthor(author);
+        item.setIntroduce(introduce);
+        item.setKind(kind);
+        item.setLastChapter(lastChapter);
+        item.setCoverUrl(coverUrl);
+        item.putVariableMap(variableMap);
+        if (StringUtils.isBlank(noteUrl)) {
+            item.setNoteUrl(getConfig().getBaseURL());
+        } else {
+            item.setNoteUrl(noteUrl);
+        }
+        searchBookBeans.add(item);
     }
 
     @Override
@@ -91,7 +191,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
             mAnalyzer.setContent(source);
 
-            book.putVariableMap(mAnalyzer.getVariableMap(getBookSource().getRulePersistedVariables(), 1));
+            book.putVariableMap(mAnalyzer.toVariableMap(getBookSource().getRulePersistedVariables(), 1));
 
             if (isEmpty(bookInfoBean.getCoverUrl())) {
                 bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleCoverUrl()));
@@ -224,9 +324,9 @@ class DefaultContentDelegate implements ContentDelegate {
         if (getBookSource().chapterListInRegex()) {
             webChapter.result = getChaptersInRegex(s, ruleChapterList, noteUrl);
         } else if (getBookSource().chapterListInWhole()) {
-            webChapter.result = getChaptersInWhole(mAnalyzer.getRawCollection(ruleChapterList), noteUrl);
+            webChapter.result = getChaptersInWhole(mAnalyzer.toRawCollection(ruleChapterList), noteUrl);
         } else {
-            webChapter.result = getChaptersInDefault(mAnalyzer.getRawCollection(ruleChapterList), noteUrl);
+            webChapter.result = getChaptersInDefault(mAnalyzer.toRawCollection(ruleChapterList), noteUrl);
         }
     }
 
@@ -279,7 +379,7 @@ class DefaultContentDelegate implements ContentDelegate {
      */
     private List<ChapterBean> getChaptersInRegex(String source, String ruleChapterList, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
-        matchRegex(source, noteUrl, ruleChapterList.split("&&"), 0,
+        matchChaptersRegex(source, noteUrl, ruleChapterList.split("&&"), 0,
                 getBookSource().getRuleChapterName(),
                 getBookSource().getRuleContentUrl(),
                 chapterList);
@@ -289,16 +389,14 @@ class DefaultContentDelegate implements ContentDelegate {
     /**
      * 匹配正则表达式
      */
-    private void matchRegex(String string, String noteUrl, String[] regex, int index, String nameRule, String urlRule, List<ChapterBean> chapterBeans) {
+    private void matchChaptersRegex(String string, String noteUrl, String[] regex, int index, String nameRule, String urlRule, List<ChapterBean> chapterBeans) {
         Matcher matcher = Pattern.compile(regex[index]).matcher(string);
         if (index + 1 == regex.length) {
             String baseUrl = "";
-            int vipGroup = 0, nameGroup = 0, urlGroup = 0;
+            int nameGroup = 0, urlGroup = 0;
             // 分离标题正则参数
-            Matcher nameMatcher = Pattern.compile("((?<=\\$)\\d)?\\$(\\d$)").matcher(nameRule);
-            while (nameMatcher.find()) {
-                String sVipGroup = nameMatcher.group(1);
-                vipGroup = sVipGroup == null ? 0 : Integer.parseInt(sVipGroup);
+            Matcher nameMatcher = Pattern.compile("(?<=\\$)\\d").matcher(nameRule);
+            if (nameMatcher.find()) {
                 nameGroup = Integer.parseInt(nameMatcher.group(2));
             }
             // 分离网址正则参数
@@ -308,23 +406,15 @@ class DefaultContentDelegate implements ContentDelegate {
                 urlGroup = Integer.parseInt(urlMatcher.group(2));
             }
             // 提取目录信息
-            if (vipGroup == 0) {
-                while (matcher.find()) {
-                    addChapter(chapterBeans, noteUrl,
-                            matcher.group(nameGroup),
-                            baseUrl + matcher.group(urlGroup));
-                }
-            } else {
-                while (matcher.find()) {
-                    addChapter(chapterBeans, noteUrl,
-                            (matcher.group(vipGroup) == null ? "" : "\uD83D\uDD12") + matcher.group(nameGroup),
-                            baseUrl + matcher.group(urlGroup));
-                }
+            while (matcher.find()) {
+                addChapter(chapterBeans, noteUrl,
+                        matcher.group(nameGroup),
+                        baseUrl + matcher.group(urlGroup));
             }
         } else {
             StringBuilder result = new StringBuilder();
             while (matcher.find()) result.append(matcher.group());
-            matchRegex(result.toString(), noteUrl, regex, ++index, nameRule, urlRule, chapterBeans);
+            matchChaptersRegex(result.toString(), noteUrl, regex, ++index, nameRule, urlRule, chapterBeans);
         }
     }
 
@@ -341,7 +431,11 @@ class DefaultContentDelegate implements ContentDelegate {
     public Observable<BookContentBean> getContent(String source) {
         return Observable.create(emitter -> {
             final ChapterBean chapter = getConfig().getExtras().getParcelable("chapter");
-            assert chapter != null;
+            if (chapter == null) {
+                emitter.onError(new NullPointerException("getContent can not with a null chapter"));
+                return;
+            }
+
             final BookContentBean bookContentBean = new BookContentBean();
             bookContentBean.setDurChapterName(chapter.getDurChapterName());
             bookContentBean.setDurChapterIndex(chapter.getDurChapterIndex());
@@ -358,7 +452,7 @@ class DefaultContentDelegate implements ContentDelegate {
                 final List<String> usedUrls = new ArrayList<>();
                 final String nextChapterUrl = chapter.getNextChapterUrl();
 
-                while (!TextUtils.isEmpty(webContent.nextUrl) && !usedUrls.contains(webContent.nextUrl)) {
+                while (!isEmpty(webContent.nextUrl) && !usedUrls.contains(webContent.nextUrl)) {
                     usedUrls.add(webContent.nextUrl);
 
                     if (webContent.nextUrl.equals(nextChapterUrl)) {
@@ -369,7 +463,7 @@ class DefaultContentDelegate implements ContentDelegate {
                         AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), webContent.nextUrl, headerMap);
                         String response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
                         webContent = getRawContentResult(response, webContent.nextUrl, ruleBookContent);
-                        if (!TextUtils.isEmpty(webContent.result)) {
+                        if (!isEmpty(webContent.result)) {
                             bookContentBean.appendDurChapterContent(webContent.result);
                         }
                     } catch (Exception ignore) {
@@ -405,7 +499,6 @@ class DefaultContentDelegate implements ContentDelegate {
             emitter.onComplete();
         });
     }
-
 
     private class WebContentResult {
 

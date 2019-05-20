@@ -1,6 +1,5 @@
 package com.monke.monkeybook.utils;
 
-import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -432,7 +431,30 @@ public class StringUtils {
     }
 
     public static String trim(String string) {
-        return string == null ? "" : string.trim();
+        if (isBlank(string)) return "";
+        int start = 0, len = string.length();
+        int end = len - 1;
+        while ((start < end) && (string.charAt(start) <= 0x20) && (string.charAt(start) == 0xA0)) {
+            ++start;
+        }
+        while ((start < end) && (string.charAt(end) <= 0x20) && (string.charAt(end) == 0xA0)) {
+            --end;
+        }
+        if (end < len) ++end;
+        return ((start > 0) || (end < len)) ? string.substring(start, end) : string;
+    }
+
+    // String数字转int数字的高效方法(利用ASCII值判断)
+    public static int parseInt(String string) {
+        int r = 0;
+        char n;
+        for (int i = 0, l = string.length(); i < l; i++) {
+            n = string.charAt(i);
+            if (n >= '0' && n <= '9') {
+                r = r * 10 + (n - 0x30); //'0-9'的ASCII值为0x30-0x39
+            }
+        }
+        return r;
     }
 
     public static boolean containsIgnoreCase(String base, String constraint) {
@@ -455,7 +477,7 @@ public class StringUtils {
 
     public static boolean isJsonType(String str) {
         boolean result = false;
-        if (!TextUtils.isEmpty(str)) {
+        if (isNotBlank(str)) {
             str = str.trim();
             if (str.startsWith("{") && str.endsWith("}")) {
                 result = true;
@@ -465,6 +487,39 @@ public class StringUtils {
         }
         return result;
     }
+
+    public static boolean isJsonObject(String text) {
+        boolean result = false;
+        if (isNotBlank(text)) {
+            text = text.trim();
+            if (text.startsWith("{") && text.endsWith("}")) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public static boolean isJsonArray(String text) {
+        boolean result = false;
+        if (isNotBlank(text)) {
+            text = text.trim();
+            if (text.startsWith("[") && text.endsWith("]")) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public static String wrapJsonArray(String text) {
+        if (isJsonArray(text)) {
+            return text;
+        }
+        if (isJsonObject(text)) {
+            return "[" + text + "]";
+        }
+        return text;
+    }
+
     public static boolean isTrimEmpty(String text) {
         if (text == null) return true;
         if (text.length() == 0) return true;

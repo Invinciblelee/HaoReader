@@ -88,7 +88,6 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         mView.searchBookError();
                     }
                 });

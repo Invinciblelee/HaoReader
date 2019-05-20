@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.gyf.immersionbar.ImmersionBar;
+import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.ToastUtils;
 
 /**
  * create on 2019/2/13
@@ -42,9 +44,14 @@ public class PermissionActivity extends AppCompatActivity {
                 }
                 break;
             case Request.TYPE_REQUEST_SETTING://跳转到设置界面
-                Intent settingIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                settingIntent.setData(Uri.fromParts("package", getPackageName(), null));
-                startActivityForResult(settingIntent, Request.TYPE_REQUEST_SETTING);
+                try {
+                    Intent settingIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    settingIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                    startActivityForResult(settingIntent, Request.TYPE_REQUEST_SETTING);
+                }catch (Exception e){
+                    ToastUtils.toast(this, "无法打开设置界面");
+                    finish();
+                }
                 break;
         }
     }

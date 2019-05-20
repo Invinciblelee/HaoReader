@@ -14,7 +14,7 @@ import com.monke.monkeybook.dao.BookShelfBeanDao;
 import com.monke.monkeybook.dao.BookmarkBeanDao;
 import com.monke.monkeybook.dao.ChapterBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.service.DownloadService;
 import com.monke.monkeybook.utils.MD5Utils;
@@ -214,7 +214,7 @@ public class BookshelfHelp {
         try {
             File file = new File(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
             if (file.exists()) {
-                return Global.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
+                return Assistant.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
             }
         } catch (Exception ignore) {
         }
@@ -233,7 +233,7 @@ public class BookshelfHelp {
     private static void saveChaptersToFile(String noteUrl, List<ChapterBean> chapterBeans) {
         File file = FileHelp.getFile(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(Global.GSON.toJson(new ArrayList<>(chapterBeans)));
+            writer.write(Assistant.GSON.toJson(new ArrayList<>(chapterBeans)));
             writer.flush();
         } catch (Exception ignore) {
         }

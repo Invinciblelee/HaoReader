@@ -3,7 +3,7 @@ package com.monke.monkeybook.model.analyzeRule;
 import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.bean.VariableStore;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 
 import java.util.HashMap;
@@ -60,7 +60,7 @@ final class VariablesPattern {
 
     private void analyzePutterMap(String rule) {
         try {
-            Map<String, String> putVariable = Global.GSON.fromJson(rule, STRING_MAP);
+            Map<String, String> putVariable = Assistant.GSON.fromJson(rule, STRING_MAP);
             map.putAll(putVariable);
         } catch (Exception ignore) {
         }

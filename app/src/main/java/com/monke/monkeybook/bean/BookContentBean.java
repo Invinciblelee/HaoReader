@@ -18,29 +18,30 @@ public class BookContentBean implements Parcelable {
 
     private String durChapterName;
 
-    private String durChapterContent; //当前章节内容
-
     private Boolean isRight = true;
+
+    private StringBuilder durChapterContent;
 
     public BookContentBean() {
 
     }
 
     protected BookContentBean(Parcel in) {
+        noteUrl = in.readString();
         durChapterUrl = in.readString();
         durChapterIndex = in.readInt();
-        durChapterContent = in.readString();
-        isRight = in.readByte() != 0;
-        noteUrl = in.readString();
+        durChapterName = in.readString();
+        byte tmpIsRight = in.readByte();
+        isRight = tmpIsRight == 0 ? null : tmpIsRight == 1;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(noteUrl);
         dest.writeString(durChapterUrl);
         dest.writeInt(durChapterIndex);
-        dest.writeString(durChapterContent);
-        dest.writeByte((byte) (isRight ? 1 : 0));
-        dest.writeString(noteUrl);
+        dest.writeString(durChapterName);
+        dest.writeByte((byte) (isRight == null ? 0 : isRight ? 1 : 2));
     }
 
     @Override
@@ -85,11 +86,14 @@ public class BookContentBean implements Parcelable {
     }
 
     public String getDurChapterContent() {
-        return durChapterContent;
+        return durChapterContent.toString();
     }
 
     public void setDurChapterContent(String durChapterContent) {
-        this.durChapterContent = durChapterContent;
+        if (this.durChapterContent == null) {
+            this.durChapterContent = new StringBuilder();
+        }
+        this.durChapterContent.append(durChapterContent);
         if (durChapterContent == null || durChapterContent.length() == 0)
             this.isRight = false;
     }
@@ -98,7 +102,7 @@ public class BookContentBean implements Parcelable {
         if (this.durChapterContent == null) {
             setDurChapterContent(durChapterContent);
         } else {
-            this.durChapterContent = this.durChapterContent + "\n" + durChapterContent;
+            this.durChapterContent.append("\n").append(durChapterContent);
         }
     }
 

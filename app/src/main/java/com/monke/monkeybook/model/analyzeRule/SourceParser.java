@@ -62,5 +62,4 @@ abstract class SourceParser<S> {
     abstract List<String> getStringList(Rule rule);
 
     abstract List<String> parseStringList(Object source, Rule rule);
-
 }

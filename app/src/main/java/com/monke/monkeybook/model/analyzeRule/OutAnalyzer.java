@@ -17,7 +17,6 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
 
     private SourceParser<S> mSourceParser;
     private IAnalyzerPresenter mPresenter;
-    private ContentDelegate mDelegate;
 
     private final AnalyzeConfig mConfig = new AnalyzeConfig();
 
@@ -52,13 +51,6 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
         return mSourceParser;
     }
 
-    private ContentDelegate getDelegate() {
-        if (mDelegate == null) {
-            mDelegate = onCreateContentDelegate(this);
-        }
-        return mDelegate;
-    }
-
     public final IAnalyzerPresenter getPresenter() {
         if (mPresenter == null) {
             mPresenter = onCreateAnalyzerPresenter(this);
@@ -71,10 +63,6 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
 
     IAnalyzerPresenter onCreateAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         return new DefaultAnalyzerPresenter<>(analyzer);
-    }
-
-    ContentDelegate onCreateContentDelegate(OutAnalyzer<S> analyzer) {
-        return new DefaultContentDelegate(analyzer);
     }
 
     @Override
@@ -108,39 +96,44 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Map<String, String> getVariableMap(String rule, int flag) {
-        return getPresenter().getVariableMap(rule, flag);
+    public Map<String, String> toVariableMap(String rule, int flag) {
+        return getPresenter().toVariableMap(rule, flag);
     }
 
     @Override
-    public AnalyzeCollection getRawCollection(String rule) {
-        return getPresenter().getRawCollection(rule);
+    public Map<String, String> toVariableMapInternal(String rule, int flag) {
+        return getPresenter().toVariableMapInternal(rule, flag);
+    }
+
+    @Override
+    public AnalyzeCollection toRawCollection(String rule) {
+        return getPresenter().toRawCollection(rule);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public Observable<List<SearchBookBean>> getSearchBooks(String source) {
-        return getDelegate().getSearchBooks(source);
+        return new DefaultContentDelegate(this).getSearchBooks(source);
     }
 
     @Override
     public Observable<BookShelfBean> getBook(String source) {
-        return getDelegate().getBook(source);
+        return new DefaultContentDelegate(this).getBook(source);
     }
 
     @Override
     public Observable<List<ChapterBean>> getChapters(String source) {
-        return getDelegate().getChapters(source);
+        return new DefaultContentDelegate(this).getChapters(source);
     }
 
     @Override
     public Observable<BookContentBean> getContent(String source) {
-        return getDelegate().getContent(source);
+        return new DefaultContentDelegate(this).getContent(source);
     }
 
     @Override
     public Observable<String> getAudioContent(String source) {
-        return getDelegate().getAudioContent(source);
+        return new DefaultContentDelegate(this).getAudioContent(source);
     }
 }
