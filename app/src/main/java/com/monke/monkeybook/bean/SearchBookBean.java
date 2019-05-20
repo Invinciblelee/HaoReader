@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.utils.ObjectsCompat;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -160,7 +161,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getCoverUrl() {
-        return coverUrl;
+        return URLUtils.resolve(tag, coverUrl);
     }
 
     public void setCoverUrl(String coverUrl) {

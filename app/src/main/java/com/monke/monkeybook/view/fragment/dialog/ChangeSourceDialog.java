@@ -109,7 +109,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
         rvSource.setOnRefreshListener(this::reSearchBook);
         ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
 
-        adapter = new ChangeSourceAdapter(getContext());
+        adapter = new ChangeSourceAdapter(getContext(), selectCover);
         rvSource.setRefreshRecyclerViewAdapter(adapter, new LinearLayoutManager(getContext()));
         adapter.setOnItemClickListener((v, item) -> selectSource(item));
         View viewRefreshError = LayoutInflater.from(getContext()).inflate(R.layout.view_searchbook_refresh_error, null);

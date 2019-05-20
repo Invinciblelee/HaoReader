@@ -1,5 +1,8 @@
 package com.monke.monkeybook.utils;
 
+import org.jsoup.helper.StringUtil;
+
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class URLUtils {
@@ -10,28 +13,27 @@ public class URLUtils {
     /**
      * 获取绝对地址
      */
-    public static String getAbsoluteURL(String baseURL, String relativePath) {
+    public static String getAbsoluteURL(String baseUrl, String relPath) {
         try {
             String header = null;
-            int index = indexOfHeader(relativePath);
+            int index = indexOfHeader(relPath);
             if (index >= 0) {
-                header = relativePath.substring(0, index + 1);
-                relativePath = relativePath.substring(index + 1);
+                header = relPath.substring(0, index + 1);
+                relPath = relPath.substring(index + 1);
             }
-            index = indexOfHeader(baseURL);
+            index = indexOfHeader(baseUrl);
             if (index >= 0) {
-                baseURL = baseURL.substring(index + 1);
+                baseUrl = baseUrl.substring(index + 1);
             }
-            URL absoluteUrl = new URL(baseURL);
-            URL parseUrl = new URL(absoluteUrl, relativePath);
-            relativePath = parseUrl.toString();
+
+            relPath = resolve(baseUrl, relPath);
+
             if (header != null) {
-                relativePath = header + relativePath;
+                relPath = header + relPath;
             }
-            return relativePath;
         } catch (Exception ignore) {
         }
-        return relativePath;
+        return relPath;
     }
 
     private static int indexOfHeader(String url) {
@@ -39,6 +41,16 @@ public class URLUtils {
             return url.indexOf("}");
         }
         return -1;
+    }
+
+    public static String resolve(String baseUrl, String relPath){
+        try {
+            URL absoluteUrl = new URL(baseUrl);
+            URL parseUrl = new URL(absoluteUrl, relPath);
+            return parseUrl.toString();
+        }catch (MalformedURLException ignore) {
+        }
+        return relPath;
     }
 
     public static boolean isUrl(String urlStr) {

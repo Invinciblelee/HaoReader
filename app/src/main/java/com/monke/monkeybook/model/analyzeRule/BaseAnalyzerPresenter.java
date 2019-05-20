@@ -247,7 +247,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     @Override
-    public Map<String, String> toVariableMapInternal(String rule, int flag) {
+    public Map<String, String> putVariableMapInternal(String rule, int flag) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return new HashMap<>();
         }

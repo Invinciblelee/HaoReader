@@ -87,18 +87,18 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Map<String, String> toVariableMap(String rule, int flag) {
-        return getPresenter().toVariableMap(rule, flag);
+    public Map<String, String> putVariableMap(String rule, int flag) {
+        return getPresenter().putVariableMap(rule, flag);
     }
 
     @Override
-    public Map<String, String> toVariableMapInternal(String rule, int flag) {
-        return getPresenter().toVariableMapInternal(rule, flag);
+    public Map<String, String> putVariableMapInternal(String rule, int flag) {
+        return getPresenter().putVariableMapInternal(rule, flag);
     }
 
     @Override
-    public AnalyzeCollection toRawCollection(String rule) {
-        return getPresenter().toRawCollection(rule);
+    public AnalyzeCollection getRawCollection(String rule) {
+        return getPresenter().getRawCollection(rule);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
