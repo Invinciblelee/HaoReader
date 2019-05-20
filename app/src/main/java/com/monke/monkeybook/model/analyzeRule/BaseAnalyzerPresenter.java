@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.VariableStore;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.assit.JavaExecutor;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutor;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutorImpl;
@@ -25,10 +25,9 @@ import static android.text.TextUtils.isEmpty;
 
 abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecutor {
 
-    private final OutAnalyzer<S> mAnalyzer;
-    private final SimpleJavaExecutor mSimpleJavaExecutor;
-
-    private final Map<String, Object> mCache = new HashMap<>();
+    private OutAnalyzer<S> mAnalyzer;
+    private SimpleJavaExecutor mSimpleJavaExecutor;
+    private Map<String, Object> mCache;
 
     BaseAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         this.mAnalyzer = analyzer;
@@ -56,6 +55,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     final Object getCache(String key) {
+        if (mCache == null) return null;
         if (getBookSource().getBookSourceCacheEnabled()) {
             return mCache.get(key);
         }
@@ -63,6 +63,9 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     final void putCache(String key, Object value) {
+        if (mCache == null) {
+            mCache = new HashMap<>();
+        }
         if (getBookSource().getBookSourceCacheEnabled()) {
             mCache.put(key, value);
         }
@@ -71,7 +74,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     final String evalStringScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                result = Global.evalObjectScript(javaScript, this, result, getBaseURL());
+                result = Assistant.evalObjectScript(javaScript, this, result, getBaseURL());
             }
         }
         return StringUtils.valueOf(result);
@@ -80,7 +83,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     final List<String> evalStringArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
+                result = Assistant.evalArrayScript(javaScript, this, result, getBaseURL());
             }
         }
         final List<String> list = new ArrayList<>();
@@ -95,7 +98,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     final List<Object> evalObjectArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
-                result = Global.evalArrayScript(javaScript, this, result, getBaseURL());
+                result = Assistant.evalArrayScript(javaScript, this, result, getBaseURL());
             }
         }
         final List<Object> list = new ArrayList<>();
@@ -241,6 +244,27 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             return StringUtils.valueOf(((JXNode) object).selOne(rule));
         }
         return getResultUrl(rule);
+    }
+
+    @Override
+    public Map<String, String> toVariableMapInternal(String rule, int flag) {
+        if (getParser().isSourceEmpty() || isEmpty(rule)) {
+            return new HashMap<>();
+        }
+        final Map<String, String> resultMap = new HashMap<>();
+        final VariablesPattern variablesPattern = VariablesPattern.fromPutterRule(rule, flag);
+        if (variablesPattern.map.isEmpty()) {
+            return resultMap;
+        } else {
+            for (Map.Entry<String, String> entry : variablesPattern.map.entrySet()) {
+                String value = getResultContentInternal(entry.getValue());
+                if (!isEmpty(value)) {
+                    resultMap.put(entry.getKey(), value);
+                }
+            }
+        }
+        getVariableStore().putVariableMap(resultMap);
+        return resultMap;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

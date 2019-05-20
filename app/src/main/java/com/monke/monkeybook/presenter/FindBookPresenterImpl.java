@@ -16,7 +16,7 @@ import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.MemoryCache;
 import com.monke.monkeybook.model.BookSourceManager;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutor;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutorImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
@@ -77,7 +77,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                                     this.put("java", getJavaExecutor());
                                 }};
                                 String javaScript = findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<"));
-                                findRule = (String) Global.evalObjectScript(javaScript, bindings);
+                                findRule = (String) Assistant.evalObjectScript(javaScript, bindings);
                                 MemoryCache.INSTANCE.putCache(sourceBean.getBookSourceUrl(), findRule);
                             }
                         }

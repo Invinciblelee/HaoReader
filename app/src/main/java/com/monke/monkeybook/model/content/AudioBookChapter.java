@@ -34,8 +34,6 @@ final class AudioBookChapter {
     private String suffix;
     private String javaScript;
 
-    private OutAnalyzer<?> analyzer;
-
     AudioBookChapter(String tag, BookSourceBean bookSourceBean) {
         this.tag = tag;
         this.bookSourceBean = bookSourceBean;
@@ -56,10 +54,8 @@ final class AudioBookChapter {
             chapter.setDurChapterPlayUrl(s);
             return Observable.just(chapter);
         } else {
-            if (analyzer == null) {
-                analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                        .tag(tag).bookSource(bookSourceBean));
-            }
+            OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                    .tag(tag).bookSource(bookSourceBean));
             analyzer.apply(analyzer.newConfig()
                     .baseURL(chapter.getDurChapterUrl())
                     .extra("chapter", (Parcelable) chapter));

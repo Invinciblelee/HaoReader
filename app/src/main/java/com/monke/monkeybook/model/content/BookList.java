@@ -12,18 +12,22 @@ import io.reactivex.Observable;
 
 final class BookList {
 
-    private final OutAnalyzer<?> analyzer;
+    private String tag;
+    private String name;
+    private BookSourceBean bookSourceBean;
 
     private boolean isAJAX;
 
     BookList(String tag, String name, BookSourceBean bookSourceBean) {
-        this.analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).name(name).bookSource(bookSourceBean));
-
+        this.tag = tag;
+        this.name = name;
+        this.bookSourceBean = bookSourceBean;
         isAJAX = bookSourceBean.ajaxSearch();
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {
+        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
+                .tag(tag).name(name).bookSource(bookSourceBean));
         analyzer.apply(analyzer.newConfig()
                 .baseURL(baseUrl));
         return analyzer.getSearchBooks(response);

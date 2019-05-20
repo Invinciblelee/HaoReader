@@ -41,27 +41,32 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     private BookSourceBean bookSourceBean;
     private Map<String, String> headerMap;
 
-    private DefaultModel(String tag) {
-        this.tag = tag;
+    private volatile static DefaultModel sInstance;
+
+    private DefaultModel() {
     }
 
-    public static DefaultModel newInstance(String tag) {
-        return new DefaultModel(tag);
+    public static DefaultModel getInstance() {
+        if (sInstance == null) {
+            synchronized (DefaultModel.class) {
+                if (sInstance == null) {
+                    sInstance = new DefaultModel();
+                }
+            }
+        }
+        return sInstance;
     }
 
-    private Boolean initBookSourceBean() {
-        if (bookSourceBean == null) {
+    public DefaultModel withTag(String tag) {
+        if (!TextUtils.equals(this.tag, tag)) {
             bookSourceBean = BookSourceManager.getByUrl(tag);
             if (bookSourceBean != null) {
                 name = bookSourceBean.getBookSourceName();
                 headerMap = AnalyzeHeaders.getMap(bookSourceBean);
-                return true;
-            } else {
-                return false;
+                this.tag = tag;
             }
-        } else {
-            return true;
         }
+        return this;
     }
 
     private Map<String, String> headerMap(boolean withCookie) {
@@ -82,7 +87,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<List<SearchBookBean>> findBook(String url, int page) {
         return Observable.create((ObservableOnSubscribe<BookList>) emitter -> {
-            if (!initBookSourceBean() || isEmpty(url)) {
+            if (bookSourceBean == null || isEmpty(url)) {
                 emitter.onError(new IllegalArgumentException("find Book failed for: " + url));
             } else {
                 emitter.onNext(new BookList(tag, name, bookSourceBean));
@@ -102,8 +107,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<List<SearchBookBean>> searchBook(String content, int page) {
         return Observable.create((ObservableOnSubscribe<BookList>) emitter -> {
-            if (!initBookSourceBean() || isEmpty(bookSourceBean.getRuleSearchUrl())) {
-                emitter.onError(new IllegalArgumentException("search Book failed for: " + bookSourceBean.getRuleSearchUrl()));
+            if (bookSourceBean == null || isEmpty(bookSourceBean.getRuleSearchUrl())) {
+                emitter.onError(new IllegalArgumentException("search Book failed for: " + content));
             } else {
                 emitter.onNext(new BookList(tag, name, bookSourceBean));
                 emitter.onComplete();
@@ -140,7 +145,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<BookShelfBean> getBookInfo(final BookShelfBean bookShelfBean) {
         return Observable.create((ObservableOnSubscribe<BookInfo>) emitter -> {
-            if (!initBookSourceBean()) {
+            if (bookSourceBean == null) {
                 emitter.onError(new Exception("没有找到当前书源"));
             } else {
                 emitter.onNext(new BookInfo(tag, name, bookSourceBean));
@@ -160,7 +165,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<List<ChapterBean>> getChapterList(final BookShelfBean bookShelfBean) {
         return Observable.create((ObservableOnSubscribe<BookChapters>) emitter -> {
-            if (!initBookSourceBean()) {
+            if (bookSourceBean == null) {
                 emitter.onError(new Exception("没有找到当前书源"));
             } else {
                 emitter.onNext(new BookChapters(tag, bookSourceBean));
@@ -179,7 +184,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<BookContentBean> getBookContent(final String chapterUrl, final ChapterBean chapter) {
         return Observable.create((ObservableOnSubscribe<BookContent>) emitter -> {
-            if (!initBookSourceBean()) {
+            if (bookSourceBean == null) {
                 emitter.onError(new Exception("没有找到当前书源"));
             } else {
                 emitter.onNext(new BookContent(tag, bookSourceBean));
@@ -213,7 +218,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     @Override
     public Observable<ChapterBean> getAudioBookContent(final String chapterUrl, final ChapterBean chapter) {
         return Observable.create((ObservableOnSubscribe<AudioBookChapter>) emitter -> {
-            if (!initBookSourceBean()) {
+            if (bookSourceBean == null) {
                 emitter.onError(new Exception("没有找到书源"));
             } else {
                 emitter.onNext(new AudioBookChapter(tag, bookSourceBean));

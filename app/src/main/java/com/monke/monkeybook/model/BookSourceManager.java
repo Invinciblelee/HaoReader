@@ -10,7 +10,7 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
@@ -192,9 +192,11 @@ public class BookSourceManager extends BaseModelImpl {
             if (NetworkUtil.isIPv4Address(url)) {
                 url = String.format("http://%s:65501", url);
             }
+
             if (StringUtils.isJsonType(url)) {
-                return importFromJson(url.trim());
+                return importFromJson(url);
             }
+
             if (URLUtils.isUrl(url)) {
                 AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(url), url);
                 return SimpleModel.getResponse(analyzeUrl)
@@ -210,7 +212,7 @@ public class BookSourceManager extends BaseModelImpl {
 
     public static Observable<Boolean> importFromJson(String json) {
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            List<BookSourceBean> bookSourceBeans = Global.GSON.fromJson(json.trim(), new TypeToken<List<BookSourceBean>>() {
+            List<BookSourceBean> bookSourceBeans = Assistant.GSON.fromJson(StringUtils.wrapJsonArray(json.trim()), new TypeToken<List<BookSourceBean>>() {
             }.getType());
             int index = 0;
             for (BookSourceBean bookSourceBean : bookSourceBeans) {

@@ -108,6 +108,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieRuleSearchLastChapter;
     @BindView(R.id.til_ruleSearchLastChapter)
     TextInputLayout tilRuleSearchLastChapter;
+    @BindView(R.id.tie_ruleSearchIntroduce)
+    TextInputEditText tieRuleSearchIntroduce;
+    @BindView(R.id.til_ruleSearchIntroduce)
+    TextInputLayout tilRuleSearchIntroduce;
     @BindView(R.id.tie_ruleSearchCoverUrl)
     TextInputEditText tieRuleSearchCoverUrl;
     @BindView(R.id.til_ruleSearchCoverUrl)
@@ -345,6 +349,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleSearchCoverUrl(trim(tieRuleSearchCoverUrl.getText()));
         bookSourceBeanN.setRuleSearchKind(trim(tieRuleSearchKind.getText()));
         bookSourceBeanN.setRuleSearchLastChapter(trim(tieRuleSearchLastChapter.getText()));
+        bookSourceBeanN.setRuleSearchIntroduce(trim(tieRuleSearchIntroduce.getText()));
         bookSourceBeanN.setRuleSearchList(trim(tieRuleSearchList.getText()));
         bookSourceBeanN.setRuleSearchName(trim(tieRuleSearchName.getText()));
         bookSourceBeanN.setRuleSearchNoteUrl(trim(tieRuleSearchNoteUrl.getText()));
@@ -393,6 +398,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieRuleSearchCoverUrl.setText(trim(bookSourceBean.getRuleSearchCoverUrl()));
         tieRuleSearchKind.setText(trim(bookSourceBean.getRuleSearchKind()));
         tieRuleSearchLastChapter.setText(trim(bookSourceBean.getRuleSearchLastChapter()));
+        tieRuleSearchIntroduce.setText(trim(bookSourceBean.getRuleSearchIntroduce()));
         tieRuleSearchList.setText(trim(bookSourceBean.getRuleSearchList()));
         tieRuleSearchName.setText(trim(bookSourceBean.getRuleSearchName()));
         tieRuleSearchNoteUrl.setText(trim(bookSourceBean.getRuleSearchNoteUrl()));
@@ -433,6 +439,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilRuleSearchCoverUrl.setHint("搜索结果封面获取规则(RuleSearchCoverUrl)");
         tilRuleSearchKind.setHint("搜索分类获取规则(RuleSearchKind)");
         tilRuleSearchLastChapter.setHint("搜索最新章节获取规则(RuleSearchLastChapter)");
+        tilRuleSearchIntroduce.setHint("搜索简介获取规则(RuleSearchIntroduce)");
         tilRuleSearchList.setHint("搜索结果列表获取规则(RuleSearchList)");
         tilRuleSearchName.setHint("搜索结果书名获取规则(RuleSearchName)");
         tilRuleSearchNoteUrl.setHint("搜索结果书籍URL获取规则(RuleSearchNoteUrl)");

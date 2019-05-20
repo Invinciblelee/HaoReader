@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -116,6 +117,12 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         Intent intent = new Intent(activity, SearchBookActivity.class);
         intent.putExtra("searchKey", searchKey);
         activity.startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.e("TAG", "onLowerMemory");
     }
 
     @Override

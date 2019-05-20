@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.monke.basemvplib.RequestMethod;
-import com.monke.monkeybook.model.analyzeRule.assit.Global;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
 import com.monke.monkeybook.utils.MD5Utils;
 import com.monke.monkeybook.utils.StringUtils;
@@ -126,7 +126,7 @@ public class AnalyzeUrl {
             ruleUrl = ruleUrl.replace(find, "");
             find = find.substring(8);
             try {
-                Map<String, String> map = Global.GSON.fromJson(find, STRING_MAP);
+                Map<String, String> map = Assistant.GSON.fromJson(find, STRING_MAP);
                 headerMap.putAll(map);
             } catch (Exception ignore) {
             }
@@ -173,7 +173,7 @@ public class AnalyzeUrl {
             }};
             Matcher expMatcher = Patterns.PATTERN_EXP.matcher(ruleUrl);
             while (expMatcher.find()) {
-                Object result = Global.evalObjectScript(expMatcher.group(1), simpleBindings);
+                Object result = Assistant.evalObjectScript(expMatcher.group(1), simpleBindings);
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {
                     expMatcher.appendReplacement(buffer, String.format("%.0f", (Double) result));
                 } else {

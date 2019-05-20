@@ -41,36 +41,42 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private int weight = 0;
     private boolean enable;
     private String ruleFindUrl;
+    //搜索
     private String ruleSearchUrl;
     private String ruleSearchList;
     private String ruleSearchName;
     private String ruleSearchAuthor;
     private String ruleSearchKind;
     private String ruleSearchLastChapter;
+    private String ruleSearchIntroduce;
     private String ruleSearchCoverUrl;
     private String ruleSearchNoteUrl;
-    private String rulePersistedVariables;
+    //详情
     private String ruleBookName;
     private String ruleBookAuthor;
     private String ruleLastChapter;
-    private String ruleChapterUrl;
-    private String ruleChapterUrlNext;
     private String ruleCoverUrl;
     private String ruleIntroduce;
+    private String ruleChapterUrl;
+    private String ruleChapterUrlNext;
+    //目录
     private String ruleChapterList;
     private String ruleChapterName;
     private String ruleContentUrl;
+    //正文
     private String ruleContentUrlNext;
     private String ruleBookContent;
+    //其他
+    private String rulePersistedVariables;
     private String httpUserAgent;
 
     @Transient
     private String ajaxJavaScript;
 
-    @Generated(hash = 2065132802)
+    @Generated(hash = 1464818968)
     public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, boolean bookSourceCacheEnabled, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl, String ruleSearchUrl,
-                          String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String rulePersistedVariables, String ruleBookName, String ruleBookAuthor,
-                          String ruleLastChapter, String ruleChapterUrl, String ruleChapterUrlNext, String ruleCoverUrl, String ruleIntroduce, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+            String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleLastChapter,
+            String ruleCoverUrl, String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -88,21 +94,22 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchAuthor = ruleSearchAuthor;
         this.ruleSearchKind = ruleSearchKind;
         this.ruleSearchLastChapter = ruleSearchLastChapter;
+        this.ruleSearchIntroduce = ruleSearchIntroduce;
         this.ruleSearchCoverUrl = ruleSearchCoverUrl;
         this.ruleSearchNoteUrl = ruleSearchNoteUrl;
-        this.rulePersistedVariables = rulePersistedVariables;
         this.ruleBookName = ruleBookName;
         this.ruleBookAuthor = ruleBookAuthor;
         this.ruleLastChapter = ruleLastChapter;
-        this.ruleChapterUrl = ruleChapterUrl;
-        this.ruleChapterUrlNext = ruleChapterUrlNext;
         this.ruleCoverUrl = ruleCoverUrl;
         this.ruleIntroduce = ruleIntroduce;
+        this.ruleChapterUrl = ruleChapterUrl;
+        this.ruleChapterUrlNext = ruleChapterUrlNext;
         this.ruleChapterList = ruleChapterList;
         this.ruleChapterName = ruleChapterName;
         this.ruleContentUrl = ruleContentUrl;
         this.ruleContentUrlNext = ruleContentUrlNext;
         this.ruleBookContent = ruleBookContent;
+        this.rulePersistedVariables = rulePersistedVariables;
         this.httpUserAgent = httpUserAgent;
     }
 
@@ -128,21 +135,22 @@ public class BookSourceBean implements Parcelable, Cloneable {
         ruleSearchAuthor = in.readString();
         ruleSearchKind = in.readString();
         ruleSearchLastChapter = in.readString();
+        ruleSearchIntroduce = in.readString();
         ruleSearchCoverUrl = in.readString();
         ruleSearchNoteUrl = in.readString();
-        rulePersistedVariables = in.readString();
         ruleBookName = in.readString();
         ruleBookAuthor = in.readString();
         ruleLastChapter = in.readString();
-        ruleChapterUrl = in.readString();
-        ruleChapterUrlNext = in.readString();
         ruleCoverUrl = in.readString();
         ruleIntroduce = in.readString();
+        ruleChapterUrl = in.readString();
+        ruleChapterUrlNext = in.readString();
         ruleChapterList = in.readString();
         ruleChapterName = in.readString();
         ruleContentUrl = in.readString();
         ruleContentUrlNext = in.readString();
         ruleBookContent = in.readString();
+        rulePersistedVariables = in.readString();
         httpUserAgent = in.readString();
         ajaxJavaScript = in.readString();
     }
@@ -166,21 +174,22 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(ruleSearchAuthor);
         dest.writeString(ruleSearchKind);
         dest.writeString(ruleSearchLastChapter);
+        dest.writeString(ruleSearchIntroduce);
         dest.writeString(ruleSearchCoverUrl);
         dest.writeString(ruleSearchNoteUrl);
-        dest.writeString(rulePersistedVariables);
         dest.writeString(ruleBookName);
         dest.writeString(ruleBookAuthor);
         dest.writeString(ruleLastChapter);
-        dest.writeString(ruleChapterUrl);
-        dest.writeString(ruleChapterUrlNext);
         dest.writeString(ruleCoverUrl);
         dest.writeString(ruleIntroduce);
+        dest.writeString(ruleChapterUrl);
+        dest.writeString(ruleChapterUrlNext);
         dest.writeString(ruleChapterList);
         dest.writeString(ruleChapterName);
         dest.writeString(ruleContentUrl);
         dest.writeString(ruleContentUrlNext);
         dest.writeString(ruleBookContent);
+        dest.writeString(rulePersistedVariables);
         dest.writeString(httpUserAgent);
         dest.writeString(ajaxJavaScript);
     }
@@ -230,6 +239,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(ruleSearchAuthor, bs.ruleSearchAuthor)
                     && stringEquals(ruleSearchKind, bs.ruleSearchKind)
                     && stringEquals(ruleSearchLastChapter, bs.ruleSearchLastChapter)
+                    && stringEquals(ruleSearchIntroduce, bs.ruleSearchIntroduce)
                     && stringEquals(ruleSearchCoverUrl, bs.ruleSearchCoverUrl)
                     && stringEquals(ruleSearchNoteUrl, bs.ruleSearchNoteUrl)
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
@@ -469,6 +479,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchLastChapter = ruleSearchLastChapter;
     }
 
+    public String getRuleSearchIntroduce() {
+        return ruleSearchIntroduce;
+    }
+
+    public void setRuleSearchIntroduce(String ruleSearchIntroduce) {
+        this.ruleSearchIntroduce = ruleSearchIntroduce;
+    }
+
     public String getRuleSearchCoverUrl() {
         return this.ruleSearchCoverUrl;
     }
@@ -490,11 +508,31 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getRealRuleSearchList() {
-        return reverseSearchList() ? ruleSearchList.substring(1) : ruleSearchList;
+        final String searchListRule;
+        if (searchListInWhole() || searchListInRegex()) {
+            searchListRule = ruleSearchList.substring(7);
+        } else {
+            searchListRule = ruleSearchList;
+        }
+        return chapterListReverse() ? searchListRule.substring(1) : searchListRule;
     }
 
-    public boolean reverseSearchList() {
+    public boolean searchListReverse() {
         return !TextUtils.isEmpty(ruleSearchList) && ruleSearchList.startsWith(Patterns.RULE_REVERSE);
+    }
+
+    public boolean searchListInWhole() {
+        if (TextUtils.isEmpty(ruleSearchList)) {
+            return false;
+        }
+        return StringUtils.startWithIgnoreCase(ruleSearchList, Patterns.RULE_IN_WHOLE);
+    }
+
+    public boolean searchListInRegex() {
+        if (TextUtils.isEmpty(ruleSearchList)) {
+            return false;
+        }
+        return StringUtils.startWithIgnoreCase(ruleSearchList, Patterns.RULE_IN_REGEX);
     }
 
     public void setRuleSearchList(String ruleSearchList) {

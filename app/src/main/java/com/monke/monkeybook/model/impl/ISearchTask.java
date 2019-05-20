@@ -9,7 +9,7 @@ import io.reactivex.Scheduler;
 
 public interface ISearchTask {
 
-    void startSearch( int index, String query, Scheduler scheduler);
+    void startSearch(String query, Scheduler scheduler);
 
     void stopSearch();
 

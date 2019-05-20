@@ -17,7 +17,6 @@ import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 import com.monke.monkeybook.model.impl.IWebBookModel;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
@@ -26,16 +25,20 @@ import io.reactivex.Observable;
 
 public class WebBookModel implements IWebBookModel {
 
+    private volatile static WebBookModel sInstance;
+
     private WebBookModel() {
-
-    }
-
-    private static class Holder {
-        private static final WebBookModel SINGLETON = new WebBookModel();
     }
 
     public static WebBookModel getInstance() {
-        return Holder.SINGLETON;
+        if (sInstance == null) {
+            synchronized (WebBookModel.class) {
+                if (sInstance == null) {
+                    sInstance = new WebBookModel();
+                }
+            }
+        }
+        return sInstance;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,11 +85,9 @@ public class WebBookModel implements IWebBookModel {
         if (bookModel != null) {
             return bookModel.getBookContent(bookInfo.getChapterListUrl(), chapter)
                     .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
-        } else
-            return Observable.create(e -> {
-                e.onNext(new BookContentBean());
-                e.onComplete();
-            });
+        } else {
+            return Observable.error(new Exception("can not find book source."));
+        }
     }
 
     @Override
@@ -109,10 +110,7 @@ public class WebBookModel implements IWebBookModel {
         if (bookModel != null) {
             return bookModel.searchBook(content, page);
         } else {
-            return Observable.create(e -> {
-                e.onNext(new ArrayList<>());
-                e.onComplete();
-            });
+            return Observable.error(new Exception("can not find book source."));
         }
     }
 
@@ -125,10 +123,7 @@ public class WebBookModel implements IWebBookModel {
         if (bookModel != null) {
             return bookModel.findBook(url, page);
         } else {
-            return Observable.create(e -> {
-                e.onNext(new ArrayList<>());
-                e.onComplete();
-            });
+            return Observable.error(new Exception("can not find book source."));
         }
     }
 
@@ -137,11 +132,11 @@ public class WebBookModel implements IWebBookModel {
         if (BookShelfBean.LOCAL_TAG.equals(tag)) {
             return null;
         } else if (TextUtils.equals(tag, Default716.TAG)) {
-            return Default716.newInstance();
+            return Default716.getInstance();
         } else if (TextUtils.equals(tag, DefaultShuqi.TAG)) {
-            return DefaultShuqi.newInstance();
+            return DefaultShuqi.getInstance();
         } else {
-            return DefaultModel.newInstance(tag);
+            return DefaultModel.getInstance().withTag(tag);
         }
     }
 

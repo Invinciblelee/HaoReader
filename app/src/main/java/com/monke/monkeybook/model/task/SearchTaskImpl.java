@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -28,8 +27,6 @@ public class SearchTaskImpl implements ISearchTask {
     private CompositeDisposable disposables;
     private final OnSearchingListener listener;
 
-    private int index;
-
     private int successCount;
 
     public SearchTaskImpl(OnSearchingListener listener) {
@@ -39,12 +36,10 @@ public class SearchTaskImpl implements ISearchTask {
     }
 
     @Override
-    public void startSearch(int index, String query, Scheduler scheduler) {
+    public void startSearch(String query, Scheduler scheduler) {
         if (TextUtils.isEmpty(query) || isDisposed()) {
             return;
         }
-
-        this.index = index;
 
         successCount = 0;
 
@@ -86,14 +81,14 @@ public class SearchTaskImpl implements ISearchTask {
             searchEngine.searchBegin();
             WebBookModel.getInstance()
                     .searchBook(searchEngine.getTag(), query, searchEngine.getPage())
+                    .timeout(30L, TimeUnit.SECONDS)
                     .subscribeOn(scheduler)
                     .doOnNext(result -> {
                         saveData(result);
                         incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
                     })
                     .doOnError(throwable -> decrementSourceWeight(searchEngine.getTag()))
-                    .delay(index * 50L, TimeUnit.MILLISECONDS)
-                    .flatMap(searchBookBeans -> Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+                    .flatMap(searchBookBeans -> {
                         boolean hasMore = true;
                         if (!isDisposed() && !searchBookBeans.isEmpty()) {
                             listener.onSearchResult(searchBookBeans);
@@ -107,9 +102,8 @@ public class SearchTaskImpl implements ISearchTask {
                         } else {
                             hasMore = false;
                         }
-                        emitter.onNext(hasMore);
-                        emitter.onComplete();
-                    }))
+                        return Observable.just(hasMore);
+                    })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -121,7 +115,7 @@ public class SearchTaskImpl implements ISearchTask {
 
                         @Override
                         public void onNext(Boolean result) {
-                            whenNext(searchEngine, result, query, scheduler);
+                            whenNext(searchEngine, query, scheduler, result);
                             successCount += 1;
                         }
 
@@ -133,7 +127,7 @@ public class SearchTaskImpl implements ISearchTask {
         }
     }
 
-    private void whenNext(SearchEngine searchEngine, boolean hasMore, String query, Scheduler scheduler) {
+    private void whenNext(SearchEngine searchEngine, String query, Scheduler scheduler, boolean hasMore) {
         if (isDisposed()) {
             return;
         }

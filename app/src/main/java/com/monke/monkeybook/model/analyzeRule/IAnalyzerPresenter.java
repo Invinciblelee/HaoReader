@@ -17,8 +17,10 @@ public interface IAnalyzerPresenter {
 
     List<String> getResultUrls(String rule);
 
-    Map<String, String> getVariableMap(String rule, int flag);
+    Map<String, String> toVariableMap(String rule, int flag);
 
-    AnalyzeCollection getRawCollection(String rule);
+    Map<String, String> toVariableMapInternal(String rule, int flag);
+
+    AnalyzeCollection toRawCollection(String rule);
 
 }

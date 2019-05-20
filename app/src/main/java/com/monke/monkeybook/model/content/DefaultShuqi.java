@@ -33,8 +33,20 @@ import io.reactivex.Observable;
 public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
     public static final String TAG = "ShuQi";
 
-    public static DefaultShuqi newInstance() {
-        return new DefaultShuqi();
+    private volatile static DefaultShuqi sInstance;
+
+    private DefaultShuqi() {
+    }
+
+    public static DefaultShuqi getInstance() {
+        if (sInstance == null) {
+            synchronized (DefaultShuqi.class) {
+                if (sInstance == null) {
+                    sInstance = new DefaultShuqi();
+                }
+            }
+        }
+        return sInstance;
     }
 
     /**

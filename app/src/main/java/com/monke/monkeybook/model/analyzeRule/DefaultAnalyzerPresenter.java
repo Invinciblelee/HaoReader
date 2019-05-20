@@ -246,7 +246,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public Map<String, String> getVariableMap(String rule, int flag) {
+    public Map<String, String> toVariableMap(String rule, int flag) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return new HashMap<>();
         }
@@ -268,7 +268,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
 
 
     @Override
-    public AnalyzeCollection getRawCollection(String rule) {
+    public AnalyzeCollection toRawCollection(String rule) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return new AnalyzeCollection(new ArrayList<>());
         }

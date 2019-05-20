@@ -68,7 +68,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             if (msg.what == MSG_SEARCH) {
                 model.search((String) msg.obj);
             } else if (msg.what == MSG_QUERY) {
-                new SearchTaskImpl(model).startSearch(msg.arg1, (String) msg.obj, model.getScheduler());
+                new SearchTaskImpl(model).startSearch((String) msg.obj, model.getScheduler());
             } else if (msg.what == MSG_EMPTY && model.searchListener != null) {
                 model.searchListener.searchSourceEmpty();
             } else if (msg.what == MSG_ERROR && model.searchListener != null) {
@@ -161,10 +161,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
         searchHandler.removeMessages(SearchHandler.MSG_QUERY);
         for (int i = 0, size = Math.min(searchEngineS.size(), threadsNum); i < size; i++) {
-            Message msg = Message.obtain();
-            msg.what = SearchHandler.MSG_QUERY;
-            msg.arg1 = i;
-            msg.obj = query;
+            Message msg = searchHandler.obtainMessage(SearchHandler.MSG_QUERY, query);
             searchHandler.sendMessageDelayed(msg, i * 50L);
         }
     }

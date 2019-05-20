@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.TlsVersion;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -25,9 +24,9 @@ public class OkHttpHelper {
     private volatile static OkHttpHelper mInstance;
 
     public static OkHttpHelper getInstance() {
-        if(mInstance == null){
-            synchronized (OkHttpHelper.class){
-                if(mInstance == null){
+        if (mInstance == null) {
+            synchronized (OkHttpHelper.class) {
+                if (mInstance == null) {
                     mInstance = new OkHttpHelper();
                 }
             }
@@ -63,8 +62,8 @@ public class OkHttpHelper {
         return getRetrofitString(url, encode).create(tClass);
     }
 
-    public OkHttpClient getOkHttpClient(){
-        if(okHttpClient == null){
+    public OkHttpClient getOkHttpClient() {
+        if (okHttpClient == null) {
 
             ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                     .tlsVersions(TlsVersion.TLS_1_2)
@@ -87,7 +86,6 @@ public class OkHttpHelper {
                     .followRedirects(true)
                     .followSslRedirects(true)
                     .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                    .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE))
                     .addInterceptor(getHeaderInterceptor())
                     .addInterceptor(new RetryInterceptor(1))
                     .build();
