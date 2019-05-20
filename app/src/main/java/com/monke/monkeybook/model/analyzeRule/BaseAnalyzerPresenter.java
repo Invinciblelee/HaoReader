@@ -267,6 +267,17 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return resultMap;
     }
 
+    @Override
+    public String putVariable(String key, String val) {
+        getVariableStore().putVariable(key, val);
+        return val;
+    }
+
+    @Override
+    public String getVariable(String key) {
+        return getVariableStore().getVariable(key);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
