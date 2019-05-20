@@ -446,6 +446,7 @@ public class StringUtils {
 
     // String数字转int数字的高效方法(利用ASCII值判断)
     public static int parseInt(String string) {
+        if (isBlank(string)) return -1;
         int r = 0;
         char n;
         for (int i = 0, l = string.length(); i < l; i++) {
@@ -462,17 +463,6 @@ public class StringUtils {
             return false;
         }
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
-    }
-
-    public static String formatHtml(String html) {
-        if (StringUtils.isBlank(html)) {
-            return "";
-        }
-        return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
-                .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
-                .replaceAll("\\s*\\n+\\s*", "\n\u3000\u3000")                   // 移除空行,并增加段前缩进2个汉字
-                .replaceAll("^[\\n\\s]+", "\u3000\u3000")
-                .replaceAll("[\\n\\s]+$", "");
     }
 
     public static boolean isJsonType(String str) {

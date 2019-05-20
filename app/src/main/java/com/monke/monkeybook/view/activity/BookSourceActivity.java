@@ -180,17 +180,29 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     public void resetData(List<BookSourceBean> bookSourceBeans) {
+        if(recyclerView == null || adapter == null) return;
         adapter.resetDataS(bookSourceBeans);
+        upGroupMenu();
+    }
+
+
+    @Override
+    public void upGroupMenu(List<String> groupList) {
+        if (groupMenu == null) return;
+        groupMenu.removeGroup(R.id.source_group);
+        if (groupList.size() == 0) {
+            groupItem.setVisible(false);
+        } else {
+            groupItem.setVisible(true);
+            for (String groupName : groupList) {
+                groupMenu.add(R.id.source_group, Menu.NONE, Menu.NONE, groupName);
+            }
+        }
     }
 
     @Override
     public String getQuery() {
         return searchView.getQuery().toString();
-    }
-
-    @Override
-    public void upMenu() {
-        supportInvalidateOptionsMenu();
     }
 
     public void delBookSource(BookSourceBean bookSource) {
@@ -298,18 +310,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         return super.onOptionsItemSelected(item);
     }
 
-    public void upGroupMenu() {
-        if (groupMenu == null) return;
-        groupMenu.removeGroup(R.id.source_group);
-        List<String> groupList = BookSourceManager.getGroupList();
-        if (groupList.size() == 0) {
-            groupItem.setVisible(false);
-        } else {
-            groupItem.setVisible(true);
-            for (String groupName : groupList) {
-                groupMenu.add(R.id.source_group, Menu.NONE, Menu.NONE, groupName);
-            }
-        }
+    private void upGroupMenu(){
+        mPresenter.refreshGroup();
     }
 
     private void upSortMenu() {

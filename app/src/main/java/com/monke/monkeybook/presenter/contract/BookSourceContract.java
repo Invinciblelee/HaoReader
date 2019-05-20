@@ -29,6 +29,8 @@ public interface BookSourceContract {
 
         void checkBookSource();
 
+        void refreshGroup();
+
         void refresh();
     }
 
@@ -38,7 +40,7 @@ public interface BookSourceContract {
 
         String getQuery();
 
-        void upMenu();
+        void upGroupMenu(List<String> groupList);
 
         void resetData(List<BookSourceBean> bookSourceBeans);
 

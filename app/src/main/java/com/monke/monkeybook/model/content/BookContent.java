@@ -26,11 +26,11 @@ final class BookContent {
     }
 
     Observable<BookContentBean> analyzeBookContent(final String s, final ChapterBean chapter) {
-        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).bookSource(bookSourceBean));
-        analyzer.apply(analyzer.newConfig()
-                .baseURL(chapter.getDurChapterUrl())
-                .extra("chapter", (Parcelable) chapter));
+        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(),
+                new AnalyzeConfig().tag(tag)
+                        .bookSource(bookSourceBean)
+                        .baseURL(chapter.getDurChapterUrl())
+                        .extra("chapter", chapter));
         return analyzer.getContent(s);
     }
 

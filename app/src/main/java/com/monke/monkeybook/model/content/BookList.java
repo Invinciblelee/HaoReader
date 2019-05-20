@@ -26,14 +26,15 @@ final class BookList {
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {
-        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).name(name).bookSource(bookSourceBean));
-        analyzer.apply(analyzer.newConfig()
-                .baseURL(baseUrl));
+        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(),
+                new AnalyzeConfig().tag(tag)
+                        .name(name)
+                        .bookSource(bookSourceBean)
+                        .baseURL(baseUrl));
         return analyzer.getSearchBooks(response);
     }
 
-    public boolean isAJAX() {
+    boolean isAJAX() {
         return isAJAX;
     }
 }

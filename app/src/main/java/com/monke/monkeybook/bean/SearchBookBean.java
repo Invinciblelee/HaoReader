@@ -176,7 +176,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getAuthor() {
-        return author == null ? "" : author;
+        return author;
     }
 
     public void setAuthor(String author) {
@@ -260,7 +260,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getIntroduce() {
-        return introduce;
+        return TextProcessor.formatHtml(introduce);
     }
 
     public void setIntroduce(String introduce) {

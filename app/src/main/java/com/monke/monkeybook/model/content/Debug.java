@@ -197,6 +197,7 @@ public class Debug {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         printError(e.getMessage());
                         printLog(String.format("★%s 目录结束", getDoTime()));
                     }

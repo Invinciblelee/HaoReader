@@ -156,7 +156,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
         result = matchRegex(result, rulePattern);
 
-        return formatHtml(result);
+        return result;
     }
 
 

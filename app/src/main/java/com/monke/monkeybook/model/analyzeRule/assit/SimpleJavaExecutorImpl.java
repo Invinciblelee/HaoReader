@@ -1,5 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule.assit;
 
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.utils.StringUtils;
@@ -43,6 +44,6 @@ public class SimpleJavaExecutorImpl implements SimpleJavaExecutor {
 
     @Override
     public final String formatHtml(String string) {
-        return StringUtils.formatHtml(string);
+        return TextProcessor.formatHtml(string);
     }
 }

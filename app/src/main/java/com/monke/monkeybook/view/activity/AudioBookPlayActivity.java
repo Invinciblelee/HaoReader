@@ -24,6 +24,7 @@ import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
+import com.monke.basemvplib.AppActivityManager;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -233,7 +234,11 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             }
         }
 
-        supportFinishAfterTransition();
+        if(AppActivityManager.getInstance().isExist(AudioBookActivity.class)){
+            finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
+        }else {
+            supportFinishAfterTransition();
+        }
     }
 
     @Override

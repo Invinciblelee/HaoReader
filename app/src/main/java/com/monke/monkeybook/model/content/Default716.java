@@ -43,9 +43,9 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
     }
 
     public static Default716 getInstance() {
-        if(sInstance == null){
-            synchronized (Default716.class){
-                if(sInstance == null){
+        if (sInstance == null) {
+            synchronized (Default716.class) {
+                if (sInstance == null) {
                     sInstance = new Default716();
                 }
             }
@@ -240,18 +240,18 @@ public class Default716 extends BaseModelImpl implements IStationBookModel {
                     } else {
                         result = chapterJson.get("body").getAsString();
                     }
-                    bookContentBean.setDurChapterContent(result.replaceAll("\\\\r\\\\n", ""));
+                    bookContentBean.appendDurChapterContent(result.replaceAll("\\\\r\\\\n", ""));
                 }
             } else {
                 JXDocument document = JXDocument.create(s);
                 Object object = document.selOne("//div[@name=\"content\"] or @id=\"content\" or @class=\"txt_tcontent\" or @id=\"htmlContent\"");
                 final String result;
                 if (object instanceof Element) {
-                    result = StringUtils.formatHtml(((Element) object).html());
+                    result = ((Element) object).html();
                 } else {
-                    result = StringUtils.formatHtml(StringUtils.valueOf(object));
+                    result = StringUtils.valueOf(object);
                 }
-                bookContentBean.setDurChapterContent(result.replaceAll("\\\\r\\\\n", ""));
+                bookContentBean.appendDurChapterContent(result.replaceAll("\\\\r\\\\n", ""));
             }
             e.onNext(bookContentBean);
             e.onComplete();

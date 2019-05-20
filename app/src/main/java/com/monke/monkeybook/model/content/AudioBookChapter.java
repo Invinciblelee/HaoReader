@@ -54,11 +54,11 @@ final class AudioBookChapter {
             chapter.setDurChapterPlayUrl(s);
             return Observable.just(chapter);
         } else {
-            OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                    .tag(tag).bookSource(bookSourceBean));
-            analyzer.apply(analyzer.newConfig()
-                    .baseURL(chapter.getDurChapterUrl())
-                    .extra("chapter", (Parcelable) chapter));
+            OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(),
+                    new AnalyzeConfig().tag(tag)
+                            .bookSource(bookSourceBean)
+                            .baseURL(chapter.getDurChapterUrl())
+                            .extra("chapter", chapter));
             return analyzer.getAudioContent(s)
                     .map(url -> {
                         chapter.setDurChapterPlayUrl(url);
@@ -77,7 +77,7 @@ final class AudioBookChapter {
         return isAJAX;
     }
 
-    public boolean isDirect() {
+    boolean isDirect() {
         return isDirect;
     }
 

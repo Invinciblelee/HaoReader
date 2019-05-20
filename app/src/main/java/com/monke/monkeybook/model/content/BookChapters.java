@@ -22,12 +22,12 @@ final class BookChapters {
     }
 
     Observable<List<ChapterBean>> analyzeChapters(final String s, final BookShelfBean bookShelfBean) {
-        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).bookSource(bookSourceBean));
-        analyzer.apply(analyzer.newConfig()
-                .baseURL(bookShelfBean.getBookInfoBean().getChapterListUrl())
-                .extra("noteUrl", bookShelfBean.getNoteUrl())
-                .variableStore(bookShelfBean));
+        OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(),
+                new AnalyzeConfig().tag(tag)
+                        .bookSource(bookSourceBean)
+                        .baseURL(bookShelfBean.getBookInfoBean().getChapterListUrl())
+                        .extra("noteUrl", bookShelfBean.getNoteUrl())
+                        .variableStore(bookShelfBean));
         return analyzer.getChapters(s);
     }
 

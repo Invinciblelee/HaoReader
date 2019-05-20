@@ -15,6 +15,7 @@ import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +82,7 @@ class DefaultContentDelegate implements ContentDelegate {
             String kind = StringUtils.join(",", mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchKind()));
             String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchLastChapter()));
             String introduce = mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchIntroduce());
-            String coverUrl = mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchCoverUrl());
+            String coverUrl = URLUtils.getAbsoluteURL(getConfig().getTag(), mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchCoverUrl()));
             String noteUrl = mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchNoteUrl());
             addSearchBook(searchBookBeans, name, author, kind, lastChapter, introduce, coverUrl, noteUrl, variableMap);
         }
@@ -395,15 +396,15 @@ class DefaultContentDelegate implements ContentDelegate {
             String baseUrl = "";
             int nameGroup = 0, urlGroup = 0;
             // 分离标题正则参数
-            Matcher nameMatcher = Pattern.compile("(?<=\\$)\\d").matcher(nameRule);
+            Matcher nameMatcher = Pattern.compile("\\$(\\d$)").matcher(nameRule);
             if (nameMatcher.find()) {
-                nameGroup = Integer.parseInt(nameMatcher.group(2));
+                nameGroup = StringUtils.parseInt(nameMatcher.group(1));
             }
             // 分离网址正则参数
             Matcher urlMatcher = Pattern.compile("(.*?)\\$(\\d$)").matcher(urlRule);
             while (urlMatcher.find()) {
                 baseUrl = VariablesPattern.fromGetterRule(urlMatcher.group(1), getConfig().getVariableStore()).rule;
-                urlGroup = Integer.parseInt(urlMatcher.group(2));
+                urlGroup = StringUtils.parseInt(urlMatcher.group(2));
             }
             // 提取目录信息
             while (matcher.find()) {
@@ -454,7 +455,6 @@ class DefaultContentDelegate implements ContentDelegate {
 
                 while (!isEmpty(webContent.nextUrl) && !usedUrls.contains(webContent.nextUrl)) {
                     usedUrls.add(webContent.nextUrl);
-
                     if (webContent.nextUrl.equals(nextChapterUrl)) {
                         break;
                     }
@@ -467,8 +467,8 @@ class DefaultContentDelegate implements ContentDelegate {
                             bookContentBean.appendDurChapterContent(webContent.result);
                         }
                     } catch (Exception ignore) {
-
                     }
+
                 }
             }
             emitter.onNext(bookContentBean);

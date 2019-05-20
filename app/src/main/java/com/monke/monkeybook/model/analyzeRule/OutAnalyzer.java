@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import androidx.annotation.NonNull;
-
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -18,23 +16,16 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     private SourceParser<S> mSourceParser;
     private IAnalyzerPresenter mPresenter;
 
-    private final AnalyzeConfig mConfig = new AnalyzeConfig();
+    private final AnalyzeConfig mConfig;
 
     public OutAnalyzer(AnalyzeConfig config) {
-        mConfig.apply(config);
+        this.mConfig = config;
     }
 
     public final AnalyzeConfig getConfig() {
         return mConfig;
     }
 
-    public final AnalyzeConfig newConfig() {
-        return mConfig.newConfig();
-    }
-
-    public void apply(@NonNull AnalyzeConfig config) {
-        this.mConfig.apply(config);
-    }
 
     public final OutAnalyzer<S> setContent(Object source) {
         getParser().setContent(source);

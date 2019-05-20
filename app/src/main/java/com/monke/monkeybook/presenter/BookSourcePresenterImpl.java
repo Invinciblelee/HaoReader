@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -154,7 +155,17 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void refresh() {
-        mView.resetData(getAllBookSource());
+        Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) emitter -> {
+            emitter.onNext(getAllBookSource());
+            emitter.onComplete();
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<List<BookSourceBean>>() {
+                    @Override
+                    public void onNext(List<BookSourceBean> bookSourceBeans) {
+                        mView.resetData(bookSourceBeans);
+                    }
+                });
     }
 
     @Override
@@ -217,6 +228,21 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     @Override
     public void checkBookSource() {
         CheckSourceService.start(mView.getContext());
+    }
+
+    @Override
+    public void refreshGroup() {
+        Observable.create((ObservableOnSubscribe<List<String>>) emitter -> {
+            emitter.onNext(BookSourceManager.getGroupList());
+            emitter.onComplete();
+        }).subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<List<String>>() {
+                    @Override
+                    public void onNext(List<String> list) {
+                        mView.upGroupMenu(list);
+                    }
+                });
     }
 
     /////////////////////////////////////////////////
