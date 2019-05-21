@@ -248,7 +248,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     @Override
     public Map<String, String> putVariableMap(String rule, int flag) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
-            return new HashMap<>();
+            return getVariableStore().getVariableMap();
         }
         final Map<String, String> resultMap = new HashMap<>();
         final VariablesPattern variablesPattern = VariablesPattern.fromPutterRule(rule, flag);
@@ -262,8 +262,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 }
             }
         }
-        getVariableStore().putVariableMap(resultMap);
-        return resultMap;
+        return getVariableStore().putVariableMap(resultMap);
     }
 
 

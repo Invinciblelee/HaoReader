@@ -478,9 +478,11 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
 
-
     @Override
     public String getVariableString() {
+        if (variableStore != null) {
+            this.variableString = variableStore.getVariableString();
+        }
         return this.variableString;
     }
 
@@ -491,31 +493,26 @@ public class BookShelfBean implements Parcelable, VariableStore {
 
     @Override
     public Map<String, String> getVariableMap() {
-        return variableStore == null ? null : variableStore.getVariableMap();
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(this.variableString);
+        }
+        return variableStore.getVariableMap();
     }
 
     @Override
-    public void putVariableMap(Map<String, String> variableMap) {
+    public Map<String, String> putVariableMap(Map<String, String> variableMap) {
         if (variableStore == null) {
             variableStore = new VariableStoreImpl(variableString);
         }
-        variableStore.putVariableMap(variableMap);
-        String variableString = variableStore.getVariableString();
-        if (variableString != null) {
-            this.variableString = variableString;
-        }
+        return variableStore.putVariableMap(variableMap);
     }
 
     @Override
-    public void putVariable(String key, String value) {
+    public String putVariable(String key, String value) {
         if (variableStore == null) {
             variableStore = new VariableStoreImpl(variableString);
         }
-        variableStore.putVariable(key, value);
-        String variableString = variableStore.getVariableString();
-        if (variableString != null) {
-            this.variableString = variableString;
-        }
+        return variableStore.putVariable(key, value);
     }
 
     @Override

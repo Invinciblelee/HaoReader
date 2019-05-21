@@ -74,7 +74,7 @@ final class RulePatterns {
 
     private String splitFilters(String rawRule) {
         if (rawRule.contains("!!")) {
-            String[] rules = rawRule.split("\\!\\!");
+            String[] rules = rawRule.split("!!");
             rawRule = rules[0];
 
             filters = new ArrayList<>();
@@ -155,7 +155,7 @@ final class RulePatterns {
     }
 
     static RulePatterns fromRule(String rawRule, String baseUrl, VariableStore variableStore, RuleMode ruleMode) {
-        return new RulePatterns(rawRule.trim(), baseUrl, variableStore, ruleMode);
+        return new RulePatterns(StringUtils.trim(rawRule), baseUrl, variableStore, ruleMode);
     }
 
     static RulePatterns fromRule(String rawRule, String baseUrl, RuleMode ruleMode) {

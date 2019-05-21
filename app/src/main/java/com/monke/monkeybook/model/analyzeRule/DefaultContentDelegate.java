@@ -153,7 +153,7 @@ class DefaultContentDelegate implements ContentDelegate {
                     infoList[i] = infoVal.toString();
                 }
                 // 保存当前节点的书籍信息
-                addSearchBook(searchBooks, infoList[0], infoList[1], infoList[2], infoList[3], infoList[4], infoList[5], infoList[6], null);
+                addSearchBook(searchBooks, infoList[0], infoList[1], infoList[2], infoList[3], infoList[4], infoList[5], infoList[6], getConfig().getVariableStore().getVariableMap());
             } while (resM.find());
         } else {
             StringBuilder result = new StringBuilder();

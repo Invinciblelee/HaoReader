@@ -8,9 +8,9 @@ public interface VariableStore {
 
     void setVariableString(String variableString);
 
-    void putVariableMap(Map<String, String> variableMap);
+    Map<String, String> putVariableMap(Map<String, String> variableMap);
 
-    void putVariable(String key, String value);
+    String putVariable(String key, String value);
 
     Map<String, String> getVariableMap();
 

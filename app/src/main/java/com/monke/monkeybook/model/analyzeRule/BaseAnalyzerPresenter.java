@@ -8,6 +8,7 @@ import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.assit.JavaExecutor;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutor;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutorImpl;
+import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
@@ -15,7 +16,6 @@ import org.jsoup.nodes.Element;
 import org.mozilla.javascript.NativeObject;
 import org.seimicrawler.xpath.JXNode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -86,13 +86,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
                 result = Assistant.evalArrayScript(javaScript, this, result, getBaseURL());
             }
         }
-        final List<String> list = new ArrayList<>();
-        if (result instanceof List) {
-            for (Object object : (List) result) {
-                list.add(StringUtils.valueOf(object));
-            }
-        }
-        return list;
+        return ListUtils.toStringList(result);
     }
 
     final List<Object> evalObjectArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
@@ -101,11 +95,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
                 result = Assistant.evalArrayScript(javaScript, this, result, getBaseURL());
             }
         }
-        final List<Object> list = new ArrayList<>();
-        if (result instanceof List) {
-            list.addAll((List) result);
-        }
-        return list;
+        return ListUtils.toObjectList(result);
     }
 
 
@@ -249,7 +239,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     @Override
     public Map<String, String> putVariableMapInternal(String rule, int flag) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
-            return new HashMap<>();
+            return getVariableStore().getVariableMap();
         }
         final Map<String, String> resultMap = new HashMap<>();
         final VariablesPattern variablesPattern = VariablesPattern.fromPutterRule(rule, flag);
@@ -263,14 +253,12 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
                 }
             }
         }
-        getVariableStore().putVariableMap(resultMap);
-        return resultMap;
+        return getVariableStore().putVariableMap(resultMap);
     }
 
     @Override
     public String putVariable(String key, String val) {
-        getVariableStore().putVariable(key, val);
-        return val;
+        return getVariableStore().putVariable(key, val);
     }
 
     @Override

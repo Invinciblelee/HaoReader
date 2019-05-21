@@ -61,6 +61,19 @@ public class ListUtils {
         return stringList;
     }
 
+    public static List<Object> toObjectList(Object object) {
+        if (object == null) {
+            return new ArrayList<>();
+        }
+        final List<Object> objectList = new ArrayList<>();
+        if (object instanceof List) {
+            objectList.addAll((List) object);
+        } else {
+            objectList.add(object);
+        }
+        return objectList;
+    }
+
     @SafeVarargs
     public static <T> List<T> mutableList(T... a) {
         if (a == null) {

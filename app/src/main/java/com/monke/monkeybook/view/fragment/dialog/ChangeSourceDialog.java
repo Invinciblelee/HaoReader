@@ -182,11 +182,15 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     private void selectSource(SearchBookBean searchBook) {
         dismissAllowingStateLoss();
         if (selectCover) {
-            onClickSource.changeSource(searchBook);
+            if(onClickSource != null) {
+                onClickSource.changeSource(searchBook);
+            }
         } else {
             if (!isCurrent(searchBook)) {
-                onClickSource.changeSource(searchBook);
                 incrementSourceWeightBySelection(searchBook);
+                if(onClickSource != null){
+                    onClickSource.changeSource(searchBook);
+                }
             }
         }
     }

@@ -1,12 +1,9 @@
 package com.monke.monkeybook.view.fragment.dialog;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -64,7 +61,9 @@ public class BookmarkDialog extends AppCompatDialog {
         tilReplaceTo.setHint(getResources().getString(R.string.content));
         TextView tvChapterName = findViewById(R.id.tvChapterName);
         tvChapterName.setOnClickListener(v -> {
-            bookmarkClick.openBookmark(bookmarkBean);
+            if(bookmarkClick != null) {
+                bookmarkClick.openBookmark(bookmarkBean);
+            }
             dismissAllowingStateLoss();
         });
 
@@ -72,19 +71,25 @@ public class BookmarkDialog extends AppCompatDialog {
         tvOk.setOnClickListener(v -> {
             dismissAllowingStateLoss();
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
-            bookmarkClick.saveBookmark(bookmarkBean);
+            if(bookmarkClick != null) {
+                bookmarkClick.openBookmark(bookmarkBean);
+            }
         });
 
         View tvSave = findViewById(R.id.tv_save);
         tvSave.setOnClickListener(v -> {
             dismissAllowingStateLoss();
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
-            bookmarkClick.saveBookmark(bookmarkBean);
+            if(bookmarkClick != null) {
+                bookmarkClick.openBookmark(bookmarkBean);
+            }
         });
         View tvDel = findViewById(R.id.tv_del);
         tvDel.setOnClickListener(v -> {
             dismissAllowingStateLoss();
-            bookmarkClick.delBookmark(bookmarkBean);
+            if(bookmarkClick != null) {
+                bookmarkClick.openBookmark(bookmarkBean);
+            }
         });
 
         View llEdit = findViewById(R.id.llEdit);
