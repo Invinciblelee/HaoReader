@@ -116,9 +116,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
                 if (searchBookType != null && !TextUtils.equals(bookSourceBean.getBookSourceType(), searchBookType)) {
                     continue;
                 }
-                if (bookSourceBean.getEnable()) {
-                    searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
-                }
+                 searchEngineS.add(new SearchEngine(bookSourceBean.getBookSourceUrl()));
             }
         }
         searchEngineChanged = false;

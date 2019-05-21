@@ -115,9 +115,18 @@ configurations.all {
         }
     }
 }
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 dependencies {
     implementation project(':basemvplib')
+	//implementation fileTree(dir: 'libs', include: ['*.jar'])
+	//implementation(name:'material-1.1.0-alpha06', ext:'aar')
+	//implementation(name:'glide-4.9.0', ext:'aar')
+	
     testImplementation 'junit:junit:4.12'
     //support
     implementation 'androidx.cardview:cardview:1.0.0'
