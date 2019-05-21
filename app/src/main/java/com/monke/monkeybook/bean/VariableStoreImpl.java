@@ -31,52 +31,42 @@ public class VariableStoreImpl implements VariableStore {
 
     @Override
     public Map<String, String> getVariableMap() {
-        return variableMap;
-    }
-
-    @Override
-    public void putVariableMap(Map<String, String> variableMap) {
-        if (variableMap != null && !variableMap.isEmpty()) {
-            if (this.variableMap == null) {
-                try {
-                    this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
-                } catch (Exception ignore) {
-                }
-            }
-            if (this.variableMap == null) {
-                this.variableMap = new HashMap<>();
-            }
-            this.variableMap.putAll(variableMap);
-            this.variableString = Assistant.GSON.toJson(this.variableMap);
-        }
-    }
-
-    @Override
-    public void putVariable(String key, String value) {
-        if (key != null && value != null) {
-            if (this.variableMap == null) {
-                try {
-                    this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
-                } catch (Exception ignore) {
-                }
-            }
-            if (this.variableMap == null) {
-                this.variableMap = new HashMap<>();
-            }
-            this.variableMap.put(key, value);
-            this.variableString = Assistant.GSON.toJson(this.variableMap);
-        }
-    }
-
-    @Override
-    public String getVariable(String key) {
-        if (this.variableMap == null) {
+        if(variableMap == null){
             try {
                 this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
             } catch (Exception ignore) {
             }
         }
-        return (this.variableMap != null && !this.variableMap.isEmpty()) ? this.variableMap.get(key) : null;
+        if(this.variableMap == null){
+            this.variableMap = new HashMap<>();
+        }
+        return variableMap;
+    }
+
+    @Override
+    public Map<String, String> putVariableMap(Map<String, String> variableMap) {
+        if (variableMap != null && !variableMap.isEmpty()) {
+            Map<String, String> map = getVariableMap();
+            map.putAll(variableMap);
+            this.variableString = Assistant.GSON.toJson(map);
+        }
+        return this.variableMap;
+    }
+
+    @Override
+    public String putVariable(String key, String value) {
+        if (key != null && value != null) {
+            Map<String, String> map = getVariableMap();
+            map.put(key, value);
+            this.variableString = Assistant.GSON.toJson(map);
+        }
+        return value;
+    }
+
+    @Override
+    public String getVariable(String key) {
+        Map<String, String> map = getVariableMap();
+        return !map.isEmpty() ? map.get(key) : null;
     }
 
 }

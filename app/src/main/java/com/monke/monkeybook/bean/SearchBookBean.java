@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.utils.ObjectsCompat;
 import com.monke.monkeybook.utils.StringUtils;
+import com.monke.monkeybook.utils.URLUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -160,7 +161,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getCoverUrl() {
-        return coverUrl;
+        return URLUtils.resolve(tag, coverUrl);
     }
 
     public void setCoverUrl(String coverUrl) {
@@ -176,7 +177,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getAuthor() {
-        return author == null ? "" : author;
+        return author;
     }
 
     public void setAuthor(String author) {
@@ -260,7 +261,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getIntroduce() {
-        return introduce;
+        return TextProcessor.formatHtml(introduce);
     }
 
     public void setIntroduce(String introduce) {
@@ -338,6 +339,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Override
     public String getVariableString() {
+        if (variableStore != null) {
+            this.variableString = variableStore.getVariableString();
+        }
         return this.variableString;
     }
 
@@ -348,31 +352,26 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Override
     public Map<String, String> getVariableMap() {
-        return variableStore == null ? null : variableStore.getVariableMap();
+        if (variableStore == null) {
+            variableStore = new VariableStoreImpl(this.variableString);
+        }
+        return variableStore.getVariableMap();
     }
 
     @Override
-    public void putVariableMap(Map<String, String> variableMap) {
+    public Map<String, String> putVariableMap(Map<String, String> variableMap) {
         if (variableStore == null) {
             variableStore = new VariableStoreImpl(variableString);
         }
-        variableStore.putVariableMap(variableMap);
-        String variableString = variableStore.getVariableString();
-        if (variableString != null) {
-            this.variableString = variableString;
-        }
+        return variableStore.putVariableMap(variableMap);
     }
 
     @Override
-    public void putVariable(String key, String value) {
+    public String putVariable(String key, String value) {
         if (variableStore == null) {
             variableStore = new VariableStoreImpl(variableString);
         }
-        variableStore.putVariable(key, value);
-        String variableString = variableStore.getVariableString();
-        if (variableString != null) {
-            this.variableString = variableString;
-        }
+        return variableStore.putVariable(key, value);
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.Objects;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -212,7 +213,7 @@ public class BookSourceManager extends BaseModelImpl {
 
     public static Observable<Boolean> importFromJson(String json) {
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            List<BookSourceBean> bookSourceBeans = Assistant.GSON.fromJson(StringUtils.wrapJsonArray(json.trim()), new TypeToken<List<BookSourceBean>>() {
+            List<BookSourceBean> bookSourceBeans = Assistant.GSON.fromJson(StringUtils.wrapJsonArray(json), new TypeToken<List<BookSourceBean>>() {
             }.getType());
             int index = 0;
             for (BookSourceBean bookSourceBean : bookSourceBeans) {

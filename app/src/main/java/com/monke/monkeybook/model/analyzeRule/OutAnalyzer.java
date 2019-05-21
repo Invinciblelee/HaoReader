@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import androidx.annotation.NonNull;
-
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -18,23 +16,16 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     private SourceParser<S> mSourceParser;
     private IAnalyzerPresenter mPresenter;
 
-    private final AnalyzeConfig mConfig = new AnalyzeConfig();
+    private final AnalyzeConfig mConfig;
 
     public OutAnalyzer(AnalyzeConfig config) {
-        mConfig.apply(config);
+        this.mConfig = config;
     }
 
     public final AnalyzeConfig getConfig() {
         return mConfig;
     }
 
-    public final AnalyzeConfig newConfig() {
-        return mConfig.newConfig();
-    }
-
-    public void apply(@NonNull AnalyzeConfig config) {
-        this.mConfig.apply(config);
-    }
 
     public final OutAnalyzer<S> setContent(Object source) {
         getParser().setContent(source);
@@ -96,18 +87,18 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Map<String, String> toVariableMap(String rule, int flag) {
-        return getPresenter().toVariableMap(rule, flag);
+    public Map<String, String> putVariableMap(String rule, int flag) {
+        return getPresenter().putVariableMap(rule, flag);
     }
 
     @Override
-    public Map<String, String> toVariableMapInternal(String rule, int flag) {
-        return getPresenter().toVariableMapInternal(rule, flag);
+    public Map<String, String> putVariableMapInternal(String rule, int flag) {
+        return getPresenter().putVariableMapInternal(rule, flag);
     }
 
     @Override
-    public AnalyzeCollection toRawCollection(String rule) {
-        return getPresenter().toRawCollection(rule);
+    public AnalyzeCollection getRawCollection(String rule) {
+        return getPresenter().getRawCollection(rule);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////

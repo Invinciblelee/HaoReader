@@ -65,7 +65,9 @@ public class InputDialog extends AppCompatDialog {
         }
 
         tvOk.setOnClickListener(v -> {
-            onInputOk.setInputText(etInput.getText().toString());
+            if(onInputOk != null) {
+                onInputOk.setInputText(etInput.getText().toString());
+            }
             dismissAllowingStateLoss();
         });
     }

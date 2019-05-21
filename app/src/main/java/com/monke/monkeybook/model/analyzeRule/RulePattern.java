@@ -126,7 +126,7 @@ final class RulePattern {
     }
 
     static RulePattern fromRule(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
-        return new RulePattern(rawRule.trim(), variableStore, ruleMode);
+        return new RulePattern(StringUtils.trim(rawRule), variableStore, ruleMode);
     }
 
     static RulePattern fromRule(@NonNull String rawRule, @Nullable RuleMode ruleMode) {

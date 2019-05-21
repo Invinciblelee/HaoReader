@@ -6,6 +6,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.monke.monkeybook.help.TextProcessor;
+
 /**
  * 书本缓存内容
  */
@@ -89,7 +91,7 @@ public class BookContentBean implements Parcelable {
         return durChapterContent.toString();
     }
 
-    public void setDurChapterContent(String durChapterContent) {
+    private void setDurChapterContent(String durChapterContent) {
         if (this.durChapterContent == null) {
             this.durChapterContent = new StringBuilder();
         }
@@ -100,9 +102,9 @@ public class BookContentBean implements Parcelable {
 
     public void appendDurChapterContent(String durChapterContent) {
         if (this.durChapterContent == null) {
-            setDurChapterContent(durChapterContent);
+            setDurChapterContent(TextProcessor.formatHtml(durChapterContent));
         } else {
-            this.durChapterContent.append("\n").append(durChapterContent);
+            this.durChapterContent.append("\n").append(TextProcessor.formatHtml(durChapterContent));
         }
     }
 

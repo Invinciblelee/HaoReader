@@ -58,13 +58,11 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     }
 
     public DefaultModel withTag(String tag) {
-        if (!TextUtils.equals(this.tag, tag)) {
-            bookSourceBean = BookSourceManager.getByUrl(tag);
-            if (bookSourceBean != null) {
-                name = bookSourceBean.getBookSourceName();
-                headerMap = AnalyzeHeaders.getMap(bookSourceBean);
-                this.tag = tag;
-            }
+        bookSourceBean = BookSourceManager.getByUrl(tag);
+        if (bookSourceBean != null) {
+            name = bookSourceBean.getBookSourceName();
+            headerMap = AnalyzeHeaders.getMap(bookSourceBean);
+            this.tag = tag;
         }
         return this;
     }

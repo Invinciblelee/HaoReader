@@ -58,9 +58,9 @@ class DefaultContentDelegate implements ContentDelegate {
             if (getBookSource().searchListInRegex()) {
                 books = getSearchListInRegex(source, ruleSearchList);
             } else if (getBookSource().searchListInWhole()) {
-                books = getSearchListInWhole(mAnalyzer.setContent(source).toRawCollection(ruleSearchList));
+                books = getSearchListInWhole(mAnalyzer.setContent(source).getRawCollection(ruleSearchList));
             } else {
-                books = getSearchListInDefault(mAnalyzer.setContent(source).toRawCollection(ruleSearchList));
+                books = getSearchListInDefault(mAnalyzer.setContent(source).getRawCollection(ruleSearchList));
             }
 
             if (getBookSource().searchListReverse()) {
@@ -75,7 +75,7 @@ class DefaultContentDelegate implements ContentDelegate {
         final List<SearchBookBean> searchBookBeans = new ArrayList<>();
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
-            Map<String, String> variableMap = mAnalyzer.toVariableMapInternal(getBookSource().getRulePersistedVariables(), 0);
+            Map<String, String> variableMap = mAnalyzer.putVariableMapInternal(getBookSource().getRulePersistedVariables(), 0);
             String name = TextProcessor.formatBookName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchName()));
             String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchAuthor()));
             String kind = StringUtils.join(",", mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchKind()));
@@ -98,7 +98,7 @@ class DefaultContentDelegate implements ContentDelegate {
         final List<SearchBookBean> searchBookBeans = new ArrayList<>();
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
-            Map<String, String> variableMap = mAnalyzer.toVariableMap(getBookSource().getRulePersistedVariables(), 0);
+            Map<String, String> variableMap = mAnalyzer.putVariableMap(getBookSource().getRulePersistedVariables(), 0);
             String name = TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName()));
             String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor()));
             String kind = StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind()));
@@ -153,7 +153,7 @@ class DefaultContentDelegate implements ContentDelegate {
                     infoList[i] = infoVal.toString();
                 }
                 // 保存当前节点的书籍信息
-                addSearchBook(searchBooks, infoList[0], infoList[1], infoList[2], infoList[3], infoList[4], infoList[5], infoList[6], null);
+                addSearchBook(searchBooks, infoList[0], infoList[1], infoList[2], infoList[3], infoList[4], infoList[5], infoList[6], getConfig().getVariableStore().getVariableMap());
             } while (resM.find());
         } else {
             StringBuilder result = new StringBuilder();
@@ -191,7 +191,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
             mAnalyzer.setContent(source);
 
-            book.putVariableMap(mAnalyzer.toVariableMap(getBookSource().getRulePersistedVariables(), 1));
+            book.putVariableMap(mAnalyzer.putVariableMap(getBookSource().getRulePersistedVariables(), 1));
 
             if (isEmpty(bookInfoBean.getCoverUrl())) {
                 bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleCoverUrl()));
@@ -324,9 +324,9 @@ class DefaultContentDelegate implements ContentDelegate {
         if (getBookSource().chapterListInRegex()) {
             webChapter.result = getChaptersInRegex(s, ruleChapterList, noteUrl);
         } else if (getBookSource().chapterListInWhole()) {
-            webChapter.result = getChaptersInWhole(mAnalyzer.toRawCollection(ruleChapterList), noteUrl);
+            webChapter.result = getChaptersInWhole(mAnalyzer.getRawCollection(ruleChapterList), noteUrl);
         } else {
-            webChapter.result = getChaptersInDefault(mAnalyzer.toRawCollection(ruleChapterList), noteUrl);
+            webChapter.result = getChaptersInDefault(mAnalyzer.getRawCollection(ruleChapterList), noteUrl);
         }
     }
 
@@ -395,15 +395,15 @@ class DefaultContentDelegate implements ContentDelegate {
             String baseUrl = "";
             int nameGroup = 0, urlGroup = 0;
             // 分离标题正则参数
-            Matcher nameMatcher = Pattern.compile("(?<=\\$)\\d").matcher(nameRule);
+            Matcher nameMatcher = Pattern.compile("\\$(\\d$)").matcher(nameRule);
             if (nameMatcher.find()) {
-                nameGroup = Integer.parseInt(nameMatcher.group(2));
+                nameGroup = StringUtils.parseInt(nameMatcher.group(1));
             }
             // 分离网址正则参数
             Matcher urlMatcher = Pattern.compile("(.*?)\\$(\\d$)").matcher(urlRule);
             while (urlMatcher.find()) {
                 baseUrl = VariablesPattern.fromGetterRule(urlMatcher.group(1), getConfig().getVariableStore()).rule;
-                urlGroup = Integer.parseInt(urlMatcher.group(2));
+                urlGroup = StringUtils.parseInt(urlMatcher.group(2));
             }
             // 提取目录信息
             while (matcher.find()) {
@@ -454,7 +454,6 @@ class DefaultContentDelegate implements ContentDelegate {
 
                 while (!isEmpty(webContent.nextUrl) && !usedUrls.contains(webContent.nextUrl)) {
                     usedUrls.add(webContent.nextUrl);
-
                     if (webContent.nextUrl.equals(nextChapterUrl)) {
                         break;
                     }
@@ -467,8 +466,8 @@ class DefaultContentDelegate implements ContentDelegate {
                             bookContentBean.appendDurChapterContent(webContent.result);
                         }
                     } catch (Exception ignore) {
-
                     }
+
                 }
             }
             emitter.onNext(bookContentBean);

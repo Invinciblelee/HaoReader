@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.annotation.BookType;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -169,8 +169,8 @@ public class BookInfoBean implements Parcelable {
         this.customCoverPath = customCoverPath;
     }
 
-    public String getRealCoverUrl(){
-        if(!TextUtils.isEmpty(customCoverPath)){
+    public String getRealCoverUrl() {
+        if (!TextUtils.isEmpty(customCoverPath)) {
             return customCoverPath;
         }
         return coverUrl;
@@ -185,7 +185,7 @@ public class BookInfoBean implements Parcelable {
     }
 
     public String getIntroduce() {
-        return introduce;
+        return TextProcessor.formatHtml(introduce);
     }
 
     public void setIntroduce(String introduce) {

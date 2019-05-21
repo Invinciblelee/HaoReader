@@ -118,7 +118,7 @@ public class ChapterListFragment extends BaseChapterListFragment<ChapterListAdap
         if (bookShelf != null && tvChapterInfo != null) {
             final int durChapter = bookShelf.getDurChapter();
             getAdapter().upChapterIndex(durChapter);
-            String durChapterName = TextProcessor.formatChapterName(bookShelf.getDurChapterName());
+            String durChapterName = bookShelf.getDurChapterName();
             if (getAdapter().getItemCount() == 0) {
                 tvChapterInfo.setText(durChapterName);
             } else {

@@ -17,27 +17,6 @@ public class AnalyzeConfig {
     private VariableStore variableStore;
     private Bundle extras;
 
-    public AnalyzeConfig newConfig() {
-        AnalyzeConfig config = new AnalyzeConfig();
-        config.tag = tag;
-        config.name = name;
-        config.baseURL = baseURL;
-        config.bookSource = bookSource;
-        return config;
-    }
-
-    public AnalyzeConfig apply(AnalyzeConfig config) {
-        if (config != null) {
-            this.tag = config.tag;
-            this.name = config.name;
-            this.baseURL = config.baseURL;
-            this.bookSource = config.bookSource;
-            this.variableStore = config.variableStore;
-            this.extras = config.extras;
-        }
-        return this;
-    }
-
     public AnalyzeConfig tag(String tag) {
         this.tag = tag;
         return this;

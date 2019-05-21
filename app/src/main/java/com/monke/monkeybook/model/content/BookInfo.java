@@ -21,8 +21,9 @@ final class BookInfo {
 
     Observable<BookShelfBean> analyzeBookInfo(String s, final BookShelfBean bookShelfBean) {
         OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
-                .tag(tag).name(name).bookSource(bookSourceBean));
-        analyzer.apply(analyzer.newConfig()
+                .tag(tag)
+                .name(name)
+                .bookSource(bookSourceBean)
                 .baseURL(bookShelfBean.getNoteUrl())
                 .variableStore(bookShelfBean));
         return analyzer.getBook(s);

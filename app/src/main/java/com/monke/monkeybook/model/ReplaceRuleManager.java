@@ -102,7 +102,7 @@ public class ReplaceRuleManager extends BaseModelImpl {
 
     private static Observable<Boolean> importFromJson(String json) {
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            List<ReplaceRuleBean> replaceRuleBeans = Assistant.GSON.fromJson(StringUtils.wrapJsonArray(json.trim()), new TypeToken<List<ReplaceRuleBean>>() {
+            List<ReplaceRuleBean> replaceRuleBeans = Assistant.GSON.fromJson(StringUtils.wrapJsonArray(json), new TypeToken<List<ReplaceRuleBean>>() {
             }.getType());
             saveAll(replaceRuleBeans);
             e.onNext(true);

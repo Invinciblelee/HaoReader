@@ -36,7 +36,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.gyf.immersionbar.BarHide;
-import com.gyf.immersionbar.ImmersionBar;
 import com.monke.basemvplib.AppActivityManager;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -283,34 +282,16 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     @Override
     public void initImmersionBar() {
-        mImmersionBar.fullScreen(true);
-
-        if (isImmersionBarEnabled()) {
-            mImmersionBar.transparentStatusBar();
-        } else {
-            mImmersionBar.statusBarColor(R.color.colorStatusBar);
-        }
-
-        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
-
-        if (canNavigationBarLightFont()) {
-            mImmersionBar.navigationBarDarkIcon(false);
-        }
-
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             mImmersionBar.statusBarDarkFont(false);
-            if (ImmersionBar.hasNotchScreen(this)) {
-                mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
-            } else if (readBookControl.getHideStatusBar()) {
+            if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         } else if (isMenuShowing() || isPopShowing()) {
             mImmersionBar.statusBarDarkFont(false);
-            if (ImmersionBar.hasNotchScreen(this)) {
-                mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
-            } else if (isMenuShowing()) {
+            if (isMenuShowing()) {
                 mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {
                 if (readBookControl.getHideStatusBar()) {
@@ -328,12 +309,26 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 mImmersionBar.statusBarDarkFont(false);
             }
 
-            if (readBookControl.getHideStatusBar() || ImmersionBar.hasNotchScreen(this)) {
+            if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         }
+
+        mImmersionBar.fullScreen(true);
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(false);
+        }
+
+        if (isImmersionBarEnabled()) {
+            mImmersionBar.transparentStatusBar();
+        } else {
+            mImmersionBar.statusBarColor(R.color.colorStatusBar);
+        }
+
+        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
         mImmersionBar.init();
     }

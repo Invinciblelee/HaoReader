@@ -84,7 +84,9 @@ public class ReplaceRuleDialog extends AppCompatDialog {
             replaceRuleBean.setReplacement(StringUtils.valueOf(tieReplaceTo.getText()));
             replaceRuleBean.setUseTo(StringUtils.valueOf(tieUseTo.getText()));
             replaceRuleBean.setIsRegex(cbUseRegex.isChecked());
-            saveReplaceRule.saveReplaceRule(replaceRuleBean);
+            if (saveReplaceRule != null) {
+                saveReplaceRule.saveReplaceRule(replaceRuleBean);
+            }
             dismissAllowingStateLoss();
         });
     }

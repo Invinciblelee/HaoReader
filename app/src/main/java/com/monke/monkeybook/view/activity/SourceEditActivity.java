@@ -180,10 +180,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieCheckUrl;
     @BindView(R.id.til_checkUrl)
     TextInputLayout tilCheckUrl;
-    @BindView(R.id.til_loginCookieKey)
-    TextInputLayout tilLoginCookieKey;
-    @BindView(R.id.tie_loginCookieKey)
-    TextInputEditText tieLoginCookieKey;
     @BindView(R.id.tie_ruleChapterUrlNext)
     TextInputEditText tieRuleChapterUrlNext;
     @BindView(R.id.til_ruleChapterUrlNext)
@@ -423,7 +419,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilBookSourceUrl.setHint("书源URL(BookSourceUrl)");
         tilBookSourceGroup.setHint("书源分组(BookSourceGroup)");
         tilCheckUrl.setHint("书源校验URL(CheckUrl)");
-        tilLoginCookieKey.setHint("登录Cookie标识(LoginCookieKey)");
         tilRuleBookAuthor.setHint("作者获取规则(RuleBookAuthor)");
         tilRuleBookContent.setHint("内容获取规则(RuleBookContent)");
         tilRuleBookName.setHint("书名获取规则(RuleBookName)");

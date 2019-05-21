@@ -4,7 +4,6 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
 import androidx.core.util.ObjectsCompat;
 
 import com.monke.monkeybook.help.ChapterContentHelp;
@@ -13,16 +12,13 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * 章节列表
  */
 @Entity
-public class ChapterBean implements Parcelable, Serializable, FilterBean, Comparable<ChapterBean> {
-
-    private static final long serialVersionUID = 536871008;
+public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBean> {
 
     @Id
     private String durChapterUrl;  //当前章节对应的文章地址
@@ -39,8 +35,8 @@ public class ChapterBean implements Parcelable, Serializable, FilterBean, Compar
 
     @Generated(hash = 256775330)
     public ChapterBean(String durChapterUrl, String nextChapterUrl, String durChapterName,
-            String durChapterPlayUrl, String noteUrl, Integer durChapterIndex, Integer start,
-            Integer end) {
+                       String durChapterPlayUrl, String noteUrl, Integer durChapterIndex, Integer start,
+                       Integer end) {
         this.durChapterUrl = durChapterUrl;
         this.nextChapterUrl = nextChapterUrl;
         this.durChapterName = durChapterName;

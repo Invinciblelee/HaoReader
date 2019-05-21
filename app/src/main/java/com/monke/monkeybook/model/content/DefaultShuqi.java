@@ -223,7 +223,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
             bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
             bookContentBean.setDurChapterName(chapterBean.getDurChapterName());
             bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
-            bookContentBean.setDurChapterContent(decodeChapterContent(getContent(response)));
+            bookContentBean.appendDurChapterContent(decodeChapterContent(getContent(response)));
             e.onNext(bookContentBean);
             e.onComplete();
         });
@@ -259,6 +259,6 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
             bytes[i] = (byte) charAt;
         }
         String content = new String(bytes, StandardCharsets.UTF_8);
-        return StringUtils.formatHtml(StringUtils.base64Decode(content));
+        return StringUtils.base64Decode(content);
     }
 }

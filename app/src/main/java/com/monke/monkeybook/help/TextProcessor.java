@@ -32,7 +32,7 @@ public class TextProcessor {
             Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(name);
             if (matcher.find()) {
-                return StringUtils.stringToInt(matcher.group(2));
+                return StringUtils.parseInt(matcher.group(2));
             }
         }
         return -1;
@@ -48,28 +48,34 @@ public class TextProcessor {
     }
 
     public static String formatBookName(String str) {
-        if (TextUtils.isEmpty(str)) {
+        if (StringUtils.isBlank(str)) {
             return "";
         }
 
-        return StringUtils.trim(str.replace("&nbsp;", "")
-                .replace(":", "：")
-                .replace(",", "，")
-                .replaceAll("\\s+", " ")
-                .replaceAll("[?？!！。~]+", ""))
-                .replaceAll("([\\[［【（(].*[)）】］\\]])", "");
+        str = StringUtils.fullToHalf(str);
+
+        return StringUtils.trim(str.replaceAll("\\s+", " "));
     }
 
     public static String formatAuthorName(String str) {
-        if (TextUtils.isEmpty(str)) {
+        if (StringUtils.isBlank(str)) {
             return "";
         }
 
-        return StringUtils.trim(str.replace("&nbsp;", "")
-                .replaceAll("\\s+", " ")
-                .replaceAll("作.*?者", "")
-                .replaceAll("[?？!！。~：:()（）［］\\[\\]【】]+", ""));
+        str = StringUtils.fullToHalf(str);
+
+        return StringUtils.trim(str.replaceAll("\\s+", " "));
     }
 
 
+    public static String formatHtml(String html) {
+        if (StringUtils.isBlank(html)) {
+            return "";
+        }
+        return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
+                .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
+                .replaceAll("\\s*\\n+\\s*", "\n\u3000\u3000")                   // 移除空行,并增加段前缩进2个汉字
+                .replaceAll("^[\\n\\s]+", "\u3000\u3000")
+                .replaceAll("[\\n\\s]+$", "");
+    }
 }

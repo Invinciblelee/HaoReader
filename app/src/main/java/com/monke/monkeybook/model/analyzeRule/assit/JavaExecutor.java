@@ -4,6 +4,10 @@ import java.util.List;
 
 public interface JavaExecutor extends SimpleJavaExecutor{
 
+    String putVariable(String key, String val);
+
+    String getVariable(String key);
+
     String parseResultContent(Object source, String rule);
 
     String parseResultUrl(Object source, String rule);

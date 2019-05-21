@@ -407,9 +407,7 @@ public class StringUtils {
     }
 
     public static boolean isBlank(String text) {
-        if (text == null) return true;
-        if (text.length() == 0) return true;
-        return text.trim().length() == 0;
+        return trim(text).length() == 0;
     }
 
     public static boolean isNotBlank(String text) {
@@ -431,13 +429,13 @@ public class StringUtils {
     }
 
     public static String trim(String string) {
-        if (isBlank(string)) return "";
+        if(string == null || string.length() == 0) return "";
         int start = 0, len = string.length();
         int end = len - 1;
-        while ((start < end) && (string.charAt(start) <= 0x20) && (string.charAt(start) == 0xA0)) {
+        while ((start < end) && ((string.charAt(start) <= ' ') || (string.charAt(start) == '　'))) {
             ++start;
         }
-        while ((start < end) && (string.charAt(end) <= 0x20) && (string.charAt(end) == 0xA0)) {
+        while ((start < end) && ((string.charAt(end) <= ' ') || (string.charAt(end) == '　'))) {
             --end;
         }
         if (end < len) ++end;
@@ -446,6 +444,7 @@ public class StringUtils {
 
     // String数字转int数字的高效方法(利用ASCII值判断)
     public static int parseInt(String string) {
+        if (isBlank(string)) return -1;
         int r = 0;
         char n;
         for (int i = 0, l = string.length(); i < l; i++) {
@@ -464,24 +463,13 @@ public class StringUtils {
         return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
     }
 
-    public static String formatHtml(String html) {
-        if (StringUtils.isBlank(html)) {
-            return "";
-        }
-        return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")  // 替换特定标签为换行符
-                .replaceAll("<[script>]*.*?>|&nbsp;", "")               // 删除script标签对和空格转义符
-                .replaceAll("\\s*\\n+\\s*", "\n\u3000\u3000")                   // 移除空行,并增加段前缩进2个汉字
-                .replaceAll("^[\\n\\s]+", "\u3000\u3000")
-                .replaceAll("[\\n\\s]+$", "");
-    }
-
-    public static boolean isJsonType(String str) {
+    public static boolean isJsonType(String text) {
         boolean result = false;
-        if (isNotBlank(str)) {
-            str = str.trim();
-            if (str.startsWith("{") && str.endsWith("}")) {
+        if (isNotBlank(text)) {
+            text = trim(text);
+            if (text.startsWith("{") && text.endsWith("}")) {
                 result = true;
-            } else if (str.startsWith("[") && str.endsWith("]")) {
+            } else if (text.startsWith("[") && text.endsWith("]")) {
                 result = true;
             }
         }
@@ -491,7 +479,7 @@ public class StringUtils {
     public static boolean isJsonObject(String text) {
         boolean result = false;
         if (isNotBlank(text)) {
-            text = text.trim();
+            text = trim(text);
             if (text.startsWith("{") && text.endsWith("}")) {
                 result = true;
             }
@@ -502,7 +490,7 @@ public class StringUtils {
     public static boolean isJsonArray(String text) {
         boolean result = false;
         if (isNotBlank(text)) {
-            text = text.trim();
+            text = trim(text);
             if (text.startsWith("[") && text.endsWith("]")) {
                 result = true;
             }
@@ -518,12 +506,6 @@ public class StringUtils {
             return "[" + text + "]";
         }
         return text;
-    }
-
-    public static boolean isTrimEmpty(String text) {
-        if (text == null) return true;
-        if (text.length() == 0) return true;
-        return text.trim().length() == 0;
     }
 
 }
