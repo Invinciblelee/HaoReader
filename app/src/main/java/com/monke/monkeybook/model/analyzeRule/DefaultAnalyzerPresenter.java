@@ -262,6 +262,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 }
             }
         }
+        
         return getVariableStore().putVariableMap(resultMap);
     }
 
