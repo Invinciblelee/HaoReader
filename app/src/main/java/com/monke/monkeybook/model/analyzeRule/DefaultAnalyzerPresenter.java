@@ -289,7 +289,6 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 }
             }
         }
-
         if (!resultsList.isEmpty()) {
             if (rulePatterns.mergeType == RulePatterns.RULE_MERGE_FILTER) {
                 for (int i = 0, size = resultsList.get(0).size(); i < size; i++) {
@@ -305,7 +304,6 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 }
             }
         }
-
         return resultList;
     }
 
