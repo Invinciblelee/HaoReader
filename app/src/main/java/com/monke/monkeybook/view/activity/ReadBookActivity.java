@@ -1201,7 +1201,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 public void openBookmark(BookmarkBean bookmarkBean) {
                     closeDrawer();
                     drawerLayout.postDelayed(() -> mPageLoader.skipToChapter(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex()), DELAY_MIDDLE);
-
                 }
             });
         }

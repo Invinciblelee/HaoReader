@@ -265,18 +265,18 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public void saveBookmark(BookmarkBean bookmarkBean) {
-        Observable.create((ObservableOnSubscribe<BookmarkBean>) e -> {
+        Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             BookshelfHelp.saveBookmark(bookmarkBean);
             bookShelf.setBookmarkList(BookshelfHelp.queryBookmarkList(bookmarkBean.getBookName()));
-            e.onNext(bookmarkBean);
+            e.onNext(bookShelf);
             e.onComplete();
         })
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<BookmarkBean>() {
+                .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
-                    public void onNext(BookmarkBean bookmarkBean) {
-                        mView.updateBookmark(bookShelf);
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        mView.updateBookmark(bookShelfBean);
                     }
 
                     @Override
@@ -288,18 +288,18 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public void delBookmark(BookmarkBean bookmarkBean) {
-        Observable.create((ObservableOnSubscribe<BookmarkBean>) e -> {
+        Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             BookshelfHelp.delBookmark(bookmarkBean);
             bookShelf.setBookmarkList(BookshelfHelp.queryBookmarkList(bookmarkBean.getBookName()));
-            e.onNext(bookmarkBean);
+            e.onNext(bookShelf);
             e.onComplete();
         })
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleObserver<BookmarkBean>() {
+                .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
-                    public void onNext(BookmarkBean bookmarkBean) {
-                        mView.updateBookmark(bookShelf);
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        mView.updateBookmark(bookShelfBean);
                     }
 
                     @Override

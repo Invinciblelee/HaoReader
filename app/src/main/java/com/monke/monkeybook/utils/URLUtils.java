@@ -1,7 +1,5 @@
 package com.monke.monkeybook.utils;
 
-import org.jsoup.helper.StringUtil;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -13,42 +11,32 @@ public class URLUtils {
     /**
      * 获取绝对地址
      */
-    public static String getAbsoluteURL(String baseUrl, String relPath) {
+    public static String getAbsUrl(String baseUrl, String relPath) {
         try {
-            String header = null;
+            final String header;
             int index = indexOfHeader(relPath);
-            if (index >= 0) {
-                header = relPath.substring(0, index + 1);
-                relPath = relPath.substring(index + 1);
-            }
+            header = index == -1 ? "" : relPath.substring(0, index + 1);
+            relPath = relPath.substring(index + 1);
+
             index = indexOfHeader(baseUrl);
-            if (index >= 0) {
-                baseUrl = baseUrl.substring(index + 1);
-            }
+            baseUrl = index == -1 ? baseUrl : baseUrl.substring(index + 1);
 
-            relPath = resolve(baseUrl, relPath);
+            relPath = header + resolve(baseUrl, relPath);
 
-            if (header != null) {
-                relPath = header + relPath;
-            }
         } catch (Exception ignore) {
         }
         return relPath;
     }
 
     private static int indexOfHeader(String url) {
-        if (StringUtils.startWithIgnoreCase(url, "@header:")) {
-            return url.indexOf("}");
-        }
-        return -1;
+        return url.indexOf("}");
     }
 
-    public static String resolve(String baseUrl, String relPath){
+    public static String resolve(String baseUrl, String relPath) {
         try {
-            URL absoluteUrl = new URL(baseUrl);
-            URL parseUrl = new URL(absoluteUrl, relPath);
+            URL parseUrl = new URL(new URL(baseUrl), relPath);
             return parseUrl.toString();
-        }catch (MalformedURLException ignore) {
+        } catch (MalformedURLException ignore) {
         }
         return relPath;
     }
