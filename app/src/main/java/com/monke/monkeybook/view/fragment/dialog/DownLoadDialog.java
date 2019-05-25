@@ -61,7 +61,7 @@ public class DownLoadDialog extends AppCompatDialog {
         TextView tvDownload = findViewById(R.id.tv_download);
 
         edtStart.setText(String.valueOf(start + 1));
-        edtEnd.setText(String.valueOf(total - 1));
+        edtEnd.setText(String.valueOf(total));
 
         edtStart.addTextChangedListener(new TextWatcher() {
             @Override

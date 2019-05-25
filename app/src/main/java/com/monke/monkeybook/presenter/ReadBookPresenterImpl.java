@@ -281,7 +281,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
                 });
     }
@@ -304,7 +303,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
                 });
     }

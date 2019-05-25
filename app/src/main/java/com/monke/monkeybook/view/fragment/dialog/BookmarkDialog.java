@@ -72,7 +72,7 @@ public class BookmarkDialog extends AppCompatDialog {
             dismissAllowingStateLoss();
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
             if(bookmarkClick != null) {
-                bookmarkClick.openBookmark(bookmarkBean);
+                bookmarkClick.saveBookmark(bookmarkBean);
             }
         });
 
@@ -81,14 +81,14 @@ public class BookmarkDialog extends AppCompatDialog {
             dismissAllowingStateLoss();
             bookmarkBean.setContent(StringUtils.valueOf(tvContent.getText()));
             if(bookmarkClick != null) {
-                bookmarkClick.openBookmark(bookmarkBean);
+                bookmarkClick.saveBookmark(bookmarkBean);
             }
         });
         View tvDel = findViewById(R.id.tv_del);
         tvDel.setOnClickListener(v -> {
             dismissAllowingStateLoss();
             if(bookmarkClick != null) {
-                bookmarkClick.openBookmark(bookmarkBean);
+                bookmarkClick.delBookmark(bookmarkBean);
             }
         });
 
