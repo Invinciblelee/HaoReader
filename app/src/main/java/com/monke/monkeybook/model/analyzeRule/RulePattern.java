@@ -33,19 +33,22 @@ final class RulePattern {
     private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
         elementsRule = new Rule();
 
+        final boolean regexTrait;
         if (ruleMode == null) {
             Rule rule = RootRule.fromStringRule(rawRule);
             elementsRule.setMode(rule.getMode());
 
             rawRule = rule.getRule();
+            regexTrait = true;
         } else {
+            regexTrait = false;
             elementsRule.setMode(ruleMode);
         }
 
-        initRulePattern(rawRule, variableStore, elementsRule.getMode());
+        initRulePattern(rawRule, variableStore, elementsRule.getMode(), regexTrait);
     }
 
-    private void initRulePattern(String rawRule, VariableStore variableStore, RuleMode ruleMode) {
+    private void initRulePattern(String rawRule, VariableStore variableStore, RuleMode ruleMode, boolean regexTrait) {
         //分离get规则
         rawRule = VariablesPattern.fromGetterRule(rawRule, variableStore).rule;
 
@@ -56,7 +59,7 @@ final class RulePattern {
         rawRule = ensureRedirectRule(rawRule);
 
         //分离正则表达式
-        rawRule = ensureRegexRule(rawRule, ruleMode == RuleMode.CSS || ruleMode == RuleMode.XPath);
+        rawRule = ensureRegexRule(rawRule, regexTrait || ruleMode == RuleMode.CSS || ruleMode == RuleMode.XPath);
 
         //分离js
         int start = ensureJavaScripts(rawRule);
