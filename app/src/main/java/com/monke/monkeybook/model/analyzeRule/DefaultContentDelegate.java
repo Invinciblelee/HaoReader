@@ -132,7 +132,7 @@ class DefaultContentDelegate implements ContentDelegate {
                 ruleGroups.add(Assistant.splitRegexRule(rule));
             }
             // 提取书籍列表信息
-            do {
+            while (resM.find()){
                 // 获取列表规则分组数
                 int resCount = resM.groupCount();
                 // 新建规则结果容器
@@ -154,7 +154,7 @@ class DefaultContentDelegate implements ContentDelegate {
                 }
                 // 保存当前节点的书籍信息
                 addSearchBook(searchBooks, infoList[0], infoList[1], infoList[2], infoList[3], infoList[4], infoList[5], infoList[6], getConfig().getVariableStore().getVariableMap());
-            } while (resM.find());
+            }
         } else {
             StringBuilder result = new StringBuilder();
             while (resM.find()) result.append(resM.group());

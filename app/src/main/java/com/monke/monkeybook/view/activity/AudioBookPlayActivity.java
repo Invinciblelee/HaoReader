@@ -234,7 +234,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             }
         }
 
-        if(AppActivityManager.getInstance().isExist(AudioBookActivity.class)){
+        if(!AppActivityManager.getInstance().isExist(AudioBookActivity.class)){
             finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
         }else {
             supportFinishAfterTransition();
