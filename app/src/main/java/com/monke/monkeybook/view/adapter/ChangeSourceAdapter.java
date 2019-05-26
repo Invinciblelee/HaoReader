@@ -116,13 +116,13 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements F
             }
 
             final View.OnClickListener clickListener = view -> {
-                if (selectCover) return;
-
-                if (lastSelectIndex != -1 && lastSelectIndex != holder.getLayoutPosition()) {
-                    notifyItemChanged(lastSelectIndex, 0);
-                }
-                if (!myViewHolder.ivChecked.isChecked()) {
-                    myViewHolder.ivChecked.setChecked(true);
+                if (!selectCover) {
+                    if (lastSelectIndex != -1 && lastSelectIndex != holder.getLayoutPosition()) {
+                        notifyItemChanged(lastSelectIndex, 0);
+                    }
+                    if (!myViewHolder.ivChecked.isChecked()) {
+                        myViewHolder.ivChecked.setChecked(true);
+                    }
                 }
                 if (mOnItemClickListener != null) {
                     mOnItemClickListener.onItemClick(view, item);

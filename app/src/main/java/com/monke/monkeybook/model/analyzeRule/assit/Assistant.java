@@ -52,8 +52,7 @@ public final class Assistant {
             }
         }
         if (start > index) list.add(str.substring(index, start));
-        String[] arr = new String[list.size()];
-        return list.toArray(arr);
+        return list.toArray(new String[0]);
     }
 
     public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {

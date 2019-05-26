@@ -77,7 +77,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                                     this.put("java", getJavaExecutor());
                                 }};
                                 String javaScript = findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<"));
-                                findRule = (String) Assistant.evalObjectScript(javaScript, bindings);
+                                findRule = String.valueOf(Assistant.evalObjectScript(javaScript, bindings));
                                 MemoryCache.INSTANCE.putCache(sourceBean.getBookSourceUrl(), findRule);
                             }
                         }
