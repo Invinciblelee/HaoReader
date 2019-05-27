@@ -12,6 +12,7 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.ChapterContentHelp;
+import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.IOUtils;
@@ -84,7 +85,7 @@ class ChapterProvider {
         int rHeight = mPageLoader.getVisibleHeight();
         int titleLinesCount = 0;
         try {
-            boolean showTitle = true; // 是否展示标题
+            boolean showTitle = ReadBookControl.getInstance().getShowTitle(); // 是否展示标题
             String paragraph = chapter.getDurChapterName() + "\n"; //默认展示标题
             if (collBook.isLocalBook()) {
                 br.readLine();

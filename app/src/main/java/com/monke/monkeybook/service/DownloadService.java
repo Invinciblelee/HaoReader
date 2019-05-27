@@ -86,8 +86,11 @@ public class DownloadService extends Service {
                         }
                         break;
                     case removeDownloadAction:
-                        int id = intent.getIntExtra("taskId", -1);
-                        removeDownload(id);
+                        if (intent.hasExtra("noteUrl")) {
+                            removeDownload(intent.getStringExtra("noteUrl"));
+                        } else {
+                            removeDownload(intent.getIntExtra("taskId", -1));
+                        }
                         break;
                     case cancelAction:
                         cancelDownload();
@@ -181,6 +184,20 @@ public class DownloadService extends Service {
         for (int i = downloadTasks.size() - 1; i >= 0; i--) {
             IDownloadTask downloadTask = downloadTasks.valueAt(i);
             if (downloadTask.getId() == id) {
+                downloadTask.stopDownload();
+                break;
+            }
+        }
+    }
+
+    private void removeDownload(String noteUrl) {
+        if (noteUrl == null) {
+            return;
+        }
+
+        for (int i = downloadTasks.size() - 1; i >= 0; i--) {
+            IDownloadTask downloadTask = downloadTasks.valueAt(i);
+            if (noteUrl.equals(downloadTask.getDownloadBook().getNoteUrl())) {
                 downloadTask.stopDownload();
                 break;
             }

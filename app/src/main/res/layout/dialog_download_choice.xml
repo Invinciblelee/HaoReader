@@ -49,13 +49,13 @@
 
                 <EditText
                     android:id="@+id/edt_start"
-                    android:layout_width="50dp"
+                    android:layout_width="56dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/bg_edit"
                     android:inputType="number"
                     android:lines="1"
-                    android:maxLength="4"
+                    android:maxLength="5"
                     android:paddingLeft="5dp"
                     android:paddingTop="4dp"
                     android:paddingRight="5dp"
@@ -75,13 +75,13 @@
 
                 <EditText
                     android:id="@+id/edt_end"
-                    android:layout_width="50dp"
+                    android:layout_width="56dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/bg_edit"
                     android:inputType="number"
                     android:lines="1"
-                    android:maxLength="4"
+                    android:maxLength="5"
                     android:paddingLeft="5dp"
                     android:paddingTop="4dp"
                     android:paddingRight="5dp"

@@ -29,6 +29,7 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
@@ -135,7 +136,8 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     @Override
     protected void onDialogAttachWindow(@NonNull Window window) {
         window.setGravity(Gravity.CENTER);
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        int height = getResources().getDisplayMetrics().heightPixels - ScreenUtils.getStatusBarHeight();
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, height);
     }
 
     @Override

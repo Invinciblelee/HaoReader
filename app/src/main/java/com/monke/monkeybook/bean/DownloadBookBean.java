@@ -32,6 +32,7 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
         this.end = end;
     }
 
+
     protected DownloadBookBean(Parcel in) {
         name = in.readString();
         author = in.readString();
@@ -147,12 +148,12 @@ public class DownloadBookBean implements Parcelable, Comparable<DownloadBookBean
         return successCount;
     }
 
-    public int getWaitingCount(){
+    public int getWaitingCount() {
         return this.downloadCount - this.successCount;
     }
 
     public synchronized void successCountAdd() {
-        if(this.successCount < this.downloadCount) {
+        if (this.successCount < this.downloadCount) {
             this.successCount += 1;
         }
     }

@@ -49,6 +49,7 @@ public class ReadBookControl {
     private Boolean canKeyTurn;
     private Boolean readAloudCanKeyTurn;
     private int clickSensitivity;
+    private Boolean showTitle;
     private Boolean clickAllNext;
     private Boolean showTimeBattery;
     private String lastNoteUrl;
@@ -183,6 +184,7 @@ public class ReadBookControl {
         this.paddingBottom = readPreference.getInt("paddingBottom", 0);
         this.pageMode = readPreference.getInt("pageMode", 0);
         this.spaceModeIndex = readPreference.getInt("spaceModeIndex", 3);
+        this.showTitle = readPreference.getBoolean("showTitle", true);
 
         initPageConfiguration();
     }
@@ -764,6 +766,17 @@ public class ReadBookControl {
 
     public boolean getLightIsFollowSys() {
         return readPreference.getBoolean("isfollowsys", true);
+    }
+
+    public void setShowTitle(boolean showTitle){
+        this.showTitle = showTitle;
+        SharedPreferences.Editor editor = readPreference.edit();
+        editor.putBoolean("showTitle", showTitle);
+        editor.apply();
+    }
+
+    public boolean getShowTitle(){
+        return showTitle;
     }
 
     @NonNull

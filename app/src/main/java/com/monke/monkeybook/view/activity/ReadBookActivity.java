@@ -54,6 +54,7 @@ import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.ReadAloudService;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.SystemUtil;
+import com.monke.monkeybook.utils.URLUtils;
 import com.monke.monkeybook.view.fragment.ChapterDrawerFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.BookmarkDialog;
@@ -75,6 +76,7 @@ import com.monke.monkeybook.widget.page.PageStatus;
 import com.monke.monkeybook.widget.page.PageView;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
+import java.net.URL;
 import java.util.List;
 
 import butterknife.BindView;
@@ -480,7 +482,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             atvLayout.setVisibility(View.GONE);
         } else {
             int chapterIndex = mPresenter.getBookShelf().getDurChapter();
-            atvUrl.setText(mPresenter.getBookShelf().getChapter(chapterIndex).getDurChapterUrl());
+            atvUrl.setText(URLUtils.getAbsUrl(mPresenter.getBookShelf().getBookInfoBean().getChapterListUrl(),
+                    mPresenter.getBookShelf().getChapter(chapterIndex).getDurChapterUrl()));
             atvSourceName.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
             if (TextUtils.isEmpty(atvUrl.getText())) {
                 atvDivider.setVisibility(View.GONE);
@@ -1201,7 +1204,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 public void openBookmark(BookmarkBean bookmarkBean) {
                     closeDrawer();
                     drawerLayout.postDelayed(() -> mPageLoader.skipToChapter(bookmarkBean.getChapterIndex(), bookmarkBean.getPageIndex()), DELAY_MIDDLE);
-
                 }
             });
         }

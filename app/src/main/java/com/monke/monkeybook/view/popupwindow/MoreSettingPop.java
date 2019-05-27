@@ -60,6 +60,10 @@ public class MoreSettingPop extends PopupWindow {
     View llswReadAloudKey;
     @BindView(R.id.sw_read_aloud_key)
     Switch swReadAloudKey;
+    @BindView(R.id.ll_sb_showTitle)
+    View llswShowTitle;
+    @BindView(R.id.sb_showTitle)
+    Switch swShowTitle;
     @BindView(R.id.ll_sb_showBatteryNumber)
     View llswShowBatteryNumber;
     @BindView(R.id.sb_showBatteryNumber)
@@ -184,6 +188,13 @@ public class MoreSettingPop extends PopupWindow {
                     .create();
             dialog.show();
         });
+
+        llswShowTitle.setOnClickListener(view -> {
+            boolean isChecked = swShowTitle.isChecked();
+            swShowTitle.setChecked(!isChecked);
+            readBookControl.setShowTitle(!isChecked);
+            changeProListener.refresh();
+        });
     }
 
     private void initData() {
@@ -198,6 +209,7 @@ public class MoreSettingPop extends PopupWindow {
         sbImmersionBar.setChecked(readBookControl.getImmersionStatusBar());
         swShowBatteryNumber.setChecked(readBookControl.getShowBatteryNumber());
         swShowDividerLine.setChecked(readBookControl.getShowBottomLine());
+        swShowTitle.setChecked(readBookControl.getShowTitle());
         upView();
     }
 
