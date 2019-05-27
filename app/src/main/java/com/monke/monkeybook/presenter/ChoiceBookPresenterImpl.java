@@ -18,11 +18,10 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContract.View> implements ChoiceBookContract.Presenter {
@@ -59,17 +58,18 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     private void searchBook(final long searchTime) {
         WebBookModel.getInstance().findBook(tag, url, page)
                 .subscribeOn(Schedulers.single())
-                .map((Function<List<SearchBookBean>, List<SearchBookBean>>) searchBookBeans -> {
-                    boolean hasMore = true;
-                    for (SearchBookBean searchBook : searchBookBeans) {
+                .map(searchBookBeans -> {
+                    Iterator<SearchBookBean> iterator = searchBookBeans.iterator();
+                    while (iterator.hasNext()) {
+                        SearchBookBean searchBook = iterator.next();
                         for (SearchBookBean temp : mView.getSearchBookAdapter().getSearchBooks()) {
                             if (TextUtils.equals(temp.getRealNoteUrl(), searchBook.getRealNoteUrl())) {
-                                hasMore = false;
+                                iterator.remove();
                                 break;
                             }
                         }
                     }
-                    return hasMore ? searchBookBeans : Collections.emptyList();
+                    return searchBookBeans;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
