@@ -127,7 +127,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
         ListIterator<String> iterator = result.listIterator();
         while (iterator.hasNext()) {
-            iterator.set(URLUtils.getAbsoluteURL(getBaseURL(), iterator.next()));
+            iterator.set(URLUtils.getAbsUrl(getBaseURL(), iterator.next()));
         }
     }
 
@@ -161,7 +161,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     final String processRawUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
         result = matchRegex(result, rulePattern);
 
-        result = URLUtils.getAbsoluteURL(getBaseURL(), result);
+        result = URLUtils.getAbsUrl(getBaseURL(), result);
 
         return result;
     }

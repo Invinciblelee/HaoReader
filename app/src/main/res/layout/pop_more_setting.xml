@@ -240,6 +240,33 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_sb_showTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/showTitle"
+                    android:textColor="@color/colorTextDefault" />
+
+
+                <Switch
+                    android:id="@+id/sb_showTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:padding="15dp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_sb_showTimeBattery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

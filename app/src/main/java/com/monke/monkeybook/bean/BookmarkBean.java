@@ -3,6 +3,8 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -147,5 +149,19 @@ public class BookmarkBean implements Parcelable, FilterBean {
     @Override
     public String[] getFilters() {
         return new String[]{chapterName, content};
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "BookmarkBean{" +
+                "id=" + id +
+                ", noteUrl='" + noteUrl + '\'' +
+                ", bookName='" + bookName + '\'' +
+                ", chapterName='" + chapterName + '\'' +
+                ", chapterIndex=" + chapterIndex +
+                ", pageIndex=" + pageIndex +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

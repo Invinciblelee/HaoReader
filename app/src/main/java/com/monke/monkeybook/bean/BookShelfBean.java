@@ -230,7 +230,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
         bookShelfBean.lastChapterName = lastChapterName;
         bookShelfBean.chapterListSize = chapterListSize;
         bookShelfBean.updateOff = updateOff;
-        bookShelfBean.setVariableString(variableString);
+        bookShelfBean.variableString = getVariableString();
         bookShelfBean.bookInfoBean = bookInfoBean.copy();
         if (chapterList != null) {
             for (ChapterBean aChapterList : chapterList) {
@@ -297,7 +297,7 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return LOCAL_TAG.equals(tag);
     }
 
-    public boolean isAudioBook(){
+    public boolean isAudioBook() {
         return BookType.AUDIO.equals(bookInfoBean.getBookType());
     }
 

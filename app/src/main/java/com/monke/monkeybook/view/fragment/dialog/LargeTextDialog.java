@@ -14,7 +14,9 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.FragmentManager;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.MarkdownUtils;
+import com.monke.monkeybook.utils.ScreenUtils;
 
 import io.reactivex.schedulers.Schedulers;
 
@@ -58,6 +60,7 @@ public class LargeTextDialog extends AppCompatDialog {
     @Override
     protected void onDialogAttachWindow(@NonNull Window window) {
         window.setGravity(Gravity.CENTER);
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        int height = getResources().getDisplayMetrics().heightPixels - ScreenUtils.getStatusBarHeight();
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, height);
     }
 }
