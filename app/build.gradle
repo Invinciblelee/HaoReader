@@ -51,7 +51,7 @@ android {
     def currentVersionName = getVersionName()
 
     signingConfigs {
-        myConfig {
+        config {
             storeFile keyFile
             storePassword keystorePSW
             keyAlias keystoreAlias
@@ -76,16 +76,14 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.myConfig
-            buildConfigField "boolean", "IS_RELEASE", "true"
+            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            signingConfig signingConfigs.myConfig
+            signingConfig signingConfigs.config
             applicationIdSuffix '.debug'
             versionNameSuffix ' debug'
-            buildConfigField "boolean", "IS_RELEASE", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

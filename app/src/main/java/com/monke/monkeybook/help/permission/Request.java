@@ -31,8 +31,8 @@ final class Request implements OnRequestPermissionsResultCallback {
     static final int TYPE_REQUEST_PERMISSION = 1;
     static final int TYPE_REQUEST_SETTING = 2;
 
-    private long mStartTime;
-    private int mRequestCode;
+    private final long mRequestTime;
+    private int mRequestCode = TYPE_REQUEST_PERMISSION;
     private RequestSource mSource;
     private ArrayList<String> mPermissions;
     private OnPermissionsResultCallback mResultCallback;
@@ -71,12 +71,14 @@ final class Request implements OnRequestPermissionsResultCallback {
     }
 
     Request(@NonNull AppCompatActivity activity) {
+        mRequestTime = System.currentTimeMillis();
         mHandler = new CallbackHandler(this);
         mSource = new ActivitySource(activity);
         mPermissions = new ArrayList<>();
     }
 
     Request(@NonNull Fragment fragment) {
+        mRequestTime = System.currentTimeMillis();
         mHandler = new CallbackHandler(this);
         mSource = new FragmentSource(fragment);
         mPermissions = new ArrayList<>();
@@ -114,7 +116,6 @@ final class Request implements OnRequestPermissionsResultCallback {
     }
 
     void start() {
-        mStartTime = System.currentTimeMillis();
         RequestPlugins.setOnRequestPermissionsCallback(this);
 
         final String[] deniedPermissions = getDeniedPermissions();
@@ -150,7 +151,7 @@ final class Request implements OnRequestPermissionsResultCallback {
     }
 
     long getStartTime() {
-        return mStartTime;
+        return mRequestTime;
     }
 
     private CharSequence getRationale() {
