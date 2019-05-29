@@ -54,22 +54,17 @@ final class RulePattern {
     private void initRulePattern(String rawRule, VariableStore variableStore, RuleMode ruleMode, boolean regexTrait) {
         //分离get规则
         rawRule = VariablesPattern.fromGetterRule(rawRule, variableStore).rule;
-
         //不共用js规则和正则
         rawRule = ensureKeepRule(rawRule);
-
         //分离重定向规则（规则重定向）
         rawRule = ensureRedirectRule(rawRule);
-
         //分离正则表达式
         rawRule = ensureRegexRule(rawRule, regexTrait || ruleMode == RuleMode.CSS || ruleMode == RuleMode.XPath);
-
         //分离js
         int start = ensureJavaScripts(rawRule);
 
         //最终的规则
         elementsRule.setRule(start == -1 ? rawRule : rawRule.substring(0, start));
-
         //是否全部使用js
         isSimpleJS = !isRedirect && TextUtils.isEmpty(elementsRule.getRule()) && !javaScripts.isEmpty();
 

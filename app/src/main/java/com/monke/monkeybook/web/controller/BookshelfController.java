@@ -42,7 +42,7 @@ public class BookshelfController {
         if (strings == null) {
             return returnData.setErrorMsg("参数url不能为空，请指定内容地址");
         }
-        ChapterBean chapter = DbHelper.getInstance().getDaoSession().getChapterBeanDao().load(strings.get(0));
+        ChapterBean chapter = BookshelfHelp.getChapter(strings.get(0));
         if (chapter == null) {
             return returnData.setErrorMsg("未找到");
         }

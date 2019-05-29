@@ -130,6 +130,10 @@ public class BookshelfHelp {
         }
     }
 
+    public static ChapterBean getChapter(String chapterUrl) {
+        return DbHelper.getInstance().getDaoSession().getChapterBeanDao().load(chapterUrl);
+    }
+
     public static void delChapterList(String noteUrl, List<ChapterBean> chapterBeanList) {
         if (chapterBeanList != null && !chapterBeanList.isEmpty()) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(chapterBeanList);

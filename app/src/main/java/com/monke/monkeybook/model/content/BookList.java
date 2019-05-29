@@ -22,7 +22,7 @@ final class BookList {
         this.tag = tag;
         this.name = name;
         this.bookSourceBean = bookSourceBean;
-        isAJAX = bookSourceBean.ajaxSearch();
+        isAJAX = bookSourceBean.ajaxSearchList();
     }
 
     Observable<List<SearchBookBean>> analyzeSearchBook(final String response, final String baseUrl) {

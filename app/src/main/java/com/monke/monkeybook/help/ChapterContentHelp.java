@@ -98,11 +98,9 @@ public class ChapterContentHelp {
     }
 
     public static String getChapterCache(BookShelfBean bookShelfBean, ChapterBean chapter) {
-        @SuppressLint("DefaultLocale")
-        File file = ChapterContentHelp.getBookFile(ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()),
+        File file = getBookFile(ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()),
                 ChapterContentHelp.getCacheFileName(chapter));
         if (!file.exists()) return null;
-
         byte[] contentByte = DocumentHelper.getBytes(file);
         return new String(contentByte, StandardCharsets.UTF_8);
     }

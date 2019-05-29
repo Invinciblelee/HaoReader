@@ -76,7 +76,6 @@ import com.monke.monkeybook.widget.page.PageStatus;
 import com.monke.monkeybook.widget.page.PageView;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
-import java.net.URL;
 import java.util.List;
 
 import butterknife.BindView;
@@ -195,7 +194,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         intent.putExtra("data_key", key);
         intent.putExtra("fromDetail", activity instanceof BookDetailActivity);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
     }
 
@@ -205,7 +203,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
     }
 

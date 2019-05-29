@@ -19,6 +19,7 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, url, page, headerMap(false));
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
-        }).doOnError(throwable -> Logger.e(TAG, "findBook", throwable));
+        }).doOnError(throwable -> Logger.e(TAG, "findBook", throwable))
+                .onErrorReturnItem(new ArrayList<>());
 
     }
 
@@ -133,7 +135,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return toObservable(analyzeUrl)
                         .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
             }
-        }).doOnError(throwable -> Logger.e(TAG, "searchBook", throwable));
+        }).doOnError(throwable -> Logger.e(TAG, "searchBook", throwable))
+                .onErrorReturnItem(new ArrayList<>());
 
     }
 

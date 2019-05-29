@@ -25,7 +25,7 @@ var apiAddress = (apiName, url) => {
         address = "//" + address;
     }
     if (!(/:\d{4,}/).test(address.split("//")[1].split("/")[0])) {
-        address += ":1122";
+        address += ":1223";
     }
     localStorage.setItem('address', address);
     return address + apiMap[apiName] + (url ? "?url=" + encodeURIComponent(url) : "");

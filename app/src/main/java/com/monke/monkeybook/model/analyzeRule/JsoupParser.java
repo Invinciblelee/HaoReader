@@ -43,7 +43,6 @@ final class JsoupParser extends SourceParser<Element> {
                 return new Element(jxNode.toString());
             }
         }
-
         return Jsoup.parse(StringUtils.valueOf(source));
     }
 

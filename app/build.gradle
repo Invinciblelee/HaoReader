@@ -123,7 +123,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.media:media:1.1.0-beta01'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     //google
     implementation 'com.google.android.material:material:1.1.0-alpha06'
     implementation 'com.google.android:flexbox:1.1.0'
