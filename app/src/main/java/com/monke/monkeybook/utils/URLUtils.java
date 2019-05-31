@@ -13,9 +13,8 @@ public class URLUtils {
      */
     public static String getAbsUrl(String baseUrl, String relPath) {
         try {
-            final String header;
             int index = indexOfHeader(relPath);
-            header = index == -1 ? "" : relPath.substring(0, index + 1);
+            String header = index == -1 ? "" : relPath.substring(0, index + 1);
             relPath = relPath.substring(index + 1);
 
             index = indexOfHeader(baseUrl);
