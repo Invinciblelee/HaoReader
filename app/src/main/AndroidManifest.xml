@@ -61,7 +61,7 @@
             android:configChanges="locale|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Activity.Read" />
+            android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.QRCodeScanActivity"

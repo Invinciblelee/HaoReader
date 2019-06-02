@@ -34,12 +34,6 @@
         <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
     </style>
 
-    <style name="AppTheme.Activity.Read" parent="AppTheme">
-        <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@null</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
-
     <style name="AppTheme.Activity.BookDetail" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -59,14 +53,6 @@
         <item name="android:activityCloseEnterAnimation">@anim/anim_alpha_in</item>
         <item name="android:activityCloseExitAnimation">@anim/anim_right_out</item>
     </style>
-
-    <style name="Animation.Activity.Translucent" parent="@android:style/Animation.Translucent">
-        <item name="android:activityOpenEnterAnimation">@anim/anim_right_in</item>
-        <item name="android:activityOpenExitAnimation">@anim/anim_alpha_out</item>
-        <item name="android:activityCloseEnterAnimation">@anim/anim_alpha_in</item>
-        <item name="android:activityCloseExitAnimation">@anim/anim_right_out</item>
-    </style>
-
 
     <style name="AppTheme.Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>

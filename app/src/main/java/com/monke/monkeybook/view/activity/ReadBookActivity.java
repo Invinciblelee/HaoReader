@@ -177,7 +177,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     private boolean autoPage = false;
     private boolean isOrWillShow = false;
-    private boolean isWindowAnimTranslucent = false;
     private boolean mFirstVisible = true;
 
     private final Handler mHandler = new Handler();
@@ -192,7 +191,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         Intent intent = new Intent(activity, ReadBookActivity.class);
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
-        intent.putExtra("fromDetail", activity instanceof BookDetailActivity);
         BitIntentDataManager.getInstance().putData(key, bookShelf.copy());
         activity.startActivity(intent);
     }
@@ -220,15 +218,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             chapterDurProgress = savedInstanceState.getInt("chapterDurPage");
             chapterDraggable = savedInstanceState.getBoolean("chapterDraggable");
             aloudStatus = savedInstanceState.getInt("aloudStatus");
-            isWindowAnimTranslucent = savedInstanceState.getBoolean("isWindowAnimTranslucent");
-            window.setWindowAnimations(isWindowAnimTranslucent ? R.style.Animation_Activity_Translucent : R.style.Animation_Activity);
-        } else {
-            if (getIntent().getBooleanExtra("fromDetail", false)) {
-                window.setWindowAnimations(R.style.Animation_Activity_Translucent);
-                isWindowAnimTranslucent = true;
-            } else {
-                window.setWindowAnimations(R.style.Animation_Activity);
-            }
         }
         readBookControl.initPageConfiguration();
         screenTimeOut = getResources().getIntArray(R.array.screen_time_out_value)[readBookControl.getScreenTimeOut()];
@@ -249,7 +238,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("aloudStatus", aloudStatus);
-        outState.putBoolean("isWindowAnimTranslucent", isWindowAnimTranslucent);
         outState.putInt("chapterPageMax", hpbReadProgress.getMax());
         outState.putInt("chapterDurPage", hpbReadProgress.getProgress());
         outState.putBoolean("chapterDraggable", hpbReadProgress.isEnabled());
@@ -641,13 +629,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         });
     }
 
-    private void ensureWindowAnimNotTranslucent() {
-        if (isWindowAnimTranslucent) {
-            getWindow().setWindowAnimations(R.style.Animation_Activity);
-            isWindowAnimTranslucent = false;
-        }
-    }
-
     /**
      * 界面设置
      */
@@ -949,7 +930,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.fabReplaceRule:
                 isOrWillShow = true;
                 popMenuOut();
-                ensureWindowAnimNotTranslucent();
                 controlsView.postDelayed(() -> ReplaceRuleActivity.startThis(this), DELAY_SHORT);
                 break;
             case R.id.fabNightTheme:
@@ -1120,7 +1100,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         .show();
                 break;
             case R.id.action_book_info:
-                ensureWindowAnimNotTranslucent();
                 BookInfoActivity.startThis(this, mPresenter.getBookShelf().copy());
                 break;
             case android.R.id.home:
@@ -1138,7 +1117,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
 
     private void openCurrentChapterBrowser() {
-        ensureWindowAnimNotTranslucent();
         String url = atvUrl.getText().toString();
         if (StringUtils.isBlank(url)) {
             return;
@@ -1535,7 +1513,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     protected void onPause() {
         super.onPause();
-        ensureWindowAnimNotTranslucent();
         autoPageStop();
         if (batInfoReceiver != null) {
             unregisterReceiver(batInfoReceiver);
