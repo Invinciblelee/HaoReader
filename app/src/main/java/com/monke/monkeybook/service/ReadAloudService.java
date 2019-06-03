@@ -340,7 +340,7 @@ public class ReadAloudService extends Service {
         Glide.with(this)
                 .asBitmap()
                 .load(cover)
-                .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
+                .into(new RequestFutureTarget<Bitmap>(dimen, dimen) {
                     @Override
                     public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         showNotification(resource);

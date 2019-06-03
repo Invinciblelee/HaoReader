@@ -12,9 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -93,7 +91,6 @@ public class AudioBookPlayService extends Service {
     private BookShelfBean bookShelfBean;
 
     private final MediaPlayer mediaPlayer = new MediaPlayer();
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private MediaSessionCompat mediaSessionCompat;
     private BroadcastReceiver broadcastReceiver;
@@ -216,7 +213,7 @@ public class AudioBookPlayService extends Service {
         try {
             Intent intent = new Intent(context, AudioBookPlayService.class);
             context.stopService(intent);
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
         }
     }
 
@@ -289,10 +286,10 @@ public class AudioBookPlayService extends Service {
                         break;
                     case ACTION_TIMER:
                         timerMinute = intent.getIntExtra("minute", -1);
-                        timerUntilFinish = timerMinute;
                         if (timerMinute == -1) {
                             cancelAlarmTimer();
                         } else {
+                            timerUntilFinish = timerMinute;
                             setAlarmTimer();
                         }
                         break;
@@ -733,7 +730,7 @@ public class AudioBookPlayService extends Service {
                 intent.setAction(ACTION_TIMER_PROGRESS);
                 intent.putExtra("minute", -1);
                 startService(intent);
-            }, 60 * 1000, 60 * 1000, TimeUnit.MILLISECONDS);
+            }, 60000, 60000, TimeUnit.MILLISECONDS);
         }
 
         sendEvent(ACTION_TIMER_PROGRESS, AudioPlayInfo.timerDown(timerUntilFinish));
@@ -741,8 +738,8 @@ public class AudioBookPlayService extends Service {
     }
 
     private void updateAlarmTimer(int minute) {
-        timerUntilFinish = timerMinute + minute;
-        int maxTimeMinute = 60;
+        timerUntilFinish = timerUntilFinish + minute;
+        int maxTimeMinute = 90;
         if (timerUntilFinish > maxTimeMinute) {
             cancelAlarmTimer();
             timerUntilFinish = 0;
@@ -766,7 +763,7 @@ public class AudioBookPlayService extends Service {
         Glide.with(this)
                 .asBitmap()
                 .load(coverUrl)
-                .into(new RequestFutureTarget<Bitmap>(handler, dimen, dimen) {
+                .into(new RequestFutureTarget<Bitmap>(dimen, dimen) {
                     @Override
                     public synchronized void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         showNotification(resource);
