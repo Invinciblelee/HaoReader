@@ -406,6 +406,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             //进入阅读
             ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf());
             finish();
+            overridePendingTransition(R.anim.anim_right_in, R.anim.anim_alpha_out);
         } else if (TextUtils.equals(bookType, BookType.AUDIO)) {
             AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf());
             finish();

@@ -20,22 +20,19 @@ import com.monke.monkeybook.R;
 
 public class AppCompatDialog extends AppCompatDialogFragment {
 
-    private View mDialogView;
-
     public AppCompatDialog() {
         setStyle(STYLE_NO_TITLE, R.style.Style_Custom_Dialog);
     }
 
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mDialogView = onCreateDialogView(inflater, container, savedInstanceState);
-        if (mDialogView != null) {
-            return mDialogView;
+        View view = onCreateDialogView(inflater, container, savedInstanceState);
+        if (view != null) {
+            return view;
         }
         ViewGroup containerView = (ViewGroup) inflater.inflate(R.layout.dialog_design_container, container, false);
         onCreateDialogContentView(inflater, containerView, savedInstanceState);
-        mDialogView = containerView;
-        return mDialogView;
+        return containerView;
     }
 
     public View onCreateDialogView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,20 +44,20 @@ public class AppCompatDialog extends AppCompatDialogFragment {
     }
 
     public final boolean isViewCreated() {
-        return mDialogView != null;
+        return getView() != null;
     }
 
     @SuppressWarnings("unchecked")
     public final <T> T findViewById(@IdRes int id) {
-        if (mDialogView == null) {
+        if (getView() == null) {
             throw new NullPointerException();
         }
-        return (T) mDialogView.findViewById(id);
+        return (T) getView().findViewById(id);
     }
 
     @Override
     public void show(@NonNull FragmentManager manager, @Nullable String tag) {
-        if(!isShowing()) {
+        if (!isAdded()) {
             super.show(manager, tag);
             manager.executePendingTransactions();
         }
@@ -68,7 +65,7 @@ public class AppCompatDialog extends AppCompatDialogFragment {
 
     @Override
     public void showNow(@NonNull FragmentManager manager, @Nullable String tag) {
-        if (!isShowing()) {
+        if (!isAdded()) {
             super.showNow(manager, tag);
         }
     }
