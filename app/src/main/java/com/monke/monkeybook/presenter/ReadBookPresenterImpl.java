@@ -225,6 +225,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 .map(bookShelfBean -> {
                     bookShelfBean.setHasUpdate(false);
                     bookShelfBean.setNewChapters(0);
+                    bookShelfBean.setUpdateOff(bookShelf.getUpdateOff());
                     return bookShelfBean;
                 })
                 .flatMap((Function<BookShelfBean, ObservableSource<BookShelfBean>>) bookShelfBean -> {

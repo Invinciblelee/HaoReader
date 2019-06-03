@@ -3,7 +3,6 @@ package com.monke.monkeybook.web.controller;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -14,7 +13,6 @@ import com.monke.monkeybook.model.content.Debug;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +25,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SourceDebugWebSocket extends NanoWSD.WebSocket {
     private CompositeDisposable compositeDisposable;
+
     public SourceDebugWebSocket(NanoHTTPD.IHTTPSession handshakeRequest) {
         super(handshakeRequest);
     }

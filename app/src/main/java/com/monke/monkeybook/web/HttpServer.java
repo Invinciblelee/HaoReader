@@ -34,12 +34,10 @@ public class HttpServer extends NanoHTTPD {
                     response.addHeader("Access-Control-Allow-Origin", session.getHeaders().get("origin"));
                     //response.addHeader("Access-Control-Max-Age", "3600");
                     return response;
-
                 case "POST":
                     Map<String, String> files = new HashMap<>();
                     session.parseBody(files);
                     String postData = files.get("postData");
-
                     switch (uri) {
                         case "/saveSource":
                             returnData = new SourceController().saveSource(postData);
