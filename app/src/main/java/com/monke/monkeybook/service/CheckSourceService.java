@@ -58,7 +58,7 @@ public class CheckSourceService extends Service {
         super.onCreate();
         threadsNum = AppConfigHelper.get().getInt(this.getString(R.string.pk_threads_num), 6);
         compositeDisposable = new CompositeDisposable();
-        bookSourceBeanList = BookSourceManager.getAll();
+        bookSourceBeanList = BookSourceManager.getEnabled();
         updateNotification(0);
         startCheck();
     }
