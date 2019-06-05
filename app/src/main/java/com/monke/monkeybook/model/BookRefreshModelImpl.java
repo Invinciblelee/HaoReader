@@ -153,16 +153,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     }
 
     private void newRefreshTask(int index) {
-        BookShelfBean bookShelfBean = refreshingIterator.next();
-        if (bookShelfBean == null) {
-            if (refreshingIterator.hasNext()) {
-                newRefreshTask(index);
-            } else if (loadingCount.get() == 0) {
-                dispatchFinishEvent();
-            }
-            return;
-        }
-
+        final BookShelfBean bookShelfBean = refreshingIterator.next();
         if (bookShelfBean.getUpdateOff()) {
             refreshingIterator.moveToNext();
             if (refreshingIterator.hasNext()) {
@@ -179,6 +170,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     private void refreshBookShelf(int index, BookShelfBean bookShelfBean) {
         WebBookModel.getInstance().getChapterList(bookShelfBean)
                 .subscribeOn(scheduler)
+                .timeout(1, TimeUnit.MINUTES)
                 .flatMap(this::saveBookToShelfO)
                 .delay(index * 100L, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -208,7 +200,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             errBooks.add(bookShelfBean.getBookInfoBean().getName());
         }
 
-        if (loadingCount.decrementAndGet() == 0) {
+        if (!refreshingIterator.hasNext() && loadingCount.decrementAndGet() == 0) {
             if (errBooks.size() > 0) {
                 dispatchMessageEvent(TextUtils.join("、", errBooks) + " 更新失败");
                 errBooks.clear();
@@ -270,7 +262,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         @Override
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             if (limit == 0) {
                 return false;
             }
@@ -278,7 +270,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         @Override
-        public BookShelfBean next() {
+        public synchronized BookShelfBean next() {
             int i = cursor;
             if (i >= limit)
                 return null;
@@ -286,7 +278,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             return bookShelfBeans.get(i);
         }
 
-        void moveToNext() {
+        synchronized void moveToNext() {
             if (cursor < limit) {
                 cursor++;
             }

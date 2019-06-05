@@ -232,17 +232,17 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     }
 
     @Override
-    public SearchEngine nextSearchEngine() {
+    public synchronized SearchEngine nextSearchEngine() {
         return searchIterator.next();
     }
 
     @Override
-    public boolean hasNextSearchEngine() {
+    public synchronized boolean hasNextSearchEngine() {
         return searchIterator.hasNext();
     }
 
     @Override
-    public void moveToNextSearchEngine() {
+    public synchronized void moveToNextSearchEngine() {
         searchIterator.moveToNext();
     }
 

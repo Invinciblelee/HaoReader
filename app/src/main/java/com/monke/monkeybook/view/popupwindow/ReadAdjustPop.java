@@ -104,10 +104,9 @@ public class ReadAdjustPop extends PopupWindow {
         hpbLight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    if (!isFollowSys) {
-                        setScreenBrightness(activity, progress);
-                    }
+                if (fromUser && !isFollowSys) {
+                    setScreenBrightness(activity, progress);
+                    readBookControl.saveLight(progress, isFollowSys);
                 }
             }
 
@@ -217,12 +216,6 @@ public class ReadAdjustPop extends PopupWindow {
             }
         });
         hpbTtsSpeechRate.setProgress(readBookControl.getSpeechRate() - 5);
-    }
-
-    @Override
-    public void dismiss() {
-        readBookControl.saveLight(light, isFollowSys);
-        super.dismiss();
     }
 
     @Override

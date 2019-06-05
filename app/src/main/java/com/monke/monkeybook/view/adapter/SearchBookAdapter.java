@@ -65,7 +65,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         }
         Activity activity = activityRef.get();
         Glide.with(activity)
-                .load(item.getCoverUrl())
+                .load(item.getRealCoverUrl())
                 .apply(new RequestOptions()
                         .centerCrop()
                         .dontAnimate().placeholder(R.drawable.img_cover_default)
@@ -179,10 +179,10 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
 
 
     public void clearAll() {
-       synchronized (searchBooks){
-           searchBooks.clear();
-           notifyDataSetChanged();
-       }
+        synchronized (searchBooks) {
+            searchBooks.clear();
+            notifyDataSetChanged();
+        }
     }
 
 }

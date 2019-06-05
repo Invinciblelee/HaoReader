@@ -59,16 +59,6 @@ public class SearchTaskImpl implements ISearchTask {
 
     private void toSearch(String query, Scheduler scheduler) {
         final SearchEngine searchEngine = listener.nextSearchEngine();
-        if (searchEngine == null) {
-            if (listener.hasNextSearchEngine()) {
-                toSearch(query, scheduler);
-            } else {
-                stopSearch();
-                listener.onSearchComplete(this);
-            }
-            return;
-        }
-
         if (!searchEngine.getHasMore()) {
             listener.moveToNextSearchEngine();
             if (listener.hasNextSearchEngine()) {
