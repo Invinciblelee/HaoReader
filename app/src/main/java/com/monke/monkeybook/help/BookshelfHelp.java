@@ -283,7 +283,7 @@ public class BookshelfHelp {
     /**
      * 排序
      */
-    public static void order(List<BookShelfBean> books, int bookshelfOrder) {
+    public static void sortBook(List<BookShelfBean> books, int bookshelfOrder) {
         if (books == null || books.size() == 0) {
             return;
         }

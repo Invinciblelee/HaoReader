@@ -48,7 +48,6 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final BookShelfBean item = getItem(holder.getLayoutPosition());
-        assert item != null;
         Glide.with(getContext()).load(item.getBookInfoBean().getRealCoverUrl())
                 .apply(new RequestOptions().dontAnimate()
                         .centerCrop().placeholder(R.drawable.img_cover_default)

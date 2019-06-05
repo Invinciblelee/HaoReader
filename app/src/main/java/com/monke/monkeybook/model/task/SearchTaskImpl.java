@@ -15,10 +15,10 @@ import com.monke.monkeybook.model.impl.ISearchTask;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -26,6 +26,8 @@ public class SearchTaskImpl implements ISearchTask {
 
     private CompositeDisposable disposables;
     private final OnSearchingListener listener;
+
+    private AtomicInteger loadingCount = new AtomicInteger();
 
     private int successCount;
 
@@ -59,6 +61,16 @@ public class SearchTaskImpl implements ISearchTask {
 
     private void toSearch(String query, Scheduler scheduler) {
         final SearchEngine searchEngine = listener.nextSearchEngine();
+        if (searchEngine == null) {
+            if (listener.hasNextSearchEngine()) {
+                toSearch(query, scheduler);
+            } else if (loadingCount.get() == 0) {
+                stopSearch();
+                listener.onSearchComplete(this);
+            }
+            return;
+        }
+
         if (!searchEngine.getHasMore()) {
             listener.moveToNextSearchEngine();
             if (listener.hasNextSearchEngine()) {
@@ -94,12 +106,12 @@ public class SearchTaskImpl implements ISearchTask {
                         }
                         return Observable.just(hasMore);
                     })
-                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             if (!isDisposed()) {
                                 disposables.add(d);
+                                loadingCount.incrementAndGet();
                             }
                         }
 
@@ -123,7 +135,7 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         searchEngine.searchEnd(hasMore);
-        if (!listener.hasNextSearchEngine()) {
+        if (loadingCount.decrementAndGet() == 0 && !listener.hasNextSearchEngine()) {
             stopSearch();
             listener.onSearchComplete(this);
         } else {
@@ -137,7 +149,7 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         searchEngine.searchEnd(false);
-        if (!listener.hasNextSearchEngine()) {
+        if (loadingCount.decrementAndGet() == 0 && !listener.hasNextSearchEngine()) {
             stopSearch();
             if (successCount == 0) {
                 listener.onSearchError(this);

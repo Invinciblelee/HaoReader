@@ -136,7 +136,7 @@ public class WebBookModel implements IWebBookModel {
         } else if (TextUtils.equals(tag, DefaultShuqi.TAG)) {
             return DefaultShuqi.getInstance();
         } else {
-            return DefaultModel.getInstance().withTag(tag);
+            return DefaultModel.newInstance(tag);
         }
     }
 

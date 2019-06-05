@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -126,7 +127,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             errBooks.clear();
             refreshingDisps.clear();
 
-            refreshingIterator = new RefreshingIterator(bookShelfBeans);
+            refreshingIterator = new RefreshingIterator(new Vector<>(bookShelfBeans));
 
             for (int i = 0, size = Math.min(THREADS_NUM, bookShelfBeans.size()); i < size; i++) {
                 newRefreshTask(i);
@@ -154,6 +155,15 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void newRefreshTask(int index) {
         final BookShelfBean bookShelfBean = refreshingIterator.next();
+        if (bookShelfBean == null) {
+            if (refreshingIterator.hasNext()) {
+                newRefreshTask(index);
+            } else if (loadingCount.get() == 0) {
+                finishRefresh();
+            }
+            return;
+        }
+
         if (bookShelfBean.getUpdateOff()) {
             refreshingIterator.moveToNext();
             if (refreshingIterator.hasNext()) {
@@ -200,15 +210,19 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             errBooks.add(bookShelfBean.getBookInfoBean().getName());
         }
 
-        if (!refreshingIterator.hasNext() && loadingCount.decrementAndGet() == 0) {
-            if (errBooks.size() > 0) {
-                dispatchMessageEvent(TextUtils.join("、", errBooks) + " 更新失败");
-                errBooks.clear();
-            }
-            dispatchFinishEvent();
+        if (loadingCount.decrementAndGet() == 0 && !refreshingIterator.hasNext()) {
+            finishRefresh();
         } else {
             newRefreshTask(index);
         }
+    }
+
+    private void finishRefresh() {
+        if (errBooks.size() > 0) {
+            dispatchMessageEvent(TextUtils.join("、", errBooks) + " 更新失败");
+            errBooks.clear();
+        }
+        dispatchFinishEvent();
     }
 
     /**
@@ -262,7 +276,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         @Override
-        public synchronized boolean hasNext() {
+        public boolean hasNext() {
             if (limit == 0) {
                 return false;
             }
@@ -270,7 +284,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         @Override
-        public synchronized BookShelfBean next() {
+        public BookShelfBean next() {
             int i = cursor;
             if (i >= limit)
                 return null;
@@ -278,7 +292,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             return bookShelfBeans.get(i);
         }
 
-        synchronized void moveToNext() {
+        void moveToNext() {
             if (cursor < limit) {
                 cursor++;
             }
