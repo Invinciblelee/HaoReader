@@ -78,6 +78,8 @@ public class ReadAdjustPop extends PopupWindow {
     private void initData() {
         isFollowSys = readBookControl.getLightIsFollowSys();
         light = readBookControl.getScreenLight(getScreenBrightness(activity));
+        hpbLight.setProgress(light);
+        scbFollowSys.setChecked(isFollowSys);
     }
 
     private void bindEvent() {
@@ -224,8 +226,6 @@ public class ReadAdjustPop extends PopupWindow {
     public void showAtLocation(View parent, int gravity, int x, int y) {
         super.showAtLocation(parent, gravity, x, y);
         initData();
-        hpbLight.setProgress(light);
-        scbFollowSys.setChecked(isFollowSys);
     }
 
 
