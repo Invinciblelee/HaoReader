@@ -100,6 +100,7 @@ public class ReadAdjustPop extends PopupWindow {
                 hpbLight.setEnabled(true);
                 hpbLight.setProgress(light);
             }
+            readBookControl.saveLight(hpbLight.getProgress(), isFollowSys);
         });
         hpbLight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -107,7 +108,7 @@ public class ReadAdjustPop extends PopupWindow {
                 if (fromUser && !isFollowSys) {
                     setScreenBrightness(activity, progress);
                 }
-                readBookControl.saveLight(progress, isFollowSys);
+                readBookControl.saveLight(progress, scbFollowSys.isChecked());
             }
 
             @Override
