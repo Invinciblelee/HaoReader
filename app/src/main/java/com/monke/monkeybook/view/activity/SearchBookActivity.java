@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,9 +34,9 @@ import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
 import java.util.Objects;
@@ -118,12 +117,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         Intent intent = new Intent(activity, SearchBookActivity.class);
         intent.putExtra("searchKey", searchKey);
         activity.startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        Log.e("TAG", "onLowerMemory");
     }
 
     @Override

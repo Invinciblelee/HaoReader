@@ -75,14 +75,14 @@ class DefaultContentDelegate implements ContentDelegate {
         final List<SearchBookBean> searchBookBeans = new ArrayList<>();
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
-            Map<String, String> variableMap = mAnalyzer.putVariableMapInternal(getBookSource().getRulePersistedVariables(), 0);
-            String name = TextProcessor.formatBookName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchName()));
-            String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchAuthor()));
-            String kind = StringUtils.join(",", mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchKind()));
-            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchLastChapter()));
-            String introduce = mAnalyzer.getResultContentInternal(getBookSource().getRuleSearchIntroduce());
-            String coverUrl = mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchCoverUrl());
-            String noteUrl = mAnalyzer.getResultUrlInternal(getBookSource().getRuleSearchNoteUrl());
+            Map<String, String> variableMap = mAnalyzer.putVariableMapDirectly(getBookSource().getRulePersistedVariables(), 0);
+            String name = TextProcessor.formatBookName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchName()));
+            String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchAuthor()));
+            String kind = StringUtils.join(",", mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchKind()));
+            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchLastChapter()));
+            String introduce = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchIntroduce());
+            String coverUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchCoverUrl());
+            String noteUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchNoteUrl());
             addSearchBook(searchBookBeans, name, author, kind, lastChapter, introduce, coverUrl, noteUrl, variableMap);
         }
         return searchBookBeans;
@@ -360,8 +360,8 @@ class DefaultContentDelegate implements ContentDelegate {
         ChapterBean chapterBean = null;
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
-            String name = mAnalyzer.getResultContentInternal(getBookSource().getRuleChapterName());
-            String url = mAnalyzer.getResultUrlInternal(getBookSource().getRuleContentUrl());   //id
+            String name = mAnalyzer.getResultContentDirectly(getBookSource().getRuleChapterName());
+            String url = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleContentUrl());   //id
 
             ChapterBean chapter = addChapter(chapterList, noteUrl, name, url);
             if (chapter != null) {

@@ -21,7 +21,6 @@ import com.monke.monkeybook.utils.NetworkUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -156,6 +155,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     }
 
     private void search(String query) {
+        Log.e("TAG", "searchStart: " + searchPageCount);
         searchIterator = new SearchIterator(searchEngineS, searchPageCount);
 
         searchHandler.removeMessages(SearchHandler.MSG_QUERY);
@@ -310,10 +310,12 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             }
 
             if (cursor < limit) {
+                Log.e("TAG", cursor + "  " + limit);
                 return true;
             } else if (cycleIndex > 1) {
-                cycleIndex--;
                 cursor = 0;
+                cycleIndex--;
+                Log.e("TAG", cycleIndex + "  " + limit);
                 return true;
             }
             return false;

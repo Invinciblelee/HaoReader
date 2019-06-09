@@ -106,8 +106,8 @@ public class ReadAdjustPop extends PopupWindow {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser && !isFollowSys) {
                     setScreenBrightness(activity, progress);
-                    readBookControl.saveLight(progress, isFollowSys);
                 }
+                readBookControl.saveLight(progress, isFollowSys);
             }
 
             @Override

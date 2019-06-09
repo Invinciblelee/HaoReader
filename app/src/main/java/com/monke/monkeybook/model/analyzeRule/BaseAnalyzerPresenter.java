@@ -31,7 +31,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     BaseAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         this.mAnalyzer = analyzer;
-        mSimpleJavaExecutor = new SimpleJavaExecutorImpl(getBaseURL());
+        mSimpleJavaExecutor = new SimpleJavaExecutorImpl();
     }
 
     final OutAnalyzer<S> getAnalyzer() {
@@ -205,7 +205,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     @Override
-    public String getResultContentInternal(String rule) {
+    public String getResultContentDirectly(String rule) {
         final Object object = getParser().getPrimitive();
         if (object instanceof NativeObject) {
             return StringUtils.valueOf(((NativeObject) object).get(rule));
@@ -223,7 +223,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     @Override
-    public String getResultUrlInternal(String rule) {
+    public String getResultUrlDirectly(String rule) {
         final Object object = getParser().getPrimitive();
         if (object instanceof NativeObject) {
             return StringUtils.valueOf(((NativeObject) object).get(rule));
@@ -237,7 +237,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     @Override
-    public Map<String, String> putVariableMapInternal(String rule, int flag) {
+    public Map<String, String> putVariableMapDirectly(String rule, int flag) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
             return getVariableStore().getVariableMap();
         }
@@ -247,7 +247,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             return resultMap;
         } else {
             for (Map.Entry<String, String> entry : variablesPattern.map.entrySet()) {
-                String value = getResultContentInternal(entry.getValue());
+                String value = getResultContentDirectly(entry.getValue());
                 if (!isEmpty(value)) {
                     resultMap.put(entry.getKey(), value);
                 }

@@ -214,6 +214,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         return new OnBookItemClickListenerTwo() {
             @Override
             public void onClick(View view, BookShelfBean bookShelf) {
+                KeyboardUtil.hideKeyboard(drawerRight.getCurrentFocus(false));
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     new AlertDialog.Builder(getSupportFragmentManager())
                             .setTitle(R.string.dialog_title)
@@ -228,7 +229,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
             @Override
             public void onLongClick(View view, BookShelfBean bookShelf) {
-                KeyboardUtil.hideKeyboard(drawerRight.getSearchAutoComplete(false));
+                KeyboardUtil.hideKeyboard(drawerRight.getCurrentFocus(false));
                 if (mPresenter.checkLocalBookNotExists(bookShelf)) {
                     new AlertDialog.Builder(getSupportFragmentManager())
                             .setTitle(R.string.dialog_title)
@@ -364,7 +365,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             @Override
             public void onDrawerOpened(View drawerView) {
                 if (drawerView == drawerRight) {
-                    KeyboardUtil.showKeyboard(drawerRight.getSearchAutoComplete(true));
+                    KeyboardUtil.showKeyboard(drawerRight.getCurrentFocus(true));
                     return;
                 }
                 super.onDrawerOpened(drawerView);

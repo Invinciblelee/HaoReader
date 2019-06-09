@@ -67,13 +67,13 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public String getResultContentInternal(String rule) {
-        return getPresenter().getResultContentInternal(rule);
+    public String getResultContentDirectly(String rule) {
+        return getPresenter().getResultContentDirectly(rule);
     }
 
     @Override
-    public String getResultUrlInternal(String rule) {
-        return getPresenter().getResultUrlInternal(rule);
+    public String getResultUrlDirectly(String rule) {
+        return getPresenter().getResultUrlDirectly(rule);
     }
 
     @Override
@@ -92,8 +92,8 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Map<String, String> putVariableMapInternal(String rule, int flag) {
-        return getPresenter().putVariableMapInternal(rule, flag);
+    public Map<String, String> putVariableMapDirectly(String rule, int flag) {
+        return getPresenter().putVariableMapDirectly(rule, flag);
     }
 
     @Override

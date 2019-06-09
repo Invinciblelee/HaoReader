@@ -29,11 +29,10 @@ import com.tencent.bugly.crashreport.CrashReport;
 import java.io.File;
 
 import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 
 public class MApplication extends Application {
 
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = BuildConfig.DEBUG;
     public final static String channelIdDownload = "channel_download";
     public final static String channelIdReadAloud = "channel_read_aloud";
     public final static String channelIdAudioBook = "channel_audio_book";

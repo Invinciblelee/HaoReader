@@ -1,6 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import com.luhuiguo.chinese.ChineseUtils;
@@ -132,7 +131,7 @@ public class ChapterContentHelp {
         }
         //替换
         for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getEnabled()) {
-            if (isUseTo(replaceRule.getUseTo(), bookTag, bookName)) {
+            if (isUseTo(replaceRule.getUseTo(), bookName, bookTag)) {
                 try {
                     content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement()).trim();
                 } catch (Exception ignored) {
