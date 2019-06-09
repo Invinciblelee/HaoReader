@@ -99,6 +99,7 @@ public class ReadAdjustPop extends PopupWindow {
                 //不跟随系统
                 hpbLight.setEnabled(true);
                 hpbLight.setProgress(light);
+                setScreenBrightness(activity, hpbLight.getProgress());
             }
             readBookControl.saveLight(hpbLight.getProgress(), isFollowSys);
         });
