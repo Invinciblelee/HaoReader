@@ -78,6 +78,8 @@ public class ReadAdjustPop extends PopupWindow {
     private void initData() {
         isFollowSys = readBookControl.getLightIsFollowSys();
         light = readBookControl.getScreenLight(getScreenBrightness(activity));
+        hpbLight.setProgress(light);
+        scbFollowSys.setChecked(isFollowSys);
     }
 
     private void bindEvent() {
@@ -99,7 +101,9 @@ public class ReadAdjustPop extends PopupWindow {
                 //不跟随系统
                 hpbLight.setEnabled(true);
                 hpbLight.setProgress(light);
+                setScreenBrightness(activity, hpbLight.getProgress());
             }
+            readBookControl.saveLight(hpbLight.getProgress(), isFollowSys);
         });
         hpbLight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -107,7 +111,7 @@ public class ReadAdjustPop extends PopupWindow {
                 if (fromUser && !isFollowSys) {
                     setScreenBrightness(activity, progress);
                 }
-                readBookControl.saveLight(progress, isFollowSys);
+                readBookControl.saveLight(progress, scbFollowSys.isChecked());
             }
 
             @Override
@@ -222,8 +226,6 @@ public class ReadAdjustPop extends PopupWindow {
     public void showAtLocation(View parent, int gravity, int x, int y) {
         super.showAtLocation(parent, gravity, x, y);
         initData();
-        hpbLight.setProgress(light);
-        scbFollowSys.setChecked(isFollowSys);
     }
 
 

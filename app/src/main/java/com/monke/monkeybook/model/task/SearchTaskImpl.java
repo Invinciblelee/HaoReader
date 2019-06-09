@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -20,13 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 public class SearchTaskImpl implements ISearchTask {
 
     private CompositeDisposable disposables;
+
     private final OnSearchingListener listener;
 
     private AtomicInteger loadingCount = new AtomicInteger();
@@ -66,7 +65,7 @@ public class SearchTaskImpl implements ISearchTask {
         if (searchEngine == null) {
             if (listener.hasNextSearchEngine()) {
                 toSearch(query, scheduler);
-            } else if (loadingCount.get() == 0) {
+
                 stopSearch();
                 listener.onSearchComplete(this);
             }
@@ -74,7 +73,6 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         if (!searchEngine.getHasMore()) {
-            listener.moveToNextSearchEngine();
             if (listener.hasNextSearchEngine()) {
                 toSearch(query, scheduler);
             } else if (loadingCount.get() == 0) {
@@ -106,7 +104,6 @@ public class SearchTaskImpl implements ISearchTask {
                         } else {
                             hasMore = false;
                         }
-                        Log.e("TAG", searchEngine.getTag() + "  " + hasMore);
                         return Observable.just(hasMore);
                     })
                     .subscribe(new SimpleObserver<Boolean>() {
@@ -138,12 +135,10 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         searchEngine.searchEnd(hasMore);
-        Log.e("TAG", "stop ： " + hasMore + "  " + listener.hasNextSearchEngine());
         if (loadingCount.decrementAndGet() == 0 && !listener.hasNextSearchEngine()) {
             stopSearch();
             listener.onSearchComplete(this);
         } else {
-            Log.e("TAG", "next");
             toSearch(query, scheduler);
         }
     }

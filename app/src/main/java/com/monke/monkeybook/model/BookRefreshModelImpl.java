@@ -165,10 +165,9 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         if (bookShelfBean.getUpdateOff()) {
-            refreshingIterator.moveToNext();
             if (refreshingIterator.hasNext()) {
                 newRefreshTask(index);
-            } else {
+            } else if (loadingCount.get() == 0) {
                 dispatchFinishEvent();
             }
         } else {
@@ -290,12 +289,6 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                 return null;
             cursor = i + 1;
             return bookShelfBeans.get(i);
-        }
-
-        void moveToNext() {
-            if (cursor < limit) {
-                cursor++;
-            }
         }
 
     }
