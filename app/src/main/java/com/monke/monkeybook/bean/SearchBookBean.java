@@ -161,6 +161,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public String getRealCoverUrl(){
         return URLUtils.resolve(tag, coverUrl);
     }
 

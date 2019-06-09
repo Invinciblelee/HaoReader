@@ -130,6 +130,10 @@ public class BookshelfHelp {
         }
     }
 
+    public static ChapterBean getChapter(String chapterUrl) {
+        return DbHelper.getInstance().getDaoSession().getChapterBeanDao().load(chapterUrl);
+    }
+
     public static void delChapterList(String noteUrl, List<ChapterBean> chapterBeanList) {
         if (chapterBeanList != null && !chapterBeanList.isEmpty()) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteInTx(chapterBeanList);
@@ -279,7 +283,7 @@ public class BookshelfHelp {
     /**
      * 排序
      */
-    public static void order(List<BookShelfBean> books, int bookshelfOrder) {
+    public static void sortBook(List<BookShelfBean> books, int bookshelfOrder) {
         if (books == null || books.size() == 0) {
             return;
         }

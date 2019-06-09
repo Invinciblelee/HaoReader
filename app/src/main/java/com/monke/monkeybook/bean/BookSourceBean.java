@@ -75,8 +75,8 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     @Generated(hash = 1464818968)
     public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, boolean bookSourceCacheEnabled, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl, String ruleSearchUrl,
-            String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleLastChapter,
-            String ruleCoverUrl, String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
+                          String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleLastChapter,
+                          String ruleCoverUrl, String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -372,13 +372,15 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getRealRuleBookContent() {
-        if (ajaxRuleBookContent()) {
-            int start = ruleBookContent.lastIndexOf(Patterns.RULE_AJAX) + 1;
+        if (sniffRuleBookContent()) {
             String[] rules = ruleBookContent.split(Patterns.REGEX_OPERATOR);
             if (rules.length > 1) {
-                return rules[0].substring(start);
+                return rules[0].substring(2);
             }
-            return ruleBookContent.substring(start);
+            return ruleBookContent.substring(2);
+        }
+        if (ajaxRuleBookContent()) {
+            return ruleBookContent.substring(1);
         }
         return ruleBookContent;
     }
@@ -423,7 +425,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchUrl = ruleSearchUrl;
     }
 
-    public boolean ajaxSearch() {
+    public boolean ajaxSearchList() {
         if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
                 || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON)
                 || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON_TRAIT)) {
@@ -433,7 +435,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public String getRealRuleSearchUrl() {
-        if (ajaxSearch()) {
+        if (ajaxSearchList()) {
             return ruleSearchUrl.substring(1);
         }
         return ruleSearchUrl;
@@ -514,7 +516,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         } else {
             searchListRule = ruleSearchList;
         }
-        return chapterListReverse() ? searchListRule.substring(1) : searchListRule;
+        return searchListReverse() ? searchListRule.substring(1) : searchListRule;
     }
 
     public boolean searchListReverse() {

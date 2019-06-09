@@ -9,20 +9,13 @@ import retrofit2.Response;
 
 public class SimpleJavaExecutorImpl implements SimpleJavaExecutor {
 
-    private final String mBaseUrl;
-
-    public SimpleJavaExecutorImpl(String baseUrl) {
-        this.mBaseUrl = baseUrl;
-    }
-
     public SimpleJavaExecutorImpl() {
-        this(null);
     }
 
     @Override
     public final String ajax(String urlStr) {
         try {
-            AnalyzeUrl analyzeUrl = new AnalyzeUrl(mBaseUrl, urlStr);
+            AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(urlStr), urlStr);
             Response<String> response = SimpleModel.getResponse(analyzeUrl)
                     .blockingFirst();
             return response.body();

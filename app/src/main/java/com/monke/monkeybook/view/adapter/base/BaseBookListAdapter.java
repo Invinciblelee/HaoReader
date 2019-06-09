@@ -81,7 +81,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         if (this.bookshelfPx != bookshelfPx) {
             this.bookshelfPx = bookshelfPx;
             if (!books.isEmpty()) {
-                BookshelfHelp.order(books, bookshelfPx);
+                BookshelfHelp.sortBook(books, bookshelfPx);
                 notifyDataSetChanged();
             }
         }
@@ -113,7 +113,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
                     if (TextUtils.equals(books.get(i).getNoteUrl(), bookShelf.getNoteUrl())) {
                         books.set(i, bookShelf);
                         if (sort) {
-                            BookshelfHelp.order(books, bookshelfPx);
+                            BookshelfHelp.sortBook(books, bookshelfPx);
                             notifyDataSetChanged();
                         } else {
                             notifyItemChanged(i, 0);
@@ -130,7 +130,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         synchronized (lock) {
             if (bookShelf != null && !updateBook(bookShelf, true)) {
                 books.add(bookShelf);
-                BookshelfHelp.order(books, bookshelfPx);
+                BookshelfHelp.sortBook(books, bookshelfPx);
                 notifyDataSetChanged();
             }
         }
@@ -159,7 +159,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
     public void sort() {
         synchronized (lock) {
             if (!books.isEmpty()) {
-                BookshelfHelp.order(books, bookshelfPx);
+                BookshelfHelp.sortBook(books, bookshelfPx);
                 notifyDataSetChanged();
             }
         }
@@ -169,7 +169,7 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         synchronized (lock) {
             books.clear();
             if (null != newDataS && newDataS.size() > 0) {
-                BookshelfHelp.order(newDataS, bookshelfPx);
+                BookshelfHelp.sortBook(newDataS, bookshelfPx);
                 books.addAll(newDataS);
             }
             notifyDataSetChanged();

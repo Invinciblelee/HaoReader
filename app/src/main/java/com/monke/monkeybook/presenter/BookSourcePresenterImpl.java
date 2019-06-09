@@ -226,6 +226,11 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void checkBookSource() {
+        if (BookSourceManager.getEnabledCount() == 0) {
+            mView.showSnackBar("请选中要校验的书源");
+            return;
+        }
+
         CheckSourceService.start(mView.getContext());
     }
 

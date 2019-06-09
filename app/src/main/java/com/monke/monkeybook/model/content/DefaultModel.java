@@ -19,6 +19,7 @@ import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,30 +42,17 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     private BookSourceBean bookSourceBean;
     private Map<String, String> headerMap;
 
-    private volatile static DefaultModel sInstance;
-
-    private DefaultModel() {
-    }
-
-    public static DefaultModel getInstance() {
-        if (sInstance == null) {
-            synchronized (DefaultModel.class) {
-                if (sInstance == null) {
-                    sInstance = new DefaultModel();
-                }
-            }
-        }
-        return sInstance;
-    }
-
-    public DefaultModel withTag(String tag) {
+    private DefaultModel(String tag) {
+        this.tag = tag;
         bookSourceBean = BookSourceManager.getByUrl(tag);
         if (bookSourceBean != null) {
             name = bookSourceBean.getBookSourceName();
             headerMap = AnalyzeHeaders.getMap(bookSourceBean);
-            this.tag = tag;
         }
-        return this;
+    }
+
+    public static DefaultModel newInstance(String tag) {
+        return new DefaultModel(tag);
     }
 
     private Map<String, String> headerMap(boolean withCookie) {
@@ -95,7 +83,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, url, page, headerMap(false));
             return toObservable(analyzeUrl)
                     .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
-        }).doOnError(throwable -> Logger.e(TAG, "findBook", throwable));
+        }).doOnError(throwable -> Logger.e(TAG, "findBook", throwable))
+                .onErrorReturnItem(new ArrayList<>());
 
     }
 
@@ -133,7 +122,8 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 return toObservable(analyzeUrl)
                         .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()));
             }
-        }).doOnError(throwable -> Logger.e(TAG, "searchBook", throwable));
+        }).doOnError(throwable -> Logger.e(TAG, "searchBook", throwable))
+                .onErrorReturnItem(new ArrayList<>());
 
     }
 

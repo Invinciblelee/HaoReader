@@ -1,6 +1,7 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -15,6 +16,7 @@ import com.monke.monkeybook.model.impl.ISearchTask;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
@@ -26,6 +28,8 @@ public class SearchTaskImpl implements ISearchTask {
 
     private CompositeDisposable disposables;
     private final OnSearchingListener listener;
+
+    private AtomicInteger loadingCount = new AtomicInteger();
 
     private int successCount;
 
@@ -62,7 +66,7 @@ public class SearchTaskImpl implements ISearchTask {
         if (searchEngine == null) {
             if (listener.hasNextSearchEngine()) {
                 toSearch(query, scheduler);
-            } else {
+            } else if (loadingCount.get() == 0) {
                 stopSearch();
                 listener.onSearchComplete(this);
             }
@@ -73,7 +77,7 @@ public class SearchTaskImpl implements ISearchTask {
             listener.moveToNextSearchEngine();
             if (listener.hasNextSearchEngine()) {
                 toSearch(query, scheduler);
-            } else {
+            } else if (loadingCount.get() == 0) {
                 stopSearch();
                 listener.onSearchComplete(this);
             }
@@ -102,14 +106,15 @@ public class SearchTaskImpl implements ISearchTask {
                         } else {
                             hasMore = false;
                         }
+                        Log.e("TAG", searchEngine.getTag() + "  " + hasMore);
                         return Observable.just(hasMore);
                     })
-                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             if (!isDisposed()) {
                                 disposables.add(d);
+                                loadingCount.incrementAndGet();
                             }
                         }
 
@@ -133,10 +138,12 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         searchEngine.searchEnd(hasMore);
-        if (!listener.hasNextSearchEngine()) {
+        Log.e("TAG", "stop ： " + hasMore + "  " + listener.hasNextSearchEngine());
+        if (loadingCount.decrementAndGet() == 0 && !listener.hasNextSearchEngine()) {
             stopSearch();
             listener.onSearchComplete(this);
         } else {
+            Log.e("TAG", "next");
             toSearch(query, scheduler);
         }
     }
@@ -147,7 +154,7 @@ public class SearchTaskImpl implements ISearchTask {
         }
 
         searchEngine.searchEnd(false);
-        if (!listener.hasNextSearchEngine()) {
+        if (loadingCount.decrementAndGet() == 0 && !listener.hasNextSearchEngine()) {
             stopSearch();
             if (successCount == 0) {
                 listener.onSearchError(this);

@@ -54,7 +54,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
         if (!activity.isFinishing()) {
             Glide.with(activity)
-                    .load(item.getCoverUrl())
+                    .load(item.getRealCoverUrl())
                     .apply(new RequestOptions()
                             .fitCenter().dontAnimate()
                             .placeholder(R.drawable.img_cover_default)

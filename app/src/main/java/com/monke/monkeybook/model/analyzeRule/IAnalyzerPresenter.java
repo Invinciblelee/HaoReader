@@ -9,9 +9,9 @@ public interface IAnalyzerPresenter {
 
     String getResultUrl(String rule);
 
-    String getResultContentInternal(String rule);
+    String getResultContentDirectly(String rule);
 
-    String getResultUrlInternal(String rule);
+    String getResultUrlDirectly(String rule);
 
     List<String> getResultContents(String rule);
 
@@ -19,7 +19,7 @@ public interface IAnalyzerPresenter {
 
     Map<String, String> putVariableMap(String rule, int flag);
 
-    Map<String, String> putVariableMapInternal(String rule, int flag);
+    Map<String, String> putVariableMapDirectly(String rule, int flag);
 
     AnalyzeCollection getRawCollection(String rule);
 

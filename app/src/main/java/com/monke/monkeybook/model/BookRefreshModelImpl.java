@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -126,7 +127,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             errBooks.clear();
             refreshingDisps.clear();
 
-            refreshingIterator = new RefreshingIterator(bookShelfBeans);
+            refreshingIterator = new RefreshingIterator(new Vector<>(bookShelfBeans));
 
             for (int i = 0, size = Math.min(THREADS_NUM, bookShelfBeans.size()); i < size; i++) {
                 newRefreshTask(i);
@@ -153,12 +154,12 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     }
 
     private void newRefreshTask(int index) {
-        BookShelfBean bookShelfBean = refreshingIterator.next();
+        final BookShelfBean bookShelfBean = refreshingIterator.next();
         if (bookShelfBean == null) {
             if (refreshingIterator.hasNext()) {
                 newRefreshTask(index);
             } else if (loadingCount.get() == 0) {
-                dispatchFinishEvent();
+                finishRefresh();
             }
             return;
         }
@@ -179,6 +180,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     private void refreshBookShelf(int index, BookShelfBean bookShelfBean) {
         WebBookModel.getInstance().getChapterList(bookShelfBean)
                 .subscribeOn(scheduler)
+                .timeout(1, TimeUnit.MINUTES)
                 .flatMap(this::saveBookToShelfO)
                 .delay(index * 100L, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -208,15 +210,19 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             errBooks.add(bookShelfBean.getBookInfoBean().getName());
         }
 
-        if (loadingCount.decrementAndGet() == 0) {
-            if (errBooks.size() > 0) {
-                dispatchMessageEvent(TextUtils.join("、", errBooks) + " 更新失败");
-                errBooks.clear();
-            }
-            dispatchFinishEvent();
+        if (loadingCount.decrementAndGet() == 0 && !refreshingIterator.hasNext()) {
+            finishRefresh();
         } else {
             newRefreshTask(index);
         }
+    }
+
+    private void finishRefresh() {
+        if (errBooks.size() > 0) {
+            dispatchMessageEvent(TextUtils.join("、", errBooks) + " 更新失败");
+            errBooks.clear();
+        }
+        dispatchFinishEvent();
     }
 
     /**

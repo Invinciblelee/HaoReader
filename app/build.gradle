@@ -51,7 +51,7 @@ android {
     def currentVersionName = getVersionName()
 
     signingConfigs {
-        myConfig {
+        config {
             storeFile keyFile
             storePassword keystorePSW
             keyAlias keystoreAlias
@@ -76,16 +76,14 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.myConfig
-            buildConfigField "boolean", "IS_RELEASE", "true"
+            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            signingConfig signingConfigs.myConfig
+            signingConfig signingConfigs.config
             applicationIdSuffix '.debug'
             versionNameSuffix ' debug'
-            buildConfigField "boolean", "IS_RELEASE", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -132,7 +130,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.media:media:1.1.0-beta01'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     //google
     implementation 'com.google.android.material:material:1.1.0-alpha06'
     implementation 'com.google.android:flexbox:1.1.0'
@@ -140,8 +138,8 @@ dependencies {
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'jp.wasabeef:glide-transformations:3.2.0'
     //CircleImageView
     implementation 'de.hdodenhof:circleimageview:3.0.0'

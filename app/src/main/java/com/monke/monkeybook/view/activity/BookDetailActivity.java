@@ -214,7 +214,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             updateView(true);
         } else {
             if (mPresenter.getSearchBook() == null) return;
-            showCoverImage(mPresenter.getSearchBook().getCoverUrl());
+            showCoverImage(mPresenter.getSearchBook().getRealCoverUrl());
             llBookRecent.setVisibility(View.GONE);
             tvName.setText(mPresenter.getSearchBook().getName());
             tvAuthor.setText(mPresenter.getSearchBook().getAuthor());
@@ -406,6 +406,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             //进入阅读
             ReadBookActivity.startThis(BookDetailActivity.this, mPresenter.getBookShelf());
             finish();
+            overridePendingTransition(R.anim.anim_right_in, R.anim.anim_alpha_out);
         } else if (TextUtils.equals(bookType, BookType.AUDIO)) {
             AudioBookPlayActivity.startThis(BookDetailActivity.this, cardCover, mPresenter.getBookShelf());
             finish();

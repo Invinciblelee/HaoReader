@@ -61,7 +61,6 @@ public class AjaxWebView {
                     mWebView = createAjaxWebView(params, this);
                     break;
                 case MSG_SUCCESS:
-                    System.out.println(msg.obj);
                     mCallback.onResult((String) msg.obj);
                     mCallback.onComplete();
                     destroyWebView();

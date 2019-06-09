@@ -29,7 +29,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 import java.io.File;
 
 import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 
 public class MApplication extends Application {
 

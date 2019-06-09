@@ -1,6 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import com.luhuiguo.chinese.ChineseUtils;
@@ -98,11 +97,9 @@ public class ChapterContentHelp {
     }
 
     public static String getChapterCache(BookShelfBean bookShelfBean, ChapterBean chapter) {
-        @SuppressLint("DefaultLocale")
-        File file = ChapterContentHelp.getBookFile(ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()),
+        File file = getBookFile(ChapterContentHelp.getCacheFolderPath(bookShelfBean.getBookInfoBean()),
                 ChapterContentHelp.getCacheFileName(chapter));
         if (!file.exists()) return null;
-
         byte[] contentByte = DocumentHelper.getBytes(file);
         return new String(contentByte, StandardCharsets.UTF_8);
     }
@@ -134,7 +131,7 @@ public class ChapterContentHelp {
         }
         //替换
         for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getEnabled()) {
-            if (isUseTo(replaceRule.getUseTo(), bookTag, bookName)) {
+            if (isUseTo(replaceRule.getUseTo(), bookName, bookTag)) {
                 try {
                     content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement()).trim();
                 } catch (Exception ignored) {

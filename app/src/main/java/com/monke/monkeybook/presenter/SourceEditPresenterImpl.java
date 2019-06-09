@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.util.Hashtable;
 import java.util.Objects;
 
+import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
@@ -105,7 +106,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
     @Override
     public void handleSourceShare() {
         Single.create((SingleOnSubscribe<File>) emitter -> {
-            Bitmap bitmap = toBitmap(mView.getBookSourceStr());
+            Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(mView.getBookSourceStr(), 800);
             if (bitmap != null) {
                 File file = new File(mView.getContext().getExternalCacheDir(), "bookSource.png");
                 FileOutputStream fOut = new FileOutputStream(file);
@@ -147,29 +148,4 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
 
     }
 
-    private static Bitmap toBitmap(String str) {
-        BitMatrix result;
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        try {
-            Hashtable<EncodeHintType, Object> hst = new Hashtable<>();
-            hst.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-            hst.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-            result = multiFormatWriter.encode(str, BarcodeFormat.QR_CODE, 600, 600, hst);
-            int[] pixels = new int[600 * 600];
-            for (int y = 0; y < 600; y++) {
-                for (int x = 0; x < 600; x++) {
-                    if (result.get(x, y)) {
-                        pixels[y * 600 + x] = Color.BLACK;
-                    } else {
-                        pixels[y * 600 + x] = Color.WHITE;
-                    }
-                }
-            }
-            Bitmap bitmap = Bitmap.createBitmap(600, 600, Bitmap.Config.ARGB_8888);
-            bitmap.setPixels(pixels, 0, 600, 0, 0, 600, 600);
-            return bitmap;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

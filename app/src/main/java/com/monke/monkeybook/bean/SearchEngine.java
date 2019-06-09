@@ -20,10 +20,6 @@ public class SearchEngine {
         return tag;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     public boolean getHasMore() {
         return hasMore;
     }

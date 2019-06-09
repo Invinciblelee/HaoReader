@@ -86,7 +86,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
         selectCover = args.getBoolean("selectCover");
         bookInfo = args.getParcelable("bookInfo");
 
-        searchBookModel = new SearchBookModel(getContext())
+        searchBookModel = new SearchBookModel(requireContext())
                 .onlyOnePage()
                 .useMy716(true)
                 .useShuqi(true)

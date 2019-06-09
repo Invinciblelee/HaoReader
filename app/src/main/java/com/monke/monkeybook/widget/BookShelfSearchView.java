@@ -131,7 +131,7 @@ public class BookShelfSearchView extends LinearLayout {
         adapter.replaceAll(value);
     }
 
-    public View getSearchAutoComplete(boolean focus) {
+    public View getCurrentFocus(boolean focus) {
         if (focus) {
             searchAutoComplete.requestFocus();
         }
