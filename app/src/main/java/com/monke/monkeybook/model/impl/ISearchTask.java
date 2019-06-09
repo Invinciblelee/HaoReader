@@ -18,8 +18,6 @@ public interface ISearchTask {
 
         boolean hasNextSearchEngine();
 
-        void moveToNextSearchEngine();
-
         void onSearchStart(ISearchTask searchTask);
 
         void onSearchResult(List<SearchBookBean> searchBooks);
