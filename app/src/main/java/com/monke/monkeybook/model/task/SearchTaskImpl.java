@@ -1,7 +1,6 @@
 package com.monke.monkeybook.model.task;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -113,7 +112,6 @@ public class SearchTaskImpl implements ISearchTask {
                             if (!isDisposed()) {
                                 disposables.add(d);
                                 loadingCount.incrementAndGet();
-                                Log.e("TAG", loadingCount.get() + "  " + searchEngine.getTag());
                             }
                         }
 
