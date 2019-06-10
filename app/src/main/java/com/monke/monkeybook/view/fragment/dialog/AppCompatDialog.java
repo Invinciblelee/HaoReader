@@ -57,14 +57,15 @@ public class AppCompatDialog extends AppCompatDialogFragment {
 
     @Override
     public void show(@NonNull FragmentManager manager, @Nullable String tag) {
+        manager.executePendingTransactions();
         if (!isAdded()) {
             super.show(manager, tag);
-            manager.executePendingTransactions();
         }
     }
 
     @Override
     public void showNow(@NonNull FragmentManager manager, @Nullable String tag) {
+        manager.executePendingTransactions();
         if (!isAdded()) {
             super.showNow(manager, tag);
         }
