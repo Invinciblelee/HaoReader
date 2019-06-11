@@ -275,7 +275,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         @Override
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             if (limit == 0) {
                 return false;
             }
@@ -283,7 +283,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         }
 
         @Override
-        public BookShelfBean next() {
+        public synchronized BookShelfBean next() {
             int i = cursor;
             if (i >= limit)
                 return null;
