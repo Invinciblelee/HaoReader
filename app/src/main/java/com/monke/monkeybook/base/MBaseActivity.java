@@ -173,9 +173,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
-        if (!isFinishing()) {
-            getDelegate().applyDayNight();
-        }
     }
 
     public void startActivityByAnim(Intent intent, int animIn, int animExit) {

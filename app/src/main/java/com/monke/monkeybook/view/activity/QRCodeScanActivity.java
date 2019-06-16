@@ -109,6 +109,12 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        zxingview.startSpotAndShowRect();
+    }
+
+    @Override
     protected void onStop() {
         zxingview.stopCamera(); // 关闭摄像头预览，并且隐藏扫描框
         super.onStop();

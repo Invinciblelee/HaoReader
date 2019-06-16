@@ -297,7 +297,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
 
         @Override
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             if (limit == 0) {
                 return false;
             }
@@ -313,7 +313,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
         }
 
         @Override
-        public SearchEngine next() {
+        public synchronized SearchEngine next() {
             int i = cursor;
             if (i >= limit)
                 return null;
