@@ -26,23 +26,6 @@
             android:transitionName="@string/img_cover"
             tools:targetApi="lollipop" />
 
-        <com.monke.monkeybook.widget.LabelView
-            android:id="@+id/tv_has_new"
-            android:layout_width="24dp"
-            android:layout_height="12dp"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:paddingStart="0dp"
-            android:paddingEnd="2dp"
-            android:text="@string/renew"
-            android:textColor="@color/white"
-            android:textSize="8sp"
-            android:visibility="invisible"
-            app:labelColor="@color/light_green"
-            app:labelSinkWidth="2dp"
-            tools:ignore="SmallSp" />
-
     </com.monke.monkeybook.widget.CoverCardView>
 
     <LinearLayout
@@ -60,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="2dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="36dp"
             android:includeFontPadding="false"
             android:ellipsize="end"
             android:singleLine="true"
@@ -133,13 +116,28 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <com.monke.monkeybook.widget.RotateLoading
-        android:id="@+id/rl_loading"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="2dp"
+    <FrameLayout
+        android:id="@+id/fl_has_new"
+        android:layout_width="46dp"
+        android:layout_height="26dp"
         android:layout_alignTop="@id/cover_card"
         android:layout_alignParentEnd="true"
-        app:loadingWidth="2dp" />
-
+        android:layout_marginEnd="2dp">
+        <com.monke.monkeybook.widget.BadgeView
+            android:id="@+id/tv_has_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="right"
+            android:includeFontPadding="false"
+            tools:ignore="RtlHardcoded" />
+        <com.monke.monkeybook.widget.RotateLoading
+            android:id="@+id/rl_loading"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_gravity="end"
+            android:layout_margin="2dp"
+            android:visibility="invisible"
+            app:loadingWidth="2dp" />
+    </FrameLayout>
 </RelativeLayout>

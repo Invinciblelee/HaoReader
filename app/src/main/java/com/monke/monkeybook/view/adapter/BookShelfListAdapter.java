@@ -23,6 +23,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
+import com.monke.monkeybook.widget.BadgeView;
 import com.monke.monkeybook.widget.RotateLoading;
 
 import java.util.List;
@@ -92,17 +93,17 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         }
 
         if (item.isFlag()) {
+            holder.tvHasNew.setVisibility(View.INVISIBLE);
             holder.rotateLoading.setVisibility(View.VISIBLE);
         } else {
+            if (item.getHasUpdate() && !item.isLocalBook()) {
+                holder.tvHasNew.setBadgeCount(item.getNewChapters());
+            } else {
+                holder.tvHasNew.setBadgeCount(item.getUnreadChapterNum());
+            }
+            holder.tvHasNew.setHighlight(item.getHasUpdate());
             holder.rotateLoading.setVisibility(View.INVISIBLE);
         }
-
-        if (item.getHasUpdate() && !item.isLocalBook()) {
-            holder.tvHasNew.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvHasNew.setVisibility(View.INVISIBLE);
-        }
-
     }
 
     private SpannableStringBuilder getBookName(String name, int newChapters) {
@@ -113,13 +114,13 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         SpannableString chaptersSpan = new SpannableString(String.format(Locale.getDefault(), "(新增%d章)", newChapters));
         chaptersSpan.setSpan(new RelativeSizeSpan(0.75f), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         chaptersSpan.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.colorTextSecondary)), 0, chaptersSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        sbs.append(chaptersSpan);
+        //sbs.append(chaptersSpan);
         return sbs;
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCover;
-        TextView tvHasNew;
+        BadgeView tvHasNew;
         TextView tvName;
         TextView tvAuthor;
         TextView tvRead;
