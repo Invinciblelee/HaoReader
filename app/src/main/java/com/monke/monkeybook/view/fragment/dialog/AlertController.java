@@ -66,12 +66,10 @@ final class AlertController {
     AppCompatButton mButtonPositive;
     Message mButtonPositiveMessage;
     private CharSequence mPositiveText;
-    private AlertDialog.OnClickListener mPositiveClickListener;
 
     AppCompatButton mButtonNegative;
     Message mButtonNegativeMessage;
     private CharSequence mNegativeText;
-    private AlertDialog.OnClickListener mNegativeClickListener;
 
     FrameLayout mContentFrame;
 
@@ -361,7 +359,6 @@ final class AlertController {
         switch (whichButton) {
             case AlertDialog.BUTTON_POSITIVE:
                 mPositiveText = text;
-                mPositiveClickListener = listener;
                 mButtonPositiveMessage = msg;
                 if (mButtonPositive != null) {
                     mButtonPositive.setText(mPositiveText);
@@ -375,7 +372,6 @@ final class AlertController {
                 break;
             case AlertDialog.BUTTON_NEGATIVE:
                 mNegativeText = text;
-                mNegativeClickListener = listener;
                 mButtonNegativeMessage = msg;
                 if (mButtonNegative != null) {
                     mButtonNegative.setText(mNegativeText);

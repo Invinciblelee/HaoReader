@@ -5,8 +5,6 @@ import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.utils.StringUtils;
 
-import retrofit2.Response;
-
 public class SimpleJavaExecutorImpl implements SimpleJavaExecutor {
 
     public SimpleJavaExecutorImpl() {
@@ -16,9 +14,7 @@ public class SimpleJavaExecutorImpl implements SimpleJavaExecutor {
     public final String ajax(String urlStr) {
         try {
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(StringUtils.getBaseUrl(urlStr), urlStr);
-            Response<String> response = SimpleModel.getResponse(analyzeUrl)
-                    .blockingFirst();
-            return response.body();
+            return SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
         } catch (Exception e) {
             return e.getLocalizedMessage();
         }
