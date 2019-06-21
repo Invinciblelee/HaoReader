@@ -1371,7 +1371,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         new CheckAddShelfPop.OnItemClickListener() {
                             @Override
                             public void clickExit() {
-                                mPresenter.removeFromShelf();
+                                finish();
                             }
 
                             @Override
@@ -1529,9 +1529,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             mHandler.removeCallbacks(mScreenOnRunnable);
         }
         super.onDestroy();
-        if (mPresenter.inBookShelf()) {
-            readBookControl.setLastNoteUrl(mPresenter.getBookShelf().getNoteUrl());
-        }
         if (batInfoReceiver != null) {
             unregisterReceiver(batInfoReceiver);
             batInfoReceiver = null;

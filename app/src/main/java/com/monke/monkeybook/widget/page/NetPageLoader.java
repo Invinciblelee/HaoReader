@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -62,6 +63,7 @@ public class NetPageLoader extends PageLoader {
             }
             WebBookModel.getInstance().getChapterList(getCollBook())
                     .subscribeOn(Schedulers.single())
+                    .timeout(60, TimeUnit.SECONDS)
                     .doAfterNext(bookShelfBean -> {
                         // 存储章节到数据库
                         bookShelfBean.setHasUpdate(false);
@@ -96,7 +98,6 @@ public class NetPageLoader extends PageLoader {
 
                         @Override
                         public void onError(Throwable e) {
-                            e.printStackTrace();
                             if (!NetworkUtil.isNetworkAvailable()) {
                                 setCurrentStatus(STATUS_NETWORK_ERROR);
                             } else {

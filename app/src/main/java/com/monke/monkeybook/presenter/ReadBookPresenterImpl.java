@@ -2,6 +2,7 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
@@ -64,7 +66,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             bookShelf = dataManager.getData("bookShelf", null);
             if (bookShelf != null) {
                 mView.prepareDisplay();
-                checkShowMenu();
+                prepareSync();
             } else {
                 mView.finish();
             }
@@ -73,12 +75,11 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             String key = intent.getStringExtra("data_key");
             bookShelf = BitIntentDataManager.getInstance().getData(key, null);
             BitIntentDataManager.getInstance().cleanData(key);
-
             if (bookShelf == null) {
                 mView.finish();
             } else {
                 mView.prepareDisplay();
-                checkShowMenu();
+                prepareSync();
             }
         }
     }
@@ -308,7 +309,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 });
     }
 
-    private void checkShowMenu() {
+    private void prepareSync() {
         if (TextUtils.equals(bookShelf.getTag(), Default716.TAG)
                 || bookShelf.isLocalBook()) {
             mView.upMenu();
@@ -334,6 +335,11 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         }
                     });
         }
+        AsyncTask.execute(() -> {
+            if (inBookShelf()) {
+                ReadBookControl.getInstance().setLastNoteUrl(getBookShelf().getNoteUrl());
+            }
+        });
     }
 
     @Override
@@ -398,30 +404,6 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                         @Override
                         public void onError(Throwable e) {
-                        }
-                    });
-        }
-    }
-
-    @Override
-    public void removeFromShelf() {
-        if (bookShelf != null) {
-            Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-                BookshelfHelp.removeFromBookShelf(bookShelf);
-                e.onNext(true);
-                e.onComplete();
-            }).subscribeOn(Schedulers.single())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SimpleObserver<Boolean>() {
-                        @Override
-                        public void onNext(Boolean aBoolean) {
-                            RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
-                            mView.finish();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
                         }
                     });
         }

@@ -71,8 +71,6 @@ public interface ReadBookContract {
 
         void addToShelf(final ReadBookPresenterImpl.OnAddListener addListener);
 
-        void removeFromShelf();
-
         void handleIntent(android.content.Intent intent);
 
         void checkBookInfo();
