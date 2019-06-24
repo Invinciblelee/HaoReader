@@ -124,7 +124,6 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         mView.hideProgress();
                     }
                 });

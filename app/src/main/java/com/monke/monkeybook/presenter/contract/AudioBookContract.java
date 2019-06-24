@@ -32,8 +32,6 @@ public interface AudioBookContract {
         void sortBookShelf();
 
         void toast(String msg);
-
-        void refreshFinish();
     }
 
 }

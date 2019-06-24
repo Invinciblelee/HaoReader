@@ -288,11 +288,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 }
             }
         } else {
-            if (!isImmersionBarEnabled()) {
-                mImmersionBar.statusBarDarkFont(false);
-            } else if (readBookControl.getDarkStatusIcon()) {
+            if (readBookControl.getDarkStatusIcon()) {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
-            } else {
+            }else {
                 mImmersionBar.statusBarDarkFont(false);
             }
 

@@ -36,6 +36,7 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
@@ -234,11 +235,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             }
         }
 
-        if(!AppActivityManager.getInstance().isExist(AudioBookActivity.class)){
-            finishByAnim(R.anim.anim_alpha_in, R.anim.anim_right_out);
-        }else {
-            supportFinishAfterTransition();
-        }
+        supportFinishAfterTransition();
     }
 
     @Override

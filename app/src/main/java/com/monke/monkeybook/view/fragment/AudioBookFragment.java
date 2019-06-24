@@ -1,15 +1,14 @@
-package com.monke.monkeybook.view.activity;
+package com.monke.monkeybook.view.fragment;
 
 import android.animation.ValueAnimator;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +22,7 @@ import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
+import com.monke.basemvplib.BaseFragment;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.AudioPlayInfo;
@@ -32,22 +32,19 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.AudioBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.AudioBookContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.utils.ToastUtils;
+import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
+import com.monke.monkeybook.view.activity.BookDetailActivity;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.CircleProgressBar;
-import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter> implements AudioBookContract.View, SwipeRefreshLayout.OnRefreshListener {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout refreshLayout;
+public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter> implements AudioBookContract.View {
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
     @BindView(R.id.iv_image_cover)
@@ -68,18 +65,15 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         return new AudioBookPresenterImpl();
     }
 
-    @Override
-    protected void onCreateActivity() {
-        setContentView(R.layout.activity_audio_book);
-    }
 
     @Override
-    protected void initData() {
+    protected View createView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.fragment_audio_book, container, false);
     }
 
     @Override
     protected void bindView() {
-        ButterKnife.bind(this);
+        ButterKnife.bind(this, view);
         setCoverImage(null);
 
         rvBookshelf.setHasFixedSize(true);
@@ -97,27 +91,26 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         }
 
         rvBookshelf.setAdapter(bookListAdapter);
-        refreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     protected void bindEvent() {
-        ivCover.setOnClickListener(v -> AudioBookPlayActivity.startThis(AudioBookActivity.this, v, null));
+        ivCover.setOnClickListener(v -> AudioBookPlayActivity.startThis((MBaseActivity) getActivity(), v, null));
 
 
         btnPause.setOnClickListener(v -> {
-            AudioBookPlayActivity.startThis(this, ivCover, null);
+            AudioBookPlayActivity.startThis((MBaseActivity) getActivity(), ivCover, null);
         });
 
         bookListAdapter.setItemClickListener(new OnBookItemClickListenerTwo() {
             @Override
             public void onClick(View view, BookShelfBean bookShelf) {
-                AudioBookPlayActivity.startThis(AudioBookActivity.this, ivCover, bookShelf);
+                AudioBookPlayActivity.startThis((MBaseActivity) getActivity(), ivCover, bookShelf);
             }
 
             @Override
             public void onLongClick(View view, BookShelfBean bookShelf) {
-                BookDetailActivity.startThis(AudioBookActivity.this, bookShelf);
+                BookDetailActivity.startThis((MBaseActivity) getActivity(), bookShelf);
             }
         });
     }
@@ -127,7 +120,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
         RxBus.get().register(this);
         if (AudioBookPlayService.running) {
             runningView.setVisibility(View.VISIBLE);
-            AudioBookPlayService.start(this);
+            AudioBookPlayService.start(getContext());
         } else {
             runningView.setVisibility(View.INVISIBLE);
         }
@@ -136,28 +129,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     }
 
     @Override
-    protected void setupActionBar() {
-        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
-        this.setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.audio_book);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         stopRotationAnim();
         RxBus.get().unregister(this);
@@ -196,12 +168,6 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     }
 
     @Override
-    public void onRefresh() {
-        refreshLayout.stopRefreshing();
-        mPresenter.loadAudioBooks(true);
-    }
-
-    @Override
     public void showAudioBooks(List<BookShelfBean> bookShelfBeans) {
         boolean isEmptyBefore = bookListAdapter.getItemCount() == 0;
 
@@ -235,8 +201,8 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     }
 
     @Override
-    public void refreshFinish() {
-        refreshLayout.stopRefreshing();
+    public void toast(String msg) {
+        ToastUtils.toast(requireContext(), msg);
     }
 
     private void startRotationAnim() {
@@ -268,6 +234,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     private void setResume() {
         btnPause.setSelected(true);
         btnPause.setImageDrawable(null);
+        runningView.setVisibility(View.VISIBLE);
         startRotationAnim();
     }
 
@@ -288,7 +255,7 @@ public class AudioBookActivity extends MBaseActivity<AudioBookContract.Presenter
     }
 
     private void setCoverImage(String image) {
-        Glide.with(AudioBookActivity.this).load(image)
+        Glide.with(AudioBookFragment.this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
                         .transforms(new CenterCrop(), new CircleCrop())
                         .error(R.drawable.img_cover_default)

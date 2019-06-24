@@ -48,7 +48,7 @@ public class AppCompat {
         searchText.setTextSize(14f);
         searchText.setPaddingRelative(searchText.getPaddingLeft(), 0, 0, 0);
 
-        final int textSize = (int) (searchText.getTextSize() * DRAWABLE_SCALE);
+        final int textSize = Math.round(searchText.getTextSize() * DRAWABLE_SCALE);
         Drawable searchIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
         searchIcon.setBounds(0, 0, textSize, textSize);
         setTint(searchIcon, normalColor);
@@ -62,8 +62,8 @@ public class AppCompat {
 
         LinearLayout plate = searchView.findViewById(R.id.search_plate);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) plate.getLayoutParams();
-        params.topMargin = ScreenUtils.dpToPx(7);
-        params.bottomMargin = ScreenUtils.dpToPx(7);
+        params.topMargin = ScreenUtils.dpToPx(5);
+        params.bottomMargin = ScreenUtils.dpToPx(5);
         plate.setLayoutParams(params);
 
         plate.setPaddingRelative(ScreenUtils.dpToPx(6), 0, ScreenUtils.dpToPx(6), 0);
@@ -101,7 +101,7 @@ public class AppCompat {
     public static void setQueryHintForSearchText(SearchView.SearchAutoComplete searchText, String hintText, boolean showIcon) {
         searchText.setTextColor(searchText.getResources().getColor(R.color.colorBarText));
         if (showIcon) {
-            final int textSize = (int) (searchText.getTextSize() * DRAWABLE_SCALE);
+            final int textSize = Math.round(searchText.getTextSize() * DRAWABLE_SCALE);
             Drawable mSearchHintIcon = searchText.getResources().getDrawable(R.drawable.ic_search_black_24dp);
             mSearchHintIcon.setBounds(0, 0, textSize, textSize);
             setTint(mSearchHintIcon, Color.GRAY);

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">阅读</string>
-    <string name="search_label">阅读·搜索</string>
+    <string name="app_name">皓阅</string>
+    <string name="search_label">皓阅·搜索</string>
     <string name="last_read">最后阅读</string>
     <string name="read_summary">让阅读成为一种习惯</string>
     <string name="update_log">更新日志</string>
@@ -294,7 +294,7 @@
     <string name="swap_vert">倒序-顺序</string>
     <string name="download_cover">下载封面</string>
     <string name="download_cover_s">长按图片可下载该图片</string>
-    <string name="sort">排序</string>
+    <string name="sort">书源排序</string>
     <string name="sort_auto">智能排序</string>
     <string name="sort_manual">手动排序</string>
     <string name="sort_ping_yin">拼音排序</string>
@@ -322,4 +322,6 @@
     <string name="web_menu">Web服务</string>
     <string name="web_edit_source">Web编辑书源</string>
     <string name="http_ip">http://%s:%d</string>
+    <string name="more_category">更多</string>
+    <string name="bookshelf">书架</string>
 </resources>

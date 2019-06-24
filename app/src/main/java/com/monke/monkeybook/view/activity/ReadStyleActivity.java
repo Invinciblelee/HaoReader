@@ -88,7 +88,11 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
 
     @Override
     public void initImmersionBar() {
-        mImmersionBar.transparentStatusBar();
+        if (isImmersionBarEnabled()) {
+            mImmersionBar.transparentStatusBar();
+        } else {
+            mImmersionBar.statusBarColor(R.color.colorStatusBar);
+        }
 
         mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 

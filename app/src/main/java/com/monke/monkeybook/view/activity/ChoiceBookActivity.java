@@ -3,6 +3,7 @@ package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,9 +18,10 @@ import com.monke.monkeybook.presenter.ChoiceBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 import com.monke.monkeybook.utils.NetworkUtil;
 import com.monke.monkeybook.view.adapter.ChoiceBookAdapter;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.refreshview.OnLoadMoreListener;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
+import com.monke.monkeybook.widget.theme.AppCompat;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.List;
 
@@ -29,6 +31,8 @@ import butterknife.ButterKnife;
 public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Presenter> implements ChoiceBookContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tab_layout)
+    SmartTabLayout tabLayout;
     @BindView(R.id.rfRv_search_books)
     RefreshRecyclerView rfRvSearchBooks;
 
@@ -88,6 +92,13 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(mPresenter.getTitle());
         }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_choice_book_activity, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     //菜单

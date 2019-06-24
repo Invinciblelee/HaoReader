@@ -207,7 +207,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setTitle(R.string.action_search);
         }
     }
 

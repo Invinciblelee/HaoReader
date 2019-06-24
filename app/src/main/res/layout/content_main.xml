@@ -21,52 +21,80 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:transitionName="sharedView"
+            app:title="@string/search_label"
+            app:titleTextColor="@color/colorMenuText"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp">
 
                 <com.monke.monkeybook.widget.ScaleDrawableTextView
                     android:id="@+id/tv_search_field"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="7dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:background="@drawable/bg_search_field"
-                    android:drawablePadding="5dp"
+                    android:drawablePadding="10dp"
                     android:gravity="center_vertical"
                     android:includeFontPadding="false"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/search_label"
+                    android:drawableStart="@drawable/ic_search_black_24dp"
+                    app:drawableSize="0dp"
                     app:drawableScale="1.05"
-                    app:drawableStartCompat="@drawable/ic_search_black_24dp"
                     app:drawableTint="@color/white" />
             </FrameLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
 
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="260dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            app:tabIconTint="@color/colorBarText"
+            app:tabIndicatorColor="@color/colorBarText"
+            app:tabIndicatorFullWidth="true"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorBarText"
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Tab">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_library_books_black_24dp"
+                android:text="@string/bookshelf" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_track_changes_black_24dp"
+                android:text="@string/find_on_www" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_audio_book_black_24dp"
+                android:text="@string/item_group_ys" />
+        </com.google.android.material.tabs.TabLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/book_list_frame"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        tools:visibility="gone" />
 
-
-    <include
-        android:id="@+id/book_shelf_menu"
-        layout="@layout/view_floating_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

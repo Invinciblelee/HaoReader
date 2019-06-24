@@ -45,7 +45,9 @@ public class BookShelfSearchView extends LinearLayout {
 
     public BookShelfSearchView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initView(context);
+        if(!isInEditMode()) {
+            initView(context);
+        }
     }
 
     @Override

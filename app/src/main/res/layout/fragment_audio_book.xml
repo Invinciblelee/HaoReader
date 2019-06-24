@@ -6,38 +6,14 @@
     android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stateListAnimator="@animator/design_topbar_state_list_animator"
-        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-
-    <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bookshelf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_bookshelf"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="4dp"
-            android:paddingBottom="66dp" />
-    </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="66dp" />
 
     <FrameLayout
         android:id="@+id/view_audio_running"

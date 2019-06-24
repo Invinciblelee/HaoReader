@@ -78,7 +78,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Activity.Search"
-            android:windowSoftInputMode="stateHidden|adjustNothing">
+            android:windowSoftInputMode="stateVisible|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -175,7 +175,7 @@
             android:theme="@style/AppTheme.Activity" />
 
         <activity
-            android:name=".view.activity.AudioBookActivity"
+            android:name=".view.fragment.AudioBookFragment"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

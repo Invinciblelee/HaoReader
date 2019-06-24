@@ -59,7 +59,6 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
     @Override
     public void onRefreshFinish() {
         mView.sortBookShelf();
-        mView.refreshFinish();
     }
 
     @Override
