@@ -6,7 +6,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.model.WebBookModel;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 
 import java.io.BufferedReader;
 import java.io.File;

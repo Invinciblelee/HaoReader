@@ -23,7 +23,7 @@ import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainBookListFragment extends BaseFragment {
+public class MainBookListFragment extends BaseFragment implements Refreshable{
 
     private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj,
             R.string.item_group_bd, R.string.item_group_ys, R.string.item_group_mh};
@@ -99,14 +99,6 @@ public class MainBookListFragment extends BaseFragment {
         }
         upGroup(bookShelfBean.getGroup());
         bookShelfMenu.setSelection(this.group);
-    }
-
-    public void restoreSuccess() {
-        for (BookListFragment fragment : fragments) {
-            if (fragment != null) {
-                fragment.refreshBookShelf(false);
-            }
-        }
     }
 
     public void clearBookshelf() {
@@ -187,5 +179,22 @@ public class MainBookListFragment extends BaseFragment {
             return ((MainActivity) getActivity()).getAdapterListener();
         }
         return null;
+    }
+
+    @Override
+    public void onRefresh() {
+        BookListFragment current = fragments[group];
+        if (current != null) {
+            current.refreshBookShelf(true);
+        }
+    }
+
+    @Override
+    public void onRestore() {
+        for (BookListFragment fragment : fragments) {
+            if (fragment != null) {
+                fragment.refreshBookShelf(false);
+            }
+        }
     }
 }

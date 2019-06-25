@@ -19,10 +19,9 @@ import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.RxBusTag;
-import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;

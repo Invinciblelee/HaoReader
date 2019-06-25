@@ -9,7 +9,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.ContextHolder;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.BookSourceManager;
@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import retrofit2.Response;
 

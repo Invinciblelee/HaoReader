@@ -16,7 +16,7 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.IOUtils;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.BufferedReader;

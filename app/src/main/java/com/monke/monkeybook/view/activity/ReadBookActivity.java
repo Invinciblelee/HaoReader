@@ -84,7 +84,7 @@ import butterknife.ButterKnife;
 import static com.monke.monkeybook.service.ReadAloudService.NEXT;
 import static com.monke.monkeybook.service.ReadAloudService.PAUSE;
 import static com.monke.monkeybook.service.ReadAloudService.PLAY;
-import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
+import static com.monke.basemvplib.NetworkUtil.isNetworkAvailable;
 import static com.monke.monkeybook.utils.ScreenBrightnessUtil.getScreenBrightness;
 import static com.monke.monkeybook.utils.ScreenBrightnessUtil.setScreenBrightness;
 

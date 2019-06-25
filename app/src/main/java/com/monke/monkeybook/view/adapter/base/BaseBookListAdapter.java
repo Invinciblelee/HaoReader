@@ -61,13 +61,13 @@ public abstract class BaseBookListAdapter<VH extends RecyclerView.ViewHolder> ex
         this.itemClickListener = itemClickListener;
     }
 
-    protected void onClick(View view, BookShelfBean bookShelf) {
+    protected void callOnItemClick(View view, BookShelfBean bookShelf) {
         if (itemClickListener != null) {
             itemClickListener.onClick(view, bookShelf);
         }
     }
 
-    protected void onLongClick(View view, BookShelfBean bookShelf) {
+    protected void callOnItemLongClick(View view, BookShelfBean bookShelf) {
         if (itemClickListener != null) {
             itemClickListener.onLongClick(view, bookShelf);
         }

@@ -9,7 +9,6 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,7 +26,6 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.AudioBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.AudioBookContract;
@@ -35,7 +33,7 @@ import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 import com.monke.monkeybook.view.activity.BookDetailActivity;
-import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
+import com.monke.monkeybook.view.adapter.AudioBookAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.widget.CircleProgressBar;
 
@@ -44,7 +42,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter> implements AudioBookContract.View {
+public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter> implements AudioBookContract.View, Refreshable {
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
     @BindView(R.id.iv_image_cover)
@@ -58,7 +56,7 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
 
     private ValueAnimator animator;
 
-    private BookShelfListAdapter bookListAdapter;
+    private AudioBookAdapter bookListAdapter;
 
     @Override
     protected AudioBookContract.Presenter initInjector() {
@@ -78,17 +76,8 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
 
         rvBookshelf.setHasFixedSize(true);
 
-        int bookPx = mPresenter.getBookshelfPx();
-        bookListAdapter = new BookShelfListAdapter(getContext(), 4, bookPx);
+        bookListAdapter = new AudioBookAdapter(getContext());
         rvBookshelf.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        if (bookPx == 2) {
-            MyItemTouchHelpCallback itemTouchHelpCallback = new MyItemTouchHelpCallback();
-            itemTouchHelpCallback.setDragEnable(true);
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelpCallback);
-            itemTouchHelper.attachToRecyclerView(rvBookshelf);
-            itemTouchHelpCallback.setOnItemTouchCallbackListener(bookListAdapter.getItemTouchCallbackListener());
-        }
 
         rvBookshelf.setAdapter(bookListAdapter);
     }
@@ -97,10 +86,7 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
     protected void bindEvent() {
         ivCover.setOnClickListener(v -> AudioBookPlayActivity.startThis((MBaseActivity) getActivity(), v, null));
 
-
-        btnPause.setOnClickListener(v -> {
-            AudioBookPlayActivity.startThis((MBaseActivity) getActivity(), ivCover, null);
-        });
+        btnPause.setOnClickListener(v -> AudioBookPlayActivity.startThis((MBaseActivity) getActivity(), ivCover, null));
 
         bookListAdapter.setItemClickListener(new OnBookItemClickListenerTwo() {
             @Override
@@ -262,5 +248,15 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
                         .placeholder(R.drawable.img_cover_default)
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                 .into(ivCover);
+    }
+
+    @Override
+    public void onRefresh() {
+        mPresenter.loadAudioBooks(true);
+    }
+
+    @Override
+    public void onRestore() {
+        mPresenter.loadAudioBooks(false);
     }
 }

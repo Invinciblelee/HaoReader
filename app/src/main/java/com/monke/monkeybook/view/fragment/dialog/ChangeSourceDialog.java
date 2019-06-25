@@ -28,7 +28,7 @@ import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtils;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;

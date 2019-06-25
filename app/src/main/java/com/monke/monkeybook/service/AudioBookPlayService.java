@@ -43,7 +43,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.AudioBookPlayModelImpl;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import com.monke.monkeybook.utils.DensityUtil;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 

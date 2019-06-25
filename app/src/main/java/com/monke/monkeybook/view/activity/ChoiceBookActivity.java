@@ -16,7 +16,7 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.presenter.ChoiceBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.view.adapter.ChoiceBookAdapter;
 import com.monke.monkeybook.widget.refreshview.OnLoadMoreListener;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;

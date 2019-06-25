@@ -91,13 +91,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.FindBookActivity"
-            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Activity"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
             android:name=".view.activity.ChoiceBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
@@ -175,13 +168,6 @@
             android:theme="@style/AppTheme.Activity" />
 
         <activity
-            android:name=".view.fragment.AudioBookFragment"
-            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Activity" />
-
-        <activity
             android:name=".view.activity.AudioBookPlayActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
@@ -221,7 +207,7 @@
         <service android:name=".service.ReadAloudService" />
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.AudioBookPlayService" />
-		 <service android:name=".service.WebService" />
+        <service android:name=".service.WebService" />
 
         <receiver android:name=".service.MediaButtonIntentReceiver">
             <intent-filter>
@@ -242,12 +228,11 @@
         <!--适配华为（huawei）刘海屏-->
         <meta-data
             android:name="android.notch_support"
-            android:value="true"/>
+            android:value="true" />
         <!--适配小米（xiaomi）刘海屏-->
         <meta-data
             android:name="notch.config"
             android:value="portrait|landscape" />
-
     </application>
 
 </manifest>

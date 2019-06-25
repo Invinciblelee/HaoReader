@@ -1,4 +1,3 @@
-//Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
@@ -21,33 +20,30 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
-import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.view.adapter.base.BaseBookListAdapter;
 import com.monke.monkeybook.widget.RotateLoading;
 
-import java.util.List;
 import java.util.Locale;
 
-public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapter.MyViewHolder> {
+public class AudioBookAdapter extends BaseBookListAdapter<AudioBookAdapter.MyViewHolder> {
 
-    public BookShelfListAdapter(Context context, int group, int bookPx) {
-        super(context, group, bookPx);
+    private final LayoutInflater mInflater;
+
+    public AudioBookAdapter(Context context) {
+        super(context, 4, 0);
+        mInflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bookshelf_list, parent, false));
+        return new MyViewHolder(mInflater.inflate(R.layout.item_audio_book, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        BookShelfBean item = getItem(holder.getLayoutPosition());
 
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
-        final BookShelfBean item = getItem(holder.getLayoutPosition());
         Glide.with(getContext()).load(item.getBookInfoBean().getRealCoverUrl())
                 .apply(new RequestOptions().dontAnimate()
                         .centerCrop().placeholder(R.drawable.img_cover_default)
@@ -64,31 +60,15 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
 
         String durChapterName = item.getDurChapterName();
         if (TextUtils.isEmpty(durChapterName)) {
-            String bookType = item.getBookInfoBean().getBookType();
-            holder.tvRead.setText(getContext().getString(TextUtils.equals(bookType, BookType.AUDIO) ?
-                    R.string.play_dur_progress : R.string.read_dur_progress, getContext().getString(R.string.text_placeholder)));
+            holder.tvRead.setText(getContext().getString(R.string.play_dur_progress, getContext().getString(R.string.text_placeholder)));
         } else {
-            holder.tvRead.setText(durChapterName);
-        }
-        String lastChapterName = item.getLastChapterName();
-        if (TextUtils.isEmpty(lastChapterName)) {
-            holder.tvLast.setText(getContext().getString(R.string.book_search_last, getContext().getString(R.string.text_placeholder)));
-        } else {
-            holder.tvLast.setText(lastChapterName);
-        }
-
-        holder.content.setOnClickListener(v -> callOnItemClick(v, item));
-
-        if (getBookshelfPx() == 2) {
-            holder.ivCover.setClickable(true);
-            holder.ivCover.setOnClickListener(v -> callOnItemLongClick(v, item));
-            holder.content.setOnLongClickListener(null);
-        } else {
-            holder.ivCover.setClickable(false);
-            holder.content.setOnLongClickListener(v -> {
-                callOnItemLongClick(v, item);
-                return true;
-            });
+            final String durProgress;
+            if (item.getChapterListSize() != 0) {
+                durProgress = String.format(Locale.getDefault(), "%s(%d/%d)", getContext().getString(R.string.play_dur_progress, durChapterName), item.getDurChapter() == 0 ? 1 : item.getDurChapter(), item.getChapterListSize());
+            } else {
+                durProgress = getContext().getString(R.string.play_dur_progress, durChapterName);
+            }
+            holder.tvRead.setText(durProgress);
         }
 
         if (item.isFlag()) {
@@ -102,6 +82,13 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         } else {
             holder.tvHasNew.setVisibility(View.INVISIBLE);
         }
+
+        holder.content.setOnClickListener(v -> callOnItemClick(v, item));
+
+        holder.content.setOnLongClickListener(v -> {
+            callOnItemLongClick(v, item);
+            return true;
+        });
 
     }
 
@@ -117,26 +104,27 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         return sbs;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+
+    static class MyViewHolder extends RecyclerView.ViewHolder {
+
         ImageView ivCover;
-        TextView tvHasNew;
         TextView tvName;
         TextView tvAuthor;
         TextView tvRead;
-        TextView tvLast;
         RotateLoading rotateLoading;
-        public View content;
+        TextView tvHasNew;
+        View content;
 
-        MyViewHolder(View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
             ivCover = itemView.findViewById(R.id.iv_cover);
-            tvHasNew = itemView.findViewById(R.id.tv_has_new);
             tvName = itemView.findViewById(R.id.tv_name);
             tvAuthor = itemView.findViewById(R.id.tv_author);
             tvRead = itemView.findViewById(R.id.tv_read);
-            tvLast = itemView.findViewById(R.id.tv_last);
             rotateLoading = itemView.findViewById(R.id.rl_loading);
+            tvHasNew = itemView.findViewById(R.id.tv_has_new);
             content = itemView.findViewById(R.id.content_card);
         }
     }
+
 }

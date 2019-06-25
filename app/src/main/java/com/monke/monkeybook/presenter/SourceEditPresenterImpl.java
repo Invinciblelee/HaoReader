@@ -5,27 +5,22 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.DbHelper;
+import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
+import com.monke.monkeybook.utils.MD5Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Hashtable;
 import java.util.Objects;
 
 import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder;
@@ -54,6 +49,16 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             BookSourceManager.add(bookSource);
             e.onNext(true);
         }).subscribeOn(Schedulers.single())
+                .doAfterNext(aBoolean -> {
+                    if (aBoolean) {
+                        try {
+                            ACache cache = ACache.get(mView.getContext());
+                            cache.remove(bookSource.getBookSourceUrl());
+                            cache.remove(MD5Utils.strToMd5By16(bookSource.getBookSourceUrl()));
+                        } catch (Exception ignore) {
+                        }
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override

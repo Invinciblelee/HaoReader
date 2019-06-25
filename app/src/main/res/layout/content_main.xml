@@ -59,7 +59,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="260dp"
-            android:layout_height="50dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
             app:tabIconTint="@color/colorBarText"
             app:tabIndicatorColor="@color/colorBarText"

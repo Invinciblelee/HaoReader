@@ -24,7 +24,6 @@ import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
-import com.monke.basemvplib.AppActivityManager;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
@@ -36,7 +35,6 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
-import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
@@ -52,7 +50,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
+import static com.monke.basemvplib.NetworkUtil.isNetworkAvailable;
 
 public class AudioBookPlayActivity extends MBaseActivity implements View.OnClickListener, AudioChapterPop.OnChapterSelectListener, AudioTimerPop.OnTimeSelectListener {
 

@@ -4,12 +4,16 @@ package com.monke.monkeybook.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -43,6 +47,7 @@ import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.FindBookFragment;
 import com.monke.monkeybook.view.fragment.MainBookListFragment;
+import com.monke.monkeybook.view.fragment.Refreshable;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
@@ -151,9 +156,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
-            if (tab != null) {
-                tab.setCustomView(newTabView(tab));
-            }
+            setCustomView(tab);
         }
 
         viewPager.setOffscreenPageLimit(3);
@@ -188,13 +191,47 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     }
 
-    private View newTabView(TabLayout.Tab tab) {
-        @SuppressLint("InflateParams") View tabView = getLayoutInflater().inflate(R.layout.item_home_tab, null);
-        TextView text = tabView.findViewById(R.id.text);
-        ImageView icon = tabView.findViewById(R.id.icon);
+    private void setCustomView(TabLayout.Tab tab) {
+        if(tab == null) return;
+        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.item_home_tab, null);
+        TextView text = view.findViewById(R.id.text);
+        ImageView icon = view.findViewById(R.id.icon);
         text.setText(tab.getText());
         icon.setImageDrawable(tab.getIcon());
-        return tabView;
+        icon.setTag(tab.getIcon());
+        tab.setCustomView(view);
+        if(tab.getCustomView() != null) {
+            View tabView = (View) tab.getCustomView().getParent();
+            tabView.setOnLongClickListener(v -> onTabLongClick(tab));
+        }
+    }
+
+    private boolean onTabLongClick(TabLayout.Tab tab) {
+        if (tab.isSelected()) {
+            Refreshable refreshable = null;
+            switch (tab.getPosition()) {
+                case 0:
+                    refreshable = findFragment(MainBookListFragment.class);
+                    break;
+                case 1:
+                    refreshable = findFragment(FindBookFragment.class);
+                    break;
+                case 2:
+                    refreshable = findFragment(AudioBookFragment.class);
+                    break;
+            }
+
+            if (refreshable != null) {
+                refreshable.onRefresh();
+            }
+
+            Optional.ofNullable(tab.getCustomView()).ifPresent(view -> {
+                ImageView imageView = view.findViewById(R.id.icon);
+                startRefreshAnim(imageView);
+            });
+            return true;
+        }
+        return false;
     }
 
     public OnBookItemClickListenerTwo getAdapterListener() {
@@ -440,10 +477,49 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
     }
 
+    private void startRefreshAnim(ImageView imageView) {
+        if (imageView == null) {
+            return;
+        }
+        Animation animation = imageView.getAnimation();
+        if (animation != null && animation.hasStarted() && !animation.hasEnded()) {
+            return;
+        }
+        imageView.setImageResource(R.drawable.ic_refresh_white_24dp);
+        AnimationSet animationSet = new AnimationSet(true);
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(1000);
+        animationSet.addAnimation(rotateAnimation);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imageView.setImageDrawable((Drawable) imageView.getTag());
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        imageView.startAnimation(animationSet);
+    }
+
     private MainBookListFragment findMainBookListFragment() {
+        return findFragment(MainBookListFragment.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Fragment> T findFragment(Class<T> clazz) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            if (fragment instanceof MainBookListFragment) {
-                return (MainBookListFragment) fragment;
+            if (fragment.getClass().equals(clazz)) {
+                return (T) fragment;
             }
         }
         return null;
@@ -504,7 +580,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         dismissHUD();
         initImmersionBar();
 
-        Optional.ofNullable(findMainBookListFragment()).ifPresent(MainBookListFragment::restoreSuccess);
+        Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(MainBookListFragment::onRestore);
+        Optional.ofNullable(findFragment(FindBookFragment.class)).ifPresent(FindBookFragment::onRestore);
+        Optional.ofNullable(findFragment(AudioBookFragment.class)).ifPresent(AudioBookFragment::onRestore);
     }
 
     @Override

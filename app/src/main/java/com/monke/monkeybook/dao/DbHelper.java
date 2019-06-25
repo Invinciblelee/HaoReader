@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.github.yuweiguocn.library.greendao.MigrationHelper;
-import com.monke.monkeybook.help.ContextHolder;
+import com.monke.basemvplib.ContextHolder;
 
 import org.greenrobot.greendao.database.Database;
 

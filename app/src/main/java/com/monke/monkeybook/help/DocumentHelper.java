@@ -5,7 +5,7 @@ import android.net.Uri;
 import androidx.documentfile.provider.DocumentFile;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.MApplication;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.utils.DocumentUtil;
 
 import java.io.ByteArrayOutputStream;

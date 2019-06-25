@@ -13,9 +13,6 @@ public interface AudioBookContract {
         void loadAudioBooks(boolean refresh);
 
         boolean getNeedAnim();
-
-        int getBookshelfPx();
-
     }
 
 

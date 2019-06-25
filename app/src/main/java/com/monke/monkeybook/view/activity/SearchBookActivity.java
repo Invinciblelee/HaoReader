@@ -31,7 +31,7 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;

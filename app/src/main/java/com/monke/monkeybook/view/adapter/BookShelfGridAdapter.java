@@ -48,16 +48,16 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
                         .error(R.drawable.img_cover_default))
                 .into(holder.ivCover);
 
-        holder.content.setOnClickListener(v -> onClick(v, item));
+        holder.content.setOnClickListener(v -> callOnItemClick(v, item));
 
         if (getBookshelfPx() == 2) {
             holder.tvName.setClickable(true);
-            holder.tvName.setOnClickListener(v -> onLongClick(v, item));
+            holder.tvName.setOnClickListener(v -> callOnItemLongClick(v, item));
             holder.content.setOnLongClickListener(null);
         } else {
             holder.tvName.setClickable(false);
             holder.content.setOnLongClickListener(v -> {
-                onLongClick(v, item);
+                callOnItemLongClick(v, item);
                 return true;
             });
         }

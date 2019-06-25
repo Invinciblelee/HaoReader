@@ -36,7 +36,7 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
     Toolbar toolbar;
     @BindView(R.id.recycler_view)
     RecyclerView rvList;
-    @BindView(R.id.progressBar)
+    @BindView(R.id.progress_bar)
     ContentLoadingProgressBar progressBar;
 
     private CacheListAdapter adapter;
@@ -158,7 +158,7 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
     }
 
     private void setProgress(int max, int progress) {
-        ProgressBar progressBar = progressDialog.findViewById(R.id.progressBar);
+        ProgressBar progressBar = progressDialog.findViewById(R.id.progress_bar);
         TextView tvPercent = progressDialog.findViewById(R.id.tv_progress_percent);
         TextView tvProgress = progressDialog.findViewById(R.id.tv_progress);
         if (progressBar != null) {

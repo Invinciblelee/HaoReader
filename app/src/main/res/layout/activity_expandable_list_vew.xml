@@ -48,7 +48,7 @@
             android:textSize="16sp" />
 
         <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/progress_bar"
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
