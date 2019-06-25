@@ -21,6 +21,10 @@ public class FindKindGroupBean implements Parcelable {
     public FindKindGroupBean() {
     }
 
+    public FindKindGroupBean(String tag) {
+        this.tag = tag;
+    }
+
     protected FindKindGroupBean(Parcel in) {
         groupName = in.readString();
         tag = in.readString();

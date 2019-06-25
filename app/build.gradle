@@ -152,8 +152,6 @@ dependencies {
 	//webServer
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
-    //TabLayout
-    implementation 'com.ogaclejapan.smarttablayout:library:2.0.0@aar'
 }
 
 greendao {

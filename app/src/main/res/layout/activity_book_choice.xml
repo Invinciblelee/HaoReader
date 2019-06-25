@@ -22,29 +22,21 @@
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <com.ogaclejapan.smarttablayout.SmartTabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            app:stl_defaultTabTextAllCaps="true"
-            app:stl_defaultTabTextColor="@color/colorBarText"
-            app:stl_indicatorAlwaysInCenter="true"
-            app:stl_indicatorColor="@color/colorAccent"
-            app:stl_indicatorWidth="auto"
-            app:stl_underlineColor="@color/colorAccentLight"
-            app:stl_underlineThickness="2dp" />
+            app:tabIndicatorHeight="5dp"
+            app:tabMode="scrollable"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabTextColor="@color/white"
+            app:tabSelectedTextColor="@color/colorAccent"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar">
-
-        <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
-            android:id="@+id/rfRv_search_books"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
+        android:layout_below="@id/appBar"/>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

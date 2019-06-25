@@ -15,13 +15,9 @@ public interface ChoiceBookContract {
         void initPage();
 
         void toSearchBooks(String key);
-
-        String getTitle();
     }
 
     interface View extends IView {
-
-        void initImmersionBar();
 
         void refreshSearchBook(List<SearchBookBean> books);
 
@@ -32,8 +28,6 @@ public interface ChoiceBookContract {
         void loadMoreFinish(Boolean isAll);
 
         void searchBookError();
-
-        void addBookShelfFailed(String massage);
 
         ChoiceBookAdapter getSearchBookAdapter();
     }

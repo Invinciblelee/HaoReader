@@ -9,6 +9,8 @@ import java.util.List;
 public interface FindBookContract {
     interface Presenter extends IPresenter {
         void initData();
+
+        void updateData(String url);
     }
 
     interface View extends IView {

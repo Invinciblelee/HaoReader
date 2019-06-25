@@ -404,7 +404,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             TextView tagView;
             for (SearchHistoryBean searchHistoryBean : historyBeans) {
                 tagView = (TextView) getLayoutInflater().inflate(R.layout.item_search_history, tflSearchHistory, false);
-                tagView.setBackgroundResource(R.drawable.selector_history_tag);
                 tagView.setTag(searchHistoryBean);
                 tagView.setText(searchHistoryBean.getContent());
                 tagView.setOnClickListener(historyItemClick);

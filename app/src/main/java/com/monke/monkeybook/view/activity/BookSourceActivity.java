@@ -28,7 +28,6 @@ import com.monke.monkeybook.help.MyItemTouchHelpCallback;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
-import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
@@ -329,7 +328,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void addBookSource() {
         Intent intent = new Intent(this, SourceEditActivity.class);
-        startActivityForResult(intent, SourceEditActivity.EDIT_SOURCE);
+        startActivityForResult(intent, SourceEditActivity.REQUEST_EDIT_SOURCE);
     }
 
     private void selectBookSourceFile() {
@@ -361,7 +360,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SourceEditActivity.EDIT_SOURCE && resultCode == RESULT_OK) {
+        if (requestCode == SourceEditActivity.REQUEST_EDIT_SOURCE && resultCode == RESULT_OK) {
             mPresenter.refresh();
         }
     }

@@ -22,6 +22,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -39,6 +40,7 @@ import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.popupwindow.KeyboardToolPop;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
@@ -55,10 +57,10 @@ import static android.text.TextUtils.isEmpty;
  */
 
 public class SourceEditActivity extends MBaseActivity<SourceEditContract.Presenter> implements SourceEditContract.View {
-    public final static int EDIT_SOURCE = 1101;
-    public final static int QR_SCAN = 1102;
+    public final static int REQUEST_EDIT_SOURCE = 1101;
+    public final static int REQUEST_QR_SCAN = 1102;
 
-    public static final int POP_TOOL_HEIGHT = 100;
+    private static final int POP_TOOL_HEIGHT = 100;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -207,7 +209,15 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         String key = String.valueOf(System.currentTimeMillis());
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, sourceBean.clone());
-        activity.startActivityForResult(intent, EDIT_SOURCE);
+        activity.startActivityForResult(intent, REQUEST_EDIT_SOURCE);
+    }
+
+    public static void startThis(Fragment fragment, BookSourceBean sourceBean) {
+        Intent intent = new Intent(fragment.requireContext(), SourceEditActivity.class);
+        String key = String.valueOf(System.currentTimeMillis());
+        intent.putExtra("data_key", key);
+        BitIntentDataManager.getInstance().putData(key, sourceBean.clone());
+        fragment.startActivityForResult(intent, REQUEST_EDIT_SOURCE);
     }
 
     @Override
@@ -288,7 +298,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     public void saveSuccess() {
         bookSourceBean = getBookSource();
         toast("保存成功");
-        setResult(RESULT_OK);
+        Intent data = new Intent();
+        data.putExtra("url", bookSourceBean.getBookSourceUrl());
+        data.putExtra("type", StringUtils.isBlank(bookSourceBean.getRuleFindUrl()) ? -1 : 0);
+        setResult(RESULT_OK, data);
         finish();
     }
 
@@ -308,7 +321,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 .rationale("相机/存储")
                 .onGranted(requestCode -> {
                     Intent intent = new Intent(SourceEditActivity.this, QRCodeScanActivity.class);
-                    startActivityForResult(intent, QR_SCAN);
+                    startActivityForResult(intent, REQUEST_QR_SCAN);
                 })
                 .request();
     }
@@ -539,7 +552,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == QR_SCAN && resultCode == RESULT_OK && null != data) {
+        if (requestCode == REQUEST_QR_SCAN && resultCode == RESULT_OK && null != data) {
             String result = data.getStringExtra("result");
             if (!TextUtils.isEmpty(result)) {
                 mPresenter.setText(result);

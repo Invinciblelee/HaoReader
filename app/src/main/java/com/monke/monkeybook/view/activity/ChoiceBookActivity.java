@@ -2,45 +2,46 @@
 package com.monke.monkeybook.view.activity;
 
 import android.annotation.SuppressLint;
-import android.view.LayoutInflater;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.tabs.TabLayout;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
-import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.presenter.ChoiceBookPresenterImpl;
-import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
-import com.monke.basemvplib.NetworkUtil;
-import com.monke.monkeybook.view.adapter.ChoiceBookAdapter;
-import com.monke.monkeybook.widget.refreshview.OnLoadMoreListener;
-import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
+import com.monke.monkeybook.bean.FindKindBean;
+import com.monke.monkeybook.bean.FindKindGroupBean;
+import com.monke.monkeybook.view.fragment.ChoiceBookFragment;
 import com.monke.monkeybook.widget.theme.AppCompat;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Presenter> implements ChoiceBookContract.View {
+public class ChoiceBookActivity extends MBaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tab_layout)
-    SmartTabLayout tabLayout;
-    @BindView(R.id.rfRv_search_books)
-    RefreshRecyclerView rfRvSearchBooks;
+    TabLayout tabLayout;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
 
-    private ChoiceBookAdapter searchBookAdapter;
+    private FindKindGroupBean groupBean;
 
-    @Override
-    protected ChoiceBookContract.Presenter initInjector() {
-        return new ChoiceBookPresenterImpl(getIntent());
+    public static void startThis(MBaseActivity activity, FindKindGroupBean groupBean) {
+        Intent intent = new Intent(activity, ChoiceBookActivity.class)
+                .putExtra("group", groupBean);
+        activity.startActivity(intent);
     }
 
     @Override
@@ -49,18 +50,11 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void initData() {
-        searchBookAdapter = new ChoiceBookAdapter(this);
+        groupBean = getIntent().getParcelableExtra("group");
+        if (groupBean == null) {
+            finish();
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -68,18 +62,10 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     protected void bindView() {
         ButterKnife.bind(this);
 
-        rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
-        int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
-        rfRvSearchBooks.getRecyclerView().setClipToPadding(false);
-        rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
-
-        View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
-        viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
-            searchBookAdapter.replaceAll(null);
-            rfRvSearchBooks.startRefresh();
-        });
-        rfRvSearchBooks.setNoDataAndrRefreshErrorView(LayoutInflater.from(this).inflate(R.layout.view_searchbook_no_data, null),
-                viewRefreshError);
+        if (groupBean != null) {
+            viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), groupBean.getChildren()));
+            tabLayout.setupWithViewPager(viewPager);
+        }
     }
 
     //设置ToolBar
@@ -90,7 +76,7 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(mPresenter.getTitle());
+            actionBar.setTitle(groupBean == null ? null : groupBean.getGroupName());
         }
 
     }
@@ -113,94 +99,32 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void bindEvent() {
-        searchBookAdapter.setItemClickListener(new ChoiceBookAdapter.OnItemClickListener() {
-            @Override
-            public void clickToSearch(View clickView, int position, SearchBookBean searchBookBean) {
-                SearchBookActivity.startByKey(ChoiceBookActivity.this, searchBookBean.getName());
-            }
 
-            @Override
-            public void clickItem(View animView, int position, SearchBookBean searchBookBean) {
-                BookDetailActivity.startThis(ChoiceBookActivity.this, searchBookBean);
-            }
-        });
+    private static class PagerAdapter extends FragmentStatePagerAdapter {
 
-        rfRvSearchBooks.setOnRefreshListener(() -> {
-            mPresenter.initPage();
-            mPresenter.toSearchBooks(null);
-        });
+        private List<FindKindBean> kindBeans;
 
-        rfRvSearchBooks.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void startLoadMore() {
-                mPresenter.toSearchBooks(null);
-            }
-
-            @Override
-            public void loadMoreErrorTryAgain() {
-                mPresenter.toSearchBooks(null);
-            }
-        });
-    }
-
-    @Override
-    public void refreshSearchBook(List<SearchBookBean> books) {
-        searchBookAdapter.replaceAll(books);
-    }
-
-    @Override
-    public void refreshFinish(Boolean isAll) {
-        rfRvSearchBooks.finishRefresh(isAll, true);
-    }
-
-    @Override
-    public void loadMoreFinish(Boolean isAll) {
-        rfRvSearchBooks.finishLoadMore(isAll, true);
-    }
-
-    @Override
-    public void loadMoreSearchBook(final List<SearchBookBean> books) {
-        if (books.isEmpty()) {
-            loadMoreFinish(true);
-            return;
+        PagerAdapter(@NonNull FragmentManager fm, List<FindKindBean> findKindBeans) {
+            super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.kindBeans = findKindBeans;
         }
-        searchBookAdapter.addAll(books);
-        loadMoreFinish(false);
-    }
 
-    @Override
-    public void searchBookError() {
-        if (mPresenter.getPage() > 1) {
-            rfRvSearchBooks.loadMoreError();
-        } else {
-            //刷新失败
-            if (!NetworkUtil.isNetworkAvailable()) {
-                rfRvSearchBooks.refreshError("网络不可用");
-            } else {
-                rfRvSearchBooks.refreshError();
-            }
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            FindKindBean kindBean = kindBeans.get(position);
+            return ChoiceBookFragment.newInstance(kindBean.getTag(), kindBean.getKindUrl());
         }
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+        @Override
+        public int getCount() {
+            return kindBeans == null ? 0 : kindBeans.size();
+        }
 
-    @Override
-    public void addBookShelfFailed(String massage) {
-        toast(massage);
-    }
-
-    @Override
-    public ChoiceBookAdapter getSearchBookAdapter() {
-        return searchBookAdapter;
-    }
-
-    @Override
-    protected void firstRequest() {
-        rfRvSearchBooks.startRefresh();
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return kindBeans.get(position).getKindName();
+        }
     }
 }

@@ -35,10 +35,12 @@ import javax.script.SimpleBindings;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.View> implements FindBookContract.Presenter {
@@ -46,6 +48,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     private static final int THREADS_NUM = 8;
 
     private CompositeDisposable mDisposableMgr;
+    private Disposable mUpdateDispose;
 
     private ExecutorService mExecutor;
 
@@ -70,6 +73,11 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         if (mDisposableMgr != null) {
             mDisposableMgr.dispose();
             mDisposableMgr = null;
+        }
+
+        if(mUpdateDispose != null){
+            mUpdateDispose.dispose();
+            mUpdateDispose = null;
         }
     }
 
@@ -112,6 +120,45 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     @Override
                     public void onError(Throwable e) {
                         mView.hideProgress();
+                    }
+                });
+    }
+
+    @Override
+    public void updateData(String url) {
+        if (StringUtils.isBlank(url)) return;
+        if (mUpdateDispose != null) {
+            mUpdateDispose.dispose();
+        }
+        Observable.just(url)
+                .subscribeOn(Schedulers.single())
+                .flatMap(s -> {
+                    BookSourceBean sourceBean = BookSourceManager.getByUrl(s);
+                    FindKindGroupBean groupBean = getFromBookSource(sourceBean);
+                    if(groupBean == null){
+                        return Observable.error(new Exception("can not get FindKindGroupBean from: " + s));
+                    }
+                    return Observable.just(groupBean);
+                })
+                .flatMap(findKindGroupBean -> {
+                    FindKindBean kindBean = findKindGroupBean.getChildren().get(0);
+                    return WebBookModel.getInstance().findBook(kindBean.getTag(), kindBean.getKindUrl(), 1)
+                            .subscribeOn(getScheduler())
+                            .timeout(30, TimeUnit.SECONDS)
+                            .flatMap(searchBookBeans -> {
+                                findKindGroupBean.setBooks(searchBookBeans);
+                                return Observable.just(findKindGroupBean);
+                            });
+                })
+                .subscribe(new SimpleObserver<FindKindGroupBean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mUpdateDispose = d;
+                    }
+
+                    @Override
+                    public void onNext(FindKindGroupBean findKindGroupBean) {
+                        mView.updateItem(findKindGroupBean);
                     }
                 });
     }
@@ -196,12 +243,12 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         return Schedulers.from(mExecutor);
     }
 
-    private void putJsCache(String tag, String findRule) {
-        ACache.get(mView.getContext()).put(MD5Utils.strToMd5By16(tag), findRule);
+    private void putJsCache(String url, String findRule) {
+        ACache.get(mView.getContext()).put(MD5Utils.strToMd5By16(url), findRule);
     }
 
-    private String getFromJsCache(String tag) {
-        return ACache.get(mView.getContext()).getAsString(MD5Utils.strToMd5By16(tag));
+    private String getFromJsCache(String url) {
+        return ACache.get(mView.getContext()).getAsString(MD5Utils.strToMd5By16(url));
     }
 
     private void putBookCache(FindKindGroupBean groupBean) {
@@ -215,9 +262,9 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         }
     }
 
-    private List<SearchBookBean> getFromBookCache(String tag) {
+    private List<SearchBookBean> getFromBookCache(String url) {
         try {
-            String json = ACache.get(mView.getContext()).getAsString(tag);
+            String json = ACache.get(mView.getContext()).getAsString(url);
             return Assistant.GSON.fromJson(json, new TypeToken<List<SearchBookBean>>() {
             }.getType());
         } catch (Exception ignore) {
@@ -234,48 +281,57 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         }
         final List<FindKindGroupBean> group = new ArrayList<>();
         for (BookSourceBean sourceBean : bookSourceBeans) {
-            String findRule = sourceBean.getRuleFindUrl();
-            if (StringUtils.isBlank(findRule)) {
-                continue;
+
+            FindKindGroupBean groupBean = getFromBookSource(sourceBean);
+            if (groupBean != null) {
+                group.add(groupBean);
             }
 
-            try {
-                boolean isJavaScript = StringUtils.startWithIgnoreCase(sourceBean.getRuleFindUrl(), "<js>");
-                if (isJavaScript) {
-                    String cacheRule = getFromJsCache(sourceBean.getBookSourceUrl());
-                    if (cacheRule != null) {
-                        findRule = cacheRule;
-                    } else {
-                        findRule = evalFindJs(sourceBean.getBookSourceUrl(), findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<")));
-                    }
-                }
-
-                if (findRule != null) {
-                    String[] kindA = findRule.split("(&&|\n)+");
-                    List<FindKindBean> children = new ArrayList<>();
-                    for (String kindB : kindA) {
-                        if (kindB.trim().isEmpty()) continue;
-                        String[] kind = kindB.split("::");
-                        FindKindBean findKindBean = new FindKindBean();
-                        findKindBean.setGroup(sourceBean.getBookSourceName());
-                        findKindBean.setTag(sourceBean.getBookSourceUrl());
-                        findKindBean.setKindName(kind[0]);
-                        findKindBean.setKindUrl(kind[1]);
-                        children.add(findKindBean);
-                    }
-                    FindKindGroupBean groupBean = new FindKindGroupBean();
-                    groupBean.setGroupName(sourceBean.getBookSourceName());
-                    groupBean.setTag(sourceBean.getBookSourceUrl());
-                    groupBean.setChildrenCount(children.size());
-                    groupBean.setChildren(children);
-                    group.add(groupBean);
-                }
-            } catch (Exception ignore) {
-                sourceBean.setBookSourceGroup("发现规则语法错误");
-                BookSourceManager.save(sourceBean);
-            }
         }
         return group;
+    }
+
+    private FindKindGroupBean getFromBookSource(BookSourceBean sourceBean) {
+        String findRule = sourceBean.getRuleFindUrl();
+        if (StringUtils.isBlank(findRule)) {
+            return null;
+        }
+        try {
+            boolean isJavaScript = StringUtils.startWithIgnoreCase(sourceBean.getRuleFindUrl(), "<js>");
+            if (isJavaScript) {
+                String cacheRule = getFromJsCache(sourceBean.getBookSourceUrl());
+                if (cacheRule != null) {
+                    findRule = cacheRule;
+                } else {
+                    findRule = evalFindJs(sourceBean.getBookSourceUrl(), findRule.substring(4, sourceBean.getRuleFindUrl().lastIndexOf("<")));
+                }
+            }
+
+            if (findRule != null) {
+                String[] kindA = findRule.split("(&&|\n)+");
+                List<FindKindBean> children = new ArrayList<>();
+                for (String kindB : kindA) {
+                    if (kindB.trim().isEmpty()) continue;
+                    String[] kind = kindB.split("::");
+                    FindKindBean findKindBean = new FindKindBean();
+                    findKindBean.setGroup(sourceBean.getBookSourceName());
+                    findKindBean.setTag(sourceBean.getBookSourceUrl());
+                    findKindBean.setKindName(kind[0]);
+                    findKindBean.setKindUrl(kind[1]);
+                    children.add(findKindBean);
+                }
+                FindKindGroupBean groupBean = new FindKindGroupBean();
+                groupBean.setGroupName(sourceBean.getBookSourceName());
+                groupBean.setTag(sourceBean.getBookSourceUrl());
+                groupBean.setChildrenCount(children.size());
+                groupBean.setChildren(children);
+                return groupBean;
+            }
+        } catch (Exception ignore) {
+            sourceBean.setBookSourceGroup("发现规则语法错误");
+            BookSourceManager.save(sourceBean);
+        }
+        return null;
     }
 
     private class FindGroupIterator implements Iterator<FindKindGroupBean> {

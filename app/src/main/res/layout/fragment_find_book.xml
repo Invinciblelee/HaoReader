@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_find_book_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:orientation="vertical"
+        android:paddingTop="56dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <androidx.core.widget.ContentLoadingProgressBar
@@ -19,4 +20,44 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-</FrameLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_search_field"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_behavior="com.monke.monkeybook.widget.behavior.HideTopViewOnScrollBehavior"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/ic_search_black_24dp"
+                android:tint="@color/colorMenuText" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edit_find_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="21dp"
+                android:background="@color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/search"
+                android:paddingStart="24dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/colorTextDefault"
+                android:textSize="14sp" />
+
+        </androidx.cardview.widget.CardView>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
