@@ -33,7 +33,7 @@ import com.monke.monkeybook.dao.SearchHistoryBeanDao;
 /**
  * {@inheritDoc}
  * 
- * @see AbstractDaoSession
+ * @see org.greenrobot.greendao.AbstractDaoSession
  */
 public class DaoSession extends AbstractDaoSession {
 

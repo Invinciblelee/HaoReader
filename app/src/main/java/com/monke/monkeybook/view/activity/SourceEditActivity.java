@@ -298,10 +298,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     public void saveSuccess() {
         bookSourceBean = getBookSource();
         toast("保存成功");
-        Intent data = new Intent();
-        data.putExtra("url", bookSourceBean.getBookSourceUrl());
-        data.putExtra("type", StringUtils.isBlank(bookSourceBean.getRuleFindUrl()) ? -1 : 0);
-        setResult(RESULT_OK, data);
+        setResult(bookSourceBean);
         finish();
     }
 
@@ -312,6 +309,13 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 .setPrettyPrinting()
                 .create();
         return gson.toJson(getBookSource());
+    }
+
+    private void setResult(BookSourceBean sourceBean){
+        Intent data = new Intent();
+        data.putExtra("url", sourceBean.getBookSourceUrl());
+        data.putExtra("type", StringUtils.isBlank(sourceBean.getRuleFindUrl()) ? -1 : 0);
+        setResult(RESULT_OK, data);
     }
 
     private void scanBookSource() {
@@ -420,7 +424,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @Override
     public void toDebug(BookSourceBean bookSourceBean) {
         this.bookSourceBean = bookSourceBean;
-        setResult(RESULT_OK);
+        setResult(bookSourceBean);
         SourceDebugActivity.startThis(SourceEditActivity.this, getBookSource().getBookSourceUrl());
     }
 

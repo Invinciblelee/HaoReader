@@ -124,14 +124,19 @@ public class ChoiceBookActivity extends MBaseActivity {
                 toggleCategoryPop();
                 break;
             case android.R.id.home:
-                if (categoryOverlay.isShown()) {
-                    toggleCategoryPop();
-                    break;
-                }
-                finish();
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (categoryOverlay.isShown()) {
+            toggleCategoryPop();
+            return;
+        }
+        finish();
     }
 
     @OnClick(R.id.view_masking)
