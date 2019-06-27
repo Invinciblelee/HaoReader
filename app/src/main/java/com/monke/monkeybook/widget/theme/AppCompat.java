@@ -26,6 +26,7 @@ import com.google.android.material.internal.NavigationMenuPresenter;
 import com.google.android.material.internal.NavigationMenuView;
 import com.google.android.material.navigation.NavigationView;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 
 import java.lang.reflect.Field;
@@ -53,7 +54,7 @@ public class AppCompat {
         searchIcon.setBounds(0, 0, textSize, textSize);
         setTint(searchIcon, normalColor);
         searchText.setCompoundDrawablesRelative(searchIcon, null, null, null);
-        searchText.setCompoundDrawablePadding(ScreenUtils.dpToPx(5));
+        searchText.setCompoundDrawablePadding(DensityUtil.dp2px(searchText.getContext(), 5));
         searchText.setIncludeFontPadding(false);
 
         AppCompatImageView close = searchView.findViewById(R.id.search_close_btn);
@@ -62,11 +63,12 @@ public class AppCompat {
 
         LinearLayout plate = searchView.findViewById(R.id.search_plate);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) plate.getLayoutParams();
-        params.topMargin = ScreenUtils.dpToPx(5);
-        params.bottomMargin = ScreenUtils.dpToPx(5);
+        params.topMargin = DensityUtil.dp2px(plate.getContext(), 5);
+        params.bottomMargin = params.topMargin;
         plate.setLayoutParams(params);
 
-        plate.setPaddingRelative(ScreenUtils.dpToPx(6), 0, ScreenUtils.dpToPx(6), 0);
+        int padding = DensityUtil.dp2px(plate.getContext(), 6);
+        plate.setPaddingRelative(padding, 0, padding, 0);
 
         if (showBg) {
             Drawable bag = searchView.getResources().getDrawable(R.drawable.bg_search_field);

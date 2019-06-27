@@ -66,7 +66,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (menu != null) {
-            if(menu instanceof  MenuBuilder) {
+            if (menu instanceof MenuBuilder) {
                 ((MenuBuilder) menu).setOptionalIconsVisible(true);
             }
             for (int i = 0; i < menu.size(); i++) {

@@ -112,6 +112,7 @@ public class OkHttpHelper {
         };
     }
 
+    //请求头拦截器
     public class RequestHeadersInterceptor implements Interceptor {
 
         @Override
@@ -126,6 +127,7 @@ public class OkHttpHelper {
         }
     }
 
+    //响应头拦截器
     public class CacheControlInterceptor implements Interceptor {
 
         @Override
