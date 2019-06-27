@@ -372,8 +372,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 try {
                     //如果搜索框中有文字，则会先清空文字.
                     mSearchAutoComplete.setText("");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ignore) {
                 }
                 return true;
             }

@@ -60,12 +60,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
     /**
      * 设置MENU图标颜色
      */
