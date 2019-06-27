@@ -230,7 +230,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     private void openInBrowser() {
         try {
             String url = webView.getUrl();
-            android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);
         } catch (Exception e) {

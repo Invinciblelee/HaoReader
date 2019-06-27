@@ -94,12 +94,12 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
 
     @NonNull
     @Override
-    public FindBookAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MyViewHolder(mInflater.inflate(R.layout.item_find_book, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FindBookAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         FindKindGroupBean item = getItem(holder.getLayoutPosition());
         holder.tvSourceName.setText(item.getGroupName());
         PreviewBooksAdapter adapter = (PreviewBooksAdapter) holder.rvPreview.getAdapter();
@@ -309,6 +309,7 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
         protected void publishResults(CharSequence constraint, FilterResults results) {
             this.constraint = constraint;
             mGroupBeans.clear();
+            notifyDataSetChanged();
             mGroupBeans.addAll((List<FindKindGroupBean>) results.values);
             notifyDataSetChanged();
         }

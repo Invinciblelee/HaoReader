@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.SearchBookBean;
@@ -21,12 +24,10 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;

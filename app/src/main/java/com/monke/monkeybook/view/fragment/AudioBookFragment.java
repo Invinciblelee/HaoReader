@@ -30,12 +30,14 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.presenter.AudioBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.AudioBookContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 import com.monke.monkeybook.view.activity.BookDetailActivity;
 import com.monke.monkeybook.view.adapter.AudioBookAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.widget.CircleProgressBar;
+import com.monke.monkeybook.widget.VisibilityFrameLayout;
 
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
     @BindView(R.id.iv_image_cover)
     ImageView ivCover;
     @BindView(R.id.view_audio_running)
-    View runningView;
+    VisibilityFrameLayout runningView;
     @BindView(R.id.btn_pause)
     ImageView btnPause;
     @BindView(R.id.audio_progress)
@@ -98,6 +100,16 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
             public void onLongClick(View view, BookShelfBean bookShelf) {
                 BookDetailActivity.startThis((MBaseActivity) getActivity(), bookShelf);
             }
+        });
+
+        runningView.setOnVisibilityChangeListener(visibility -> {
+            final int paddingBottom;
+            if(visibility == View.VISIBLE){
+                paddingBottom = DensityUtil.dp2px(requireContext(), 66);
+            }else {
+                paddingBottom = 0;
+            }
+            rvBookshelf.setPadding(0, rvBookshelf.getPaddingTop(), 0, paddingBottom);
         });
     }
 

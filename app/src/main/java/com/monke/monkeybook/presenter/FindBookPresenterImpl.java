@@ -5,6 +5,9 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.reflect.TypeToken;
 import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
+import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.R;
@@ -15,6 +18,7 @@ import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
@@ -35,12 +39,10 @@ import javax.script.SimpleBindings;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.View> implements FindBookContract.Presenter {
@@ -140,6 +142,8 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     }
                     return Observable.just(groupBean);
                 })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(groupBean -> mView.updateItem(groupBean))
                 .flatMap(findKindGroupBean -> {
                     FindKindBean kindBean = findKindGroupBean.getChildren().get(0);
                     return WebBookModel.getInstance().findBook(kindBean.getTag(), kindBean.getKindUrl(), 1)
@@ -150,6 +154,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                                 return Observable.just(findKindGroupBean);
                             });
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<FindKindGroupBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -162,6 +167,14 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     }
                 });
     }
+
+
+    @Subscribe(thread = EventThread.MAIN_THREAD,
+            tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
+    public void updateBookShelf(Boolean change) {
+        initData();
+    }
+
 
     private void startFindBooks(List<FindKindGroupBean> groupBeans) {
         if (groupBeans == null || groupBeans.isEmpty()) return;

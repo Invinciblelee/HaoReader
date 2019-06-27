@@ -6,11 +6,11 @@
     android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -26,11 +26,11 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            app:tabIndicatorColor="@color/colorAccent"
             app:tabIndicatorHeight="5dp"
             app:tabMode="scrollable"
-            app:tabIndicatorColor="@color/colorAccent"
-            app:tabTextColor="@color/white"
-            app:tabSelectedTextColor="@color/colorAccent"/>
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -38,5 +38,44 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar"/>
+        android:layout_below="@id/appBar" />
+
+
+    <LinearLayout
+        android:id="@+id/view_choice_book_category_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="16dp"
+        android:orientation="vertical"
+        android:paddingTop="?attr/actionBarSize"
+        android:visibility="invisible">
+
+        <GridView
+            android:id="@+id/flex_box_book_category"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:outlineProvider="background"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:elevation="16dp"
+            android:numColumns="3"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:clipToPadding="false"
+            android:background="@drawable/bg_choice_book_category"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"/>
+
+        <View
+            android:id="@+id/view_masking"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

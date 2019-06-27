@@ -63,7 +63,7 @@ final class RulePatterns {
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {
                     expMatcher.appendReplacement(buffer, String.format("%.0f", (Double) result));
                 } else {
-                    expMatcher.appendReplacement(buffer, com.monke.monkeybook.utils.StringUtils.valueOf(result));
+                    expMatcher.appendReplacement(buffer, StringUtils.valueOf(result));
                 }
             }
             expMatcher.appendTail(buffer);

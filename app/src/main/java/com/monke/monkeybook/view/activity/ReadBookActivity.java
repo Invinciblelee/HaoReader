@@ -1594,11 +1594,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     class ThisBatInfoReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(Context context, android.content.Intent intent) {
+        public void onReceive(Context context, Intent intent) {
             if (readStatusBar != null) {
-                if (android.content.Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
+                if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
                     readStatusBar.updateTime();
-                } else if (android.content.Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+                } else if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
                     int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     readStatusBar.updateBattery(level);
                 }
@@ -1607,8 +1607,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         public void registerReceiverBatInfo() {
             IntentFilter filter = new IntentFilter();
-            filter.addAction(android.content.Intent.ACTION_TIME_TICK);
-            filter.addAction(android.content.Intent.ACTION_BATTERY_CHANGED);
+            filter.addAction(Intent.ACTION_TIME_TICK);
+            filter.addAction(Intent.ACTION_BATTERY_CHANGED);
             registerReceiver(batInfoReceiver, filter);
             if (readStatusBar != null) {
                 readStatusBar.updateTime();

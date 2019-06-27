@@ -40,6 +40,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     ContentLoadingProgressBar progressBar;
     @BindView(R.id.edit_find_search)
     AppCompatEditText searchEdit;
+    @BindView(R.id.card_search_field)
+    View searchField;
 
     private FindBookAdapter mAdapter;
 
@@ -120,6 +122,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     @Override
     public void updateUI(List<FindKindGroupBean> group) {
         mAdapter.setItems(group);
+        searchField.setVisibility(group.isEmpty() ? View.INVISIBLE : View.VISIBLE);
     }
 
     @Override
@@ -129,12 +132,14 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
     @Override
     public void showProgress() {
+        rvFindList.setVisibility(View.INVISIBLE);
         progressBar.show();
     }
 
     @Override
     public void hideProgress() {
         progressBar.hide();
+        rvFindList.setVisibility(View.VISIBLE);
     }
 
     @Override

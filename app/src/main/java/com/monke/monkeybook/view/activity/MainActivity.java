@@ -593,10 +593,17 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            MainBookListFragment fragment = findMainBookListFragment();
-            if (fragment != null && fragment.onBackPressed()) {
+            MainBookListFragment mainFragment = findMainBookListFragment();
+            if (viewPager.getCurrentItem() == 0 && mainFragment != null && mainFragment.onBackPressed()) {
                 return true;
-            } else if (drawer.isDrawerOpen(GravityCompat.START)
+            }
+
+            FindBookFragment findFragment = findFragment(FindBookFragment.class);
+            if(viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.onBackPressed()){
+                return true;
+            }
+
+            if (drawer.isDrawerOpen(GravityCompat.START)
                     || drawer.isDrawerOpen(GravityCompat.END)) {
                 drawer.closeDrawers();
                 return true;
