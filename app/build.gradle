@@ -12,7 +12,7 @@ def getVersionCode() {// 获取版本号
         versionProps.load(new FileInputStream(versionFile))
         def versionCode = versionProps['VERSION_CODE'].toInteger()// 读取文件里面的版本号
         def runTasks = gradle.startParameter.taskNames
-        if ('assembleRelease' in runTasks) {//仅在assembleRelease任务是增加版本号,其他渠道包在此分别配置
+        if ('assemble' in runTasks) {//仅在assembleRelease任务是增加版本号,其他渠道包在此分别配置
             // 版本号自增之后再写入文件（此处是关键，版本号自增+1）
             versionProps['VERSION_CODE'] = (++versionCode).toString()
             versionProps.store(versionFile.newWriter(), null)
@@ -116,7 +116,7 @@ configurations.all {
 
 dependencies {
     implementation project(':basemvplib')
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13-beta-3'
     //support
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.media:media:1.1.0-rc01'
