@@ -31,7 +31,7 @@ dependencies {
     api 'androidx.appcompat:appcompat:1.1.0-beta01'
     //RxAndroid
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    api 'io.reactivex.rxjava2:rxjava:2.2.6'
+    api 'io.reactivex.rxjava2:rxjava:2.2.10'
     //Retrofit
     api 'com.squareup.okhttp3:logging-interceptor:4.0.0'
     api 'com.squareup.retrofit2:retrofit:2.6.0'
