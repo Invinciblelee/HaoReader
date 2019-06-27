@@ -206,7 +206,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -281,7 +281,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 mPresenter.useShuqi(item.isChecked());
                 break;
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
             default:
                 if (item.getGroupId() == R.id.book_source_group) {

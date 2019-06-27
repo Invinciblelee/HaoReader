@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.base;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,8 +26,6 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.theme.AppCompat;
-
-import java.lang.reflect.Method;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
 

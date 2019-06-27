@@ -63,7 +63,7 @@ public class AppCompat {
 
         LinearLayout plate = searchView.findViewById(R.id.search_plate);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) plate.getLayoutParams();
-        params.topMargin = DensityUtil.dp2px(plate.getContext(), 5);
+        params.topMargin = DensityUtil.dp2px(plate.getContext(), 6);
         params.bottomMargin = params.topMargin;
         plate.setLayoutParams(params);
 
