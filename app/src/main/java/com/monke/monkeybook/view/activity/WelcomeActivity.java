@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.KeyEvent;
 
-import com.gyf.immersionbar.BarHide;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -31,9 +30,9 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
             mImmersionBar.statusBarColor(R.color.colorStatusBar);
         }
 
-        if(isImmersionBarEnabled()) {
+        if (isImmersionBarEnabled()) {
             mImmersionBar.statusBarDarkFont(!isNightTheme());
-        }else {
+        } else {
             mImmersionBar.statusBarDarkFont(false);
         }
         mImmersionBar.init();

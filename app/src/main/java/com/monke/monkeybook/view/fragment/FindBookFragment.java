@@ -2,14 +2,17 @@ package com.monke.monkeybook.view.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,9 +21,12 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.keyboard.KeyboardHeightProvider;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
+import com.monke.monkeybook.utils.DensityUtil;
+import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookDetailActivity;
 import com.monke.monkeybook.view.activity.ChoiceBookActivity;
@@ -44,6 +50,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     View searchField;
 
     private FindBookAdapter mAdapter;
+
+    private KeyboardHeightProvider mHeightProvider;
 
     @Override
     protected FindBookContract.Presenter initInjector() {
@@ -98,6 +106,12 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
                 mAdapter.getFilter().filter(s == null ? null : s.toString());
             }
         });
+
+        mHeightProvider = new KeyboardHeightProvider(requireActivity()).init().setHeightListener(height -> {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
+            params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 16);
+            searchField.setLayoutParams(params);
+        });
     }
 
     @Override
@@ -109,6 +123,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     public void onRefresh() {
         if (mAdapter.getItemCount() == 0) {
             showProgress();
+        }else {
+            rvFindList.scrollToPosition(0);
         }
         mPresenter.initData();
     }
@@ -159,9 +175,24 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     }
 
     public boolean onBackPressed() {
+        if (mHeightProvider.isKeyboardActive()) {
+            KeyboardUtil.hideKeyboard(searchEdit);
+            return true;
+        }
+
         CharSequence text = searchEdit.getText();
         if (text != null && StringUtils.isNotBlank(text.toString())) {
             searchEdit.setText(null);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Rect rect = new Rect();
+        searchField.getGlobalVisibleRect(rect);
+        if (!rect.contains((int) ev.getX(), (int) ev.getY()) && mHeightProvider.isKeyboardActive()) {
+            KeyboardUtil.hideKeyboard(searchEdit);
             return true;
         }
         return false;

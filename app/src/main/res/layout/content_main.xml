@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,10 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:transitionName="sharedView"
-            app:title="@string/search_label"
-            app:titleTextColor="@color/colorMenuText"
             app:contentInsetStartWithNavigation="0dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/search_label"
+            app:titleTextColor="@color/colorMenuText">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -40,15 +40,15 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/bg_search_field"
+                    android:drawableStart="@drawable/ic_search_black_24dp"
                     android:drawablePadding="10dp"
                     android:gravity="center_vertical"
                     android:includeFontPadding="false"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/search_label"
-                    android:drawableStart="@drawable/ic_search_black_24dp"
-                    app:drawableSize="0dp"
                     app:drawableScale="1.05"
+                    app:drawableSize="0dp"
                     app:drawableTint="@color/white" />
             </FrameLayout>
 
@@ -78,7 +78,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_track_changes_black_24dp"
-                android:text="@string/find_on_www" />
+                android:text="@string/find_on_www"
+                />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -93,8 +94,7 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:visibility="gone" />
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

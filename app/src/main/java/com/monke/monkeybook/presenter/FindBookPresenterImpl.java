@@ -77,7 +77,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             mDisposableMgr = null;
         }
 
-        if(mUpdateDispose != null){
+        if (mUpdateDispose != null) {
             mUpdateDispose.dispose();
             mUpdateDispose = null;
         }
@@ -137,7 +137,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                 .flatMap(s -> {
                     BookSourceBean sourceBean = BookSourceManager.getByUrl(s);
                     FindKindGroupBean groupBean = getFromBookSource(sourceBean);
-                    if(groupBean == null){
+                    if (groupBean == null) {
                         return Observable.error(new Exception("can not get FindKindGroupBean from: " + s));
                     }
                     return Observable.just(groupBean);
@@ -170,7 +170,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
 
 
     @Subscribe(thread = EventThread.MAIN_THREAD,
-            tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE)})
+            tags = {@Tag(RxBusTag.SOURCE_LIST_CHANGE), @Tag(RxBusTag.FIND_LIST_CHANGE)})
     public void updateBookShelf(Boolean change) {
         initData();
     }
