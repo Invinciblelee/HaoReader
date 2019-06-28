@@ -1,20 +1,15 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.presenter;
 
-import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.hwangjr.rxbus.RxBus;
-import com.hwangjr.rxbus.annotation.Subscribe;
-import com.hwangjr.rxbus.annotation.Tag;
-import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 
@@ -27,15 +22,15 @@ import io.reactivex.schedulers.Schedulers;
 public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContract.View> implements ChoiceBookContract.Presenter {
     private String tag;
     private String url;
-    private String title;
 
     private int page = 1;
     private long startThisSearchTime;
 
-    public ChoiceBookPresenterImpl(final Intent intent) {
-        url = intent.getStringExtra("url");
-        title = intent.getStringExtra("title");
-        tag = intent.getStringExtra("tag");
+    public ChoiceBookPresenterImpl(final Bundle args) {
+        if(args != null){
+            url = args.getString("url");
+            tag = args.getString("tag");
+        }
     }
 
     @Override
@@ -59,6 +54,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
         WebBookModel.getInstance().findBook(tag, url, page)
                 .subscribeOn(Schedulers.single())
                 .map(searchBookBeans -> {
+                    if(page == 1) return searchBookBeans;
                     Iterator<SearchBookBean> iterator = searchBookBeans.iterator();
                     while (iterator.hasNext()) {
                         SearchBookBean searchBook = iterator.next();
@@ -95,24 +91,12 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
     public void attachView(@NonNull IView iView) {
         super.attachView(iView);
-        RxBus.get().register(this);
     }
 
     @Override
     public void detachView() {
-        RxBus.get().unregister(this);
-    }
-
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.IMMERSION_CHANGE)})
-    public void initImmersionBar(Boolean immersion) {
-        mView.initImmersionBar();
     }
 
 }

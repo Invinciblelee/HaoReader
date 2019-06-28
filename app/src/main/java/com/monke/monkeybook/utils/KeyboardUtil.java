@@ -36,21 +36,4 @@ public class KeyboardUtil {
             }
         }
     }
-
-    public static void resetViewPosition(Activity activity, View view) {
-        final View decorView = (activity).getWindow().getDecorView();
-        decorView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            try {
-                Rect rect = new Rect();
-                decorView.getWindowVisibleDisplayFrame(rect);
-                int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-                int heightDifference = screenHeight - rect.bottom;//计算软键盘占有的高度  = 屏幕高度 - 视图可见高度
-                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-                layoutParams.bottomMargin = heightDifference; //设置rlContent的marginBottom的值为软键盘占有的高度即可
-                view.setLayoutParams(layoutParams);
-                view.requestLayout();
-            } catch (Exception ignored) {
-            }
-        });
-    }
 }

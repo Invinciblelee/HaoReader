@@ -50,7 +50,6 @@
                 app:layout_scrollFlags="scroll"
                 app:tabIndicatorColor="@color/colorBarText"
                 app:tabIndicatorFullWidth="false"
-                app:tabIndicatorHeight="2.0dp"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/colorBarText"
                 app:tabTextAppearance="@style/TextAppearance.AppCompat.Tab">
@@ -58,7 +57,7 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/table_of_contents" />
+                    android:text="@string/category" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"

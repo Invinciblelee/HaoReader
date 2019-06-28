@@ -3,7 +3,7 @@ package com.monke.monkeybook.model.analyzeRule;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.ContextHolder;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.utils.StringUtils;
 

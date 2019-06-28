@@ -1,17 +1,21 @@
 package com.monke.basemvplib;
 
+import android.text.TextUtils;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.CacheControl;
 import okhttp3.ConnectionSpec;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.TlsVersion;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -63,6 +67,8 @@ public class OkHttpHelper {
         return getRetrofitString(url, encode).create(tClass);
     }
 
+
+
     public OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
 
@@ -104,5 +110,34 @@ public class OkHttpHelper {
                     .build();
             return chain.proceed(request);
         };
+    }
+
+    //请求头拦截器
+    public class RequestHeadersInterceptor implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            Request.Builder builder = request.newBuilder();
+            if (!NetworkUtil.isNetworkAvailable()) {
+                // 无网络时，强制使用缓存
+                builder.cacheControl(CacheControl.FORCE_CACHE);
+            }
+            return chain.proceed(builder.build());
+        }
+    }
+
+    //响应头拦截器
+    public class CacheControlInterceptor implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Response response = chain.proceed(chain.request());
+            String cacheControl = response.header("Cache-Control");
+            if (TextUtils.isEmpty(cacheControl)) {
+                return response.newBuilder().removeHeader("Pragma").header("Cache-Control", "public, max-age=60").build();
+            }
+            return response;
+        }
     }
 }

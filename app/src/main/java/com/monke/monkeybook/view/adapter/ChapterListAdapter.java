@@ -50,12 +50,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
     public void setBook(BookShelfBean book) {
         synchronized (lock) {
-            if (book != null) {
-                boolean changed = mBook == null || !TextUtils.equals(mBook.getTag(), book.getTag());
-                this.mBook = book;
-                if (changed) {
-                    setDataList(mBook.getChapterList());
-                }
+            boolean changed = mBook == null || !TextUtils.equals(mBook.getNoteUrl(), book.getNoteUrl());
+            this.mBook = book;
+            if (changed) {
+                setDataList(mBook.getChapterList());
             }
         }
     }

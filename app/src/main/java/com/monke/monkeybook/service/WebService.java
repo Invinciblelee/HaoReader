@@ -10,7 +10,7 @@ import android.os.IBinder;
 
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.web.HttpServer;
 import com.monke.monkeybook.web.WebSocketServer;

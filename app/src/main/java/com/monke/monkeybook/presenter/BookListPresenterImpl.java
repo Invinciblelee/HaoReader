@@ -15,7 +15,7 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.ContextHolder;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookRefreshModelImpl;
 import com.monke.monkeybook.presenter.contract.BookListContract;

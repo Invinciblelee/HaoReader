@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -31,8 +32,9 @@ public class ScaleDrawableTextView extends androidx.appcompat.widget.AppCompatTe
             tintList = getTextColors();
         }
 
+
         if (size == 0) {
-            size = (int) (getTextSize() * scale);
+            size = Math.round(getTextSize() * scale);
         }
         Drawable[] drawables = getCompoundDrawablesRelative();
         for (Drawable drawable : drawables) {

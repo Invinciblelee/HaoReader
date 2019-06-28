@@ -270,7 +270,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
     }
 
     @Override
-    public boolean accept(java.io.File pathname) {
+    public boolean accept(File pathname) {
         String fileName = pathname.getName();
         if (fileName.startsWith(".")) {
             return false;

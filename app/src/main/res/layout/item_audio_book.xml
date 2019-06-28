@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingLeft="@dimen/card_item_margin"
+    android:paddingTop="@dimen/half_card_item_margin"
+    android:paddingRight="@dimen/card_item_margin"
+    android:paddingBottom="@dimen/half_card_item_margin">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cover_card"
+        style="@style/AppTheme.CardView.Image"
+        android:layout_width="70dp"
+        android:layout_height="70dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_cover_default"
+            android:transitionName="@string/img_cover"
+            tools:targetApi="lollipop" />
+
+        <com.monke.monkeybook.widget.LabelView
+            android:id="@+id/tv_has_new"
+            android:layout_width="24dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingStart="0dp"
+            android:paddingEnd="2dp"
+            android:text="@string/renew"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            android:visibility="invisible"
+            app:labelColor="@color/light_green"
+            app:labelSinkWidth="2dp"
+            tools:ignore="SmallSp" />
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/cover_card"
+        android:layout_alignBottom="@id/cover_card"
+        android:layout_toEndOf="@+id/cover_card"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/half_card_item_margin"
+        android:paddingEnd="12dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:paddingTop="2dp"
+            android:singleLine="true"
+            android:text="@string/tv_book_name"
+            android:textColor="@color/colorTextDefault"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:text="@string/author"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="13sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_read"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:text="@string/play_dur_progress"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <com.monke.monkeybook.widget.RotateLoading
+        android:id="@+id/rl_loading"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@id/cover_card"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="2dp"
+        app:loadingWidth="2dp" />
+
+</RelativeLayout>

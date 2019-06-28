@@ -3,6 +3,8 @@ package com.monke.monkeybook.help;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.monke.basemvplib.ContextHolder;
+
 public class AppConfigHelper {
 
     private volatile static AppConfigHelper mInstance;

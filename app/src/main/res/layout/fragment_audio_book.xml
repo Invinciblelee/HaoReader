@@ -6,40 +6,15 @@
     android:background="@color/colorBackground"
     app:appInsetForeground="@color/colorPrimary">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stateListAnimator="@animator/design_topbar_state_list_animator"
-        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-
-    <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bookshelf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar">
+        android:clipToPadding="false"
+        android:paddingTop="4dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_bookshelf"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="4dp"
-            android:paddingBottom="66dp" />
-    </com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout>
-
-    <FrameLayout
+    <com.monke.monkeybook.widget.VisibilityFrameLayout
         android:id="@+id/view_audio_running"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -75,5 +50,5 @@
             android:contentDescription="@string/pause"
             android:src="@drawable/ic_play_white_24dp"
             android:tint="@color/colorAccent" />
-    </FrameLayout>
+    </com.monke.monkeybook.widget.VisibilityFrameLayout>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

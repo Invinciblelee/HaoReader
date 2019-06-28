@@ -1,6 +1,9 @@
 package com.monke.monkeybook.bean;
 
-public class FindKindBean {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class FindKindBean implements Parcelable {
     private String group;
     private String tag;
     private String kindName;
@@ -9,6 +12,38 @@ public class FindKindBean {
     public FindKindBean() {
 
     }
+
+    protected FindKindBean(Parcel in) {
+        group = in.readString();
+        tag = in.readString();
+        kindName = in.readString();
+        kindUrl = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(group);
+        dest.writeString(tag);
+        dest.writeString(kindName);
+        dest.writeString(kindUrl);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<FindKindBean> CREATOR = new Creator<FindKindBean>() {
+        @Override
+        public FindKindBean createFromParcel(Parcel in) {
+            return new FindKindBean(in);
+        }
+
+        @Override
+        public FindKindBean[] newArray(int size) {
+            return new FindKindBean[size];
+        }
+    };
 
     public String getKindName() {
         return kindName;

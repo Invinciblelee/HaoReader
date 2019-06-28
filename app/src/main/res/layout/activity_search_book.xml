@@ -23,6 +23,7 @@
             android:focusableInTouchMode="true"
             android:transitionName="sharedView"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <androidx.appcompat.widget.SearchView

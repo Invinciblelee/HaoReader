@@ -136,28 +136,28 @@ public class AlertDialog extends AppCompatDialog {
             return this;
         }
 
-        public Builder setPositiveButton(CharSequence text, AlertDialog.OnClickListener clickListener) {
+        public Builder setPositiveButton(CharSequence text, OnClickListener clickListener) {
             P.mPositiveText = text;
             P.mPositiveTextResId = 0;
             P.mPositiveClickListener = clickListener;
             return this;
         }
 
-        public Builder setPositiveButton(@StringRes int textResId, AlertDialog.OnClickListener clickListener) {
+        public Builder setPositiveButton(@StringRes int textResId, OnClickListener clickListener) {
             P.mPositiveText = null;
             P.mPositiveTextResId = textResId;
             P.mPositiveClickListener = clickListener;
             return this;
         }
 
-        public Builder setNegativeButton(CharSequence text, AlertDialog.OnClickListener clickListener) {
+        public Builder setNegativeButton(CharSequence text, OnClickListener clickListener) {
             P.mNegativeText = text;
             P.mNegativeTextResId = 0;
             P.mNegativeClickListener = clickListener;
             return this;
         }
 
-        public Builder setNegativeButton(@StringRes int textResId, AlertDialog.OnClickListener clickListener) {
+        public Builder setNegativeButton(@StringRes int textResId, OnClickListener clickListener) {
             P.mNegativeText = null;
             P.mNegativeTextResId = textResId;
             P.mNegativeClickListener = clickListener;

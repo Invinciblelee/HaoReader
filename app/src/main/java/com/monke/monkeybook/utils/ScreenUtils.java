@@ -9,8 +9,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.monke.monkeybook.MApplication;
-import com.monke.monkeybook.help.ContextHolder;
+import com.monke.basemvplib.ContextHolder;
 
 import java.lang.reflect.Method;
 

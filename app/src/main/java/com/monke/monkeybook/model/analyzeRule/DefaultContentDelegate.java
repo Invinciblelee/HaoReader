@@ -132,7 +132,7 @@ class DefaultContentDelegate implements ContentDelegate {
                 ruleGroups.add(Assistant.splitRegexRule(rule));
             }
             // 提取书籍列表信息
-            while (resM.find()){
+            while (resM.find()) {
                 // 获取列表规则分组数
                 int resCount = resM.groupCount();
                 // 新建规则结果容器
@@ -453,21 +453,20 @@ class DefaultContentDelegate implements ContentDelegate {
                 final String nextChapterUrl = chapter.getNextChapterUrl();
 
                 while (!isEmpty(webContent.nextUrl) && !usedUrls.contains(webContent.nextUrl)) {
-                    usedUrls.add(webContent.nextUrl);
                     if (webContent.nextUrl.equals(nextChapterUrl)) {
                         break;
                     }
+                    usedUrls.add(webContent.nextUrl);
 
                     try {
                         AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), webContent.nextUrl, headerMap);
-                        String response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
+                        String response = SimpleModel.getResponse(analyzeUrl).subscribeOn(Schedulers.single()).blockingFirst().body();
                         webContent = getRawContentResult(response, webContent.nextUrl, ruleBookContent);
                         if (!isEmpty(webContent.result)) {
                             bookContentBean.appendDurChapterContent(webContent.result);
                         }
                     } catch (Exception ignore) {
                     }
-
                 }
             }
             emitter.onNext(bookContentBean);

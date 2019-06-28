@@ -1,25 +1,36 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -32,28 +43,29 @@ import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
-import com.monke.monkeybook.view.fragment.BookListFragment;
+import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.FindBookFragment;
+import com.monke.monkeybook.view.fragment.MainBookListFragment;
+import com.monke.monkeybook.view.fragment.Refreshable;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
-import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import compat.Optional;
 
 public class MainActivity extends MBaseActivity<MainContract.Presenter> implements MainContract.View {
     private static final int BACKUP_RESULT = 11;
     private static final int RESTORE_RESULT = 12;
     private static final int FILE_SELECT_RESULT = 13;
-
-    private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj,
-            R.string.item_group_bd, R.string.item_group_ys, R.string.item_group_mh};
 
     @BindView(R.id.layout_container)
     ScrimInsetsRelativeLayout container;
@@ -65,21 +77,23 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     View appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
     @BindView(R.id.bookshelf_search_view)
     BookShelfSearchView drawerRight;
-    @BindView(R.id.book_shelf_menu)
-    BookFloatingActionMenu bookShelfMenu;
     @BindView(R.id.tv_search_field)
     View mSearchField;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
+
+    @BindArray(R.array.home_tab)
+    String[] titles;
 
     private Switch swNightTheme;
-    private int group = -1;
     private boolean viewIsList;
     private long exitTime = 0;
 
     private ProgressDialog progressDialog;
-
-    private BookListFragment[] fragments = new BookListFragment[4];
 
     private final OnPermissionsGrantedCallback grantedCallback = requestCode -> {
         switch (requestCode) {
@@ -101,27 +115,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            FragmentManager manager = getSupportFragmentManager();
-            fragments[0] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[0]));
-            fragments[1] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[1]));
-            fragments[2] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[2]));
-            fragments[3] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[3]));
-
-            for (BookListFragment fragment : fragments) {
-                if (fragment != null) {
-                    fragment.setItemClickListenerTwo(getAdapterListener());
-                }
-            }
-        } else {
-            showFragment(this.group);
-        }
-    }
-
-    @Override
     protected void onCreateActivity() {
         setContentView(R.layout.activity_main);
     }
@@ -137,19 +130,15 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     protected void initData() {
         viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
-        group = getPreferences().getInt("shelfGroup", 0);
         getIntent().putExtra("isRecreate", false);
     }
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (bookShelfMenu.isExpanded()) {
-            Rect rect = new Rect();
-            bookShelfMenu.getGlobalVisibleRect(rect);
-            if (!rect.contains((int) ev.getX(), (int) ev.getY())) {
-                bookShelfMenu.collapse();
-                return true;
-            }
+        MainBookListFragment fragment = findMainBookListFragment();
+        if (fragment != null && fragment.dispatchTouchEvent(ev)) {
+            return true;
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -158,15 +147,22 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     protected void bindView() {
         ButterKnife.bind(this);
         initDrawer();
-        upGroup(group);
-
-        bookShelfMenu.setSelection(group);
 
         container.setOnInsetsCallback(insets -> {
             appBar.setPadding(0, insets.top, 0, 0);
             drawerLeft.getHeaderView(0).setPadding(0, insets.top, 0, 0);
             drawerRight.applyWindowInsets(insets);
         });
+
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            setCustomView(tab);
+        }
+
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), titles));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
     @Override
@@ -187,21 +183,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerRight.setOnItemClickListener(getAdapterListener());
         drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
 
-        bookShelfMenu.setOnActionMenuClickListener(new BookFloatingActionMenu.OnActionMenuClickListener() {
-            @Override
-            public void onMainLongClick(View fabMain) {
-                BookListFragment current = fragments[group];
-                if (current != null) {
-                    current.refreshBookShelf(true);
-                }
-            }
-
-            @Override
-            public void onMenuClick(int index, View menuView) {
-                bookShelfMenu.postDelayed(() -> upGroup(index), 400L);
-            }
-        });
-
         mSearchField.setOnClickListener(v -> {
             //点击搜索
             Intent intent = new Intent(MainActivity.this, SearchBookActivity.class);
@@ -210,7 +191,50 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     }
 
-    private OnBookItemClickListenerTwo getAdapterListener() {
+    private void setCustomView(TabLayout.Tab tab) {
+        if(tab == null) return;
+        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.item_home_tab, null);
+        TextView text = view.findViewById(R.id.text);
+        ImageView icon = view.findViewById(R.id.icon);
+        text.setText(tab.getText());
+        icon.setImageDrawable(tab.getIcon());
+        icon.setTag(tab.getIcon());
+        tab.setCustomView(view);
+        if(tab.getCustomView() != null) {
+            View tabView = (View) tab.getCustomView().getParent();
+            tabView.setOnLongClickListener(v -> onTabLongClick(tab));
+        }
+    }
+
+    private boolean onTabLongClick(TabLayout.Tab tab) {
+        if (tab.isSelected()) {
+            Refreshable refreshable = null;
+            switch (tab.getPosition()) {
+                case 0:
+                    refreshable = findFragment(MainBookListFragment.class);
+                    break;
+                case 1:
+                    refreshable = findFragment(FindBookFragment.class);
+                    break;
+                case 2:
+                    refreshable = findFragment(AudioBookFragment.class);
+                    break;
+            }
+
+            if (refreshable != null) {
+                refreshable.onRefresh();
+            }
+
+            Optional.ofNullable(tab.getCustomView()).ifPresent(view -> {
+                ImageView imageView = view.findViewById(R.id.icon);
+                startRefreshAnim(imageView);
+            });
+            return true;
+        }
+        return false;
+    }
+
+    public OnBookItemClickListenerTwo getAdapterListener() {
         return new OnBookItemClickListenerTwo() {
             @Override
             public void onClick(View view, BookShelfBean bookShelf) {
@@ -274,12 +298,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         SharedPreferences.Editor editor = getPreferences().edit();
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_library:
-                startActivity(new Intent(this, FindBookActivity.class));
-                break;
-            case R.id.action_audio:
-                startActivity(new Intent(this, AudioBookActivity.class));
-                break;
             case R.id.action_add_local:
                 requestPermissions(FILE_SELECT_RESULT);
                 break;
@@ -290,11 +308,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 viewIsList = !viewIsList;
                 editor.putBoolean("bookshelfIsList", viewIsList);
                 if (editor.commit()) {
-                    for (BookListFragment fragment : fragments) {
-                        if (fragment != null) {
-                            fragment.updateLayoutType(viewIsList);
-                        }
-                    }
+                    Optional.ofNullable(findMainBookListFragment()).ifPresent(mainBookListFragment -> mainBookListFragment.upLayoutType(viewIsList));
                 }
                 break;
             case R.id.action_clearCaches:
@@ -373,43 +387,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
 
         setUpNavigationView();
-    }
-
-    private void upGroup(int group) {
-        group = Math.max(0, group);
-        group = Math.min(group, fragments.length - 1);
-        if (this.group != group) {
-            showFragment(group);
-
-            getPreferences().edit().putInt("shelfGroup", group).apply();
-
-            this.group = group;
-        }
-    }
-
-    private void showFragment(int group) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        BookListFragment from = fragments[this.group];
-        BookListFragment to = fragments[group];
-        if (from != null) {
-            transaction.hide(from);
-        }
-
-        if (to == null) {
-            to = fragments[group] = BookListFragment.newInstance(group);
-            to.setItemClickListenerTwo(getAdapterListener());
-        }
-
-        if (!to.isAdded()) {
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .add(R.id.book_list_frame, to, getString(BOOK_GROUPS[group]))
-                    .show(to)
-                    .commitAllowingStateLoss();
-        } else if (to.isSupportHidden()) {
-            transaction.setTransition(this.group > group ? FragmentTransaction.TRANSIT_FRAGMENT_OPEN : FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                    .show(to)
-                    .commitAllowingStateLoss();
-        }
     }
 
     //侧边栏按钮
@@ -500,16 +477,60 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
     }
 
+    private void startRefreshAnim(ImageView imageView) {
+        if (imageView == null) {
+            return;
+        }
+        Animation animation = imageView.getAnimation();
+        if (animation != null && animation.hasStarted() && !animation.hasEnded()) {
+            return;
+        }
+        imageView.setImageResource(R.drawable.ic_refresh_white_24dp);
+        AnimationSet animationSet = new AnimationSet(true);
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(1000);
+        animationSet.addAnimation(rotateAnimation);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imageView.setImageDrawable((Drawable) imageView.getTag());
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        imageView.startAnimation(animationSet);
+    }
+
+    private MainBookListFragment findMainBookListFragment() {
+        return findFragment(MainBookListFragment.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Fragment> T findFragment(Class<T> clazz) {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment.getClass().equals(clazz)) {
+                return (T) fragment;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void clearBookshelf() {
         AudioBookPlayService.stop(this);
         drawerRight.clear();
 
-        for (BookListFragment fragment : fragments) {
-            if (fragment != null) {
-                fragment.clearBookShelf();
-            }
-        }
+        Optional.ofNullable(findMainBookListFragment()).ifPresent(MainBookListFragment::clearBookshelf);
     }
 
     @Override
@@ -551,24 +572,17 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void addSuccess(BookShelfBean bookShelfBean) {
-        BookListFragment fragment = fragments[fragments.length - 1];
-        if (fragment != null) {
-            fragment.addBookShelf(bookShelfBean);
-        }
-        upGroup(bookShelfBean.getGroup());
-        bookShelfMenu.setSelection(this.group);
+        Optional.ofNullable(findMainBookListFragment()).ifPresent(mainBookListFragment -> mainBookListFragment.addBookSuccess(bookShelfBean));
     }
 
     @Override
     public void restoreSuccess() {
-        for (BookListFragment fragment : fragments) {
-            if (fragment != null) {
-                fragment.refreshBookShelf(false);
-            }
-        }
-
         dismissHUD();
         initImmersionBar();
+
+        Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(MainBookListFragment::onRestore);
+        Optional.ofNullable(findFragment(FindBookFragment.class)).ifPresent(FindBookFragment::onRestore);
+        Optional.ofNullable(findFragment(AudioBookFragment.class)).ifPresent(AudioBookFragment::onRestore);
     }
 
     @Override
@@ -579,10 +593,17 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (bookShelfMenu.isExpanded()) {
-                bookShelfMenu.collapse();
+            MainBookListFragment mainFragment = findMainBookListFragment();
+            if (viewPager.getCurrentItem() == 0 && mainFragment != null && mainFragment.onBackPressed()) {
                 return true;
-            } else if (drawer.isDrawerOpen(GravityCompat.START)
+            }
+
+            FindBookFragment findFragment = findFragment(FindBookFragment.class);
+            if(viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.onBackPressed()){
+                return true;
+            }
+
+            if (drawer.isDrawerOpen(GravityCompat.START)
                     || drawer.isDrawerOpen(GravityCompat.END)) {
                 drawer.closeDrawers();
                 return true;
@@ -602,4 +623,39 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
     }
 
+
+    private static class PagerAdapter extends FragmentPagerAdapter {
+
+        private final String[] titles;
+
+        PagerAdapter(@NonNull FragmentManager fm, String[] titles) {
+            super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.titles = titles;
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new MainBookListFragment();
+                case 1:
+                    return new FindBookFragment();
+                case 2:
+                default:
+                    return new AudioBookFragment();
+            }
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return titles.length;
+        }
+    }
 }

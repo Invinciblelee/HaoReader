@@ -9,6 +9,8 @@ import java.util.List;
 public interface FindBookContract {
     interface Presenter extends IPresenter {
         void initData();
+
+        void updateData(String url);
     }
 
     interface View extends IView {
@@ -18,6 +20,7 @@ public interface FindBookContract {
          */
         void updateUI(List<FindKindGroupBean> group);
 
+        void updateItem(FindKindGroupBean item);
 
         void showProgress();
 

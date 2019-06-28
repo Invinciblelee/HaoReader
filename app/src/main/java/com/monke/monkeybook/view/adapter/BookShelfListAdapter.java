@@ -78,16 +78,16 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvLast.setText(lastChapterName);
         }
 
-        holder.content.setOnClickListener(v -> onClick(v, item));
+        holder.content.setOnClickListener(v -> callOnItemClick(v, item));
 
         if (getBookshelfPx() == 2) {
             holder.ivCover.setClickable(true);
-            holder.ivCover.setOnClickListener(v -> onLongClick(v, item));
+            holder.ivCover.setOnClickListener(v -> callOnItemLongClick(v, item));
             holder.content.setOnLongClickListener(null);
         } else {
             holder.ivCover.setClickable(false);
             holder.content.setOnLongClickListener(v -> {
-                onLongClick(v, item);
+                callOnItemLongClick(v, item);
                 return true;
             });
         }

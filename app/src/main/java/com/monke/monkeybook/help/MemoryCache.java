@@ -36,4 +36,10 @@ public enum MemoryCache {
             mCache.put(key, value);
         }
     }
+
+    public final void remove(String key){
+        if(mCache != null){
+            mCache.remove(key);
+        }
+    }
 }

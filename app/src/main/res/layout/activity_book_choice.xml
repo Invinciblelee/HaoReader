@@ -10,30 +10,72 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
-            android:background="@color/colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorHeight="5dp"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextColor="@color/white" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <FrameLayout
-        android:layout_below="@id/appBar"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:layout_below="@id/appBar" />
 
-        <com.monke.monkeybook.widget.refreshview.RefreshRecyclerView
-            android:id="@+id/rfRv_search_books"
+
+    <LinearLayout
+        android:id="@+id/view_choice_book_category_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="16dp"
+        android:orientation="vertical"
+        android:paddingTop="?attr/actionBarSize"
+        android:visibility="invisible">
+
+        <GridView
+            android:id="@+id/flex_box_book_category"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="256dp"
+            android:outlineProvider="background"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:elevation="16dp"
+            android:numColumns="3"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:clipToPadding="false"
+            android:background="@drawable/bg_choice_book_category"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"/>
 
-    </FrameLayout>
+        <View
+            android:id="@+id/view_masking"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

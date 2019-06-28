@@ -1,57 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_audio_chapter_pop">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="58dp"
-        android:gravity="center_vertical"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_audio_chapter_pop"
+        android:elevation="16dp"
+        android:orientation="vertical"
+        android:outlineProvider="background"
+        tools:ignore="UselessParent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="58dp"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/audio_book_chapters"
+                android:textColor="@color/colorTextDefault"
+                android:textSize="16sp" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_chapter_sort"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/swap_vert"
+                android:padding="2dp"
+                android:src="@drawable/ic_swap_vert_black_24dp"
+                app:tint="@color/colorTextDefault" />
+        </LinearLayout>
+
+        <View style="@style/Style.Line" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <View style="@style/Style.Line" />
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorCardBackground"
+            android:text="@string/close"
             android:textColor="@color/colorTextDefault"
-            android:textSize="16sp"
-            android:text="@string/audio_book_chapters"/>
-
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_chapter_sort"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/swap_vert"
-            android:padding="2dp"
-            android:src="@drawable/ic_swap_vert_black_24dp"
-            app:tint="@color/colorTextDefault" />
+            android:textSize="18sp" />
     </LinearLayout>
 
-    <View style="@style/Style.Line"/>
+</FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-
-    <View style="@style/Style.Line"/>
-
-    <Button
-        android:id="@+id/btn_close"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorCardBackground"
-        android:textColor="@color/colorTextDefault"
-        android:textSize="18sp"
-        android:text="@string/close"/>
-</LinearLayout>

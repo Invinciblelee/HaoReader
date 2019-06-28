@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.base;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +11,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuItemImpl;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.gyf.immersionbar.ImmersionBar;
 import com.monke.basemvplib.BaseActivity;
@@ -20,14 +26,6 @@ import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.theme.AppCompat;
-
-import java.lang.reflect.Method;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.view.menu.MenuItemImpl;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
 
@@ -59,35 +57,15 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         }
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        if (menu != null) {
-            if (menu.getClass().getSimpleName().equalsIgnoreCase("MenuBuilder")) {
-                try {
-                    @SuppressLint("PrivateApi")
-                    Method method = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
-                    method.setAccessible(true);
-                    method.invoke(menu, true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return super.onMenuOpened(featureId, menu);
-    }
-
     /**
      * 设置MENU图标颜色
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (menu != null) {
+            if (menu instanceof MenuBuilder) {
+                ((MenuBuilder) menu).setOptionalIconsVisible(true);
+            }
             for (int i = 0; i < menu.size(); i++) {
                 MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
                 if (item.requiresOverflow()) {

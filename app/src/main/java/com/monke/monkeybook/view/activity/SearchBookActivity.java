@@ -24,7 +24,7 @@ import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;
@@ -205,8 +205,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setTitle(R.string.action_search);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -281,7 +280,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
                 mPresenter.useShuqi(item.isChecked());
                 break;
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
             default:
                 if (item.getGroupId() == R.id.book_source_group) {
@@ -404,7 +403,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             TextView tagView;
             for (SearchHistoryBean searchHistoryBean : historyBeans) {
                 tagView = (TextView) getLayoutInflater().inflate(R.layout.item_search_history, tflSearchHistory, false);
-                tagView.setBackgroundResource(R.drawable.selector_history_tag);
                 tagView.setTag(searchHistoryBean);
                 tagView.setText(searchHistoryBean.getContent());
                 tagView.setOnClickListener(historyItemClick);

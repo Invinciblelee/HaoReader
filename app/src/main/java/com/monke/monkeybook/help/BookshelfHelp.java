@@ -3,6 +3,7 @@ package com.monke.monkeybook.help;
 import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;

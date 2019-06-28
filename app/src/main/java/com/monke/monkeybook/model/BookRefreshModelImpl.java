@@ -2,12 +2,12 @@ package com.monke.monkeybook.model;
 
 import android.text.TextUtils;
 
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.model.impl.IBookRefreshModel;
-import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,14 +41,11 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     private CompositeDisposable refreshingDisps = new CompositeDisposable();
     private RefreshingIterator refreshingIterator;
 
-    private final Scheduler scheduler;
     private AtomicInteger loadingCount = new AtomicInteger();
 
-    private OnBookRefreshListener refreshListener;
+    private ExecutorService executor;
 
-    private BookRefreshModelImpl() {
-        scheduler = Schedulers.from(Executors.newFixedThreadPool(THREADS_NUM));
-    }
+    private OnBookRefreshListener refreshListener;
 
     public static BookRefreshModelImpl newInstance() {
         return new BookRefreshModelImpl();
@@ -59,6 +57,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     @Override
     public void queryBooks(int group, boolean refresh, boolean autoClean) {
+        resetRefresh();
         Single.create((SingleOnSubscribe<List<BookShelfBean>>) e -> {
             List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooksByGroup(group);
             e.onSuccess(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
@@ -97,7 +96,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
                 .subscribe(new SingleObserver<List<BookShelfBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        refreshingDisps.add(d);
                     }
 
                     @Override
@@ -124,13 +123,13 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
     @Override
     public void startRefreshBook() {
         if (bookShelfBeans != null && !bookShelfBeans.isEmpty()) {
-            errBooks.clear();
-            refreshingDisps.clear();
+            resetRefresh();
 
+            errBooks.clear();
             refreshingIterator = new RefreshingIterator(new Vector<>(bookShelfBeans));
 
             for (int i = 0, size = Math.min(THREADS_NUM, bookShelfBeans.size()); i < size; i++) {
-                newRefreshTask(i);
+                newRefreshTask();
             }
         }
     }
@@ -141,7 +140,27 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             refreshingDisps.dispose();
             refreshingDisps = null;
         }
-        scheduler.shutdown();
+
+        if(executor != null){
+            executor.shutdown();
+            executor = null;
+        }
+    }
+
+    private Scheduler getScheduler() {
+        if (executor == null || executor.isShutdown()) {
+            executor = Executors.newFixedThreadPool(THREADS_NUM);
+        }
+        return Schedulers.from(executor);
+    }
+
+
+    private void resetRefresh(){
+        if (refreshingDisps == null || refreshingDisps.isDisposed()) {
+            refreshingDisps = new CompositeDisposable();
+        } else {
+            refreshingDisps.clear();
+        }
     }
 
     private Function<List<BookShelfBean>, List<BookShelfBean>> ensureNotLoading() {
@@ -153,11 +172,11 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         };
     }
 
-    private void newRefreshTask(int index) {
+    private void newRefreshTask() {
         final BookShelfBean bookShelfBean = refreshingIterator.next();
         if (bookShelfBean == null) {
             if (refreshingIterator.hasNext()) {
-                newRefreshTask(index);
+                newRefreshTask();
             } else if (loadingCount.get() == 0) {
                 finishRefresh();
             }
@@ -166,22 +185,21 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
         if (bookShelfBean.getUpdateOff()) {
             if (refreshingIterator.hasNext()) {
-                newRefreshTask(index);
+                newRefreshTask();
             } else if (loadingCount.get() == 0) {
                 dispatchFinishEvent();
             }
         } else {
             dispatchRefreshEvent(bookShelfBean, true);
-            refreshBookShelf(index, bookShelfBean);
+            refreshBookShelf(bookShelfBean);
         }
     }
 
-    private void refreshBookShelf(int index, BookShelfBean bookShelfBean) {
+    private void refreshBookShelf(BookShelfBean bookShelfBean) {
         WebBookModel.getInstance().getChapterList(bookShelfBean)
-                .subscribeOn(scheduler)
+                .subscribeOn(getScheduler())
                 .timeout(1, TimeUnit.MINUTES)
                 .flatMap(this::saveBookToShelfO)
-                .delay(index * 100L, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
 
@@ -193,17 +211,17 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
                     @Override
                     public void onNext(BookShelfBean value) {
-                        whenRefreshNext(index, bookShelfBean, false);
+                        whenRefreshNext(bookShelfBean, false);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        whenRefreshNext(index, bookShelfBean, true);
+                        whenRefreshNext(bookShelfBean, true);
                     }
                 });
     }
 
-    private void whenRefreshNext(int index, BookShelfBean bookShelfBean, boolean error) {
+    private void whenRefreshNext(BookShelfBean bookShelfBean, boolean error) {
         dispatchRefreshEvent(bookShelfBean, false);
         if (error) {
             errBooks.add(bookShelfBean.getBookInfoBean().getName());
@@ -212,7 +230,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         if (loadingCount.decrementAndGet() == 0 && !refreshingIterator.hasNext()) {
             finishRefresh();
         } else {
-            newRefreshTask(index);
+            newRefreshTask();
         }
     }
 

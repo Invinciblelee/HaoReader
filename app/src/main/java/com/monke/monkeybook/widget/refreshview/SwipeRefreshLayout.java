@@ -38,7 +38,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     private SwipeProgressBar mProgressBar;
     private View mTarget;
     private int mOriginalOffsetTop;
-    private SwipeRefreshLayout.OnRefreshListener mListener;
+    private OnRefreshListener mListener;
     private int mFrom;
     private boolean mRefreshing;
     private int mTouchSlop;
@@ -97,12 +97,12 @@ public class SwipeRefreshLayout extends ViewGroup {
                 SwipeRefreshLayout.this.mProgressBar.setTriggerPercentage(percent);
             }
         };
-        this.mReturnToStartPositionListener = new SwipeRefreshLayout.BaseAnimationListener() {
+        this.mReturnToStartPositionListener = new BaseAnimationListener() {
             public void onAnimationEnd(Animation animation) {
                 SwipeRefreshLayout.this.mCurrentTargetOffsetTop = 0;
             }
         };
-        this.mShrinkAnimationListener = new SwipeRefreshLayout.BaseAnimationListener() {
+        this.mShrinkAnimationListener = new BaseAnimationListener() {
             public void onAnimationEnd(Animation animation) {
                 SwipeRefreshLayout.this.mCurrPercentage = 0.0F;
             }
@@ -166,7 +166,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         this.mTarget.startAnimation(this.mAnimateToStartPosition);
     }
 
-    public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener listener) {
+    public void setOnRefreshListener(OnRefreshListener listener) {
         this.mListener = listener;
     }
 

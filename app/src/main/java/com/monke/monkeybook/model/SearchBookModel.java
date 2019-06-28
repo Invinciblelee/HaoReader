@@ -15,7 +15,7 @@ import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
-import com.monke.monkeybook.utils.NetworkUtil;
+import com.monke.basemvplib.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;

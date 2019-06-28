@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static com.monke.monkeybook.presenter.BookDetailPresenterImpl.FROM_BOOKSHELF;
-import static com.monke.monkeybook.utils.NetworkUtil.isNetworkAvailable;
+import static com.monke.basemvplib.NetworkUtil.isNetworkAvailable;
 
 public class BookDetailActivity extends MBaseActivity<BookDetailContract.Presenter> implements BookDetailContract.View {
     @BindView(R.id.ifl_content)

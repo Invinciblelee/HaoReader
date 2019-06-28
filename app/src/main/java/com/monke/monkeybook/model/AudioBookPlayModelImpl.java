@@ -3,6 +3,7 @@ package com.monke.monkeybook.model;
 import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -10,7 +11,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
-import com.monke.monkeybook.utils.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -388,19 +388,20 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     }
 
     private void saveBookShelf(BookShelfBean bookShelfBean, boolean forceSave) {
-        Observable.create((ObservableOnSubscribe<BookShelfBean>) emitter -> {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             bookShelfBean.setFinalDate(System.currentTimeMillis());
             bookShelfBean.setHasUpdate(false);
-            if (forceSave || inBookShelf()) {
+            boolean inShelf = inBookShelf();
+            if (forceSave || inShelf) {
                 BookshelfHelp.saveBookToShelf(bookShelfBean);
             }
-            emitter.onNext(bookShelfBean);
+            emitter.onNext(forceSave && !inShelf);
             emitter.onComplete();
         }).subscribeOn(Schedulers.single())
-                .subscribe(new SimpleObserver<BookShelfBean>() {
+                .subscribe(new SimpleObserver<Boolean>() {
                     @Override
-                    public void onNext(BookShelfBean bookShelfBean) {
-                        RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
+                    public void onNext(Boolean value) {
+                        RxBus.get().post(value ? RxBusTag.HAD_ADD_BOOK : RxBusTag.UPDATE_BOOK_SHELF, bookShelfBean);
                     }
 
                     @Override

@@ -456,7 +456,7 @@ class BytesEncodingDetect extends Encoding {
         float rangeval = 0, freqval = 0;
         int hzstart = 0, hzend = 0;
         int row, column;
-        rawtextlen = rawtext.length;
+        rawtextlen = rawtext.length - 1;
         for (i = 0; i < rawtextlen; i++) {
             if (rawtext[i] == '~') {
                 if (rawtext[i + 1] == '{') {
@@ -480,8 +480,8 @@ class BytesEncodingDetect extends Encoding {
                             } else if (15 <= row && row < 55) {
                                 hzfreq += 200;
                             }
-                        } else if ((0xA1 <= rawtext[i] && rawtext[i] <= 0xF7)
-                                && (0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= 0xF7)) {
+                        } else if (0xA1 <= rawtext[i] && rawtext[i] <= 0xF7
+                                && 0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= 0xF7) {
                             hzchars += 2;
                             row = rawtext[i] + 256 - 0xA1;
                             column = rawtext[i + 1] + 256 - 0xA1;

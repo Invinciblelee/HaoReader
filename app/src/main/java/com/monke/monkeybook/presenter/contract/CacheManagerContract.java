@@ -28,7 +28,7 @@ public interface CacheManagerContract {
     interface Presenter extends IPresenter{
         void queryBooks();
 
-        void extractBookCache(BookShelfBean bookShelfBean,  boolean force);
+        void extractBookCache(BookShelfBean bookShelfBean, boolean force);
 
         void cancel();
     }

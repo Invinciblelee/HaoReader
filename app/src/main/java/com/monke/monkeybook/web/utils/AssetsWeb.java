@@ -3,7 +3,7 @@ package com.monke.monkeybook.web.utils;
 import android.content.res.AssetManager;
 import android.text.TextUtils;
 
-import com.monke.monkeybook.help.ContextHolder;
+import com.monke.basemvplib.ContextHolder;
 
 import java.io.File;
 import java.io.IOException;

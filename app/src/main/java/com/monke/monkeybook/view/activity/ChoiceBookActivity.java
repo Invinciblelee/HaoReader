@@ -1,42 +1,66 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.view.LayoutInflater;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.tabs.TabLayout;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
-import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.presenter.ChoiceBookPresenterImpl;
-import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
-import com.monke.monkeybook.utils.NetworkUtil;
-import com.monke.monkeybook.view.adapter.ChoiceBookAdapter;
+import com.monke.monkeybook.bean.FindKindBean;
+import com.monke.monkeybook.bean.FindKindGroupBean;
+import com.monke.monkeybook.utils.DensityUtil;
+import com.monke.monkeybook.view.fragment.ChoiceBookFragment;
 import com.monke.monkeybook.widget.theme.AppCompat;
-import com.monke.monkeybook.widget.refreshview.OnLoadMoreListener;
-import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Presenter> implements ChoiceBookContract.View {
+public class ChoiceBookActivity extends MBaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.rfRv_search_books)
-    RefreshRecyclerView rfRvSearchBooks;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
+    @BindView(R.id.view_choice_book_category_overlay)
+    View categoryOverlay;
+    @BindView(R.id.flex_box_book_category)
+    GridView categoryBox;
 
-    private ChoiceBookAdapter searchBookAdapter;
+    private FindKindGroupBean groupBean;
 
-    @Override
-    protected ChoiceBookContract.Presenter initInjector() {
-        return new ChoiceBookPresenterImpl(getIntent());
+    private CategoryAdapter categoryAdapter;
+
+    public static void startThis(MBaseActivity activity, FindKindGroupBean groupBean) {
+        Intent intent = new Intent(activity, ChoiceBookActivity.class)
+                .putExtra("group", groupBean);
+        activity.startActivity(intent);
     }
 
     @Override
@@ -45,18 +69,11 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void initData() {
-        searchBookAdapter = new ChoiceBookAdapter(this);
+        groupBean = getIntent().getParcelableExtra("group");
+        if (groupBean == null) {
+            finish();
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -64,18 +81,19 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     protected void bindView() {
         ButterKnife.bind(this);
 
-        rfRvSearchBooks.setRefreshRecyclerViewAdapter(searchBookAdapter, new LinearLayoutManager(this));
-        int padding = getResources().getDimensionPixelSize(R.dimen.half_card_item_margin);
-        rfRvSearchBooks.getRecyclerView().setClipToPadding(false);
-        rfRvSearchBooks.getRecyclerView().setPadding(0, padding, 0, padding);
+        if (groupBean != null) {
+            viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), groupBean.getChildren()));
+            tabLayout.setupWithViewPager(viewPager);
 
-        View viewRefreshError = LayoutInflater.from(this).inflate(R.layout.view_searchbook_refresh_error, null);
-        viewRefreshError.findViewById(R.id.tv_refresh_again).setOnClickListener(v -> {
-            searchBookAdapter.replaceAll(null);
-            rfRvSearchBooks.startRefresh();
-        });
-        rfRvSearchBooks.setNoDataAndrRefreshErrorView(LayoutInflater.from(this).inflate(R.layout.view_searchbook_no_data, null),
-                viewRefreshError);
+            addToCategoryView(groupBean.getChildren());
+
+            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    setCategorySelected(position);
+                }
+            });
+        }
     }
 
     //设置ToolBar
@@ -86,8 +104,15 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(mPresenter.getTitle());
+            actionBar.setTitle(groupBean == null ? null : groupBean.getGroupName());
         }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_choice_book_activity, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     //菜单
@@ -95,101 +120,150 @@ public class ChoiceBookActivity extends MBaseActivity<ChoiceBookContract.Present
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case R.id.action_more:
+                toggleCategoryPop();
+                break;
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void bindEvent() {
-        searchBookAdapter.setItemClickListener(new ChoiceBookAdapter.OnItemClickListener() {
-            @Override
-            public void clickToSearch(View clickView, int position, SearchBookBean searchBookBean) {
-                SearchBookActivity.startByKey(ChoiceBookActivity.this, searchBookBean.getName());
-            }
-
-            @Override
-            public void clickItem(View animView, int position, SearchBookBean searchBookBean) {
-                BookDetailActivity.startThis(ChoiceBookActivity.this, searchBookBean);
-            }
-        });
-
-        rfRvSearchBooks.setOnRefreshListener(() -> {
-            mPresenter.initPage();
-            mPresenter.toSearchBooks(null);
-        });
-
-        rfRvSearchBooks.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void startLoadMore() {
-                mPresenter.toSearchBooks(null);
-            }
-
-            @Override
-            public void loadMoreErrorTryAgain() {
-                mPresenter.toSearchBooks(null);
-            }
-        });
-    }
-
-    @Override
-    public void refreshSearchBook(List<SearchBookBean> books) {
-        searchBookAdapter.replaceAll(books);
-    }
-
-    @Override
-    public void refreshFinish(Boolean isAll) {
-        rfRvSearchBooks.finishRefresh(isAll, true);
-    }
-
-    @Override
-    public void loadMoreFinish(Boolean isAll) {
-        rfRvSearchBooks.finishLoadMore(isAll, true);
-    }
-
-    @Override
-    public void loadMoreSearchBook(final List<SearchBookBean> books) {
-        if (books.isEmpty()) {
-            loadMoreFinish(true);
+    public void onBackPressed() {
+        if (categoryOverlay.isShown()) {
+            toggleCategoryPop();
             return;
         }
-        searchBookAdapter.addAll(books);
-        loadMoreFinish(false);
+        finish();
     }
 
-    @Override
-    public void searchBookError() {
-        if (mPresenter.getPage() > 1) {
-            rfRvSearchBooks.loadMoreError();
-        } else {
-            //刷新失败
-            if (!NetworkUtil.isNetworkAvailable()) {
-                rfRvSearchBooks.refreshError("网络不可用");
-            } else {
-                rfRvSearchBooks.refreshError();
-            }
+    @OnClick(R.id.view_masking)
+    public void onClick(View view) {
+        toggleCategoryPop();
+    }
+
+    private void addToCategoryView(List<FindKindBean> kindBeans) {
+        if (kindBeans == null || kindBeans.isEmpty()) return;
+        categoryAdapter = new CategoryAdapter(this, kindBeans);
+        categoryBox.setAdapter(categoryAdapter);
+
+        categoryBox.setOnItemClickListener((parent, view, position, id) -> {
+            viewPager.setCurrentItem(position);
+            toggleCategoryPop();
+        });
+    }
+
+    private void setCategorySelected(int position) {
+        if (categoryAdapter != null) {
+            categoryAdapter.setSelected(position);
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void toggleCategoryPop() {
+        final boolean pendingShow = !categoryOverlay.isShown();
+
+        if (pendingShow) {
+            categoryOverlay.setVisibility(View.VISIBLE);
+        }
+
+        float start = pendingShow ? -categoryBox.getHeight() : 0;
+        float end = pendingShow ? 0 : -categoryBox.getHeight();
+        ObjectAnimator animator = ObjectAnimator.ofFloat(categoryBox, "translationY", start, end);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!pendingShow) {
+                    categoryOverlay.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        animator.start();
     }
 
-    @Override
-    public void addBookShelfFailed(String massage) {
-        toast(massage);
+
+    private static class PagerAdapter extends FragmentStatePagerAdapter {
+
+        private List<FindKindBean> kindBeans;
+
+        PagerAdapter(@NonNull FragmentManager fm, List<FindKindBean> findKindBeans) {
+            super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.kindBeans = findKindBeans;
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            FindKindBean kindBean = kindBeans.get(position);
+            return ChoiceBookFragment.newInstance(kindBean.getTag(), kindBean.getKindUrl());
+        }
+
+        @Override
+        public int getCount() {
+            return kindBeans == null ? 0 : kindBeans.size();
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return kindBeans.get(position).getKindName();
+        }
     }
 
-    @Override
-    public ChoiceBookAdapter getSearchBookAdapter() {
-        return searchBookAdapter;
-    }
+    private static class CategoryAdapter extends BaseAdapter {
 
-    @Override
-    protected void firstRequest() {
-        rfRvSearchBooks.startRefresh();
+        private final List<FindKindBean> findKindBeans;
+
+        private final Context context;
+
+        private int lastPosition;
+
+        CategoryAdapter(Context context, List<FindKindBean> findKindBeans) {
+            this.context = context;
+            this.findKindBeans = findKindBeans;
+        }
+
+        @Override
+        public int getCount() {
+            return findKindBeans == null ? 0 : findKindBeans.size();
+        }
+
+        @Override
+        public FindKindBean getItem(int position) {
+            return findKindBeans.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.item_choice_book_category, null);
+            }
+            TextView tvText = convertView.findViewById(R.id.tv_text);
+            tvText.setText(getItem(position).getKindName());
+            GradientDrawable drawable = (GradientDrawable) tvText.getBackground();
+            if(lastPosition == position){
+                int selectedColor  =ContextCompat.getColor(context, R.color.colorAccent);
+                tvText.setTextColor(selectedColor);
+                drawable.setStroke(DensityUtil.dp2px(context, 2), selectedColor);
+            }else {
+                int normalColor = ContextCompat.getColor(context, R.color.colorBarText);
+                tvText.setTextColor(normalColor);
+                drawable.setStroke(DensityUtil.dp2px(context, 2), normalColor);
+            }
+            return convertView;
+        }
+
+        void setSelected(int position) {
+            if (lastPosition != position) {
+                lastPosition = position;
+                notifyDataSetChanged();
+            }
+        }
     }
 }

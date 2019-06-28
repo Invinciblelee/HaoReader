@@ -66,7 +66,9 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
 
     </style>
+    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
 
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
 
@@ -159,6 +161,11 @@
     <style name="Animation.Pop.Sheet" parent="@android:style/Animation">
         <item name="android:windowEnterAnimation">@anim/anim_pop_windowslide_in</item>
         <item name="android:windowExitAnimation">@anim/anim_pop_windowslide_out</item>
+    </style>
+
+    <style name="Animation.Pop.Slide" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/anim_pop_top_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_pop_top_out</item>
     </style>
 
     <style name="Animation.Dialog" parent="@android:style/Animation">
