@@ -123,6 +123,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     public void onRefresh() {
         if (mAdapter.getItemCount() == 0) {
             showProgress();
+        }else {
+            rvFindList.scrollToPosition(0);
         }
         mPresenter.initData();
     }
