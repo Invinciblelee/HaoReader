@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -136,10 +137,18 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        MainBookListFragment fragment = findMainBookListFragment();
-        if (fragment != null && fragment.dispatchTouchEvent(ev)) {
+        MainBookListFragment mainFragment = findMainBookListFragment();
+        if (viewPager.getCurrentItem() == 0 && mainFragment != null && mainFragment.dispatchTouchEvent(ev)) {
             return true;
         }
+
+
+        FindBookFragment findFragment = findFragment(FindBookFragment.class);
+
+        if (viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.dispatchTouchEvent(ev)) {
+            return true;
+        }
+
         return super.dispatchTouchEvent(ev);
     }
 
@@ -161,8 +170,20 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), titles));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                super.onTabUnselected(tab);
+                setTabSelected(tab, false);
+            }
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                setTabSelected(tab, true);
+            }
+        });
     }
 
     @Override
@@ -192,17 +213,30 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     private void setCustomView(TabLayout.Tab tab) {
-        if(tab == null) return;
+        if (tab == null) return;
         @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.item_home_tab, null);
         TextView text = view.findViewById(R.id.text);
         ImageView icon = view.findViewById(R.id.icon);
         text.setText(tab.getText());
+        text.setTag(text.getCurrentTextColor());
         icon.setImageDrawable(tab.getIcon());
         icon.setTag(tab.getIcon());
         tab.setCustomView(view);
-        if(tab.getCustomView() != null) {
+        if (tab.getPosition() == 0) {
+            text.setTextColor(ContextCompat.getColor(this, R.color.colorBarText));
+        }
+
+        if (tab.getCustomView() != null) {
             View tabView = (View) tab.getCustomView().getParent();
             tabView.setOnLongClickListener(v -> onTabLongClick(tab));
+        }
+    }
+
+    private void setTabSelected(TabLayout.Tab tab, boolean selected) {
+        View custom = tab.getCustomView();
+        if (custom != null) {
+            TextView text = custom.findViewById(R.id.text);
+            text.setTextColor(selected ? ContextCompat.getColor(this, R.color.colorBarText) : (Integer) text.getTag());
         }
     }
 
@@ -599,7 +633,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             }
 
             FindBookFragment findFragment = findFragment(FindBookFragment.class);
-            if(viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.onBackPressed()){
+            if (viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.onBackPressed()) {
                 return true;
             }
 

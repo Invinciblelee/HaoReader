@@ -81,4 +81,5 @@
         <attr name="labelColor" format="color|reference" />
         <attr name="labelSinkWidth" format="dimension|reference" />
     </declare-styleable>
+
 </resources>
