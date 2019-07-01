@@ -29,45 +29,46 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_search_field"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_search_field"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="@color/colorCardBackground"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="4dp"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_search_black_24dp"
+            android:tint="@color/colorMenuText" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_find_search"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:visibility="invisible"
-            app:cardBackgroundColor="@color/colorCardBackground"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="4dp"
-            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
+            android:layout_height="match_parent"
+            android:layout_marginStart="21dp"
+            android:background="@color/transparent"
+            android:gravity="center_vertical"
+            android:hint="@string/search"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:singleLine="true"
+            android:textColor="@color/colorTextDefault"
+            android:textSize="14sp" />
 
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="24dp"
-                android:src="@drawable/ic_search_black_24dp"
-                android:tint="@color/colorMenuText" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edit_find_search"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="21dp"
-                android:background="@color/transparent"
-                android:gravity="center_vertical"
-                android:hint="@string/search"
-                android:paddingStart="24dp"
-                android:paddingEnd="16dp"
-                android:singleLine="true"
-                android:textColor="@color/colorTextDefault"
-                android:textSize="14sp" />
-
-        </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

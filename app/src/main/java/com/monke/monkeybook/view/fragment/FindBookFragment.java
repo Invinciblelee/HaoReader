@@ -1,5 +1,6 @@
 package com.monke.monkeybook.view.fragment;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -52,6 +53,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     private FindBookAdapter mAdapter;
 
     private KeyboardHeightProvider mHeightProvider;
+    private boolean mKeyboardShown;
 
     @Override
     protected FindBookContract.Presenter initInjector() {
@@ -109,9 +111,34 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
         mHeightProvider = new KeyboardHeightProvider(requireActivity()).init().setHeightListener(height -> {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
-            params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 16);
-            searchField.setLayoutParams(params);
+            params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 24);
+            searchField.requestLayout();
+            searchField.postDelayed(() -> animShow(height > 0), 200L);
         });
+    }
+
+    private void animShow(boolean show){
+        if(mKeyboardShown != show) {
+            mKeyboardShown = show;
+
+            if(!mKeyboardShown){
+                searchEdit.setText(null);
+                searchEdit.clearFocus();
+            }
+
+            final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
+            final int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            final int offset = DensityUtil.dp2px(requireContext(), 48);
+            final int start = show ? DensityUtil.dp2px(requireContext(), 100) : screenWidth - offset;
+            final int end = show ? screenWidth - offset : DensityUtil.dp2px(requireContext(), 100);
+
+            ValueAnimator animator = ValueAnimator.ofInt(start, end);
+            animator.addUpdateListener(valueAnimator -> {
+                params.width = (int) valueAnimator.getAnimatedValue();
+                searchField.requestLayout();
+            });
+            animator.start();
+        }
     }
 
     @Override

@@ -35,6 +35,7 @@ public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivi
     }
 
     /**
+     *
      * 事件触发绑定
      */
     protected void bindEvent() {
