@@ -117,11 +117,11 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
         });
     }
 
-    private void animShow(boolean show){
-        if(mKeyboardShown != show) {
+    private void animShow(boolean show) {
+        if (mKeyboardShown != show) {
             mKeyboardShown = show;
 
-            if(!mKeyboardShown){
+            if (!mKeyboardShown) {
                 searchEdit.setText(null);
                 searchEdit.clearFocus();
             }
@@ -150,7 +150,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     public void onRefresh() {
         if (mAdapter.getItemCount() == 0) {
             showProgress();
-        }else {
+        } else {
             rvFindList.scrollToPosition(0);
         }
         mPresenter.initData();
