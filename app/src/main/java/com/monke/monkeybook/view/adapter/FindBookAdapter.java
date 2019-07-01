@@ -293,13 +293,15 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
                 }
             } else {
                 ArrayList<FindKindGroupBean> list = new ArrayList<>();
+                final String key = constraint.toString();
                 for (FindKindGroupBean groupBean : mOriginalList) {
-                    if (StringUtils.containsIgnoreCase(groupBean.getGroupName(), constraint.toString())) {
+                    if (StringUtils.containsIgnoreCase(groupBean.getGroupName(), key)) {
                         list.add(groupBean);
                     }
                 }
                 results.values = list;
                 results.count = list.size();
+
             }
             return results;
         }

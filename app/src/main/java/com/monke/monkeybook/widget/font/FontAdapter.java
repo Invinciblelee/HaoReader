@@ -99,7 +99,7 @@ public class FontAdapter extends Adapter<FontAdapter.MyViewHolder> {
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvFont;
         RadioButton ivChecked;
 
