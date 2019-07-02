@@ -52,6 +52,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     private FindBookAdapter mAdapter;
 
     private boolean mSubmit = true;
+    private String mKeyword;
 
     private KeyboardHeightProvider mHeightProvider;
     private boolean mKeyboardShown;
@@ -107,7 +108,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             @Override
             public void afterTextChanged(Editable s) {
                 if (mSubmit) {
-                    mAdapter.getFilter().filter(s == null ? null : s.toString());
+                    mKeyword = s == null ? null : s.toString();
+                    mAdapter.getFilter().filter(mKeyword);
                 } else {
                     mSubmit = true;
                 }
@@ -130,6 +132,9 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
                 mSubmit = false;
                 searchEdit.setText(null);
                 searchEdit.clearFocus();
+            }else {
+                searchEdit.setText(mKeyword);
+                searchEdit.setSelection(searchEdit.length());
             }
 
             final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
