@@ -11,6 +11,10 @@
     <color name="colorAccentLight">#FFD75E</color>
     <color name="colorAccentTranslucent">#66D9AB23</color>
 
+    <color name="colorSideBar">#607d8b</color>
+    <color name="colorSideBarDark">#455a64</color>
+    <color name="colorSideBarLight">#78909c</color>
+
     <color name="colorBarText">#ffffff</color>
     <color name="colorMenuText">#4a4a4a</color>
 

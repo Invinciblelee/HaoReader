@@ -113,7 +113,6 @@
     <string name="update_url">查看最新版本</string>
     <string name="camera_scan">扫描二维码</string>
     <string name="scan_image">扫描本地图片</string>
-    <string name="rule_summary">规则说明</string>
     <string name="share">分享</string>
     <string name="flow_sys">跟随系统</string>
     <string name="add">添加</string>
@@ -136,7 +135,6 @@
     <string name="menu">菜单</string>
     <string name="adjust">调节</string>
     <string name="scroll_bar">滚动条</string>
-    <string name="qqq">讨论群:701903217</string>
     <string name="clear_all_content">清除缓存会删除所有已保存章节,是否确认删除?</string>
     <string name="book_source_share_url">书源共享</string>
     <string name="replace_rule_summary">替换规则描述</string>
@@ -209,7 +207,6 @@
     <string name="action_del">删除</string>
     <string name="action_open_chapter">前往</string>
     <string name="load_over_time">加载超时</string>
-    <string name="qq_group">QQ讨论群:%s</string>
     <string name="copy_complete">已拷贝</string>
     <string name="delete_bookshelf_s">是否确认将这本书移出书架？</string>
     <string name="delete_bookshelf_not_exist_s">此书籍文件已被删除，是否将这本书移出书架？</string>

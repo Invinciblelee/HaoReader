@@ -311,7 +311,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         return gson.toJson(getBookSource());
     }
 
-    private void setResult(BookSourceBean sourceBean){
+    private void setResult(BookSourceBean sourceBean) {
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
         data.putExtra("type", StringUtils.isBlank(sourceBean.getRuleFindUrl()) ? -1 : 0);
@@ -472,16 +472,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         startActivity(Intent.createChooser(intent, "分享书源"));
     }
 
-    private void openRuleSummary() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(getString(R.string.source_rule_url)));
-            startActivity(intent);
-        } catch (Exception e) {
-            showSnackBar(R.string.can_not_open);
-        }
-    }
-
     //设置ToolBar
     @Override
     protected void setupActionBar() {
@@ -542,9 +532,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 if (canSaveBookSource()) {
                     mPresenter.saveSource(getBookSource(), bookSourceBean, true);
                 }
-                break;
-            case R.id.action_rule_summary:
-                openRuleSummary();
                 break;
             case android.R.id.home:
                 onBackPressed();

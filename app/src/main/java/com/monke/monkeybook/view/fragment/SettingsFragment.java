@@ -47,6 +47,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             if (listView != null) {
                 listView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
                 listView.setVerticalScrollBarEnabled(false);
+                listView.setDivider(null);
+                listView.setDividerHeight(0);
             }
         }
     }

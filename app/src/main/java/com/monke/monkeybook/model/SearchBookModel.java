@@ -84,7 +84,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     public SearchBookModel(Context context) {
         AppConfigHelper configHelper = AppConfigHelper.get();
         threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
-        threadsNum = Math.min(30, threadsNum);
+        threadsNum = Math.min(50, threadsNum);
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
         searchHandler = new SearchHandler(this);
     }
