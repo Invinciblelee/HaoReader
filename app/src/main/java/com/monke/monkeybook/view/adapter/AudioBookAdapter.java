@@ -58,7 +58,7 @@ public class AudioBookAdapter extends BaseBookListAdapter<AudioBookAdapter.MyVie
             holder.tvAuthor.setText(R.string.author_unknown);
         }
 
-        String durChapterName = item.getDurChapterName();
+        String durChapterName = item.getDisplayDurChapterName();
         if (TextUtils.isEmpty(durChapterName)) {
             holder.tvRead.setText(getContext().getString(R.string.play_dur_progress, getContext().getString(R.string.text_placeholder)));
         } else {

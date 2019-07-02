@@ -374,7 +374,12 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
     public String getDurChapterName() {
-        return TextProcessor.formatChapterName(this.durChapterName);
+        return this.durChapterName;
+    }
+
+
+    public String getDisplayDurChapterName() {
+        return TextProcessor.formatChapterName(durChapterName);
     }
 
     public void setDurChapterName(String durChapterName) {
@@ -382,7 +387,11 @@ public class BookShelfBean implements Parcelable, VariableStore {
     }
 
     public String getLastChapterName() {
-        return TextProcessor.formatChapterName(this.lastChapterName);
+        return this.lastChapterName;
+    }
+
+    public String getDisplayLastChapterName() {
+        return TextProcessor.formatChapterName(lastChapterName);
     }
 
     public void setLastChapterName(String lastChapterName) {

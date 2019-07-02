@@ -192,6 +192,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         return lastChapter;
     }
 
+    public String getDisplayLastChapter(){
+        return TextProcessor.formatChapterName(lastChapter);
+    }
+
     public void setLastChapter(String lastChapter) {
         this.lastChapter = lastChapter;
     }

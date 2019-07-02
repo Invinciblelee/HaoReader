@@ -39,12 +39,14 @@ public class TextProcessor {
     }
 
     public static String formatChapterName(String chapterName) {
-        if (StringUtils.isBlank(chapterName)) {
+        if (TextUtils.isEmpty(chapterName)) {
             return "";
         }
 
-        String halfString = StringUtils.fullToHalf(chapterName);
-        return StringUtils.trim(halfString.replaceAll("\\s+", " "));
+        chapterName = StringUtils.fullToHalf(chapterName);
+        chapterName = StringUtils.trim(chapterName.replaceAll("\\s+", " "));
+
+        return chapterName;
     }
 
     public static String formatBookName(String str) {

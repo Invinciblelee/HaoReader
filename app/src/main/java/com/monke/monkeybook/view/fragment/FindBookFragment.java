@@ -67,7 +67,6 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
         return inflater.inflate(R.layout.fragment_find_book, container, false);
     }
 
-
     @Override
     protected void bindView() {
         ButterKnife.bind(this, view);
@@ -122,6 +121,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             searchField.requestLayout();
             searchField.postDelayed(() -> animShow(height > 0), 200L);
         });
+
     }
 
     private void animShow(boolean show) {
@@ -132,7 +132,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
                 mSubmit = false;
                 searchEdit.setText(null);
                 searchEdit.clearFocus();
-            }else {
+            } else {
                 searchEdit.setText(mKeyword);
                 searchEdit.setSelection(searchEdit.length());
             }

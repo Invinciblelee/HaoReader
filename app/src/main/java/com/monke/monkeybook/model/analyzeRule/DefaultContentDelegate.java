@@ -79,7 +79,7 @@ class DefaultContentDelegate implements ContentDelegate {
             String name = TextProcessor.formatBookName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchName()));
             String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchAuthor()));
             String kind = StringUtils.join(",", mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchKind()));
-            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchLastChapter()));
+            String lastChapter = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchLastChapter());
             String introduce = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchIntroduce());
             String coverUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchCoverUrl());
             String noteUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchNoteUrl());
@@ -102,7 +102,7 @@ class DefaultContentDelegate implements ContentDelegate {
             String name = TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName()));
             String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor()));
             String kind = StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind()));
-            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter()));
+            String lastChapter = mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter());
             String introduce = mAnalyzer.getResultContent(getBookSource().getRuleSearchIntroduce());
             String coverUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl());
             String noteUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl());
@@ -215,7 +215,7 @@ class DefaultContentDelegate implements ContentDelegate {
             }
 
             if (isEmpty(book.getLastChapterName())) {
-                book.setLastChapterName(TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter())));
+                book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter()));
             }
 
             bookInfoBean.setNoteUrl(getConfig().getBaseURL());   //id

@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
-import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.utils.NumberUtil;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
@@ -83,7 +82,7 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
             return;
         }
 
-        holder.tvName.setText(TextProcessor.formatChapterName(chapterBean.getDurChapterName()));
+        holder.tvName.setText(chapterBean.getDisplayDurChapterName());
 
         if (isCached(chapterBean)) {
             setBoldText(holder, true);

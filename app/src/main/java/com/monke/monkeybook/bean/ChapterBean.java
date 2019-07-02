@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import androidx.core.util.ObjectsCompat;
 
 import com.monke.monkeybook.help.ChapterContentHelp;
+import com.monke.monkeybook.help.TextProcessor;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -165,6 +166,10 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
 
     public String getDurChapterName() {
         return durChapterName;
+    }
+
+    public String getDisplayDurChapterName() {
+        return TextProcessor.formatChapterName(durChapterName);
     }
 
     public void setDurChapterName(String durChapterName) {

@@ -119,10 +119,11 @@ public class DownloadService extends Service {
         new DownloadTaskImpl(downloadBook) {
             @Override
             public void onDownloadPrepared(DownloadBookBean downloadBook) {
+                downloadTasks.put(getId(), this);
+
                 if (canStartNextTask()) {
                     startDownload(scheduler, threadsNum);
                 }
-                downloadTasks.put(getId(), this);
                 sendUpDownloadBook(addDownloadAction, downloadBook);
                 longToast(String.format(Locale.getDefault(), "%s：下载任务添加成功", downloadBook.getName()));
             }
@@ -139,10 +140,8 @@ public class DownloadService extends Service {
 
             @Override
             public void onDownloadError(DownloadBookBean downloadBook) {
-                if (downloadTasks.indexOfValue(this) >= 0) {
-                    downloadTasks.remove(getId());
-                    managerCompat.cancel(getId());
-                }
+                downloadTasks.remove(getId());
+                managerCompat.cancel(getId());
 
                 toast(String.format(Locale.getDefault(), "%s：下载失败", downloadBook.getName()));
 
@@ -152,17 +151,18 @@ public class DownloadService extends Service {
             @Override
             public void onDownloadComplete(DownloadBookBean downloadBook) {
                 if (downloadTasks.indexOfValue(this) >= 0) {
-                    downloadTasks.remove(getId());
-                    managerCompat.cancel(getId());
-
                     if (downloadBook.getSuccessCount() == 0) {
-                        toast(String.format(Locale.getDefault(), "%s：无章节可下载", downloadBook.getName()));
+                        toast(String.format(Locale.getDefault(), "%s：取消下载", downloadBook.getName()));
                     } else {
                         longToast(String.format(Locale.getDefault(), "%s：共下载%d章", downloadBook.getName(), downloadBook.getSuccessCount()));
                     }
                 } else if (!downloadBook.isValid()) {
-                    toast(String.format(Locale.getDefault(), "%s：所有章节已缓存，无需重复下载", downloadBook.getName()));
+                    toast(String.format(Locale.getDefault(), "%s：所有章节已缓存", downloadBook.getName()));
                 }
+
+                downloadTasks.remove(getId());
+                managerCompat.cancel(getId());
+
                 startNextTaskAfterRemove(downloadBook);
             }
         };
@@ -173,6 +173,7 @@ public class DownloadService extends Service {
             IDownloadTask downloadTask = downloadTasks.valueAt(i);
             downloadTask.stopDownload();
         }
+        downloadTasks.clear();
         finishSelf();
     }
 

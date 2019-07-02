@@ -17,7 +17,6 @@ import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.impl.IDownloadTask;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +30,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public abstract class DownloadTaskImpl implements IDownloadTask {
 
-    private final int id;
     private final long when;
 
     private boolean isDownloading = false;
@@ -42,10 +40,8 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
     private CompositeDisposable disposables;
 
-    public DownloadTaskImpl(DownloadBookBean downloadBook) {
-        final long nowTime = new Date().getTime();
-        this.id = (int) (nowTime / 1000);
-        this.when = nowTime;
+    protected DownloadTaskImpl(DownloadBookBean downloadBook) {
+        this.when = System.currentTimeMillis();
         this.downloadBook = downloadBook;
         downloadChapters = new ArrayList<>();
         disposables = new CompositeDisposable();
