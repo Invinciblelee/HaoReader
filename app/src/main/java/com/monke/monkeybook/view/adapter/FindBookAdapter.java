@@ -274,6 +274,14 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
             filter(constraint);
         }
 
+        public boolean clearFilter() {
+            if (!TextUtils.isEmpty(constraint)) {
+                filter(null);
+                return true;
+            }
+            return false;
+        }
+
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
 

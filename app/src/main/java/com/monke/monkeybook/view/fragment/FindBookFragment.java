@@ -28,7 +28,6 @@ import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookDetailActivity;
 import com.monke.monkeybook.view.activity.ChoiceBookActivity;
 import com.monke.monkeybook.view.activity.SourceEditActivity;
@@ -51,6 +50,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     View searchField;
 
     private FindBookAdapter mAdapter;
+
+    private boolean mSubmit = true;
 
     private KeyboardHeightProvider mHeightProvider;
     private boolean mKeyboardShown;
@@ -105,7 +106,11 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
             @Override
             public void afterTextChanged(Editable s) {
-                mAdapter.getFilter().filter(s == null ? null : s.toString());
+                if (mSubmit) {
+                    mAdapter.getFilter().filter(s == null ? null : s.toString());
+                } else {
+                    mSubmit = true;
+                }
             }
         });
 
@@ -122,6 +127,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             mKeyboardShown = show;
 
             if (!mKeyboardShown) {
+                mSubmit = false;
                 searchEdit.setText(null);
                 searchEdit.clearFocus();
             }
@@ -207,8 +213,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             return true;
         }
 
-        CharSequence text = searchEdit.getText();
-        if (text != null && StringUtils.isNotBlank(text.toString())) {
+        if (mAdapter.getFilter().clearFilter()) {
             searchEdit.setText(null);
             return true;
         }
