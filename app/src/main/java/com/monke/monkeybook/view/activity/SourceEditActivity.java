@@ -311,6 +311,11 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         return gson.toJson(getBookSource());
     }
 
+    @Override
+    public String getBookSourceName() {
+        return trim(tieBookSourceName.getText());
+    }
+
     private void setResult(BookSourceBean sourceBean) {
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
@@ -463,12 +468,12 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     @Override
-    public void shareSource(File file) {
+    public void shareSource(File file, String mediaType) {
         Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file);
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-        intent.setType("image/png");
+        intent.setType(mediaType);
         startActivity(Intent.createChooser(intent, "分享书源"));
     }
 

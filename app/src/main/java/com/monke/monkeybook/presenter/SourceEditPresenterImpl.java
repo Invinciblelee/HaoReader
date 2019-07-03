@@ -18,6 +18,7 @@ import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
 import com.monke.monkeybook.utils.MD5Utils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -120,8 +121,16 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
                 fOut.close();
                 file.setReadable(true, false);
                 emitter.onSuccess(file);
+            } else if (StringUtils.isNotBlank(mView.getBookSourceName())) {
+                File file = new File(mView.getContext().getExternalCacheDir(), mView.getBookSourceName() + ".txt");
+                FileOutputStream fOut = new FileOutputStream(file);
+                fOut.write(mView.getBookSourceStr().getBytes());
+                fOut.flush();
+                fOut.close();
+                file.setReadable(true, false);
+                emitter.onSuccess(file);
             } else {
-                emitter.onError(new IllegalArgumentException("string data covert to bitmap failed！"));
+                emitter.onError(new IllegalArgumentException("can not generate share file"));
             }
         }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -133,7 +142,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
 
                     @Override
                     public void onSuccess(File file) {
-                        mView.shareSource(file);
+                        mView.shareSource(file, file.getName().endsWith(".txt") ? "text/plain" : "image/png");
                     }
 
                     @Override

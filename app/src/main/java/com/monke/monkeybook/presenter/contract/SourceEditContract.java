@@ -29,10 +29,12 @@ public interface SourceEditContract {
 
         String getBookSourceStr();
 
+        String getBookSourceName();
+
         void saveSuccess();
 
         void showSnackBar(String msg);
 
-        void shareSource(File file);
+        void shareSource(File file, String mediaType);
     }
 }
