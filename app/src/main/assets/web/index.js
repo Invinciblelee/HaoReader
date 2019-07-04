@@ -27,7 +27,6 @@ const RuleJSON = (() => {
 	ruleJson.enable = true;
 	ruleJson.bookSourceType = 'TEXT';
 	ruleJson.bookSourceRuleType = 'DEFAULT';
-	ruleJson.bookSourceCacheEnabled = true;
 	return ruleJson;
 })();
 // 选项卡Tab切换事件处理
@@ -79,7 +78,6 @@ function rule2json() {
 	RuleJSON.serialNumber = RuleJSON.serialNumber == '' ? 0 : parseInt(RuleJSON.serialNumber);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.enable = RuleJSON.enable == '' || RuleJSON.enable.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
-	RuleJSON.bookSourceCacheEnabled = RuleJSON.bookSourceCacheEnabled == '' || RuleJSON.bookSourceCacheEnabled.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	if(RuleJSON.bookSourceType != 'TEXT' && RuleJSON.bookSourceType != 'AUDIO'){
 	    RuleJSON.bookSourceType = 'TEXT';
 	}

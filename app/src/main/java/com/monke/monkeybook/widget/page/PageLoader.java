@@ -214,7 +214,7 @@ public abstract class PageLoader {
         // 绘制标题的画笔
         mTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTitlePaint.setColor(mTextColor);
-        mTitlePaint.setTextSize(mTextSize * 1.2f);
+        mTitlePaint.setTextSize(mTextSize * 1.25f);
         mTitlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mTitlePaint.setTypeface(typeface);
         mTitlePaint.setFakeBoldText(true);
@@ -731,9 +731,10 @@ public abstract class PageLoader {
             x += bw;
             line = line.substring(2);
         }
-        int lineLength = line.length();
-        int gapCount = lineLength - 1;
-        float d = ((mDisplayWidth - (mMarginLeft + mMarginRight)) - lineWidth) / gapCount;
+
+        final int lineLength = line.length();
+        final int gapCount = lineLength - 1;
+        final float d = ((mDisplayWidth - (mMarginLeft + mMarginRight)) - lineWidth) / gapCount;
         for (int i = 0; i < lineLength; i++) {
             String c = String.valueOf(line.charAt(i));
             float cw = StaticLayout.getDesiredWidth(c, paint);

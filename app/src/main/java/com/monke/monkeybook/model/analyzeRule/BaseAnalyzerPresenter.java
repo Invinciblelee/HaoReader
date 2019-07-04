@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -27,7 +29,6 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     private OutAnalyzer<S> mAnalyzer;
     private SimpleJavaExecutor mSimpleJavaExecutor;
-    private Map<String, Object> mCache;
 
     BaseAnalyzerPresenter(OutAnalyzer<S> analyzer) {
         this.mAnalyzer = analyzer;
@@ -52,23 +53,6 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     final BookSourceBean getBookSource() {
         return mAnalyzer.getConfig().getBookSource();
-    }
-
-    final Object getCache(String key) {
-        if (mCache == null) return null;
-        if (getBookSource().getBookSourceCacheEnabled()) {
-            return mCache.get(key);
-        }
-        return null;
-    }
-
-    final void putCache(String key, Object value) {
-        if (mCache == null) {
-            mCache = new HashMap<>();
-        }
-        if (getBookSource().getBookSourceCacheEnabled()) {
-            mCache.put(key, value);
-        }
     }
 
     final String evalStringScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
@@ -107,7 +91,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
             }
         }
 
-        matchRegexes(result, rulePattern);
+        replaceRegexes(result, rulePattern);
     }
 
 
@@ -123,7 +107,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     final void processRawUrls(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
-        matchRegexes(result, rulePattern);
+        replaceRegexes(result, rulePattern);
 
         ListIterator<String> iterator = result.listIterator();
         while (iterator.hasNext()) {
@@ -131,7 +115,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         }
     }
 
-    final void matchRegexes(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
+    final void replaceRegexes(@NonNull List<String> list, @NonNull RulePattern rulePattern) {
         if (!isEmpty(rulePattern.replaceRegex)) {
             ListIterator<String> iterator = list.listIterator();
             while (iterator.hasNext()) {
@@ -144,7 +128,7 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     final String processResultContent(@NonNull String result, @NonNull RulePattern rulePattern) {
         result = evalStringScript(result, rulePattern);
 
-        result = matchRegex(result, rulePattern);
+        result = replaceRegex(result, rulePattern);
 
         return result;
     }
@@ -159,48 +143,50 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     }
 
     final String processRawUrl(@NonNull String result, @NonNull RulePattern rulePattern) {
-        result = matchRegex(result, rulePattern);
+        result = replaceRegex(result, rulePattern);
 
         result = URLUtils.getAbsUrl(getBaseURL(), result);
 
         return result;
     }
 
-    final String matchRegex(@NonNull String result, @NonNull RulePattern rulePattern) {
+    final String replaceRegex(@NonNull String result, @NonNull RulePattern rulePattern) {
         if (!isEmpty(rulePattern.replaceRegex)) {
-            result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
+            if (rulePattern.replaceGroup > -1) {
+                Pattern pattern = Pattern.compile(rulePattern.replaceRegex);
+                Matcher matcher = pattern.matcher(result);
+                if (matcher.find()) {
+                    result = matcher.group(rulePattern.replaceGroup).replaceFirst(rulePattern.replaceRegex, rulePattern.replacement);
+                } else {
+                    result = "";
+                }
+            } else {
+                result = result.replaceAll(rulePattern.replaceRegex, rulePattern.replacement);
+            }
         }
         return result;
     }
 
     RulePatterns fromRule(String rawRule, boolean withVariableStore) {
-        RulePatterns patterns = (RulePatterns) getCache(rawRule);
-        if (patterns != null) {
-            return patterns;
-        }
+        final RulePatterns patterns;
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
             patterns = RulePatterns.fromRule(rawRule, getBaseURL(), getVariableStore(), mode);
         } else {
             patterns = RulePatterns.fromRule(rawRule, getBaseURL(), mode);
         }
-        putCache(rawRule, patterns);
         return patterns;
     }
 
 
     RulePattern fromSingleRule(String rawRule, boolean withVariableStore) {
-        RulePattern pattern = (RulePattern) getCache(rawRule);
-        if (pattern != null) {
-            return pattern;
-        }
+        final RulePattern pattern;
         RuleMode mode = RuleMode.fromRuleType(mAnalyzer.getRuleType());
         if (withVariableStore) {
             pattern = RulePattern.fromRule(rawRule, getVariableStore(), mode);
         } else {
             pattern = RulePattern.fromRule(rawRule, mode);
         }
-        putCache(rawRule, pattern);
         return pattern;
     }
 
@@ -256,6 +242,8 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return getVariableStore().putVariableMap(resultMap);
     }
 
+    /////////////////////////////////////////////////////////JS执行/////////////////////////////////////////////////////////////////
+
     @Override
     public String putVariable(String key, String val) {
         return getVariableStore().putVariable(key, val);
@@ -266,8 +254,6 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return getVariableStore().getVariable(key);
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     @Override
     public final String ajax(String urlStr) {
         return mSimpleJavaExecutor.ajax(urlStr);
@@ -277,7 +263,6 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     public final String base64Decode(String string) {
         return mSimpleJavaExecutor.base64Decode(string);
     }
-
 
     @Override
     public String base64Encode(String string) {

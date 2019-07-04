@@ -46,7 +46,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         public final static Property RuleSearchNoteUrl = new Property(19, String.class, "ruleSearchNoteUrl", false, "RULE_SEARCH_NOTE_URL");
         public final static Property RuleBookName = new Property(20, String.class, "ruleBookName", false, "RULE_BOOK_NAME");
         public final static Property RuleBookAuthor = new Property(21, String.class, "ruleBookAuthor", false, "RULE_BOOK_AUTHOR");
-        public final static Property RuleLastChapter = new Property(22, String.class, "ruleLastChapter", false, "RULE_LAST_CHAPTER");
+        public final static Property RuleBookLastChapter = new Property(22, String.class, "ruleBookLastChapter", false, "RULE_BOOK_LAST_CHAPTER");
         public final static Property RuleCoverUrl = new Property(23, String.class, "ruleCoverUrl", false, "RULE_COVER_URL");
         public final static Property RuleIntroduce = new Property(24, String.class, "ruleIntroduce", false, "RULE_INTRODUCE");
         public final static Property RuleChapterUrl = new Property(25, String.class, "ruleChapterUrl", false, "RULE_CHAPTER_URL");
@@ -95,7 +95,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
                 "\"RULE_SEARCH_NOTE_URL\" TEXT," + // 19: ruleSearchNoteUrl
                 "\"RULE_BOOK_NAME\" TEXT," + // 20: ruleBookName
                 "\"RULE_BOOK_AUTHOR\" TEXT," + // 21: ruleBookAuthor
-                "\"RULE_LAST_CHAPTER\" TEXT," + // 22: ruleLastChapter
+                "\"RULE_BOOK_LAST_CHAPTER\" TEXT," + // 22: ruleBookLastChapter
                 "\"RULE_COVER_URL\" TEXT," + // 23: ruleCoverUrl
                 "\"RULE_INTRODUCE\" TEXT," + // 24: ruleIntroduce
                 "\"RULE_CHAPTER_URL\" TEXT," + // 25: ruleChapterUrl
@@ -213,9 +213,9 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             stmt.bindString(22, ruleBookAuthor);
         }
  
-        String ruleLastChapter = entity.getRuleLastChapter();
-        if (ruleLastChapter != null) {
-            stmt.bindString(23, ruleLastChapter);
+        String ruleBookLastChapter = entity.getRuleBookLastChapter();
+        if (ruleBookLastChapter != null) {
+            stmt.bindString(23, ruleBookLastChapter);
         }
  
         String ruleCoverUrl = entity.getRuleCoverUrl();
@@ -372,9 +372,9 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             stmt.bindString(22, ruleBookAuthor);
         }
  
-        String ruleLastChapter = entity.getRuleLastChapter();
-        if (ruleLastChapter != null) {
-            stmt.bindString(23, ruleLastChapter);
+        String ruleBookLastChapter = entity.getRuleBookLastChapter();
+        if (ruleBookLastChapter != null) {
+            stmt.bindString(23, ruleBookLastChapter);
         }
  
         String ruleCoverUrl = entity.getRuleCoverUrl();
@@ -463,7 +463,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // ruleSearchNoteUrl
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // ruleBookName
             cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // ruleBookAuthor
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // ruleLastChapter
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // ruleBookLastChapter
             cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // ruleCoverUrl
             cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // ruleIntroduce
             cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // ruleChapterUrl
@@ -503,7 +503,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         entity.setRuleSearchNoteUrl(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
         entity.setRuleBookName(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
         entity.setRuleBookAuthor(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setRuleLastChapter(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setRuleBookLastChapter(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
         entity.setRuleCoverUrl(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
         entity.setRuleIntroduce(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
         entity.setRuleChapterUrl(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));

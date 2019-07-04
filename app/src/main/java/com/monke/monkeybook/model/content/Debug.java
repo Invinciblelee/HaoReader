@@ -74,7 +74,7 @@ public class Debug {
     }
 
     private void searchDebug(String key) {
-        printLog(String.format("★%s 搜索开始", getDoTime()));
+        printLog(String.format("◆%s 搜索开始", getDoTime()));
         WebBookModel.getInstance().searchBook(Debug.SOURCE_DEBUG_TAG, key, 1)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -89,7 +89,7 @@ public class Debug {
                     public void onNext(List<SearchBookBean> searchBookBeans) {
                         if (searchBookBeans.isEmpty()) {
                             printError("搜索列表为空");
-                            printLog(String.format("★%s 搜索结束", getDoTime()));
+                            printLog(String.format("◆%s 搜索结束", getDoTime()));
                         } else {
                             printLog("●成功获取搜索结果» 共" + searchBookBeans.size() + "个结果");
                             SearchBookBean searchBookBean = searchBookBeans.get(0);
@@ -100,12 +100,12 @@ public class Debug {
                             printLog("●最新章节» " + searchBookBean.getLastChapter());
                             printLog("●书籍封面» " + searchBookBean.getCoverUrl());
                             printLog("●书籍网址» " + searchBookBean.getNoteUrl());
-                            printLog(String.format("★%s 搜索结束", getDoTime()));
+                            printLog(String.format("◆%s 搜索结束", getDoTime()));
                             if (!TextUtils.isEmpty(searchBookBean.getNoteUrl())) {
                                 bookInfoDebug(BookshelfHelp.getBookFromSearchBook(searchBookBean), false);
                             } else {
                                 printError("详情网址获取失败");
-                                printLog(String.format("★%s 搜索结束", getDoTime()));
+                                printLog(String.format("◆%s 搜索结束", getDoTime()));
                             }
                         }
                     }
@@ -113,7 +113,7 @@ public class Debug {
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
-                        printLog(String.format("★%s 目录结束", getDoTime()));
+                        printLog(String.format("◆%s 目录结束", getDoTime()));
                     }
 
                     @Override
@@ -127,7 +127,7 @@ public class Debug {
         if (!start) {
             printLog("\n");
         }
-        printLog(String.format("★%s 详情开始", getDoTime()));
+        printLog(String.format("◆%s 详情开始", getDoTime()));
         WebBookModel.getInstance().getBookInfo(bookShelfBean)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -147,7 +147,7 @@ public class Debug {
                         printLog("●最新章节» " + bookShelfBean.getLastChapterName());
                         printLog("●书籍封面» " + bookInfoBean.getCoverUrl());
                         printLog("●目录网址» " + bookInfoBean.getChapterListUrl());
-                        printLog(String.format("★%s 详情结束", getDoTime()));
+                        printLog(String.format("◆%s 详情结束", getDoTime()));
                         bookChapterListDebug(bookShelfBean);
                     }
 
@@ -155,7 +155,7 @@ public class Debug {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         printError(e.getMessage());
-                        printLog(String.format("★%s 详情结束", getDoTime()));
+                        printLog(String.format("◆%s 详情结束", getDoTime()));
                     }
 
                     @Override
@@ -167,7 +167,7 @@ public class Debug {
 
     private void bookChapterListDebug(BookShelfBean bookShelfBean) {
         printLog("\n");
-        printLog(String.format("★%s 目录开始", getDoTime()));
+        printLog(String.format("◆%s 目录开始", getDoTime()));
         WebBookModel.getInstance().getChapterList(bookShelfBean)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -186,11 +186,11 @@ public class Debug {
                             ChapterBean chapterBean = bookShelfBean.getChapter(0);
                             printLog("●章节名称» " + chapterBean.getDurChapterName());
                             printLog("●章节网址» " + URLUtils.getAbsUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), chapterBean.getDurChapterUrl()));
-                            printLog(String.format("★%s 目录结束", getDoTime()));
+                            printLog(String.format("◆%s 目录结束", getDoTime()));
                             bookContentDebug(bookShelfBean.getBookInfoBean(), chapterBean);
                         } else {
                             printError("获取到的目录为空");
-                            printLog(String.format("★%s 目录结束", getDoTime()));
+                            printLog(String.format("◆%s 目录结束", getDoTime()));
                         }
 
                     }
@@ -199,7 +199,7 @@ public class Debug {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         printError(e.getMessage());
-                        printLog(String.format("★%s 目录结束", getDoTime()));
+                        printLog(String.format("◆%s 目录结束", getDoTime()));
                     }
 
                     @Override
@@ -211,7 +211,7 @@ public class Debug {
 
     private void bookContentDebug(BookInfoBean bookInfoBean, ChapterBean chapterBean) {
         printLog("\n");
-        printLog(String.format("★%s 正文开始", getDoTime()));
+        printLog(String.format("◆%s 正文开始", getDoTime()));
 
         if (BookType.AUDIO.equals(bookInfoBean.getBookType())) {
             bookAudioDebug(bookInfoBean, chapterBean);
@@ -237,13 +237,13 @@ public class Debug {
                         } else {
                             printLog("●章节内容» " + content);
                         }
-                        printLog(String.format("★%s 正文结束", getDoTime()));
+                        printLog(String.format("◆%s 正文结束", getDoTime()));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
-                        printLog(String.format("★%s 正文结束", getDoTime()));
+                        printLog(String.format("◆%s 正文结束", getDoTime()));
                     }
 
                     @Override
@@ -268,13 +268,13 @@ public class Debug {
                     public void onNext(ChapterBean chapterBean) {
                         printLog("●成功获取播放页» " + chapterBean.getDurChapterUrl());
                         printLog("●播放链接» " + chapterBean.getDurChapterPlayUrl());
-                        printLog(String.format("★%s 正文结束", getDoTime()));
+                        printLog(String.format("◆%s 正文结束", getDoTime()));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         printError(e.getMessage());
-                        printLog(String.format("★%s 正文结束", getDoTime()));
+                        printLog(String.format("◆%s 正文结束", getDoTime()));
                     }
 
                     @Override

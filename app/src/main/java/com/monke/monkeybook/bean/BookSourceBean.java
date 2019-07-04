@@ -33,13 +33,13 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private String bookSourceGroup;
     private String bookSourceType = BookType.TEXT;
     private String bookSourceRuleType = RuleType.DEFAULT;
-    private boolean bookSourceCacheEnabled;
     private String checkUrl;
     @OrderBy
     private int serialNumber;
     @OrderBy
     private int weight = 0;
     private boolean enable;
+    private boolean showFind;
     private String ruleFindUrl;
     //搜索
     private String ruleSearchUrl;
@@ -54,7 +54,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     //详情
     private String ruleBookName;
     private String ruleBookAuthor;
-    private String ruleLastChapter;
+    private String ruleBookLastChapter;
     private String ruleCoverUrl;
     private String ruleIntroduce;
     private String ruleChapterUrl;
@@ -73,16 +73,15 @@ public class BookSourceBean implements Parcelable, Cloneable {
     @Transient
     private String ajaxJavaScript;
 
-    @Generated(hash = 1464818968)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, boolean bookSourceCacheEnabled, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl, String ruleSearchUrl,
-                          String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleLastChapter,
-                          String ruleCoverUrl, String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
+    @Generated()
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, boolean bookSourceCacheEnabled, String checkUrl, int serialNumber, int weight, boolean enable, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList,
+                          String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleBookLastChapter, String ruleCoverUrl,
+                          String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
         this.bookSourceType = bookSourceType;
         this.bookSourceRuleType = bookSourceRuleType;
-        this.bookSourceCacheEnabled = bookSourceCacheEnabled;
         this.checkUrl = checkUrl;
         this.serialNumber = serialNumber;
         this.weight = weight;
@@ -99,7 +98,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleSearchNoteUrl = ruleSearchNoteUrl;
         this.ruleBookName = ruleBookName;
         this.ruleBookAuthor = ruleBookAuthor;
-        this.ruleLastChapter = ruleLastChapter;
+        this.ruleBookLastChapter = ruleBookLastChapter;
         this.ruleCoverUrl = ruleCoverUrl;
         this.ruleIntroduce = ruleIntroduce;
         this.ruleChapterUrl = ruleChapterUrl;
@@ -123,11 +122,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
         bookSourceGroup = in.readString();
         bookSourceType = in.readString();
         bookSourceRuleType = in.readString();
-        bookSourceCacheEnabled = in.readByte() != 0;
         checkUrl = in.readString();
         serialNumber = in.readInt();
         weight = in.readInt();
         enable = in.readByte() != 0;
+        showFind = in.readByte() != 0;
         ruleFindUrl = in.readString();
         ruleSearchUrl = in.readString();
         ruleSearchList = in.readString();
@@ -140,7 +139,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         ruleSearchNoteUrl = in.readString();
         ruleBookName = in.readString();
         ruleBookAuthor = in.readString();
-        ruleLastChapter = in.readString();
+        ruleBookLastChapter = in.readString();
         ruleCoverUrl = in.readString();
         ruleIntroduce = in.readString();
         ruleChapterUrl = in.readString();
@@ -162,11 +161,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(bookSourceGroup);
         dest.writeString(bookSourceType);
         dest.writeString(bookSourceRuleType);
-        dest.writeByte((byte) (bookSourceCacheEnabled ? 1 : 0));
         dest.writeString(checkUrl);
         dest.writeInt(serialNumber);
         dest.writeInt(weight);
         dest.writeByte((byte) (enable ? 1 : 0));
+        dest.writeByte((byte) (showFind ? 1 : 0));
         dest.writeString(ruleFindUrl);
         dest.writeString(ruleSearchUrl);
         dest.writeString(ruleSearchList);
@@ -179,7 +178,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeString(ruleSearchNoteUrl);
         dest.writeString(ruleBookName);
         dest.writeString(ruleBookAuthor);
-        dest.writeString(ruleLastChapter);
+        dest.writeString(ruleBookLastChapter);
         dest.writeString(ruleCoverUrl);
         dest.writeString(ruleIntroduce);
         dest.writeString(ruleChapterUrl);
@@ -223,7 +222,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(ruleFindUrl, bs.ruleFindUrl)
                     && stringEquals(ruleBookName, bs.ruleBookName)
                     && stringEquals(ruleBookAuthor, bs.ruleBookAuthor)
-                    && stringEquals(ruleLastChapter, bs.ruleLastChapter)
+                    && stringEquals(ruleBookLastChapter, bs.ruleBookLastChapter)
                     && stringEquals(ruleChapterUrl, bs.ruleChapterUrl)
                     && stringEquals(ruleChapterUrlNext, ruleChapterUrlNext)
                     && stringEquals(ruleCoverUrl, bs.ruleCoverUrl)
@@ -245,7 +244,9 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
                     && stringEquals(checkUrl, bs.checkUrl)
                     && stringEquals(rulePersistedVariables, bs.rulePersistedVariables)
-                    && bookSourceCacheEnabled == bs.bookSourceCacheEnabled;
+                    && enable == bs.enable
+                    && showFind == bs.showFind;
+
         }
         return false;
     }
@@ -319,6 +320,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.enable = enable;
     }
 
+    public boolean getShowFind() {
+        return showFind;
+    }
+
+    public void setShowFind(boolean showFind) {
+        this.showFind = showFind;
+    }
+
     public String getRuleBookName() {
         return this.ruleBookName;
     }
@@ -335,12 +344,12 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.ruleBookAuthor = ruleBookAutoher;
     }
 
-    public String getRuleLastChapter() {
-        return ruleLastChapter;
+    public String getRuleBookLastChapter() {
+        return ruleBookLastChapter;
     }
 
-    public void setRuleLastChapter(String ruleLastChapter) {
-        this.ruleLastChapter = ruleLastChapter;
+    public void setRuleBookLastChapter(String ruleBookLastChapter) {
+        this.ruleBookLastChapter = ruleBookLastChapter;
     }
 
     public String getRuleChapterUrl() {
@@ -662,13 +671,5 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setWeight(int weight) {
         this.weight = weight;
-    }
-
-    public void setBookSourceCacheEnabled(boolean bookSourceCacheEnabled) {
-        this.bookSourceCacheEnabled = bookSourceCacheEnabled;
-    }
-
-    public boolean getBookSourceCacheEnabled() {
-        return this.bookSourceCacheEnabled;
     }
 }

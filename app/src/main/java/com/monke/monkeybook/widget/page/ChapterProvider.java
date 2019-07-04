@@ -76,12 +76,13 @@ class ChapterProvider {
      */
     private TxtChapter loadChapter(ChapterBean chapter, BufferedReader br) {
         //生成的页面
-        List<TxtPage> pages = new ArrayList<>();
-        TxtChapter txtChapter = new TxtChapter(chapter.getDurChapterIndex(), PageStatus.STATUS_FINISH);
+        final List<TxtPage> pages = new ArrayList<>();
+        final TxtChapter txtChapter = new TxtChapter(chapter.getDurChapterIndex(), PageStatus.STATUS_FINISH);
         //使用流的方式加载
-        List<String> lines = new ArrayList<>();
-        BookShelfBean collBook = mPageLoader.getCollBook();
-        BookInfoBean bookInfo = collBook.getBookInfoBean();
+        final List<String> lines = new ArrayList<>();
+        final BookShelfBean collBook = mPageLoader.getCollBook();
+        final BookInfoBean bookInfo = collBook.getBookInfoBean();
+
         int rHeight = mPageLoader.getVisibleHeight();
         int titleLinesCount = 0;
         try {

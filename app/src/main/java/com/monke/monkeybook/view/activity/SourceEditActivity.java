@@ -74,10 +74,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieBookSourceRuleType;
     @BindView(R.id.til_book_source_rule_type)
     TextInputLayout tilBookSourceRuleType;
-    @BindView(R.id.tie_book_source_cache_enable)
-    TextInputEditText tieBookSourceCacheEnable;
-    @BindView(R.id.til_book_source_cache_enable)
-    TextInputLayout tilBookSourceCacheEnable;
     @BindView(R.id.tie_book_source_url)
     TextInputEditText tieBookSourceUrl;
     @BindView(R.id.til_book_source_url)
@@ -134,10 +130,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieRuleBookAuthor;
     @BindView(R.id.til_ruleBookAuthor)
     TextInputLayout tilRuleBookAuthor;
-    @BindView(R.id.til_ruleLastChapter)
-    TextInputLayout tilRuleLastChapter;
-    @BindView(R.id.tie_ruleLastChapter)
-    TextInputEditText tieRuleLastChapter;
+    @BindView(R.id.til_ruleBookLastChapter)
+    TextInputLayout tilRuleBookLastChapter;
+    @BindView(R.id.tie_ruleBookLastChapter)
+    TextInputEditText tieRuleBookLastChapter;
     @BindView(R.id.tie_ruleCoverUrl)
     TextInputEditText tieRuleCoverUrl;
     @BindView(R.id.til_ruleCoverUrl)
@@ -346,7 +342,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         BookSourceBean bookSourceBeanN = new BookSourceBean();
         bookSourceBeanN.setBookSourceType(trim(tieBookSourceType.getText()));
         bookSourceBeanN.setBookSourceRuleType(trim(tieBookSourceRuleType.getText()));
-        bookSourceBeanN.setBookSourceCacheEnabled(TextUtils.equals(trim(tieBookSourceCacheEnable.getText()), "TRUE"));
         bookSourceBeanN.setBookSourceName(trim(tieBookSourceName.getText()));
         bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText()));
         bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText()));
@@ -355,7 +350,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleBookContent(trim(tieRuleBookContent.getText()));
         bookSourceBeanN.setRulePersistedVariables(trim(tiePersistedVariables.getText()));
         bookSourceBeanN.setRuleBookName(trim(tieRuleBookName.getText()));
-        bookSourceBeanN.setRuleLastChapter(trim(tieRuleLastChapter.getText()));
+        bookSourceBeanN.setRuleBookLastChapter(trim(tieRuleBookLastChapter.getText()));
         bookSourceBeanN.setRuleChapterList(trim(tieRuleChapterList.getText()));
         bookSourceBeanN.setRuleChapterName(trim(tieRuleChapterName.getText()));
         bookSourceBeanN.setRuleChapterUrl(trim(tieRuleChapterUrl.getText()));
@@ -394,8 +389,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (!TextUtils.isEmpty(ruleType)) {
             tieBookSourceRuleType.setText(ruleType);
         }
-        boolean cache = bookSourceBean.getBookSourceCacheEnabled();
-        tieBookSourceCacheEnable.setText(cache ? "TRUE" : "FALSE");
         tieBookSourceName.setText(trim(bookSourceBean.getBookSourceName()));
         tieBookSourceUrl.setText(trim(bookSourceBean.getBookSourceUrl()));
         tieBookSourceGroup.setText(trim(bookSourceBean.getBookSourceGroup()));
@@ -404,7 +397,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieRuleBookContent.setText(trim(bookSourceBean.getRuleBookContent()));
         tiePersistedVariables.setText(trim(bookSourceBean.getRulePersistedVariables()));
         tieRuleBookName.setText(trim(bookSourceBean.getRuleBookName()));
-        tieRuleLastChapter.setText(trim(bookSourceBean.getRuleLastChapter()));
+        tieRuleBookLastChapter.setText(trim(bookSourceBean.getRuleBookLastChapter()));
         tieRuleChapterList.setText(trim(bookSourceBean.getRuleChapterList()));
         tieRuleChapterName.setText(trim(bookSourceBean.getRuleChapterName()));
         tieRuleChapterUrl.setText(trim(bookSourceBean.getRuleChapterUrl()));
@@ -436,7 +429,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private void setHint() {
         tilBookSourceType.setHint("书源类型(BookSourceType)");
         tilBookSourceRuleType.setHint("书源规则类型(BookSourceRuleType)");
-        tilBookSourceCacheEnable.setHint("书源解析缓存(BookSourceCacheEnabled)");
         tilBookSourceName.setHint("书源名称(BookSourceName)");
         tilBookSourceUrl.setHint("书源URL(BookSourceUrl)");
         tilBookSourceGroup.setHint("书源分组(BookSourceGroup)");
@@ -444,7 +436,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilRuleBookAuthor.setHint("作者获取规则(RuleBookAuthor)");
         tilRuleBookContent.setHint("内容获取规则(RuleBookContent)");
         tilRuleBookName.setHint("书名获取规则(RuleBookName)");
-        tilRuleLastChapter.setHint("最新章节获取规则(RuleBookLastChapter)");
+        tilRuleBookLastChapter.setHint("最新章节获取规则(RuleBookLastChapter)");
         tilRuleChapterList.setHint("目录列表获取规则(RuleChapterList)");
         tilRuleChapterName.setHint("章节名称获取规则(RuleChapterName)");
         tilRuleChapterUrl.setHint("目录URL获取规则(RuleChapterUrl)");

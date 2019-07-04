@@ -24,6 +24,38 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBar"
+        android:orientation="horizontal">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorTextDefault"
+            android:text="启用书源"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorTextDefault"
+            android:text="启用发现"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -64,18 +96,6 @@
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_book_source_cache_enable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.monke.monkeybook.widget.TextInputSpinner
-                    android:id="@+id/tie_book_source_cache_enable"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/cache_enabled"
-                    android:textSize="16sp" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_book_source_name"
@@ -270,12 +290,12 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_ruleLastChapter"
+                android:id="@+id/til_ruleBookLastChapter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tie_ruleLastChapter"
+                    android:id="@+id/tie_ruleBookLastChapter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp" />

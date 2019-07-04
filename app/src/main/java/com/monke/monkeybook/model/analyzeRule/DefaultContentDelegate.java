@@ -207,15 +207,16 @@ class DefaultContentDelegate implements ContentDelegate {
                 bookInfoBean.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
             }
 
+
+            if (isEmpty(book.getLastChapterName())) {
+                book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleBookLastChapter()));
+            }
+
             String chapterUrl = mAnalyzer.getResultUrl(getBookSource().getRuleChapterUrl());
             if (isEmpty(chapterUrl)) {
                 bookInfoBean.setChapterListUrl(getConfig().getBaseURL());
             } else {
                 bookInfoBean.setChapterListUrl(chapterUrl);
-            }
-
-            if (isEmpty(book.getLastChapterName())) {
-                book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter()));
             }
 
             bookInfoBean.setNoteUrl(getConfig().getBaseURL());   //id
@@ -379,6 +380,7 @@ class DefaultContentDelegate implements ContentDelegate {
      */
     private List<ChapterBean> getChaptersInRegex(String source, String ruleChapterList, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
+        System.out.println(source);
         matchChaptersRegex(source, noteUrl, ruleChapterList.split("&&"), 0,
                 getBookSource().getRuleChapterName(),
                 getBookSource().getRuleContentUrl(),
