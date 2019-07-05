@@ -23,7 +23,7 @@ import com.monke.monkeybook.widget.BookFloatingActionMenu;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainBookListFragment extends BaseFragment implements Refreshable{
+public class MainBookListFragment extends BaseFragment implements FragmentTrigger {
 
     private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj,
             R.string.item_group_bd, R.string.item_group_ys, R.string.item_group_mh};
@@ -117,26 +117,6 @@ public class MainBookListFragment extends BaseFragment implements Refreshable{
         }
     }
 
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (bookShelfMenu.isExpanded()) {
-            Rect rect = new Rect();
-            bookShelfMenu.getGlobalVisibleRect(rect);
-            if (!rect.contains((int) ev.getX(), (int) ev.getY())) {
-                bookShelfMenu.collapse();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean onBackPressed() {
-        if (bookShelfMenu.isExpanded()) {
-            bookShelfMenu.collapse();
-            return true;
-        }
-        return false;
-    }
-
     private void upGroup(int group) {
         group = Math.max(0, group);
         group = Math.min(group, fragments.length - 1);
@@ -195,6 +175,37 @@ public class MainBookListFragment extends BaseFragment implements Refreshable{
             if (fragment != null) {
                 fragment.refreshBookShelf(false);
             }
+        }
+    }
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (bookShelfMenu.isExpanded()) {
+            Rect rect = new Rect();
+            bookShelfMenu.getGlobalVisibleRect(rect);
+            if (!rect.contains((int) ev.getX(), (int) ev.getY())) {
+                bookShelfMenu.collapse();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (bookShelfMenu.isExpanded()) {
+            bookShelfMenu.collapse();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onReselected() {
+        BookListFragment fragment = fragments[group];
+        if (fragment != null) {
+            fragment.scrollToTop();
         }
     }
 }

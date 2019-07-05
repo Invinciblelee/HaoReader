@@ -15,13 +15,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,6 +40,7 @@ import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
@@ -187,12 +190,19 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @BindView(R.id.til_ruleContentUrlNext)
     TextInputLayout tilRuleContentUrlNext;
     @BindView(R.id.scroll_view)
-    ScrollView scrollContent;
+    NestedScrollView scrollContent;
+    @BindView(R.id.switch_layout)
+    View switchLayout;
+    @BindView(R.id.checker_enable_source)
+    AppCompatCheckBox sourceEnableChecker;
+    @BindView(R.id.checker_enable_find)
+    AppCompatCheckBox findEnableChecker;
 
     private BookSourceBean bookSourceBean;
     private int serialNumber;
     private int weight;
     private boolean enable;
+    private boolean showFind;
     private String title;
     private KeyboardToolPop mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
@@ -227,6 +237,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             title = savedInstanceState.getString("title");
             serialNumber = savedInstanceState.getInt("serialNumber");
             enable = savedInstanceState.getBoolean("enable");
+            showFind = savedInstanceState.getBoolean("showFind");
         }
         super.onCreate(savedInstanceState);
     }
@@ -237,6 +248,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         outState.putString("title", title);
         outState.putInt("serialNumber", serialNumber);
         outState.putBoolean("enable", enable);
+        outState.putBoolean("showFind", showFind);
         if (bookSourceBean != null) {
             String key = String.valueOf(System.currentTimeMillis());
             getIntent().putExtra("data_key", key);
@@ -261,6 +273,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             if (bookSourceBean != null) {
                 serialNumber = bookSourceBean.getSerialNumber();
                 enable = bookSourceBean.getEnable();
+                showFind = bookSourceBean.getShowFind();
                 weight = bookSourceBean.getWeight();
                 BitIntentDataManager.getInstance().cleanData(key);
             }
@@ -275,6 +288,15 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         setText(bookSourceBean);
         mSoftKeyboardTool = new KeyboardToolPop(this, this::insertTextToEditText);
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(mKeyboardListener = new KeyboardOnGlobalChangeListener());
+    }
+
+    @Override
+    protected void bindEvent() {
+        findEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> showFind = isChecked);
+        sourceEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enable = isChecked);
+
+        scrollContent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                ViewCompat.setElevation(switchLayout, v.canScrollVertically(-1) ? DensityUtil.dp2px(v.getContext(), 3) : 0));
     }
 
     private void saveBookSource() {
@@ -315,7 +337,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private void setResult(BookSourceBean sourceBean) {
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
-        data.putExtra("type", StringUtils.isBlank(sourceBean.getRuleFindUrl()) ? -1 : 0);
+        data.putExtra("type", (StringUtils.isBlank(sourceBean.getRuleFindUrl()) || !sourceBean.getShowFind()) ? -1 : 0);
         setResult(RESULT_OK, data);
     }
 
@@ -371,6 +393,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleFindUrl(trim(tieRuleFindUrl.getText()));
         bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText()));
         bookSourceBeanN.setEnable(enable);
+        bookSourceBeanN.setShowFind(showFind);
         bookSourceBeanN.setSerialNumber(serialNumber);
         bookSourceBeanN.setWeight(weight);
         return bookSourceBeanN;
@@ -417,6 +440,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieHttpUserAgent.setText(trim(bookSourceBean.getHttpUserAgent()));
         tieRuleFindUrl.setText(trim(bookSourceBean.getRuleFindUrl()));
         tieRuleContentUrlNext.setText(trim(bookSourceBean.getRuleContentUrlNext()));
+        sourceEnableChecker.setChecked(bookSourceBean.getEnable());
+        findEnableChecker.setChecked(bookSourceBean.getShowFind());
     }
 
     @Override

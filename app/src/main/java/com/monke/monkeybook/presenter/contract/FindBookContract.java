@@ -22,6 +22,8 @@ public interface FindBookContract {
 
         void updateItem(FindKindGroupBean item);
 
+        void removeItem(FindKindGroupBean item);
+
         void showProgress();
 
         void hideProgress();

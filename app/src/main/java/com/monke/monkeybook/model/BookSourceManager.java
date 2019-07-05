@@ -5,13 +5,13 @@ import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
@@ -36,6 +36,14 @@ public class BookSourceManager extends BaseModelImpl {
     public static List<BookSourceBean> getEnabled() {
         return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                 .where(BookSourceBeanDao.Properties.Enable.eq(true))
+                .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                .list();
+    }
+
+    public static List<BookSourceBean> getFindEnabled() {
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .where(BookSourceBeanDao.Properties.ShowFind.eq(true))
                 .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
                 .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();

@@ -25,42 +25,52 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/switch_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/appBar"
-        android:orientation="horizontal">
+        android:background="@color/colorBackground"
+        android:outlineProvider="background"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
 
         <Space
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
         <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checker_enable_source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorTextDefault"
-            android:text="启用书源"/>
+            android:text="@string/enable_source"
+            android:textColor="@color/colorTextDefault" />
 
         <Space
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
         <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checker_enable_find"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorTextDefault"
-            android:text="启用发现"/>
+            android:text="@string/enable_find"
+            android:textColor="@color/colorTextDefault" />
+
         <Space
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBar"
+        android:layout_below="@id/switch_layout"
         android:overScrollMode="ifContentScrolls"
         android:scrollbars="none">
 
@@ -434,5 +444,5 @@
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

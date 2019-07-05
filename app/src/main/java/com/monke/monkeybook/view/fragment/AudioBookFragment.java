@@ -2,6 +2,7 @@ package com.monke.monkeybook.view.fragment;
 
 import android.animation.ValueAnimator;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -44,7 +45,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter> implements AudioBookContract.View, Refreshable {
+public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter> implements AudioBookContract.View, FragmentTrigger {
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
     @BindView(R.id.iv_image_cover)
@@ -270,5 +271,20 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
     @Override
     public void onRestore() {
         mPresenter.loadAudioBooks(false);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return false;
+    }
+
+    @Override
+    public void onReselected() {
+        rvBookshelf.scrollToPosition(0);
     }
 }

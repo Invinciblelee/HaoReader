@@ -38,7 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> implements Refreshable, FindBookContract.View {
+public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> implements FragmentTrigger, FindBookContract.View {
 
     @BindView(R.id.rv_find_book_list)
     RecyclerView rvFindList;
@@ -185,6 +185,11 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     }
 
     @Override
+    public void removeItem(FindKindGroupBean item) {
+        mAdapter.removeItem(item);
+    }
+
+    @Override
     public void showProgress() {
         rvFindList.setVisibility(View.INVISIBLE);
         progressBar.show();
@@ -212,6 +217,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
         }
     }
 
+
+    @Override
     public boolean onBackPressed() {
         if (mHeightProvider.isKeyboardActive()) {
             KeyboardUtil.hideKeyboard(searchEdit);
@@ -225,6 +232,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
         return false;
     }
 
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect rect = new Rect();
         searchField.getGlobalVisibleRect(rect);
@@ -233,5 +241,10 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onReselected() {
+        rvFindList.scrollToPosition(0);
     }
 }

@@ -48,7 +48,7 @@ import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.FindBookFragment;
 import com.monke.monkeybook.view.fragment.MainBookListFragment;
-import com.monke.monkeybook.view.fragment.Refreshable;
+import com.monke.monkeybook.view.fragment.FragmentTrigger;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
@@ -174,7 +174,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                super.onTabUnselected(tab);
                 setTabSelected(tab, false);
             }
 
@@ -182,6 +181,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 setTabSelected(tab, true);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                whenTabReselected(tab);
             }
         });
     }
@@ -228,7 +232,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         if (tab.getCustomView() != null) {
             View tabView = (View) tab.getCustomView().getParent();
-            tabView.setOnLongClickListener(v -> onTabLongClick(tab));
+            tabView.setOnLongClickListener(v -> whenTabLongClick(tab));
         }
     }
 
@@ -240,23 +244,23 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
     }
 
-    private boolean onTabLongClick(TabLayout.Tab tab) {
+    private boolean whenTabLongClick(TabLayout.Tab tab) {
         if (tab.isSelected()) {
-            Refreshable refreshable = null;
+            FragmentTrigger fragmentTrigger = null;
             switch (tab.getPosition()) {
                 case 0:
-                    refreshable = findFragment(MainBookListFragment.class);
+                    fragmentTrigger = findFragment(MainBookListFragment.class);
                     break;
                 case 1:
-                    refreshable = findFragment(FindBookFragment.class);
+                    fragmentTrigger = findFragment(FindBookFragment.class);
                     break;
                 case 2:
-                    refreshable = findFragment(AudioBookFragment.class);
+                    fragmentTrigger = findFragment(AudioBookFragment.class);
                     break;
             }
 
-            if (refreshable != null) {
-                refreshable.onRefresh();
+            if (fragmentTrigger != null) {
+                fragmentTrigger.onRefresh();
             }
 
             Optional.ofNullable(tab.getCustomView()).ifPresent(view -> {
@@ -266,6 +270,25 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             return true;
         }
         return false;
+    }
+
+    private void whenTabReselected(TabLayout.Tab tab){
+        FragmentTrigger fragmentTrigger = null;
+        switch (tab.getPosition()) {
+            case 0:
+                fragmentTrigger = findFragment(MainBookListFragment.class);
+                break;
+            case 1:
+                fragmentTrigger = findFragment(FindBookFragment.class);
+                break;
+            case 2:
+                fragmentTrigger = findFragment(AudioBookFragment.class);
+                break;
+        }
+
+        if (fragmentTrigger != null) {
+            fragmentTrigger.onReselected();
+        }
     }
 
     public OnBookItemClickListenerTwo getAdapterListener() {

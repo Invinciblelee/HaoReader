@@ -7,7 +7,6 @@
     <string name="pk_user_agent">user_agent</string>
     <string name="pk_bookshelf_px">bookshelf_px</string>
     <string name="pk_read_type">read_type</string>
-    <string name="pk_find_expand_group">expandGroupFind</string>
     <string name="pk_ImmersionStatusBar">immersionStatusBar</string>
     <string name="pk_show_all_find">showAllFind</string>
     <string name="pk_bookshelf_anim">bookshelfAnim</string>

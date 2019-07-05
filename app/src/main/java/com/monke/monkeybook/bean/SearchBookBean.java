@@ -32,7 +32,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     private String tag;
     private String kind;//分类
     private String origin;//来源
-    private String desc;
     private String lastChapter;
     private String introduce; //简介
     private String bookType;
@@ -55,10 +54,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
 
-    @Generated(hash = 995325559)
+    @Generated(hash = 1090259944)
     public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag,
-                          String kind, String origin, String desc, String lastChapter, String introduce,
-                          String bookType, String variableString, Long addTime) {
+            String kind, String origin, String lastChapter, String introduce, String bookType,
+            String variableString, Long addTime) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -66,7 +65,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         this.tag = tag;
         this.kind = kind;
         this.origin = origin;
-        this.desc = desc;
         this.lastChapter = lastChapter;
         this.introduce = introduce;
         this.bookType = bookType;
@@ -83,7 +81,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         tag = in.readString();
         kind = in.readString();
         origin = in.readString();
-        desc = in.readString();
         lastChapter = in.readString();
         introduce = in.readString();
         bookType = in.readString();
@@ -109,7 +106,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         dest.writeString(tag);
         dest.writeString(kind);
         dest.writeString(origin);
-        dest.writeString(desc);
         dest.writeString(lastChapter);
         dest.writeString(introduce);
         dest.writeString(bookType);
@@ -245,14 +241,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
             this.tags.add(tag);
         }
         originNum = this.tags.size();
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public Boolean isCurrentSource() {
@@ -401,7 +389,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
                 ", tag='" + tag + '\'' +
                 ", kind='" + kind + '\'' +
                 ", origin='" + origin + '\'' +
-                ", desc='" + desc + '\'' +
                 ", lastChapter='" + lastChapter + '\'' +
                 ", introduce='" + introduce + '\'' +
                 ", bookType='" + bookType + '\'' +

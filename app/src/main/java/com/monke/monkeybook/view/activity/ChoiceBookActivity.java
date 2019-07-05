@@ -247,11 +247,11 @@ public class ChoiceBookActivity extends MBaseActivity {
             TextView tvText = convertView.findViewById(R.id.tv_text);
             tvText.setText(getItem(position).getKindName());
             GradientDrawable drawable = (GradientDrawable) tvText.getBackground();
-            if(lastPosition == position){
-                int selectedColor  =ContextCompat.getColor(context, R.color.colorAccent);
+            if (lastPosition == position) {
+                int selectedColor = ContextCompat.getColor(context, R.color.colorAccent);
                 tvText.setTextColor(selectedColor);
                 drawable.setStroke(DensityUtil.dp2px(context, 2), selectedColor);
-            }else {
+            } else {
                 int normalColor = ContextCompat.getColor(context, R.color.colorBarText);
                 tvText.setTextColor(normalColor);
                 drawable.setStroke(DensityUtil.dp2px(context, 2), normalColor);

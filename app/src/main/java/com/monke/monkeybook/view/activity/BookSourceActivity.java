@@ -93,12 +93,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     @Override
-    protected void onDestroy() {
-        RxBus.get().post(RxBusTag.SOURCE_LIST_CHANGE, true);
-        super.onDestroy();
-    }
-
-    @Override
     protected void bindView() {
         ButterKnife.bind(this);
         initSearchView();
@@ -179,7 +173,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     @Override
     public void resetData(List<BookSourceBean> bookSourceBeans) {
-        if(recyclerView == null || adapter == null) return;
+        if (recyclerView == null || adapter == null) return;
         adapter.resetDataS(bookSourceBeans);
         upGroupMenu();
     }
@@ -197,6 +191,12 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 groupMenu.add(R.id.source_group, Menu.NONE, Menu.NONE, groupName);
             }
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        RxBus.get().post(RxBusTag.SOURCE_LIST_CHANGE, true);
     }
 
     @Override
@@ -309,7 +309,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         return super.onOptionsItemSelected(item);
     }
 
-    private void upGroupMenu(){
+    private void upGroupMenu() {
         mPresenter.refreshGroup();
     }
 
