@@ -27,6 +27,10 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
     private Disposable disposable;
 
+    {
+        RxExecutors.setDefault(RxExecutors.newScheduler(1));
+    }
+
     public ChoiceBookPresenterImpl(final Bundle args) {
         if (args != null) {
             url = args.getString("url");
@@ -100,6 +104,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
     @Override
     public void detachView() {
+        super.detachView();
         if (disposable != null) {
             disposable.dispose();
             disposable = null;

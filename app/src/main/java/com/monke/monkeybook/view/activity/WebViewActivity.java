@@ -29,9 +29,9 @@ import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 

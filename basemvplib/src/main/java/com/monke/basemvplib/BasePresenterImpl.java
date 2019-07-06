@@ -1,9 +1,11 @@
 package com.monke.basemvplib;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 
 public abstract class BasePresenterImpl<T extends IView> implements IPresenter {
 
@@ -16,8 +18,10 @@ public abstract class BasePresenterImpl<T extends IView> implements IPresenter {
     }
 
 
+    @CallSuper
     @Override
     public void detachView() {
+        RxExecutors.setDefault(null);
     }
 
 }

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.script.SimpleBindings;
 
@@ -152,9 +153,13 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                             .flatMap(searchBookBeans -> {
                                 findKindGroupBean.setBooks(searchBookBeans);
                                 return Observable.just(findKindGroupBean);
+                            }).onErrorResumeNext(throwable -> {
+                                if (throwable instanceof TimeoutException) {
+                                    return Observable.error(throwable);
+                                }
+                                return Observable.just(findKindGroupBean);
                             });
                 })
-                .onErrorReturnItem(new FindKindGroupBean(url))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<FindKindGroupBean>() {
                     @Override
@@ -208,7 +213,12 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                                 findKindGroupBean.setBooks(searchBookBeans);
                                 return Observable.just(findKindGroupBean);
                             })
-                            .onErrorReturnItem(findKindGroupBean)
+                            .onErrorResumeNext(throwable -> {
+                                if (throwable instanceof TimeoutException) {
+                                    return Observable.error(throwable);
+                                }
+                                return Observable.just(findKindGroupBean);
+                            })
                             .doOnNext(groupBean -> {
                                 if (isFindInvalid(groupBean)) {
                                     BookSourceBean sourceBean = BookSourceManager.getByUrl(groupBean.getTag());

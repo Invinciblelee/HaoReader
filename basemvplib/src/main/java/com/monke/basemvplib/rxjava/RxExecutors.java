@@ -14,7 +14,7 @@ public class RxExecutors {
 
     private static final int THREAD_NUM = 6;
 
-    private static final Scheduler DEFAULT;
+    private volatile static Scheduler DEFAULT;
 
     private RxExecutors() {
 
@@ -22,9 +22,6 @@ public class RxExecutors {
 
     static {
         THREAD_FACTORY = new RxThreadFactory(THREAD_NAME_PREFIX);
-
-        ExecutorService service = Executors.newFixedThreadPool(THREAD_NUM, THREAD_FACTORY);
-        DEFAULT = Schedulers.from(service);
     }
 
     public static Scheduler newScheduler(int nThreads) {
@@ -38,6 +35,16 @@ public class RxExecutors {
 
 
     public static Scheduler getDefault() {
+        if (DEFAULT == null) {
+            ExecutorService service = Executors.newFixedThreadPool(THREAD_NUM, THREAD_FACTORY);
+            DEFAULT = Schedulers.from(service);
+        }
         return DEFAULT;
+    }
+
+    public static void setDefault(Scheduler scheduler) {
+        if (DEFAULT != scheduler) {
+            DEFAULT = scheduler;
+        }
     }
 }
