@@ -13,6 +13,7 @@ import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
 import org.jsoup.nodes.Element;
+import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.seimicrawler.xpath.JXNode;
 
@@ -64,6 +65,15 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         return StringUtils.valueOf(result);
     }
 
+    final Object evalObjectScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
+        if (!rulePattern.javaScripts.isEmpty()) {
+            for (String javaScript : rulePattern.javaScripts) {
+                result = Assistant.evalObjectScript(javaScript, this, result, getBaseURL());
+            }
+        }
+        return result;
+    }
+
     final List<String> evalStringArrayScript(@NonNull Object result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
             for (String javaScript : rulePattern.javaScripts) {
@@ -85,9 +95,22 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     final void processResultContents(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
-            ListIterator<String> iterator = result.listIterator();
-            while (iterator.hasNext()) {
-                iterator.set(evalStringScript(iterator.next(), rulePattern));
+            if (result.size() == 1) {
+                Object object = evalObjectScript(result.get(0), rulePattern);
+                if (object instanceof NativeArray) {
+                    result.clear();
+                    NativeArray array = ((NativeArray) object);
+                    for (int i = 0, size = array.size(); i < size; i++) {
+                        result.add(StringUtils.valueOf(array.get(i)));
+                    }
+                } else {
+                    result.set(0, StringUtils.valueOf(object));
+                }
+            } else {
+                ListIterator<String> iterator = result.listIterator();
+                while (iterator.hasNext()) {
+                    iterator.set(evalStringScript(iterator.next(), rulePattern));
+                }
             }
         }
 
@@ -97,9 +120,22 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
 
     final void processResultUrls(@NonNull List<String> result, @NonNull RulePattern rulePattern) {
         if (!rulePattern.javaScripts.isEmpty()) {
-            ListIterator<String> iterator = result.listIterator();
-            while (iterator.hasNext()) {
-                iterator.set(evalStringScript(iterator.next(), rulePattern));
+            if (result.size() == 1) {
+                Object object = evalObjectScript(result.get(0), rulePattern);
+                if (object instanceof NativeArray) {
+                    result.clear();
+                    NativeArray array = ((NativeArray) object);
+                    for (int i = 0, size = array.size(); i < size; i++) {
+                        result.add(StringUtils.valueOf(array.get(i)));
+                    }
+                } else {
+                    result.set(0, StringUtils.valueOf(object));
+                }
+            } else {
+                ListIterator<String> iterator = result.listIterator();
+                while (iterator.hasNext()) {
+                    iterator.set(evalStringScript(iterator.next(), rulePattern));
+                }
             }
         }
 

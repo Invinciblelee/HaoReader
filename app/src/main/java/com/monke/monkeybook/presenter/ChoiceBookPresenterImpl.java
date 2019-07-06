@@ -4,10 +4,8 @@ package com.monke.monkeybook.presenter;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.monke.basemvplib.BasePresenterImpl;
-import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.model.WebBookModel;
@@ -15,9 +13,10 @@ import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.disposables.Disposable;
 
 public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContract.View> implements ChoiceBookContract.Presenter {
     private String tag;
@@ -26,8 +25,10 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     private int page = 1;
     private long startThisSearchTime;
 
+    private Disposable disposable;
+
     public ChoiceBookPresenterImpl(final Bundle args) {
-        if(args != null){
+        if (args != null) {
             url = args.getString("url");
             tag = args.getString("tag");
         }
@@ -52,9 +53,10 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
     private void searchBook(final long searchTime) {
         WebBookModel.getInstance().findBook(tag, url, page)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
+                .timeout(30, TimeUnit.SECONDS)
                 .map(searchBookBeans -> {
-                    if(page == 1) return searchBookBeans;
+                    if (page == 1) return searchBookBeans;
                     Iterator<SearchBookBean> iterator = searchBookBeans.iterator();
                     while (iterator.hasNext()) {
                         SearchBookBean searchBook = iterator.next();
@@ -69,6 +71,12 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable = d;
+                    }
+
                     @Override
                     public void onNext(List<SearchBookBean> value) {
                         if (searchTime == startThisSearchTime) {
@@ -88,15 +96,13 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                     }
                 });
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void attachView(@NonNull IView iView) {
-        super.attachView(iView);
-    }
 
     @Override
     public void detachView() {
+        if (disposable != null) {
+            disposable.dispose();
+            disposable = null;
+        }
     }
-
 }

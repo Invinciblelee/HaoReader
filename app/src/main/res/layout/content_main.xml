@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:showIn="@layout/activity_main">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -29,7 +28,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="4dp"
                 android:layout_marginEnd="8dp">
 
                 <com.monke.monkeybook.widget.ScaleDrawableTextView
@@ -37,8 +36,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="6dp"
                     android:background="@drawable/bg_search_field"
                     android:drawableStart="@drawable/ic_search_black_24dp"
                     android:drawablePadding="10dp"
@@ -78,14 +77,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_track_changes_black_24dp"
-                android:text="@string/find_on_www"
-                />
+                android:text="@string/find_on_www" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_audio_book_black_24dp"
-                android:text="@string/item_group_ys" />
         </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -94,7 +87,17 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/appBar"
         tools:visibility="gone" />
 
 
-</LinearLayout>
+    <com.monke.monkeybook.widget.AudioPlayingButton
+        android:id="@+id/view_audio_running"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

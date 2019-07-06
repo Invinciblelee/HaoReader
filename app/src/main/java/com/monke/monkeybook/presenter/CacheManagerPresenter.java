@@ -1,6 +1,7 @@
 package com.monke.monkeybook.presenter;
 
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
@@ -30,7 +31,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContract.View> implements CacheManagerContract.Presenter {
 
@@ -53,7 +53,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                 }
             }
             emitter.onSuccess(bookShelfBeans);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<BookShelfBean>>() {
                     @Override
@@ -111,7 +111,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
             }
             emitter.onNext(wrappedFiles);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<WrappedFile>>() {
 
@@ -159,6 +159,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
 
     @Override
     public void detachView() {
+        super.detachView();
         disposables.dispose();
     }
 
@@ -185,7 +186,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                 accessFile.write("\r\n".getBytes());
             }
             emitter.onSuccess(wrappedFile.index);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Integer>() {
                     @Override

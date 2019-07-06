@@ -64,7 +64,7 @@ public class AudioBookAdapter extends BaseBookListAdapter<AudioBookAdapter.MyVie
         } else {
             final String durProgress;
             if (item.getChapterListSize() != 0) {
-                durProgress = String.format(Locale.getDefault(), "%s(%d/%d)", getContext().getString(R.string.play_dur_progress, durChapterName), item.getDurChapter() == 0 ? 1 : item.getDurChapter(), item.getChapterListSize());
+                durProgress = String.format(Locale.getDefault(), "%d/%d | %s", item.getDurChapter() + 1, item.getChapterListSize(), durChapterName);
             } else {
                 durProgress = getContext().getString(R.string.play_dur_progress, durChapterName);
             }

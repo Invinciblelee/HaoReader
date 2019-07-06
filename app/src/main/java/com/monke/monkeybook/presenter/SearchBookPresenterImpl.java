@@ -15,6 +15,7 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.NetworkUtil;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
@@ -31,7 +32,6 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContract.View> implements SearchBookContract.Presenter, SearchBookModel.SearchListener {
     private static final int BOOK = 2;
@@ -100,7 +100,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             }
             e.onNext(searchHistoryBean);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<SearchHistoryBean>() {
                     @Override
@@ -124,7 +124,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                     new String[]{String.valueOf(SearchBookPresenterImpl.BOOK), "%" + content + "%"});
             e.onNext(a);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Integer>() {
                     @Override
@@ -147,7 +147,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             DbHelper.getInstance().getDaoSession().getSearchHistoryBeanDao().delete(searchHistoryBean);
             e.onNext(true);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -176,7 +176,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             e.onNext(data);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchHistoryBean>>() {
                     @Override
@@ -208,11 +208,13 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
             searchBookModel.startSearch(key);
         }
     }
+
     @Override
     public void initSearchEngineS(String group) {
         searchBookModel.group(group);
         searchBookModel.notifySearchEngineChanged();
     }
+
     @Override
     public void stopSearch() {
         searchBookModel.stopSearch();
@@ -229,6 +231,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         searchBookModel.useShuqi(bool);
         searchBookModel.notifySearchEngineChanged();
     }
+
     @Override
     public void searchSourceEmpty() {
         mView.showBookSourceEmptyTip();
@@ -264,6 +267,7 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
 
     @Override
     public void detachView() {
+        super.detachView();
         searchBookModel.shutdownSearch();
         RxBus.get().unregister(this);
     }

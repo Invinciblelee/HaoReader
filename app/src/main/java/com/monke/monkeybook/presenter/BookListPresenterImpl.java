@@ -10,12 +10,13 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookRefreshModelImpl;
 import com.monke.monkeybook.presenter.contract.BookListContract;
@@ -26,13 +27,16 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.View> implements BookListContract.Presenter, BookRefreshModelImpl.OnBookRefreshListener {
 
-    private BookRefreshModelImpl impl = BookRefreshModelImpl.newInstance();
+    private final BookRefreshModelImpl impl;
 
     private int group;
+
+    public BookListPresenterImpl() {
+        impl = BookRefreshModelImpl.newInstance();
+    }
 
     @Override
     public void initData(Fragment fragment) {
@@ -109,7 +113,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
                 }
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.single())
+            }).subscribeOn(RxExecutors.getDefault())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe();
         }
@@ -132,6 +136,7 @@ public class BookListPresenterImpl extends BasePresenterImpl<BookListContract.Vi
 
     @Override
     public void detachView() {
+        super.detachView();
         RxBus.get().unregister(this);
         impl.stopRefreshBook();
     }

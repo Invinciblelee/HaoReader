@@ -11,6 +11,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.BitIntentDataManager;
@@ -25,8 +26,6 @@ import com.monke.monkeybook.widget.page.animation.Direction;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
@@ -34,7 +33,6 @@ import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_FINISH;
@@ -85,7 +83,7 @@ public abstract class PageLoader {
     // 绘制小说内容的画笔
     private TextPaint mTextPaint;
 
-    private ExecutorService mExecutor;
+    private Scheduler mScheduler;
     private Disposable mPreLoadPrevDisposable;
     private Disposable mPreLoadNextDisposable;
     private Disposable mCurLoadDisposable;
@@ -1040,10 +1038,10 @@ public abstract class PageLoader {
     }
 
     private Scheduler getScheduler() {
-        if (mExecutor == null || mExecutor.isShutdown()) {
-            mExecutor = Executors.newFixedThreadPool(8);
+        if (mScheduler == null) {
+            mScheduler = RxExecutors.newScheduler(8);
         }
-        return Schedulers.from(mExecutor);
+        return mScheduler;
     }
 
     private void preload() {
@@ -1276,9 +1274,9 @@ public abstract class PageLoader {
 
         mChapterProvider.stop();
 
-        if (mExecutor != null) {
-            mExecutor.shutdown();
-            mExecutor = null;
+        if (mScheduler != null) {
+            mScheduler.shutdown();
+            mScheduler = null;
         }
     }
 

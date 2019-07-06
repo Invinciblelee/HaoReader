@@ -18,6 +18,7 @@ import com.monke.monkeybook.utils.URLUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,11 +43,19 @@ public class BookSourceManager extends BaseModelImpl {
     }
 
     public static List<BookSourceBean> getFindEnabled() {
-        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                .where(BookSourceBeanDao.Properties.ShowFind.eq(true))
+        List<BookSourceBean> sourceBeanList = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
                 .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
                 .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();
+
+        Iterator<BookSourceBean> iterator = sourceBeanList.iterator();
+        while (iterator.hasNext()) {
+            Boolean enableFind = iterator.next().getEnableFind();
+            if (enableFind != null && !enableFind) {
+                iterator.remove();
+            }
+        }
+        return sourceBeanList;
     }
 
     public static long getEnabledCount() {

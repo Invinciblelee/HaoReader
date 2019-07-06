@@ -2,7 +2,6 @@
 package com.monke.monkeybook.presenter;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -13,6 +12,7 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -46,7 +46,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
 
@@ -126,7 +125,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         Single.create((SingleOnSubscribe<Boolean>) emitter -> {
             BookshelfHelp.cleanBookCache(bookShelf);
             emitter.onSuccess(true);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Boolean>() {
                     @Override
@@ -163,7 +162,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 }
                 e.onNext(bookShelf);
                 e.onComplete();
-            }).subscribeOn(Schedulers.single())
+            }).subscribeOn(RxExecutors.getDefault())
                     .subscribe(new SimpleObserver<BookShelfBean>() {
                         @Override
                         public void onNext(BookShelfBean value) {
@@ -221,7 +220,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         WebBookModel.getInstance().getBookInfo(target)
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(bookShelfBean -> {
                     bookShelfBean.setHasUpdate(false);
@@ -273,7 +272,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             e.onNext(bookShelf);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
@@ -295,7 +294,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             e.onNext(bookShelf);
             e.onComplete();
         })
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<BookShelfBean>() {
                     @Override
@@ -321,7 +320,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 bookSource = BookSourceManager.getByUrl(bookShelf.getTag());
                 e.onNext(bookSource != null);
                 e.onComplete();
-            }).subscribeOn(Schedulers.single())
+            }).subscribeOn(RxExecutors.getDefault())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -335,7 +334,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         }
                     });
         }
-        AsyncTask.execute(() -> {
+        RxExecutors.getDefault().createWorker().schedule(() -> {
             if (inBookShelf()) {
                 ReadBookControl.getInstance().setLastNoteUrl(getBookShelf().getNoteUrl());
             }
@@ -368,7 +367,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             bookShelf.setNewChapters(0);
             e.onNext(true);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -392,7 +391,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                 BookshelfHelp.saveBookToShelf(bookShelf);
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.single())
+            }).subscribeOn(RxExecutors.getDefault())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -423,6 +422,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
     @Override
     public void detachView() {
+        super.detachView();
         changeSourceDisp.dispose();
         RxBus.get().unregister(this);
     }

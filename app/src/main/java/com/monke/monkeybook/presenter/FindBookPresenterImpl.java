@@ -10,6 +10,7 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -31,8 +32,6 @@ import com.monke.monkeybook.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.script.SimpleBindings;
@@ -43,7 +42,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.View> implements FindBookContract.Presenter {
 
@@ -52,7 +50,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     private CompositeDisposable mDisposableMgr;
     private Disposable mUpdateDispose;
 
-    private ExecutorService mExecutor;
+    private final Scheduler mScheduler = RxExecutors.newScheduler(THREADS_NUM);
 
     private SimpleJavaExecutor mJavaExecutor;
 
@@ -68,12 +66,8 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
 
     @Override
     public void detachView() {
+        super.detachView();
         RxBus.get().unregister(this);
-        if (mExecutor != null) {
-            mExecutor.shutdown();
-            mExecutor = null;
-        }
-
         if (mDisposableMgr != null) {
             mDisposableMgr.dispose();
             mDisposableMgr = null;
@@ -83,6 +77,8 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             mUpdateDispose.dispose();
             mUpdateDispose = null;
         }
+
+        mScheduler.shutdown();
     }
 
     @Override
@@ -95,15 +91,15 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             e.onNext(groupList);
             e.onComplete();
         })
-                .subscribeOn(getScheduler())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(findKindGroupBeans -> {
                     mView.updateUI(findKindGroupBeans);
                     mView.hideProgress();
                 })
-                .observeOn(getScheduler())
+                .observeOn(mScheduler)
                 .flatMap(groupBeans -> Observable.fromIterable(groupBeans)
-                        .observeOn(getScheduler())
+                        .observeOn(mScheduler)
                         .map(groupBean -> {
                             groupBean.setBooks(getFromBookCache(groupBean.getTag()));
                             return groupBean;
@@ -137,7 +133,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             mUpdateDispose.dispose();
         }
         Observable.just(url)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(mScheduler)
                 .flatMap(s -> {
                     BookSourceBean sourceBean = BookSourceManager.getByUrl(s);
                     FindKindGroupBean groupBean = getFromBookSource(sourceBean);
@@ -151,7 +147,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                 .flatMap(findKindGroupBean -> {
                     FindKindBean kindBean = findKindGroupBean.getChildren().get(0);
                     return WebBookModel.getInstance().findBook(kindBean.getTag(), kindBean.getKindUrl(), 1)
-                            .subscribeOn(getScheduler())
+                            .subscribeOn(mScheduler)
                             .timeout(30, TimeUnit.SECONDS)
                             .flatMap(searchBookBeans -> {
                                 findKindGroupBean.setBooks(searchBookBeans);
@@ -206,7 +202,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     }
                     FindKindBean kindBean = findKindGroupBean.getChildren().get(0);
                     return WebBookModel.getInstance().findBook(kindBean.getTag(), kindBean.getKindUrl(), 1)
-                            .subscribeOn(getScheduler())
+                            .subscribeOn(mScheduler)
                             .timeout(30, TimeUnit.SECONDS)
                             .flatMap(searchBookBeans -> {
                                 findKindGroupBean.setBooks(searchBookBeans);
@@ -216,7 +212,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                             .doOnNext(groupBean -> {
                                 if (isFindInvalid(groupBean)) {
                                     BookSourceBean sourceBean = BookSourceManager.getByUrl(groupBean.getTag());
-                                    sourceBean.setShowFind(false);
+                                    sourceBean.setEnableFind(false);
                                     BookSourceManager.save(sourceBean);
                                 }
                             });
@@ -279,12 +275,6 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         return findRule;
     }
 
-    private Scheduler getScheduler() {
-        if (mExecutor == null || mExecutor.isShutdown()) {
-            mExecutor = Executors.newFixedThreadPool(THREADS_NUM);
-        }
-        return Schedulers.from(mExecutor);
-    }
 
     private void putJsCache(String url, String findRule) {
         ACache.get(mView.getContext()).put(MD5Utils.strToMd5By16(url), findRule);
@@ -319,6 +309,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         final List<BookSourceBean> bookSourceBeans;
         if (mShowAllFind) {
             bookSourceBeans = BookSourceManager.getAll();
+            System.out.println(bookSourceBeans.toString());
         } else {
             bookSourceBeans = BookSourceManager.getFindEnabled();
         }

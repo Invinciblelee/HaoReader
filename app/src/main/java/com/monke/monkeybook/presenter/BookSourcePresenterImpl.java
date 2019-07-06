@@ -11,6 +11,7 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -27,7 +28,6 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by GKF on 2017/12/18.
@@ -43,7 +43,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
             DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
             e.onNext(BookSourceManager.getAll());
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
@@ -56,7 +56,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             }
             DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(bookSourceBeans);
             e.onNext(BookSourceManager.getAll());
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
@@ -66,7 +66,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
             e.onNext(BookSourceManager.getAll());
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
@@ -87,7 +87,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
             BookSourceManager.delete(bookSourceBean);
             e.onNext(getAllBookSource());
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
@@ -116,7 +116,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
             BookSourceManager.deleteAll(bookSourceBeans);
             e.onNext(getAllBookSource());
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
@@ -138,7 +138,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) e -> {
             BookSourceManager.add(bookSourceBean);
             e.onNext(getAllBookSource());
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
@@ -157,7 +157,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<BookSourceBean>>) emitter -> {
             emitter.onNext(getAllBookSource());
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookSourceBean>>() {
                     @Override
@@ -239,7 +239,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         Observable.create((ObservableOnSubscribe<List<String>>) emitter -> {
             emitter.onNext(BookSourceManager.getGroupList());
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<String>>() {
                     @Override
@@ -259,6 +259,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
     @Override
     public void detachView() {
+        super.detachView();
         RxBus.get().unregister(this);
     }
 

@@ -3,6 +3,7 @@ package com.monke.monkeybook.model;
 import android.text.TextUtils;
 
 import com.monke.basemvplib.NetworkUtil;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.BookshelfHelp;
@@ -15,8 +16,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +29,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class BookRefreshModelImpl implements IBookRefreshModel {
 
@@ -43,7 +41,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private AtomicInteger loadingCount = new AtomicInteger();
 
-    private ExecutorService executor;
+    private final Scheduler scheduler = RxExecutors.newScheduler(THREADS_NUM);
 
     private OnBookRefreshListener refreshListener;
 
@@ -61,7 +59,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
         Single.create((SingleOnSubscribe<List<BookShelfBean>>) e -> {
             List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooksByGroup(group);
             e.onSuccess(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(scheduler)
                 .flatMap((Function<List<BookShelfBean>, SingleSource<List<BookShelfBean>>>) bookShelfBeans -> {
                     if (group == Constant.GROUP_BENDI && autoClean) {
                         return Single.create((SingleOnSubscribe<List<BookShelfBean>>) emitter -> {
@@ -141,21 +139,10 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
             refreshingDisps = null;
         }
 
-        if(executor != null){
-            executor.shutdown();
-            executor = null;
-        }
+        scheduler.shutdown();
     }
 
-    private Scheduler getScheduler() {
-        if (executor == null || executor.isShutdown()) {
-            executor = Executors.newFixedThreadPool(THREADS_NUM);
-        }
-        return Schedulers.from(executor);
-    }
-
-
-    private void resetRefresh(){
+    private void resetRefresh() {
         if (refreshingDisps == null || refreshingDisps.isDisposed()) {
             refreshingDisps = new CompositeDisposable();
         } else {
@@ -197,7 +184,7 @@ public class BookRefreshModelImpl implements IBookRefreshModel {
 
     private void refreshBookShelf(BookShelfBean bookShelfBean) {
         WebBookModel.getInstance().getChapterList(bookShelfBean)
-                .subscribeOn(getScheduler())
+                .subscribeOn(scheduler)
                 .timeout(1, TimeUnit.MINUTES)
                 .flatMap(this::saveBookToShelfO)
                 .observeOn(AndroidSchedulers.mainThread())

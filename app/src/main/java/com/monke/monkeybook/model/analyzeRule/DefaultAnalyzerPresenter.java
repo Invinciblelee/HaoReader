@@ -67,7 +67,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleRegex) {
-                final String result =  processRawUrl(getParser().getStringSource(), pattern);
+                final String result = processRawUrl(getParser().getStringSource(), pattern);
                 if (!isEmpty(result)) {
                     return result;
                 }

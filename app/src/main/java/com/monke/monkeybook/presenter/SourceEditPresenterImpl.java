@@ -6,11 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import androidx.annotation.NonNull;
-
 import com.google.gson.Gson;
 import com.monke.basemvplib.BasePresenterImpl;
-import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.DbHelper;
@@ -32,7 +30,6 @@ import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by GKF on 2018/1/28.
@@ -49,7 +46,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             }
             BookSourceManager.add(bookSource);
             e.onNext(true);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .doAfterNext(aBoolean -> {
                     if (aBoolean) {
                         try {
@@ -132,7 +129,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             } else {
                 emitter.onError(new IllegalArgumentException("can not generate share file"));
             }
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<File>() {
                     @Override
@@ -150,16 +147,6 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
                         mView.showSnackBar("分享失败");
                     }
                 });
-    }
-
-    @Override
-    public void attachView(@NonNull IView iView) {
-        super.attachView(iView);
-    }
-
-    @Override
-    public void detachView() {
-
     }
 
 }

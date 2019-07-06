@@ -202,7 +202,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private int serialNumber;
     private int weight;
     private boolean enable;
-    private boolean showFind;
+    private boolean enableFind;
     private String title;
     private KeyboardToolPop mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
@@ -237,7 +237,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             title = savedInstanceState.getString("title");
             serialNumber = savedInstanceState.getInt("serialNumber");
             enable = savedInstanceState.getBoolean("enable");
-            showFind = savedInstanceState.getBoolean("showFind");
+            enableFind = savedInstanceState.getBoolean("enableFind");
         }
         super.onCreate(savedInstanceState);
     }
@@ -248,7 +248,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         outState.putString("title", title);
         outState.putInt("serialNumber", serialNumber);
         outState.putBoolean("enable", enable);
-        outState.putBoolean("showFind", showFind);
+        outState.putBoolean("enableFind", enableFind);
         if (bookSourceBean != null) {
             String key = String.valueOf(System.currentTimeMillis());
             getIntent().putExtra("data_key", key);
@@ -273,7 +273,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             if (bookSourceBean != null) {
                 serialNumber = bookSourceBean.getSerialNumber();
                 enable = bookSourceBean.getEnable();
-                showFind = bookSourceBean.getShowFind();
+                enableFind = bookSourceBean.getEnableFind();
                 weight = bookSourceBean.getWeight();
                 BitIntentDataManager.getInstance().cleanData(key);
             }
@@ -292,7 +292,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @Override
     protected void bindEvent() {
-        findEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> showFind = isChecked);
+        findEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enableFind = isChecked);
         sourceEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enable = isChecked);
 
         scrollContent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
@@ -337,7 +337,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private void setResult(BookSourceBean sourceBean) {
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
-        data.putExtra("type", (StringUtils.isBlank(sourceBean.getRuleFindUrl()) || !sourceBean.getShowFind()) ? -1 : 0);
+        data.putExtra("type", (StringUtils.isBlank(sourceBean.getRuleFindUrl()) || !sourceBean.getEnableFind()) ? -1 : 0);
         setResult(RESULT_OK, data);
     }
 
@@ -393,7 +393,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleFindUrl(trim(tieRuleFindUrl.getText()));
         bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText()));
         bookSourceBeanN.setEnable(enable);
-        bookSourceBeanN.setShowFind(showFind);
+        bookSourceBeanN.setEnableFind(enableFind);
         bookSourceBeanN.setSerialNumber(serialNumber);
         bookSourceBeanN.setWeight(weight);
         return bookSourceBeanN;
@@ -441,7 +441,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieRuleFindUrl.setText(trim(bookSourceBean.getRuleFindUrl()));
         tieRuleContentUrlNext.setText(trim(bookSourceBean.getRuleContentUrlNext()));
         sourceEnableChecker.setChecked(bookSourceBean.getEnable());
-        findEnableChecker.setChecked(bookSourceBean.getShowFind());
+        findEnableChecker.setChecked(bookSourceBean.getEnableFind());
     }
 
     @Override

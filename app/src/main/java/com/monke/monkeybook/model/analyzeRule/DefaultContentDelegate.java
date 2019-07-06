@@ -264,7 +264,7 @@ class DefaultContentDelegate implements ContentDelegate {
                         if (webChapter.result != null && !webChapter.result.isEmpty()) {
                             chapterList.addAll(webChapter.result);
                         }
-                        nextUrl = webChapter.nextUrls.isEmpty() ? null : webChapter.nextUrls.get(0);
+                        nextUrl = (webChapter.nextUrls == null || webChapter.nextUrls.isEmpty()) ? null : webChapter.nextUrls.get(0);
                     }
                 }
                 doOnChapterListFinish(chapterList, emitter);
@@ -380,7 +380,6 @@ class DefaultContentDelegate implements ContentDelegate {
      */
     private List<ChapterBean> getChaptersInRegex(String source, String ruleChapterList, String noteUrl) {
         final List<ChapterBean> chapterList = new ArrayList<>();
-        System.out.println(source);
         matchChaptersRegex(source, noteUrl, ruleChapterList.split("&&"), 0,
                 getBookSource().getRuleChapterName(),
                 getBookSource().getRuleContentUrl(),

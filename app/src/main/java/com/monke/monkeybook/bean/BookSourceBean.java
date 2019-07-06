@@ -39,7 +39,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     @OrderBy
     private int weight = 0;
     private Boolean enable = true;
-    private Boolean showFind = true;
+    private Boolean enableFind = true;
     private String ruleFindUrl;
     //搜索
     private String ruleSearchUrl;
@@ -73,10 +73,10 @@ public class BookSourceBean implements Parcelable, Cloneable {
     @Transient
     private String ajaxJavaScript;
 
-    @Generated(hash = 432121770)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, Boolean enable, Boolean showFind, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList,
-                          String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleBookLastChapter, String ruleCoverUrl,
-                          String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
+    @Generated(hash = 1372865890)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, Boolean enable, Boolean enableFind, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList,
+            String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleBookLastChapter, String ruleCoverUrl,
+            String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -86,7 +86,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.serialNumber = serialNumber;
         this.weight = weight;
         this.enable = enable;
-        this.showFind = showFind;
+        this.enableFind = enableFind;
         this.ruleFindUrl = ruleFindUrl;
         this.ruleSearchUrl = ruleSearchUrl;
         this.ruleSearchList = ruleSearchList;
@@ -129,7 +129,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         byte tmpEnable = in.readByte();
         enable = tmpEnable == 0 ? null : tmpEnable == 1;
         byte tmpShowFind = in.readByte();
-        showFind = tmpShowFind == 0 ? null : tmpShowFind == 1;
+        enableFind = tmpShowFind == 0 ? null : tmpShowFind == 1;
         ruleFindUrl = in.readString();
         ruleSearchUrl = in.readString();
         ruleSearchList = in.readString();
@@ -168,7 +168,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeInt(serialNumber);
         dest.writeInt(weight);
         dest.writeByte((byte) (enable == null ? 0 : enable ? 1 : 2));
-        dest.writeByte((byte) (showFind == null ? 0 : showFind ? 1 : 2));
+        dest.writeByte((byte) (enableFind == null ? 0 : enableFind ? 1 : 2));
         dest.writeString(ruleFindUrl);
         dest.writeString(ruleSearchUrl);
         dest.writeString(ruleSearchList);
@@ -248,7 +248,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
                     && stringEquals(checkUrl, bs.checkUrl)
                     && stringEquals(rulePersistedVariables, bs.rulePersistedVariables)
                     && enable == bs.enable
-                    && showFind == bs.showFind;
+                    && enableFind == bs.enableFind;
 
         }
         return false;
@@ -315,20 +315,20 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.serialNumber = serialNumber;
     }
 
-    public boolean getEnable() {
+    public Boolean getEnable() {
         return this.enable;
     }
 
-    public void setEnable(boolean enable) {
+    public void setEnable(Boolean enable) {
         this.enable = enable;
     }
 
-    public boolean getShowFind() {
-        return this.showFind;
+    public Boolean getEnableFind() {
+        return this.enableFind;
     }
 
-    public void setShowFind(boolean showFind) {
-        this.showFind = showFind;
+    public void setEnableFind(Boolean enableFind) {
+        this.enableFind = enableFind;
     }
 
     public String getRuleBookName() {
@@ -676,11 +676,44 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.weight = weight;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
-    }
-
-    public void setShowFind(Boolean showFind) {
-        this.showFind = showFind;
+    @Override
+    public String toString() {
+        return "BookSourceBean{" +
+                "bookSourceUrl='" + bookSourceUrl + '\'' +
+                ", bookSourceName='" + bookSourceName + '\'' +
+                ", bookSourceGroup='" + bookSourceGroup + '\'' +
+                ", bookSourceType='" + bookSourceType + '\'' +
+                ", bookSourceRuleType='" + bookSourceRuleType + '\'' +
+                ", checkUrl='" + checkUrl + '\'' +
+                ", serialNumber=" + serialNumber +
+                ", weight=" + weight +
+                ", enable=" + enable +
+                ", enableFind=" + enableFind +
+                ", ruleFindUrl='" + ruleFindUrl + '\'' +
+                ", ruleSearchUrl='" + ruleSearchUrl + '\'' +
+                ", ruleSearchList='" + ruleSearchList + '\'' +
+                ", ruleSearchName='" + ruleSearchName + '\'' +
+                ", ruleSearchAuthor='" + ruleSearchAuthor + '\'' +
+                ", ruleSearchKind='" + ruleSearchKind + '\'' +
+                ", ruleSearchLastChapter='" + ruleSearchLastChapter + '\'' +
+                ", ruleSearchIntroduce='" + ruleSearchIntroduce + '\'' +
+                ", ruleSearchCoverUrl='" + ruleSearchCoverUrl + '\'' +
+                ", ruleSearchNoteUrl='" + ruleSearchNoteUrl + '\'' +
+                ", ruleBookName='" + ruleBookName + '\'' +
+                ", ruleBookAuthor='" + ruleBookAuthor + '\'' +
+                ", ruleBookLastChapter='" + ruleBookLastChapter + '\'' +
+                ", ruleCoverUrl='" + ruleCoverUrl + '\'' +
+                ", ruleIntroduce='" + ruleIntroduce + '\'' +
+                ", ruleChapterUrl='" + ruleChapterUrl + '\'' +
+                ", ruleChapterUrlNext='" + ruleChapterUrlNext + '\'' +
+                ", ruleChapterList='" + ruleChapterList + '\'' +
+                ", ruleChapterName='" + ruleChapterName + '\'' +
+                ", ruleContentUrl='" + ruleContentUrl + '\'' +
+                ", ruleContentUrlNext='" + ruleContentUrlNext + '\'' +
+                ", ruleBookContent='" + ruleBookContent + '\'' +
+                ", rulePersistedVariables='" + rulePersistedVariables + '\'' +
+                ", httpUserAgent='" + httpUserAgent + '\'' +
+                ", ajaxJavaScript='" + ajaxJavaScript + '\'' +
+                '}';
     }
 }

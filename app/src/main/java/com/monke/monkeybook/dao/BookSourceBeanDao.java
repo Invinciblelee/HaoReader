@@ -33,7 +33,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         public final static Property SerialNumber = new Property(6, int.class, "serialNumber", false, "SERIAL_NUMBER");
         public final static Property Weight = new Property(7, int.class, "weight", false, "WEIGHT");
         public final static Property Enable = new Property(8, Boolean.class, "enable", false, "ENABLE");
-        public final static Property ShowFind = new Property(9, Boolean.class, "showFind", false, "SHOW_FIND");
+        public final static Property EnableFind = new Property(9, Boolean.class, "enableFind", false, "ENABLE_FIND");
         public final static Property RuleFindUrl = new Property(10, String.class, "ruleFindUrl", false, "RULE_FIND_URL");
         public final static Property RuleSearchUrl = new Property(11, String.class, "ruleSearchUrl", false, "RULE_SEARCH_URL");
         public final static Property RuleSearchList = new Property(12, String.class, "ruleSearchList", false, "RULE_SEARCH_LIST");
@@ -82,7 +82,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
                 "\"SERIAL_NUMBER\" INTEGER NOT NULL ," + // 6: serialNumber
                 "\"WEIGHT\" INTEGER NOT NULL ," + // 7: weight
                 "\"ENABLE\" INTEGER," + // 8: enable
-                "\"SHOW_FIND\" INTEGER," + // 9: showFind
+                "\"ENABLE_FIND\" INTEGER," + // 9: enableFind
                 "\"RULE_FIND_URL\" TEXT," + // 10: ruleFindUrl
                 "\"RULE_SEARCH_URL\" TEXT," + // 11: ruleSearchUrl
                 "\"RULE_SEARCH_LIST\" TEXT," + // 12: ruleSearchList
@@ -156,9 +156,9 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             stmt.bindLong(9, enable ? 1L: 0L);
         }
  
-        Boolean showFind = entity.getShowFind();
-        if (showFind != null) {
-            stmt.bindLong(10, showFind ? 1L: 0L);
+        Boolean enableFind = entity.getEnableFind();
+        if (enableFind != null) {
+            stmt.bindLong(10, enableFind ? 1L: 0L);
         }
  
         String ruleFindUrl = entity.getRuleFindUrl();
@@ -323,9 +323,9 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             stmt.bindLong(9, enable ? 1L: 0L);
         }
  
-        Boolean showFind = entity.getShowFind();
-        if (showFind != null) {
-            stmt.bindLong(10, showFind ? 1L: 0L);
+        Boolean enableFind = entity.getEnableFind();
+        if (enableFind != null) {
+            stmt.bindLong(10, enableFind ? 1L: 0L);
         }
  
         String ruleFindUrl = entity.getRuleFindUrl();
@@ -466,7 +466,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             cursor.getInt(offset + 6), // serialNumber
             cursor.getInt(offset + 7), // weight
             cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0, // enable
-            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // showFind
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // enableFind
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // ruleFindUrl
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // ruleSearchUrl
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // ruleSearchList
@@ -506,7 +506,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         entity.setSerialNumber(cursor.getInt(offset + 6));
         entity.setWeight(cursor.getInt(offset + 7));
         entity.setEnable(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
-        entity.setShowFind(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setEnableFind(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
         entity.setRuleFindUrl(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setRuleSearchUrl(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setRuleSearchList(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));

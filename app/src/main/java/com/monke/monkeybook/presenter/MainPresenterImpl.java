@@ -9,8 +9,10 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
@@ -35,7 +37,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> implements MainContract.Presenter {
 
@@ -55,7 +56,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooks(query);
             e.onNext(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<BookShelfBean>>() {
                     @Override
@@ -80,7 +81,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 e.onNext(false);
             }
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -113,7 +114,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             }
             e.onComplete();
         })
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -158,7 +159,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             }
             e.onComplete();
         })
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .flatMap(bookShelfBean -> {
                     if (bookShelfBean.getTag() == null) {
                         return Observable.error(new Exception("exists"));
@@ -194,7 +195,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 BookshelfHelp.removeFromBookShelf(bookShelf);
                 e.onNext(true);
                 e.onComplete();
-            }).subscribeOn(Schedulers.single())
+            }).subscribeOn(RxExecutors.getDefault())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SimpleObserver<Boolean>() {
                         @Override
@@ -221,7 +222,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             BookshelfHelp.clearBookshelf();
             e.onNext(true);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -245,7 +246,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
             BookshelfHelp.cleanCaches();
             e.onNext(true);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
@@ -266,7 +267,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     public void importBooks(List<String> books) {
         mView.showLoading("正在导入书籍");
         Observable.fromIterable(books)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .map(File::new)
                 .flatMap(file -> ImportBookModelImpl.getInstance().importBook(file))
                 .flatMap((Function<LocBookShelfBean, ObservableSource<LocBookShelfBean>>) locBookShelfBean -> {
@@ -321,6 +322,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
     @Override
     public void detachView() {
+        super.detachView();
         RxBus.get().unregister(this);
     }
 
@@ -347,4 +349,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
         mView.initImmersionBar();
     }
 
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.AUDIO_PLAY)})
+    public void onPlayEvent(AudioPlayInfo info) {
+        mView.onPlayEvent(info);
+    }
 }

@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.NetworkUtil;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -23,7 +24,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
@@ -72,7 +72,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 }
                 emitter.onComplete();
             })
-                    .subscribeOn(Schedulers.single())
+                    .subscribeOn(RxExecutors.getDefault())
                     .flatMap(chapterBeans -> {
                         if (chapterBeans.isEmpty()) {
                             return getChapterList(bookShelf);
@@ -142,7 +142,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         target.setDurChapterPage(bookShelf.getDurChapterPage());
         target.setFinalDate(bookShelf.getFinalDate());
         WebBookModel.getInstance().getBookInfo(target)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
                 .timeout(30, TimeUnit.SECONDS)
                 .map(bookShelfBean -> {
@@ -265,7 +265,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         }
 
         Observable.just(chapter)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .map(chapterBean -> {
                     if (reset) {
                         chapterBean.setStart(0);
@@ -282,7 +282,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                         mPlayCallback.onPrepare(chapter);
                     }
                 })
-                .observeOn(Schedulers.single())
+                .observeOn(RxExecutors.getDefault())
                 .flatMap((Function<ChapterBean, ObservableSource<ChapterBean>>) chapterBean -> {
                     if (!NetworkUtil.isNetworkAvailable() || !TextUtils.isEmpty(chapter.getDurChapterPlayUrl())) {
                         return Observable.just(chapterBean);
@@ -370,7 +370,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             }
             emitter.onNext(true);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean bool) {
@@ -397,7 +397,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             }
             emitter.onNext(forceSave && !inShelf);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {

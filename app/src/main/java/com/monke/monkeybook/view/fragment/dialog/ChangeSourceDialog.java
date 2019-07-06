@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -28,9 +29,7 @@ import com.monke.monkeybook.dao.SearchBookBeanDao;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.utils.ListUtils;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
-import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.adapter.ChangeSourceAdapter;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerView;
 
@@ -148,7 +147,6 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public void searchSourceEmpty() {
-        ToastUtils.toast(getContext(), "没有选中任何书源");
         ibtStop.setVisibility(View.INVISIBLE);
         rvSource.finishRefresh(true, false);
         rvSource.setEnabled(true);
@@ -184,13 +182,13 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     private void selectSource(SearchBookBean searchBook) {
         dismissAllowingStateLoss();
         if (selectCover) {
-            if(onClickSource != null) {
+            if (onClickSource != null) {
                 onClickSource.changeSource(searchBook);
             }
         } else {
             if (!isCurrent(searchBook)) {
                 incrementSourceWeightBySelection(searchBook);
-                if(onClickSource != null){
+                if (onClickSource != null) {
                     onClickSource.changeSource(searchBook);
                 }
             }
