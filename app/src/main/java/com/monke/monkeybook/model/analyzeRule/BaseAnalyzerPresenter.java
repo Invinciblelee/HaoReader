@@ -13,7 +13,6 @@ import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
 import org.jsoup.nodes.Element;
-import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.seimicrawler.xpath.JXNode;
 
@@ -97,11 +96,10 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         if (!rulePattern.javaScripts.isEmpty()) {
             if (result.size() == 1) {
                 Object object = evalObjectScript(result.get(0), rulePattern);
-                if (object instanceof NativeArray) {
+                if (object instanceof List) {
                     result.clear();
-                    NativeArray array = ((NativeArray) object);
-                    for (int i = 0, size = array.size(); i < size; i++) {
-                        result.add(StringUtils.valueOf(array.get(i)));
+                    for (Object o : (List) object) {
+                        result.add(StringUtils.valueOf(o));
                     }
                 } else {
                     result.set(0, StringUtils.valueOf(object));
@@ -122,11 +120,10 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
         if (!rulePattern.javaScripts.isEmpty()) {
             if (result.size() == 1) {
                 Object object = evalObjectScript(result.get(0), rulePattern);
-                if (object instanceof NativeArray) {
+                if (object instanceof List) {
                     result.clear();
-                    NativeArray array = ((NativeArray) object);
-                    for (int i = 0, size = array.size(); i < size; i++) {
-                        result.add(StringUtils.valueOf(array.get(i)));
+                    for (Object o : (List) object) {
+                        result.add(StringUtils.valueOf(o));
                     }
                 } else {
                     result.set(0, StringUtils.valueOf(object));

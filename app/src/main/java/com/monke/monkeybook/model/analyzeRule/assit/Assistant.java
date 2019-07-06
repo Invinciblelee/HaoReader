@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.utils.StringUtils;
 
-import org.mozilla.javascript.NativeArray;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +58,8 @@ public final class Assistant {
     public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {
         final Object object = evalObjectScript(jsStr, java, result, baseUrl);
         final List<Object> resultList = new ArrayList<>();
-        if (object instanceof NativeArray) {
-            NativeArray array = ((NativeArray) object);
-            for (int i = 0, size = array.size(); i < size; i++) {
-                resultList.add(StringUtils.valueOf(array.get(i)));
-            }
+        if (object instanceof List) {
+            resultList.addAll((List) object);
         } else if (object != null) {
             resultList.add(object);
         }

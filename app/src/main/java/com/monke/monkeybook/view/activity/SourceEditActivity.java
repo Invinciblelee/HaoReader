@@ -335,6 +335,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void setResult(BookSourceBean sourceBean) {
+        sourceEnableChecker.setChecked(sourceBean.getEnable());
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
         data.putExtra("type", (StringUtils.isBlank(sourceBean.getRuleFindUrl()) || !sourceBean.getEnableFind()) ? -1 : 0);
