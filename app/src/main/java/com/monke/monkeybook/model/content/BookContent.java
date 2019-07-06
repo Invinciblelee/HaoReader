@@ -23,11 +23,11 @@ final class BookContent {
         isAJAX = bookSourceBean.ajaxRuleBookContent();
     }
 
-    Observable<BookContentBean> analyzeBookContent(final String s, final ChapterBean chapter) {
+    Observable<BookContentBean> analyzeBookContent(final String s, String baseUrl, final ChapterBean chapter) {
         OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(),
                 new AnalyzeConfig().tag(tag)
                         .bookSource(bookSourceBean)
-                        .baseURL(chapter.getDurChapterUrl())
+                        .baseURL(baseUrl)
                         .extra("chapter", chapter));
         return analyzer.getContent(s);
     }

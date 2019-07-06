@@ -49,7 +49,7 @@ final class AudioBookChapter {
         isDirect = StringUtils.isBlank(bookSourceBean.getRuleBookContent());
     }
 
-    Observable<ChapterBean> analyzeAudioChapter(final String s, final ChapterBean chapter) {
+    Observable<ChapterBean> analyzeAudioChapter(String s, String baseUrl, ChapterBean chapter) {
         if (isSniff) {
             chapter.setDurChapterPlayUrl(s);
             return Observable.just(chapter);
@@ -57,7 +57,7 @@ final class AudioBookChapter {
             OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(),
                     new AnalyzeConfig().tag(tag)
                             .bookSource(bookSourceBean)
-                            .baseURL(chapter.getDurChapterUrl())
+                            .baseURL(baseUrl)
                             .extra("chapter", chapter));
             return analyzer.getAudioContent(s)
                     .map(url -> {

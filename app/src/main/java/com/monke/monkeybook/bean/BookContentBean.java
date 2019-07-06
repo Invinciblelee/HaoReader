@@ -104,7 +104,10 @@ public class BookContentBean implements Parcelable {
         if (this.durChapterContent == null) {
             setDurChapterContent(TextProcessor.formatHtml(durChapterContent));
         } else {
-            this.durChapterContent.append("\n").append(TextProcessor.formatHtml(durChapterContent));
+            if (durChapterContent.matches("^\\s+")) {
+                this.durChapterContent.append("\n");
+            }
+            this.durChapterContent.append(TextProcessor.formatHtml(durChapterContent));
         }
     }
 

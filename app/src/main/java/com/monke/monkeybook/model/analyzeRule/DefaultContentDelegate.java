@@ -461,7 +461,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
                     try {
                         AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), webContent.nextUrl, headerMap);
-                        String response = SimpleModel.getResponse(analyzeUrl).subscribeOn(Schedulers.single()).blockingFirst().body();
+                        String response = SimpleModel.getResponse(analyzeUrl).subscribeOn(Schedulers.io()).blockingFirst().body();
                         webContent = getRawContentResult(response, webContent.nextUrl, ruleBookContent);
                         if (!isEmpty(webContent.result)) {
                             bookContentBean.appendDurChapterContent(webContent.result);
