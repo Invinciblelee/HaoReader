@@ -252,15 +252,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         runningView.stop();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        runningView.start();
     }
 
     public void setCurrentItem(int item) {
