@@ -129,6 +129,7 @@ public class BookshelfHelp {
         if (bookInfo != null) {
             FileHelp.deleteFile(Constant.BOOK_CHAPTER_PATH + getChapterFolderName(bookInfo.getName(), bookInfo.getAuthor()));
         }
+        delChapterList(bookShelfBean.getNoteUrl(), null);
     }
 
     public static ChapterBean getChapter(String chapterUrl) {
