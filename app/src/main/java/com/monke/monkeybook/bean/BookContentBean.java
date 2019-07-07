@@ -8,6 +8,11 @@ import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.help.TextProcessor;
 
+import java.util.regex.Matcher;
+
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_SPACE_END;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_SPACE_START;
+
 /**
  * 书本缓存内容
  */
@@ -104,10 +109,25 @@ public class BookContentBean implements Parcelable {
         if (this.durChapterContent == null) {
             setDurChapterContent(TextProcessor.formatHtml(durChapterContent));
         } else {
-            if (durChapterContent.matches("^\\s+")) {
-                this.durChapterContent.append("\n");
+            Matcher matcher = PATTERN_SPACE_START.matcher(durChapterContent);
+            if (matcher.find()) {
+                this.durChapterContent.append("\n").append(TextProcessor.formatHtml(durChapterContent));
+            } else {
+                String content = this.durChapterContent.toString();
+                matcher = PATTERN_SPACE_END.matcher(content);
+                if (matcher.find()) {
+                    this.durChapterContent.setLength(0);
+                    this.durChapterContent.append(matcher.replaceFirst(""));
+                }
+
+                content = TextProcessor.formatHtml(durChapterContent);
+                matcher = PATTERN_SPACE_START.matcher(content);
+                if(matcher.find()){
+                    this.durChapterContent.append(matcher.replaceFirst(""));
+                }else {
+                    this.durChapterContent.append(content);
+                }
             }
-            this.durChapterContent.append(TextProcessor.formatHtml(durChapterContent));
         }
     }
 

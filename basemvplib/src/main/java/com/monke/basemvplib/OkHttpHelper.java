@@ -68,7 +68,6 @@ public class OkHttpHelper {
     }
 
 
-
     public OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
 
@@ -95,7 +94,7 @@ public class OkHttpHelper {
                     .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                     .addInterceptor(getHeaderInterceptor())
                     .addInterceptor(new RetryInterceptor(1))
-                    .addInterceptor(new LoggerInterceptor())
+//                    .addInterceptor(new LoggerInterceptor())
                     .build();
         }
         return okHttpClient;

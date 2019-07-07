@@ -112,7 +112,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         final String lastChapter = item.getDisplayLastChapter();
         String desc = !StringUtils.isBlank(lastChapter) ? lastChapter
                 : !StringUtils.isBlank(item.getIntroduce()) ? item.getIntroduce() : "";
-        myViewHolder.tvLasted.setText(desc);
+        myViewHolder.tvLasted.setText(StringUtils.trim(desc));
 
         if (!StringUtils.isBlank(item.getOrigin())) {
             myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
