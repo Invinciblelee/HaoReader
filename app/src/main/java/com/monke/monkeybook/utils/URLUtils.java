@@ -45,4 +45,7 @@ public class URLUtils {
         return urlStr.matches(regex);
     }
 
+    public static boolean isAbsUrl(String url) {
+        return url != null && (url.startsWith("http:") || url.startsWith("https:"));
+    }
 }

@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.monke.basemvplib.NetworkUtil;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.SearchBookBean;
@@ -15,16 +17,12 @@ import com.monke.monkeybook.model.content.Default716;
 import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.model.impl.ISearchTask;
 import com.monke.monkeybook.model.task.SearchTaskImpl;
-import com.monke.basemvplib.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by GKF on 2018/1/16.
@@ -43,7 +41,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     private final List<SearchEngine> searchEngineS = new ArrayList<>();
     private final List<ISearchTask> searchTasks = new ArrayList<>();
 
-    private ExecutorService executor;
+    private final Scheduler scheduler;
     private final SearchHandler searchHandler;
 
     private SearchIterator searchIterator;
@@ -68,7 +66,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
             if (msg.what == MSG_SEARCH) {
                 model.search((String) msg.obj);
             } else if (msg.what == MSG_QUERY) {
-                new SearchTaskImpl(model).startSearch((String) msg.obj, model.getScheduler());
+                new SearchTaskImpl(model).startSearch((String) msg.obj, model.scheduler);
             } else if (msg.what == MSG_EMPTY && model.searchListener != null) {
                 model.searchListener.searchSourceEmpty();
             } else if (msg.what == MSG_ERROR && model.searchListener != null) {
@@ -84,16 +82,10 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
     public SearchBookModel(Context context) {
         AppConfigHelper configHelper = AppConfigHelper.get();
         threadsNum = Math.max(1, configHelper.getInt(context.getString(R.string.pk_threads_num), 6));
-        threadsNum = Math.min(30, threadsNum);
+        threadsNum = Math.min(50, threadsNum);
+        scheduler = RxExecutors.newScheduler(threadsNum);
         searchPageCount = configHelper.getInt(context.getString(R.string.pk_search_page_count), 1);
         searchHandler = new SearchHandler(this);
-    }
-
-    private Scheduler getScheduler() {
-        if (executor == null || executor.isShutdown()) {
-            executor = Executors.newFixedThreadPool(threadsNum);
-        }
-        return Schedulers.from(executor);
     }
 
     /**
@@ -183,10 +175,7 @@ public class SearchBookModel implements ISearchTask.OnSearchingListener {
 
     public void shutdownSearch() {
         clearSearch();
-        if (executor != null) {
-            executor.shutdown();
-            executor = null;
-        }
+        scheduler.shutdown();
     }
 
     public SearchBookModel onlyOnePage() {

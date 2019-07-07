@@ -95,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:ellipsize="middle"
+            android:ellipsize="end"
             android:gravity="center_vertical"
             android:includeFontPadding="false"
             android:singleLine="true"

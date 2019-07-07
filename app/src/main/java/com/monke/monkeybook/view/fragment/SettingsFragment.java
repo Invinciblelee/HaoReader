@@ -47,6 +47,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             if (listView != null) {
                 listView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
                 listView.setVerticalScrollBarEnabled(false);
+                listView.setDivider(null);
+                listView.setDividerHeight(0);
             }
         }
     }
@@ -97,7 +99,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         } else if (key.equals(getResources().getString(R.string.pk_chapter_disk_cache))) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().detachAll();
-        } else if (key.endsWith(getString(R.string.pk_show_all_find))) {
+        } else if (key.equals(getString(R.string.pk_show_all_find))) {
             RxBus.get().post(RxBusTag.FIND_LIST_CHANGE, true);
         }
     }

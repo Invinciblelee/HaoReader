@@ -40,12 +40,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_rule_summary"
-        android:icon="@drawable/ic_help_outline_black_24dp"
-        android:title="@string/rule_summary"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_share_it"
         android:icon="@drawable/ic_share_black_24dp"
         android:title="@string/share"

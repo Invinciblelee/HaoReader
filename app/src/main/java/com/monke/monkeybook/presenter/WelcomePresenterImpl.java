@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -27,7 +28,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View> implements WelcomeContract.Presenter {
 
@@ -66,7 +66,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
                 bookShelfBean = BookshelfHelp.queryBookByUrl(noteUrl);
             }
             e.onSuccess(bookShelfBean == null ? new BookShelfBean() : bookShelfBean);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<BookShelfBean>() {
                     @Override
@@ -103,7 +103,7 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
             e.onNext(FileUtil.getFilePathFromUri(activity, uri));
             e.onComplete();
         })
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(File::new)
                 .flatMap((Function<File, ObservableSource<LocBookShelfBean>>) file -> ImportBookModelImpl.getInstance().importBook(file))
@@ -121,8 +121,4 @@ public class WelcomePresenterImpl extends BasePresenterImpl<WelcomeContract.View
                 });
     }
 
-    @Override
-    public void detachView() {
-
-    }
 }

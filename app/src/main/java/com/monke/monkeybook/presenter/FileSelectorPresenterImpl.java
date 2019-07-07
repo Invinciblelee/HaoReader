@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.bean.FileSnapshot;
 import com.monke.monkeybook.bean.RipeFile;
 import com.monke.monkeybook.help.ACache;
@@ -28,7 +29,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorContract.View> implements FileSelectorContract.Presenter, FileFilter {
 
@@ -109,7 +109,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             } else {
                 emitter.onError(new Exception("file load failed!"));
             }
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
@@ -143,7 +143,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
                     emitter.onError(new Exception("snapshot pop failed!"));
                 }
             }
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
@@ -178,7 +178,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             } else {
                 emitter.onError(new Exception("snapshot push failed!"));
             }
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
@@ -223,7 +223,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
             } else {
                 emitter.onError(new Exception("file load failed!"));
             }
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<FileSnapshot>() {
                     @Override
@@ -294,6 +294,7 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
 
     @Override
     public void detachView() {
+        super.detachView();
         if (!snapshots.empty()) {
             if (current != null) {
                 current.setScrollOffset(mView.getScrollOffset());

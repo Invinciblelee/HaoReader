@@ -2,7 +2,6 @@ package com.monke.monkeybook.view.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
         synchronized (mGroupBeans) {
             mOriginalList = null;
             mGroupBeans.clear();
-            if(items != null) {
+            if (items != null) {
                 mGroupBeans.addAll(items);
             }
             getFilter().filter();
@@ -67,9 +66,9 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
                     notifyItemChanged(index, 0);
                 }
 
-                if(mOriginalList != null){
+                if (mOriginalList != null) {
                     index = mOriginalList.indexOf(item);
-                    if(index >=0){
+                    if (index >= 0) {
                         mOriginalList.set(index, item);
                     }
                 }
@@ -77,15 +76,15 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
         }
     }
 
-    public void removeItem(FindKindGroupBean item){
-        synchronized (mGroupBeans){
-            if(item != null){
+    public void removeItem(FindKindGroupBean item) {
+        synchronized (mGroupBeans) {
+            if (item != null) {
                 int index = mGroupBeans.indexOf(item);
-                if(index >= 0){
+                if (index >= 0) {
                     mGroupBeans.remove(item);
                     notifyItemRemoved(index);
                 }
-                if(mOriginalList != null){
+                if (mOriginalList != null) {
                     mOriginalList.remove(item);
                 }
             }
@@ -275,6 +274,14 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
             filter(constraint);
         }
 
+        public boolean clearFilter() {
+            if (!TextUtils.isEmpty(constraint)) {
+                filter(null);
+                return true;
+            }
+            return false;
+        }
+
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
 
@@ -294,24 +301,29 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
                 }
             } else {
                 ArrayList<FindKindGroupBean> list = new ArrayList<>();
+                final String key = constraint.toString();
                 for (FindKindGroupBean groupBean : mOriginalList) {
-                    if (StringUtils.containsIgnoreCase(groupBean.getGroupName(), constraint.toString())) {
+                    if (StringUtils.containsIgnoreCase(groupBean.getGroupName(), key)) {
                         list.add(groupBean);
                     }
                 }
                 results.values = list;
                 results.count = list.size();
+
             }
             return results;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             this.constraint = constraint;
             mGroupBeans.clear();
             notifyDataSetChanged();
-            mGroupBeans.addAll((List<FindKindGroupBean>) results.values);
-            notifyDataSetChanged();
+            if (results.count > 0) {
+                mGroupBeans.addAll((List<FindKindGroupBean>) results.values);
+                notifyDataSetChanged();
+            }
         }
     }
 }

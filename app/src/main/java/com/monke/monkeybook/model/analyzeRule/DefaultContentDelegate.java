@@ -79,7 +79,7 @@ class DefaultContentDelegate implements ContentDelegate {
             String name = TextProcessor.formatBookName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchName()));
             String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchAuthor()));
             String kind = StringUtils.join(",", mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchKind()));
-            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchLastChapter()));
+            String lastChapter = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchLastChapter());
             String introduce = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchIntroduce());
             String coverUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchCoverUrl());
             String noteUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchNoteUrl());
@@ -102,7 +102,7 @@ class DefaultContentDelegate implements ContentDelegate {
             String name = TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName()));
             String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor()));
             String kind = StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind()));
-            String lastChapter = TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter()));
+            String lastChapter = mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter());
             String introduce = mAnalyzer.getResultContent(getBookSource().getRuleSearchIntroduce());
             String coverUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl());
             String noteUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl());
@@ -207,15 +207,16 @@ class DefaultContentDelegate implements ContentDelegate {
                 bookInfoBean.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
             }
 
+
+            if (isEmpty(book.getLastChapterName())) {
+                book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleBookLastChapter()));
+            }
+
             String chapterUrl = mAnalyzer.getResultUrl(getBookSource().getRuleChapterUrl());
             if (isEmpty(chapterUrl)) {
                 bookInfoBean.setChapterListUrl(getConfig().getBaseURL());
             } else {
                 bookInfoBean.setChapterListUrl(chapterUrl);
-            }
-
-            if (isEmpty(book.getLastChapterName())) {
-                book.setLastChapterName(TextProcessor.formatChapterName(mAnalyzer.getResultContent(getBookSource().getRuleLastChapter())));
             }
 
             bookInfoBean.setNoteUrl(getConfig().getBaseURL());   //id
@@ -263,7 +264,7 @@ class DefaultContentDelegate implements ContentDelegate {
                         if (webChapter.result != null && !webChapter.result.isEmpty()) {
                             chapterList.addAll(webChapter.result);
                         }
-                        nextUrl = webChapter.nextUrls.isEmpty() ? null : webChapter.nextUrls.get(0);
+                        nextUrl = (webChapter.nextUrls == null || webChapter.nextUrls.isEmpty()) ? null : webChapter.nextUrls.get(0);
                     }
                 }
                 doOnChapterListFinish(chapterList, emitter);
@@ -460,7 +461,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
                     try {
                         AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), webContent.nextUrl, headerMap);
-                        String response = SimpleModel.getResponse(analyzeUrl).subscribeOn(Schedulers.single()).blockingFirst().body();
+                        String response = SimpleModel.getResponse(analyzeUrl).subscribeOn(Schedulers.io()).blockingFirst().body();
                         webContent = getRawContentResult(response, webContent.nextUrl, ruleBookContent);
                         if (!isEmpty(webContent.result)) {
                             bookContentBean.appendDurChapterContent(webContent.result);

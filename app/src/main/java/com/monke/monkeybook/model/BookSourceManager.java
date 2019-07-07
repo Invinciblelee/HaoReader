@@ -5,19 +5,20 @@ import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
 import com.monke.basemvplib.BaseModelImpl;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,6 +40,22 @@ public class BookSourceManager extends BaseModelImpl {
                 .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
                 .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();
+    }
+
+    public static List<BookSourceBean> getFindEnabled() {
+        List<BookSourceBean> sourceBeanList = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                .list();
+
+        Iterator<BookSourceBean> iterator = sourceBeanList.iterator();
+        while (iterator.hasNext()) {
+            Boolean enableFind = iterator.next().getEnableFind();
+            if (enableFind != null && !enableFind) {
+                iterator.remove();
+            }
+        }
+        return sourceBeanList;
     }
 
     public static long getEnabledCount() {

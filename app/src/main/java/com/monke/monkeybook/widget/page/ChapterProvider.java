@@ -6,6 +6,8 @@ import android.text.StaticLayout;
 import androidx.annotation.NonNull;
 
 import com.hwangjr.rxbus.RxBus;
+import com.monke.basemvplib.NetworkUtil;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -16,14 +18,11 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.IOUtils;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -31,7 +30,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 class ChapterProvider {
 
@@ -41,7 +39,7 @@ class ChapterProvider {
 
     private PageLoader mPageLoader;
 
-    private ExecutorService mExecutor;
+    private Scheduler mScheduler;
 
     ChapterProvider(PageLoader pageLoader) {
         this.mPageLoader = pageLoader;
@@ -76,12 +74,13 @@ class ChapterProvider {
      */
     private TxtChapter loadChapter(ChapterBean chapter, BufferedReader br) {
         //生成的页面
-        List<TxtPage> pages = new ArrayList<>();
-        TxtChapter txtChapter = new TxtChapter(chapter.getDurChapterIndex(), PageStatus.STATUS_FINISH);
+        final List<TxtPage> pages = new ArrayList<>();
+        final TxtChapter txtChapter = new TxtChapter(chapter.getDurChapterIndex(), PageStatus.STATUS_FINISH);
         //使用流的方式加载
-        List<String> lines = new ArrayList<>();
-        BookShelfBean collBook = mPageLoader.getCollBook();
-        BookInfoBean bookInfo = collBook.getBookInfoBean();
+        final List<String> lines = new ArrayList<>();
+        final BookShelfBean collBook = mPageLoader.getCollBook();
+        final BookInfoBean bookInfo = collBook.getBookInfoBean();
+
         int rHeight = mPageLoader.getVisibleHeight();
         int titleLinesCount = 0;
         try {
@@ -234,10 +233,10 @@ class ChapterProvider {
     }
 
     private Scheduler getScheduler() {
-        if (mExecutor == null || mExecutor.isShutdown()) {
-            mExecutor = Executors.newFixedThreadPool(6);
+        if (mScheduler == null) {
+            mScheduler = RxExecutors.newScheduler(6);
         }
-        return Schedulers.from(mExecutor);
+        return mScheduler;
     }
 
     private void ensureCompositeDisposable() {
@@ -252,9 +251,9 @@ class ChapterProvider {
             mCompositeDisposable.dispose();
             mCompositeDisposable = null;
         }
-        if (mExecutor != null) {
-            mExecutor.shutdown();
-            mExecutor = null;
+        if (mScheduler != null) {
+            mScheduler.shutdown();
+            mScheduler = null;
         }
     }
 }

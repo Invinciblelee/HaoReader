@@ -95,6 +95,7 @@ public class OkHttpHelper {
                     .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                     .addInterceptor(getHeaderInterceptor())
                     .addInterceptor(new RetryInterceptor(1))
+                    .addInterceptor(new LoggerInterceptor())
                     .build();
         }
         return okHttpClient;

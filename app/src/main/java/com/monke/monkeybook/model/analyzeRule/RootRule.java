@@ -27,7 +27,7 @@ final class RootRule extends Rule {
         } else if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_CSS)) {
             mode = RuleMode.CSS;
             rule = rawRule.substring(5);
-        } else {
+        }else {
             mode = RuleMode.Default;
             rule = rawRule;
         }

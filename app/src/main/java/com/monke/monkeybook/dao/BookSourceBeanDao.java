@@ -29,11 +29,11 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         public final static Property BookSourceGroup = new Property(2, String.class, "bookSourceGroup", false, "BOOK_SOURCE_GROUP");
         public final static Property BookSourceType = new Property(3, String.class, "bookSourceType", false, "BOOK_SOURCE_TYPE");
         public final static Property BookSourceRuleType = new Property(4, String.class, "bookSourceRuleType", false, "BOOK_SOURCE_RULE_TYPE");
-        public final static Property BookSourceCacheEnabled = new Property(5, boolean.class, "bookSourceCacheEnabled", false, "BOOK_SOURCE_CACHE_ENABLED");
-        public final static Property CheckUrl = new Property(6, String.class, "checkUrl", false, "CHECK_URL");
-        public final static Property SerialNumber = new Property(7, int.class, "serialNumber", false, "SERIAL_NUMBER");
-        public final static Property Weight = new Property(8, int.class, "weight", false, "WEIGHT");
-        public final static Property Enable = new Property(9, boolean.class, "enable", false, "ENABLE");
+        public final static Property CheckUrl = new Property(5, String.class, "checkUrl", false, "CHECK_URL");
+        public final static Property SerialNumber = new Property(6, int.class, "serialNumber", false, "SERIAL_NUMBER");
+        public final static Property Weight = new Property(7, int.class, "weight", false, "WEIGHT");
+        public final static Property Enable = new Property(8, Boolean.class, "enable", false, "ENABLE");
+        public final static Property EnableFind = new Property(9, Boolean.class, "enableFind", false, "ENABLE_FIND");
         public final static Property RuleFindUrl = new Property(10, String.class, "ruleFindUrl", false, "RULE_FIND_URL");
         public final static Property RuleSearchUrl = new Property(11, String.class, "ruleSearchUrl", false, "RULE_SEARCH_URL");
         public final static Property RuleSearchList = new Property(12, String.class, "ruleSearchList", false, "RULE_SEARCH_LIST");
@@ -46,7 +46,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         public final static Property RuleSearchNoteUrl = new Property(19, String.class, "ruleSearchNoteUrl", false, "RULE_SEARCH_NOTE_URL");
         public final static Property RuleBookName = new Property(20, String.class, "ruleBookName", false, "RULE_BOOK_NAME");
         public final static Property RuleBookAuthor = new Property(21, String.class, "ruleBookAuthor", false, "RULE_BOOK_AUTHOR");
-        public final static Property RuleLastChapter = new Property(22, String.class, "ruleLastChapter", false, "RULE_LAST_CHAPTER");
+        public final static Property RuleBookLastChapter = new Property(22, String.class, "ruleBookLastChapter", false, "RULE_BOOK_LAST_CHAPTER");
         public final static Property RuleCoverUrl = new Property(23, String.class, "ruleCoverUrl", false, "RULE_COVER_URL");
         public final static Property RuleIntroduce = new Property(24, String.class, "ruleIntroduce", false, "RULE_INTRODUCE");
         public final static Property RuleChapterUrl = new Property(25, String.class, "ruleChapterUrl", false, "RULE_CHAPTER_URL");
@@ -78,11 +78,11 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
                 "\"BOOK_SOURCE_GROUP\" TEXT," + // 2: bookSourceGroup
                 "\"BOOK_SOURCE_TYPE\" TEXT," + // 3: bookSourceType
                 "\"BOOK_SOURCE_RULE_TYPE\" TEXT," + // 4: bookSourceRuleType
-                "\"BOOK_SOURCE_CACHE_ENABLED\" INTEGER NOT NULL ," + // 5: bookSourceCacheEnabled
-                "\"CHECK_URL\" TEXT," + // 6: checkUrl
-                "\"SERIAL_NUMBER\" INTEGER NOT NULL ," + // 7: serialNumber
-                "\"WEIGHT\" INTEGER NOT NULL ," + // 8: weight
-                "\"ENABLE\" INTEGER NOT NULL ," + // 9: enable
+                "\"CHECK_URL\" TEXT," + // 5: checkUrl
+                "\"SERIAL_NUMBER\" INTEGER NOT NULL ," + // 6: serialNumber
+                "\"WEIGHT\" INTEGER NOT NULL ," + // 7: weight
+                "\"ENABLE\" INTEGER," + // 8: enable
+                "\"ENABLE_FIND\" INTEGER," + // 9: enableFind
                 "\"RULE_FIND_URL\" TEXT," + // 10: ruleFindUrl
                 "\"RULE_SEARCH_URL\" TEXT," + // 11: ruleSearchUrl
                 "\"RULE_SEARCH_LIST\" TEXT," + // 12: ruleSearchList
@@ -95,7 +95,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
                 "\"RULE_SEARCH_NOTE_URL\" TEXT," + // 19: ruleSearchNoteUrl
                 "\"RULE_BOOK_NAME\" TEXT," + // 20: ruleBookName
                 "\"RULE_BOOK_AUTHOR\" TEXT," + // 21: ruleBookAuthor
-                "\"RULE_LAST_CHAPTER\" TEXT," + // 22: ruleLastChapter
+                "\"RULE_BOOK_LAST_CHAPTER\" TEXT," + // 22: ruleBookLastChapter
                 "\"RULE_COVER_URL\" TEXT," + // 23: ruleCoverUrl
                 "\"RULE_INTRODUCE\" TEXT," + // 24: ruleIntroduce
                 "\"RULE_CHAPTER_URL\" TEXT," + // 25: ruleChapterUrl
@@ -143,15 +143,23 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         if (bookSourceRuleType != null) {
             stmt.bindString(5, bookSourceRuleType);
         }
-        stmt.bindLong(6, entity.getBookSourceCacheEnabled() ? 1L: 0L);
  
         String checkUrl = entity.getCheckUrl();
         if (checkUrl != null) {
-            stmt.bindString(7, checkUrl);
+            stmt.bindString(6, checkUrl);
         }
-        stmt.bindLong(8, entity.getSerialNumber());
-        stmt.bindLong(9, entity.getWeight());
-        stmt.bindLong(10, entity.getEnable() ? 1L: 0L);
+        stmt.bindLong(7, entity.getSerialNumber());
+        stmt.bindLong(8, entity.getWeight());
+ 
+        Boolean enable = entity.getEnable();
+        if (enable != null) {
+            stmt.bindLong(9, enable ? 1L: 0L);
+        }
+ 
+        Boolean enableFind = entity.getEnableFind();
+        if (enableFind != null) {
+            stmt.bindLong(10, enableFind ? 1L: 0L);
+        }
  
         String ruleFindUrl = entity.getRuleFindUrl();
         if (ruleFindUrl != null) {
@@ -213,9 +221,9 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             stmt.bindString(22, ruleBookAuthor);
         }
  
-        String ruleLastChapter = entity.getRuleLastChapter();
-        if (ruleLastChapter != null) {
-            stmt.bindString(23, ruleLastChapter);
+        String ruleBookLastChapter = entity.getRuleBookLastChapter();
+        if (ruleBookLastChapter != null) {
+            stmt.bindString(23, ruleBookLastChapter);
         }
  
         String ruleCoverUrl = entity.getRuleCoverUrl();
@@ -302,15 +310,23 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         if (bookSourceRuleType != null) {
             stmt.bindString(5, bookSourceRuleType);
         }
-        stmt.bindLong(6, entity.getBookSourceCacheEnabled() ? 1L: 0L);
  
         String checkUrl = entity.getCheckUrl();
         if (checkUrl != null) {
-            stmt.bindString(7, checkUrl);
+            stmt.bindString(6, checkUrl);
         }
-        stmt.bindLong(8, entity.getSerialNumber());
-        stmt.bindLong(9, entity.getWeight());
-        stmt.bindLong(10, entity.getEnable() ? 1L: 0L);
+        stmt.bindLong(7, entity.getSerialNumber());
+        stmt.bindLong(8, entity.getWeight());
+ 
+        Boolean enable = entity.getEnable();
+        if (enable != null) {
+            stmt.bindLong(9, enable ? 1L: 0L);
+        }
+ 
+        Boolean enableFind = entity.getEnableFind();
+        if (enableFind != null) {
+            stmt.bindLong(10, enableFind ? 1L: 0L);
+        }
  
         String ruleFindUrl = entity.getRuleFindUrl();
         if (ruleFindUrl != null) {
@@ -372,9 +388,9 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             stmt.bindString(22, ruleBookAuthor);
         }
  
-        String ruleLastChapter = entity.getRuleLastChapter();
-        if (ruleLastChapter != null) {
-            stmt.bindString(23, ruleLastChapter);
+        String ruleBookLastChapter = entity.getRuleBookLastChapter();
+        if (ruleBookLastChapter != null) {
+            stmt.bindString(23, ruleBookLastChapter);
         }
  
         String ruleCoverUrl = entity.getRuleCoverUrl();
@@ -446,11 +462,11 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // bookSourceGroup
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // bookSourceType
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // bookSourceRuleType
-            cursor.getShort(offset + 5) != 0, // bookSourceCacheEnabled
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // checkUrl
-            cursor.getInt(offset + 7), // serialNumber
-            cursor.getInt(offset + 8), // weight
-            cursor.getShort(offset + 9) != 0, // enable
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // checkUrl
+            cursor.getInt(offset + 6), // serialNumber
+            cursor.getInt(offset + 7), // weight
+            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0, // enable
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // enableFind
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // ruleFindUrl
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // ruleSearchUrl
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // ruleSearchList
@@ -463,7 +479,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // ruleSearchNoteUrl
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // ruleBookName
             cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // ruleBookAuthor
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // ruleLastChapter
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // ruleBookLastChapter
             cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // ruleCoverUrl
             cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // ruleIntroduce
             cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // ruleChapterUrl
@@ -486,11 +502,11 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         entity.setBookSourceGroup(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setBookSourceType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setBookSourceRuleType(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setBookSourceCacheEnabled(cursor.getShort(offset + 5) != 0);
-        entity.setCheckUrl(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setSerialNumber(cursor.getInt(offset + 7));
-        entity.setWeight(cursor.getInt(offset + 8));
-        entity.setEnable(cursor.getShort(offset + 9) != 0);
+        entity.setCheckUrl(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setSerialNumber(cursor.getInt(offset + 6));
+        entity.setWeight(cursor.getInt(offset + 7));
+        entity.setEnable(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
+        entity.setEnableFind(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
         entity.setRuleFindUrl(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setRuleSearchUrl(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setRuleSearchList(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
@@ -503,7 +519,7 @@ public class BookSourceBeanDao extends AbstractDao<BookSourceBean, String> {
         entity.setRuleSearchNoteUrl(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
         entity.setRuleBookName(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
         entity.setRuleBookAuthor(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setRuleLastChapter(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setRuleBookLastChapter(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
         entity.setRuleCoverUrl(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
         entity.setRuleIntroduce(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
         entity.setRuleChapterUrl(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_image_cover"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_bg_circle_image"
+        android:transitionName="image_cover" />
+
+    <com.monke.monkeybook.widget.CircleProgressBar
+        android:id="@+id/audio_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:strokeColor="@color/colorAccent"
+        app:strokeWidth="2dp" />
+
+    <ImageView
+        android:id="@+id/btn_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:contentDescription="@string/pause"
+        android:src="@drawable/ic_play_white_24dp"
+        android:tint="@color/colorAccent" />
+</merge>

@@ -15,13 +15,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,6 +40,7 @@ import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.SourceEditPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
+import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
@@ -74,10 +77,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieBookSourceRuleType;
     @BindView(R.id.til_book_source_rule_type)
     TextInputLayout tilBookSourceRuleType;
-    @BindView(R.id.tie_book_source_cache_enable)
-    TextInputEditText tieBookSourceCacheEnable;
-    @BindView(R.id.til_book_source_cache_enable)
-    TextInputLayout tilBookSourceCacheEnable;
     @BindView(R.id.tie_book_source_url)
     TextInputEditText tieBookSourceUrl;
     @BindView(R.id.til_book_source_url)
@@ -134,10 +133,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     TextInputEditText tieRuleBookAuthor;
     @BindView(R.id.til_ruleBookAuthor)
     TextInputLayout tilRuleBookAuthor;
-    @BindView(R.id.til_ruleLastChapter)
-    TextInputLayout tilRuleLastChapter;
-    @BindView(R.id.tie_ruleLastChapter)
-    TextInputEditText tieRuleLastChapter;
+    @BindView(R.id.til_ruleBookLastChapter)
+    TextInputLayout tilRuleBookLastChapter;
+    @BindView(R.id.tie_ruleBookLastChapter)
+    TextInputEditText tieRuleBookLastChapter;
     @BindView(R.id.tie_ruleCoverUrl)
     TextInputEditText tieRuleCoverUrl;
     @BindView(R.id.til_ruleCoverUrl)
@@ -191,12 +190,19 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     @BindView(R.id.til_ruleContentUrlNext)
     TextInputLayout tilRuleContentUrlNext;
     @BindView(R.id.scroll_view)
-    ScrollView scrollContent;
+    NestedScrollView scrollContent;
+    @BindView(R.id.switch_layout)
+    View switchLayout;
+    @BindView(R.id.checker_enable_source)
+    AppCompatCheckBox sourceEnableChecker;
+    @BindView(R.id.checker_enable_find)
+    AppCompatCheckBox findEnableChecker;
 
     private BookSourceBean bookSourceBean;
     private int serialNumber;
     private int weight;
     private boolean enable;
+    private boolean enableFind;
     private String title;
     private KeyboardToolPop mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
@@ -231,6 +237,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             title = savedInstanceState.getString("title");
             serialNumber = savedInstanceState.getInt("serialNumber");
             enable = savedInstanceState.getBoolean("enable");
+            enableFind = savedInstanceState.getBoolean("enableFind");
         }
         super.onCreate(savedInstanceState);
     }
@@ -241,6 +248,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         outState.putString("title", title);
         outState.putInt("serialNumber", serialNumber);
         outState.putBoolean("enable", enable);
+        outState.putBoolean("enableFind", enableFind);
         if (bookSourceBean != null) {
             String key = String.valueOf(System.currentTimeMillis());
             getIntent().putExtra("data_key", key);
@@ -265,6 +273,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             if (bookSourceBean != null) {
                 serialNumber = bookSourceBean.getSerialNumber();
                 enable = bookSourceBean.getEnable();
+                enableFind = bookSourceBean.getEnableFind();
                 weight = bookSourceBean.getWeight();
                 BitIntentDataManager.getInstance().cleanData(key);
             }
@@ -279,6 +288,15 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         setText(bookSourceBean);
         mSoftKeyboardTool = new KeyboardToolPop(this, this::insertTextToEditText);
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(mKeyboardListener = new KeyboardOnGlobalChangeListener());
+    }
+
+    @Override
+    protected void bindEvent() {
+        findEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enableFind = isChecked);
+        sourceEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enable = isChecked);
+
+        scrollContent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                ViewCompat.setElevation(switchLayout, v.canScrollVertically(-1) ? DensityUtil.dp2px(v.getContext(), 3) : 0));
     }
 
     private void saveBookSource() {
@@ -311,10 +329,16 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         return gson.toJson(getBookSource());
     }
 
-    private void setResult(BookSourceBean sourceBean){
+    @Override
+    public String getBookSourceName() {
+        return trim(tieBookSourceName.getText());
+    }
+
+    private void setResult(BookSourceBean sourceBean) {
+        sourceEnableChecker.setChecked(sourceBean.getEnable());
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
-        data.putExtra("type", StringUtils.isBlank(sourceBean.getRuleFindUrl()) ? -1 : 0);
+        data.putExtra("type", (StringUtils.isBlank(sourceBean.getRuleFindUrl()) || !sourceBean.getEnableFind()) ? -1 : 0);
         setResult(RESULT_OK, data);
     }
 
@@ -341,7 +365,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         BookSourceBean bookSourceBeanN = new BookSourceBean();
         bookSourceBeanN.setBookSourceType(trim(tieBookSourceType.getText()));
         bookSourceBeanN.setBookSourceRuleType(trim(tieBookSourceRuleType.getText()));
-        bookSourceBeanN.setBookSourceCacheEnabled(TextUtils.equals(trim(tieBookSourceCacheEnable.getText()), "TRUE"));
         bookSourceBeanN.setBookSourceName(trim(tieBookSourceName.getText()));
         bookSourceBeanN.setBookSourceUrl(trim(tieBookSourceUrl.getText()));
         bookSourceBeanN.setBookSourceGroup(trim(tieBookSourceGroup.getText()));
@@ -350,7 +373,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleBookContent(trim(tieRuleBookContent.getText()));
         bookSourceBeanN.setRulePersistedVariables(trim(tiePersistedVariables.getText()));
         bookSourceBeanN.setRuleBookName(trim(tieRuleBookName.getText()));
-        bookSourceBeanN.setRuleLastChapter(trim(tieRuleLastChapter.getText()));
+        bookSourceBeanN.setRuleBookLastChapter(trim(tieRuleBookLastChapter.getText()));
         bookSourceBeanN.setRuleChapterList(trim(tieRuleChapterList.getText()));
         bookSourceBeanN.setRuleChapterName(trim(tieRuleChapterName.getText()));
         bookSourceBeanN.setRuleChapterUrl(trim(tieRuleChapterUrl.getText()));
@@ -371,6 +394,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setRuleFindUrl(trim(tieRuleFindUrl.getText()));
         bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText()));
         bookSourceBeanN.setEnable(enable);
+        bookSourceBeanN.setEnableFind(enableFind);
         bookSourceBeanN.setSerialNumber(serialNumber);
         bookSourceBeanN.setWeight(weight);
         return bookSourceBeanN;
@@ -389,8 +413,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (!TextUtils.isEmpty(ruleType)) {
             tieBookSourceRuleType.setText(ruleType);
         }
-        boolean cache = bookSourceBean.getBookSourceCacheEnabled();
-        tieBookSourceCacheEnable.setText(cache ? "TRUE" : "FALSE");
         tieBookSourceName.setText(trim(bookSourceBean.getBookSourceName()));
         tieBookSourceUrl.setText(trim(bookSourceBean.getBookSourceUrl()));
         tieBookSourceGroup.setText(trim(bookSourceBean.getBookSourceGroup()));
@@ -399,7 +421,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieRuleBookContent.setText(trim(bookSourceBean.getRuleBookContent()));
         tiePersistedVariables.setText(trim(bookSourceBean.getRulePersistedVariables()));
         tieRuleBookName.setText(trim(bookSourceBean.getRuleBookName()));
-        tieRuleLastChapter.setText(trim(bookSourceBean.getRuleLastChapter()));
+        tieRuleBookLastChapter.setText(trim(bookSourceBean.getRuleBookLastChapter()));
         tieRuleChapterList.setText(trim(bookSourceBean.getRuleChapterList()));
         tieRuleChapterName.setText(trim(bookSourceBean.getRuleChapterName()));
         tieRuleChapterUrl.setText(trim(bookSourceBean.getRuleChapterUrl()));
@@ -419,6 +441,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieHttpUserAgent.setText(trim(bookSourceBean.getHttpUserAgent()));
         tieRuleFindUrl.setText(trim(bookSourceBean.getRuleFindUrl()));
         tieRuleContentUrlNext.setText(trim(bookSourceBean.getRuleContentUrlNext()));
+        sourceEnableChecker.setChecked(bookSourceBean.getEnable());
+        findEnableChecker.setChecked(bookSourceBean.getEnableFind());
     }
 
     @Override
@@ -431,7 +455,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private void setHint() {
         tilBookSourceType.setHint("书源类型(BookSourceType)");
         tilBookSourceRuleType.setHint("书源规则类型(BookSourceRuleType)");
-        tilBookSourceCacheEnable.setHint("书源解析缓存(BookSourceCacheEnabled)");
         tilBookSourceName.setHint("书源名称(BookSourceName)");
         tilBookSourceUrl.setHint("书源URL(BookSourceUrl)");
         tilBookSourceGroup.setHint("书源分组(BookSourceGroup)");
@@ -439,7 +462,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilRuleBookAuthor.setHint("作者获取规则(RuleBookAuthor)");
         tilRuleBookContent.setHint("内容获取规则(RuleBookContent)");
         tilRuleBookName.setHint("书名获取规则(RuleBookName)");
-        tilRuleLastChapter.setHint("最新章节获取规则(RuleBookLastChapter)");
+        tilRuleBookLastChapter.setHint("最新章节获取规则(RuleBookLastChapter)");
         tilRuleChapterList.setHint("目录列表获取规则(RuleChapterList)");
         tilRuleChapterName.setHint("章节名称获取规则(RuleChapterName)");
         tilRuleChapterUrl.setHint("目录URL获取规则(RuleChapterUrl)");
@@ -463,23 +486,13 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     @Override
-    public void shareSource(File file) {
+    public void shareSource(File file, String mediaType) {
         Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file);
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-        intent.setType("image/png");
+        intent.setType(mediaType);
         startActivity(Intent.createChooser(intent, "分享书源"));
-    }
-
-    private void openRuleSummary() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(getString(R.string.source_rule_url)));
-            startActivity(intent);
-        } catch (Exception e) {
-            showSnackBar(R.string.can_not_open);
-        }
     }
 
     //设置ToolBar
@@ -542,9 +555,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 if (canSaveBookSource()) {
                     mPresenter.saveSource(getBookSource(), bookSourceBean, true);
                 }
-                break;
-            case R.id.action_rule_summary:
-                openRuleSummary();
                 break;
             case android.R.id.home:
                 onBackPressed();

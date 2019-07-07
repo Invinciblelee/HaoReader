@@ -63,7 +63,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
             holder.tvAuthor.setText(R.string.author_unknown);
         }
 
-        String durChapterName = item.getDurChapterName();
+        String durChapterName = item.getDisplayDurChapterName();
         if (TextUtils.isEmpty(durChapterName)) {
             String bookType = item.getBookInfoBean().getBookType();
             holder.tvRead.setText(getContext().getString(TextUtils.equals(bookType, BookType.AUDIO) ?
@@ -71,7 +71,7 @@ public class BookShelfListAdapter extends BaseBookListAdapter<BookShelfListAdapt
         } else {
             holder.tvRead.setText(durChapterName);
         }
-        String lastChapterName = item.getLastChapterName();
+        String lastChapterName = item.getDisplayLastChapterName();
         if (TextUtils.isEmpty(lastChapterName)) {
             holder.tvLast.setText(getContext().getString(R.string.book_search_last, getContext().getString(R.string.text_placeholder)));
         } else {

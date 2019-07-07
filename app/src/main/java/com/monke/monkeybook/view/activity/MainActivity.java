@@ -34,6 +34,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
@@ -44,14 +45,14 @@ import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
-import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.FindBookFragment;
+import com.monke.monkeybook.view.fragment.FragmentTrigger;
 import com.monke.monkeybook.view.fragment.MainBookListFragment;
-import com.monke.monkeybook.view.fragment.Refreshable;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
+import com.monke.monkeybook.widget.AudioPlayingButton;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -86,8 +87,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     View mSearchField;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    @BindView(R.id.view_audio_running)
+    AudioPlayingButton runningView;
 
-    @BindArray(R.array.home_tab)
+    @BindArray(R.array.tab_main)
     String[] titles;
 
     private Switch swNightTheme;
@@ -174,7 +177,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                super.onTabUnselected(tab);
                 setTabSelected(tab, false);
             }
 
@@ -182,6 +184,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 setTabSelected(tab, true);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                whenTabReselected(tab);
             }
         });
     }
@@ -212,6 +219,48 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     }
 
+    @Override
+    public void onPlayEvent(AudioPlayInfo info) {
+        switch (info.getAction()) {
+            case AudioBookPlayService.ACTION_ATTACH:
+                runningView.setCoverImage(info.getBookInfoBean().getRealCoverUrl());
+                runningView.setProgress(info.getProgress(), info.getDuration());
+                if (info.isPause()) {
+                    runningView.setPause();
+                } else {
+                    runningView.setResume();
+                }
+                runningView.show();
+                break;
+            case AudioBookPlayService.ACTION_START:
+                runningView.setResume();
+                break;
+            case AudioBookPlayService.ACTION_PAUSE:
+                runningView.setPause();
+                break;
+            case AudioBookPlayService.ACTION_RESUME:
+                runningView.setResume();
+                break;
+            case AudioBookPlayService.ACTION_PROGRESS:
+                runningView.setProgress(info.getProgress(), info.getDuration());
+                break;
+            case AudioBookPlayService.ACTION_STOP:
+                runningView.setVisibility(View.INVISIBLE);
+                runningView.stop();
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        runningView.stop();
+    }
+
+    public void setCurrentItem(int item) {
+        viewPager.setCurrentItem(item);
+    }
+
     private void setCustomView(TabLayout.Tab tab) {
         if (tab == null) return;
         @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.item_home_tab, null);
@@ -228,7 +277,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         if (tab.getCustomView() != null) {
             View tabView = (View) tab.getCustomView().getParent();
-            tabView.setOnLongClickListener(v -> onTabLongClick(tab));
+            tabView.setOnLongClickListener(v -> whenTabLongClick(tab));
         }
     }
 
@@ -240,23 +289,20 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
     }
 
-    private boolean onTabLongClick(TabLayout.Tab tab) {
+    private boolean whenTabLongClick(TabLayout.Tab tab) {
         if (tab.isSelected()) {
-            Refreshable refreshable = null;
+            FragmentTrigger fragmentTrigger = null;
             switch (tab.getPosition()) {
                 case 0:
-                    refreshable = findFragment(MainBookListFragment.class);
+                    fragmentTrigger = findFragment(MainBookListFragment.class);
                     break;
                 case 1:
-                    refreshable = findFragment(FindBookFragment.class);
-                    break;
-                case 2:
-                    refreshable = findFragment(AudioBookFragment.class);
+                    fragmentTrigger = findFragment(FindBookFragment.class);
                     break;
             }
 
-            if (refreshable != null) {
-                refreshable.onRefresh();
+            if (fragmentTrigger != null) {
+                fragmentTrigger.onRefresh();
             }
 
             Optional.ofNullable(tab.getCustomView()).ifPresent(view -> {
@@ -266,6 +312,22 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             return true;
         }
         return false;
+    }
+
+    private void whenTabReselected(TabLayout.Tab tab) {
+        FragmentTrigger fragmentTrigger = null;
+        switch (tab.getPosition()) {
+            case 0:
+                fragmentTrigger = findFragment(MainBookListFragment.class);
+                break;
+            case 1:
+                fragmentTrigger = findFragment(FindBookFragment.class);
+                break;
+        }
+
+        if (fragmentTrigger != null) {
+            fragmentTrigger.onReselected();
+        }
     }
 
     public OnBookItemClickListenerTwo getAdapterListener() {
@@ -616,7 +678,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(MainBookListFragment::onRestore);
         Optional.ofNullable(findFragment(FindBookFragment.class)).ifPresent(FindBookFragment::onRestore);
-        Optional.ofNullable(findFragment(AudioBookFragment.class)).ifPresent(AudioBookFragment::onRestore);
     }
 
     @Override
@@ -674,10 +735,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 case 0:
                     return new MainBookListFragment();
                 case 1:
-                    return new FindBookFragment();
-                case 2:
                 default:
-                    return new AudioBookFragment();
+                    return new FindBookFragment();
             }
         }
 

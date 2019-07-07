@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,8 +28,6 @@ public class BookFloatingActionMenu extends LinearLayout {
     private int mLastIndex;
     private OnActionMenuClickListener mMenuClickListener;
     
-    private final Handler mAnimateHandler = new Handler();
-
     private final Runnable mExpandRunnable = this::expandInternal;
 
     private final Runnable mCollapseRunnable = this::collapseInternal;
@@ -152,11 +149,11 @@ public class BookFloatingActionMenu extends LinearLayout {
     }
 
     public void expand() {
-        mAnimateHandler.post(mExpandRunnable);
+        post(mExpandRunnable);
     }
 
     public void collapse() {
-        mAnimateHandler.post(mCollapseRunnable);
+        post(mCollapseRunnable);
     }
 
     private void expandInternal() {
@@ -171,7 +168,7 @@ public class BookFloatingActionMenu extends LinearLayout {
                 }
                 View labelView = childGroup.getChildAt(0);
                 FloatingActionButton btnView = (FloatingActionButton) childGroup.getChildAt(1);
-                mAnimateHandler.postDelayed(() -> {
+                postDelayed(() -> {
                     btnView.show();
                     animateShowLabelView(labelView);
                 }, 50 * index);
@@ -189,7 +186,7 @@ public class BookFloatingActionMenu extends LinearLayout {
                 ViewGroup childGroup = (ViewGroup) getChildAt(i);
                 View labelView = childGroup.getChildAt(0);
                 FloatingActionButton btnView = (FloatingActionButton) childGroup.getChildAt(1);
-                mAnimateHandler.postDelayed(() -> {
+                postDelayed(() -> {
                     btnView.hide();
                     animateHideLabelView(labelView);
                 }, 50 * index);

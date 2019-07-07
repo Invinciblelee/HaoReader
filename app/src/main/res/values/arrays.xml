@@ -99,9 +99,4 @@
         <item>TRUE</item>
     </string-array>
 
-    <string-array name="home_tab">
-        <item>@string/bookshelf</item>
-        <item>@string/find_on_www</item>
-        <item>@string/item_group_ys</item>
-    </string-array>
 </resources>

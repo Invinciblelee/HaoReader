@@ -22,13 +22,14 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
 
     private static boolean hasUpdated = false;
 
-    public static void setHasUpdated(boolean hasUpdated) {
+    static void setHasUpdated(boolean hasUpdated) {
         AudioBookPresenterImpl.hasUpdated = hasUpdated;
     }
 
-    private BookRefreshModelImpl impl = BookRefreshModelImpl.newInstance();
+    private final BookRefreshModelImpl impl;
 
     public AudioBookPresenterImpl() {
+        impl = BookRefreshModelImpl.newInstance();
         impl.setOnBookRefreshListener(this);
     }
 
@@ -78,6 +79,7 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
 
     @Override
     public void detachView() {
+        super.detachView();
         RxBus.get().unregister(this);
         impl.stopRefreshBook();
     }

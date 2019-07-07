@@ -9,10 +9,12 @@ abstract class SourceParser<S> {
 
     private Object mPrimitive;
     private S mSource;
+    private String mStringSource;
 
     final void setContent(Object source) {
         mPrimitive = source;
         mSource = null;
+        mStringSource = null;
         onAttachSource(source);
     }
 
@@ -24,7 +26,10 @@ abstract class SourceParser<S> {
     }
 
     final String getStringSource() {
-        return parseObject(mPrimitive);
+        if (mStringSource == null) {
+            mStringSource = parseObject(mPrimitive);
+        }
+        return mStringSource;
     }
 
     final Object getPrimitive() {

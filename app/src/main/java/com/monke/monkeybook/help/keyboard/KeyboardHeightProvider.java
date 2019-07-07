@@ -35,7 +35,9 @@ public class KeyboardHeightProvider extends PopupWindow implements ViewTreeObser
         setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 
-        setOnDismissListener(() -> rootView.getViewTreeObserver().removeOnGlobalLayoutListener(KeyboardHeightProvider.this));
+        setOnDismissListener(() -> {
+            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(KeyboardHeightProvider.this);
+        });
     }
 
     public KeyboardHeightProvider init() {

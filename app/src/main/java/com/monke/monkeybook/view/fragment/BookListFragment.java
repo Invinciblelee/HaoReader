@@ -247,11 +247,14 @@ public class BookListFragment extends BaseFragment<BookListContract.Presenter> i
 
     //*****************************************************************************************************************************************//
 
-    public void setItemClickListenerTwo(OnBookItemClickListenerTwo itemClickListenerTwo) {
+    void setItemClickListenerTwo(OnBookItemClickListenerTwo itemClickListenerTwo) {
         this.itemClickListenerTwo = itemClickListenerTwo;
         if (bookListAdapter != null) {
             bookListAdapter.setItemClickListener(this.itemClickListenerTwo);
         }
     }
 
+    void scrollToTop(){
+        rvBookshelf.scrollToPosition(0);
+    }
 }

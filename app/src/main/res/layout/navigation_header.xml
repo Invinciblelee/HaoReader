@@ -10,9 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="108dp"
         android:contentDescription="@string/app_name"
-        android:paddingStart="0dp"
         android:paddingTop="16dp"
-        android:paddingEnd="48dp"
         android:paddingBottom="16dp"
         android:src="@drawable/ic_read"
         android:tint="@color/colorBarText" />

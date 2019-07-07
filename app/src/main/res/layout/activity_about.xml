@@ -127,47 +127,6 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/vw_qq"
-                style="@style/AppTheme.CardView.Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_qq"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_qq_group_black_24dp"
-                    android:drawablePadding="6dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/qqq"
-                    android:textColor="@color/colorTextDefault" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/vw_scoring"
-                style="@style/AppTheme.CardView.Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_scoring"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_scoring_black_24dp"
-                    android:drawablePadding="6dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/scoring"
-                    android:textColor="@color/colorTextDefault" />
-
-            </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/vw_mail"
@@ -207,48 +166,6 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/git_hub"
-                    android:textColor="@color/colorTextDefault" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/vw_home_page"
-                style="@style/AppTheme.CardView.Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_home_page"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_launch_black_24dp"
-                    android:drawablePadding="6dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/home_page"
-                    android:textColor="@color/colorTextDefault" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/vw_source_rule"
-                style="@style/AppTheme.CardView.Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_source_rule"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_launch_black_24dp"
-                    android:drawablePadding="6dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/source_rule_s"
                     android:textColor="@color/colorTextDefault" />
 
             </androidx.cardview.widget.CardView>

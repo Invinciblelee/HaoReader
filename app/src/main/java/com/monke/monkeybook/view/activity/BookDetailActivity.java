@@ -227,7 +227,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 tvOrigin.setVisibility(View.INVISIBLE);
             }
-            String lastChapterName = mPresenter.getSearchBook().getLastChapter();
+            String lastChapterName = mPresenter.getSearchBook().getDisplayLastChapter();
             if (TextUtils.isEmpty(lastChapterName)) {
                 tvLastChapter.setText(getString(R.string.book_search_last, getString(R.string.text_placeholder)));
             } else {
@@ -262,7 +262,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                     }
                 }
                 llBookRecent.setVisibility(View.VISIBLE);
-                String durChapterName = mPresenter.getBookShelf().getDurChapterName();
+                String durChapterName = mPresenter.getBookShelf().getDisplayDurChapterName();
                 if (!TextUtils.isEmpty(durChapterName)) {
                     tvChapter.setText(durChapterName);
                 } else {
@@ -283,7 +283,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 tvAuthor.setText(R.string.author_unknown);
             }
 
-            String lastChapterName = mPresenter.getBookShelf().getLastChapterName();
+            String lastChapterName = mPresenter.getBookShelf().getDisplayLastChapterName();
             if (TextUtils.isEmpty(lastChapterName) && mPresenter.getSearchBook() != null) {
                 lastChapterName = mPresenter.getSearchBook().getLastChapter();
             }

@@ -28,6 +28,8 @@ public interface AudioBookContract {
 
         void sortBookShelf();
 
+        void clearBookShelf();
+
         void toast(String msg);
     }
 

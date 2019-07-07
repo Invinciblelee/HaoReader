@@ -1,5 +1,6 @@
 package com.monke.monkeybook.view.fragment;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -27,7 +28,6 @@ import com.monke.monkeybook.presenter.FindBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
 import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.activity.BookDetailActivity;
 import com.monke.monkeybook.view.activity.ChoiceBookActivity;
 import com.monke.monkeybook.view.activity.SourceEditActivity;
@@ -38,7 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> implements Refreshable, FindBookContract.View {
+public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> implements FragmentTrigger, FindBookContract.View {
 
     @BindView(R.id.rv_find_book_list)
     RecyclerView rvFindList;
@@ -51,7 +51,11 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
     private FindBookAdapter mAdapter;
 
+    private boolean mSubmit = true;
+    private String mKeyword;
+
     private KeyboardHeightProvider mHeightProvider;
+    private boolean mKeyboardShown;
 
     @Override
     protected FindBookContract.Presenter initInjector() {
@@ -62,7 +66,6 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     protected View createView(LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.fragment_find_book, container, false);
     }
-
 
     @Override
     protected void bindView() {
@@ -103,15 +106,50 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
             @Override
             public void afterTextChanged(Editable s) {
-                mAdapter.getFilter().filter(s == null ? null : s.toString());
+                if (mSubmit) {
+                    mKeyword = s == null ? null : s.toString();
+                    mAdapter.getFilter().filter(mKeyword);
+                } else {
+                    mSubmit = true;
+                }
             }
         });
 
         mHeightProvider = new KeyboardHeightProvider(requireActivity()).init().setHeightListener(height -> {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
-            params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 16);
-            searchField.setLayoutParams(params);
+            params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 24);
+            searchField.requestLayout();
+            searchField.postDelayed(() -> animShow(height > 0), 200L);
         });
+
+    }
+
+    private void animShow(boolean show) {
+        if (mKeyboardShown != show) {
+            mKeyboardShown = show;
+
+            if (!mKeyboardShown) {
+                mSubmit = false;
+                searchEdit.setText(null);
+                searchEdit.clearFocus();
+            } else {
+                searchEdit.setText(mKeyword);
+                searchEdit.setSelection(searchEdit.length());
+            }
+
+            final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
+            final int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            final int offset = DensityUtil.dp2px(requireContext(), 48);
+            final int start = show ? DensityUtil.dp2px(requireContext(), 100) : screenWidth - offset;
+            final int end = show ? screenWidth - offset : DensityUtil.dp2px(requireContext(), 100);
+
+            ValueAnimator animator = ValueAnimator.ofInt(start, end);
+            animator.addUpdateListener(valueAnimator -> {
+                params.width = (int) valueAnimator.getAnimatedValue();
+                searchField.requestLayout();
+            });
+            animator.start();
+        }
     }
 
     @Override
@@ -123,7 +161,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     public void onRefresh() {
         if (mAdapter.getItemCount() == 0) {
             showProgress();
-        }else {
+        } else {
             rvFindList.scrollToPosition(0);
         }
         mPresenter.initData();
@@ -144,6 +182,11 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     @Override
     public void updateItem(FindKindGroupBean item) {
         mAdapter.updateItem(item);
+    }
+
+    @Override
+    public void removeItem(FindKindGroupBean item) {
+        mAdapter.removeItem(item);
     }
 
     @Override
@@ -174,20 +217,22 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
         }
     }
 
+
+    @Override
     public boolean onBackPressed() {
         if (mHeightProvider.isKeyboardActive()) {
             KeyboardUtil.hideKeyboard(searchEdit);
             return true;
         }
 
-        CharSequence text = searchEdit.getText();
-        if (text != null && StringUtils.isNotBlank(text.toString())) {
+        if (mAdapter.getFilter().clearFilter()) {
             searchEdit.setText(null);
             return true;
         }
         return false;
     }
 
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect rect = new Rect();
         searchField.getGlobalVisibleRect(rect);
@@ -196,5 +241,10 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onReselected() {
+        rvFindList.scrollToPosition(0);
     }
 }

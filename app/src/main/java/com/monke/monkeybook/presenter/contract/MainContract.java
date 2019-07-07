@@ -4,6 +4,7 @@ import androidx.annotation.StringRes;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.basemvplib.impl.IView;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public interface MainContract {
         void showQueryBooks(List<BookShelfBean> bookShelfBeans);
 
         void clearBookshelf();
+
+        void onPlayEvent(AudioPlayInfo info);
 
         /**
          * 取消弹出框

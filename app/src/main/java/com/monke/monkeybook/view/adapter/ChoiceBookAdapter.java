@@ -92,8 +92,9 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvKind.setText(kind);
         }
 
-        String desc = !StringUtils.isBlank(item.getLastChapter()) ? item.getLastChapter()
-                : !StringUtils.isBlank(item.getDesc()) ? item.getDesc() : "";
+        final String lastChapter = item.getDisplayLastChapter();
+        String desc = !StringUtils.isBlank(lastChapter) ? lastChapter
+                : !StringUtils.isBlank(item.getIntroduce()) ? item.getIntroduce() : "";
         myViewHolder.tvLasted.setText(desc);
 
         if (!StringUtils.isBlank(item.getOrigin())) {

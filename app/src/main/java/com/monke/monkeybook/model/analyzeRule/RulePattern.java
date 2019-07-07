@@ -7,8 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
-
-import org.apache.commons.lang3.StringUtils;
+import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +22,11 @@ final class RulePattern {
 
     boolean isKeep;
     boolean isSimpleJS;
+    boolean isSimpleRegex;
 
     Rule elementsRule;
 
+    int replaceGroup = -1;
     String replaceRegex;
     String replacement;
     List<String> javaScripts;
@@ -33,8 +34,11 @@ final class RulePattern {
     private RulePattern(@NonNull String rawRule, @Nullable VariableStore variableStore, @Nullable RuleMode ruleMode) {
         elementsRule = new Rule();
 
-        final boolean regexTrait;
+        if (useSimpleRegex(rawRule)) {
+            return;
+        }
 
+        final boolean regexTrait;
         if (ruleMode == null) {
             Rule rule = RootRule.fromStringRule(rawRule);
             elementsRule.setMode(rule.getMode());
@@ -59,7 +63,7 @@ final class RulePattern {
         //分离重定向规则（规则重定向）
         rawRule = ensureRedirectRule(rawRule);
         //分离正则表达式
-        rawRule = ensureRegexRule(rawRule, regexTrait || ruleMode == RuleMode.CSS || ruleMode == RuleMode.XPath);
+        rawRule = ensureRegexRule(rawRule, regexTrait || ruleMode != RuleMode.Default);
         //分离js
         int start = ensureJavaScripts(rawRule);
 
@@ -67,7 +71,29 @@ final class RulePattern {
         elementsRule.setRule(start == -1 ? rawRule : rawRule.substring(0, start));
         //是否全部使用js
         isSimpleJS = !isRedirect && TextUtils.isEmpty(elementsRule.getRule()) && !javaScripts.isEmpty();
+    }
 
+    private boolean useSimpleRegex(String rawRule) {
+        if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_REGEX)) {
+            isSimpleRegex = true;
+            rawRule = rawRule.substring(2);
+
+            final String[] rules = rawRule.split(Patterns.RULE_REGEX_SPLIT_TRAIT);
+            replaceRegex = rules[0];
+            if (rules.length > 1) {
+                replacement = rules[1];
+            } else {
+                replacement = "";
+            }
+
+            if (rules.length > 2) {
+                replaceGroup = StringUtils.parseInt(rules[2]);
+            } else {
+                replaceGroup = -1;
+            }
+            return true;
+        }
+        return false;
     }
 
     private String ensureKeepRule(String rawRule) {
@@ -92,7 +118,7 @@ final class RulePattern {
     }
 
     private String ensureRegexRule(String rawRule, boolean trait) {
-        final String[] rules = rawRule.split(trait ? Patterns.RULE_REGEX_TRAIT : Patterns.RULE_REGEX);
+        final String[] rules = rawRule.split(trait ? Patterns.RULE_REGEX_SPLIT_TRAIT : Patterns.RULE_REGEX_SPLIT);
         rawRule = rules[0];
         if (rules.length > 1) {
             replaceRegex = rules[1];
@@ -114,7 +140,7 @@ final class RulePattern {
         Matcher jsMatcher = PATTERN_JS.matcher(rawRule);
         while (jsMatcher.find()) {
             final String group = jsMatcher.group();
-            if (StringUtils.startsWithIgnoreCase(group, "<js>")) {
+            if (StringUtils.startWithIgnoreCase(group, "<js>")) {
                 javaScripts.add(group.substring(4, group.lastIndexOf("<")));
             } else {
                 javaScripts.add(group.substring(4));
@@ -141,7 +167,9 @@ final class RulePattern {
                 ", redirectRule='" + redirectRule + '\'' +
                 ", isKeep=" + isKeep +
                 ", isSimpleJS=" + isSimpleJS +
+                ", isSimpleRegex=" + isSimpleRegex +
                 ", elementsRule=" + elementsRule +
+                ", replaceGroup=" + replaceGroup +
                 ", replaceRegex='" + replaceRegex + '\'' +
                 ", replacement='" + replacement + '\'' +
                 ", javaScripts=" + javaScripts +

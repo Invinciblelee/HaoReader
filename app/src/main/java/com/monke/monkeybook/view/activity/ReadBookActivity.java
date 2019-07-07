@@ -81,10 +81,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.monke.basemvplib.NetworkUtil.isNetworkAvailable;
 import static com.monke.monkeybook.service.ReadAloudService.NEXT;
 import static com.monke.monkeybook.service.ReadAloudService.PAUSE;
 import static com.monke.monkeybook.service.ReadAloudService.PLAY;
-import static com.monke.basemvplib.NetworkUtil.isNetworkAvailable;
 import static com.monke.monkeybook.utils.ScreenBrightnessUtil.getScreenBrightness;
 import static com.monke.monkeybook.utils.ScreenBrightnessUtil.setScreenBrightness;
 
@@ -290,7 +290,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         } else {
             if (readBookControl.getDarkStatusIcon()) {
                 mImmersionBar.statusBarDarkFont(true, 0.2f);
-            }else {
+            } else {
                 mImmersionBar.statusBarDarkFont(false);
             }
 
@@ -769,7 +769,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     public void onPageCountChange(int count) {
         hpbReadProgress.setMax(Math.max(0, count - 1));
         hpbReadProgress.setProgress(0);
-        hpbReadProgress.setEnabled(mPageLoader.isPageScrollable());
+        hpbReadProgress.setEnabled(mPageLoader.isPageScrollable() && hpbReadProgress.getMax() > 1);
     }
 
     @Override
@@ -1009,7 +1009,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     public void startLoadingBook() {
         hpbReadProgress.setMax(chapterProgressMax);
         hpbReadProgress.setProgress(chapterDurProgress);
-        hpbReadProgress.setEnabled(chapterDraggable);
+        hpbReadProgress.setEnabled(chapterDraggable && chapterProgressMax > 1);
 
         initPageView();
     }
