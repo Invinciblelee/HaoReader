@@ -15,12 +15,6 @@
         <menu>
 
             <item
-                android:id="@+id/action_book_my716"
-                android:checkable="true"
-                android:title="@string/book_inner_source_716"
-                app:showAsAction="never" />
-
-            <item
                 android:id="@+id/action_book_shuqi"
                 android:checkable="true"
                 android:title="@string/book_inner_source_sq"

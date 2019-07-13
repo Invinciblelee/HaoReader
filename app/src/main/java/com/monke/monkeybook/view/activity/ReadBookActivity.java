@@ -47,7 +47,7 @@ import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.ReadBookControl;
-import com.monke.monkeybook.model.content.Default716;
+
 import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
@@ -1042,14 +1042,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 }
             }
             final boolean defaultShuqi = DefaultShuqi.TAG.equals(mPresenter.getBookShelf().getTag());
-            final boolean default716 = Default716.TAG.equals(mPresenter.getBookShelf().getTag());
+
             MenuItem disableSourceItem = menu.findItem(R.id.disable_book_source);
-            if (default716 || defaultShuqi) {
+            if (defaultShuqi) {
                 disableSourceItem.setVisible(false);
                 disableSourceItem.setEnabled(false);
-            } else {
-                disableSourceItem.setVisible(true);
-                disableSourceItem.setEnabled(true);
             }
         }
         return super.onPrepareOptionsMenu(menu);

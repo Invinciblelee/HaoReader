@@ -249,10 +249,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem my716 = menu.findItem(R.id.action_book_my716);
-        if (my716 != null) {
-            my716.setChecked(AppConfigHelper.get().getBoolean("useMy716", true));
-        }
         MenuItem shuqi = menu.findItem(R.id.action_book_shuqi);
         if (shuqi != null) {
             shuqi.setChecked(AppConfigHelper.get().getBoolean("useShuqi", true));
@@ -268,11 +264,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         switch (id) {
             case R.id.action_book_source_manage:
                 BookSourceActivity.startThis(this);
-                break;
-            case R.id.action_book_my716:
-                item.setChecked(!item.isChecked());
-                AppConfigHelper.get().edit().putBoolean("useMy716", item.isChecked()).apply();
-                mPresenter.useMy716(item.isChecked());
                 break;
             case R.id.action_book_shuqi:
                 item.setChecked(!item.isChecked());

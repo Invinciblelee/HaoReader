@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import io.reactivex.Observable;
 
 public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
-    public static final String TAG = "ShuQi";
+    public static final String TAG = "书旗";
 
     private volatile static DefaultShuqi sInstance;
 
@@ -86,7 +86,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
                         item.setKind(aladdin.get("category").getAsString());
                         item.setLastChapter(aladdin.get("latest_chapter").getAsJsonObject().get("cname").getAsString());
                         item.setName(aladdin.get("title").getAsString());
-                        item.setNoteUrl(aladdin.get("bid").getAsString());
+                        item.setNoteUrl("@SQi:"+aladdin.get("bid").getAsString());
                         item.setCoverUrl(aladdin.get("cover").getAsString().replace("\\/", "/"));
                         item.setIntroduce(aladdin.get("desc").getAsString());
                         searchBooks.add(item);
@@ -106,7 +106,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
                     item.setKind(book.get("category").getAsString());
                     item.setLastChapter(book.get("first_chapter").getAsString());
                     item.setName(book.get("title").getAsString());
-                    item.setNoteUrl(book.get("bid").getAsString());
+                    item.setNoteUrl("@SQi:"+book.get("bid").getAsString());
                     item.setCoverUrl(book.get("cover").getAsString().replace("\\/", "/"));
                     item.setIntroduce(book.get("desc").getAsString());
                     searchBooks.add(item);

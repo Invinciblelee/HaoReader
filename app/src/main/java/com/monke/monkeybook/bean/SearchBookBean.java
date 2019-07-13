@@ -150,7 +150,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     public String getRealNoteUrl() {
         if (!StringUtils.isBlank(noteUrl)
-                && noteUrl.startsWith("@716:")) {
+                && noteUrl.startsWith("@SQi:")) {
             return noteUrl.substring(5);
         }
         return noteUrl;

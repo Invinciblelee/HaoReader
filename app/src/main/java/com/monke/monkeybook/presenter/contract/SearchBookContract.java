@@ -28,8 +28,6 @@ public interface SearchBookContract {
 
         void stopSearch();
 
-        void useMy716(Boolean bool);
-
         void useShuqi(Boolean bool);
     }
 
