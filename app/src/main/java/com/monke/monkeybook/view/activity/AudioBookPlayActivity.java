@@ -311,7 +311,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 break;
             case AudioBookPlayService.ACTION_PREPARE:
                 updateIndex(info.getDurChapter().getDurChapterIndex());
-                setSubTitle(info.getDurChapter().getDurChapterName());
+                setSubTitle(info.getDurChapter().getDisplayDurChapterName());
                 setProgress(info.getProgress(), info.getDuration());
                 setMediaButtonEnabled(true);
                 break;
@@ -361,7 +361,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         audioChapterPop.upIndex(durChapter);
         if (chapterBeans != null && !chapterBeans.isEmpty()) {
             ChapterBean chapterBean = chapterBeans.get(durChapter);
-            setSubTitle(chapterBean.getDurChapterName());
+            setSubTitle(chapterBean.getDisplayDurChapterName());
         }
     }
 

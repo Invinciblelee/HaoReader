@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 public class TextProcessor {
 
     private static final String[] CHAPTER_PATTERNS = new String[]{
-            "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节回])[、，。　：:.\\s]*",
-            "^([\\(（\\[【]*([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[】\\]）\\)]*)[、，。　：:.\\s]+"
+            "^(第?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[章节回集场])[\\s、，。　：:.]?",
+            "^([(（\\[【]?([\\d零〇一二两三四五六七八九十百千万0-9\\s]+)[】\\]）)]?)[\\s、，。　：:.]?",
     };
 
     private static final String SPECIAL_PATTERN = "第.*?[卷篇集].*?第.*[章节回].*?";
@@ -28,7 +28,7 @@ public class TextProcessor {
         if (TextUtils.isEmpty(name) || name.matches(SPECIAL_PATTERN)) {
             return -1;
         }
-        for (String str : CHAPTER_PATTERNS) {
+        for (String str: CHAPTER_PATTERNS) {
             Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(name);
             if (matcher.find()) {
@@ -45,6 +45,20 @@ public class TextProcessor {
 
         chapterName = StringUtils.fullToHalf(chapterName);
         chapterName = StringUtils.trim(chapterName.replaceAll("\\s+", " "));
+
+        if (chapterName.matches(SPECIAL_PATTERN)) {
+            return chapterName;
+        }
+
+        for (String chapterPattern : CHAPTER_PATTERNS) {
+            Pattern pattern = Pattern.compile(chapterPattern, Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(chapterName);
+            if (matcher.find()) {
+                int num = StringUtils.stringToInt(matcher.group(2));
+                chapterName = num > 0 ? matcher.replaceFirst("第" + num + "章 ") : matcher.replaceFirst("$ ");
+                return chapterName;
+            }
+        }
 
         return chapterName;
     }

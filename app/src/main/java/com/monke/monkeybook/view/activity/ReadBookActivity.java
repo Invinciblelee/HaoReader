@@ -23,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -101,6 +102,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     DrawerLayout drawerLayout;
     @BindView(R.id.controls_frame)
     ScrimInsetsRelativeLayout controlsView;
+    @BindView(R.id.view_controls_back)
+    View controlsBackView;
     @BindView(R.id.ll_menu_bottom)
     LinearLayout llMenuBottom;
     @BindView(R.id.tv_pre)
@@ -523,6 +526,17 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 || (moreSettingPop != null && moreSettingPop.isShowing());
     }
 
+    private void ensureCenterClickArea() {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) controlsBackView.getLayoutParams();
+        int top = appBar.getHeight();
+        int bottom = navigationBar.getHeight();
+        if (params.topMargin != top || params.bottomMargin != bottom) {
+            params.topMargin = top;
+            params.bottomMargin = bottom;
+            controlsBackView.requestLayout();
+        }
+    }
+
     /**
      * 显示菜单
      */
@@ -538,6 +552,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     initImmersionBar();
+                    ensureCenterClickArea();
                 }
 
                 @Override
@@ -834,7 +849,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         btnSetting.setOnClickListener(this);
 
         //菜单
-        controlsView.setOnClickListener(this);
+        controlsBackView.setOnClickListener(this);
 
         NoDoubleClickListener clickListener = new NoDoubleClickListener() {
             @Override
@@ -920,7 +935,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.controls_frame:
+            case R.id.view_controls_back:
                 popMenuOut();
                 break;
             case R.id.atv_layout:

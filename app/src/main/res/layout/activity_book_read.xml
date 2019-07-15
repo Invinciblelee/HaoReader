@@ -29,6 +29,11 @@
             app:appInsetForeground="@color/colorPrimary">
 
 
+            <View
+                android:id="@+id/view_controls_back"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
             <LinearLayout
                 android:id="@+id/ll_menu_top"
                 android:layout_width="match_parent"
@@ -48,8 +53,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:theme="@style/AppTheme.AppBarOverlay"
-                        app:popupTheme="@style/AppTheme.PopupOverlay"
                         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                        app:popupTheme="@style/AppTheme.PopupOverlay"
                         app:titleTextColor="@color/colorBarText" />
 
                     <View
@@ -227,7 +232,6 @@
                     android:id="@+id/rlNavigationBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:descendantFocusability="blocksDescendants"
                     android:background="@color/colorPrimary">
                     <!--章节设置-->
                     <TextView

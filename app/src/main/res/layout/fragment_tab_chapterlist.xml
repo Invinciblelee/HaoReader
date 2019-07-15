@@ -26,7 +26,7 @@
             android:paddingStart="24dp"
             android:paddingTop="36dp"
             android:paddingBottom="8dp"
-            android:paddingEnd="24dp"
+            android:paddingEnd="25dp"
             android:text="@string/app_name"
             android:textSize="18sp"
             android:textStyle="bold" />
