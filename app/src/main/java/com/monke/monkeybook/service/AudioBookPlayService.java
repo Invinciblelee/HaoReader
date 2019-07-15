@@ -785,7 +785,7 @@ public class AudioBookPlayService extends Service {
         } else {
             contentTitle = name;
         }
-        final String contentText = bookShelfBean == null ? null : bookShelfBean.getDurChapterName();
+        final String contentText = bookShelfBean == null ? null : bookShelfBean.getDisplayDurChapterName();
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.layout_audio_notification);
         remoteViews.setTextViewText(R.id.tv_title, contentTitle);
         remoteViews.setTextViewText(R.id.tv_content, TextUtils.isEmpty(contentText) ? "即将为您播放" : contentText);

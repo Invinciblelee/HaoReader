@@ -230,7 +230,7 @@ public class ReadBottomStatusBar extends FrameLayout {
             return;
         }
 
-        updatePageIndex(bookShelfBean.getDurChapterName(), bookShelfBean.getDurChapterPage() + 1, durPageSize);
+        updatePageIndex(bookShelfBean.getDisplayDurChapterName(), bookShelfBean.getDurChapterPage() + 1, durPageSize);
         updateChapterIndex(bookShelfBean.getDurChapter() + 1, bookShelfBean.getChapterListSize());
     }
 

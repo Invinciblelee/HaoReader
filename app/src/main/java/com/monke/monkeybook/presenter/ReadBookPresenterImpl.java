@@ -173,7 +173,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         if (bookShelf.getChapterListSize() == 0) {
             return mView.getContext().getString(R.string.no_chapter);
         } else
-            return bookShelf.getChapter(chapterIndex).getDurChapterName();
+            return bookShelf.getChapter(chapterIndex).getDisplayDurChapterName();
     }
 
     /**

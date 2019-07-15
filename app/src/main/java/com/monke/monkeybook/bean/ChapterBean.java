@@ -12,6 +12,7 @@ import com.monke.monkeybook.help.TextProcessor;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Objects;
 
@@ -33,6 +34,8 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     //章节内容在文章中的终止位置(本地)
     private Integer end;
 
+    @Transient
+    private String displayDurChapterName;
 
     @Generated(hash = 256775330)
     public ChapterBean(String durChapterUrl, String nextChapterUrl, String durChapterName,
@@ -169,7 +172,10 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     }
 
     public String getDisplayDurChapterName() {
-        return TextProcessor.formatChapterName(durChapterName);
+        if (displayDurChapterName == null) {
+            displayDurChapterName = TextProcessor.formatChapterName(durChapterName);
+        }
+        return displayDurChapterName;
     }
 
     public void setDurChapterName(String durChapterName) {

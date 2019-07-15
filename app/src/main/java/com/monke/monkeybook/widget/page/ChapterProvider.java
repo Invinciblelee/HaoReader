@@ -88,7 +88,7 @@ class ChapterProvider {
         int titleLinesCount = 0;
         try {
             boolean showTitle = ReadBookControl.getInstance().getShowTitle(); // 是否展示标题
-            String paragraph = chapter.getDurChapterName() + "\n"; //默认展示标题
+            String paragraph = chapter.getDisplayDurChapterName() + "\n"; //默认展示标题
             if (collBook.isLocalBook()) {
                 br.readLine();
             }
@@ -115,7 +115,7 @@ class ChapterProvider {
                         // 创建Page
                         TxtPage page = new TxtPage();
                         page.position = pages.size();
-                        page.title = chapter.getDurChapterName();
+                        page.title = chapter.getDisplayDurChapterName();
                         page.lines = new ArrayList<>(lines);
                         page.titleLines = titleLinesCount;
                         pages.add(page);
@@ -164,7 +164,7 @@ class ChapterProvider {
                 //创建Page
                 TxtPage page = new TxtPage();
                 page.position = pages.size();
-                page.title = chapter.getDurChapterName();
+                page.title = chapter.getDisplayDurChapterName();
                 page.lines = new ArrayList<>(lines);
                 page.titleLines = titleLinesCount;
                 pages.add(page);

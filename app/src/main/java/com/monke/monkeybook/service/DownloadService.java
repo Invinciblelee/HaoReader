@@ -307,7 +307,7 @@ public class DownloadService extends Service {
                 .setAutoCancel(false)
                 .setWhen(when)//保持位置不变
                 .setContentTitle("正在下载：" + bookName)
-                .setContentText(downloadChapterBean.getDurChapterName() == null ? "  " : downloadChapterBean.getDurChapterName())
+                .setContentText(downloadChapterBean.getDisplayDurChapterName() == null ? "  " : downloadChapterBean.getDisplayDurChapterName())
                 .setContentIntent(mainPendingIntent);
         builder.addAction(R.drawable.ic_stop_white_24dp, getString(R.string.cancel), getRemovePendingIntent(notificationId));
         //发送通知
