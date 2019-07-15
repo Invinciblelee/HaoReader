@@ -116,7 +116,7 @@ public class AudioPlayingButton extends FrameLayout {
     public void setCoverImage(String image) {
         Glide.with(this).load(image)
                 .apply(new RequestOptions().dontAnimate().centerCrop()
-                        .transforms(new CenterCrop(), new CircleCrop())
+                        .transform(new CenterCrop(), new CircleCrop())
                         .error(R.drawable.img_cover_default)
                         .placeholder(R.drawable.img_cover_default)
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE))

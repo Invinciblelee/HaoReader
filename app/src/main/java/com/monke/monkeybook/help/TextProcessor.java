@@ -66,7 +66,9 @@ public class TextProcessor {
 
         str = StringUtils.fullToHalf(str);
 
-        return StringUtils.trim(str.replaceAll("\\s+", " "));
+        return StringUtils.trim(str.replaceAll("\\s+", " ")
+                .replaceAll("作.*?者", "")
+                .replaceAll("[?？!！。~：:()（）【】]+", ""));
     }
 
 

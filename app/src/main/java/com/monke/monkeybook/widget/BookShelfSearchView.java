@@ -2,12 +2,6 @@ package com.monke.monkeybook.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,6 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
@@ -45,7 +46,7 @@ public class BookShelfSearchView extends LinearLayout {
 
     public BookShelfSearchView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        if(!isInEditMode()) {
+        if (!isInEditMode()) {
             initView(context);
         }
     }
@@ -147,9 +148,9 @@ public class BookShelfSearchView extends LinearLayout {
     }
 
     public void addBookShelfIfNeed(BookShelfBean bookShelfBean) {
-        if (bookShelfBean != null
-                && !TextUtils.isEmpty(searchView.getQuery())
-                && searchView.getQuery().toString().contains(this.query)) {
+        if (bookShelfBean != null && this.query != null
+                && (bookShelfBean.getBookInfoBean().getName().contains(this.query)
+                || bookShelfBean.getBookInfoBean().getAuthor().contains(this.query))) {
             adapter.addBook(bookShelfBean);
         }
     }

@@ -11,6 +11,8 @@
     <color name="colorAccentLight">#FFD75E</color>
     <color name="colorAccentTranslucent">#66D9AB23</color>
 
+    <color name="colorSearchField">@color/colorSideBarLight</color>
+
     <color name="colorSideBar">#607d8b</color>
     <color name="colorSideBarDark">#455a64</color>
     <color name="colorSideBarLight">#78909c</color>

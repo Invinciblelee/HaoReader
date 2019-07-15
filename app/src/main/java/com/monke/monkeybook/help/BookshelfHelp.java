@@ -40,7 +40,7 @@ import static com.monke.monkeybook.help.ChapterContentHelp.getChapterFolderName;
 
 public class BookshelfHelp {
 
-    private static final Type CHAPTER_LIST = new TypeToken<List<ChapterBean>>() {
+    private static final Type CHAPTER_LIST_TYPE = new TypeToken<List<ChapterBean>>() {
     }.getType();
 
     public static List<BookShelfBean> queryAllBook() {
@@ -105,6 +105,19 @@ public class BookshelfHelp {
 
             bookShelfBean.setChapterList(queryChapterList(bookInfoBean.getNoteUrl()));
             bookShelfBean.setBookmarkList(queryBookmarkList(bookInfoBean.getName()));
+            return bookShelfBean;
+        }
+        return null;
+    }
+
+    public static BookShelfBean queryBookByName(String name, String author, @BookType String bookType) {
+        BookInfoBean bookInfoBean = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
+                .where(BookInfoBeanDao.Properties.Name.eq(name), BookInfoBeanDao.Properties.Author.eq(author), BookInfoBeanDao.Properties.BookType.eq(bookType))
+                .unique();
+        if (bookInfoBean != null) {
+            BookShelfBean bookShelfBean = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
+                    .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookInfoBean.getNoteUrl())).build().unique();
+            bookShelfBean.setBookInfoBean(bookInfoBean);
             return bookShelfBean;
         }
         return null;
@@ -184,7 +197,7 @@ public class BookshelfHelp {
     public static BookShelfBean getBookFromSearchBook(SearchBookBean searchBookBean) {
         BookShelfBean bookShelfBean = new BookShelfBean();
         bookShelfBean.setTag(searchBookBean.getTag());
-        bookShelfBean.setNoteUrl(searchBookBean.getRealNoteUrl());
+        bookShelfBean.setNoteUrl(searchBookBean.getNoteUrl());
         bookShelfBean.setFinalDate(System.currentTimeMillis());
         bookShelfBean.setLastChapterName(searchBookBean.getLastChapter());
         bookShelfBean.setDurChapter(0);
@@ -193,7 +206,7 @@ public class BookshelfHelp {
         bookShelfBean.setVariableString(searchBookBean.getVariableString());
         BookInfoBean bookInfo = new BookInfoBean();
         bookInfo.setBookType(searchBookBean.getBookType());
-        bookInfo.setNoteUrl(searchBookBean.getRealNoteUrl());
+        bookInfo.setNoteUrl(searchBookBean.getNoteUrl());
         bookInfo.setAuthor(searchBookBean.getAuthor());
         bookInfo.setCoverUrl(searchBookBean.getCoverUrl());
         bookInfo.setName(searchBookBean.getName());
@@ -219,7 +232,7 @@ public class BookshelfHelp {
         try {
             File file = new File(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
             if (file.exists()) {
-                return Assistant.GSON.fromJson(new FileReader(file), CHAPTER_LIST);
+                return Assistant.fromJson(new FileReader(file), CHAPTER_LIST_TYPE);
             }
         } catch (Exception ignore) {
         }
@@ -238,7 +251,7 @@ public class BookshelfHelp {
     private static void saveChaptersToFile(String noteUrl, List<ChapterBean> chapterBeans) {
         File file = FileHelp.getFile(Constant.BOOK_CHAPTER_PATH, getChapterKey(noteUrl) + FileHelp.SUFFIX_CHAP);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(Assistant.GSON.toJson(new ArrayList<>(chapterBeans)));
+            writer.write(Assistant.toJson(new ArrayList<>(chapterBeans)));
             writer.flush();
         } catch (Exception ignore) {
         }

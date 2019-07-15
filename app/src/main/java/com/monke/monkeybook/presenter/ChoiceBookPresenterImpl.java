@@ -10,6 +10,7 @@ import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
+import com.monke.monkeybook.utils.ListUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,10 +25,11 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
     private int page = 1;
     private long startThisSearchTime;
+    private boolean isRefresh;
 
     private Disposable disposable;
 
-    {
+    static {
         RxExecutors.setDefault(RxExecutors.newScheduler(1));
     }
 
@@ -47,6 +49,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
     public void initPage() {
         this.page = 1;
         this.startThisSearchTime = System.currentTimeMillis();
+        this.isRefresh = true;
     }
 
     @Override
@@ -60,12 +63,13 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                 .subscribeOn(RxExecutors.getDefault())
                 .timeout(30, TimeUnit.SECONDS)
                 .map(searchBookBeans -> {
+                    ListUtils.removeDuplicate(searchBookBeans);
                     if (page == 1) return searchBookBeans;
                     Iterator<SearchBookBean> iterator = searchBookBeans.iterator();
                     while (iterator.hasNext()) {
                         SearchBookBean searchBook = iterator.next();
                         for (SearchBookBean temp : mView.getSearchBookAdapter().getSearchBooks()) {
-                            if (TextUtils.equals(temp.getRealNoteUrl(), searchBook.getRealNoteUrl())) {
+                            if (TextUtils.equals(temp.getNoteUrl(), searchBook.getNoteUrl())) {
                                 iterator.remove();
                                 break;
                             }
@@ -92,11 +96,13 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                             }
                             page++;
                         }
+                        isRefresh = false;
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.searchBookError();
+                        mView.searchBookError(isRefresh);
+                        isRefresh = false;
                     }
                 });
     }

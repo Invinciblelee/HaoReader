@@ -21,8 +21,10 @@ public class Patterns {
     public static final Pattern PATTERN_JSON = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})");
     public static final Pattern PATTERN_EXP = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}");
 
-    public static final Pattern PATTERN_SPACE_START =  Pattern.compile("^[\\s|\\u3000]+");
-    public static final Pattern PATTERN_SPACE_END =  Pattern.compile("[\\s|\\u3000]+$");
+    public static final Pattern PATTERN_SPACE_START = Pattern.compile("^[\\s|\\u3000]+");
+    public static final Pattern PATTERN_SPACE_END = Pattern.compile("[\\s|\\u3000]+$");
+
+    public static final Type MAP_TYPE = new TypeToken<Map<String, String>>(){}.getType();
 
     public static final String REGEX_OPERATOR = "(?i)@operate:";
     public static final String REGEX_REDIRECT = "(?i)@redirect:";
@@ -43,7 +45,4 @@ public class Patterns {
     public static final String RULE_XPATH_TRAIT = "//";
     public static final String RULE_CSS = "@CSS:";
     public static final String RULE_REGEX = "##";
-
-    public static final Type STRING_MAP = new TypeToken<Map<String, String>>() {
-    }.getType();
 }

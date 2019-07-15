@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.utils.ObjectsCompat;
-import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -56,8 +55,8 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Generated(hash = 1090259944)
     public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag,
-            String kind, String origin, String lastChapter, String introduce, String bookType,
-            String variableString, Long addTime) {
+                          String kind, String origin, String lastChapter, String introduce, String bookType,
+                          String variableString, Long addTime) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -148,19 +147,11 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         this.noteUrl = noteUrl;
     }
 
-    public String getRealNoteUrl() {
-        if (!StringUtils.isBlank(noteUrl)
-                && noteUrl.startsWith("@716:")) {
-            return noteUrl.substring(5);
-        }
-        return noteUrl;
-    }
-
     public String getCoverUrl() {
         return coverUrl;
     }
 
-    public String getRealCoverUrl(){
+    public String getRealCoverUrl() {
         return URLUtils.resolve(tag, coverUrl);
     }
 
@@ -188,7 +179,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         return lastChapter;
     }
 
-    public String getDisplayLastChapter(){
+    public String getDisplayLastChapter() {
         return TextProcessor.formatChapterName(lastChapter);
     }
 
@@ -312,14 +303,15 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
             SearchBookBean compare = (SearchBookBean) obj;
             return TextUtils.equals(compare.bookType, bookType)
                     && TextUtils.equals(compare.tag, tag)
-                    && TextUtils.equals(compare.getRealNoteUrl(), getRealNoteUrl());
+                    && TextUtils.equals(compare.name, name)
+                    && TextUtils.equals(compare.author, author);
         }
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return ObjectsCompat.hashCode(tag) + ObjectsCompat.hashCode(getRealNoteUrl());
+        return ObjectsCompat.hashCode(bookType) + ObjectsCompat.hashCode(tag) + ObjectsCompat.hashCode(name) + ObjectsCompat.hashCode(author);
     }
 
     @Override
@@ -335,9 +327,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Override
     public String getVariableString() {
-        if (variableStore != null) {
-            this.variableString = variableStore.getVariableString();
-        }
         return this.variableString;
     }
 
@@ -359,7 +348,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         if (variableStore == null) {
             variableStore = new VariableStoreImpl(variableString);
         }
-        return variableStore.putVariableMap(variableMap);
+        Map<String, String> map = variableStore.putVariableMap(variableMap);
+        setVariableString(variableStore.getVariableString());
+        return map;
     }
 
     @Override
@@ -367,7 +358,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         if (variableStore == null) {
             variableStore = new VariableStoreImpl(variableString);
         }
-        return variableStore.putVariable(key, value);
+        String val = variableStore.putVariable(key, value);
+        setVariableString(variableStore.getVariableString());
+        return val;
     }
 
     @Override

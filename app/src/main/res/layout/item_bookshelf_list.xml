@@ -59,10 +59,10 @@
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="2dp"
             android:layout_marginEnd="16dp"
-            android:includeFontPadding="false"
             android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:paddingTop="2dp"
             android:singleLine="true"
             android:text="@string/tv_book_name"
             android:textColor="@color/colorTextDefault"
@@ -137,9 +137,10 @@
         android:id="@+id/rl_loading"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_margin="2dp"
         android:layout_alignTop="@id/cover_card"
         android:layout_alignParentEnd="true"
+        android:layout_margin="2dp"
+        android:visibility="invisible"
         app:loadingWidth="2dp" />
 
 </RelativeLayout>

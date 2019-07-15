@@ -87,8 +87,6 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
         searchBookModel = new SearchBookModel(requireContext())
                 .onlyOnePage()
-                .useMy716(true)
-                .useShuqi(true)
                 .setSearchBookType(selectCover ? null : bookInfo.getBookType())
                 .listener(this)
                 .setup();
@@ -263,7 +261,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
     }
 
     private boolean isCurrent(SearchBookBean searchBookBean) {
-        return TextUtils.equals(searchBookBean.getRealNoteUrl(), bookInfo.getNoteUrl())
+        return TextUtils.equals(searchBookBean.getNoteUrl(), bookInfo.getNoteUrl())
                 && TextUtils.equals(searchBookBean.getTag(), bookInfo.getTag());
     }
 

@@ -14,8 +14,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import androidx.annotation.NonNull;
-
 import com.monke.monkeybook.R;
 
 public class RotateLoading extends View {
@@ -148,25 +146,14 @@ public class RotateLoading extends View {
     }
 
     @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        stop();
-    }
-
-
-    @Override
-    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
-        super.onVisibilityChanged(changedView, visibility);
-        if (visibility == VISIBLE) {
-            start();
-        } else {
-            stop();
-        }
-    }
-
-    @Override
     public boolean isShown() {
         return super.isShown();
+    }
+
+    @Deprecated
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
     }
 
     public void setLoadingColor(int color) {
@@ -175,6 +162,19 @@ public class RotateLoading extends View {
 
     public int getLoadingColor() {
         return color;
+    }
+
+    public void show() {
+        if (getVisibility() != View.VISIBLE || !isStart) {
+            setVisibility(View.VISIBLE);
+            start();
+        }
+    }
+
+    public void hide() {
+        if (getVisibility() == View.VISIBLE || isStart) {
+            stop();
+        }
     }
 
     private void start() {
@@ -222,6 +222,7 @@ public class RotateLoading extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
                 isStart = false;
+                setVisibility(View.GONE);
             }
 
             @Override

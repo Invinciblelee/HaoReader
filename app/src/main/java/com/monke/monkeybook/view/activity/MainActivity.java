@@ -83,8 +83,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     TabLayout tabLayout;
     @BindView(R.id.bookshelf_search_view)
     BookShelfSearchView drawerRight;
-    @BindView(R.id.tv_search_field)
-    View mSearchField;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
     @BindView(R.id.view_audio_running)
@@ -211,7 +209,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerRight.setOnItemClickListener(getAdapterListener());
         drawerRight.setIQuery(query -> mPresenter.queryBooks(query));
 
-        mSearchField.setOnClickListener(v -> {
+        toolbar.setOnClickListener(v -> {
             //点击搜索
             Intent intent = new Intent(MainActivity.this, SearchBookActivity.class);
             startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
@@ -245,7 +243,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 runningView.setProgress(info.getProgress(), info.getDuration());
                 break;
             case AudioBookPlayService.ACTION_STOP:
-                runningView.setVisibility(View.INVISIBLE);
+                runningView.hide();
                 runningView.stop();
                 break;
         }
@@ -447,6 +445,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         }
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
+//        AppCompat.setTint(toolbar.getOverflowIcon(), getResources().getColor(R.color.colorMenuText));
     }
 
     //初始化侧边栏

@@ -4,6 +4,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.NetworkUtil;
@@ -18,24 +19,26 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.utils.IOUtils;
+import com.monke.monkeybook.utils.ObjectsCompat;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 class ChapterProvider {
 
-    private final List<String> mDownloadingChapterList = new ArrayList<>();
+    private static final int THREAD_NUM = 6;
 
-    private CompositeDisposable mCompositeDisposable;
+    private final DownloadList mDownloadingChapterList = new DownloadList(THREAD_NUM);
 
     private PageLoader mPageLoader;
 
@@ -181,7 +184,7 @@ class ChapterProvider {
         final BookShelfBean bookShelf = mPageLoader.getCollBook();
         if (NetworkUtil.isNetworkAvailable() && null != bookShelf && !bookShelf.realChapterListEmpty()) {
             final ChapterBean chapter = bookShelf.getChapter(chapterIndex);
-            if (mPageLoader.chapterNotCached(chapter) && addDownloading(chapter.getDurChapterUrl())) {
+            if (mPageLoader.chapterNotCached(chapter) && !contains(chapter.getDurChapterUrl())) {
                 WebBookModel.getInstance().getBookContent(bookShelf.getBookInfoBean(), chapter)
                         .subscribeOn(getScheduler())
                         .doAfterNext(bookContentBean -> RxBus.get().post(RxBusTag.CHAPTER_CHANGE, bookContentBean))
@@ -191,8 +194,7 @@ class ChapterProvider {
 
                             @Override
                             public void onSubscribe(Disposable d) {
-                                ensureCompositeDisposable();
-                                mCompositeDisposable.add(d);
+                                addDownloading(chapter.getDurChapterUrl(), d);
                             }
 
                             @Override
@@ -222,38 +224,86 @@ class ChapterProvider {
     }
 
     private synchronized void removeDownloading(String chapterUrl) {
-        mDownloadingChapterList.remove(chapterUrl);
+        mDownloadingChapterList.remove(new ChapterDownloading(chapterUrl));
     }
 
-    private synchronized boolean addDownloading(String chapterUrl) {
-        if (!mDownloadingChapterList.contains(chapterUrl)) {
-            return mDownloadingChapterList.add(chapterUrl);
-        }
-        return false;
+    private synchronized boolean contains(String chapterUrl) {
+        return mDownloadingChapterList.contains(new ChapterDownloading(chapterUrl));
+    }
+
+    private synchronized void addDownloading(String chapterUrl, Disposable disposable) {
+        mDownloadingChapterList.add(new ChapterDownloading(chapterUrl, disposable));
     }
 
     private Scheduler getScheduler() {
         if (mScheduler == null) {
-            mScheduler = RxExecutors.newScheduler(6);
+            mScheduler = RxExecutors.newScheduler(THREAD_NUM);
         }
         return mScheduler;
     }
 
-    private void ensureCompositeDisposable() {
-        if (mCompositeDisposable == null || mCompositeDisposable.isDisposed()) {
-            mCompositeDisposable = new CompositeDisposable();
-        }
-    }
-
     void stop() {
-        mDownloadingChapterList.clear();
-        if (mCompositeDisposable != null) {
-            mCompositeDisposable.dispose();
-            mCompositeDisposable = null;
+        for (ChapterDownloading downloading : mDownloadingChapterList) {
+            downloading.dispose();
         }
+        mDownloadingChapterList.clear();
         if (mScheduler != null) {
             mScheduler.shutdown();
             mScheduler = null;
+        }
+    }
+
+    private static class ChapterDownloading {
+        private String chapterUrl;
+        private Disposable disposable;
+
+        ChapterDownloading(String chapterUrl) {
+            this.chapterUrl = chapterUrl;
+        }
+
+        ChapterDownloading(String chapterUrl, Disposable disposable) {
+            this.chapterUrl = chapterUrl;
+            this.disposable = disposable;
+        }
+
+        private void dispose() {
+            if (disposable != null) {
+                disposable.dispose();
+            }
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if (obj instanceof ChapterDownloading) {
+                return Objects.equals(chapterUrl, ((ChapterDownloading) obj).chapterUrl);
+            }
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return ObjectsCompat.hashCode(chapterUrl);
+        }
+    }
+
+
+    private static class DownloadList extends LinkedList<ChapterDownloading> {
+        //容量
+        private int capacity;
+
+        DownloadList(int capacity) {
+            this.capacity = capacity;
+        }
+
+        @Override
+        public boolean add(ChapterDownloading e) {
+            if (size() + 1 > capacity) {
+                ChapterDownloading downloading = super.removeFirst();
+                if (downloading != null) {
+                    downloading.dispose();
+                }
+            }
+            return super.add(e);
         }
     }
 }

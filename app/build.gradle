@@ -23,7 +23,7 @@ def getVersionCode() {// 获取版本号
     }
 }
 
-def name = "MONKOVEL"
+def name = "XIANYU"
 
 def keystorePSW = ''
 def keystoreAlias = ''

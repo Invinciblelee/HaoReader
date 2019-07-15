@@ -271,10 +271,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             title = getString(R.string.edit_book_source);
             bookSourceBean = BitIntentDataManager.getInstance().getData(key, null);
             if (bookSourceBean != null) {
-                serialNumber = bookSourceBean.getSerialNumber();
-                enable = bookSourceBean.getEnable();
-                enableFind = bookSourceBean.getEnableFind();
-                weight = bookSourceBean.getWeight();
                 BitIntentDataManager.getInstance().cleanData(key);
             }
         }
@@ -335,7 +331,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void setResult(BookSourceBean sourceBean) {
-        sourceEnableChecker.setChecked(sourceBean.getEnable());
+        setBasicConfig(sourceBean);
+
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
         data.putExtra("type", (StringUtils.isBlank(sourceBean.getRuleFindUrl()) || !sourceBean.getEnableFind()) ? -1 : 0);
@@ -405,6 +402,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (bookSourceBean == null) {
             return;
         }
+        setBasicConfig(bookSourceBean);
+
         String bookType = trim(bookSourceBean.getBookSourceType());
         if (!TextUtils.isEmpty(bookType)) {
             tieBookSourceType.setText(bookType);
@@ -441,8 +440,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tieHttpUserAgent.setText(trim(bookSourceBean.getHttpUserAgent()));
         tieRuleFindUrl.setText(trim(bookSourceBean.getRuleFindUrl()));
         tieRuleContentUrlNext.setText(trim(bookSourceBean.getRuleContentUrlNext()));
-        sourceEnableChecker.setChecked(bookSourceBean.getEnable());
-        findEnableChecker.setChecked(bookSourceBean.getEnableFind());
     }
 
     @Override
@@ -483,6 +480,18 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilHttpUserAgent.setHint("用户代理(HttpUserAgent)");
         tilRuleFindUrl.setHint("发现获取规则(RuleFinalUrl)");
         tilRuleContentUrlNext.setHint("下一页内容URL获取规则(RuleContentUrlNext)");
+    }
+
+    private void setBasicConfig(BookSourceBean sourceBean) {
+        if (sourceBean == null) return;
+
+        serialNumber = sourceBean.getSerialNumber();
+        enable = sourceBean.getEnable();
+        enableFind = sourceBean.getEnableFind();
+        weight = sourceBean.getWeight();
+
+        sourceEnableChecker.setChecked(enable);
+        findEnableChecker.setChecked(enableFind);
     }
 
     @Override

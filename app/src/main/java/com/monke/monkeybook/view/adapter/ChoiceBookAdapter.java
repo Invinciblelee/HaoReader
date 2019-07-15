@@ -165,7 +165,6 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             if (newData.size() > 0) {
                 searchBooks.addAll(newData);
             }
-            notifyItemInserted(position);
             notifyItemRangeChanged(position, newData.size());
         }
     }

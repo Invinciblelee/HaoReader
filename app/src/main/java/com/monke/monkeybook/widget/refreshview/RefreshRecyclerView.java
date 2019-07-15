@@ -2,14 +2,15 @@ package com.monke.monkeybook.widget.refreshview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
 
@@ -68,9 +69,14 @@ public class RefreshRecyclerView extends FrameLayout {
         recyclerView.addOnScrollListener(new InfiniteScrollListener() {
             @Override
             public void onLoadMore() {
-                if (null != loadMoreListener) {
-                    ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsRequesting(2, false);
-                    loadMoreListener.startLoadMore();
+                if (null == loadMoreListener) return;
+                RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                if (adapter instanceof RefreshRecyclerViewAdapter) {
+                    RefreshRecyclerViewAdapter adpt = (RefreshRecyclerViewAdapter) adapter;
+                    if (adpt.canLoadMore()) {
+                        adpt.resetLoadMore();
+                        loadMoreListener.startLoadMore();
+                    }
                 }
             }
         });
@@ -110,7 +116,7 @@ public class RefreshRecyclerView extends FrameLayout {
         }
 
         if (refreshErrorView != null) {
-            if(adapter != null){
+            if (adapter != null) {
                 int itemCount;
                 if (adapter instanceof RefreshRecyclerViewAdapter) {
                     itemCount = ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getICount();
@@ -119,20 +125,20 @@ public class RefreshRecyclerView extends FrameLayout {
                 }
                 refreshErrorView.setVisibility(itemCount > 0 ? GONE : VISIBLE);
                 TextView textView = refreshErrorView.findViewById(R.id.tv_error_message);
-                if(textView != null){
-                    if(message != null) {
+                if (textView != null) {
+                    if (message != null) {
                         textView.setText(message);
-                    }else {
+                    } else {
                         textView.setText("加载失败");
                     }
                 }
-            }else {
+            } else {
                 refreshErrorView.setVisibility(VISIBLE);
             }
         }
     }
 
-    public void refreshError(){
+    public void refreshError() {
         refreshError(null);
     }
 
@@ -210,7 +216,8 @@ public class RefreshRecyclerView extends FrameLayout {
                 ((RefreshRecyclerViewAdapter) adapter).setIsRequesting(0, false);
                 ((RefreshRecyclerViewAdapter) adapter).setIsAll(true, needNoti);
             } else {
-                ((RefreshRecyclerViewAdapter) adapter).setIsRequesting(0, needNoti);
+                ((RefreshRecyclerViewAdapter) adapter).setIsRequesting(0, false);
+                ((RefreshRecyclerViewAdapter) adapter).setIsAll(false, needNoti);
             }
         }
 
@@ -219,6 +226,13 @@ public class RefreshRecyclerView extends FrameLayout {
         }
         if (refreshErrorView != null) {
             refreshErrorView.setVisibility(GONE);
+        }
+    }
+
+    public void resetLoadMore() {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter instanceof RefreshRecyclerViewAdapter) {
+            ((RefreshRecyclerViewAdapter) adapter).resetLoadMore();
         }
     }
 

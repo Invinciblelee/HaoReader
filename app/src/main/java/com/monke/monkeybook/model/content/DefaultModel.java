@@ -133,7 +133,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             final AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookShelfBean.getNoteUrl(), headerMap(true));
             final BookInfo bookInfo = new BookInfo(tag, name, bookSourceBean);
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookInfo.analyzeBookInfo(response, analyzeUrl.getUrl(), bookShelfBean));
+                    .flatMap(response -> bookInfo.analyzeBookInfo(response, analyzeUrl.getQueryUrl(), bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "bookInfo", e);
             return Observable.error(e);
@@ -149,7 +149,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             final AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookShelfBean.getNoteUrl(), bookShelfBean.getBookInfoBean().getChapterListUrl(), headerMap(true));
             final BookChapters bookChapters = new BookChapters(tag, bookSourceBean);
             return toObservable(analyzeUrl)
-                    .flatMap(response -> bookChapters.analyzeChapters(response, analyzeUrl.getUrl(), bookShelfBean));
+                    .flatMap(response -> bookChapters.analyzeChapters(response, analyzeUrl.getQueryUrl(), bookShelfBean));
         } catch (Exception e) {
             Logger.e(TAG, "chapterList", e);
             return Observable.error(e);
@@ -179,10 +179,10 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         params.url(analyzeUrl.getQueryUrl());
                 }
                 return ajax(params)
-                        .flatMap(response -> bookContent.analyzeBookContent(response, analyzeUrl.getUrl(), chapter));
+                        .flatMap(response -> bookContent.analyzeBookContent(response, analyzeUrl.getQueryUrl(), chapter));
             } else {
                 return toObservable(analyzeUrl)
-                        .flatMap(response -> bookContent.analyzeBookContent(response, analyzeUrl.getUrl(), chapter));
+                        .flatMap(response -> bookContent.analyzeBookContent(response, analyzeUrl.getQueryUrl(), chapter));
             }
         } catch (Exception e) {
             Logger.e(TAG, "getBookContent", e);
@@ -217,10 +217,10 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         params.url(analyzeUrl.getQueryUrl());
                 }
                 return sniff(params)
-                        .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, analyzeUrl.getUrl(), chapter));
+                        .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, analyzeUrl.getQueryUrl(), chapter));
             } else {
                 return toObservable(analyzeUrl)
-                        .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, analyzeUrl.getUrl(), chapter));
+                        .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, analyzeUrl.getQueryUrl(), chapter));
             }
         } catch (Exception e) {
             Logger.e(TAG, "audioBookContent", e);

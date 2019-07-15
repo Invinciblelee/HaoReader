@@ -29,8 +29,6 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
-import com.monke.monkeybook.model.content.Default716;
-import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
 
@@ -94,21 +92,14 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     @Override
     public void disableDurBookSource() {
         try {
-            switch (bookShelf.getTag()) {
-                case BookShelfBean.LOCAL_TAG:
-                case Default716.TAG:
-                    break;
-                case DefaultShuqi.TAG:
-                    break;
-                default:
-                    BookSourceBean bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                            .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookShelf.getTag())).unique();
-                    bookSource.setEnable(false);
-                    if (TextUtils.isEmpty(bookSource.getBookSourceGroup()))
-                        bookSource.setBookSourceGroup("禁用");
-                    mView.toast("已禁用" + bookSource.getBookSourceName());
-                    BookSourceManager.save(bookSource);
-                    break;
+            if (!BookShelfBean.LOCAL_TAG.equals(bookShelf.getTag())) {
+                BookSourceBean bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                        .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookShelf.getTag())).unique();
+                bookSource.setEnable(false);
+                if (TextUtils.isEmpty(bookSource.getBookSourceGroup()))
+                    bookSource.setBookSourceGroup("禁用");
+                mView.toast("已禁用" + bookSource.getBookSourceName());
+                BookSourceManager.save(bookSource);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -309,11 +300,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     }
 
     private void prepareSync() {
-        if (TextUtils.equals(bookShelf.getTag(), Default716.TAG)
-                || bookShelf.isLocalBook()) {
-            mView.upMenu();
-        } else if (TextUtils.equals(bookShelf.getTag(), DefaultShuqi.TAG)
-                || bookShelf.isLocalBook()) {
+        if (bookShelf.isLocalBook()) {
             mView.upMenu();
         } else {
             Observable.create((ObservableOnSubscribe<Boolean>) e -> {

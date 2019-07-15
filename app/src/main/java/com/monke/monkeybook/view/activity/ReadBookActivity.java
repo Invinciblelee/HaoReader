@@ -46,9 +46,9 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.WebLoadConfig;
 import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookShelfHolder;
+import com.monke.monkeybook.help.BookshelfHelp;
+import com.monke.monkeybook.help.NoDoubleClickListener;
 import com.monke.monkeybook.help.ReadBookControl;
-import com.monke.monkeybook.model.content.Default716;
-import com.monke.monkeybook.model.content.DefaultShuqi;
 import com.monke.monkeybook.presenter.ReadBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.ReadAloudService;
@@ -767,9 +767,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void onPageCountChange(int count) {
-        hpbReadProgress.setMax(Math.max(0, count - 1));
-        hpbReadProgress.setProgress(0);
-        hpbReadProgress.setEnabled(mPageLoader.isPageScrollable() && hpbReadProgress.getMax() > 1);
+        setReadProgress(Math.max(0, count - 1), 0, mPageLoader.isPageScrollable());
     }
 
     @Override
@@ -781,7 +779,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         readStatusBar.updateChapterInfo(mPresenter.getBookShelf(), pageSize);
 
-        hpbReadProgress.post(() -> hpbReadProgress.setProgress(pageIndex));
+        setReadProgress(pageSize, pageIndex, mPageLoader.isPageScrollable());
 
         //继续朗读
         if ((ReadAloudService.running) && pageIndex >= 0) {
@@ -823,12 +821,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         fabNightTheme.setOnClickListener(this);
         fabNightTheme.setOnLongClickListener(this);
 
-        //上一章
-        tvPre.setOnClickListener(this);
-
-        //下一章
-        tvNext.setOnClickListener(this);
-
         //目录
         btnCatalog.setOnClickListener(this);
 
@@ -843,6 +835,30 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
         //菜单
         controlsView.setOnClickListener(this);
+
+        NoDoubleClickListener clickListener = new NoDoubleClickListener() {
+            @Override
+            public void onNoDoubleClick(View v) {
+                switch (v.getId()) {
+                    case R.id.tv_pre:
+                        if (mPresenter.getBookShelf() != null) {
+                            mPageLoader.skipPreChapter();
+                        }
+                        break;
+                    case R.id.tv_next:
+                        if (mPresenter.getBookShelf() != null) {
+                            mPageLoader.skipNextChapter();
+                        }
+                        break;
+                }
+            }
+        };
+
+        //上一章
+        tvPre.setOnClickListener(clickListener);
+
+        //下一章
+        tvNext.setOnClickListener(clickListener);
 
         //动态设置状态栏，导航栏
         controlsView.setOnInsetsCallback(insets -> {
@@ -934,16 +950,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 popMenuOut();
                 controlsView.postDelayed(() -> setNightTheme(!isNightTheme()), DELAY_LONG);
                 break;
-            case R.id.tv_pre:
-                if (mPresenter.getBookShelf() != null) {
-                    mPageLoader.skipPreChapter();
-                }
-                break;
-            case R.id.tv_next:
-                if (mPresenter.getBookShelf() != null) {
-                    mPageLoader.skipNextChapter();
-                }
-                break;
             case R.id.btn_catalog:
                 isOrWillShow = true;
                 popMenuOut();
@@ -1007,9 +1013,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void startLoadingBook() {
-        hpbReadProgress.setMax(chapterProgressMax);
-        hpbReadProgress.setProgress(chapterDurProgress);
-        hpbReadProgress.setEnabled(chapterDraggable && chapterProgressMax > 1);
+        setReadProgress(chapterProgressMax, chapterDurProgress, chapterDraggable);
 
         initPageView();
     }
@@ -1040,16 +1044,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     menu.getItem(i).setVisible(true);
                     menu.getItem(i).setEnabled(true);
                 }
-            }
-            final boolean defaultShuqi = DefaultShuqi.TAG.equals(mPresenter.getBookShelf().getTag());
-            final boolean default716 = Default716.TAG.equals(mPresenter.getBookShelf().getTag());
-            MenuItem disableSourceItem = menu.findItem(R.id.disable_book_source);
-            if (default716 || defaultShuqi) {
-                disableSourceItem.setVisible(false);
-                disableSourceItem.setEnabled(false);
-            } else {
-                disableSourceItem.setVisible(true);
-                disableSourceItem.setEnabled(true);
             }
         }
         return super.onPrepareOptionsMenu(menu);
@@ -1105,6 +1099,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setReadProgress(int max, int progress, boolean enabled) {
+        hpbReadProgress.setMax(max);
+        hpbReadProgress.setProgress(max == 1 ? 1 : progress);
+        hpbReadProgress.setEnabled(enabled && max > 1);
     }
 
     private void addChapterFragment(ChapterDrawerFragment fragment) {
@@ -1369,6 +1369,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         new CheckAddShelfPop.OnItemClickListener() {
                             @Override
                             public void clickExit() {
+                                BookshelfHelp.cleanBookCache(mPresenter.getBookShelf());
                                 finish();
                             }
 

@@ -926,12 +926,12 @@ public class AudioBookPlayService extends Service {
 
         @Override
         protected void onFocusGainFromFocusLossTransient() {
-            resumePlay();
+
         }
 
         @Override
         protected void onFocusGain() {
-
+            resumePlay();
         }
 
         @Override

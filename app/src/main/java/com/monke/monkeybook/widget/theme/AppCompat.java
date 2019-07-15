@@ -27,7 +27,6 @@ import com.google.android.material.internal.NavigationMenuView;
 import com.google.android.material.navigation.NavigationView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.utils.DensityUtil;
-import com.monke.monkeybook.utils.ScreenUtils;
 
 import java.lang.reflect.Field;
 
@@ -66,6 +65,11 @@ public class AppCompat {
         params.topMargin = DensityUtil.dp2px(plate.getContext(), 6);
         params.bottomMargin = params.topMargin;
         plate.setLayoutParams(params);
+
+        View editFrame = searchView.findViewById(R.id.search_edit_frame);
+        params = (LinearLayout.LayoutParams) editFrame.getLayoutParams();
+        params.leftMargin = DensityUtil.dp2px(editFrame.getContext(), 4);
+        editFrame.setLayoutParams(params);
 
         int padding = DensityUtil.dp2px(plate.getContext(), 6);
         plate.setPaddingRelative(padding, 0, padding, 0);

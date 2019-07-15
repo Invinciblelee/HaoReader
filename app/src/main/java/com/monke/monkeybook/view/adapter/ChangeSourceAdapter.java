@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.TextProcessor;
-import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
 import com.monke.monkeybook.widget.refreshview.scroller.FastScroller;
 
@@ -46,7 +44,6 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements F
     public void addAllSourceAdapter(List<SearchBookBean> value) {
         synchronized (searchBookBeans) {
             searchBookBeans.addAll(value);
-            ListUtils.removeDuplicate(searchBookBeans);
             Collections.sort(searchBookBeans);
             notifyDataSetChanged();
         }

@@ -88,6 +88,7 @@ public class ChoiceBookFragment extends BaseFragment<ChoiceBookContract.Presente
         });
 
         rfRvSearchBooks.setOnRefreshListener(() -> {
+            rfRvSearchBooks.resetLoadMore();
             mPresenter.initPage();
             mPresenter.toSearchBooks(null);
         });
@@ -137,16 +138,16 @@ public class ChoiceBookFragment extends BaseFragment<ChoiceBookContract.Presente
     }
 
     @Override
-    public void searchBookError() {
-        if (mPresenter.getPage() > 1) {
-            rfRvSearchBooks.loadMoreError();
-        } else {
+    public void searchBookError(boolean isRefresh) {
+        if (isRefresh) {
             //刷新失败
             if (!NetworkUtil.isNetworkAvailable()) {
                 rfRvSearchBooks.refreshError("网络不可用");
             } else {
                 rfRvSearchBooks.refreshError();
             }
+        } else {
+            rfRvSearchBooks.loadMoreError();
         }
     }
 

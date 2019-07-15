@@ -43,7 +43,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp">
+            android:layout_height="450dp">
 
             <com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout
                 android:id="@+id/refresh_layout"

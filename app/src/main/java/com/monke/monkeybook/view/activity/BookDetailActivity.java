@@ -40,8 +40,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-import static com.monke.monkeybook.presenter.BookDetailPresenterImpl.FROM_BOOKSHELF;
 import static com.monke.basemvplib.NetworkUtil.isNetworkAvailable;
+import static com.monke.monkeybook.presenter.BookDetailPresenterImpl.FROM_BOOKSHELF;
 
 public class BookDetailActivity extends MBaseActivity<BookDetailContract.Presenter> implements BookDetailContract.View {
     @BindView(R.id.ifl_content)
@@ -184,7 +184,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     public void getBookShelfError(boolean refresh) {
         llLoading.setVisibility(View.VISIBLE);
         tvLoadingMsg.setText("加载失败，点击重试");
-        progressBar.setVisibility(View.GONE);
+        progressBar.hide();
         llLoading.setEnabled(true);
         llLoading.setOnClickListener(v -> {
             showLoading(true);
@@ -417,7 +417,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         if (show) {
             llLoading.setVisibility(View.VISIBLE);
             tvLoadingMsg.setText(R.string.data_loading);
-            progressBar.setVisibility(View.VISIBLE);
+            progressBar.show();
         } else {
             if (llLoading.getVisibility() == View.GONE) {
                 return;

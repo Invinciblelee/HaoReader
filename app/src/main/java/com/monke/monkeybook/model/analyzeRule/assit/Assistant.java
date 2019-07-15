@@ -2,9 +2,13 @@ package com.monke.monkeybook.model.analyzeRule.assit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonReader;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.utils.StringUtils;
 
+import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,40 +23,19 @@ public final class Assistant {
 
     private static final ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("rhino");
 
-    public static final Gson GSON = new GsonBuilder()
+    private static final Gson GSON = new GsonBuilder()
             .setLenient()
             .create();
 
     private Assistant() {
     }
 
-    public static boolean canConvertToJson(Object object) {
+    public static boolean isPrimitiveJson(Object object) {
         if (object instanceof List || object instanceof Map) {
             return true;
         } else {
             return StringUtils.isJsonType(StringUtils.valueOf(object));
         }
-    }
-
-    public static String[] splitRegexRule(String str) {
-        int start = 0, index = 0, len = str.length();
-        List<String> list = new ArrayList<>();
-        while (start < len) {
-            if ((str.charAt(start) == '$') && (str.charAt(start + 1) >= '0') && (str.charAt(start + 1) <= '9')) {
-                if (start > index) list.add(str.substring(index, start));
-                if ((start + 2 < len) && (str.charAt(start + 2) >= '0') && (str.charAt(start + 2) <= '9')) {
-                    list.add(str.substring(start, start + 3));
-                    index = start += 3;
-                } else {
-                    list.add(str.substring(start, start + 2));
-                    index = start += 2;
-                }
-            } else {
-                ++start;
-            }
-        }
-        if (start > index) list.add(str.substring(index, start));
-        return list.toArray(new String[0]);
     }
 
     public static List<Object> evalArrayScript(String jsStr, JavaExecutor java, Object result, String baseUrl) {
@@ -86,5 +69,29 @@ public final class Assistant {
             Logger.e(TAG, jsStr, e);
         }
         return null;
+    }
+
+    public static <T> T fromJson(String json, Type type) {
+        return GSON.fromJson(json, type);
+    }
+
+    public static <T> T fromJson(Reader reader, Type type) {
+        return GSON.fromJson(reader, type);
+    }
+
+    public static <T> T fromJson(JsonReader reader, Type type) {
+        return GSON.fromJson(reader, type);
+    }
+
+    public static <T> T fromJson(JsonElement element, Type type) {
+        return GSON.fromJson(element, type);
+    }
+
+    public static String toJson(Object object) {
+        return GSON.toJson(object);
+    }
+
+    public static String toJson(JsonElement element) {
+        return GSON.toJson(element);
     }
 }

@@ -126,7 +126,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
                     holder.mCover.setVisibility(View.VISIBLE);
                     Glide.with(fragment.get()).load(item.getPath())
                             .apply(new RequestOptions().placeholder(placeholder)
-                                    .transforms(new CenterCrop(), new RoundedCorners(ScreenUtils.dpToPx(3))))
+                                    .transform(new CenterCrop(), new RoundedCorners(ScreenUtils.dpToPx(3))))
                             .transition(new DrawableTransitionOptions().crossFade())
                             .into(holder.mCover);
                 } else if (checkBookAdded && isAdded(item.getFile())) {

@@ -3,6 +3,8 @@ package com.monke.monkeybook.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 public class FindKindBean implements Parcelable {
     private String group;
     private String tag;
@@ -75,5 +77,16 @@ public class FindKindBean implements Parcelable {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "FindKindBean{" +
+                "group='" + group + '\'' +
+                ", tag='" + tag + '\'' +
+                ", kindName='" + kindName + '\'' +
+                ", kindUrl='" + kindUrl + '\'' +
+                '}';
     }
 }

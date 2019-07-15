@@ -33,8 +33,6 @@
                 android:id="@+id/ll_menu_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -229,9 +227,8 @@
                     android:id="@+id/rlNavigationBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
-                    android:clickable="true"
-                    android:focusable="true">
+                    android:descendantFocusability="blocksDescendants"
+                    android:background="@color/colorPrimary">
                     <!--章节设置-->
                     <TextView
                         android:id="@+id/tv_pre"

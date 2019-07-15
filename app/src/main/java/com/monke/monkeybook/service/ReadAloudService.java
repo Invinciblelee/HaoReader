@@ -572,14 +572,14 @@ public class ReadAloudService extends Service {
 
         @Override
         protected void onFocusGainFromFocusLossTransient() {
-            if (!pause) {
-                resumeReadAloud();
-            }
+
         }
 
         @Override
         protected void onFocusGain() {
-
+            if (!pause) {
+                resumeReadAloud();
+            }
         }
 
         @Override

@@ -15,51 +15,33 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         tools:ignore="UnusedAttribute">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <androidx.cardview.widget.CardView
+            style="@style/CardView.Light"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:transitionName="sharedView"
-            app:contentInsetStartWithNavigation="0dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/search_label"
-            app:titleTextColor="@color/colorMenuText">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="@color/colorSearchField"
+            app:cardCornerRadius="3dp">
 
-            <FrameLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="8dp">
+                android:transitionName="sharedView"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:title="@string/search_label"
+                app:titleTextColor="@color/colorBarText" />
 
-                <com.monke.monkeybook.widget.ScaleDrawableTextView
-                    android:id="@+id/tv_search_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="6dp"
-                    android:background="@drawable/bg_search_field"
-                    android:drawableStart="@drawable/ic_search_black_24dp"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:includeFontPadding="false"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/search_label"
-                    app:drawableScale="1.05"
-                    app:drawableSize="0dp"
-                    app:drawableTint="@color/white" />
-            </FrameLayout>
-
-
-        </androidx.appcompat.widget.Toolbar>
+        </androidx.cardview.widget.CardView>
 
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
-            android:layout_width="240dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginStart="36dp"
+            android:layout_marginEnd="36dp"
             app:tabIconTint="@color/colorBarText"
             app:tabIndicatorColor="@color/colorBarText"
             app:tabIndicatorFullWidth="true"

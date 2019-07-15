@@ -95,7 +95,7 @@
 
     <style name="AppTheme.CardView.Background" parent="CardView.Light">
         <item name="cardBackgroundColor">@color/colorCardBackground</item>
-        <item name="cardElevation">2dp</item>
+        <item name="cardElevation">4dp</item>
         <item name="cardUseCompatPadding">true</item>
     </style>
 

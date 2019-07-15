@@ -27,10 +27,6 @@ public interface SearchBookContract {
         void initSearchEngineS(String group);
 
         void stopSearch();
-
-        void useMy716(Boolean bool);
-
-        void useShuqi(Boolean bool);
     }
 
     interface View extends IView {

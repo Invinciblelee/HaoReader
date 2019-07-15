@@ -14,10 +14,7 @@
     <string name="book_local">添加本地</string>
     <string name="book_source_manage">书源管理</string>
     <string name="book_all_source">全部</string>
-    <string name="book_inner_source">内置书源</string>
-    <string name="book_outer_source">外置书源</string>
-    <string name="book_inner_source_716">My716</string>
-	<string name="book_inner_source_sq">ShuQi</string>
+    <string name="book_source_group">搜索分组</string>
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="donate">捐赠</string>

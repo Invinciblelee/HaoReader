@@ -5,7 +5,7 @@ import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
 
 public class VariableStoreImpl implements VariableStore {
 
@@ -31,13 +31,13 @@ public class VariableStoreImpl implements VariableStore {
 
     @Override
     public Map<String, String> getVariableMap() {
-        if(variableMap == null){
+        if (variableMap == null) {
             try {
-                this.variableMap = Assistant.GSON.fromJson(variableString, STRING_MAP);
+                this.variableMap = Assistant.fromJson(variableString, MAP_TYPE);
             } catch (Exception ignore) {
             }
         }
-        if(this.variableMap == null){
+        if (this.variableMap == null) {
             this.variableMap = new HashMap<>();
         }
         return variableMap;
@@ -48,7 +48,7 @@ public class VariableStoreImpl implements VariableStore {
         if (variableMap != null && !variableMap.isEmpty()) {
             Map<String, String> map = getVariableMap();
             map.putAll(variableMap);
-            this.variableString = Assistant.GSON.toJson(map);
+            this.variableString = Assistant.toJson(map);
         }
         return this.variableMap;
     }
@@ -58,7 +58,7 @@ public class VariableStoreImpl implements VariableStore {
         if (key != null && value != null) {
             Map<String, String> map = getVariableMap();
             map.put(key, value);
-            this.variableString = Assistant.GSON.toJson(map);
+            this.variableString = Assistant.toJson(map);
         }
         return value;
     }

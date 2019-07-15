@@ -10,6 +10,8 @@
     <color name="colorAccentLight">#FFD75E</color>
     <color name="colorAccentTranslucent">#66D9AB23</color>
 
+    <color name="colorSearchField">#4a4a4a</color>
+
     <color name="colorBarText">#f3f3f3</color>
     <color name="colorMenuText">#f3f3f3</color>
 

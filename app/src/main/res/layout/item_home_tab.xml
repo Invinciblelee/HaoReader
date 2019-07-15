@@ -17,5 +17,7 @@
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:paddingTop="1dp"
         android:textSize="14sp" />
 </LinearLayout>

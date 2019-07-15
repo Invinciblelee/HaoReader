@@ -184,9 +184,6 @@ public class BookSourceManager extends BaseModelImpl {
         BookSourceBean temp = getByUrl(bookSourceBean.getBookSourceUrl());
         if (temp != null) {
             bookSourceBean.setSerialNumber(temp.getSerialNumber());
-            bookSourceBean.setEnable(temp.getEnable());
-        } else {
-            bookSourceBean.setEnable(true);
         }
 
         if (bookSourceBean.getSerialNumber() == 0) {
@@ -229,8 +226,7 @@ public class BookSourceManager extends BaseModelImpl {
 
     public static Observable<Boolean> importFromJson(String json) {
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            List<BookSourceBean> bookSourceBeans = Assistant.GSON.fromJson(StringUtils.wrapJsonArray(json), new TypeToken<List<BookSourceBean>>() {
-            }.getType());
+            List<BookSourceBean> bookSourceBeans = Assistant.fromJson(StringUtils.wrapJsonArray(json), new TypeToken<List<BookSourceBean>>(){}.getType());
             int index = 0;
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
                 if (Objects.equals(bookSourceBean.getBookSourceGroup(), "删除")) {

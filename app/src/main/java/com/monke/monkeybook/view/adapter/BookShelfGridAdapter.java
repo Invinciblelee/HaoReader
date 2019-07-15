@@ -63,9 +63,9 @@ public class BookShelfGridAdapter extends BaseBookListAdapter<BookShelfGridAdapt
         }
 
         if (item.isFlag()) {
-            holder.rotateLoading.setVisibility(View.VISIBLE);
+            holder.rotateLoading.show();
         } else {
-            holder.rotateLoading.setVisibility(View.INVISIBLE);
+            holder.rotateLoading.hide();
         }
 
         if (item.getHasUpdate() && !item.isLocalBook()) {

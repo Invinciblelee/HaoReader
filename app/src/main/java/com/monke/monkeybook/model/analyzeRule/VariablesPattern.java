@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_GET;
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 final class VariablesPattern {
 
@@ -60,7 +60,7 @@ final class VariablesPattern {
 
     private void analyzePutterMap(String rule) {
         try {
-            Map<String, String> putVariable = Assistant.GSON.fromJson(rule, STRING_MAP);
+            Map<String, String> putVariable = Assistant.fromJson(rule, MAP_TYPE);
             map.putAll(putVariable);
         } catch (Exception ignore) {
         }

@@ -21,9 +21,9 @@ import java.util.regex.Matcher;
 
 import javax.script.SimpleBindings;
 
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_HEADER;
 import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_PAGE;
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.STRING_MAP;
 
 /**
  * Created by GKF on 2018/1/24.
@@ -121,8 +121,7 @@ public class AnalyzeUrl {
             ruleUrl = ruleUrl.replace(find, "");
             find = find.substring(8);
             try {
-                Map<String, String> map = Assistant.GSON.fromJson(find, STRING_MAP);
-                headerMap.putAll(map);
+                headerMap.putAll(Assistant.fromJson(find, MAP_TYPE));
             } catch (Exception ignore) {
             }
         }

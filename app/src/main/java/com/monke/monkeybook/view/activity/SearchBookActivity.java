@@ -23,15 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.basemvplib.AppActivityManager;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
-import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.SearchBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.view.adapter.SearchBookAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.widget.explosion_field.ExplosionField;
@@ -250,14 +249,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem my716 = menu.findItem(R.id.action_book_my716);
-        if (my716 != null) {
-            my716.setChecked(AppConfigHelper.get().getBoolean("useMy716", true));
-        }
-        MenuItem shuqi = menu.findItem(R.id.action_book_shuqi);
-        if (shuqi != null) {
-            shuqi.setChecked(AppConfigHelper.get().getBoolean("useShuqi", true));
-        }
         initMenu(menu);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -269,16 +260,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         switch (id) {
             case R.id.action_book_source_manage:
                 BookSourceActivity.startThis(this);
-                break;
-            case R.id.action_book_my716:
-                item.setChecked(!item.isChecked());
-                AppConfigHelper.get().edit().putBoolean("useMy716", item.isChecked()).apply();
-                mPresenter.useMy716(item.isChecked());
-                break;
-            case R.id.action_book_shuqi:
-                item.setChecked(!item.isChecked());
-                AppConfigHelper.get().edit().putBoolean("useShuqi", item.isChecked()).apply();
-                mPresenter.useShuqi(item.isChecked());
                 break;
             case android.R.id.home:
                 onBackPressed();

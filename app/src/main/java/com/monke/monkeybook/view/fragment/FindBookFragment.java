@@ -122,7 +122,9 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             searchField.postDelayed(() -> animShow(height > 0), 200L);
         });
 
+        searchEdit.post(() -> searchEdit.clearFocus());
     }
+
 
     private void animShow(boolean show) {
         if (mKeyboardShown != show) {

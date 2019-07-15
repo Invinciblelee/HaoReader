@@ -21,7 +21,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
-import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
@@ -43,8 +42,6 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
         //搜索引擎初始化
         searchBookModel = new SearchBookModel(context)
                 .listener(this)
-                .useMy716(AppConfigHelper.get().getBoolean("useMy716", true))
-                .useShuqi(AppConfigHelper.get().getBoolean("useShuqi", true))
                 .setup();
     }
 
@@ -218,18 +215,6 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
     @Override
     public void stopSearch() {
         searchBookModel.stopSearch();
-    }
-
-    @Override
-    public void useMy716(Boolean bool) {
-        searchBookModel.useMy716(bool);
-        searchBookModel.notifySearchEngineChanged();
-    }
-
-    @Override
-    public void useShuqi(Boolean bool) {
-        searchBookModel.useShuqi(bool);
-        searchBookModel.notifySearchEngineChanged();
     }
 
     @Override

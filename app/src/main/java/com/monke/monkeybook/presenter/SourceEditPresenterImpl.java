@@ -11,7 +11,6 @@ import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.ACache;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.presenter.contract.SourceEditContract;
@@ -42,7 +41,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
     public void saveSource(BookSourceBean bookSource, BookSourceBean bookSourceOld, boolean debug) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             if (bookSourceOld != null && !Objects.equals(bookSource.getBookSourceUrl(), bookSourceOld.getBookSourceUrl())) {
-                DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().delete(bookSourceOld);
+                BookSourceManager.delete(bookSourceOld);
             }
             BookSourceManager.add(bookSource);
             e.onNext(true);

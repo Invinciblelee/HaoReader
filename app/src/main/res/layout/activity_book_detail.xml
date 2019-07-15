@@ -11,16 +11,16 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_content"
+        style="@style/AppTheme.CardView.Background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="30dp"
+        android:layout_margin="24dp"
         android:clickable="true"
         android:focusable="true"
         app:cardBackgroundColor="@color/colorCardBackground"
         app:cardCornerRadius="6dp"
-        app:cardElevation="10dp"
-        app:cardPreventCornerOverlap="true">
+        app:cardElevation="10dp">
 
 
         <RelativeLayout

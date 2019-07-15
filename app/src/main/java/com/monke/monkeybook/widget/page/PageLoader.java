@@ -43,6 +43,7 @@ import static com.monke.monkeybook.widget.page.PageStatus.STATUS_NETWORK_ERROR;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PARING;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PARSE_ERROR;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_PREPARE_CATEGORY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_UNKNOWN_ERROR;
 
 /**
  * Created by newbiechen on 17-7-1.
@@ -625,14 +626,6 @@ public abstract class PageLoader {
         mPageView.invalidate();
     }
 
-    private void preDrawBackground() {
-        Bitmap bitmap = mPageView.getNextBitmap();
-        if (bitmap != null && !bitmap.isRecycled()) {
-            Canvas canvas = new Canvas(bitmap);
-            drawBackground(canvas);
-        }
-    }
-
     private void drawBackground(Canvas canvas) {
         if (mSettingManager.bgIsColor()) {
             canvas.drawColor(mSettingManager.getBgColor());
@@ -649,6 +642,13 @@ public abstract class PageLoader {
         }
     }
 
+    private void preDrawBackground() {
+        Bitmap bitmap = mPageView.getNextBitmap();
+        if (bitmap != null && !bitmap.isRecycled()) {
+            Canvas canvas = new Canvas(bitmap);
+            drawBackground(canvas);
+        }
+    }
 
     /**
      * 绘制内容
@@ -838,7 +838,8 @@ public abstract class PageLoader {
                 callback.onChapterPrepared();
             }
         } else {
-            preDrawBackground(); //由于异步加载，先绘制一下背景。否则可能会出现黑屏
+//            setCurrentStatus(STATUS_LOADING);
+            preDrawBackground();
             //异步加载章节
             dealLoadChapter(prevChapter, () -> {
                 if (!mCurChapter.isEmpty()) {
@@ -870,12 +871,21 @@ public abstract class PageLoader {
             preload();
         } else {
             setCurrentStatus(STATUS_LOADING);
-            dealLoadChapter(mCurChapterPos, () -> {
-                if (callback != null) {
-                    callback.onChapterPrepared();
+            dealLoadChapter(mCurChapterPos, new OnSimpleChapterPreparedCallback() {
+
+                @Override
+                public void onChapterPrepared() {
+                    if (callback != null) {
+                        callback.onChapterPrepared();
+                    }
+                    preload();
                 }
 
-                preload();
+                @Override
+                void onChapterLoadFailed() {
+                    setCurrentStatus(STATUS_UNKNOWN_ERROR);
+                }
+
             });
         }
     }
@@ -907,7 +917,8 @@ public abstract class PageLoader {
                 callback.onChapterPrepared();
             }
         } else {
-            preDrawBackground();//由于异步加载，先绘制一下背景。否则可能会出现黑屏
+//            setCurrentStatus(STATUS_LOADING);
+            preDrawBackground();
             //异步加载章节
             dealLoadChapter(nextChapter, () -> {
                 if (!mCurChapter.isEmpty()) {
@@ -928,6 +939,7 @@ public abstract class PageLoader {
     void dealLoadChapter(int chapterPos, OnChapterPreparedCallback callback) {
         if (mCurLoadDisposable != null) {
             mCurLoadDisposable.dispose();
+            mCurLoadDisposable = null;
         }
 
         Single.create((SingleOnSubscribe<TxtChapter>) emitter ->
@@ -953,6 +965,9 @@ public abstract class PageLoader {
 
                     @Override
                     public void onError(Throwable e) {
+                        if (callback instanceof OnSimpleChapterPreparedCallback) {
+                            ((OnSimpleChapterPreparedCallback) callback).onChapterLoadFailed();
+                        }
                     }
                 });
     }
@@ -972,6 +987,7 @@ public abstract class PageLoader {
         //如果之前正在加载则取消
         if (mPreLoadNextDisposable != null) {
             mPreLoadNextDisposable.dispose();
+            mPreLoadNextDisposable = null;
         }
 
         //调用异步进行预加载加载
@@ -1012,6 +1028,7 @@ public abstract class PageLoader {
         //如果之前正在加载则取消
         if (mPreLoadPrevDisposable != null) {
             mPreLoadPrevDisposable.dispose();
+            mPreLoadPrevDisposable = null;
         }
 
         //调用异步进行预加载加载
@@ -1039,7 +1056,7 @@ public abstract class PageLoader {
 
     private Scheduler getScheduler() {
         if (mScheduler == null) {
-            mScheduler = RxExecutors.newScheduler(8);
+            mScheduler = RxExecutors.newScheduler(16);
         }
         return mScheduler;
     }
@@ -1282,5 +1299,11 @@ public abstract class PageLoader {
 
     interface OnChapterPreparedCallback {
         void onChapterPrepared();
+    }
+
+    abstract class OnSimpleChapterPreparedCallback implements OnChapterPreparedCallback {
+
+        abstract void onChapterLoadFailed();
+
     }
 }

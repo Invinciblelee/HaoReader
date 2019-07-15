@@ -122,12 +122,20 @@ public class BookContentBean implements Parcelable {
 
                 content = TextProcessor.formatHtml(durChapterContent);
                 matcher = PATTERN_SPACE_START.matcher(content);
-                if(matcher.find()){
+                if (matcher.find()) {
                     this.durChapterContent.append(matcher.replaceFirst(""));
-                }else {
+                } else {
                     this.durChapterContent.append(content);
                 }
             }
+        }
+    }
+
+    public void appendRawDurChapterContent(String durChapterContent) {
+        if (this.durChapterContent == null) {
+            setDurChapterContent(durChapterContent);
+        } else {
+            this.durChapterContent.append("\n").append(durChapterContent);
         }
     }
 

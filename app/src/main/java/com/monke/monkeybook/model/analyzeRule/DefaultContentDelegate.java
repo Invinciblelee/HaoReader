@@ -13,7 +13,6 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
-import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -129,7 +128,7 @@ class DefaultContentDelegate implements ContentDelegate {
             List<String[]> ruleGroups = new ArrayList<>();
             // 提取规则信息
             for (String rule : ruleList) {
-                ruleGroups.add(Assistant.splitRegexRule(rule));
+                ruleGroups.add(splitRegexRule(rule));
             }
             // 提取书籍列表信息
             while (resM.find()) {
@@ -160,6 +159,27 @@ class DefaultContentDelegate implements ContentDelegate {
             while (resM.find()) result.append(resM.group());
             matchSearchListRegex(searchBooks, result.toString(), regs, ++index);
         }
+    }
+
+    private static String[] splitRegexRule(String str) {
+        int start = 0, index = 0, len = str.length();
+        List<String> list = new ArrayList<>();
+        while (start < len) {
+            if ((str.charAt(start) == '$') && (str.charAt(start + 1) >= '0') && (str.charAt(start + 1) <= '9')) {
+                if (start > index) list.add(str.substring(index, start));
+                if ((start + 2 < len) && (str.charAt(start + 2) >= '0') && (str.charAt(start + 2) <= '9')) {
+                    list.add(str.substring(start, start + 3));
+                    index = start += 3;
+                } else {
+                    list.add(str.substring(start, start + 2));
+                    index = start += 2;
+                }
+            } else {
+                ++start;
+            }
+        }
+        if (start > index) list.add(str.substring(index, start));
+        return list.toArray(new String[0]);
     }
 
     private void addSearchBook(List<SearchBookBean> searchBookBeans, String name, String author, String kind, String lastChapter, String introduce, String coverUrl, String noteUrl, Map<String, String> variableMap) {
@@ -498,6 +518,7 @@ class DefaultContentDelegate implements ContentDelegate {
             emitter.onComplete();
         });
     }
+
 
     private class WebContentResult {
 

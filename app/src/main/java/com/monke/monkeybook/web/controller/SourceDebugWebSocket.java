@@ -2,13 +2,12 @@ package com.monke.monkeybook.web.controller;
 
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.monkeybook.base.observer.SimpleObserver;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.content.Debug;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -22,6 +21,8 @@ import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
 
 public class SourceDebugWebSocket extends NanoWSD.WebSocket {
     private CompositeDisposable compositeDisposable;
@@ -63,7 +64,7 @@ public class SourceDebugWebSocket extends NanoWSD.WebSocket {
     @Override
     protected void onMessage(NanoWSD.WebSocketFrame message) {
         if (!StringUtils.isJsonType(message.getTextPayload())) return;
-        Map<String, String> debugBean = new Gson().fromJson(message.getTextPayload(), Patterns.STRING_MAP);
+        Map<String, String> debugBean = Assistant.fromJson(message.getTextPayload(), MAP_TYPE);
         String tag = debugBean.get("tag");
         String key = debugBean.get("key");
         Debug.newDebug(tag, key, compositeDisposable, new Debug.CallBack() {

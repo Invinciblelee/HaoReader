@@ -26,6 +26,7 @@ import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutor;
 import com.monke.monkeybook.model.analyzeRule.assit.SimpleJavaExecutorImpl;
 import com.monke.monkeybook.presenter.contract.FindBookContract;
+import com.monke.monkeybook.utils.ListUtils;
 import com.monke.monkeybook.utils.MD5Utils;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -43,6 +44,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 
 public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.View> implements FindBookContract.Presenter {
 
@@ -58,6 +60,11 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     private FindGroupIterator mGroupIterator;
 
     private boolean mShowAllFind;
+
+    private final Function<List<SearchBookBean>, List<SearchBookBean>> mBookFilter = searchBookBeans -> {
+        ListUtils.removeDuplicate(searchBookBeans);
+        return searchBookBeans;
+    };
 
     @Override
     public void attachView(@NonNull IView iView) {
@@ -137,19 +144,29 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                 .subscribeOn(mScheduler)
                 .flatMap(s -> {
                     BookSourceBean sourceBean = BookSourceManager.getByUrl(s);
+                    return Observable.just(sourceBean);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(sourceBean -> {
+                    FindKindGroupBean groupBean = new FindKindGroupBean();
+                    groupBean.setGroupName(sourceBean.getBookSourceName());
+                    groupBean.setTag(sourceBean.getBookSourceUrl());
+                    mView.updateItem(groupBean);
+                })
+                .observeOn(mScheduler)
+                .flatMap(sourceBean -> {
                     FindKindGroupBean groupBean = getFromBookSource(sourceBean);
                     if (groupBean == null) {
-                        return Observable.error(new Exception("can not get FindKindGroupBean from: " + s));
+                        return Observable.error(new Exception("can not get FindKindGroupBean from: " + sourceBean.getBookSourceUrl()));
                     }
                     return Observable.just(groupBean);
                 })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(groupBean -> mView.updateItem(groupBean))
                 .flatMap(findKindGroupBean -> {
                     FindKindBean kindBean = findKindGroupBean.getChildren().get(0);
                     return WebBookModel.getInstance().findBook(kindBean.getTag(), kindBean.getKindUrl(), 1)
                             .subscribeOn(mScheduler)
                             .timeout(30, TimeUnit.SECONDS)
+                            .map(mBookFilter)
                             .flatMap(searchBookBeans -> {
                                 findKindGroupBean.setBooks(searchBookBeans);
                                 return Observable.just(findKindGroupBean);
@@ -160,6 +177,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                                 return Observable.just(findKindGroupBean);
                             });
                 })
+                .doOnNext(this::putBookCache)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<FindKindGroupBean>() {
                     @Override
@@ -209,6 +227,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                     return WebBookModel.getInstance().findBook(kindBean.getTag(), kindBean.getKindUrl(), 1)
                             .subscribeOn(mScheduler)
                             .timeout(30, TimeUnit.SECONDS)
+                            .map(mBookFilter)
                             .flatMap(searchBookBeans -> {
                                 findKindGroupBean.setBooks(searchBookBeans);
                                 return Observable.just(findKindGroupBean);
@@ -299,7 +318,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             return;
         }
         try {
-            String json = Assistant.GSON.toJson(groupBean.getBooks());
+            String json = Assistant.toJson(groupBean.getBooks());
             ACache.get(mView.getContext()).put(groupBean.getTag(), json, ACache.TIME_DAY);
         } catch (Exception ignore) {
         }
@@ -308,7 +327,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     private List<SearchBookBean> getFromBookCache(String url) {
         try {
             String json = ACache.get(mView.getContext()).getAsString(url);
-            return Assistant.GSON.fromJson(json, new TypeToken<List<SearchBookBean>>() {
+            return Assistant.fromJson(json, new TypeToken<List<SearchBookBean>>() {
             }.getType());
         } catch (Exception ignore) {
         }
@@ -319,7 +338,6 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
         final List<BookSourceBean> bookSourceBeans;
         if (mShowAllFind) {
             bookSourceBeans = BookSourceManager.getAll();
-            System.out.println(bookSourceBeans.toString());
         } else {
             bookSourceBeans = BookSourceManager.getFindEnabled();
         }

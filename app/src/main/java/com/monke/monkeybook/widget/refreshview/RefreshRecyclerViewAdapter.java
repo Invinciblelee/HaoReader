@@ -18,7 +18,7 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private Handler handler;
     private int isRequesting = 0;   //0是未执行网络请求  1是正在下拉刷新  2是正在加载更多
-    private Boolean needLoadMore = false;
+    private Boolean needLoadMore;
     private Boolean isAll = false;  //判断是否还有更多
     private Boolean loadMoreError = false;
 
@@ -69,16 +69,17 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
         if (holder.getItemViewType() == LOAD_MORE_TYPE) {
             LoadMoreViewHolder loadHolder = (LoadMoreViewHolder) holder;
             if (!loadMoreError) {
-                loadHolder.progressBar.setVisibility(View.VISIBLE);
+                loadHolder.progressBar.show();
                 loadHolder.tvLoadMore.setText("正在加载...");
             } else {
-                loadHolder.progressBar.setVisibility(View.GONE);
+                loadHolder.progressBar.hide();
                 loadHolder.tvLoadMore.setText("加载失败,点击重试");
             }
             ((LoadMoreViewHolder) holder).llLoadMore.setOnClickListener(v -> {
                 if (null != clickTryAgainListener && loadMoreError) {
                     clickTryAgainListener.loadMoreErrorTryAgain();
                     loadMoreError = false;
+                    loadHolder.progressBar.show();
                     ((LoadMoreViewHolder) holder).tvLoadMore.setText("正在加载...");
                 }
             });
@@ -125,12 +126,12 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
-    class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+    static class LoadMoreViewHolder extends RecyclerView.ViewHolder {
         View llLoadMore;
         TextView tvLoadMore;
         RotateLoading progressBar;
 
-        public LoadMoreViewHolder(View itemView) {
+        LoadMoreViewHolder(View itemView) {
             super(itemView);
             llLoadMore = itemView.findViewById(R.id.ll_loadmore);
             tvLoadMore = itemView.findViewById(R.id.tv_loadmore);
@@ -166,6 +167,17 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
             } else {
                 handler.post(this::notifyDataSetChanged);
             }
+        }
+    }
+
+    public void resetLoadMore() {
+        this.isRequesting = 0;
+        this.loadMoreError = false;
+        this.isAll = false;
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            notifyDataSetChanged();
+        } else {
+            handler.post(this::notifyDataSetChanged);
         }
     }
 }

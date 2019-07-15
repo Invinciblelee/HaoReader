@@ -60,6 +60,8 @@
             android:layout_height="match_parent"
             android:layout_marginStart="21dp"
             android:background="@color/transparent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="center_vertical"
             android:hint="@string/search"
             android:includeFontPadding="false"
