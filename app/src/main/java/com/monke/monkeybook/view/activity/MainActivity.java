@@ -455,7 +455,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (drawerView == drawerRight) {
                     if (slideOffset < 0.8f) {
-                        KeyboardUtil.hideKeyboard(getCurrentFocus());
+                        KeyboardUtil.hideKeyboard(drawerRight.getCurrentFocus(false));
                     }
                 }
             }
