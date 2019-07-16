@@ -3,12 +3,9 @@ package com.monke.monkeybook.model.impl;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
-import retrofit2.http.Headers;
-import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 

@@ -101,10 +101,12 @@ public class BookshelfHelp {
         if (bookShelfBean != null) {
             BookInfoBean bookInfoBean = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
                     .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookShelfBean.getNoteUrl())).unique();
-            bookShelfBean.setBookInfoBean(bookInfoBean);
+            if (bookInfoBean != null) {
+                bookShelfBean.setBookInfoBean(bookInfoBean);
 
-            bookShelfBean.setChapterList(queryChapterList(bookInfoBean.getNoteUrl()));
-            bookShelfBean.setBookmarkList(queryBookmarkList(bookInfoBean.getName()));
+                bookShelfBean.setChapterList(queryChapterList(bookInfoBean.getNoteUrl()));
+                bookShelfBean.setBookmarkList(queryBookmarkList(bookInfoBean.getName()));
+            }
             return bookShelfBean;
         }
         return null;
@@ -117,7 +119,9 @@ public class BookshelfHelp {
         if (bookInfoBean != null) {
             BookShelfBean bookShelfBean = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
                     .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookInfoBean.getNoteUrl())).build().unique();
-            bookShelfBean.setBookInfoBean(bookInfoBean);
+            if(bookShelfBean != null) {
+                bookShelfBean.setBookInfoBean(bookInfoBean);
+            }
             return bookShelfBean;
         }
         return null;

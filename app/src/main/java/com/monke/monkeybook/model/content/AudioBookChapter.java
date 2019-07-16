@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.os.Parcelable;
-
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeConfig;

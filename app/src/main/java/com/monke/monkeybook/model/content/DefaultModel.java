@@ -101,7 +101,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .postData(analyzeUrl.getPostData())
                         .headerMap(analyzeUrl.getHeaderMap())
-                        .cookieStore(CookieHelper.get());
+                        .cookieStore(CookieHelper.getInstance());
                 switch (analyzeUrl.getRequestMethod()) {
                     case DEFAULT:
                     case POST:
@@ -169,7 +169,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .postData(analyzeUrl.getPostData())
                         .headerMap(analyzeUrl.getHeaderMap())
-                        .cookieStore(CookieHelper.get());
+                        .cookieStore(CookieHelper.getInstance());
                 switch (analyzeUrl.getRequestMethod()) {
                     case DEFAULT:
                     case POST:
@@ -204,7 +204,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .suffix(audioBookChapter.getSuffix())
-                        .cookieStore(CookieHelper.get())
+                        .cookieStore(CookieHelper.getInstance())
                         .postData(analyzeUrl.getPostData())
                         .headerMap(analyzeUrl.getHeaderMap())
                         .javaScript(audioBookChapter.getJavaScript());
@@ -259,7 +259,7 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
                 }
                 String cookie = cookieBuilder.toString();
                 if (!TextUtils.isEmpty(cookie)) {
-                    CookieHelper.get().replaceCookie(tag, cookie);
+                    CookieHelper.getInstance().replaceCookie(tag, cookie);
                 }
             }
             e.onNext(response);

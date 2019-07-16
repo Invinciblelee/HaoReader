@@ -243,6 +243,7 @@ class DefaultContentDelegate implements ContentDelegate {
             bookInfoBean.setTag(getConfig().getTag());
             bookInfoBean.setOrigin(getConfig().getName());
             bookInfoBean.setBookType(getBookSource().getBookSourceType());
+            book.setNoteUrl(bookInfoBean.getNoteUrl());
             emitter.onNext(book);
             emitter.onComplete();
         });

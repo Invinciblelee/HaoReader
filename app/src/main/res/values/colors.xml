@@ -2,7 +2,7 @@
 <resources>
 
     <color name="colorBackground">#f4f4f4</color>
-    <color name="colorCardBackground">#FFFFFF</color>
+    <color name="colorCardBackground">#ffffff</color>
 
     <color name="colorPrimary">#607d8b</color>
     <color name="colorPrimaryDark">#607d8b</color>

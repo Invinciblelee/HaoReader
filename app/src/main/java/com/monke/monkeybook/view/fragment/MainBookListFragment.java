@@ -92,6 +92,15 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
         });
     }
 
+    private void restoreFragment(Fragment fragment) {
+        if (fragment instanceof BookListFragment) {
+            ((BookListFragment) fragment).refreshBookShelf(false);
+        } else if (fragment instanceof AudioBookFragment) {
+            ((AudioBookFragment) fragment).onRestore();
+        }
+    }
+
+
     private void refreshFragment(Fragment fragment) {
         if (fragment instanceof BookListFragment) {
             ((BookListFragment) fragment).refreshBookShelf(true);
@@ -195,7 +204,7 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
     @Override
     public void onRestore() {
         for (Fragment fragment : fragments) {
-            refreshFragment(fragment);
+            restoreFragment(fragment);
         }
     }
 

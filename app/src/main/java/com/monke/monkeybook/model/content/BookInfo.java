@@ -19,7 +19,7 @@ final class BookInfo {
         this.bookSourceBean = bookSourceBean;
     }
 
-    Observable<BookShelfBean> analyzeBookInfo(String s,  String baseUrl, BookShelfBean bookShelfBean) {
+    Observable<BookShelfBean> analyzeBookInfo(String s, String baseUrl, BookShelfBean bookShelfBean) {
         OutAnalyzer<?> analyzer = AnalyzerFactory.create(bookSourceBean.getBookSourceRuleType(), new AnalyzeConfig()
                 .tag(tag)
                 .name(name)

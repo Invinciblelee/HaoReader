@@ -282,7 +282,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
                 WebLoadConfig config = actRef.get().mConfig;
                 if (config != null) {
                     CookieManager cookieManager = CookieManager.getInstance();
-                    CookieHelper.get().setCookie(config.getTag(), cookieManager.getCookie(url));
+                    CookieHelper.getInstance().setCookie(config.getTag(), cookieManager.getCookie(url));
                 }
             }
             super.onPageFinished(view, url);

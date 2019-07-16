@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -41,7 +42,6 @@ public class BookShelfSearchView extends LinearLayout {
 
     private BookShelfListAdapter adapter;
 
-    private String query;
     private IQuery iQuery;
 
     public BookShelfSearchView(Context context, @Nullable AttributeSet attrs) {
@@ -110,8 +110,6 @@ public class BookShelfSearchView extends LinearLayout {
             return;
         }
 
-        this.query = query;
-
         if (iQuery != null) {
             iQuery.query(query);
         }
@@ -148,9 +146,10 @@ public class BookShelfSearchView extends LinearLayout {
     }
 
     public void addBookShelfIfNeed(BookShelfBean bookShelfBean) {
-        if (bookShelfBean != null && this.query != null
-                && (bookShelfBean.getBookInfoBean().getName().contains(this.query)
-                || bookShelfBean.getBookInfoBean().getAuthor().contains(this.query))) {
+        String query = searchView.getQuery() == null ? null : searchView.getQuery().toString();
+        if (bookShelfBean != null && StringUtils.isNotBlank(query)
+                && (bookShelfBean.getBookInfoBean().getName().contains(query)
+                || bookShelfBean.getBookInfoBean().getAuthor().contains(query))) {
             adapter.addBook(bookShelfBean);
         }
     }

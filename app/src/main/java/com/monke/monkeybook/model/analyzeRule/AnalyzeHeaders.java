@@ -30,7 +30,7 @@ public class AnalyzeHeaders {
 
         String sourceUrl = bookSource == null ? null : bookSource.getBookSourceUrl();
         if (!isEmpty(sourceUrl)) {
-            String cookie = CookieHelper.get().getCookie(sourceUrl);
+            String cookie = CookieHelper.getInstance().getCookie(sourceUrl);
             if (!isEmpty(cookie)) {
                 headerMap.put("Cookie", cookie);
             }

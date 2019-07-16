@@ -452,32 +452,19 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private void initDrawer() {
         drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
-            public void onDrawerClosed(View drawerView) {
-                if (drawerView == drawerRight) {
-                    return;
-                }
-                super.onDrawerClosed(drawerView);
-            }
-
-            @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (drawerView == drawerRight) {
-                    if (slideOffset > 0) {
+                    if (slideOffset < 0.8f) {
                         KeyboardUtil.hideKeyboard(getCurrentFocus());
                     }
-                    return;
                 }
-                super.onDrawerSlide(drawerView, slideOffset);
-
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 if (drawerView == drawerRight) {
                     KeyboardUtil.showKeyboard(drawerRight.getCurrentFocus(true));
-                    return;
                 }
-                super.onDrawerOpened(drawerView);
             }
         });
 

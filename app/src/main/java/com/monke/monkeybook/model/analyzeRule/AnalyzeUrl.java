@@ -295,14 +295,15 @@ public class AnalyzeUrl {
     public String toString() {
         return "AnalyzeUrl{" +
                 "requestUrl='" + requestUrl + '\'' +
+                ", baseUrl='" + baseUrl + '\'' +
                 ", url='" + url + '\'' +
                 ", host='" + host + '\'' +
                 ", urlPath='" + urlPath + '\'' +
                 ", queryStr='" + queryStr + '\'' +
                 ", postData=" + Arrays.toString(postData) +
+                ", encoding='" + encoding + '\'' +
                 ", queryMap=" + queryMap +
                 ", headerMap=" + headerMap +
-                ", encoding='" + encoding + '\'' +
                 ", requestMethod=" + requestMethod +
                 '}';
     }

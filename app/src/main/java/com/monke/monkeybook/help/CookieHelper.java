@@ -20,7 +20,7 @@ public class CookieHelper implements CookieStore {
     private CookieHelper() {
     }
 
-    public static CookieHelper get() {
+    public static CookieHelper getInstance() {
         if (mInstance == null) {
             synchronized (AppConfigHelper.class) {
                 if (mInstance == null) {
