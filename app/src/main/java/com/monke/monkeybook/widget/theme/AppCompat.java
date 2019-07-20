@@ -84,6 +84,17 @@ public class AppCompat {
         setQueryHintForSearchText(searchText, hint, showSearchHintIcon);
     }
 
+    public static void useSimpleStyleForSearchView(SearchView searchView, String hint){
+        AppCompatImageView search = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+        search.setImageDrawable(null);
+        LinearLayout plate = searchView.findViewById(R.id.search_plate);
+        plate.setBackground(null);
+        AppCompatImageView close = searchView.findViewById(R.id.search_close_btn);
+        AppCompat.setTint(close, searchView.getResources().getColor(R.color.colorBarText));
+        SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById(R.id.search_src_text);
+        searchAutoComplete.setHint(hint);
+    }
+
     public static void useCustomIconForSearchView(SearchView searchView, String hint) {
         useCustomIconForSearchView(searchView, hint, false, true);
     }

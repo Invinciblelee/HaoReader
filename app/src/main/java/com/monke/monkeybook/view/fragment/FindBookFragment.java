@@ -115,12 +115,14 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             }
         });
 
-        mHeightProvider = new KeyboardHeightProvider(requireActivity()).init().setHeightListener(height -> {
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
-            params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 24);
-            searchField.requestLayout();
-            searchField.postDelayed(() -> animShow(height > 0), 200L);
-        });
+        mHeightProvider = new KeyboardHeightProvider(requireActivity()).setHeightListener(height -> {
+            if(searchEdit.hasFocus()) {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
+                params.bottomMargin = height + DensityUtil.dp2px(requireContext(), 24);
+                searchField.requestLayout();
+                searchField.postDelayed(() -> animShow(height > 0), 200L);
+            }
+        }).start();
 
         searchEdit.post(() -> searchEdit.clearFocus());
     }
@@ -248,5 +250,11 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
     @Override
     public void onReselected() {
         rvFindList.scrollToPosition(0);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mHeightProvider.stop();
     }
 }

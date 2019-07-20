@@ -291,7 +291,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
     @SuppressLint("ClickableViewAccessibility")
     private void initSearchView() {
-        AppCompat.useCustomIconForSearchView(searchView, getString(R.string.searchBook));
+        AppCompat.useSimpleStyleForSearchView(searchView, getString(R.string.searchBook));
         mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -308,10 +308,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
         });
 
         searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus && TextUtils.isEmpty(searchView.getQuery())) {
-                finish();
-            }
-
             if (hasFocus) {
                 mPresenter.stopSearch();
                 openOrCloseHistory(true);
@@ -343,7 +339,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             mPresenter.stopSearch();
             openOrCloseHistory(true);
         } else {
-            finish();
+            supportFinishAfterTransition();
         }
     }
 

@@ -40,7 +40,7 @@ public class KeyboardHeightProvider extends PopupWindow implements ViewTreeObser
         });
     }
 
-    public KeyboardHeightProvider init() {
+    public KeyboardHeightProvider start() {
         if (!isShowing()) {
             final View view = mActivity.getWindow().getDecorView();
             // 延迟加载popupwindow，如果不加延迟就会报错
@@ -56,6 +56,10 @@ public class KeyboardHeightProvider extends PopupWindow implements ViewTreeObser
 
     public boolean isKeyboardActive() {
         return isKeyboardActive;
+    }
+
+    public void stop(){
+        dismiss();
     }
 
     @Override

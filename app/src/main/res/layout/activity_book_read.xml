@@ -228,59 +228,63 @@
 
                 <View style="@style/Style.Shadow.Bottom" />
                 <!--底部设置栏-->
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/rlNavigationBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:background="@color/colorPrimary">
                     <!--章节设置-->
-                    <TextView
-                        android:id="@+id/tv_pre"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:text="@string/previous_chapter"
-                        android:textColor="@color/colorBarText"
-                        android:textSize="14sp" />
 
-                    <androidx.appcompat.widget.AppCompatSeekBar
-                        android:id="@+id/hpb_read_progress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@id/tv_pre"
-                        android:layout_alignBottom="@id/tv_pre"
-                        android:layout_gravity="center_vertical"
-                        android:layout_toStartOf="@id/tv_next"
-                        android:layout_toEndOf="@id/tv_pre"
-                        android:progressBackgroundTint="@color/colorProgressTrackLight"
-                        android:progressTint="@color/colorProgress"
-                        android:thumbTint="@color/colorProgress" />
 
-                    <TextView
-                        android:id="@+id/tv_next"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginEnd="24dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:text="@string/next_chapter"
-                        android:textColor="@color/colorBarText"
-                        android:textSize="14sp" />
+                        android:paddingTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_pre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:text="@string/previous_chapter"
+                            android:textColor="@color/colorBarText"
+                            android:textSize="14sp" />
+
+                        <androidx.appcompat.widget.AppCompatSeekBar
+                            android:id="@+id/hpb_read_progress"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:progressBackgroundTint="@color/colorProgressTrackLight"
+                            android:progressTint="@color/colorProgress"
+                            android:thumbTint="@color/colorProgress" />
+
+                        <TextView
+                            android:id="@+id/tv_next"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="24dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:text="@string/next_chapter"
+                            android:textColor="@color/colorBarText"
+                            android:textSize="14sp" />
+
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_below="@id/hpb_read_progress"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="4dp"
                         android:baselineAligned="false"
@@ -380,7 +384,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
                     </LinearLayout>
-                </RelativeLayout>
+                </LinearLayout>
 
             </LinearLayout>
 

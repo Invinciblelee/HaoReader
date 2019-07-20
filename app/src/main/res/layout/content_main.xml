@@ -16,10 +16,12 @@
         tools:ignore="UnusedAttribute">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_search_bar"
             style="@style/CardView.Light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:transitionName="sharedView"
             app:cardBackgroundColor="@color/colorSearchField"
             app:cardCornerRadius="3dp">
 
@@ -27,9 +29,9 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:transitionName="sharedView"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:title="@string/search_label"
+                app:title="@string/searchBook"
+                app:titleTextAppearance="@style/TextAppearance.Toolbar.Title"
                 app:titleTextColor="@color/colorBarText" />
 
         </androidx.cardview.widget.CardView>
@@ -38,6 +40,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
+
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="36dp"

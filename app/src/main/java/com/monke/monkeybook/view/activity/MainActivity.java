@@ -77,6 +77,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     NavigationView drawerLeft;
     @BindView(R.id.appBar)
     View appBar;
+    @BindView(R.id.card_search_bar)
+    View mSearchBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tab_layout)
@@ -146,7 +148,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         FindBookFragment findFragment = findFragment(FindBookFragment.class);
 
-        if (viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.dispatchTouchEvent(ev)) {
+        if (!drawer.isDrawerOpen(GravityCompat.END) && viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.dispatchTouchEvent(ev)) {
             return true;
         }
 
@@ -212,7 +214,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         toolbar.setOnClickListener(v -> {
             //点击搜索
             Intent intent = new Intent(MainActivity.this, SearchBookActivity.class);
-            startActivityByAnim(intent, R.anim.anim_alpha_in, R.anim.anim_alpha_out);
+            startActivityByAnim(intent, mSearchBar, mSearchBar.getTransitionName());
         });
 
     }
