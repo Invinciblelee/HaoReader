@@ -1,4 +1,4 @@
-package com.monke.monkeybook.model.analyzeRule.pattern;
+package com.monke.monkeybook.model.analyzeRule.assit;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class Patterns {
+public class AnalyzeGlobal {
 
 
     public static final Pattern PATTERN_HEADER = Pattern.compile("@header:\\{.+?\\}", Pattern.CASE_INSENSITIVE);
@@ -24,7 +24,10 @@ public class Patterns {
     public static final Pattern PATTERN_SPACE_START = Pattern.compile("^[\\s|\\u3000]+");
     public static final Pattern PATTERN_SPACE_END = Pattern.compile("[\\s|\\u3000]+$");
 
-    public static final Type MAP_TYPE = new TypeToken<Map<String, String>>(){}.getType();
+    public static final Type MAP_TYPE = new TypeToken<Map<String, String>>() {
+    }.getType();
+
+    public static final String EMPTY = "";
 
     public static final String REGEX_OPERATOR = "(?i)@operate:";
     public static final String REGEX_REDIRECT = "(?i)@redirect:";
@@ -45,4 +48,5 @@ public class Patterns {
     public static final String RULE_XPATH_TRAIT = "//";
     public static final String RULE_CSS = "@CSS:";
     public static final String RULE_REGEX = "##";
+
 }

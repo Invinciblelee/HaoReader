@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:outlineProvider="background"
     app:cardBackgroundColor="@color/colorAccent"
-    app:cardElevation="1dp">
+    app:cardCornerRadius="4dp"
+    app:cardElevation="4dp">
 
     <TextView
         android:id="@+id/tv_message"

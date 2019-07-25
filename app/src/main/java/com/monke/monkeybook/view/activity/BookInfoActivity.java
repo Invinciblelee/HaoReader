@@ -145,7 +145,7 @@ public class BookInfoActivity extends MBaseActivity {
                     .onGranted(requestCode -> imageSelectorResult()).build().request();
         });
         tvChangeCover.setOnClickListener(view -> ChangeSourceDialog.show(getSupportFragmentManager(), bookInfo, true, searchBookBean -> {
-            tieCoverUrl.setText(searchBookBean.getRealCoverUrl());
+            tieCoverUrl.setText(searchBookBean.getCoverUrl());
             initCover(getTextString(tieCoverUrl));
         }));
         tvRefreshCover.setOnClickListener(view -> initCover(getTextString(tieCoverUrl)));

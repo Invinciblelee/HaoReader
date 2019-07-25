@@ -10,6 +10,7 @@ import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ChapterContentHelp;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.model.content.DefaultModel;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
@@ -47,11 +48,11 @@ public class WebBookModel implements IWebBookModel {
      */
     @Override
     public Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean) {
-        IStationBookModel bookModel = getBookSourceModel(bookShelfBean.getTag());
-        if (bookModel != null) {
+        try {
+            IStationBookModel bookModel = getBookSourceModel(bookShelfBean.getTag());
             return bookModel.getBookInfo(bookShelfBean);
-        } else {
-            return Observable.error(new Throwable(bookShelfBean.getBookInfoBean().getName() + "没有书源"));
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 
@@ -63,12 +64,12 @@ public class WebBookModel implements IWebBookModel {
      */
     @Override
     public Observable<BookShelfBean> getChapterList(final BookShelfBean bookShelfBean) {
-        IStationBookModel bookModel = getBookSourceModel(bookShelfBean.getTag());
-        if (bookModel != null) {
+        try {
+            IStationBookModel bookModel = getBookSourceModel(bookShelfBean.getTag());
             return bookModel.getChapterList(bookShelfBean)
                     .flatMap((chapterList) -> updateChapterList(bookShelfBean, chapterList));
-        } else {
-            return Observable.error(new Throwable(bookShelfBean.getBookInfoBean().getName() + "没有书源"));
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 
@@ -79,22 +80,22 @@ public class WebBookModel implements IWebBookModel {
      */
     @Override
     public Observable<BookContentBean> getBookContent(BookInfoBean bookInfo, ChapterBean chapter) {
-        IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
-        if (bookModel != null) {
+        try {
+            IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
             return bookModel.getBookContent(bookInfo.getChapterListUrl(), chapter)
                     .flatMap(bookContentBean -> saveChapterInfo(bookInfo, bookContentBean));
-        } else {
-            return Observable.error(new Exception("can not find book source."));
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 
     @Override
     public Observable<ChapterBean> getAudioBookContent(BookInfoBean bookInfo, ChapterBean chapter) {
-        IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
-        if (bookModel instanceof IAudioBookChapterModel) {
+        try {
+            IStationBookModel bookModel = getBookSourceModel(bookInfo.getTag());
             return ((IAudioBookChapterModel) bookModel).getAudioBookContent(bookInfo.getChapterListUrl(), chapter);
-        } else {
-            return Observable.error(new IllegalAccessException("the model is not IAudioBookChapterModel."));
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 
@@ -104,11 +105,11 @@ public class WebBookModel implements IWebBookModel {
     @Override
     public Observable<List<SearchBookBean>> searchBook(String tag, String content, int page) {
         //获取所有书源类
-        IStationBookModel bookModel = getBookSourceModel(tag);
-        if (bookModel != null) {
+        try {
+            IStationBookModel bookModel = getBookSourceModel(tag);
             return bookModel.searchBook(content, page);
-        } else {
-            return Observable.error(new Exception("can not find book source."));
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 
@@ -117,21 +118,20 @@ public class WebBookModel implements IWebBookModel {
      */
     @Override
     public Observable<List<SearchBookBean>> findBook(String tag, String url, int page) {
-        IStationBookModel bookModel = getBookSourceModel(tag);
-        if (bookModel != null) {
+        try {
+            IStationBookModel bookModel = getBookSourceModel(tag);
             return bookModel.findBook(url, page);
-        } else {
-            return Observable.error(new Exception("can not find book source."));
+        } catch (Exception e) {
+            return Observable.error(e);
         }
     }
 
     //获取book source class
-    private IStationBookModel getBookSourceModel(String tag) {
+    private IStationBookModel getBookSourceModel(String tag) throws BookSourceException {
         if (BookShelfBean.LOCAL_TAG.equals(tag)) {
-            return null;
-        }  else {
-            return DefaultModel.newInstance(tag);
+            throw new IllegalArgumentException("unsupported local book");
         }
+        return DefaultModel.newInstance(tag);
     }
 
     private Observable<BookShelfBean> updateChapterList(BookShelfBean bookShelfBean, List<ChapterBean> chapterList) {

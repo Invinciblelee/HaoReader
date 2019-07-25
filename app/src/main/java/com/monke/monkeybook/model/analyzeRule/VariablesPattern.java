@@ -4,15 +4,15 @@ import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_GET;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.MAP_TYPE;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_GET;
 
 final class VariablesPattern {
 
@@ -22,11 +22,11 @@ final class VariablesPattern {
     private VariablesPattern(@NonNull String ruleStr, int flag) {
         map = new HashMap<>();
 
-        if (flag == 0 && findWhere(ruleStr, Patterns.PATTERN_PUT_SEARCH)) {
+        if (flag == 0 && findWhere(ruleStr, AnalyzeGlobal.PATTERN_PUT_SEARCH)) {
             return;
         }
 
-        if (flag == 1 && findWhere(ruleStr, Patterns.PATTERN_PUT_DETAIL)) {
+        if (flag == 1 && findWhere(ruleStr, AnalyzeGlobal.PATTERN_PUT_DETAIL)) {
             return;
         }
 

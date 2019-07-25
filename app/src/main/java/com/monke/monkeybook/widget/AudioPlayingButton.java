@@ -47,6 +47,11 @@ public class AudioPlayingButton extends FrameLayout {
         initView();
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+    }
+
     private void initView() {
         ViewCompat.setElevation(this, DensityUtil.dp2px(getContext(), 8));
         ViewCompat.setBackground(this, getResources().getDrawable(R.drawable.shape_audio_bar));
@@ -81,9 +86,15 @@ public class AudioPlayingButton extends FrameLayout {
         }
     }
 
-    public void stop() {
+    public void pause() {
         if (animator != null) {
             animator.pause();
+        }
+    }
+
+    public void stop() {
+        if (animator != null) {
+            animator.cancel();
         }
     }
 

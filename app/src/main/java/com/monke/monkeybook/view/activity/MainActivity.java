@@ -34,7 +34,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
-import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
@@ -45,6 +44,7 @@ import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
+import com.monke.monkeybook.view.fragment.AudioBookFragment;
 import com.monke.monkeybook.view.fragment.FileSelectorFragment;
 import com.monke.monkeybook.view.fragment.FindBookFragment;
 import com.monke.monkeybook.view.fragment.FragmentTrigger;
@@ -52,7 +52,6 @@ import com.monke.monkeybook.view.fragment.MainBookListFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
-import com.monke.monkeybook.widget.AudioPlayingButton;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -87,8 +86,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     BookShelfSearchView drawerRight;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
-    @BindView(R.id.view_audio_running)
-    AudioPlayingButton runningView;
 
     @BindArray(R.array.tab_main)
     String[] titles;
@@ -140,7 +137,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        MainBookListFragment mainFragment = findMainBookListFragment();
+        MainBookListFragment mainFragment = findFragment(MainBookListFragment.class);
         if (viewPager.getCurrentItem() == 0 && mainFragment != null && mainFragment.dispatchTouchEvent(ev)) {
             return true;
         }
@@ -219,44 +216,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     }
 
-    @Override
-    public void onPlayEvent(AudioPlayInfo info) {
-        switch (info.getAction()) {
-            case AudioBookPlayService.ACTION_ATTACH:
-                runningView.setCoverImage(info.getBookInfoBean().getRealCoverUrl());
-                runningView.setProgress(info.getProgress(), info.getDuration());
-                if (info.isPause()) {
-                    runningView.setPause();
-                } else {
-                    runningView.setResume();
-                }
-                runningView.show();
-                break;
-            case AudioBookPlayService.ACTION_START:
-                runningView.setResume();
-                break;
-            case AudioBookPlayService.ACTION_PAUSE:
-                runningView.setPause();
-                break;
-            case AudioBookPlayService.ACTION_RESUME:
-                runningView.setResume();
-                break;
-            case AudioBookPlayService.ACTION_PROGRESS:
-                runningView.setProgress(info.getProgress(), info.getDuration());
-                break;
-            case AudioBookPlayService.ACTION_STOP:
-                runningView.hide();
-                runningView.stop();
-                break;
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        runningView.stop();
-    }
-
     public void setCurrentItem(int item) {
         viewPager.setCurrentItem(item);
     }
@@ -299,6 +258,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 case 1:
                     fragmentTrigger = findFragment(FindBookFragment.class);
                     break;
+                case 2:
+                    fragmentTrigger = findFragment(AudioBookFragment.class);
             }
 
             if (fragmentTrigger != null) {
@@ -323,6 +284,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             case 1:
                 fragmentTrigger = findFragment(FindBookFragment.class);
                 break;
+            case 2:
+                fragmentTrigger = findFragment(AudioBookFragment.class);
         }
 
         if (fragmentTrigger != null) {
@@ -404,7 +367,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 viewIsList = !viewIsList;
                 editor.putBoolean("bookshelfIsList", viewIsList);
                 if (editor.commit()) {
-                    Optional.ofNullable(findMainBookListFragment()).ifPresent(mainBookListFragment -> mainBookListFragment.upLayoutType(viewIsList));
+                    Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(mainBookListFragment -> mainBookListFragment.upLayoutType(viewIsList));
                 }
                 break;
             case R.id.action_clearCaches:
@@ -595,10 +558,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         imageView.startAnimation(animationSet);
     }
 
-    private MainBookListFragment findMainBookListFragment() {
-        return findFragment(MainBookListFragment.class);
-    }
-
     @SuppressWarnings("unchecked")
     private <T extends Fragment> T findFragment(Class<T> clazz) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
@@ -614,7 +573,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         AudioBookPlayService.stop(this);
         drawerRight.clear();
 
-        Optional.ofNullable(findMainBookListFragment()).ifPresent(MainBookListFragment::clearBookshelf);
+        Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(MainBookListFragment::clearBookshelf);
     }
 
     @Override
@@ -656,7 +615,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @Override
     public void addSuccess(BookShelfBean bookShelfBean) {
-        Optional.ofNullable(findMainBookListFragment()).ifPresent(mainBookListFragment -> mainBookListFragment.addBookSuccess(bookShelfBean));
+        Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(mainBookListFragment -> mainBookListFragment.addBookSuccess(bookShelfBean));
     }
 
     @Override
@@ -666,6 +625,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         Optional.ofNullable(findFragment(MainBookListFragment.class)).ifPresent(MainBookListFragment::onRestore);
         Optional.ofNullable(findFragment(FindBookFragment.class)).ifPresent(FindBookFragment::onRestore);
+        Optional.ofNullable(findFragment(AudioBookFragment.class)).ifPresent(AudioBookFragment::onRestore);
     }
 
     @Override
@@ -676,7 +636,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            MainBookListFragment mainFragment = findMainBookListFragment();
+            MainBookListFragment mainFragment = findFragment(MainBookListFragment.class);
             if (viewPager.getCurrentItem() == 0 && mainFragment != null && mainFragment.onBackPressed()) {
                 return true;
             }
@@ -699,10 +659,11 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     public void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            showSnackBar("再按一次退出程序");
+            toast("再按一次退出程序");
             exitTime = System.currentTimeMillis();
         } else {
             finish();
+            System.exit(0);
         }
     }
 
@@ -723,8 +684,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 case 0:
                     return new MainBookListFragment();
                 case 1:
-                default:
                     return new FindBookFragment();
+                case 2:
+                default:
+                    return new AudioBookFragment();
             }
         }
 

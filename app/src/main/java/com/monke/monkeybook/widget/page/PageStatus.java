@@ -18,6 +18,7 @@ public class PageStatus {
     public static final int STATUS_HY = 13;            // 换源
     public static final int STATUS_HY_ERROR = 14;      // 换源失败
     public static final int STATUS_CHANGE_CHARSET = 15; //设置编码
+    public static final int STATUS_SOURCE_NOT_FIND = 16; //没有找到书源
 
     private PageStatus() {
     }
@@ -45,6 +46,9 @@ public class PageStatus {
                 break;
             case STATUS_CATEGORY_ERROR:
                 tip = String.format("加载失败\n%s", "无法获取目录列表");
+                break;
+            case STATUS_SOURCE_NOT_FIND:
+                tip = String.format("加载失败\n%s", "没有找到当前书源");
                 break;
             case STATUS_PREPARE_CATEGORY:
                 tip = "正在准备目录...";

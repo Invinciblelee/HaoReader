@@ -13,7 +13,7 @@ public interface CacheManagerContract {
 
         void removeItem(BookShelfBean bookShelfBean);
 
-        void showSnackBar(String msg);
+        void toast(String msg);
 
         void showExtractTip(BookShelfBean bookShelfBean);
 

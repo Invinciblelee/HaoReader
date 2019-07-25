@@ -18,6 +18,7 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.presenter.contract.BookDetailContract;
 
 import java.util.concurrent.TimeUnit;
@@ -294,7 +295,11 @@ public class BookDetailPresenterImpl extends BasePresenterImpl<BookDetailContrac
                     @Override
                     public void onError(Throwable e) {
                         mView.updateView(true);
-                        mView.toast("书源更换失败");
+                        if (e instanceof BookSourceException) {
+                            mView.toast(e.getMessage());
+                        } else {
+                            mView.toast("书源更换失败");
+                        }
                     }
                 });
     }

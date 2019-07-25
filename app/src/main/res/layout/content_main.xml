@@ -64,6 +64,12 @@
                 android:icon="@drawable/ic_track_changes_black_24dp"
                 android:text="@string/find_on_www" />
 
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_headset_black_24dp"
+                android:text="@string/item_group_ys" />
+
         </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -74,15 +80,5 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBar"
         tools:visibility="gone" />
-
-
-    <com.monke.monkeybook.widget.AudioPlayingButton
-        android:id="@+id/view_audio_running"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
-        android:visibility="invisible" />
 
 </RelativeLayout>

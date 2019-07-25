@@ -69,7 +69,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("书源保存失败");
+                        mView.toast("书源保存失败");
                     }
                 });
     }
@@ -80,7 +80,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
         ClipData clipData = ClipData.newPlainText(null, mView.getBookSourceStr());
         if (clipboard != null) {
             clipboard.setPrimaryClip(clipData);
-            mView.showSnackBar("拷贝成功");
+            mView.toast("拷贝成功");
         }
     }
 
@@ -100,7 +100,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
             BookSourceBean bookSourceBean = gson.fromJson(bookSourceStr, BookSourceBean.class);
             mView.setText(bookSourceBean);
         } catch (Exception ignore) {
-            mView.showSnackBar("数据格式不对");
+            mView.toast("数据格式不对");
         }
     }
 
@@ -143,7 +143,7 @@ public class SourceEditPresenterImpl extends BasePresenterImpl<SourceEditContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("分享失败");
+                        mView.toast("分享失败");
                     }
                 });
     }

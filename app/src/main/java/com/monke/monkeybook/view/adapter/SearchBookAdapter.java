@@ -65,7 +65,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         }
         Activity activity = activityRef.get();
         Glide.with(activity)
-                .load(item.getRealCoverUrl())
+                .load(item.getCoverUrl())
                 .apply(new RequestOptions()
                         .centerCrop()
                         .dontAnimate().placeholder(R.drawable.img_cover_default)

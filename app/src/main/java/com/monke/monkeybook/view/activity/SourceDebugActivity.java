@@ -211,7 +211,7 @@ public class SourceDebugActivity extends MBaseActivity {
     }
 
     private void printDebugLog(String msg) {
-        int titleIndex = msg.indexOf("★");
+        int titleIndex = msg.indexOf("◆[");
         if (titleIndex >= 0) {
             SpannableString spannableString = new SpannableString(msg);
             spannableString.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), titleIndex, msg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

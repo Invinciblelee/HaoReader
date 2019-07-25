@@ -30,7 +30,6 @@ public class RxExecutors {
     }
 
     public static Scheduler newScheduler() {
-
         return newScheduler(THREAD_NUM);
     }
 

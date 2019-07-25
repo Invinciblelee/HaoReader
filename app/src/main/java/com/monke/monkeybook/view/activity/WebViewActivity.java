@@ -226,7 +226,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         webView.reload();
     }
 
-
     private void openInBrowser() {
         try {
             String url = webView.getUrl();

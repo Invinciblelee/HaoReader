@@ -187,17 +187,6 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         return snackbar;
     }
 
-    public void showSnackBar(String msg) {
-        Snackbar snackbar = getSnackBar(msg);
-        if (snackbar != null) {
-            snackbar.show();
-        }
-    }
-
-    public void showSnackBar(@StringRes int msgId) {
-        showSnackBar(getString(msgId));
-    }
-
     public void toast(String msg) {
         ToastUtils.toast(this, msg);
     }

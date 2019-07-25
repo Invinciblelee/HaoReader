@@ -214,7 +214,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             updateView(true);
         } else {
             if (mPresenter.getSearchBook() == null) return;
-            showCoverImage(mPresenter.getSearchBook().getRealCoverUrl());
+            showCoverImage(mPresenter.getSearchBook().getCoverUrl());
             llBookRecent.setVisibility(View.GONE);
             tvName.setText(mPresenter.getSearchBook().getName());
             tvAuthor.setText(mPresenter.getSearchBook().getAuthor());

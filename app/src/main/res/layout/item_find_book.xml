@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="8dp">
+    android:paddingBottom="4dp">
 
     <com.monke.monkeybook.widget.ScaleDrawableTextView
         android:id="@+id/tv_source_name"
@@ -19,8 +19,8 @@
         android:gravity="center_vertical"
         android:paddingStart="10dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:paddingEnd="6dp"
+        android:paddingBottom="10dp"
         android:textColor="@color/colorTextDefault"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -32,7 +32,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_book_list"
         android:layout_width="match_parent"
-        android:layout_height="148dp"
+        android:layout_height="164.8dp"
         android:clipToPadding="false"
         android:nestedScrollingEnabled="false"
         android:orientation="horizontal"

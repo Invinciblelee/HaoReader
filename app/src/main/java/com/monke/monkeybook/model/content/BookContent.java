@@ -29,7 +29,7 @@ final class BookContent {
                         .bookSource(bookSourceBean)
                         .baseURL(baseUrl)
                         .extra("chapter", chapter));
-        return analyzer.getContent(s);
+        return analyzer.getBookContent(s);
     }
 
 

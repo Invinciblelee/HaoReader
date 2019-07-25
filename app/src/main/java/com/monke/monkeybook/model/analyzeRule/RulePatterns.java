@@ -7,7 +7,7 @@ import androidx.annotation.IntDef;
 
 import com.monke.monkeybook.bean.VariableStore;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.lang.annotation.Retention;
@@ -57,7 +57,7 @@ final class RulePatterns {
             final SimpleBindings simpleBindings = new SimpleBindings() {{
                 this.put("baseUrl", baseUrl);
             }};
-            Matcher expMatcher = Patterns.PATTERN_EXP.matcher(rawRule);
+            Matcher expMatcher = AnalyzeGlobal.PATTERN_EXP.matcher(rawRule);
             while (expMatcher.find()) {
                 Object result = Assistant.evalObjectScript(expMatcher.group(1), simpleBindings);
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {

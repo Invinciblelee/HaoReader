@@ -1,7 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
 
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ abstract class SourceParser<S> {
     private S mSource;
     private String mStringSource;
 
-    final void setContent(Object source) {
+    final void setSource(Object source) {
         mPrimitive = source;
         mSource = null;
         mStringSource = null;
@@ -41,7 +41,7 @@ abstract class SourceParser<S> {
     }
 
     final boolean isOuterBody(String rule) {
-        return Patterns.RULE_BODY.equals(rule);
+        return AnalyzeGlobal.RULE_BODY.equals(rule);
     }
 
     void onAttachSource(Object source) {

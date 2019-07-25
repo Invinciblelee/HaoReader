@@ -263,8 +263,8 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:progressBackgroundTint="@color/colorProgressTrackLight"
-                            android:progressTint="@color/colorProgress"
-                            android:thumbTint="@color/colorProgress" />
+                            android:progressTint="@color/colorProgressWhite"
+                            android:thumbTint="@color/colorProgressWhite" />
 
                         <TextView
                             android:id="@+id/tv_next"

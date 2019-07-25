@@ -6,7 +6,6 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +16,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
 import com.monke.basemvplib.AppActivityManager;
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
-import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
-import com.monke.monkeybook.service.AudioBookPlayService;
-import com.monke.monkeybook.service.WebService;
-import com.monke.monkeybook.view.activity.MainActivity;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
@@ -79,7 +75,6 @@ public class MApplication extends Application {
         } catch (PackageManager.NameNotFoundException e) {
             versionCode = 0;
             versionName = "0.0.0";
-            e.printStackTrace();
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -210,13 +205,6 @@ public class MApplication extends Application {
             @Override
             public void onActivityDestroyed(Activity activity) {
                 AppActivityManager.getInstance().remove(activity);
-                if (activity instanceof MainActivity) {
-                    Intent intent = activity.getIntent();
-                    if (intent != null && !intent.getBooleanExtra("isRecreate", false)) {
-                        AudioBookPlayService.stop(activity);
-                        WebService.stopThis(activity);
-                    }
-                }
             }
         });
     }

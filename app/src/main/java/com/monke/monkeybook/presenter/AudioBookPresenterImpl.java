@@ -9,6 +9,7 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.impl.IView;
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
@@ -106,4 +107,8 @@ public class AudioBookPresenterImpl extends BasePresenterImpl<AudioBookContract.
         }
     }
 
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.AUDIO_PLAY)})
+    public void onPlayEvent(AudioPlayInfo info) {
+        mView.onPlayEvent(info);
+    }
 }

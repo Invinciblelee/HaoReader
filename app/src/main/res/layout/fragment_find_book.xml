@@ -52,7 +52,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="24dp"
             android:src="@drawable/ic_search_black_24dp"
-            android:tint="@color/colorMenuText" />
+            android:tint="@color/colorAccent" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edit_find_search"

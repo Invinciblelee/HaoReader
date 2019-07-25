@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JSON;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_JSON;
 
 final class JsonParser extends SourceParser<ReadContext> {
 

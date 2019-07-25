@@ -5,7 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.model.annotation.RuleType;
 import com.monke.monkeybook.utils.StringUtils;
@@ -385,7 +385,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public String getRealRuleBookContent() {
         if (sniffRuleBookContent()) {
-            String[] rules = ruleBookContent.split(Patterns.REGEX_OPERATOR);
+            String[] rules = ruleBookContent.split(AnalyzeGlobal.REGEX_OPERATOR);
             if (rules.length > 1) {
                 return rules[0].substring(2);
             }
@@ -399,7 +399,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public String getAjaxJavaScript() {
         if (ajaxJavaScript == null) {
-            String[] rules = ruleBookContent.split(Patterns.REGEX_OPERATOR);
+            String[] rules = ruleBookContent.split(AnalyzeGlobal.REGEX_OPERATOR);
             if (rules.length > 1) {
                 ajaxJavaScript = rules[1];
             }
@@ -409,20 +409,20 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public boolean ajaxRuleBookContent() {
         if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
-                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON)
-                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON_TRAIT)) {
+                || StringUtils.startWithIgnoreCase(ruleBookContent, AnalyzeGlobal.RULE_JSON)
+                || StringUtils.startWithIgnoreCase(ruleBookContent, AnalyzeGlobal.RULE_JSON_TRAIT)) {
             return false;
         }
-        return !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_AJAX);
+        return !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(AnalyzeGlobal.RULE_AJAX);
     }
 
     public boolean sniffRuleBookContent() {
         if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
-                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON)
-                || StringUtils.startWithIgnoreCase(ruleBookContent, Patterns.RULE_JSON_TRAIT)) {
+                || StringUtils.startWithIgnoreCase(ruleBookContent, AnalyzeGlobal.RULE_JSON)
+                || StringUtils.startWithIgnoreCase(ruleBookContent, AnalyzeGlobal.RULE_JSON_TRAIT)) {
             return false;
         }
-        return !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(Patterns.RULE_SNIFF);
+        return !TextUtils.isEmpty(ruleBookContent) && ruleBookContent.startsWith(AnalyzeGlobal.RULE_SNIFF);
     }
 
     public void setRuleBookContent(String ruleBookContent) {
@@ -439,11 +439,11 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public boolean ajaxSearchList() {
         if (TextUtils.equals(bookSourceRuleType, RuleType.JSON)
-                || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON)
-                || StringUtils.startWithIgnoreCase(ruleSearchUrl, Patterns.RULE_JSON_TRAIT)) {
+                || StringUtils.startWithIgnoreCase(ruleSearchUrl, AnalyzeGlobal.RULE_JSON)
+                || StringUtils.startWithIgnoreCase(ruleSearchUrl, AnalyzeGlobal.RULE_JSON_TRAIT)) {
             return false;
         }
-        return !TextUtils.isEmpty(ruleSearchUrl) && ruleSearchUrl.startsWith(Patterns.RULE_AJAX);
+        return !TextUtils.isEmpty(ruleSearchUrl) && ruleSearchUrl.startsWith(AnalyzeGlobal.RULE_AJAX);
     }
 
     public String getRealRuleSearchUrl() {
@@ -532,21 +532,21 @@ public class BookSourceBean implements Parcelable, Cloneable {
     }
 
     public boolean searchListReverse() {
-        return !TextUtils.isEmpty(ruleSearchList) && ruleSearchList.startsWith(Patterns.RULE_REVERSE);
+        return !TextUtils.isEmpty(ruleSearchList) && ruleSearchList.startsWith(AnalyzeGlobal.RULE_REVERSE);
     }
 
     public boolean searchListInWhole() {
         if (TextUtils.isEmpty(ruleSearchList)) {
             return false;
         }
-        return StringUtils.startWithIgnoreCase(ruleSearchList, Patterns.RULE_IN_WHOLE);
+        return StringUtils.startWithIgnoreCase(ruleSearchList, AnalyzeGlobal.RULE_IN_WHOLE);
     }
 
     public boolean searchListInRegex() {
         if (TextUtils.isEmpty(ruleSearchList)) {
             return false;
         }
-        return StringUtils.startWithIgnoreCase(ruleSearchList, Patterns.RULE_IN_REGEX);
+        return StringUtils.startWithIgnoreCase(ruleSearchList, AnalyzeGlobal.RULE_IN_REGEX);
     }
 
     public void setRuleSearchList(String ruleSearchList) {
@@ -572,23 +572,23 @@ public class BookSourceBean implements Parcelable, Cloneable {
             return false;
         }
         if (chapterListInWhole() || chapterListInRegex()) {
-            return ruleChapterList.startsWith(Patterns.RULE_REVERSE, 7);
+            return ruleChapterList.startsWith(AnalyzeGlobal.RULE_REVERSE, 7);
         }
-        return ruleChapterList.startsWith(Patterns.RULE_REVERSE);
+        return ruleChapterList.startsWith(AnalyzeGlobal.RULE_REVERSE);
     }
 
     public boolean chapterListInWhole() {
         if (TextUtils.isEmpty(ruleChapterList)) {
             return false;
         }
-        return StringUtils.startWithIgnoreCase(ruleChapterList, Patterns.RULE_IN_WHOLE);
+        return StringUtils.startWithIgnoreCase(ruleChapterList, AnalyzeGlobal.RULE_IN_WHOLE);
     }
 
     public boolean chapterListInRegex() {
         if (TextUtils.isEmpty(ruleChapterList)) {
             return false;
         }
-        return StringUtils.startWithIgnoreCase(ruleChapterList, Patterns.RULE_IN_REGEX);
+        return StringUtils.startWithIgnoreCase(ruleChapterList, AnalyzeGlobal.RULE_IN_REGEX);
     }
 
     public void setRuleChapterList(String ruleChapterList) {

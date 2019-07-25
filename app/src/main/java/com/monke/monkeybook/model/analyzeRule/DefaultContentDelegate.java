@@ -13,6 +13,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SimpleModel;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -75,13 +76,13 @@ class DefaultContentDelegate implements ContentDelegate {
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
             Map<String, String> variableMap = mAnalyzer.putVariableMapDirectly(getBookSource().getRulePersistedVariables(), 0);
-            String name = TextProcessor.formatBookName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchName()));
-            String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchAuthor()));
-            String kind = StringUtils.join(",", mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchKind()));
-            String lastChapter = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchLastChapter());
-            String introduce = mAnalyzer.getResultContentDirectly(getBookSource().getRuleSearchIntroduce());
-            String coverUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchCoverUrl());
-            String noteUrl = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleSearchNoteUrl());
+            String name = TextProcessor.formatBookName(mAnalyzer.getTextDirectly(getBookSource().getRuleSearchName()));
+            String author = TextProcessor.formatAuthorName(mAnalyzer.getTextDirectly(getBookSource().getRuleSearchAuthor()));
+            String kind = StringUtils.join(",", mAnalyzer.getTextDirectly(getBookSource().getRuleSearchKind()));
+            String lastChapter = mAnalyzer.getTextDirectly(getBookSource().getRuleSearchLastChapter());
+            String introduce = mAnalyzer.getTextDirectly(getBookSource().getRuleSearchIntroduce());
+            String coverUrl = mAnalyzer.getRawUrlDirectly(getBookSource().getRuleSearchCoverUrl());
+            String noteUrl = mAnalyzer.getRawUrlDirectly(getBookSource().getRuleSearchNoteUrl());
             addSearchBook(searchBookBeans, name, author, kind, lastChapter, introduce, coverUrl, noteUrl, variableMap);
         }
         return searchBookBeans;
@@ -98,13 +99,13 @@ class DefaultContentDelegate implements ContentDelegate {
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
             Map<String, String> variableMap = mAnalyzer.putVariableMap(getBookSource().getRulePersistedVariables(), 0);
-            String name = TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleSearchName()));
-            String author = TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleSearchAuthor()));
-            String kind = StringUtils.join(",", mAnalyzer.getResultContents(getBookSource().getRuleSearchKind()));
-            String lastChapter = mAnalyzer.getResultContent(getBookSource().getRuleSearchLastChapter());
-            String introduce = mAnalyzer.getResultContent(getBookSource().getRuleSearchIntroduce());
-            String coverUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchCoverUrl());
-            String noteUrl = mAnalyzer.getResultUrl(getBookSource().getRuleSearchNoteUrl());
+            String name = TextProcessor.formatBookName(mAnalyzer.getText(getBookSource().getRuleSearchName()));
+            String author = TextProcessor.formatAuthorName(mAnalyzer.getText(getBookSource().getRuleSearchAuthor()));
+            String kind = StringUtils.join(",", mAnalyzer.getTextList(getBookSource().getRuleSearchKind()));
+            String lastChapter = mAnalyzer.getText(getBookSource().getRuleSearchLastChapter());
+            String introduce = mAnalyzer.getText(getBookSource().getRuleSearchIntroduce());
+            String coverUrl = mAnalyzer.getRawUrl(getBookSource().getRuleSearchCoverUrl());
+            String noteUrl = mAnalyzer.getRawUrl(getBookSource().getRuleSearchNoteUrl());
             addSearchBook(searchBookBeans, name, author, kind, lastChapter, introduce, coverUrl, noteUrl, variableMap);
         }
         return searchBookBeans;
@@ -193,12 +194,12 @@ class DefaultContentDelegate implements ContentDelegate {
         item.setIntroduce(introduce);
         item.setKind(kind);
         item.setLastChapter(lastChapter);
-        item.setCoverUrl(coverUrl);
+        item.setCoverUrl(mAnalyzer.processUrl(coverUrl));
         item.putVariableMap(variableMap);
         if (StringUtils.isBlank(noteUrl)) {
             item.setNoteUrl(getConfig().getBaseURL());
         } else {
-            item.setNoteUrl(noteUrl);
+            item.setNoteUrl(mAnalyzer.processUrl(noteUrl));
         }
         searchBookBeans.add(item);
     }
@@ -214,25 +215,25 @@ class DefaultContentDelegate implements ContentDelegate {
             book.putVariableMap(mAnalyzer.putVariableMap(getBookSource().getRulePersistedVariables(), 1));
 
             if (isEmpty(bookInfoBean.getCoverUrl())) {
-                bookInfoBean.setCoverUrl(mAnalyzer.getResultUrl(getBookSource().getRuleCoverUrl()));
+                bookInfoBean.setCoverUrl(mAnalyzer.getAbsUrl(getBookSource().getRuleCoverUrl()));
             }
             if (isEmpty(bookInfoBean.getName())) {
-                bookInfoBean.setName(TextProcessor.formatBookName(mAnalyzer.getResultContent(getBookSource().getRuleBookName())));
+                bookInfoBean.setName(TextProcessor.formatBookName(mAnalyzer.getText(getBookSource().getRuleBookName())));
             }
             if (isEmpty(bookInfoBean.getAuthor())) {
-                bookInfoBean.setAuthor(TextProcessor.formatAuthorName(mAnalyzer.getResultContent(getBookSource().getRuleBookAuthor())));
+                bookInfoBean.setAuthor(TextProcessor.formatAuthorName(mAnalyzer.getText(getBookSource().getRuleBookAuthor())));
             }
 
             if (isEmpty(bookInfoBean.getIntroduce())) {
-                bookInfoBean.setIntroduce(mAnalyzer.getResultContent(getBookSource().getRuleIntroduce()));
+                bookInfoBean.setIntroduce(mAnalyzer.getText(getBookSource().getRuleIntroduce()));
             }
 
 
             if (isEmpty(book.getLastChapterName())) {
-                book.setLastChapterName(mAnalyzer.getResultContent(getBookSource().getRuleBookLastChapter()));
+                book.setLastChapterName(mAnalyzer.getText(getBookSource().getRuleBookLastChapter()));
             }
 
-            String chapterUrl = mAnalyzer.getResultUrl(getBookSource().getRuleChapterUrl());
+            String chapterUrl = mAnalyzer.getAbsUrl(getBookSource().getRuleChapterUrl());
             if (isEmpty(chapterUrl)) {
                 bookInfoBean.setChapterListUrl(getConfig().getBaseURL());
             } else {
@@ -338,7 +339,7 @@ class DefaultContentDelegate implements ContentDelegate {
     private synchronized void toWebChaptersResult(String s, String ruleChapterList, WebChapterResult webChapter, boolean readUrls) {
         mAnalyzer.setContent(s);
         if (readUrls && !isEmpty(getBookSource().getRuleChapterUrlNext())) {
-            webChapter.nextUrls = mAnalyzer.getResultUrls(getBookSource().getRuleChapterUrlNext());
+            webChapter.nextUrls = mAnalyzer.getRawUrlList(getBookSource().getRuleChapterUrlNext());
         }
 
         final String noteUrl = getConfig().getExtras().getString("noteUrl");
@@ -360,8 +361,8 @@ class DefaultContentDelegate implements ContentDelegate {
         ChapterBean chapterBean = null;
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
-            String name = mAnalyzer.getResultContent(getBookSource().getRuleChapterName());
-            String url = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrl());   //id
+            String name = mAnalyzer.getText(getBookSource().getRuleChapterName());
+            String url = mAnalyzer.getRawUrl(getBookSource().getRuleContentUrl());   //id
 
             ChapterBean chapter = addChapter(chapterList, noteUrl, name, url);
             if (chapter != null) {
@@ -382,8 +383,8 @@ class DefaultContentDelegate implements ContentDelegate {
         ChapterBean chapterBean = null;
         while (collection.hasNext()) {
             mAnalyzer.setContent(collection.next());
-            String name = mAnalyzer.getResultContentDirectly(getBookSource().getRuleChapterName());
-            String url = mAnalyzer.getResultUrlDirectly(getBookSource().getRuleContentUrl());   //id
+            String name = mAnalyzer.getTextDirectly(getBookSource().getRuleChapterName());
+            String url = mAnalyzer.getRawUrlDirectly(getBookSource().getRuleContentUrl());   //id
 
             ChapterBean chapter = addChapter(chapterList, noteUrl, name, url);
             if (chapter != null) {
@@ -414,7 +415,7 @@ class DefaultContentDelegate implements ContentDelegate {
     private void matchChaptersRegex(String string, String noteUrl, String[] regex, int index, String nameRule, String urlRule, List<ChapterBean> chapterBeans) {
         Matcher matcher = Pattern.compile(regex[index]).matcher(string);
         if (index + 1 == regex.length) {
-            String baseUrl = "";
+            String baseUrl = AnalyzeGlobal.EMPTY;
             int nameGroup = 0, urlGroup = 0;
             // 分离标题正则参数
             Matcher nameMatcher = Pattern.compile("\\$(\\d$)").matcher(nameRule);
@@ -450,11 +451,11 @@ class DefaultContentDelegate implements ContentDelegate {
     }
 
     @Override
-    public Observable<BookContentBean> getContent(String source) {
+    public Observable<BookContentBean> getBookContent(String source) {
         return Observable.create(emitter -> {
             final ChapterBean chapter = getConfig().getExtras().getParcelable("chapter");
             if (chapter == null) {
-                emitter.onError(new NullPointerException("getContent can not with a null chapter"));
+                emitter.onError(new NullPointerException("getBookContent can not with a null chapter"));
                 return;
             }
 
@@ -500,9 +501,9 @@ class DefaultContentDelegate implements ContentDelegate {
         WebContentResult webContentBean = new WebContentResult();
         try {
             mAnalyzer.setContent(s);
-            webContentBean.result = mAnalyzer.getResultContent(ruleContent);
+            webContentBean.result = mAnalyzer.getText(ruleContent);
             if (!TextUtils.isEmpty(getBookSource().getRuleContentUrlNext())) {
-                webContentBean.nextUrl = mAnalyzer.getResultUrl(getBookSource().getRuleContentUrlNext());
+                webContentBean.nextUrl = mAnalyzer.getRawUrl(getBookSource().getRuleContentUrlNext());
             }
         } catch (Exception ex) {
             Logger.e(TAG, "getBookContent", ex);
@@ -515,7 +516,7 @@ class DefaultContentDelegate implements ContentDelegate {
     public Observable<String> getAudioContent(String source) {
         return Observable.create(emitter -> {
             final String ruleBookContent = getBookSource().getRealRuleBookContent();
-            emitter.onNext(mAnalyzer.setContent(source).getResultUrl(ruleBookContent));
+            emitter.onNext(mAnalyzer.setContent(source).getAbsUrl(ruleBookContent));
             emitter.onComplete();
         });
     }

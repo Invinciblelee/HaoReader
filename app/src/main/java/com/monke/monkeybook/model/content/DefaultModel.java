@@ -16,6 +16,7 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeHeaders;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.model.impl.IAudioBookChapterModel;
 import com.monke.monkeybook.model.impl.IStationBookModel;
 
@@ -41,16 +42,19 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     private BookSourceBean bookSourceBean;
     private Map<String, String> headerMap;
 
-    private DefaultModel(String tag) {
+    private DefaultModel(String tag) throws BookSourceException {
         this.tag = tag;
         bookSourceBean = BookSourceManager.getByUrl(tag);
         if (bookSourceBean != null) {
             name = bookSourceBean.getBookSourceName();
             headerMap = AnalyzeHeaders.getMap(bookSourceBean);
         }
+        if (bookSourceBean == null) {
+            throw new BookSourceException("没有找到当前书源");
+        }
     }
 
-    public static DefaultModel newInstance(String tag) {
+    public static DefaultModel newInstance(String tag) throws BookSourceException {
         return new DefaultModel(tag);
     }
 

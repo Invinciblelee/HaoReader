@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.monke.monkeybook.widget.ScrimInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
-    app:appInsetForeground="@color/colorPrimary">
+    android:background="@color/colorBackground">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,4 +14,13 @@
         android:paddingTop="4dp" />
 
 
-</com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>
+    <com.monke.monkeybook.widget.AudioPlayingButton
+        android:id="@+id/view_audio_running"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:visibility="invisible"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -74,6 +74,7 @@
     <string-array name="tab_main">
         <item>书架</item>
         <item>发现</item>
+        <item>有声</item>
     </string-array>
 
     <string-array name="source_type">

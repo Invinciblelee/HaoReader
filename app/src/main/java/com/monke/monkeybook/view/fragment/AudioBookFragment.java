@@ -1,6 +1,5 @@
 package com.monke.monkeybook.view.fragment;
 
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,14 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.monke.basemvplib.BaseFragment;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.presenter.AudioBookPresenterImpl;
 import com.monke.monkeybook.presenter.contract.AudioBookContract;
+import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 import com.monke.monkeybook.view.activity.BookDetailActivity;
 import com.monke.monkeybook.view.adapter.AudioBookAdapter;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
+import com.monke.monkeybook.widget.AudioPlayingButton;
 
 import java.util.List;
 
@@ -31,17 +33,10 @@ import butterknife.ButterKnife;
 public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter> implements AudioBookContract.View, FragmentTrigger {
     @BindView(R.id.rv_bookshelf)
     RecyclerView rvBookshelf;
+    @BindView(R.id.view_audio_running)
+    AudioPlayingButton runningView;
 
     private AudioBookAdapter bookListAdapter;
-
-    public static AudioBookFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        AudioBookFragment fragment = new AudioBookFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     protected AudioBookContract.Presenter initInjector() {
@@ -84,6 +79,10 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
     @Override
     protected void firstRequest() {
         mPresenter.loadAudioBooks(false);
+
+        if (AudioBookPlayService.running) {
+            AudioBookPlayService.start(requireContext());
+        }
     }
 
     @Override
@@ -164,5 +163,37 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
     @Override
     public void onReselected() {
         rvBookshelf.scrollToPosition(0);
+    }
+
+    @Override
+    public void onPlayEvent(AudioPlayInfo info) {
+        switch (info.getAction()) {
+            case AudioBookPlayService.ACTION_ATTACH:
+                runningView.setCoverImage(info.getBookInfoBean().getRealCoverUrl());
+                runningView.setProgress(info.getProgress(), info.getDuration());
+                if (info.isPause()) {
+                    runningView.setPause();
+                } else {
+                    runningView.setResume();
+                }
+                runningView.show();
+                break;
+            case AudioBookPlayService.ACTION_START:
+                runningView.setResume();
+                break;
+            case AudioBookPlayService.ACTION_PAUSE:
+                runningView.setPause();
+                break;
+            case AudioBookPlayService.ACTION_RESUME:
+                runningView.setResume();
+                break;
+            case AudioBookPlayService.ACTION_PROGRESS:
+                runningView.setProgress(info.getProgress(), info.getDuration());
+                break;
+            case AudioBookPlayService.ACTION_STOP:
+                runningView.hide();
+                runningView.stop();
+                break;
+        }
     }
 }

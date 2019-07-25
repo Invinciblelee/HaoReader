@@ -1,16 +1,13 @@
 package com.monke.monkeybook.model.analyzeRule.assit;
 
-import java.util.List;
-
-public interface JavaExecutor extends SimpleJavaExecutor{
+public interface JavaExecutor extends SimpleJavaExecutor {
 
     String putVariable(String key, String val);
 
     String getVariable(String key);
 
-    String parseResultContent(Object source, String rule);
+    String parseContent(Object source, String rule);
 
-    String parseResultUrl(Object source, String rule);
+    String parseUrl(Object source, String rule);
 
-    List<String> parseResultContents(Object source, String rule);
 }

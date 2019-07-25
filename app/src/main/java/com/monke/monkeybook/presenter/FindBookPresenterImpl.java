@@ -99,7 +99,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
             e.onNext(groupList);
             e.onComplete();
         })
-                .subscribeOn(RxExecutors.getDefault())
+                .subscribeOn(mScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(findKindGroupBeans -> {
                     mView.updateUI(findKindGroupBeans);

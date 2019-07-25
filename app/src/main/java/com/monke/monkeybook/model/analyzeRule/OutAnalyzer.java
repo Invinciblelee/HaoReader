@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import androidx.annotation.NonNull;
+
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
@@ -28,7 +30,7 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
 
 
     public final OutAnalyzer<S> setContent(Object source) {
-        getParser().setContent(source);
+        getParser().setSource(source);
         return this;
     }
 
@@ -57,33 +59,48 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public String getResultContent(String rule) {
-        return getPresenter().getResultContent(rule);
+    public String getText(String rule) {
+        return getPresenter().getText(rule);
     }
 
     @Override
-    public String getResultUrl(String rule) {
-        return getPresenter().getResultUrl(rule);
+    public String getRawUrl(String rule) {
+        return getPresenter().getRawUrl(rule);
     }
 
     @Override
-    public String getResultContentDirectly(String rule) {
-        return getPresenter().getResultContentDirectly(rule);
+    public String getAbsUrl(String rule) {
+        return getPresenter().getAbsUrl(rule);
     }
 
     @Override
-    public String getResultUrlDirectly(String rule) {
-        return getPresenter().getResultUrlDirectly(rule);
+    public String getTextDirectly(String rule) {
+        return getPresenter().getTextDirectly(rule);
     }
 
     @Override
-    public List<String> getResultContents(String rule) {
-        return getPresenter().getResultContents(rule);
+    public String getRawUrlDirectly(String rule) {
+        return getPresenter().getRawUrlDirectly(rule);
     }
 
     @Override
-    public List<String> getResultUrls(String rule) {
-        return getPresenter().getResultUrls(rule);
+    public String getAbsUrlDirectly(String rule) {
+        return getPresenter().getAbsUrlDirectly(rule);
+    }
+
+    @Override
+    public List<String> getTextList(String rule) {
+        return getPresenter().getTextList(rule);
+    }
+
+    @Override
+    public List<String> getRawUrlList(String rule) {
+        return getPresenter().getRawUrlList(rule);
+    }
+
+    @Override
+    public List<String> getAbsUrlList(String rule) {
+        return getPresenter().getAbsUrlList(rule);
     }
 
     @Override
@@ -99,6 +116,16 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     @Override
     public AnalyzeCollection getRawCollection(String rule) {
         return getPresenter().getRawCollection(rule);
+    }
+
+    @Override
+    public String processUrl(@NonNull String result) {
+        return getPresenter().processUrl(result);
+    }
+
+    @Override
+    public void processUrlList(List<String> result) {
+        getPresenter().processUrlList(result);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -119,8 +146,8 @@ public abstract class OutAnalyzer<S> implements IAnalyzerPresenter, ContentDeleg
     }
 
     @Override
-    public Observable<BookContentBean> getContent(String source) {
-        return new DefaultContentDelegate(this).getContent(source);
+    public Observable<BookContentBean> getBookContent(String source) {
+        return new DefaultContentDelegate(this).getBookContent(source);
     }
 
     @Override

@@ -297,7 +297,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     private void saveBookSource() {
         if (isEmpty(tieBookSourceName.getText()) || isEmpty(tieBookSourceUrl.getText())) {
-            showSnackBar("书源名称和URL不能为空");
+            toast("书源名称和URL不能为空");
             return;
         }
         mPresenter.saveSource(getBookSource(), bookSourceBean, false);

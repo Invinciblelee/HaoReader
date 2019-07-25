@@ -138,13 +138,13 @@ public class ChoiceBookFragment extends BaseFragment<ChoiceBookContract.Presente
     }
 
     @Override
-    public void searchBookError(boolean isRefresh) {
+    public void searchBookError(boolean isRefresh, String errorMsg) {
         if (isRefresh) {
             //刷新失败
             if (!NetworkUtil.isNetworkAvailable()) {
                 rfRvSearchBooks.refreshError("网络不可用");
             } else {
-                rfRvSearchBooks.refreshError();
+                rfRvSearchBooks.refreshError(errorMsg);
             }
         } else {
             rfRvSearchBooks.loadMoreError();

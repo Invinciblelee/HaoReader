@@ -5,13 +5,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-
-import androidx.appcompat.widget.ListPopupWindow;
-
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
+
+import androidx.appcompat.widget.ListPopupWindow;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.monke.monkeybook.R;
@@ -21,8 +20,18 @@ import com.monke.monkeybook.widget.theme.AppCompat;
 
 public class TextInputSpinner extends TextInputEditText {
 
-    CharSequence[] mEntities;
-    ListPopupWindow mPopup;
+    private CharSequence[] mEntities;
+    private ListPopupWindow mPopup;
+
+    private final Runnable mShowRunnable = new Runnable() {
+        @Override
+        public void run() {
+            TextInputSpinner.this.requestFocus();
+            if (!mPopup.isShowing()) {
+                mPopup.show();
+            }
+        }
+    };
 
     public TextInputSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -86,17 +95,19 @@ public class TextInputSpinner extends TextInputEditText {
         }
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        removeCallbacks(mShowRunnable);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean touch = super.onTouchEvent(event);
         if(event.getAction()== MotionEvent.ACTION_DOWN){
-            post(() -> {
-                TextInputSpinner.this.requestFocus();
-                if (!mPopup.isShowing()) {
-                    mPopup.show();
-                }
-            });
+            removeCallbacks(mShowRunnable);
+            post(mShowRunnable);
         }
         return touch;
     }

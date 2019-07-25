@@ -12,7 +12,6 @@ import com.monke.basemvplib.impl.IView;
 import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
-import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.LocBookShelfBean;
@@ -24,6 +23,7 @@ import com.monke.monkeybook.help.DataRestore;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.ImportBookModelImpl;
 import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -63,11 +63,6 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(List<BookShelfBean> bookShelfBeans) {
                         mView.showQueryBooks(bookShelfBeans);
                     }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
                 });
     }
 
@@ -87,16 +82,16 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     @Override
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
-                            mView.showSnackBar(R.string.backup_success);
+                            mView.toast(R.string.backup_success);
                         } else {
-                            mView.showSnackBar(R.string.backup_fail);
+                            mView.toast(R.string.backup_fail);
                         }
                         mView.dismissHUD();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar(R.string.backup_fail);
+                        mView.toast(R.string.backup_fail);
                         mView.dismissHUD();
                     }
                 });
@@ -121,17 +116,17 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(Boolean value) {
                         if (value) {
                             mView.restoreSuccess();
-                            mView.showSnackBar(R.string.restore_success);
+                            mView.toast(R.string.restore_success);
                         } else {
                             mView.dismissHUD();
-                            mView.showSnackBar(R.string.restore_fail);
+                            mView.toast(R.string.restore_fail);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.showSnackBar(R.string.restore_fail);
+                        mView.toast(R.string.restore_fail);
                     }
                 });
     }
@@ -161,7 +156,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
         })
                 .subscribeOn(RxExecutors.getDefault())
                 .flatMap(bookShelfBean -> {
-                    if (bookShelfBean.getTag() == null) {
+                    if (bookShelfBean.getNoteUrl() == null) {
                         return Observable.error(new Exception("exists"));
                     } else {
                         return getBook(bookShelfBean);
@@ -173,16 +168,18 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                     public void onNext(BookShelfBean bookShelfBean) {
                         mView.dismissHUD();
                         RxBus.get().post(RxBusTag.HAD_ADD_BOOK, bookShelfBean);
-                        mView.showSnackBar("添加书籍成功");
+                        mView.toast("添加书籍成功");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        if ("exists".equals(e.getMessage())) {
-                            mView.showSnackBar("该书已在书架中");
+                        if (e instanceof BookSourceException) {
+                            mView.toast(e.getMessage());
+                        } else if ("exists".equals(e.getMessage())) {
+                            mView.toast("该书已在书架中");
                         } else {
-                            mView.showSnackBar("书籍添加失败");
+                            mView.toast("书籍添加失败");
                         }
                     }
                 });
@@ -203,13 +200,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                             if (value) {
                                 RxBus.get().post(RxBusTag.HAD_REMOVE_BOOK, bookShelf);
                             } else {
-                                mView.showSnackBar("移出书架失败");
+                                mView.toast("移出书架失败");
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            mView.showSnackBar("移出书架失败");
+                            mView.toast("移出书架失败");
                         }
                     });
         }
@@ -233,7 +230,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("书架清空失败");
+                        mView.toast("书架清空失败");
                         mView.dismissHUD();
                     }
                 });
@@ -251,13 +248,13 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean value) {
-                        mView.showSnackBar("缓存清除成功");
+                        mView.toast("缓存清除成功");
                         mView.dismissHUD();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("缓存清除失败");
+                        mView.toast("缓存清除失败");
                         mView.dismissHUD();
                     }
                 });
@@ -288,7 +285,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar(e.getMessage());
+                        mView.toast(e.getMessage());
                         mView.dismissHUD();
                     }
                 });
@@ -349,8 +346,4 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
         mView.initImmersionBar();
     }
 
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.AUDIO_PLAY)})
-    public void onPlayEvent(AudioPlayInfo info) {
-        mView.onPlayEvent(info);
-    }
 }

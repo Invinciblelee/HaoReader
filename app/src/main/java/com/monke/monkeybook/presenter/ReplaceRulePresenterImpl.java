@@ -86,14 +86,14 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                 .subscribe(new SimpleObserver<List<ReplaceRuleBean>>() {
                     @Override
                     public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
-                        mView.showSnackBar("删除成功");
+                        mView.toast("删除成功");
                         mView.refresh(replaceRuleBeans);
                         mView.dismissLoading();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("删除失败");
+                        mView.toast("删除失败");
                         mView.dismissLoading();
                     }
                 });
@@ -159,13 +159,13 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                     @Override
                     public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
                         mView.refresh(ReplaceRuleManager.getAll());
-                        mView.showSnackBar("规则导入成功");
+                        mView.toast("规则导入成功");
                         mView.dismissLoading();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("规则导入失败");
+                        mView.toast("规则导入失败");
                         mView.dismissLoading();
                     }
                 });
@@ -186,12 +186,12 @@ public class ReplaceRulePresenterImpl extends BasePresenterImpl<ReplaceRuleContr
                     @Override
                     public void onNext(List<ReplaceRuleBean> replaceRuleBeans) {
                         mView.refresh(replaceRuleBeans);
-                        mView.showSnackBar("规则导入成功");
+                        mView.toast("规则导入成功");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("规则导入失败");
+                        mView.toast("规则导入失败");
                     }
                 });
     }

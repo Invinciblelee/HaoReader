@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
@@ -30,6 +29,7 @@ import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.MApplication;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.AudioPlayInfo;
@@ -41,9 +41,9 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.AudioBookPlayModelImpl;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
 import com.monke.monkeybook.utils.DensityUtil;
-import com.monke.basemvplib.NetworkUtil;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
 
@@ -139,7 +139,7 @@ public class AudioBookPlayService extends Service {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_PLAY);
-        intent.putExtra("chapter", (Parcelable) chapterBean);
+        intent.putExtra("chapter", chapterBean);
         context.startService(intent);
     }
 
@@ -369,8 +369,8 @@ public class AudioBookPlayService extends Service {
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                toastError("播放失败，无法获取播放链接");
+            public void onError(Throwable error) {
+                toastError(error, "播放失败，无法获取播放链接");
                 sendWhenError();
             }
         });
@@ -387,7 +387,7 @@ public class AudioBookPlayService extends Service {
 
             @Override
             public void onError(Throwable error) {
-                toastError("播放目录获取失败");
+                toastError(error, "播放目录获取失败");
                 sendWhenError();
             }
         });
@@ -407,7 +407,7 @@ public class AudioBookPlayService extends Service {
 
                 @Override
                 public void onError(Throwable error) {
-                    toastError("换源失败，请重新换源");
+                    toastError(error, "换源失败，请重新换源");
                     setLoading(false);
                 }
             });
@@ -455,7 +455,7 @@ public class AudioBookPlayService extends Service {
             Logger.d(TAG, "audio error --> " + what + "  " + extra);
             isPrepared = false;
             if (what != -38) {
-                toastError("播放失败，请重试");
+                toastError(null, "播放失败，请重试");
             }
             sendWhenError();
             return true;
@@ -535,8 +535,10 @@ public class AudioBookPlayService extends Service {
         }
     }
 
-    private void toastError(String errorMsg) {
-        if (NetworkUtil.isNetworkAvailable()) {
+    private void toastError(Throwable e, String errorMsg) {
+        if (e instanceof BookSourceException) {
+            ToastUtils.toast(AudioBookPlayService.this, e.getMessage());
+        } else if (NetworkUtil.isNetworkAvailable()) {
             ToastUtils.toast(AudioBookPlayService.this, errorMsg);
         } else {
             ToastUtils.toast(AudioBookPlayService.this, "网络连接失败");

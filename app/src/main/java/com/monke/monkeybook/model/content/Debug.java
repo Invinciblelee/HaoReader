@@ -183,7 +183,7 @@ public class Debug {
                         int size = bookShelfBean.getChapterList().size();
                         if (size > 0) {
                             printLog("●成功获取目录列表» 共" + size + "个章节");
-                            ChapterBean chapterBean = bookShelfBean.getChapter(0);
+                            ChapterBean chapterBean = bookShelfBean.getChapter(size - 1);
                             printLog("●章节名称» " + chapterBean.getDurChapterName());
                             printLog("●章节网址» " + URLUtils.getAbsUrl(bookShelfBean.getBookInfoBean().getChapterListUrl(), chapterBean.getDurChapterUrl()));
                             printLog(String.format("◆%s 目录结束", getDoTime()));
@@ -232,8 +232,8 @@ public class Debug {
                     public void onNext(BookContentBean bookContentBean) {
                         printLog("●成功获取正文页» " + URLUtils.getAbsUrl(bookInfoBean.getChapterListUrl(), bookContentBean.getDurChapterUrl()));
                         final String content = bookContentBean.getDurChapterContent();
-                        if (content != null && content.length() > 3000) {
-                            printLog("●章节内容» " + content.substring(0, 3000) + "\u00B7\u00B7\u00B7");
+                        if (content != null && content.length() > 6000) {
+                            printLog("●章节内容» " + content.substring(0, 6000) + "\u00B7\u00B7\u00B7");
                         } else {
                             printLog("●章节内容» " + content);
                         }

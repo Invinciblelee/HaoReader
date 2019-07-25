@@ -1,21 +1,29 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Map;
 
 public interface IAnalyzerPresenter {
 
-    String getResultContent(String rule);
+    String getText(String rule);
 
-    String getResultUrl(String rule);
+    String getRawUrl(String rule);
 
-    String getResultContentDirectly(String rule);
+    String getAbsUrl(String rule);
 
-    String getResultUrlDirectly(String rule);
+    String getTextDirectly(String rule);
 
-    List<String> getResultContents(String rule);
+    String getRawUrlDirectly(String rule);
 
-    List<String> getResultUrls(String rule);
+    String getAbsUrlDirectly(String rule);
+
+    List<String> getTextList(String rule);
+
+    List<String> getRawUrlList(String rule);
+
+    List<String> getAbsUrlList(String rule);
 
     Map<String, String> putVariableMap(String rule, int flag);
 
@@ -23,4 +31,7 @@ public interface IAnalyzerPresenter {
 
     AnalyzeCollection getRawCollection(String rule);
 
+    void processUrlList(List<String> result);
+
+    String processUrl(@NonNull String result);
 }

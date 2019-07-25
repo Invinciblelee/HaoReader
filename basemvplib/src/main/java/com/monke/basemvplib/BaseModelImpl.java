@@ -36,6 +36,7 @@ public class BaseModelImpl {
         public void onResult(String result) {
             if (!emitter.isDisposed()) {
                 emitter.onNext(result);
+                emitter.onComplete();
             }
         }
 
@@ -43,13 +44,6 @@ public class BaseModelImpl {
         public void onError(Throwable error) {
             if (!emitter.isDisposed()) {
                 emitter.onError(error);
-            }
-        }
-
-        @Override
-        public void onComplete() {
-            if (!emitter.isDisposed()) {
-                emitter.onComplete();
             }
         }
     }

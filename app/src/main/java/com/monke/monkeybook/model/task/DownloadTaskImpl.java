@@ -3,6 +3,7 @@ package com.monke.monkeybook.model.task;
 import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookContentBean;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -26,7 +27,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public abstract class DownloadTaskImpl implements IDownloadTask {
 
@@ -64,7 +64,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
                 downloadBook.setValid(false);
             }
             emitter.onNext(downloadBook);
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<DownloadBookBean>() {
                     @Override
@@ -160,7 +160,6 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         onDownloadError(downloadBook);
                     }
                 });
@@ -213,7 +212,6 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         removeFromDownloadList(chapter);
                         if (TextUtils.equals(e.getMessage(), "cached")) {
                             whenNext(scheduler, false);

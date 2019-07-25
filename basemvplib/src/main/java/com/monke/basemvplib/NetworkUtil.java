@@ -1,6 +1,7 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.basemvplib;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,7 +20,7 @@ public class NetworkUtil {
         ConnectivityManager mConnectivityManager = (ConnectivityManager) ContextHolder.getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (mConnectivityManager != null) {
-            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if (mNetworkInfo != null) {
                 return mNetworkInfo.isAvailable();
             }

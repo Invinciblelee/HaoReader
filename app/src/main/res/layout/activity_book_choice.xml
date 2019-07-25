@@ -29,11 +29,10 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorColor="@color/colorBarText"
             app:tabIndicatorHeight="5dp"
             app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/colorAccent"
-            app:tabTextColor="@color/white" />
+            app:tabSelectedTextColor="@color/colorBarText" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

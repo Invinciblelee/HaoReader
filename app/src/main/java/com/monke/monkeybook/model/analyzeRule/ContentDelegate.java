@@ -17,7 +17,7 @@ public interface ContentDelegate {
 
     Observable<List<ChapterBean>> getChapters(String source);
 
-    Observable<BookContentBean> getContent(String source);
+    Observable<BookContentBean> getBookContent(String source);
 
     Observable<String> getAudioContent(String source);
 }

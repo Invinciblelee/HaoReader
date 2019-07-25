@@ -17,7 +17,6 @@ import com.monke.basemvplib.BaseFragment;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.view.activity.MainActivity;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.widget.BookFloatingActionMenu;
@@ -28,18 +27,18 @@ import butterknife.ButterKnife;
 public class MainBookListFragment extends BaseFragment implements FragmentTrigger {
 
     private static final int[] BOOK_GROUPS = {R.string.item_group_zg, R.string.item_group_yf, R.string.item_group_wj,
-            R.string.item_group_bd, R.string.item_group_ys, R.string.item_group_mh};
+            R.string.item_group_bd};
 
     @BindView(R.id.book_shelf_menu)
     BookFloatingActionMenu bookShelfMenu;
 
     private int group = -1;
 
-    private Fragment[] fragments = new Fragment[5];
+    private BookListFragment[] fragments = new BookListFragment[4];
 
     @Override
     protected void initData() {
-        group = AppConfigHelper.get().getInt("shelfGroup", 0);
+        group = getSafeGroup(AppConfigHelper.get().getInt("shelfGroup", 0));
     }
 
     @Override
@@ -51,11 +50,10 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             FragmentManager manager = getChildFragmentManager();
-            fragments[0] = manager.findFragmentByTag(getString(BOOK_GROUPS[0]));
-            fragments[1] = manager.findFragmentByTag(getString(BOOK_GROUPS[1]));
-            fragments[2] = manager.findFragmentByTag(getString(BOOK_GROUPS[2]));
-            fragments[3] = manager.findFragmentByTag(getString(BOOK_GROUPS[3]));
-            fragments[4] = manager.findFragmentByTag(getString(BOOK_GROUPS[4]));
+            fragments[0] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[0]));
+            fragments[1] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[1]));
+            fragments[2] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[2]));
+            fragments[3] = (BookListFragment) manager.findFragmentByTag(getString(BOOK_GROUPS[3]));
 
             for (Fragment fragment : fragments) {
                 if (fragment instanceof BookListFragment) {
@@ -95,8 +93,6 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
     private void restoreFragment(Fragment fragment) {
         if (fragment instanceof BookListFragment) {
             ((BookListFragment) fragment).refreshBookShelf(false);
-        } else if (fragment instanceof AudioBookFragment) {
-            ((AudioBookFragment) fragment).onRestore();
         }
     }
 
@@ -104,16 +100,12 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
     private void refreshFragment(Fragment fragment) {
         if (fragment instanceof BookListFragment) {
             ((BookListFragment) fragment).refreshBookShelf(true);
-        } else if (fragment instanceof AudioBookFragment) {
-            ((AudioBookFragment) fragment).onRefresh();
         }
     }
 
     private void scrollTop(Fragment fragment) {
         if (fragment instanceof BookListFragment) {
             ((BookListFragment) fragment).scrollToTop();
-        } else if (fragment instanceof AudioBookFragment) {
-            ((AudioBookFragment) fragment).onReselected();
         }
     }
 
@@ -123,9 +115,9 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
             activity.setCurrentItem(0);
         }
 
-        Fragment fragment = fragments[fragments.length - 2];
-        if (fragment instanceof BookListFragment) {
-            ((BookListFragment) fragment).addBookShelf(bookShelfBean);
+        BookListFragment fragment = fragments[fragments.length - 2];
+        if (fragment != null) {
+            fragment.addBookShelf(bookShelfBean);
         }
         upGroup(bookShelfBean.getGroup());
         bookShelfMenu.setSelection(this.group);
@@ -150,39 +142,34 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
     }
 
     private void upGroup(int group) {
-        group = Math.max(0, group);
-        group = Math.min(group, fragments.length - 1);
+        group = getSafeGroup(group);
         if (this.group != group) {
             showFragment(group);
 
-            AppConfigHelper.get().edit().putInt("shelfGroup", group).apply();
-
             this.group = group;
+            AppConfigHelper.get().edit().putInt("shelfGroup", group).apply();
         }
     }
 
     private void showFragment(int group) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         Fragment from = fragments[this.group];
-        Fragment to = fragments[group];
+        BookListFragment to = fragments[group];
+
         if (from != null) {
             transaction.hide(from);
         }
 
         if (to == null) {
-            to = group == Constant.GROUP_AUDIO ? AudioBookFragment.newInstance() : BookListFragment.newInstance(group);
-            fragments[group] = to;
-            if (to instanceof BookListFragment) {
-                ((BookListFragment) to).setItemClickListenerTwo(getAdapterListener());
-            }
+            fragments[group] = to = BookListFragment.newInstance(group);
+            to.setItemClickListenerTwo(getAdapterListener());
         }
 
         if (!to.isAdded()) {
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .add(R.id.book_list_frame, to, getString(BOOK_GROUPS[group]))
-                    .show(to)
                     .commitAllowingStateLoss();
-        } else if (((BaseFragment) to).isSupportHidden()) {
+        } else if (to.isSupportHidden()) {
             transaction.setTransition(this.group > group ? FragmentTransaction.TRANSIT_FRAGMENT_OPEN : FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(to)
                     .commitAllowingStateLoss();
@@ -194,6 +181,12 @@ public class MainBookListFragment extends BaseFragment implements FragmentTrigge
             return ((MainActivity) getActivity()).getAdapterListener();
         }
         return null;
+    }
+
+    private int getSafeGroup(int group) {
+        group = Math.max(0, group);
+        group = Math.min(group, fragments.length - 1);
+        return group;
     }
 
     @Override

@@ -24,9 +24,9 @@ final class HybridParser extends SourceParser<Object> {
     private void ensureJsoupParser() {
         if (jsoupParser == null) {
             jsoupParser = new JsoupParser();
-            jsoupParser.setContent(getSource());
+            jsoupParser.setSource(getSource());
         } else if (sourceChangedJP) {
-            jsoupParser.setContent(getSource());
+            jsoupParser.setSource(getSource());
             sourceChangedJP = false;
         }
         currentParser = jsoupParser;
@@ -35,9 +35,9 @@ final class HybridParser extends SourceParser<Object> {
     private void ensureJsonParser() {
         if (jsonParser == null) {
             jsonParser = new JsonParser();
-            jsonParser.setContent(getSource());
+            jsonParser.setSource(getSource());
         } else if (sourceChangedJS) {
-            jsonParser.setContent(getSource());
+            jsonParser.setSource(getSource());
             sourceChangedJS = false;
         }
         currentParser = jsonParser;
@@ -46,9 +46,9 @@ final class HybridParser extends SourceParser<Object> {
     private void ensureXPathParser() {
         if (xPathParser == null) {
             xPathParser = new XPathParser();
-            xPathParser.setContent(getSource());
+            xPathParser.setSource(getSource());
         } else if (sourceChangedXP) {
-            xPathParser.setContent(getSource());
+            xPathParser.setSource(getSource());
             sourceChangedXP = false;
         }
         currentParser = xPathParser;
@@ -57,9 +57,9 @@ final class HybridParser extends SourceParser<Object> {
     private void ensureCSSParser() {
         if (cssParser == null) {
             cssParser = new CSSParser();
-            cssParser.setContent(getSource());
+            cssParser.setSource(getSource());
         } else if (sourceChangedCS) {
-            cssParser.setContent(getSource());
+            cssParser.setSource(getSource());
             sourceChangedCS = false;
         }
         currentParser = cssParser;

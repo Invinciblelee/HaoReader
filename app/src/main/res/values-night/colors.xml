@@ -5,10 +5,11 @@
 
     <color name="colorPrimary">#363636</color>
     <color name="colorPrimaryDark">#363636</color>
-    <color name="colorAccent">#D9AB23</color>
-    <color name="colorAccentDark">#A6831B</color>
-    <color name="colorAccentLight">#FFD75E</color>
-    <color name="colorAccentTranslucent">#66D9AB23</color>
+
+    <color name="colorAccent">@color/colorTheme</color>
+    <color name="colorAccentDark">@color/colorThemeDark</color>
+    <color name="colorAccentLight">@color/colorThemeLight</color>
+    <color name="colorAccentTranslucent">@color/colorThemeTranslucent</color>
 
     <color name="colorSearchField">#4a4a4a</color>
 
@@ -18,6 +19,7 @@
     <color name="colorProgressTrackLight">#898989</color>
     <color name="colorProgressTrack">#a1a1a1</color>
     <color name="colorProgress">@color/colorAccent</color>
+    <color name="colorProgressWhite">#f3f3f3</color>
 
     <color name="colorTextDefault">#f3f3f3</color>
     <color name="colorTextSecondary">#c9c9c9</color>
@@ -26,8 +28,8 @@
     <color name="colorNegativeButton">@color/colorCardBackground</color>
     <color name="colorNegativeButtonPressed">#262626</color>
 
-    <color name="colorPositiveButton">@color/colorAccent</color>
-    <color name="colorPositiveButtonPressed">@color/colorAccentDark</color>
+    <color name="colorPositiveButton">@color/colorTheme</color>
+    <color name="colorPositiveButtonPressed">@color/colorTheme</color>
     <color name="colorButtonDisabled">#434343</color>
 
     <color name="colorTag">#505050</color>

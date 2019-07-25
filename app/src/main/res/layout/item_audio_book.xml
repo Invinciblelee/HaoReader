@@ -111,6 +111,7 @@
         android:layout_alignTop="@id/cover_card"
         android:layout_alignParentEnd="true"
         android:layout_margin="2dp"
+        android:visibility="invisible"
         app:loadingWidth="2dp" />
 
 </RelativeLayout>

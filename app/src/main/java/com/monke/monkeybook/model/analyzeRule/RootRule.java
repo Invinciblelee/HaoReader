@@ -1,6 +1,6 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.utils.StringUtils;
 
 final class RootRule extends Rule {
@@ -12,19 +12,19 @@ final class RootRule extends Rule {
     static RootRule fromStringRule(String rawRule) {
         final String rule;
         final RuleMode mode;
-        if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_XPATH)) {
+        if (StringUtils.startWithIgnoreCase(rawRule, AnalyzeGlobal.RULE_XPATH)) {
             mode = RuleMode.XPath;
             rule = rawRule.substring(7);
-        } else if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_XPATH_TRAIT)) {//XPath特征很明显,无需配置单独的识别标头
+        } else if (StringUtils.startWithIgnoreCase(rawRule, AnalyzeGlobal.RULE_XPATH_TRAIT)) {//XPath特征很明显,无需配置单独的识别标头
             mode = RuleMode.XPath;
             rule = rawRule;
-        } else if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_JSON)) {
+        } else if (StringUtils.startWithIgnoreCase(rawRule, AnalyzeGlobal.RULE_JSON)) {
             mode = RuleMode.JSon;
             rule = rawRule.substring(6);
-        } else if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_JSON_TRAIT)) {
+        } else if (StringUtils.startWithIgnoreCase(rawRule, AnalyzeGlobal.RULE_JSON_TRAIT)) {
             mode = RuleMode.JSon;
             rule = rawRule;
-        } else if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_CSS)) {
+        } else if (StringUtils.startWithIgnoreCase(rawRule, AnalyzeGlobal.RULE_CSS)) {
             mode = RuleMode.CSS;
             rule = rawRule.substring(5);
         }else {

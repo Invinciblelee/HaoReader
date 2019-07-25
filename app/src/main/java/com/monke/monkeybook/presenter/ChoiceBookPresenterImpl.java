@@ -9,6 +9,7 @@ import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.presenter.contract.ChoiceBookContract;
 import com.monke.monkeybook.utils.ListUtils;
 
@@ -101,7 +102,7 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.searchBookError(isRefresh);
+                        mView.searchBookError(isRefresh, (e instanceof BookSourceException) ? e.getMessage() : null);
                         isRefresh = false;
                     }
                 });

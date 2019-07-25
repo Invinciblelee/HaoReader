@@ -29,6 +29,7 @@ import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
 
@@ -245,12 +246,12 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     @Override
                     public void onNext(BookShelfBean bookShelfBean) {
                         bookShelf = bookShelfBean;
-                        mView.changeSourceFinish(true);
+                        mView.changeSourceFinish(true, null);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.changeSourceFinish(false);
+                        mView.changeSourceFinish(false, (e instanceof BookSourceException) ? e.getMessage() : null);
                     }
                 });
     }

@@ -4,18 +4,20 @@
     <color name="colorBackground">#f4f4f4</color>
     <color name="colorCardBackground">#ffffff</color>
 
-    <color name="colorPrimary">#607d8b</color>
-    <color name="colorPrimaryDark">#607d8b</color>
-    <color name="colorAccent">#D9AB23</color>
-    <color name="colorAccentDark">#A6831B</color>
-    <color name="colorAccentLight">#FFD75E</color>
-    <color name="colorAccentTranslucent">#66D9AB23</color>
+    <color name="colorPrimary">@color/colorTheme</color>
+    <color name="colorPrimaryDark">@color/colorThemeDark</color>
 
-    <color name="colorSearchField">@color/colorSideBarLight</color>
+    <color name="colorAccent">@color/colorTheme</color>
+    <color name="colorAccentDark">@color/colorThemeDark</color>
+    <color name="colorAccentLight">@color/colorThemeLight</color>
+    <color name="colorAccentTranslucent">@color/colorThemeTranslucent</color>
 
-    <color name="colorSideBar">#607d8b</color>
-    <color name="colorSideBarDark">#455a64</color>
-    <color name="colorSideBarLight">#78909c</color>
+    <color name="colorTheme">@color/md_brown_400</color>
+    <color name="colorThemeDark">@color/md_brown_500</color>
+    <color name="colorThemeLight">@color/md_brown_300</color>
+    <color name="colorThemeTranslucent">#668D6E63</color>
+
+    <color name="colorSearchField">@color/colorThemeLight</color>
 
     <color name="colorBarText">#ffffff</color>
     <color name="colorMenuText">#4a4a4a</color>
@@ -27,12 +29,13 @@
     <color name="colorProgressTrackLight">#ffffff</color>
     <color name="colorProgressTrack">#767676</color>
     <color name="colorProgress">@color/colorAccent</color>
+    <color name="colorProgressWhite">#f4f4f4</color>
 
     <color name="colorNegativeButton">@color/colorCardBackground</color>
     <color name="colorNegativeButtonPressed">#cecece</color>
 
-    <color name="colorPositiveButton">@color/colorAccent</color>
-    <color name="colorPositiveButtonPressed">@color/colorAccentDark</color>
+    <color name="colorPositiveButton">@color/colorTheme</color>
+    <color name="colorPositiveButtonPressed">@color/colorThemeDark</color>
     <color name="colorButtonDisabled">#dddddd</color>
 
     <color name="colorTag">#eeeeee</color>

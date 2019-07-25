@@ -27,7 +27,7 @@ public interface ChoiceBookContract {
 
         void loadMoreFinish(Boolean isAll);
 
-        void searchBookError(boolean isRefresh);
+        void searchBookError(boolean isRefresh, String errorMsg);
 
         ChoiceBookAdapter getSearchBookAdapter();
     }

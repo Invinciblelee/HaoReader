@@ -6,14 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.bean.VariableStore;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_JS;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_JS;
 
 final class RulePattern {
 
@@ -74,11 +74,11 @@ final class RulePattern {
     }
 
     private boolean useSimpleRegex(String rawRule) {
-        if (StringUtils.startWithIgnoreCase(rawRule, Patterns.RULE_REGEX)) {
+        if (StringUtils.startWithIgnoreCase(rawRule, AnalyzeGlobal.RULE_REGEX)) {
             isSimpleRegex = true;
             rawRule = rawRule.substring(2);
 
-            final String[] rules = rawRule.split(Patterns.RULE_REGEX_SPLIT_TRAIT);
+            final String[] rules = rawRule.split(AnalyzeGlobal.RULE_REGEX_SPLIT_TRAIT);
             replaceRegex = rules[0];
             if (rules.length > 1) {
                 replacement = rules[1];
@@ -97,7 +97,7 @@ final class RulePattern {
     }
 
     private String ensureKeepRule(String rawRule) {
-        isKeep = rawRule.startsWith(Patterns.RULE_KEEP);
+        isKeep = rawRule.startsWith(AnalyzeGlobal.RULE_KEEP);
         if (isKeep) {
             rawRule = rawRule.substring(1);
         }
@@ -105,7 +105,7 @@ final class RulePattern {
     }
 
     private String ensureRedirectRule(String rawRule) {
-        final String[] ruleS = rawRule.split(Patterns.REGEX_REDIRECT);
+        final String[] ruleS = rawRule.split(AnalyzeGlobal.REGEX_REDIRECT);
         if (ruleS.length > 1) {
             isRedirect = true;
             redirectRule = ruleS[1];
@@ -118,7 +118,7 @@ final class RulePattern {
     }
 
     private String ensureRegexRule(String rawRule, boolean trait) {
-        final String[] rules = rawRule.split(trait ? Patterns.RULE_REGEX_SPLIT_TRAIT : Patterns.RULE_REGEX_SPLIT);
+        final String[] rules = rawRule.split(trait ? AnalyzeGlobal.RULE_REGEX_SPLIT_TRAIT : AnalyzeGlobal.RULE_REGEX_SPLIT);
         rawRule = rules[0];
         if (rules.length > 1) {
             replaceRegex = rules[1];
@@ -170,7 +170,7 @@ final class RulePattern {
                 ", isSimpleRegex=" + isSimpleRegex +
                 ", elementsRule=" + elementsRule +
                 ", replaceGroup=" + replaceGroup +
-                ", replaceRegex='" + replaceRegex + '\'' +
+                ", processContent='" + replaceRegex + '\'' +
                 ", replacement='" + replacement + '\'' +
                 ", javaScripts=" + javaScripts +
                 '}';

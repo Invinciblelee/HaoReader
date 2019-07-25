@@ -65,7 +65,6 @@ public class FileSelectorPresenterImpl extends BasePresenterImpl<FileSelectorCon
         assert list != null;
         suffixes = new String[list.size()];
         list.toArray(suffixes);
-
         key = StringUtils.join(",", list);
     }
 

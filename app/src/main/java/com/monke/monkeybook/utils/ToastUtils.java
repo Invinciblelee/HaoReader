@@ -11,12 +11,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
-import com.monke.monkeybook.R;
 import com.monke.basemvplib.ContextHolder;
+import com.monke.monkeybook.R;
 
 public class ToastUtils {
 
-    private static int Y_OFFSET = DensityUtil.dp2px(ContextHolder.getContext(), 80);
+    private static int Y_OFFSET = DensityUtil.dp2px(ContextHolder.getContext(), 78);
 
     private ToastUtils() {
 

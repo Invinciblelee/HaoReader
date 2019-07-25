@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.monke.basemvplib.RequestMethod;
 import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
-import com.monke.monkeybook.model.analyzeRule.pattern.Patterns;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
@@ -21,9 +21,9 @@ import java.util.regex.Matcher;
 
 import javax.script.SimpleBindings;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_HEADER;
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_PAGE;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.MAP_TYPE;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_HEADER;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_PAGE;
 
 /**
  * Created by GKF on 2018/1/24.
@@ -165,7 +165,7 @@ public class AnalyzeUrl {
                     this.put("searchPage", searchPage);
                 }
             }};
-            Matcher expMatcher = Patterns.PATTERN_EXP.matcher(ruleUrl);
+            Matcher expMatcher = AnalyzeGlobal.PATTERN_EXP.matcher(ruleUrl);
             while (expMatcher.find()) {
                 Object result = Assistant.evalObjectScript(expMatcher.group(1), simpleBindings);
                 if (result instanceof Double && ((Double) result) % 1.0 == 0) {

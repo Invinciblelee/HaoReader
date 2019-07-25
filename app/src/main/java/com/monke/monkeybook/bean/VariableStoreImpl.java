@@ -5,7 +5,7 @@ import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.MAP_TYPE;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.MAP_TYPE;
 
 public class VariableStoreImpl implements VariableStore {
 

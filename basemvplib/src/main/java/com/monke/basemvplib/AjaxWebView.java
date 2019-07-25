@@ -9,15 +9,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -62,7 +60,6 @@ public class AjaxWebView {
                     break;
                 case MSG_SUCCESS:
                     mCallback.onResult((String) msg.obj);
-                    mCallback.onComplete();
                     destroyWebView();
                     break;
                 case MSG_ERROR:
@@ -80,7 +77,6 @@ public class AjaxWebView {
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     public void ajax(AjaxParams params) {
         mHandler.obtainMessage(AjaxHandler.MSG_AJAX_START, params)
                 .sendToTarget();
@@ -92,7 +88,7 @@ public class AjaxWebView {
     }
 
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
     private static WebView createAjaxWebView(AjaxParams params, Handler handler) {
         WebView webView = new WebView(params.context.getApplicationContext());
         WebSettings settings = webView.getSettings();
@@ -105,6 +101,7 @@ public class AjaxWebView {
             webView.setWebViewClient(new SnifferWebClient(params, handler));
         } else {
             webView.setWebViewClient(new HtmlWebViewClient(params, handler));
+            webView.addJavascriptInterface(new JavascriptMethod(handler), "OUTHTML");
         }
         switch (params.getRequestMethod()) {
             case POST:
@@ -116,6 +113,23 @@ public class AjaxWebView {
         }
         return webView;
     }
+
+    private static class JavascriptMethod {
+
+        private final Handler handler;
+
+        JavascriptMethod(Handler handler) {
+            this.handler = handler;
+        }
+
+        @JavascriptInterface
+        @SuppressWarnings("unused")
+        public void processHTML(String html) {
+            handler.obtainMessage(AjaxHandler.MSG_SUCCESS, html)
+                    .sendToTarget();
+        }
+    }
+
 
     public static class AjaxParams {
         private final Context context;
@@ -214,7 +228,7 @@ public class AjaxWebView {
 
     private static class HtmlWebViewClient extends WebViewClient {
 
-        private static final String OUTER_HTML = "document.documentElement.outerHTML";
+        private static final String OUTER_HTML = "window.OUTHTML.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
 
         private final AjaxParams params;
         private final Handler handler;
@@ -228,10 +242,14 @@ public class AjaxWebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             params.setCookie(url);
-
-            evaluateJavascript(view, OUTER_HTML);
+            evaluateOutHtml(view);
         }
 
+
+        @Override
+        public void onLoadResource(WebView view, String url) {
+            super.onLoadResource(view, url);
+        }
 
         @Override
         public void onReceivedError(android.webkit.WebView view, int errorCode, String description, String failingUrl) {
@@ -254,15 +272,8 @@ public class AjaxWebView {
             handler.proceed();
         }
 
-        private void evaluateJavascript(final WebView webView, final String javaScript) {
-            final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript, value -> {
-                if (!TextUtils.isEmpty(value)) {
-                    handler.obtainMessage(AjaxHandler.MSG_SUCCESS, StringEscapeUtils.unescapeJson(value))
-                            .sendToTarget();
-                } else {
-                    evaluateJavascript(webView, javaScript);
-                }
-            });
+        private void evaluateOutHtml(final WebView webView) {
+            final ScriptRunnable runnable = new ScriptRunnable(webView, OUTER_HTML);
             handler.postDelayed(runnable, 1000L);
         }
     }
@@ -313,7 +324,6 @@ public class AjaxWebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             params.setCookie(url);
-
             if (params.hasJavaScript()) {
                 evaluateJavascript(view, params.javaScript);
                 params.clearJavaScript();
@@ -321,11 +331,7 @@ public class AjaxWebView {
         }
 
         private void evaluateJavascript(final WebView webView, final String javaScript) {
-            final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript, value -> {
-                if (TextUtils.isEmpty(value)) {
-                    evaluateJavascript(webView, javaScript);
-                }
-            });
+            final ScriptRunnable runnable = new ScriptRunnable(webView, javaScript);
             handler.postDelayed(runnable, 1000L);
         }
     }
@@ -333,21 +339,19 @@ public class AjaxWebView {
     private static class ScriptRunnable implements Runnable {
 
         private final String mJavaScript;
-        private final ValueCallback<String> mCallback;
 
         private WeakReference<WebView> mWebView;
 
-        private ScriptRunnable(WebView webView, String javaScript, ValueCallback<String> callback) {
+        private ScriptRunnable(WebView webView, String javaScript) {
             mWebView = new WeakReference<>(webView);
             mJavaScript = javaScript;
-            mCallback = callback;
         }
 
         @Override
         public void run() {
             WebView webView = mWebView.get();
             if (webView != null) {
-                webView.evaluateJavascript(mJavaScript, mCallback);
+                webView.loadUrl("javascript:" + mJavaScript);
             }
         }
     }
@@ -357,8 +361,5 @@ public class AjaxWebView {
         public abstract void onResult(String result);
 
         public abstract void onError(Throwable error);
-
-        public abstract void onComplete();
-
     }
 }

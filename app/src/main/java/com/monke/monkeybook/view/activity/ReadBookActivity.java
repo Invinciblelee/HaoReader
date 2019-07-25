@@ -1588,14 +1588,14 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public void changeSourceFinish(boolean success) {
+    public void changeSourceFinish(boolean success, String errorMsg) {
         supportInvalidateOptionsMenu();
         if (mPageLoader != null) {
             if (success) {
                 mPageLoader.changeSourceFinish(mPresenter.getBookShelf());
             } else {
                 if (mPageLoader.hasCurrentChapter()) {
-                    toast("换源失败，请选择其他书源");
+                    toast(errorMsg == null ? "换源失败，请选择其他书源" : errorMsg);
                     mPageLoader.setCurrentStatus(PageStatus.STATUS_FINISH);
                 } else {
                     mPageLoader.setCurrentStatus(PageStatus.STATUS_HY_ERROR);

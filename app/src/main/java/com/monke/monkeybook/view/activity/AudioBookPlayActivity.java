@@ -18,7 +18,6 @@ import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -425,15 +424,13 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 .apply(new RequestOptions().dontAnimate().centerCrop()
                         .centerCrop()
                         .error(R.drawable.img_cover_default)
-                        .placeholder(R.drawable.img_cover_default)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                        .placeholder(R.drawable.img_cover_default))
                 .into(ivCover);
 
         Glide.with(this).load(image)
                 .apply(new RequestOptions()
                         .dontAnimate()
                         .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                         .placeholder(R.drawable.img_cover_gs)
                         .error(R.drawable.img_cover_gs))
                 .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))

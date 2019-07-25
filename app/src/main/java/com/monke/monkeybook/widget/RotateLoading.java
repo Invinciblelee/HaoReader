@@ -1,8 +1,7 @@
 package com.monke.monkeybook.widget;
 
 import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -10,11 +9,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.utils.DensityUtil;
 
 public class RotateLoading extends View {
 
@@ -46,6 +44,10 @@ public class RotateLoading extends View {
 
     private float speedOfArc;
 
+    private final Runnable mShown = this::startInternal;
+
+    private final Runnable mHiden = this::stopInternal;
+
     public RotateLoading(Context context) {
         super(context);
         initView(context, null);
@@ -63,14 +65,14 @@ public class RotateLoading extends View {
 
     private void initView(Context context, AttributeSet attrs) {
         color = getResources().getColor(R.color.colorAccent);
-        width = dpToPx(context, DEFAULT_WIDTH);
-        shadowPosition = dpToPx(getContext(), DEFAULT_SHADOW_POSITION);
+        width = DensityUtil.dp2px(context, DEFAULT_WIDTH);
+        shadowPosition = DensityUtil.dp2px(getContext(), DEFAULT_SHADOW_POSITION);
         speedOfDegree = DEFAULT_SPEED_OF_DEGREE;
 
         if (null != attrs) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RotateLoading);
             color = typedArray.getColor(R.styleable.RotateLoading_loadingColor, color);
-            width = typedArray.getDimensionPixelSize(R.styleable.RotateLoading_loadingWidth, dpToPx(context, DEFAULT_WIDTH));
+            width = typedArray.getDimensionPixelSize(R.styleable.RotateLoading_loadingWidth, DensityUtil.dp2px(context, DEFAULT_WIDTH));
             shadowPosition = typedArray.getInt(R.styleable.RotateLoading_shadowPosition, DEFAULT_SHADOW_POSITION);
             speedOfDegree = typedArray.getInt(R.styleable.RotateLoading_loadingSpeed, DEFAULT_SPEED_OF_DEGREE);
             typedArray.recycle();
@@ -141,7 +143,7 @@ public class RotateLoading extends View {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (getVisibility() == View.VISIBLE) {
-            start();
+            startInternal();
         }
     }
 
@@ -165,25 +167,25 @@ public class RotateLoading extends View {
     }
 
     public void show() {
-        if (getVisibility() != View.VISIBLE || !isStart) {
-            setVisibility(View.VISIBLE);
-            start();
-        }
+        removeCallbacks(mShown);
+        removeCallbacks(mHiden);
+        post(mShown);
     }
 
     public void hide() {
-        if (getVisibility() == View.VISIBLE || isStart) {
-            stop();
-        }
+        removeCallbacks(mShown);
+        removeCallbacks(mHiden);
+        post(mHiden);
     }
 
-    private void start() {
+    private void startInternal() {
         startAnimator();
+
         isStart = true;
         invalidate();
     }
 
-    private void stop() {
+    private void stopInternal() {
         stopAnimator();
         invalidate();
     }
@@ -193,54 +195,30 @@ public class RotateLoading extends View {
     }
 
     private void startAnimator() {
-        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 0.0f, 1);
-        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0.0f, 1);
-        scaleXAnimator.setDuration(300);
-        scaleXAnimator.setInterpolator(new LinearInterpolator());
-        scaleYAnimator.setDuration(300);
-        scaleYAnimator.setInterpolator(new LinearInterpolator());
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(scaleXAnimator, scaleYAnimator);
-        animatorSet.start();
+        animate().cancel();
+        animate().scaleX(1.0f)
+                .scaleY(1.0f)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        setVisibility(View.VISIBLE);
+                    }
+                })
+                .start();
     }
 
     private void stopAnimator() {
-        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 1, 0);
-        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 1, 0);
-        scaleXAnimator.setDuration(300);
-        scaleXAnimator.setInterpolator(new LinearInterpolator());
-        scaleYAnimator.setDuration(300);
-        scaleYAnimator.setInterpolator(new LinearInterpolator());
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(scaleXAnimator, scaleYAnimator);
-        animatorSet.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                isStart = false;
-                setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        animatorSet.start();
-    }
-
-
-    public int dpToPx(Context context, float dpVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, context.getResources().getDisplayMetrics());
+        animate().cancel();
+        animate().scaleX(0.0f)
+                .scaleY(0.0f)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        isStart = false;
+                        setVisibility(View.GONE);
+                    }
+                })
+                .start();
     }
 
 }

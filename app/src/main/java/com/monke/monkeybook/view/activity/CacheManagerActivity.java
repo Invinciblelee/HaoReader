@@ -131,7 +131,7 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
             if (progress == max) {
                 new Handler().postDelayed(() -> {
                     progressDialog.dismissAllowingStateLoss();
-                    showSnackBar("缓存提取成功");
+                    toast("缓存提取成功");
                 }, 100L);
             }
         }

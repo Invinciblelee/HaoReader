@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +16,9 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public String getResultContent(String rule) {
+    public String getText(String rule) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
-            return "";
+            return AnalyzeGlobal.EMPTY;
         }
 
         final RulePatterns rulePatterns = fromRule(rule.trim(), false);
@@ -24,7 +26,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         for (RulePattern pattern : rulePatterns.patterns) {
             boolean haveResult = false;
             if (pattern.isSimpleRegex) {
-                final String result = replaceRegex(getParser().getStringSource(), pattern);
+                final String result = processContent(getParser().getStringSource(), pattern);
                 if (!isEmpty(result)) {
                     builder.append(result);
                     haveResult = true;
@@ -32,7 +34,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             } else if (pattern.isSimpleJS) {
                 final String result = evalStringScript(getParser().getPrimitive(), pattern);
                 if (!isEmpty(result)) {
-                    builder.append(replaceRegex(result, pattern));
+                    builder.append(processContent(result, pattern));
                     haveResult = true;
                 }
             } else if (pattern.isRedirect) {
@@ -40,13 +42,13 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, false);
                 final String result = getParser().parseString(source, newPattern.elementsRule);
                 if (!isEmpty(result)) {
-                    builder.append(processResultContent(result, newPattern));
+                    builder.append(processContentWithScript(result, newPattern));
                     haveResult = true;
                 }
             } else {
                 final String result = getParser().getString(pattern.elementsRule);
                 if (!isEmpty(result)) {
-                    builder.append(processResultContent(result, pattern));
+                    builder.append(processContentWithScript(result, pattern));
                     haveResult = true;
                 }
             }
@@ -59,42 +61,48 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
 
 
     @Override
-    public String getResultUrl(String rule) {
+    public String getRawUrl(String rule) {
         if (getParser().isSourceEmpty() || isEmpty(rule)) {
-            return "";
+            return AnalyzeGlobal.EMPTY;
         }
 
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleRegex) {
-                final String result = processRawUrl(getParser().getStringSource(), pattern);
+                final String result = processContent(getParser().getStringSource(), pattern);
                 if (!isEmpty(result)) {
                     return result;
                 }
             } else if (pattern.isSimpleJS) {
                 final String result = evalStringScript(getParser().getPrimitive(), pattern);
                 if (!isEmpty(result)) {
-                    return processRawUrl(result, pattern);
+                    return processContent(result, pattern);
                 }
             } else if (pattern.isRedirect) {
                 final String source = evalStringScript(getParser().getPrimitive(), pattern);
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, true);
                 final String result = getParser().parseStringFirst(source, newPattern.elementsRule);
                 if (!isEmpty(result)) {
-                    return processResultUrl(result, newPattern);
+                    return processContentWithScript(result, newPattern);
                 }
             } else {
                 final String result = getParser().getStringFirst(pattern.elementsRule);
                 if (!isEmpty(result)) {
-                    return processResultUrl(result, pattern);
+                    return processContentWithScript(result, pattern);
                 }
             }
         }
-        return "";
+        return AnalyzeGlobal.EMPTY;
     }
 
     @Override
-    public List<String> getResultContents(String rule) {
+    public String getAbsUrl(String rule) {
+        String url = getRawUrl(rule);
+        return processUrl(url);
+    }
+
+    @Override
+    public List<String> getTextList(String rule) {
         if (isEmpty(rule)) {
             return new ArrayList<>();
         }
@@ -105,7 +113,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final List<String> result = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 if (!result.isEmpty()) {
-                    replaceRegexes(result, pattern);
+                    processContentList(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
@@ -114,14 +122,14 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, false);
                 final List<String> result = getParser().parseStringList(source, newPattern.elementsRule);
                 if (!result.isEmpty()) {
-                    processResultContents(result, newPattern);
+                    processContentListWithScript(result, newPattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
             } else {
                 final List<String> result = getParser().getStringList(pattern.elementsRule);
                 if (!result.isEmpty()) {
-                    processResultContents(result, pattern);
+                    processContentListWithScript(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
@@ -134,7 +142,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public List<String> getResultUrls(String rule) {
+    public List<String> getRawUrlList(String rule) {
         if (isEmpty(rule)) {
             return new ArrayList<>();
         }
@@ -145,7 +153,7 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final List<String> result = evalStringArrayScript(getParser().getPrimitive(), pattern);
                 if (!result.isEmpty()) {
-                    processRawUrls(result, pattern);
+                    processContentList(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
@@ -154,14 +162,14 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
                 final RulePattern newPattern = fromSingleRule(pattern.redirectRule, false);
                 final List<String> result = getParser().parseStringList(source, newPattern.elementsRule);
                 if (!result.isEmpty()) {
-                    processResultUrls(result, newPattern);
+                    processContentListWithScript(result, newPattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
             } else {
                 final List<String> result = getParser().getStringList(pattern.elementsRule);
                 if (!result.isEmpty()) {
-                    processResultUrls(result, pattern);
+                    processContentListWithScript(result, pattern);
                     resultList.addAll(result);
                     haveResult = true;
                 }
@@ -173,11 +181,25 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
         return resultList;
     }
 
+    @Override
+    public List<String> getAbsUrlList(String rule) {
+        List<String> resultList = getRawUrlList(rule);
+        processUrlList(resultList);
+        return resultList;
+    }
 
     @Override
-    public String parseResultContent(Object source, String rule) {
+    public AnalyzeCollection getRawCollection(String rule) {
+        if (getParser().isSourceEmpty() || isEmpty(rule)) {
+            return new AnalyzeCollection(new ArrayList<>());
+        }
+        return new AnalyzeCollection(getRawList(rule));
+    }
+
+    @Override
+    public String parseContent(Object source, String rule) {
         if (source == null || isEmpty(rule)) {
-            return "";
+            return AnalyzeGlobal.EMPTY;
         }
         final RulePatterns rulePatterns = fromRule(rule.trim(), false);
         final StringBuilder builder = new StringBuilder();
@@ -186,13 +208,13 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             if (pattern.isSimpleJS) {
                 final String result = evalStringScript(source, pattern);
                 if (!isEmpty(result)) {
-                    builder.append(replaceRegex(result, pattern));
+                    builder.append(processContent(result, pattern));
                     haveResult = true;
                 }
             } else {
                 final String result = getParser().parseString(source, pattern.elementsRule);
                 if (!isEmpty(result)) {
-                    builder.append(processResultContent(result, pattern));
+                    builder.append(processContentWithScript(result, pattern));
                     haveResult = true;
                 }
             }
@@ -204,56 +226,25 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
     }
 
     @Override
-    public String parseResultUrl(Object source, String rule) {
+    public String parseUrl(Object source, String rule) {
         if (source == null || isEmpty(rule)) {
-            return "";
+            return AnalyzeGlobal.EMPTY;
         }
         final RulePatterns rulePatterns = fromRule(rule.trim(), true);
         for (RulePattern pattern : rulePatterns.patterns) {
             if (pattern.isSimpleJS) {
                 final String result = evalStringScript(source, pattern);
                 if (!isEmpty(result)) {
-                    return processRawUrl(result, pattern);
+                    return processContent(result, pattern);
                 }
             } else {
                 final String result = getParser().parseStringFirst(source, pattern.elementsRule);
                 if (!isEmpty(result)) {
-                    return processResultUrl(result, pattern);
+                    return processContentWithScript(result, pattern);
                 }
             }
         }
-        return "";
-    }
-
-    @Override
-    public List<String> parseResultContents(Object source, String rule) {
-        if (source == null || isEmpty(rule)) {
-            return new ArrayList<>();
-        }
-        final RulePatterns rulePatterns = fromRule(rule.trim(), true);
-        final List<String> resultList = new ArrayList<>();
-        for (RulePattern pattern : rulePatterns.patterns) {
-            boolean haveResult = false;
-            if (pattern.isSimpleJS) {
-                final List<String> result = evalStringArrayScript(source, pattern);
-                if (!result.isEmpty()) {
-                    replaceRegexes(result, pattern);
-                    resultList.addAll(result);
-                    haveResult = true;
-                }
-            } else {
-                final List<String> result = getParser().parseStringList(source, pattern.elementsRule);
-                if (!result.isEmpty()) {
-                    processResultContents(result, pattern);
-                    resultList.addAll(result);
-                    haveResult = true;
-                }
-            }
-            if (haveResult && rulePatterns.mergeType == RulePatterns.RULE_MERGE_OR) {
-                break;
-            }
-        }
-        return resultList;
+        return AnalyzeGlobal.EMPTY;
     }
 
     @Override
@@ -267,22 +258,13 @@ public class DefaultAnalyzerPresenter<S> extends BaseAnalyzerPresenter<S> {
             return resultMap;
         } else {
             for (Map.Entry<String, String> entry : variablesPattern.map.entrySet()) {
-                String value = getResultContent(entry.getValue());
+                String value = getText(entry.getValue());
                 if (!isEmpty(value)) {
                     resultMap.put(entry.getKey(), value);
                 }
             }
         }
         return getVariableStore().putVariableMap(resultMap);
-    }
-
-
-    @Override
-    public AnalyzeCollection getRawCollection(String rule) {
-        if (getParser().isSourceEmpty() || isEmpty(rule)) {
-            return new AnalyzeCollection(new ArrayList<>());
-        }
-        return new AnalyzeCollection(getRawList(rule));
     }
 
     private List<Object> getRawList(String rule) {

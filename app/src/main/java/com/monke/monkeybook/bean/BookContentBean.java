@@ -10,8 +10,8 @@ import com.monke.monkeybook.help.TextProcessor;
 
 import java.util.regex.Matcher;
 
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_SPACE_END;
-import static com.monke.monkeybook.model.analyzeRule.pattern.Patterns.PATTERN_SPACE_START;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_SPACE_END;
+import static com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal.PATTERN_SPACE_START;
 
 /**
  * 书本缓存内容

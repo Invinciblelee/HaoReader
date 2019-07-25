@@ -35,7 +35,7 @@ public interface ReplaceRuleContract {
 
         void dismissLoading();
 
-        void showSnackBar(String msg);
+        void toast(String msg);
     }
 
 }

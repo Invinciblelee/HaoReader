@@ -129,11 +129,11 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
                     public void onError(Throwable e) {
                         if ("delete".equals(e.getMessage())) {
                             mView.removeItem(bookShelfBean);
-                            mView.showSnackBar("缓存文件不存在");
+                            mView.toast("缓存文件不存在");
                         } else if ("tip".equals(e.getMessage())) {
                             mView.showExtractTip(bookShelfBean);
                         } else {
-                            mView.showSnackBar("提取失败");
+                            mView.toast("提取失败");
                         }
                     }
                 });

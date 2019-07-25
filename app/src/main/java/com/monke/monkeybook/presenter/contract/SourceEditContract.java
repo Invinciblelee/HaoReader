@@ -33,7 +33,7 @@ public interface SourceEditContract {
 
         void saveSuccess();
 
-        void showSnackBar(String msg);
+        void toast(String msg);
 
         void shareSource(File file, String mediaType);
     }

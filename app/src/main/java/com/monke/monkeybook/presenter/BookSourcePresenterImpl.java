@@ -101,7 +101,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.showSnackBar("删除失败");
+                        mView.toast("删除失败");
                     }
                 });
     }
@@ -123,13 +123,13 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
                     public void onNext(List<BookSourceBean> bookSourceBeans) {
                         mView.resetData(bookSourceBeans);
                         mView.dismissHUD();
-                        mView.showSnackBar("删除成功");
+                        mView.toast("删除成功");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mView.dismissHUD();
-                        mView.showSnackBar("删除失败");
+                        mView.toast("删除失败");
                     }
                 });
     }
@@ -203,13 +203,13 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
             public void onNext(List<BookSourceBean> bookSourceBeans) {
                 mView.resetData(bookSourceBeans);
                 mView.dismissHUD();
-                mView.showSnackBar("书源导入成功");
+                mView.toast("书源导入成功");
             }
 
             @Override
             public void onError(Throwable e) {
                 mView.dismissHUD();
-                mView.showSnackBar("书源导入失败");
+                mView.toast("书源导入失败");
             }
         };
     }
@@ -227,7 +227,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
     @Override
     public void checkBookSource() {
         if (BookSourceManager.getEnabledCount() == 0) {
-            mView.showSnackBar("请选中要校验的书源");
+            mView.toast("请选中要校验的书源");
             return;
         }
 
@@ -270,7 +270,7 @@ public class BookSourcePresenterImpl extends BasePresenterImpl<BookSourceContrac
         refresh();
 
         if (state == -1) {
-            mView.showSnackBar("校验完成");
+            mView.getSnackBar("校验完成").show();
         } else {
             if (progressSnackBar == null) {
                 progressSnackBar = mView.getSnackBar(getProgressStr(state)).setDuration(BaseTransientBottomBar.LENGTH_INDEFINITE);

@@ -209,7 +209,7 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
             if (holder.getItemViewType() == TYPE_ITEM) {
                 MyViewHolder viewHolder = (MyViewHolder) holder;
                 SearchBookBean item = getItem(holder.getLayoutPosition());
-                Glide.with(mContext).load(item.getRealCoverUrl())
+                Glide.with(mContext).load(item.getCoverUrl())
                         .apply(new RequestOptions().dontAnimate()
                                 .centerCrop().placeholder(R.drawable.img_cover_default)
                                 .error(R.drawable.img_cover_default))

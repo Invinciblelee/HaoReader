@@ -44,7 +44,7 @@ public interface BookSourceContract {
 
         void resetData(List<BookSourceBean> bookSourceBeans);
 
-        void showSnackBar(String msg);
+        void toast(String msg);
 
         void showLoading(String msg);
 

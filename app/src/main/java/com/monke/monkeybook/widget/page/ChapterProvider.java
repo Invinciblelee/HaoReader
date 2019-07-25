@@ -18,6 +18,7 @@ import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.WebBookModel;
+import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.ObjectsCompat;
 import com.monke.monkeybook.utils.StringUtils;
@@ -213,6 +214,8 @@ class ChapterProvider {
                                         mPageLoader.setCurrentStatus(PageStatus.STATUS_NETWORK_ERROR);
                                     } else if (e instanceof TimeoutException) {
                                         mPageLoader.setCurrentStatus(PageStatus.STATUS_CONTENT_TIMEOUT);
+                                    } else if (e instanceof BookSourceException) {
+                                        mPageLoader.setCurrentStatus(PageStatus.STATUS_SOURCE_NOT_FIND);
                                     } else {
                                         mPageLoader.setCurrentStatus(PageStatus.STATUS_CONTENT_ERROR);
                                     }

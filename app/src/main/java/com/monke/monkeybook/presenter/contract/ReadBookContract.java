@@ -14,7 +14,7 @@ public interface ReadBookContract {
 
         void stopRefreshChapterList();
 
-        void changeSourceFinish(boolean success);
+        void changeSourceFinish(boolean success, String msg);
 
         void prepareDisplay();
 
