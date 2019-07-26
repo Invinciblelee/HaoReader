@@ -1086,7 +1086,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.action_copy_text:
                 popMenuOut();
                 if (mPageLoader != null) {
-                    String content = mPageLoader.getCurrentContent();
+                    String content = mPageLoader.getCurrentChapter().getContent();
                     if (!TextUtils.isEmpty(content)) {
                         LargeTextDialog.show(getSupportFragmentManager(), content, false);
                     }

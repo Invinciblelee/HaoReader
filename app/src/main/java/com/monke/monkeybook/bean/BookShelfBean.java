@@ -57,7 +57,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
     public BookShelfBean() {
     }
 
-
     @Generated(hash = 228430457)
     public BookShelfBean(String noteUrl, Integer durChapter, Integer durChapterPage, Long finalDate, Boolean hasUpdate, Integer newChapters,
                          String tag, Integer serialNumber, Long finalRefreshData, Integer group, String durChapterName, String lastChapterName,

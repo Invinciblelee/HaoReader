@@ -37,7 +37,7 @@
         android:id="@+id/action_debug"
         android:icon="@drawable/ic_developer_board_black_24dp"
         android:title="@string/source_debug"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_share_it"

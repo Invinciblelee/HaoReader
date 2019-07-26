@@ -35,7 +35,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     private String introduce; //简介
     private String bookType;
     private String variableString;
-    private Long addTime;
     @Transient
     private int weight;
     @Transient
@@ -53,10 +52,9 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
 
-    @Generated(hash = 1090259944)
-    public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag,
-                          String kind, String origin, String lastChapter, String introduce, String bookType,
-                          String variableString, Long addTime) {
+    @Generated(hash = 65370007)
+    public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag, String kind, String origin,
+            String lastChapter, String introduce, String bookType, String variableString) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -68,7 +66,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         this.introduce = introduce;
         this.bookType = bookType;
         this.variableString = variableString;
-        this.addTime = addTime;
     }
 
 
@@ -84,11 +81,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         introduce = in.readString();
         bookType = in.readString();
         variableString = in.readString();
-        if (in.readByte() == 0) {
-            addTime = null;
-        } else {
-            addTime = in.readLong();
-        }
         weight = in.readInt();
         lastChapterNum = in.readInt();
         isCurrentSource = in.readByte() != 0;
@@ -109,12 +101,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
         dest.writeString(introduce);
         dest.writeString(bookType);
         dest.writeString(variableString);
-        if (addTime == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(addTime);
-        }
         dest.writeInt(weight);
         dest.writeInt(lastChapterNum);
         dest.writeByte((byte) (isCurrentSource ? 1 : 0));
@@ -236,7 +222,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     public void setIsCurrentSource(Boolean isCurrentSource) {
         this.isCurrentSource = isCurrentSource;
-        this.addTime = System.currentTimeMillis();
     }
 
     public int getOriginNum() {
@@ -265,14 +250,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     public void setWeight(int weight) {
         this.weight = weight;
-    }
-
-    public Long getAddTime() {
-        return this.addTime;
-    }
-
-    public void setAddTime(Long addTime) {
-        this.addTime = addTime;
     }
 
     public boolean isSimilarTo(BookInfoBean book, boolean ignoreType) {
@@ -312,13 +289,7 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
 
     @Override
     public int compareTo(SearchBookBean o) {
-        int result;
-        if ((result = Integer.compare(o.getLastChapterNum(), this.getLastChapterNum())) != 0) {
-            return result;
-        } else if ((result = Long.compare(this.getAddTime(), o.getAddTime())) != 0) {
-            return result;
-        }
-        return Integer.compare(o.getWeight(), this.getWeight());
+        return Integer.compare(o.getLastChapterNum(), this.getLastChapterNum());
     }
 
     @Override
@@ -382,7 +353,6 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
                 ", introduce='" + introduce + '\'' +
                 ", bookType='" + bookType + '\'' +
                 ", variableString='" + variableString + '\'' +
-                ", addTime=" + addTime +
                 ", weight=" + weight +
                 ", lastChapterNum=" + lastChapterNum +
                 ", isCurrentSource=" + isCurrentSource +

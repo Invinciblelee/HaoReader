@@ -14,7 +14,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.FragmentManager;
 
 import com.monke.monkeybook.R;
-import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.utils.MarkdownUtils;
 import com.monke.monkeybook.utils.ScreenUtils;
 
@@ -52,6 +51,7 @@ public class LargeTextDialog extends AppCompatDialog {
             } else {
                 string = text;
                 tvContent.setTextIsSelectable(true);
+                tvContent.setTextSize(16f);
             }
             tvContent.post(() -> tvContent.setText(string));
         });

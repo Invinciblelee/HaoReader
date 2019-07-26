@@ -123,7 +123,7 @@ dependencies {
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     //google
-    implementation 'com.google.android.material:material:1.1.0-alpha07'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
     implementation 'com.google.android:flexbox:1.1.0'
     //GreenDao
     implementation 'org.greenrobot:greendao:3.2.2'
@@ -155,7 +155,7 @@ dependencies {
 }
 
 greendao {
-    schemaVersion 89
+    schemaVersion 90
     daoPackage 'com.monke.monkeybook.dao'
     targetGenDir 'src/main/java'
 }

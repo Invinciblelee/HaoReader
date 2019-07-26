@@ -5,9 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.monke.monkeybook.R;
 
@@ -33,6 +34,7 @@ public class CircleProgressBar extends View {
         mStrokeColor = typeArray.getColor(R.styleable.CircleProgressBar_strokeColor, 0xFFFFFFFF);
         mMaxProgress = typeArray.getFloat(R.styleable.CircleProgressBar_maxProgress, 100f);
         mProgress = typeArray.getFloat(R.styleable.CircleProgressBar_progress, 0f);
+        typeArray.recycle();
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.STROKE);

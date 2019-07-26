@@ -15,27 +15,41 @@ import java.util.regex.Pattern;
 public class TextProcessor {
 
     private static final String[] CHAPTER_PATTERNS = new String[]{
-            "^(.*?([\\d零〇一二两三四五六七八九十百千万0-9]+)[章节回场]?)[\\s、，。　：:.]",
-            "^([(（\\[【]?([\\d零〇一二两三四五六七八九十百千万0-9]+)[】\\]）)]?)([\\s、，。　：:.]|$)",
-            "^(第([\\d零〇一二两三四五六七八九十百千万0-9]+)[卷篇集章节回场集])$"
+            "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场])[\\s、，。　：:.]?",
+            "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场]?)[\\s、，。　：:.](?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))",
+            "^([(（\\[【]?([\\d零〇一二两三四五六七八九十百千万]+)[】\\]）)]?)(?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))",
+            "^(第([\\d零〇一二两三四五六七八九十百千万]+)[卷篇集章节回场])$"
     };
 
-    private static final String SPECIAL_REGEX = "[\\s、，。　：:._]?第?([\\d零〇一二两三四五六七八九十百千万0-9]+)[章节回场][\\s、，。　：:.]?";
+    private static final String SPECIAL_REGEX = "[\\s、，。　：:._]?第?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场][\\s、，。　：:.]?";
 
     private static final String SPECIAL_PATTERN = "第.*?[卷篇集].*?" + SPECIAL_REGEX;
 
     private TextProcessor() {
     }
 
-    public static int guessChapterNum(String name) {
-        if (TextUtils.isEmpty(name) || name.matches(SPECIAL_PATTERN)) {
+    public static int guessChapterNum(String chapterName) {
+        if (TextUtils.isEmpty(chapterName) || chapterName.matches(SPECIAL_PATTERN)) {
             return -1;
         }
+
+        chapterName = StringUtils.fullToHalf(chapterName);
+        chapterName = StringUtils.trim(chapterName.replace("(", "（")
+                .replace(")", "）")
+                .replaceAll("[\\[\\]【】]+", "")
+                .replaceAll("\\s+", " "));
+
+        Pattern pattern = Pattern.compile(SPECIAL_PATTERN);
+        Matcher matcher = pattern.matcher(chapterName);
+        if (matcher.find()) {
+            return StringUtils.stringToInt(matcher.group(1));
+        }
+
         for (String str : CHAPTER_PATTERNS) {
-            Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
-            Matcher matcher = pattern.matcher(name);
+            pattern = Pattern.compile(str, Pattern.MULTILINE);
+            matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
-                return StringUtils.parseInt(matcher.group(2));
+                return StringUtils.stringToInt(matcher.group(2));
             }
         }
         return -1;
@@ -47,8 +61,8 @@ public class TextProcessor {
         }
 
         chapterName = StringUtils.fullToHalf(chapterName);
-        chapterName = StringUtils.trim(chapterName.replace("（", "(")
-                .replace("）", ")")
+        chapterName = StringUtils.trim(chapterName.replace("(", "（")
+                .replace(")", "）")
                 .replaceAll("[\\[\\]【】]+", "")
                 .replaceAll("\\s+", " "));
 

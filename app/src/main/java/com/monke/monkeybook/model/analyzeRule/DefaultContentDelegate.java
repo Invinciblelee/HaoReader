@@ -522,7 +522,7 @@ class DefaultContentDelegate implements ContentDelegate {
     }
 
 
-    private class WebContentResult {
+    private static class WebContentResult {
 
         String result;
 
@@ -532,7 +532,7 @@ class DefaultContentDelegate implements ContentDelegate {
         }
     }
 
-    private class WebChapterResult implements Comparable<WebChapterResult> {
+    private static class WebChapterResult implements Comparable<WebChapterResult> {
         int id;
 
         List<ChapterBean> result;
@@ -552,7 +552,7 @@ class DefaultContentDelegate implements ContentDelegate {
         }
     }
 
-    private class WebChapterRequest {
+    private static class WebChapterRequest {
         int id;
         String url;
 

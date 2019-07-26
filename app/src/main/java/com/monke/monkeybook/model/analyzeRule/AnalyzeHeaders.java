@@ -1,9 +1,9 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.help.AppConfigHelper;
-import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -22,7 +22,7 @@ public class AnalyzeHeaders {
     public static Map<String, String> getMap(BookSourceBean bookSource) {
         Map<String, String> headerMap = new HashMap<>();
         String userAgent = bookSource == null ? null : bookSource.getHttpUserAgent();
-        if (!StringUtils.isBlank(userAgent)) {
+        if (StringUtils.isNotBlank(userAgent)) {
             headerMap.put("User-Agent", userAgent);
         } else {
             headerMap.put("User-Agent", getDefaultUserAgent());
