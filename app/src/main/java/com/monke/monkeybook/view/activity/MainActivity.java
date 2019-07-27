@@ -663,7 +663,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             exitTime = System.currentTimeMillis();
         } else {
             finish();
-            System.exit(0);
         }
     }
 
