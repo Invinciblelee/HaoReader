@@ -577,9 +577,7 @@ public class ReadAloudService extends Service {
 
         @Override
         protected void onFocusGain() {
-            if (!pause) {
-                resumeReadAloud();
-            }
+
         }
 
         @Override
@@ -598,6 +596,9 @@ public class ReadAloudService extends Service {
 
         @Override
         protected void onFocusLossTransientCanDuck() {
+            if (!pause) {
+                resumeReadAloud();
+            }
         }
     }
 

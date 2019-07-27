@@ -933,7 +933,7 @@ public class AudioBookPlayService extends Service {
 
         @Override
         protected void onFocusGain() {
-            resumePlay();
+
         }
 
         @Override
@@ -948,6 +948,7 @@ public class AudioBookPlayService extends Service {
 
         @Override
         protected void onFocusLossTransientCanDuck() {
+            resumePlay();
         }
     }
 }
