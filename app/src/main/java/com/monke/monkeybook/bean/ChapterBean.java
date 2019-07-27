@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import androidx.core.util.ObjectsCompat;
 
+import com.google.gson.annotations.Expose;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.TextProcessor;
 
@@ -35,6 +36,7 @@ public class ChapterBean implements Parcelable, FilterBean, Comparable<ChapterBe
     private Integer end;
 
     @Transient
+    @Expose(serialize = false, deserialize = false)
     private String displayDurChapterName;
 
     @Generated(hash = 256775330)
