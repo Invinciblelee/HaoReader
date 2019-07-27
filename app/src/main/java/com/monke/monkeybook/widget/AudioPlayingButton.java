@@ -95,13 +95,14 @@ public class AudioPlayingButton extends FrameLayout {
     public void stop() {
         if (animator != null) {
             animator.cancel();
+            animator = null;
         }
     }
 
     public void setPause() {
         btnPause.setSelected(false);
         btnPause.setImageResource(R.drawable.ic_play_white_24dp);
-        stop();
+        pause();
     }
 
     public void setResume() {
