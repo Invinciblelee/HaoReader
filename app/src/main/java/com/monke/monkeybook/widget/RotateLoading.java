@@ -46,7 +46,7 @@ public class RotateLoading extends View {
 
     private final Runnable mShown = this::startInternal;
 
-    private final Runnable mHiden = this::stopInternal;
+    private final Runnable mHidden = this::stopInternal;
 
     public RotateLoading(Context context) {
         super(context);
@@ -148,6 +148,13 @@ public class RotateLoading extends View {
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        isStart = false;
+        animate().cancel();
+    }
+
+    @Override
     public boolean isShown() {
         return super.isShown();
     }
@@ -168,14 +175,14 @@ public class RotateLoading extends View {
 
     public void show() {
         removeCallbacks(mShown);
-        removeCallbacks(mHiden);
+        removeCallbacks(mHidden);
         post(mShown);
     }
 
     public void hide() {
         removeCallbacks(mShown);
-        removeCallbacks(mHiden);
-        post(mHiden);
+        removeCallbacks(mHidden);
+        post(mHidden);
     }
 
     private void startInternal() {

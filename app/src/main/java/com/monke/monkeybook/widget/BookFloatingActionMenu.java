@@ -27,7 +27,7 @@ public class BookFloatingActionMenu extends LinearLayout {
     private boolean isExpanded;
     private int mLastIndex;
     private OnActionMenuClickListener mMenuClickListener;
-    
+
     private final Runnable mExpandRunnable = this::expandInternal;
 
     private final Runnable mCollapseRunnable = this::collapseInternal;
