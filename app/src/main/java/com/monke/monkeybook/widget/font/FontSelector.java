@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.monke.monkeybook.R;
+import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.FileHelp;
-import com.monke.monkeybook.utils.FileUtil;
 
 import java.io.File;
 
@@ -29,7 +29,7 @@ public class FontSelector {
         builder.setView(view);
         builder.setTitle(R.string.title_select_font);
         builder.setNegativeButton(R.string.cancel, null);
-        fontPath = FileUtil.getSdCardPath() + "/YueDu/Fonts";
+        fontPath = Constant.READ_FONT_PATH;
         adapter = new FontAdapter(context, selectPath,
                 new OnThisListener() {
                     @Override

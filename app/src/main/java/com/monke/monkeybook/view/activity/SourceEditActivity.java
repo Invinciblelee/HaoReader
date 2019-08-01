@@ -201,8 +201,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private BookSourceBean bookSourceBean;
     private int serialNumber;
     private int weight;
-    private boolean enable;
-    private boolean enableFind;
     private String title;
     private KeyboardToolPop mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
@@ -236,8 +234,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         if (savedInstanceState != null) {
             title = savedInstanceState.getString("title");
             serialNumber = savedInstanceState.getInt("serialNumber");
-            enable = savedInstanceState.getBoolean("enable");
-            enableFind = savedInstanceState.getBoolean("enableFind");
         }
         super.onCreate(savedInstanceState);
     }
@@ -247,8 +243,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         super.onSaveInstanceState(outState);
         outState.putString("title", title);
         outState.putInt("serialNumber", serialNumber);
-        outState.putBoolean("enable", enable);
-        outState.putBoolean("enableFind", enableFind);
         if (bookSourceBean != null) {
             String key = String.valueOf(System.currentTimeMillis());
             getIntent().putExtra("data_key", key);
@@ -288,9 +282,6 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @Override
     protected void bindEvent() {
-        findEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enableFind = isChecked);
-        sourceEnableChecker.setOnCheckedChangeListener((buttonView, isChecked) -> enable = isChecked);
-
         scrollContent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
                 ViewCompat.setElevation(switchLayout, v.canScrollVertically(-1) ? DensityUtil.dp2px(v.getContext(), 3) : 0));
     }
@@ -331,7 +322,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     }
 
     private void setResult(BookSourceBean sourceBean) {
-        setBasicConfig(sourceBean);
+        setBasicInfo(sourceBean);
 
         Intent data = new Intent();
         data.putExtra("url", sourceBean.getBookSourceUrl());
@@ -390,8 +381,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         bookSourceBeanN.setHttpUserAgent(trim(tieHttpUserAgent.getText()));
         bookSourceBeanN.setRuleFindUrl(trim(tieRuleFindUrl.getText()));
         bookSourceBeanN.setRuleContentUrlNext(trim(tieRuleContentUrlNext.getText()));
-        bookSourceBeanN.setEnable(enable);
-        bookSourceBeanN.setEnableFind(enableFind);
+        bookSourceBeanN.setEnable(sourceEnableChecker.isChecked());
+        bookSourceBeanN.setEnableFind(findEnableChecker.isChecked());
         bookSourceBeanN.setSerialNumber(serialNumber);
         bookSourceBeanN.setWeight(weight);
         return bookSourceBeanN;
@@ -399,10 +390,10 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
 
     @Override
     public void setText(BookSourceBean bookSourceBean) {
+        setBasicInfo(bookSourceBean);
         if (bookSourceBean == null) {
             return;
         }
-        setBasicConfig(bookSourceBean);
 
         String bookType = trim(bookSourceBean.getBookSourceType());
         if (!TextUtils.isEmpty(bookType)) {
@@ -482,16 +473,18 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         tilRuleContentUrlNext.setHint("下一页内容URL获取规则(RuleContentUrlNext)");
     }
 
-    private void setBasicConfig(BookSourceBean sourceBean) {
-        if (sourceBean == null) return;
+    private void setBasicInfo(BookSourceBean sourceBean) {
+        if (sourceBean == null) {
+            sourceEnableChecker.setChecked(true);
+            findEnableChecker.setChecked(true);
+            return;
+        }
 
         serialNumber = sourceBean.getSerialNumber();
-        enable = sourceBean.getEnable();
-        enableFind = sourceBean.getEnableFind();
         weight = sourceBean.getWeight();
 
-        sourceEnableChecker.setChecked(enable);
-        findEnableChecker.setChecked(enableFind);
+        sourceEnableChecker.setChecked(sourceBean.getEnable());
+        findEnableChecker.setChecked(sourceBean.getEnableFind());
     }
 
     @Override
