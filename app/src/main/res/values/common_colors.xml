@@ -26,7 +26,7 @@
     <color name="transparent">#00000000</color>
     <color name="light_translucent">#23000000</color>
     <color name="dark_translucent">#66000000</color>
-    <color name="white_translucent">#66ffffff</color>
+    <color name="white_translucent">#A6ffffff</color>
     <color name="dim_translucent">#66000000</color>
     <color name="dim_gray">#66dddddd</color>
 

@@ -101,7 +101,7 @@ public class AjaxWebView {
             webView.setWebViewClient(new SnifferWebClient(params, handler));
         } else {
             webView.setWebViewClient(new HtmlWebViewClient(params, handler));
-            webView.addJavascriptInterface(new JavascriptMethod(handler), "OUTHTML");
+            webView.addJavascriptInterface(new JavaInjectMethod(handler), "OUTHTML");
         }
         switch (params.getRequestMethod()) {
             case POST:
@@ -114,11 +114,11 @@ public class AjaxWebView {
         return webView;
     }
 
-    private static class JavascriptMethod {
+    private static class JavaInjectMethod {
 
         private final Handler handler;
 
-        JavascriptMethod(Handler handler) {
+        JavaInjectMethod(Handler handler) {
             this.handler = handler;
         }
 
@@ -242,7 +242,7 @@ public class AjaxWebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             params.setCookie(url);
-            evaluateOutHtml(view);
+            evaluateJavascript(view);
         }
 
 
@@ -272,7 +272,7 @@ public class AjaxWebView {
             handler.proceed();
         }
 
-        private void evaluateOutHtml(final WebView webView) {
+        private void evaluateJavascript(final WebView webView) {
             final ScriptRunnable runnable = new ScriptRunnable(webView, OUTER_HTML);
             handler.postDelayed(runnable, 1000L);
         }
