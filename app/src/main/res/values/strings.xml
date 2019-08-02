@@ -52,7 +52,7 @@
     <string name="cancel">取消</string>
     <string name="goto_select">去选择</string>
     <string name="tip_source_not_selected">您没有选择任何书源</string>
-    <string name="backup_message">新备份会替换原有备份，备份文件夹YueDu，是否确认备份？</string>
+    <string name="backup_message">新备份会替换原有备份，备份文件夹HaoYue，是否确认备份？</string>
     <string name="restore_message">备份书架会覆盖现有书架，是否确认恢复？</string>
     <string name="on_backup">正在备份</string>
     <string name="backup_success">备份成功</string>
@@ -242,7 +242,7 @@
     <string name="nb_file_add_shelf">加入书架</string>
     <string name="nb_file_add_shelves">加入书架(%1$d)</string>
     <string name="nb_file_add_succeed">成功添加%1$d本书</string>
-    <string name="fonts_folder">请将字体文件放到YueDu/Fonts文件夹下重新选择</string>
+    <string name="fonts_folder">请将字体文件放到HaoYue/Fonts文件夹下重新选择</string>
     <string name="default_font">默认字体</string>
     <string name="select_font">字体</string>
     <string name="title_select_font">选择字体</string>
