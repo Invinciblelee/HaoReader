@@ -142,7 +142,7 @@
     <string name="download_cancel">取消下载</string>
     <string name="no_download">暂无任务</string>
     <string name="import_select_book">导入选择书籍</string>
-    <string name="update_search_threads_num">搜索线程数</string>
+    <string name="update_threads_num">搜索和下载线程数</string>
     <string name="change_icon">切换图标</string>
     <string name="add_shelf">放入书架</string>
     <string name="remove_shelf">移出书架</string>

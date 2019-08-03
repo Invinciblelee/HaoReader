@@ -11,9 +11,9 @@ public interface IDownloadTask {
 
     long getWhen();
 
-    void startDownload(Scheduler scheduler, int threadsNum);
+    void startDownload(Scheduler scheduler);
 
-    void stopDownload();
+    void stopDownload(boolean callEvent);
 
     boolean isDownloading();
 
@@ -30,4 +30,6 @@ public interface IDownloadTask {
     void onDownloadError(DownloadBookBean downloadBook);
 
     void onDownloadComplete(DownloadBookBean downloadBook);
+
+    void onDownloadCancel(DownloadBookBean downloadBook);
 }

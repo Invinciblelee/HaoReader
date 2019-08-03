@@ -101,7 +101,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     }
 
     @Override
-    public void startDownload(Scheduler scheduler, int threadsNum) {
+    public void startDownload(Scheduler scheduler) {
         if (isFinishing()) return;
 
         if (disposables.isDisposed()) {
@@ -114,18 +114,20 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
     }
 
     @Override
-    public void stopDownload() {
-        if (isDownloading) {
-            isDownloading = false;
-            onDownloadComplete(downloadBook);
-        }
-
-        if (!isFinishing()) {
-            downloadChapters.clear();
-        }
+    public void stopDownload(boolean callEvent) {
+        isDownloading = false;
+        downloadChapters.clear();
 
         if (!disposables.isDisposed()) {
             disposables.dispose();
+
+            if (callEvent) {
+                if (downloadBook.getSuccessCount() == 0) {
+                    onDownloadCancel(downloadBook);
+                } else {
+                    onDownloadComplete(downloadBook);
+                }
+            }
         }
     }
 
@@ -235,7 +237,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
             downloadBook.successCountAdd();
         }
         if (isFinishing()) {
-            stopDownload();
+            stopDownload(false);
             onDownloadComplete(downloadBook);
         } else {
             onDownloadChange(downloadBook);
@@ -249,7 +251,7 @@ public abstract class DownloadTaskImpl implements IDownloadTask {
         }
 
         if (isFinishing()) {
-            stopDownload();
+            stopDownload(false);
             if (downloadBook.getSuccessCount() == 0) {
                 onDownloadError(downloadBook);
             } else {

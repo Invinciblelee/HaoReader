@@ -42,6 +42,12 @@ public class DownloadService extends Service {
     public static final String progressDownloadAction = "progressDownloadAction";
     public static final String obtainDownloadListAction = "obtainDownloadListAction";
     public static final String finishDownloadAction = "finishDownloadAction";
+
+    private static final int EVENT_START = -1;
+    private static final int EVENT_COMPLETE = 0;
+    private static final int EVENT_ERROR = 1;
+    private static final int EVENT_CANCEL = 2;
+
     private NotificationManagerCompat managerCompat;
 
     public static boolean running = false;
@@ -50,7 +56,7 @@ public class DownloadService extends Service {
     private Scheduler scheduler;
     private int threadsNum;
 
-    private SparseArray<IDownloadTask> downloadTasks = new SparseArray<>();
+    private final SparseArray<IDownloadTask> downloadTasks = new SparseArray<>();
 
     @Override
     public void onCreate() {
@@ -119,13 +125,10 @@ public class DownloadService extends Service {
         new DownloadTaskImpl(downloadBook) {
             @Override
             public void onDownloadPrepared(DownloadBookBean downloadBook) {
-                downloadTasks.put(getId(), this);
+                addDownload(this);
 
-                if (canStartNextTask()) {
-                    startDownload(scheduler, threadsNum);
-                }
-                sendUpDownloadBook(addDownloadAction, downloadBook);
-                longToast(String.format(Locale.getDefault(), "%s：下载任务添加成功", downloadBook.getName()));
+                sendDownloadBook(addDownloadAction, downloadBook);
+                toastOnEvent(EVENT_START, downloadBook);
             }
 
             @Override
@@ -135,46 +138,102 @@ public class DownloadService extends Service {
 
             @Override
             public void onDownloadChange(DownloadBookBean downloadBook) {
-                sendUpDownloadBook(progressDownloadAction, downloadBook);
+                sendDownloadBook(progressDownloadAction, downloadBook);
             }
 
             @Override
             public void onDownloadError(DownloadBookBean downloadBook) {
-                downloadTasks.remove(getId());
-                managerCompat.cancel(getId());
-
-                toast(String.format(Locale.getDefault(), "%s：下载失败", downloadBook.getName()));
-
-                startNextTaskAfterRemove(downloadBook);
+                toastOnEvent(EVENT_ERROR, downloadBook);
+                deleteDownload(this, true);
             }
 
             @Override
             public void onDownloadComplete(DownloadBookBean downloadBook) {
-                if (downloadTasks.indexOfValue(this) >= 0) {
-                    if (downloadBook.getSuccessCount() == 0) {
-                        toast(String.format(Locale.getDefault(), "%s：取消下载", downloadBook.getName()));
-                    } else {
-                        longToast(String.format(Locale.getDefault(), "%s：共下载%d章", downloadBook.getName(), downloadBook.getSuccessCount()));
-                    }
-                } else if (!downloadBook.isValid()) {
-                    toast(String.format(Locale.getDefault(), "%s：所有章节已缓存", downloadBook.getName()));
-                }
+                toastOnEvent(EVENT_COMPLETE, downloadBook);
+                deleteDownload(this, true);
+            }
 
-                downloadTasks.remove(getId());
-                managerCompat.cancel(getId());
-
-                startNextTaskAfterRemove(downloadBook);
+            @Override
+            public void onDownloadCancel(DownloadBookBean downloadBook) {
+                toastOnEvent(EVENT_CANCEL, downloadBook);
+                deleteDownload(this, true);
             }
         };
+
+
+    }
+
+    private void toastOnEvent(int action, DownloadBookBean downloadBook) {
+        switch (action) {
+            case EVENT_START:
+                toast(String.format(Locale.getDefault(), "%s：下载任务添加成功", downloadBook.getName()));
+                break;
+            case EVENT_COMPLETE:
+                if (downloadBook.isValid()) {
+                    toast(String.format(Locale.getDefault(), "%s：共下载%d章", downloadBook.getName(), downloadBook.getSuccessCount()));
+                } else {
+                    toast(String.format(Locale.getDefault(), "%s：所有章节已缓存", downloadBook.getName()));
+                }
+                break;
+            case EVENT_ERROR:
+                toast(String.format(Locale.getDefault(), "%s：下载失败", downloadBook.getName()));
+                break;
+            case EVENT_CANCEL:
+                toast(String.format(Locale.getDefault(), "%s：下载取消", downloadBook.getName()));
+                break;
+        }
     }
 
     private void cancelDownload() {
-        for (int i = downloadTasks.size() - 1; i >= 0; i--) {
-            IDownloadTask downloadTask = downloadTasks.valueAt(i);
-            downloadTask.stopDownload();
+        synchronized (downloadTasks) {
+            for (int i = 0; i < downloadTasks.size(); i++) {
+                IDownloadTask downloadTask = downloadTasks.valueAt(i);
+                cancelDownload(downloadTask, false);
+            }
+            downloadTasks.clear();
         }
-        downloadTasks.clear();
         finishSelf();
+    }
+
+    private void addDownload(IDownloadTask downloadTask) {
+        if (downloadTask == null) {
+            return;
+        }
+
+        synchronized (downloadTasks) {
+            if (downloadTasks.size() == 0) {
+                managerCompat.cancelAll();
+            }
+
+            downloadTasks.put(downloadTask.getId(), downloadTask);
+
+            if (canStartNextTask()) {
+                downloadTask.startDownload(scheduler);
+            }
+        }
+    }
+
+    private void cancelDownload(IDownloadTask downloadTask, boolean callEvent) {
+        if (deleteDownload(downloadTask, false)) {
+            downloadTask.stopDownload(callEvent);
+        }
+    }
+
+    private boolean deleteDownload(IDownloadTask downloadTask, boolean startNext) {
+        synchronized (downloadTasks) {
+            if (downloadTask != null) {
+                downloadTasks.remove(downloadTask.getId());
+                managerCompat.cancel(downloadTask.getId());
+
+                if (startNext) {
+                    startNextTaskAfterRemove(downloadTask.getDownloadBook());
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void removeDownload(int id) {
@@ -182,11 +241,13 @@ public class DownloadService extends Service {
             return;
         }
 
-        for (int i = downloadTasks.size() - 1; i >= 0; i--) {
-            IDownloadTask downloadTask = downloadTasks.valueAt(i);
-            if (downloadTask.getId() == id) {
-                downloadTask.stopDownload();
-                break;
+        synchronized (downloadTasks) {
+            for (int i = downloadTasks.size() - 1; i >= 0; i--) {
+                IDownloadTask downloadTask = downloadTasks.valueAt(i);
+                if (downloadTask.getId() == id) {
+                    cancelDownload(downloadTask, true);
+                    break;
+                }
             }
         }
     }
@@ -196,12 +257,20 @@ public class DownloadService extends Service {
             return;
         }
 
-        for (int i = downloadTasks.size() - 1; i >= 0; i--) {
-            IDownloadTask downloadTask = downloadTasks.valueAt(i);
-            if (noteUrl.equals(downloadTask.getDownloadBook().getNoteUrl())) {
-                downloadTask.stopDownload();
-                break;
+        synchronized (downloadTasks) {
+            for (int i = downloadTasks.size() - 1; i >= 0; i--) {
+                IDownloadTask downloadTask = downloadTasks.valueAt(i);
+                if (noteUrl.equals(downloadTask.getDownloadBook().getNoteUrl())) {
+                    cancelDownload(downloadTask, true);
+                    break;
+                }
             }
+        }
+    }
+
+    private boolean containsDownload(int id) {
+        synchronized (downloadTasks) {
+            return downloadTasks.indexOfKey(id) >= 0;
         }
     }
 
@@ -215,12 +284,12 @@ public class DownloadService extends Service {
             }
         }
         if (!downloadBookBeans.isEmpty()) {
-            sendUpDownloadBooks(downloadBookBeans);
+            sendDownloadBooks(downloadBookBeans);
         }
     }
 
     private void startNextTaskAfterRemove(DownloadBookBean downloadBook) {
-        sendUpDownloadBook(removeDownloadAction, downloadBook);
+        sendDownloadBook(removeDownloadAction, downloadBook);
         if (downloadTasks.size() == 0) {
             finishSelf();
         } else {
@@ -235,7 +304,7 @@ public class DownloadService extends Service {
         for (int i = 0; i < downloadTasks.size(); i++) {
             IDownloadTask downloadTask = downloadTasks.valueAt(i);
             if (!downloadTask.isDownloading()) {
-                downloadTask.startDownload(scheduler, threadsNum);
+                downloadTask.startDownload(scheduler);
                 break;
             }
         }
@@ -265,22 +334,18 @@ public class DownloadService extends Service {
     }
 
 
-    private void sendUpDownloadBook(String action, DownloadBookBean downloadBook) {
+    private void sendDownloadBook(String action, DownloadBookBean downloadBook) {
         DownloadInfo downloadInfo = new DownloadInfo(action, downloadBook);
         RxBus.get().post(RxBusTag.BOOK_DOWNLOAD, downloadInfo);
     }
 
-    private void sendUpDownloadBooks(ArrayList<DownloadBookBean> downloadBooks) {
+    private void sendDownloadBooks(ArrayList<DownloadBookBean> downloadBooks) {
         DownloadInfo downloadInfo = new DownloadInfo(obtainDownloadListAction, downloadBooks);
         RxBus.get().post(RxBusTag.BOOK_DOWNLOAD, downloadInfo);
     }
 
     private void toast(String msg) {
         ToastUtils.toast(this, msg);
-    }
-
-    private void longToast(String msg) {
-        ToastUtils.longToast(this, msg);
     }
 
     private PendingIntent getRemovePendingIntent(int notificationId) {
@@ -291,10 +356,10 @@ public class DownloadService extends Service {
     }
 
     private void isProgress(int notificationId, long when, String bookName, ChapterBean downloadChapterBean) {
-        if (!running) {
+        if (!containsDownload(notificationId)) {
+            managerCompat.cancel(notificationId);
             return;
         }
-
         Intent mainIntent = new Intent(this, DownloadActivity.class);
         PendingIntent mainPendingIntent = PendingIntent.getActivity(this, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         //创建 Notification.Builder 对象

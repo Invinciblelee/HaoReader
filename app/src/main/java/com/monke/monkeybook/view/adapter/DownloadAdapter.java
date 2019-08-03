@@ -1,12 +1,13 @@
 package com.monke.monkeybook.view.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -40,9 +41,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
                 Collections.sort(this.dataS);
             }
         }
-        if (dataS != null) {
-            notifyDataSetChanged();
-        }
+        notifyDataSetChanged();
     }
 
     public void upData(DownloadBookBean data) {
@@ -102,7 +101,8 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         final DownloadBookBean item = dataS.get(holder.getLayoutPosition());
         if (!payloads.isEmpty()) {
-            holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
+            holder.tvName.setText(String.format(Locale.getDefault(), "[正在下载]%s", item.getName()));
+            holder.tvName.getPaint().setFakeBoldText(true);
             holder.tvDownload.setText(activity.getString(R.string.un_download, (Integer) payloads.get(0)));
         } else {
             Glide.with(activity)
@@ -113,9 +113,11 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.MyView
                             .error(R.drawable.img_cover_default))
                     .into(holder.ivCover);
             if (item.getSuccessCount() > 0) {
-                holder.tvName.setText(String.format(Locale.getDefault(), "%s(正在下载)", item.getName()));
+                holder.tvName.setText(String.format(Locale.getDefault(), "[正在下载]%s", item.getName()));
+                holder.tvName.getPaint().setFakeBoldText(true);
             } else {
-                holder.tvName.setText(String.format(Locale.getDefault(), "%s(等待下载)", item.getName()));
+                holder.tvName.setText(String.format(Locale.getDefault(), "[等待下载]%s", item.getName()));
+                holder.tvName.getPaint().setFakeBoldText(false);
             }
             holder.tvDownload.setText(activity.getString(R.string.un_download, item.getDownloadCount() - item.getSuccessCount()));
             holder.ivDel.setOnClickListener(view -> DownloadService.removeDownload(activity, item.getNoteUrl()));

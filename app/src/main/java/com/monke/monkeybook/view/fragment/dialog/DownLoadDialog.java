@@ -63,6 +63,11 @@ public class DownLoadDialog extends AppCompatDialog {
         edtStart.setText(String.valueOf(start + 1));
         edtEnd.setText(String.valueOf(total));
 
+        view.post(() -> {
+            edtEnd.requestFocus();
+            edtEnd.setSelection(edtEnd.length());
+        });
+
         edtStart.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
