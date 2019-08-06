@@ -17,7 +17,7 @@ public class TextProcessor {
     private static final String[] CHAPTER_PATTERNS = new String[]{
             "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场])*[\\s、，。　：:.]?",
             "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场]?)*[\\s、，。　：:.](?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))",
-            "^(第([\\d零〇一二两三四五六七八九十百千万]+)[卷篇集章节回场])*$",
+            "^(第([\\d零〇一二两三四五六七八九十百千万]+)[卷篇集章节回场])$",
             "^([(（\\[【]?([\\d零〇一二两三四五六七八九十百千万]+)[】\\]）)]?)[\\s、，。　：:.](?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))"
     };
 
@@ -45,11 +45,14 @@ public class TextProcessor {
             return StringUtils.stringToInt(matcher.group(1));
         }
 
-        for (String str : CHAPTER_PATTERNS) {
-            pattern = Pattern.compile(str, Pattern.MULTILINE);
+        for (String chapterPattern : CHAPTER_PATTERNS) {
+            pattern = Pattern.compile(Matcher.quoteReplacement(chapterPattern), Pattern.MULTILINE);
             matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
-                return StringUtils.stringToInt(matcher.group(2));
+                int num = StringUtils.stringToInt(matcher.group(2));
+                if (num > 0) {
+                    return num;
+                }
             }
         }
         return -1;
@@ -75,12 +78,14 @@ public class TextProcessor {
         }
 
         for (String chapterPattern : CHAPTER_PATTERNS) {
-            pattern = Pattern.compile(chapterPattern, Pattern.MULTILINE);
+            pattern = Pattern.compile(Matcher.quoteReplacement(chapterPattern), Pattern.MULTILINE);
             matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
                 int num = StringUtils.stringToInt(matcher.group(2));
-                chapterName = num > 0 ? matcher.replaceFirst("第" + num + "章 ") : matcher.replaceFirst("$ ");
-                return chapterName;
+                if (num > 0) {
+                    chapterName = matcher.replaceFirst("第" + num + "章 ");
+                    break;
+                }
             }
         }
 

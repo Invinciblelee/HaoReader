@@ -215,7 +215,7 @@ public class StringUtils {
         return new String(c);
     }
 
-    public final static HashMap<Character, Integer> ChnMap = getChnMap();
+    private final static HashMap<Character, Integer> ChnMap = getChnMap();
 
     private static HashMap<Character, Integer> getChnMap() {
         String cnStr = "零一二三四五六七八九十";

@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.monke.basemvplib.RequestMethod;
-import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.utils.URLUtils;
 import com.monke.monkeybook.utils.UrlEncoderUtils;
@@ -250,7 +250,7 @@ public class AnalyzeUrl {
 
     public String getRequestUrl() {
         if (requestUrl == null) {
-            return getQueryUrl();
+            return baseUrl;
         }
         return requestUrl;
     }
