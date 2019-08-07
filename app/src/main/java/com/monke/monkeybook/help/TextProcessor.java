@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 public class TextProcessor {
 
     private static final String[] CHAPTER_PATTERNS = new String[]{
-            "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场])*[\\s、，。　：:.]?",
-            "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场]?)*[\\s、，。　：:.](?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))",
+            "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场]){1,2}[\\s、，。　：:.]?",
+            "^(.*?([\\d零〇一二两三四五六七八九十百千万]+)[章节回场]?){1,2}[\\s、，。　：:.](?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))",
             "^(第([\\d零〇一二两三四五六七八九十百千万]+)[卷篇集章节回场])$",
             "^([(（\\[【]?([\\d零〇一二两三四五六七八九十百千万]+)[】\\]）)]?)[\\s、，。　：:.](?!([-\\s]?[-\\d零〇一二两三四五六七八九十百千万]+))"
     };
@@ -33,8 +33,8 @@ public class TextProcessor {
             return -1;
         }
 
-        chapterName = StringUtils.fullToHalf(chapterName);
-        chapterName = StringUtils.trim(chapterName.replace("(", "（")
+        chapterName = StringUtils.trim(StringUtils.fullToHalf(chapterName)
+                .replace("(", "（")
                 .replace(")", "）")
                 .replaceAll("[\\[\\]【】]+", "")
                 .replaceAll("\\s+", " "));
@@ -46,7 +46,7 @@ public class TextProcessor {
         }
 
         for (String chapterPattern : CHAPTER_PATTERNS) {
-            pattern = Pattern.compile(Matcher.quoteReplacement(chapterPattern), Pattern.MULTILINE);
+            pattern = Pattern.compile(chapterPattern, Pattern.MULTILINE);
             matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
                 int num = StringUtils.stringToInt(matcher.group(2));
@@ -63,8 +63,8 @@ public class TextProcessor {
             return "";
         }
 
-        chapterName = StringUtils.fullToHalf(chapterName);
-        chapterName = StringUtils.trim(chapterName.replace("(", "（")
+        chapterName = StringUtils.trim(StringUtils.fullToHalf(chapterName)
+                .replace("(", "（")
                 .replace(")", "）")
                 .replaceAll("[\\[\\]【】]+", "")
                 .replaceAll("\\s+", " "));
@@ -78,7 +78,7 @@ public class TextProcessor {
         }
 
         for (String chapterPattern : CHAPTER_PATTERNS) {
-            pattern = Pattern.compile(Matcher.quoteReplacement(chapterPattern), Pattern.MULTILINE);
+            pattern = Pattern.compile(chapterPattern, Pattern.MULTILINE);
             matcher = pattern.matcher(chapterName);
             if (matcher.find()) {
                 int num = StringUtils.stringToInt(matcher.group(2));

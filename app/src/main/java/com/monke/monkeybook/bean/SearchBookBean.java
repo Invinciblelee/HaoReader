@@ -40,6 +40,8 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     @Transient
     private int lastChapterNum;
     @Transient
+    private String displayLastChapter;
+    @Transient
     private boolean isCurrentSource = false;
     @Transient
     private int originNum = 1;
@@ -162,7 +164,10 @@ public class SearchBookBean implements Parcelable, Comparable<SearchBookBean>, V
     }
 
     public String getDisplayLastChapter() {
-        return TextProcessor.formatChapterName(lastChapter);
+        if(displayLastChapter == null){
+            displayLastChapter = TextProcessor.formatChapterName(lastChapter);
+        }
+        return displayLastChapter;
     }
 
     public void setLastChapter(String lastChapter) {
