@@ -1,4 +1,4 @@
-package com.monke.monkeybook.view.fragment;
+package com.monke.monkeybook.view.fragment.dialog;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +24,6 @@ import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BigImageActivity;
 import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
-import com.monke.monkeybook.view.fragment.dialog.AppCompatDialog;
 import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
@@ -34,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class FileSelectorFragment extends AppCompatDialog implements FileSelectorContract.View,
+public class FileSelectorDialog extends AppCompatDialog implements FileSelectorContract.View,
         View.OnClickListener, Toolbar.OnMenuItemClickListener, FileSelectorAdapter.OnItemClickListener
         , SwipeRefreshLayout.OnRefreshListener {
 
@@ -51,14 +50,14 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
 
     private FileSelectorContract.Presenter mPresenter;
 
-    public static FileSelectorFragment newInstance(String title, boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
+    public static FileSelectorDialog newInstance(String title, boolean singleChoice, boolean checkBookAdded, boolean isImage, String[] suffixes) {
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putBoolean("isSingleChoice", singleChoice);
         args.putBoolean("checkBookAdded", checkBookAdded);
         args.putBoolean("isImage", isImage);
         args.putStringArrayList("suffixes", new ArrayList<>(Arrays.asList(suffixes)));
-        FileSelectorFragment fragment = new FileSelectorFragment();
+        FileSelectorDialog fragment = new FileSelectorDialog();
         fragment.setArguments(args);
         return fragment;
     }
@@ -267,7 +266,7 @@ public class FileSelectorFragment extends AppCompatDialog implements FileSelecto
 
     public void show(AppCompatActivity activity, OnFileSelectedListener selectedListener) {
         this.selectedListener = selectedListener;
-        super.show(activity.getSupportFragmentManager(), "FileSelectorFragment");
+        super.show(activity.getSupportFragmentManager(), "FileSelectorDialog");
     }
 
     public static abstract class OnFileSelectedListener {

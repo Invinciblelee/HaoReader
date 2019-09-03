@@ -45,7 +45,7 @@ import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.AudioBookFragment;
-import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.FindBookFragment;
 import com.monke.monkeybook.view.fragment.FragmentTrigger;
 import com.monke.monkeybook.view.fragment.MainBookListFragment;
@@ -516,7 +516,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     }
 
     private void fileSelectResult() {
-        FileSelectorFragment.newInstance("选择文件", false, true, false, new String[]{"txt"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
+        FileSelectorDialog.newInstance("选择文件", false, true, false, new String[]{"txt"}).show(this, new FileSelectorDialog.OnFileSelectedListener() {
             @Override
             public void onMultiplyChoice(List<String> paths) {
                 mPresenter.importBooks(paths);

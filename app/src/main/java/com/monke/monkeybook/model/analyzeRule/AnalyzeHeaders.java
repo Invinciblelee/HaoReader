@@ -1,9 +1,9 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import android.webkit.WebSettings;
+
 import com.monke.basemvplib.ContextHolder;
-import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookSourceBean;
-import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.utils.StringUtils;
 
@@ -48,7 +48,6 @@ public class AnalyzeHeaders {
     }
 
     private static String getDefaultUserAgent() {
-        return AppConfigHelper.get().getString(ContextHolder.getContext().getString(R.string.pk_user_agent),
-                ContextHolder.getContext().getString(R.string.pv_user_agent));
+        return WebSettings.getDefaultUserAgent(ContextHolder.getContext());
     }
 }

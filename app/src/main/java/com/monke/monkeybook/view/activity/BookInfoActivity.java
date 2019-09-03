@@ -28,7 +28,7 @@ import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
@@ -209,7 +209,7 @@ public class BookInfoActivity extends MBaseActivity {
     }
 
     private void imageSelectorResult() {
-        FileSelectorFragment.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
+        FileSelectorDialog.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorDialog.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 tieCoverUrl.setText(path);

@@ -18,7 +18,7 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
-import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
@@ -150,7 +150,7 @@ public class QRCodeScanActivity extends AppCompatActivity implements QRCodeView.
     }
 
     public void requestImage() {
-        FileSelectorFragment.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
+        FileSelectorDialog.newInstance("选择图片", true, false, true, new String[]{"png", "jpg", "jpeg"}).show(this, new FileSelectorDialog.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 zxingview.startSpotAndShowRect(); // 显示扫描框，并开始识别

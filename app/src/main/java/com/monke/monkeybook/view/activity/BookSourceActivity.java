@@ -31,7 +31,7 @@ import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
-import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -349,7 +349,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     private void resultImportPerms() {
-        FileSelectorFragment.newInstance("选择文件", true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
+        FileSelectorDialog.newInstance("选择文件", true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelectorDialog.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 mPresenter.importBookSource(new File(path));

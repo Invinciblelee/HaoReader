@@ -69,7 +69,6 @@
 
         </FrameLayout>
 
-
         <androidx.appcompat.widget.ButtonBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -84,7 +83,8 @@
                 android:id="@android:id/button3"
                 style="?attr/buttonBarNeutralButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent" />
 
             <android.widget.Space
                 android:id="@+id/spacer"
@@ -97,13 +97,15 @@
                 android:id="@android:id/button2"
                 style="?attr/buttonBarNegativeButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@android:id/button1"
                 style="?attr/buttonBarPositiveButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent" />
 
         </androidx.appcompat.widget.ButtonBarLayout>
 

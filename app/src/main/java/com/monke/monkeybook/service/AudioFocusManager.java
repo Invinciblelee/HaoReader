@@ -41,16 +41,15 @@ public abstract class AudioFocusManager implements AudioManager.OnAudioFocusChan
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initFocusRequest() {
-        AudioAttributes mPlaybackAttributes = new AudioAttributes.Builder()
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build();
         mFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(mPlaybackAttributes)
+                .setAudioAttributes(audioAttributes)
                 .setAcceptsDelayedFocusGain(true)
                 .setOnAudioFocusChangeListener(this)
                 .build();
-
     }
 
     public void abandonAudioFocus() {
@@ -65,9 +64,10 @@ public abstract class AudioFocusManager implements AudioManager.OnAudioFocusChan
                 if (isPausedByFocusLossTransient) {
                     // 通话结束，恢复播放
                     onFocusGainFromFocusLossTransient();
+                }else {
+                    // 恢复音量
+                    onFocusGain();
                 }
-                // 恢复音量
-                onFocusGain();
                 isPausedByFocusLossTransient = false;
                 Logger.d(TAG, "重新获得焦点");
                 break;

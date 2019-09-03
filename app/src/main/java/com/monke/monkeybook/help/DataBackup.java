@@ -32,7 +32,7 @@ public class DataBackup {
     }
 
     public boolean run() {
-        File dir = FileHelp.getFolder(FileUtil.getSdCardPath(), "YueDu/backups");
+        File dir = FileHelp.getFolder(FileUtil.getSdCardPath(), "HaoYue/backups");
         String dirPath = dir.getAbsolutePath();
         backupBookShelf(dirPath);
         backupBookSource(dirPath);

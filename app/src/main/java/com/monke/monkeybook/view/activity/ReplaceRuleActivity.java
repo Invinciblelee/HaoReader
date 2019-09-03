@@ -28,7 +28,7 @@ import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.presenter.ReplaceRulePresenterImpl;
 import com.monke.monkeybook.presenter.contract.ReplaceRuleContract;
 import com.monke.monkeybook.view.adapter.ReplaceRuleAdapter;
-import com.monke.monkeybook.view.fragment.FileSelectorFragment;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
 import com.monke.monkeybook.view.fragment.dialog.ReplaceRuleDialog;
@@ -189,7 +189,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
     }
 
     private void resultImportPerms() {
-        FileSelectorFragment.newInstance("选择文件", true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelectorFragment.OnFileSelectedListener() {
+        FileSelectorDialog.newInstance("选择文件", true, false, false, new String[]{"txt", "json", "xml"}).show(this, new FileSelectorDialog.OnFileSelectedListener() {
             @Override
             public void onSingleChoice(String path) {
                 mPresenter.importDataS(new File(path));
