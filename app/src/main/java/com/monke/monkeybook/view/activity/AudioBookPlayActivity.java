@@ -227,7 +227,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     public void onBackPressed() {
         if (bookInfoBean != null) {
             if (!BookshelfHelp.isInBookShelf(bookInfoBean.getNoteUrl())) {
-                showAddShelfPop(bookInfoBean.getName());
+//                showAddShelfPop(bookInfoBean.getName());
                 return;
             }
         }

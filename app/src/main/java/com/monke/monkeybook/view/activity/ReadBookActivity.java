@@ -1558,9 +1558,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
 
     @Override
     public void onBackPressed() {
-        if (!checkAddShelf()) {
-            return;
-        }
+//        if (!checkAddShelf()) {
+//            return;
+//        }
         finish();
     }
 

@@ -20,7 +20,7 @@ import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
-import com.tencent.bugly.crashreport.CrashReport;
+//import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
 
@@ -92,7 +92,7 @@ public class MApplication extends Application {
 
         ContextHolder.initialize(this);
 
-        CrashReport.initCrashReport(getApplicationContext(), Constant.BUGLY_APP_ID, DEBUG);
+//        CrashReport.initCrashReport(getApplicationContext(), Constant.BUGLY_APP_ID, DEBUG);
 
         Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
 
