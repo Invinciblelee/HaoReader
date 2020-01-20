@@ -21,13 +21,13 @@ public class Constant {
 
     //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
     public static String BOOK_CHAPTER_PATH = FileUtil.getSdCardPath() + File.separator
-            + "HaoYue" + File.separator + "chapters" + File.separator;
+            + "Android/AppData/HaoYue" + File.separator + "chapters" + File.separator;
     public static String AUDIO_CACHE_PATH = FileUtil.getSdCardPath() + File.separator
-            + "HaoYue" + File.separator + "audios" + File.separator;
+            + "Android/AppData/HaoYue" + File.separator + "audios" + File.separator;
     public static String AUDIO_BOOK_PATH = FileUtil.getSdCardPath() + File.separator
-            + "HaoYue" + File.separator + "books" + File.separator;
+            + "Android/AppData/HaoYue" + File.separator + "books" + File.separator;
     public static String READ_FONT_PATH = FileUtil.getSdCardPath() + File.separator
-            + "HaoYue" + File.separator + "fonts" + File.separator;
+            +"Fonts" + File.separator;
 
 
     public static final String[] BOOK_TYPES = {

@@ -33,7 +33,7 @@ public class DataRestore {
     }
 
     public Boolean run() throws Exception {
-        String dirPath = FileUtil.getSdCardPath() + "/HaoYue/backups";
+        String dirPath = FileUtil.getSdCardPath() + "/Android/AppData/HaoYue/backups";
         restoreConfig(dirPath);
         restoreBookSource(dirPath);
         restoreBookShelf(dirPath);
