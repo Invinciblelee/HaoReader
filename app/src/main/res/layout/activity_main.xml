@@ -23,7 +23,7 @@
             android:layout_gravity="start"
             android:background="@color/colorBackground"
             app:headerLayout="@layout/navigation_header"
-            app:itemIconTint="@color/navigation_icon_color"
+            app:itemIconTint="@color/colorAccent"
             app:itemTextAppearance="@style/AppTheme.Navigation.Text"
             app:itemTextColor="@color/navigation_color"
             app:menu="@menu/menu_drawer" />

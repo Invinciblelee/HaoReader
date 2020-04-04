@@ -12,10 +12,10 @@
     <color name="colorAccentLight">@color/colorThemeLight</color>
     <color name="colorAccentTranslucent">@color/colorThemeTranslucent</color>
 
-    <color name="colorTheme">@color/md_brown_400</color>
-    <color name="colorThemeDark">@color/md_brown_500</color>
-    <color name="colorThemeLight">@color/md_brown_300</color>
-    <color name="colorThemeTranslucent">#668D6E63</color>
+    <color name="colorTheme">#54A771</color>
+    <color name="colorThemeDark">#428259</color>
+    <color name="colorThemeLight">#64C486</color>
+    <color name="colorThemeTranslucent">#6654A771</color>
 
     <color name="colorSearchField">@color/white</color>
 

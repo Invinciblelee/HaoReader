@@ -16,7 +16,7 @@ import com.monke.monkeybook.R;
 
 public class ToastUtils {
 
-    private static int Y_OFFSET = DensityUtil.dp2px(ContextHolder.getContext(), 78);
+    private static int Y_OFFSET = DensityUtil.dp2px(ContextHolder.getContext(), 156);
 
     private ToastUtils() {
 
@@ -44,7 +44,7 @@ public class ToastUtils {
 
     private static Toast createToast(Context context, CharSequence msg, int length) {
         @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, msg, length);
-        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, Y_OFFSET);
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, Y_OFFSET);
         toast.setView(createToastView(context, msg));
         return toast;
     }
