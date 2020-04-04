@@ -61,6 +61,18 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="show_find_mode_title">
+        <item>@string/show_find_mode_0</item>
+        <item>@string/show_find_mode_1</item>
+        <item>@string/show_find_mode_2</item>
+    </string-array>
+
+    <string-array name="show_find_mode_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="read_type_title">
         <item>@string/horizontal_page_turning</item>
         <item>@string/vertical_scroll</item>

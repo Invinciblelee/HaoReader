@@ -64,6 +64,7 @@
                     android:id="@+id/til_book_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorHint="@color/colorAccent"
                     android:hint="bookName">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -78,6 +79,7 @@
                     android:id="@+id/til_book_author"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorHint="@color/colorAccent"
                     android:layout_marginTop="8dp"
                     android:hint="bookAuthor">
 
@@ -96,6 +98,7 @@
             android:id="@+id/til_cover_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColorHint="@color/colorAccent"
             android:layout_marginTop="5dp"
             android:hint="coverUrl">
 
@@ -149,6 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textColorHint="@color/colorAccent"
             android:hint="简介">
 
             <com.google.android.material.textfield.TextInputEditText

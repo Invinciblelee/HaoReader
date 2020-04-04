@@ -17,13 +17,36 @@
         android:stateListAnimator="@animator/design_topbar_state_list_animator"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                app:title="标题"
+                app:contentInsetStartWithNavigation="0dp"
+                app:titleMarginStart="48dp"
+                app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="44dp"
+                android:scaleType="fitXY"
+                android:padding="14dp"
+                android:tint="@color/colorBarText"
+                style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
+                android:src="@drawable/ic_close_black_24dp"/>
+
+        </FrameLayout>
+
+
+
 
     </com.google.android.material.appbar.AppBarLayout>
 

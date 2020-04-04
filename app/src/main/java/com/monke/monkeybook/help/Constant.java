@@ -17,8 +17,6 @@ public class Constant {
     public static final String FORMAT_TIME = "HH:mm";
     public static final String FORMAT_FILE_DATE = "yyyy-MM-dd";
 
-    public static final String BUGLY_APP_ID = "d4ef8e5fa4";
-
     //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
     public static String BOOK_CHAPTER_PATH = FileUtil.getSdCardPath() + File.separator
             + "HaoYue" + File.separator + "chapters" + File.separator;
@@ -28,6 +26,8 @@ public class Constant {
             + "HaoYue" + File.separator + "books" + File.separator;
     public static String READ_FONT_PATH = FileUtil.getSdCardPath() + File.separator
             + "HaoYue" + File.separator + "fonts" + File.separator;
+    public static String READ_CRASH_PATH = FileUtil.getSdCardPath() + File.separator
+            + "HaoYue" + File.separator + "crashes" + File.separator;
 
 
     public static final String[] BOOK_TYPES = {

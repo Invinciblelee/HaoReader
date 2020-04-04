@@ -25,6 +25,19 @@
             android:scaleType="centerCrop"
             android:src="@drawable/img_cover_default" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_audio_label"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:tint="@color/white"
+            android:padding="4dp"
+            android:background="@drawable/shape_bg_circle_image_tp_1"
+            android:src="@drawable/ic_headset_black_24dp"/>
+
     </com.monke.monkeybook.widget.CoverCardView>
 
     <LinearLayout
@@ -165,7 +178,7 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:text="最新章节"
-            android:textColor="@color/colorTextSummary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="14sp" />
 
         <Space

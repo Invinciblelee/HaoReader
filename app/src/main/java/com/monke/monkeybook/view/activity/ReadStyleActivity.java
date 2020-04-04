@@ -96,15 +96,14 @@ public class ReadStyleActivity extends MBaseActivity implements ColorPickerDialo
 
         mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
+        boolean isNightTheme = isNightTheme();
+
         if (canNavigationBarLightFont()) {
-            mImmersionBar.navigationBarDarkIcon(false);
+            mImmersionBar.navigationBarDarkIcon(!isNightTheme);
         }
 
-        if (darkStatusIcon) {
-            mImmersionBar.statusBarDarkFont(true);
-        } else {
-            mImmersionBar.statusBarDarkFont(false);
-        }
+        mImmersionBar.statusBarDarkFont(darkStatusIcon);
+
         mImmersionBar.init();
     }
 

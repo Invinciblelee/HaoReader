@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/side_nav_bar"
     android:orientation="vertical"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    android:theme="@style/AppTheme.AppBarOverlay.Dark">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:src="@drawable/ic_read"
-        android:tint="@color/colorBarText" />
+        android:tint="@color/white" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_user"

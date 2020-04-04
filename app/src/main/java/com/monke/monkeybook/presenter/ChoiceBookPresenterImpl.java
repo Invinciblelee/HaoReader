@@ -2,7 +2,6 @@
 package com.monke.monkeybook.presenter;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import com.monke.basemvplib.BasePresenterImpl;
 import com.monke.basemvplib.rxjava.RxExecutors;
@@ -69,8 +68,8 @@ public class ChoiceBookPresenterImpl extends BasePresenterImpl<ChoiceBookContrac
                     Iterator<SearchBookBean> iterator = searchBookBeans.iterator();
                     while (iterator.hasNext()) {
                         SearchBookBean searchBook = iterator.next();
-                        for (SearchBookBean temp : mView.getSearchBookAdapter().getSearchBooks()) {
-                            if (TextUtils.equals(temp.getNoteUrl(), searchBook.getNoteUrl())) {
+                        for (SearchBookBean book: mView.getSearchBookAdapter().getSearchBooks()) {
+                            if(book.equals(searchBook)){
                                 iterator.remove();
                                 break;
                             }

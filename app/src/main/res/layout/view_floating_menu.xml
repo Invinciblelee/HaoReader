@@ -33,7 +33,7 @@
                 android:paddingEnd="8dp"
                 android:paddingBottom="2dp"
                 android:text="@string/item_group_zg"
-                android:textColor="@color/colorBarText"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
         </androidx.cardview.widget.CardView>
@@ -45,7 +45,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="8dp"
-            android:tint="@color/colorBarText"
+            android:tint="@color/white"
             app:backgroundTint="@color/colorAccent"
             app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_assignment_black_24dp" />
@@ -76,7 +76,7 @@
                 android:paddingEnd="8dp"
                 android:paddingBottom="2dp"
                 android:text="@string/item_group_yf"
-                android:textColor="@color/colorBarText"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
         </androidx.cardview.widget.CardView>
@@ -88,7 +88,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="8dp"
-            android:tint="@color/colorBarText"
+            android:tint="@color/white"
             app:backgroundTint="@color/colorAccent"
             app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_book_black_24dp" />
@@ -121,7 +121,7 @@
                 android:paddingEnd="8dp"
                 android:paddingBottom="2dp"
                 android:text="@string/item_group_wj"
-                android:textColor="@color/colorBarText"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
         </androidx.cardview.widget.CardView>
@@ -133,7 +133,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="8dp"
-            android:tint="@color/colorBarText"
+            android:tint="@color/white"
             app:backgroundTint="@color/colorAccent"
             app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_assignment_turned_in_black_24dp" />
@@ -165,7 +165,7 @@
                 android:paddingEnd="8dp"
                 android:paddingBottom="2dp"
                 android:text="@string/item_group_bd"
-                android:textColor="@color/colorBarText"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
         </androidx.cardview.widget.CardView>
@@ -177,7 +177,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="8dp"
-            android:tint="@color/colorBarText"
+            android:tint="@color/white"
             app:backgroundTint="@color/colorAccent"
             app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_folder_black_24dp" />
@@ -194,7 +194,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:tint="@color/colorBarText"
+        android:tint="@color/white"
         app:backgroundTint="@color/colorAccent"
         app:fabCustomSize="56dp"
         app:srcCompat="@drawable/ic_library_books_black_24dp" />

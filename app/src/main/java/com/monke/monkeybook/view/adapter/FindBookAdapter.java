@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.FindKindGroupBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -221,6 +222,12 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
                         mItemClickListener.onItemPreviewClick(item);
                     }
                 });
+                String bookType = item.getBookType();
+                if (TextUtils.equals(bookType, BookType.AUDIO)) {
+                    viewHolder.ivAudioLabel.setVisibility(View.VISIBLE);
+                } else {
+                    viewHolder.ivAudioLabel.setVisibility(View.GONE);
+                }
             } else {
                 MyFooterViewHolder viewHolder = (MyFooterViewHolder) holder;
                 viewHolder.itemView.setOnClickListener(v -> {
@@ -249,11 +256,13 @@ public class FindBookAdapter extends RecyclerView.Adapter<FindBookAdapter.MyView
 
             ImageView ivCover;
             TextView tvName;
+            ImageView ivAudioLabel;
 
             MyViewHolder(@NonNull View itemView) {
                 super(itemView);
                 ivCover = itemView.findViewById(R.id.iv_cover);
                 tvName = itemView.findViewById(R.id.tv_name);
+                ivAudioLabel = itemView.findViewById(R.id.iv_audio_label);
             }
         }
 

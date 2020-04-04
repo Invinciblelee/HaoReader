@@ -74,6 +74,7 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
                 BookDetailActivity.startThis((MBaseActivity) getActivity(), bookShelf);
             }
         });
+
     }
 
     @Override
@@ -179,20 +180,17 @@ public class AudioBookFragment extends BaseFragment<AudioBookContract.Presenter>
                 runningView.show();
                 break;
             case AudioBookPlayService.ACTION_START:
+            case AudioBookPlayService.ACTION_RESUME:
                 runningView.setResume();
                 break;
             case AudioBookPlayService.ACTION_PAUSE:
                 runningView.setPause();
-                break;
-            case AudioBookPlayService.ACTION_RESUME:
-                runningView.setResume();
                 break;
             case AudioBookPlayService.ACTION_PROGRESS:
                 runningView.setProgress(info.getProgress(), info.getDuration());
                 break;
             case AudioBookPlayService.ACTION_STOP:
                 runningView.hide();
-                runningView.stop();
                 break;
         }
     }

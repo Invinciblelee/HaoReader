@@ -21,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.MBaseActivity;
+import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.utils.ContextUtils;
 import com.monke.monkeybook.utils.DensityUtil;
 import com.monke.monkeybook.view.activity.AudioBookPlayActivity;
@@ -52,6 +53,7 @@ public class AudioPlayingButton extends FrameLayout {
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 
+
     private void initView() {
         ViewCompat.setElevation(this, DensityUtil.dp2px(getContext(), 8));
         ViewCompat.setBackground(this, getResources().getDrawable(R.drawable.shape_audio_bar));
@@ -61,6 +63,14 @@ public class AudioPlayingButton extends FrameLayout {
         ivCover.setOnClickListener(this::startPlayerActivity);
 
         btnPause.setOnClickListener(v -> startPlayerActivity(ivCover));
+
+        final OnLongClickListener longClickListener = v -> {
+            AudioBookPlayService.stop(getContext());
+            return true;
+        };
+
+        ivCover.setOnLongClickListener(longClickListener);
+        btnPause.setOnLongClickListener(longClickListener);
     }
 
     private void startPlayerActivity(View v) {
@@ -72,7 +82,7 @@ public class AudioPlayingButton extends FrameLayout {
     }
 
     public void start() {
-        if (!isShown()) return;
+        if (getVisibility() != VISIBLE) return;
         if (animator == null) {
             animator = ValueAnimator.ofFloat(0f, 360f);
             animator.addUpdateListener(animation -> ivCover.setRotation((Float) animation.getAnimatedValue()));
@@ -118,6 +128,7 @@ public class AudioPlayingButton extends FrameLayout {
 
     public void hide() {
         setVisibility(View.INVISIBLE);
+        stop();
     }
 
     public void setProgress(int progress, int duration) {

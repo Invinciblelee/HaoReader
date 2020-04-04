@@ -68,7 +68,7 @@ public class ChangeSourceAdapter extends RefreshRecyclerViewAdapter implements F
         return searchBookBeans;
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvBookSource;
         TextView tvLastChapter;
         RadioButton ivChecked;

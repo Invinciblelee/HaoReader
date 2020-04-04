@@ -8,7 +8,7 @@
     <string name="pk_bookshelf_px">bookshelf_px</string>
     <string name="pk_read_type">read_type</string>
     <string name="pk_ImmersionStatusBar">immersionStatusBar</string>
-    <string name="pk_show_all_find">showAllFind</string>
+    <string name="pk_show_find_mode">showFindMode</string>
     <string name="pk_bookshelf_anim">bookshelfAnim</string>
     <string name="pk_default_read">defaultToRead</string>
     <string name="pk_search_page_count">search_page_count</string>

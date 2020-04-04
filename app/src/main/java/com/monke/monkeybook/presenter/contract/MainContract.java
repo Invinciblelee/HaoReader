@@ -59,7 +59,7 @@ public interface MainContract {
 
         void removeFromBookShelf(BookShelfBean bookShelfBean);
 
-        void cleanCaches();
+        void cleanCaches(boolean clearChapter);
 
         void clearBookshelf();
 

@@ -11,7 +11,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:scaleType="centerInside"
-        android:tint="@color/colorBarText" />
+        android:tint="@color/navigation_icon_color" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text"
@@ -19,5 +19,6 @@
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:paddingTop="1dp"
+        android:textColor="@color/navigation_color"
         android:textSize="14sp" />
 </LinearLayout>

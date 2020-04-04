@@ -1,5 +1,7 @@
 package com.monke.monkeybook.model.analyzeRule;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.monke.monkeybook.bean.BookSourceBean;
@@ -278,5 +280,15 @@ abstract class BaseAnalyzerPresenter<S> implements IAnalyzerPresenter, JavaExecu
     @Override
     public final String formatHtml(String string) {
         return mSimpleJavaExecutor.formatHtml(string);
+    }
+
+    @Override
+    public String unescapeHtml3(String string) {
+        return mSimpleJavaExecutor.unescapeHtml3(string);
+    }
+
+    @Override
+    public String unescapeHtml4(String string) {
+        return mSimpleJavaExecutor.unescapeHtml4(string);
     }
 }

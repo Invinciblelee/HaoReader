@@ -14,7 +14,7 @@
         app:qrcv_barcodeRectHeight="120dp"
         app:qrcv_borderColor="@android:color/white"
         app:qrcv_borderSize="1dp"
-        app:qrcv_cornerColor="@color/colorPrimaryDark"
+        app:qrcv_cornerColor="@color/colorAccent"
         app:qrcv_cornerDisplayType="center"
         app:qrcv_cornerLength="20dp"
         app:qrcv_cornerSize="3dp"
@@ -31,7 +31,7 @@
         app:qrcv_maskColor="#33FFFFFF"
         app:qrcv_qrCodeTipText="将二维码放入框内，即可自动扫描"
         app:qrcv_rectWidth="300dp"
-        app:qrcv_scanLineColor="@color/colorPrimaryDark"
+        app:qrcv_scanLineColor="@color/colorAccent"
         app:qrcv_scanLineMargin="0dp"
         app:qrcv_scanLineSize="0.5dp"
         app:qrcv_tipTextColor="@android:color/white"
@@ -43,14 +43,14 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay.Dark"
         android:fitsSystemWindows="true">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/transparent"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:theme="@style/AppTheme.AppBarOverlay"
+            app:popupTheme="@style/AppTheme.PopupOverlay.Dark"
             app:title="二维码扫描"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp" />
 

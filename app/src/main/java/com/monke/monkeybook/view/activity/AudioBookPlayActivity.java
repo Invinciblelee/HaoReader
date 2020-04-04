@@ -34,6 +34,7 @@ import com.monke.monkeybook.help.BitIntentDataManager;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.service.AudioBookPlayService;
+import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
 import com.monke.monkeybook.view.popupwindow.AudioChapterPop;
 import com.monke.monkeybook.view.popupwindow.AudioTimerPop;
@@ -96,6 +97,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         intent.putExtra("data_key", key);
         BitIntentDataManager.getInstance().putData(key, bookShelf == null ? null : bookShelf.copy());
         if (transitionView != null) {
+            intent.putExtra("special", String.valueOf(transitionView.getTag()));
             activity.startActivityByAnim(intent, transitionView, transitionView.getTransitionName());
         } else {
             activity.startActivity(intent);
@@ -106,7 +108,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
     public void initImmersionBar() {
         mImmersionBar.transparentStatusBar();
 
-        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
+        mImmersionBar.transparentNavigationBar();
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -198,7 +200,7 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
         getMenuInflater().inflate(R.menu.menu_audio_play_activity, menu);
         for (int i = 0; i < menu.size(); i++) {
             MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-            AppCompat.setTint(item, getResources().getColor(R.color.colorBarText));
+            AppCompat.setTint(item, getResources().getColor(R.color.white));
         }
         return true;
     }
@@ -232,7 +234,11 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
             }
         }
 
-        supportFinishAfterTransition();
+        if (StringUtils.isNotBlank(getIntent().getStringExtra("special"))) {
+            finish();
+        } else {
+            supportFinishAfterTransition();
+        }
     }
 
     @Override

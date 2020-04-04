@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -22,6 +21,7 @@ import com.monke.monkeybook.bean.SearchHistoryBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.dao.SearchHistoryBeanDao;
 import com.monke.monkeybook.help.RxBusTag;
+import com.monke.monkeybook.help.TextProcessor;
 import com.monke.monkeybook.model.SearchBookModel;
 import com.monke.monkeybook.presenter.contract.SearchBookContract;
 import com.monke.monkeybook.utils.StringUtils;
@@ -54,21 +54,13 @@ public class SearchBookPresenterImpl extends BasePresenterImpl<SearchBookContrac
                 ClipData.Item item = intent.getClipData().getItemAt(0);
                 keyWord = StringUtils.valueOf(item.getText()).trim();
 
-                if (!TextUtils.isEmpty(keyWord)) {
-                    int start = keyWord.indexOf("《");
-                    int end = keyWord.indexOf("》");
-                    if (start >= 0 && end > 1) {
-                        keyWord = keyWord.substring(start + 1, end);
-                    } else if (keyWord.length() > 12) {
-                        keyWord = keyWord.substring(0, 12);
-                    }
-                }
+                keyWord = TextProcessor.formatKeyword(keyWord);
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && keyWord == null && Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
                 String type = intent.getType();
                 if ("text/plain".equals(type)) {
-                    keyWord = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
+                    keyWord = TextProcessor.formatKeyword(intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT));
                 }
             }
         }

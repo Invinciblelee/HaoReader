@@ -38,8 +38,6 @@ public class AnalyzeGlobal {
     public static final String RULE_REVERSE = "-";
     public static final String RULE_IN_WHOLE = "@whole:";
     public static final String RULE_IN_REGEX = "@regex:";
-    public static final String RULE_REGEX_SPLIT = "#";
-    public static final String RULE_REGEX_SPLIT_TRAIT = "##";
     public static final String RULE_BODY = "outerBody";
 
     public static final String RULE_JSON = "@JSon:";
@@ -48,5 +46,7 @@ public class AnalyzeGlobal {
     public static final String RULE_XPATH_TRAIT = "//";
     public static final String RULE_CSS = "@CSS:";
     public static final String RULE_REGEX = "##";
+
+    public static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36";
 
 }

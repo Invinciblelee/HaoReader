@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,8 +25,8 @@ import com.monke.monkeybook.presenter.contract.FileSelectorContract;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.view.activity.BigImageActivity;
 import com.monke.monkeybook.view.adapter.FileSelectorAdapter;
-import com.monke.monkeybook.widget.theme.AppCompat;
 import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,7 +95,8 @@ public class FileSelectorDialog extends AppCompatDialog implements FileSelectorC
         }
         toolbar.inflateMenu(R.menu.menu_file_selector);
         toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_format_line_spacing_black_24dp));
-        AppCompat.setTint(toolbar.getOverflowIcon(), getResources().getColor(R.color.white));
+        AppCompat.setTint(toolbar.getLogo(), ContextCompat.getColor(requireContext(), R.color.colorMenuText));
+        AppCompat.setTint(toolbar.getOverflowIcon(), getResources().getColor(R.color.colorMenuText));
         Menu menu = toolbar.getMenu();
         if (mPresenter.isSingleChoice()) {
             MenuItem item = menu.findItem(R.id.action_select_all);
@@ -102,7 +104,7 @@ public class FileSelectorDialog extends AppCompatDialog implements FileSelectorC
             item.setVisible(false);
         }
         for (int i = 0; i < menu.size(); i++) {
-            AppCompat.setTint(menu.getItem(i), getResources().getColor(R.color.white));
+            AppCompat.setTint(menu.getItem(i), getResources().getColor(R.color.colorMenuText));
         }
         toolbar.setOnMenuItemClickListener(this);
 

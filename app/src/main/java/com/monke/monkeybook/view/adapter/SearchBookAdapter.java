@@ -73,12 +73,13 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
                         .error(R.drawable.img_cover_default))
                 .into(myViewHolder.ivCover);
 
-        StringBuilder builder = new StringBuilder(item.getName());
         String bookType = item.getBookType();
         if (TextUtils.equals(bookType, BookType.AUDIO)) {
-            builder.insert(0, activity.getString(R.string.book_audio));
+            myViewHolder.ivAudioLabel.setVisibility(View.VISIBLE);
+        } else {
+            myViewHolder.ivAudioLabel.setVisibility(View.GONE);
         }
-        myViewHolder.tvName.setText(builder.toString());
+        myViewHolder.tvName.setText(item.getName());
 
         if (!StringUtils.isBlank(item.getAuthor())) {
             myViewHolder.tvAuthor.setText(item.getAuthor());
@@ -150,6 +151,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvKind;
         TextView tvLasted;
         TextView tvOrigin;
+        ImageView ivAudioLabel;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -161,6 +163,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             tvLasted = itemView.findViewById(R.id.tv_lasted);
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
+            ivAudioLabel = itemView.findViewById(R.id.iv_audio_label);
         }
     }
 

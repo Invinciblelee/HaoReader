@@ -23,6 +23,7 @@ import com.monke.monkeybook.presenter.contract.CacheManagerContract;
 import com.monke.monkeybook.utils.NumberUtil;
 import com.monke.monkeybook.view.adapter.CacheListAdapter;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
+import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
 import java.util.Locale;
@@ -62,6 +63,7 @@ public class CacheManagerActivity extends MBaseActivity<CacheManagerContract.Pre
     protected void bindView() {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        AppCompat.setToolbarNavIconTint(toolbar, getResources().getColor(R.color.colorBarText));
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

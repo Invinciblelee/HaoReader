@@ -28,14 +28,15 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup"
+        tools:ignore="AllowBackup,LockedOrientationActivity"
         tools:targetApi="n">
 
         <activity
             android:name=".view.activity.WelcomeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Activity.Welcome">
+            android:theme="@style/AppTheme.Activity.Welcome"
+            android:windowSoftInputMode="adjustNothing|stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,6 +47,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
+
         </activity>
 
         <activity
@@ -53,18 +55,19 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
-            android:theme="@style/AppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
 
         <activity
             android:name=".view.activity.ReadBookActivity"
-            android:configChanges="locale|keyboardHidden"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Activity" />
 
         <activity
             android:name=".view.activity.QRCodeScanActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
@@ -158,7 +161,8 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Activity" />
+            android:theme="@style/AppTheme.Activity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
             android:name=".view.activity.BigImageActivity"
@@ -199,6 +203,7 @@
 
         <activity
             android:name=".help.permission.PermissionActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Activity.Permission"
             android:windowSoftInputMode="adjustNothing|stateAlwaysHidden" />

@@ -24,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
@@ -370,7 +371,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             }
             emitter.onNext(true);
             emitter.onComplete();
-        }).subscribeOn(RxExecutors.getDefault())
+        }).subscribeOn(Schedulers.newThread())
                 .subscribe(new SimpleObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean bool) {
@@ -391,6 +392,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             bookShelfBean.setFinalDate(System.currentTimeMillis());
             bookShelfBean.setHasUpdate(false);
+            bookShelfBean.setNewChapters(0);
             boolean inShelf = inBookShelf();
             if (forceSave || inShelf) {
                 BookshelfHelp.saveBookToShelf(bookShelfBean);

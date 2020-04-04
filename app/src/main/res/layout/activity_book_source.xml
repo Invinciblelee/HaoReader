@@ -19,6 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationContentDescription="@string/back"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <androidx.appcompat.widget.SearchView
@@ -35,6 +38,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
         android:layout_below="@id/appBar">
 
         <com.monke.monkeybook.widget.refreshview.scroller.FastScrollRecyclerView

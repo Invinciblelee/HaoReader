@@ -11,6 +11,7 @@ import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.WebBookModel;
 import com.monke.monkeybook.model.impl.ISearchTask;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,6 +85,7 @@ public class SearchTaskImpl implements ISearchTask {
                     .timeout(30L, TimeUnit.SECONDS)
                     .subscribeOn(scheduler)
                     .doOnNext(result -> {
+                        System.out.println(Arrays.toString(result.toArray()));
                         saveData(result);
                         incrementSourceWeight(searchEngine.getTag(), searchEngine.getElapsedTime());
                     })

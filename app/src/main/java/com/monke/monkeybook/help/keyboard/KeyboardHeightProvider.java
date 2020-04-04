@@ -44,7 +44,11 @@ public class KeyboardHeightProvider extends PopupWindow implements ViewTreeObser
         if (!isShowing()) {
             final View view = mActivity.getWindow().getDecorView();
             // 延迟加载popupwindow，如果不加延迟就会报错
-            view.post(() -> showAtLocation(view, Gravity.NO_GRAVITY, 0, 0));
+            view.post(() -> {
+                if(!mActivity.isFinishing() && !mActivity.isDestroyed()){
+                    showAtLocation(view, Gravity.NO_GRAVITY, 0, 0);
+                }
+            });
         }
         return this;
     }

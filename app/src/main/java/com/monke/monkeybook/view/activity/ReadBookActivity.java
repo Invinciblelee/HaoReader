@@ -23,7 +23,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -102,10 +101,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     DrawerLayout drawerLayout;
     @BindView(R.id.controls_frame)
     ScrimInsetsRelativeLayout controlsView;
-    @BindView(R.id.view_controls_back)
-    View controlsBackView;
-    @BindView(R.id.ll_menu_bottom)
-    LinearLayout llMenuBottom;
+    @BindView(R.id.controls_frame_bg)
+    View controlsBgView;
+    @BindView(R.id.rl_menu_bottom)
+    View bottomMenuView;
     @BindView(R.id.tv_pre)
     TextView tvPre;
     @BindView(R.id.tv_next)
@@ -135,7 +134,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @BindView(R.id.atv_source_name)
     TextView atvSourceName;
     @BindView(R.id.ll_menu_top)
-    LinearLayout llMenuTop;
+    View topMenuView;
     @BindView(R.id.appBar)
     View appBar;
     @BindView(R.id.rlNavigationBar)
@@ -261,6 +260,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         }
     }
 
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -272,15 +272,17 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      */
     @Override
     public void initImmersionBar() {
+        boolean isNightTheme = isNightTheme();
+
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mImmersionBar.statusBarDarkFont(false);
+            mImmersionBar.statusBarDarkFont(!isNightTheme);
             if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
             } else {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR);
             }
         } else if (isMenuShowing() || isPopShowing()) {
-            mImmersionBar.statusBarDarkFont(false);
+            mImmersionBar.statusBarDarkFont(!isNightTheme);
             if (isMenuShowing()) {
                 mImmersionBar.hideBar(BarHide.FLAG_SHOW_BAR);
             } else if (isPopShowing()) {
@@ -291,11 +293,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 }
             }
         } else {
-            if (readBookControl.getDarkStatusIcon()) {
-                mImmersionBar.statusBarDarkFont(true, 0.2f);
-            } else {
-                mImmersionBar.statusBarDarkFont(false);
-            }
+            mImmersionBar.statusBarDarkFont(readBookControl.getDarkStatusIcon());
 
             if (readBookControl.getHideStatusBar()) {
                 mImmersionBar.hideBar(BarHide.FLAG_HIDE_BAR);
@@ -307,7 +305,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         mImmersionBar.fullScreen(true);
 
         if (canNavigationBarLightFont()) {
-            mImmersionBar.navigationBarDarkIcon(false);
+            mImmersionBar.navigationBarDarkIcon(!isNightTheme);
         }
 
         if (isImmersionBarEnabled()) {
@@ -526,17 +524,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 || (moreSettingPop != null && moreSettingPop.isShowing());
     }
 
-    private void ensureCenterClickArea() {
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) controlsBackView.getLayoutParams();
-        int top = appBar.getHeight();
-        int bottom = navigationBar.getHeight();
-        if (params.topMargin != top || params.bottomMargin != bottom) {
-            params.topMargin = top;
-            params.bottomMargin = bottom;
-            controlsBackView.requestLayout();
-        }
-    }
-
     /**
      * 显示菜单
      */
@@ -552,7 +539,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     initImmersionBar();
-                    ensureCenterClickArea();
                 }
 
                 @Override
@@ -849,7 +835,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         btnSetting.setOnClickListener(this);
 
         //菜单
-        controlsBackView.setOnClickListener(this);
+        controlsBgView.setOnClickListener(this);
 
         NoDoubleClickListener clickListener = new NoDoubleClickListener() {
             @Override
@@ -935,7 +921,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.view_controls_back:
+            case R.id.controls_frame_bg:
                 popMenuOut();
                 break;
             case R.id.atv_layout:
@@ -1298,8 +1284,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private void popMenuOut() {
         if (isMenuShowing()) {
             ensureMenuOutAnim();
-            llMenuTop.startAnimation(menuTopOut);
-            llMenuBottom.startAnimation(menuBottomOut);
+            topMenuView.startAnimation(menuTopOut);
+            bottomMenuView.startAnimation(menuBottomOut);
         }
     }
 
@@ -1310,8 +1296,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (!isMenuShowing()) {
             ensureMenuInAnim();
             controlsView.setVisibility(View.VISIBLE);
-            llMenuTop.startAnimation(menuTopIn);
-            llMenuBottom.startAnimation(menuBottomIn);
+            topMenuView.startAnimation(menuTopIn);
+            bottomMenuView.startAnimation(menuBottomIn);
         }
     }
 

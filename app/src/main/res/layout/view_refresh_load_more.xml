@@ -23,6 +23,6 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="正在加载..."
-        android:textColor="@color/colorTextSummary"
+        android:textColor="@color/colorTextSecondary"
         android:textSize="14sp" />
 </LinearLayout>

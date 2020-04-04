@@ -1,7 +1,5 @@
 package com.monke.monkeybook.model.content;
 
-import android.text.TextUtils;
-
 import com.monke.basemvplib.AjaxWebView;
 import com.monke.basemvplib.BaseModelImpl;
 import com.monke.basemvplib.ContextHolder;
@@ -10,7 +8,6 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
-import com.monke.monkeybook.help.CookieHelper;
 import com.monke.monkeybook.help.Logger;
 import com.monke.monkeybook.model.BookSourceManager;
 import com.monke.monkeybook.model.SimpleModel;
@@ -27,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
 /**
@@ -101,18 +98,18 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             final AnalyzeUrl analyzeUrl = new AnalyzeUrl(tag, bookSourceBean.getRealRuleSearchUrl(), content, page, headerMap(false));
             final BookList bookList = new BookList(tag, name, bookSourceBean);
             if (bookList.isAJAX()) {
-                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext())
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .postData(analyzeUrl.getPostData())
-                        .headerMap(analyzeUrl.getHeaderMap())
-                        .cookieStore(CookieHelper.getInstance());
+                        .headerMap(analyzeUrl.getHeaderMap());
                 switch (analyzeUrl.getRequestMethod()) {
-                    case DEFAULT:
-                    case POST:
-                        params.url(analyzeUrl.getUrl());
-                        break;
                     case GET:
                         params.url(analyzeUrl.getQueryUrl());
+                        break;
+                    case POST:
+                    case DEFAULT:
+                        params.url(analyzeUrl.getUrl());
+                        break;
                 }
                 return ajax(params)
                         .flatMap(response -> bookList.analyzeSearchBook(response, analyzeUrl.getRequestUrl()))
@@ -169,20 +166,21 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
             final AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapterUrl, chapter.getDurChapterUrl(), headerMap(true));
             final BookContent bookContent = new BookContent(tag, bookSourceBean);
             if (bookContent.isAJAX()) {
-                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext())
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .postData(analyzeUrl.getPostData())
-                        .headerMap(analyzeUrl.getHeaderMap())
-                        .cookieStore(CookieHelper.getInstance());
+                        .headerMap(analyzeUrl.getHeaderMap());
                 switch (analyzeUrl.getRequestMethod()) {
-                    case DEFAULT:
-                    case POST:
-                        params.url(analyzeUrl.getUrl());
-                        break;
                     case GET:
                         params.url(analyzeUrl.getQueryUrl());
+                        break;
+                    case POST:
+                    case DEFAULT:
+                        params.url(analyzeUrl.getUrl());
+                        break;
                 }
                 return ajax(params)
+                        .observeOn(Schedulers.io())
                         .flatMap(response -> bookContent.analyzeBookContent(response, analyzeUrl.getQueryUrl(), chapter));
             } else {
                 return toObservable(analyzeUrl)
@@ -205,22 +203,23 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
             final AnalyzeUrl analyzeUrl = new AnalyzeUrl(chapterUrl, chapter.getDurChapterUrl(), headerMap(true));
             if (audioBookChapter.isAJAX()) {
-                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext(), tag)
+                final AjaxWebView.AjaxParams params = new AjaxWebView.AjaxParams(ContextHolder.getContext())
                         .requestMethod(analyzeUrl.getRequestMethod())
                         .suffix(audioBookChapter.getSuffix())
-                        .cookieStore(CookieHelper.getInstance())
                         .postData(analyzeUrl.getPostData())
                         .headerMap(analyzeUrl.getHeaderMap())
                         .javaScript(audioBookChapter.getJavaScript());
                 switch (analyzeUrl.getRequestMethod()) {
-                    case DEFAULT:
-                    case POST:
-                        params.url(analyzeUrl.getUrl());
-                        break;
                     case GET:
                         params.url(analyzeUrl.getQueryUrl());
+                        break;
+                    case POST:
+                    case DEFAULT:
+                        params.url(analyzeUrl.getUrl());
+                        break;
                 }
                 return sniff(params)
+                        .observeOn(Schedulers.io())
                         .flatMap(response -> audioBookChapter.analyzeAudioChapter(response, analyzeUrl.getQueryUrl(), chapter));
             } else {
                 return toObservable(analyzeUrl)
@@ -234,7 +233,6 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
 
     private Observable<String> toObservable(AnalyzeUrl analyzeUrl) {
         return SimpleModel.getResponse(analyzeUrl)
-                .flatMap(response -> setCookie(response, tag))
                 .doOnNext(response -> {
                     final String requestUrl;
                     okhttp3.Response networkResponse = response.raw().networkResponse();
@@ -249,25 +247,4 @@ public class DefaultModel extends BaseModelImpl implements IStationBookModel, IA
     }
 
 
-    private Observable<Response<String>> setCookie(Response<String> response, String tag) {
-        return Observable.create((ObservableOnSubscribe<Response<String>>) e -> {
-            if (!response.raw().headers("Set-Cookie").isEmpty()) {
-                final StringBuilder cookieBuilder = new StringBuilder();
-                for (String s : response.raw().headers("Set-Cookie")) {
-                    String[] x = s.split(";");
-                    for (String y : x) {
-                        if (!TextUtils.isEmpty(y)) {
-                            cookieBuilder.append(y).append(";");
-                        }
-                    }
-                }
-                String cookie = cookieBuilder.toString();
-                if (!TextUtils.isEmpty(cookie)) {
-                    CookieHelper.getInstance().replaceCookie(tag, cookie);
-                }
-            }
-            e.onNext(response);
-            e.onComplete();
-        }).onErrorReturnItem(response);
-    }
 }

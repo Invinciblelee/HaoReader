@@ -43,9 +43,27 @@ public class BookshelfHelp {
     private static final Type CHAPTER_LIST_TYPE = new TypeToken<List<ChapterBean>>() {
     }.getType();
 
-    public static List<BookShelfBean> queryAllBook() {
+    public static List<BookShelfBean> queryAllBooks() {
         List<BookShelfBean> bookShelfList = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
                 .orderDesc(BookShelfBeanDao.Properties.FinalDate).list();
+        for (int i = 0; i < bookShelfList.size(); i++) {
+            BookInfoBean bookInfoBean = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
+                    .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookShelfList.get(i).getNoteUrl())).unique();
+            if (bookInfoBean != null) {
+                bookShelfList.get(i).setBookInfoBean(bookInfoBean);
+            } else {
+                bookShelfList.remove(i);
+                i--;
+            }
+        }
+        return bookShelfList;
+    }
+
+    public static List<BookShelfBean> queryBooks(int limit) {
+        List<BookShelfBean> bookShelfList = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
+                .orderDesc(BookShelfBeanDao.Properties.FinalDate)
+                .where(BookShelfBeanDao.Properties.Group.notEq(Constant.GROUP_AUDIO))
+                .limit(limit).list();
         for (int i = 0; i < bookShelfList.size(); i++) {
             BookInfoBean bookInfoBean = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
                     .where(BookInfoBeanDao.Properties.NoteUrl.eq(bookShelfList.get(i).getNoteUrl())).unique();
@@ -322,11 +340,36 @@ public class BookshelfHelp {
         DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().deleteAll();
         DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().deleteAll();
         DbHelper.getInstance().getDaoSession().getChapterBeanDao().deleteAll();
-        cleanCaches();
-    }
-
-    public static void cleanCaches() {
+        DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().deleteAll();
         FileHelp.deleteFile(Constant.BOOK_CHAPTER_PATH);
         FileHelp.getFolder(Constant.BOOK_CHAPTER_PATH);
+    }
+
+    public static void cleanCaches(boolean clearChapter) {
+        List<BookShelfBean> bookShelfBeans = queryAllBooks();
+        List<SearchBookBean> searchBookBeans = DbHelper.getInstance().getDaoSession().getSearchBookBeanDao()
+                .loadAll();
+
+        List<SearchBookBean> tempList = new ArrayList<>();
+        for (SearchBookBean searchBookBean: searchBookBeans){
+            boolean arrowClear = true;
+            for (BookShelfBean bookShelfBean: bookShelfBeans){
+                    if(TextUtils.equals(searchBookBean.getName(), bookShelfBean.getBookInfoBean().getName())
+                    && TextUtils.equals(searchBookBean.getAuthor(), bookShelfBean.getBookInfoBean().getAuthor())){
+                        arrowClear = false;
+                        break;
+                    }
+            }
+            if(arrowClear){
+               tempList.add(searchBookBean);
+            }
+        }
+
+        DbHelper.getInstance().getDaoSession().getSearchBookBeanDao().deleteInTx(tempList);
+
+        if(clearChapter) {
+            FileHelp.deleteFile(Constant.BOOK_CHAPTER_PATH);
+            FileHelp.getFolder(Constant.BOOK_CHAPTER_PATH);
+        }
     }
 }

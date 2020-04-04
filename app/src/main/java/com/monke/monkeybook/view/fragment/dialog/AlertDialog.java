@@ -59,6 +59,29 @@ public class AlertDialog extends AppCompatDialog {
         mAlert.onDestroy();
     }
 
+    public void setTitle(CharSequence title){
+        if(mAlert != null){
+            mAlert.setTitle(title);
+        }
+    }
+
+    public void setTitle(@StringRes int resId){
+        if(mAlert != null){
+            mAlert.setTitle(resId);
+        }
+    }
+
+    public void setMessage(CharSequence message){
+        if(mAlert != null){
+            mAlert.setMessage(message);
+        }
+    }
+
+    public void setMessage(@StringRes int resId){
+        if(mAlert != null){
+            mAlert.setMessage(resId);
+        }
+    }
 
     public void show() {
         if (mAlert != null) {

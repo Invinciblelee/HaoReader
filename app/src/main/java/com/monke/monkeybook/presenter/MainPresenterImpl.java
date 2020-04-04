@@ -29,7 +29,6 @@ import com.monke.monkeybook.utils.StringUtils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -54,7 +53,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     public void queryBooks(String query) {
         Observable.create((ObservableOnSubscribe<List<BookShelfBean>>) e -> {
             List<BookShelfBean> bookShelfBeans = BookshelfHelp.queryBooks(query);
-            e.onNext(bookShelfBeans == null ? new ArrayList<>() : bookShelfBeans);
+            e.onNext(bookShelfBeans);
             e.onComplete();
         }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -125,6 +124,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.dismissHUD();
                         mView.toast(R.string.restore_fail);
                     }
@@ -237,10 +237,10 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     }
 
     @Override
-    public void cleanCaches() {
+    public void cleanCaches(boolean clearChapter) {
         mView.showLoading("正在清除缓存");
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            BookshelfHelp.cleanCaches();
+            BookshelfHelp.cleanCaches(clearChapter);
             e.onNext(true);
             e.onComplete();
         }).subscribeOn(RxExecutors.getDefault())

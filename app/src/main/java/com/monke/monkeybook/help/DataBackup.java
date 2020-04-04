@@ -43,7 +43,7 @@ public class DataBackup {
     }
 
     private void backupBookShelf(String file) {
-        List<BookShelfBean> bookShelfList = BookshelfHelp.queryAllBook();
+        List<BookShelfBean> bookShelfList = BookshelfHelp.queryAllBooks();
         if (bookShelfList != null && bookShelfList.size() > 0) {
             for (BookShelfBean bookshelf : bookShelfList) {
                 bookshelf.setChapterList(null, false);
@@ -56,7 +56,7 @@ public class DataBackup {
             DocumentFile docFile = DocumentHelper.createFileIfNotExist("myBookShelf.json", file);
             DocumentHelper.writeString(bookshelf, docFile);
         }
-        BookshelfHelp.queryAllBook();
+        BookshelfHelp.queryAllBooks();
     }
 
     private void backupBookSource(String file) {

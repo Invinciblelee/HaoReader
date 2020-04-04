@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="96dp"
-    android:layout_height="148dp"
+    android:layout_width="94dp"
+    android:layout_height="149dp"
     android:background="?attr/selectableItemBackground"
     android:gravity="center"
     android:text="@string/look_more"
-    android:textColor="@color/colorTextSummary"
-    android:textSize="14sp" />
+    android:textColor="@color/colorTextSecondary"
+    android:textSize="13sp" />

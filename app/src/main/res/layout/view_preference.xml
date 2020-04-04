@@ -38,7 +38,7 @@
             android:layout_below="@android:id/title"
             android:layout_alignStart="@android:id/title"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/colorTextSummary"
+            android:textColor="@color/colorTextSecondary"
             android:maxLines="4"
             android:textSize="14sp"/>
 

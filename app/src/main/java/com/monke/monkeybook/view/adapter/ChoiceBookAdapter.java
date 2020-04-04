@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.BookKindBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.model.annotation.BookType;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.refreshview.RefreshRecyclerViewAdapter;
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     private Activity activity;
-    private final List<SearchBookBean> searchBooks;
+    private final List<SearchBookBean> searchBooks = new ArrayList<>();
 
     public interface OnItemClickListener {
         void clickToSearch(View clickView, int position, SearchBookBean searchBookBean);
@@ -39,7 +40,6 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
     public ChoiceBookAdapter(Activity activity) {
         super(true);
         this.activity = activity;
-        searchBooks = new ArrayList<>();
     }
 
     @Override
@@ -52,16 +52,21 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         final int realPosition = holder.getLayoutPosition();
         final SearchBookBean item = searchBooks.get(realPosition);
         MyViewHolder myViewHolder = (MyViewHolder) holder;
-        if (!activity.isFinishing()) {
-            Glide.with(activity)
-                    .load(item.getCoverUrl())
-                    .apply(new RequestOptions()
-                            .fitCenter().dontAnimate()
-                            .placeholder(R.drawable.img_cover_default)
-                            .error(R.drawable.img_cover_default))
-                    .into(myViewHolder.ivCover);
-        }
+        Glide.with(activity)
+                .load(item.getCoverUrl())
+                .apply(new RequestOptions()
+                        .fitCenter().dontAnimate()
+                        .placeholder(R.drawable.img_cover_default)
+                        .error(R.drawable.img_cover_default))
+                .into(myViewHolder.ivCover);
         myViewHolder.tvName.setText(item.getName());
+
+        String bookType = item.getBookType();
+        if (TextUtils.equals(bookType, BookType.AUDIO)) {
+            myViewHolder.ivAudioLabel.setVisibility(View.VISIBLE);
+        } else {
+            myViewHolder.ivAudioLabel.setVisibility(View.GONE);
+        }
 
         if (!TextUtils.isEmpty(item.getAuthor())) {
             myViewHolder.tvAuthor.setText(item.getAuthor());
@@ -135,6 +140,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvLasted;
         Button btnAddShelf;
         TextView tvOrigin;
+        ImageView ivAudioLabel;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -148,6 +154,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
             btnAddShelf.setVisibility(View.VISIBLE);
+            ivAudioLabel = itemView.findViewById(R.id.iv_audio_label);
 
             int paddingEnd = ScreenUtils.dpToPx(72);
             tvAuthor.setPadding(0, 0, paddingEnd, 0);

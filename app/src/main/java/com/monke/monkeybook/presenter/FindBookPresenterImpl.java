@@ -60,7 +60,7 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
 
     private FindGroupIterator mGroupIterator;
 
-    private boolean mShowAllFind;
+    private int mShowFindMode;
 
     private final Function<List<SearchBookBean>, List<SearchBookBean>> mBookFilter = searchBookBeans -> {
         ListUtils.removeDuplicate(searchBookBeans);
@@ -91,8 +91,14 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     }
 
     @Override
+    public int getFindMode() {
+        return mShowFindMode;
+    }
+
+    @Override
     public void initData() {
-        mShowAllFind = AppConfigHelper.get().getBoolean(mView.getContext().getString(R.string.pk_show_all_find), true);
+        String findMode = AppConfigHelper.get().getString(mView.getContext().getString(R.string.pk_show_find_mode), "0");
+        mShowFindMode = Integer.parseInt(findMode);
 
         resetDispose();
         Observable.create((ObservableOnSubscribe<List<FindKindGroupBean>>) e -> {
@@ -240,11 +246,14 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
                                 return Observable.just(findKindGroupBean);
                             })
                             .doOnNext(groupBean -> {
+                                BookSourceBean sourceBean = BookSourceManager.getByUrl(groupBean.getTag());
                                 if (isFindInvalid(groupBean)) {
-                                    BookSourceBean sourceBean = BookSourceManager.getByUrl(groupBean.getTag());
                                     sourceBean.setEnableFind(false);
-                                    BookSourceManager.save(sourceBean);
+                                    sourceBean.setValidFind(false);
+                                } else {
+                                    sourceBean.setValidFind(true);
                                 }
+                                BookSourceManager.save(sourceBean);
                             });
                 })
                 .doOnNext(this::putBookCache)
@@ -289,9 +298,10 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
     }
 
     private boolean isFindInvalid(FindKindGroupBean groupBean) {
-        if (mShowAllFind) {
+        if (mShowFindMode == 0) {
             return false;
         }
+
         return groupBean == null || groupBean.getBooks() == null || groupBean.getBooks().isEmpty();
     }
 
@@ -337,10 +347,12 @@ public class FindBookPresenterImpl extends BasePresenterImpl<FindBookContract.Vi
 
     private List<FindKindGroupBean> obtainFindGroupList() {
         final List<BookSourceBean> bookSourceBeans;
-        if (mShowAllFind) {
+        if (mShowFindMode == 0) {
             bookSourceBeans = BookSourceManager.getAll();
-        } else {
+        } else if (mShowFindMode == 1) {
             bookSourceBeans = BookSourceManager.getFindEnabled();
+        } else {
+            bookSourceBeans = BookSourceManager.getFindValid();
         }
         final List<FindKindGroupBean> group = new ArrayList<>();
         for (BookSourceBean sourceBean : bookSourceBeans) {

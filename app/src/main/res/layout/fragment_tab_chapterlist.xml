@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/side_nav_bar"
         android:outlineProvider="none"
-        android:theme="@style/AppTheme.AppBarOverlay"
+        android:theme="@style/AppTheme.AppBarOverlay.Dark"
         app:elevation="0dp">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -38,7 +38,7 @@
             android:layout_height="48dp"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            app:popupTheme="@style/AppTheme.PopupOverlay.Dark">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/toolbar_tab"
@@ -49,10 +49,10 @@
                 android:layout_marginEnd="10dp"
                 android:fillViewport="false"
                 app:layout_scrollFlags="scroll"
-                app:tabIndicatorColor="@color/colorBarText"
+                app:tabIndicatorColor="@color/white"
                 app:tabIndicatorFullWidth="false"
                 app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/colorBarText"
+                app:tabSelectedTextColor="@color/white"
                 app:tabTextAppearance="@style/TextAppearance.AppCompat.Tab">
 
                 <com.google.android.material.tabs.TabItem

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minHeight="48dp"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.widget.Space
+        android:id="@+id/textSpacerNoTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_dialog_padding_top_material"
+        tools:ignore="PrivateResource" />
+
+    <TextView
+        android:id="@+id/tv_msg"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:text="@string/clean_caches_s" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/checker_clear_chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:textSize="12sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/clean_caches_ss"/>
+
+    <android.widget.Space
+        android:id="@+id/textSpacerNoButtons"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_dialog_padding_top_material"
+        tools:ignore="PrivateResource" />
+</LinearLayout>

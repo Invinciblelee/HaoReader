@@ -137,7 +137,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     public void initImmersionBar() {
         mImmersionBar.transparentStatusBar();
 
-        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
+        mImmersionBar.transparentNavigationBar();
 
         if (canNavigationBarLightFont()) {
             mImmersionBar.navigationBarDarkIcon(false);
@@ -275,9 +275,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 tvRemoveShelf.setText(R.string.add_shelf);
             }
 
-            if (TextUtils.isEmpty(tvName.getText())) {
-                tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
-            }
+            tvName.setText(mPresenter.getBookShelf().getBookInfoBean().getName());
+
             tvAuthor.setText(mPresenter.getBookShelf().getBookInfoBean().getAuthor());
             if (TextUtils.isEmpty(tvAuthor.getText())) {
                 tvAuthor.setText(R.string.author_unknown);
@@ -285,7 +284,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
 
             String lastChapterName = mPresenter.getBookShelf().getDisplayLastChapterName();
             if (TextUtils.isEmpty(lastChapterName) && mPresenter.getSearchBook() != null) {
-                lastChapterName = mPresenter.getSearchBook().getLastChapter();
+                lastChapterName = mPresenter.getSearchBook().getDisplayLastChapter();
             }
             if (!TextUtils.isEmpty(lastChapterName)) {
                 tvLastChapter.setText(lastChapterName);
@@ -454,8 +453,8 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         ChangeSourceDialog.show(getSupportFragmentManager(), mPresenter.getBookShelf().getBookInfoBean(), false,
                 searchBookBean -> {
                     tvOrigin.setText(searchBookBean.getOrigin());
-                    if (!TextUtils.isEmpty(searchBookBean.getLastChapter())) {
-                        tvLastChapter.setText(searchBookBean.getLastChapter());
+                    if (!TextUtils.isEmpty(searchBookBean.getDisplayLastChapter())) {
+                        tvLastChapter.setText(searchBookBean.getDisplayLastChapter());
                     } else {
                         tvLastChapter.setText(getString(R.string.book_search_last, getString(R.string.text_placeholder)));
                     }

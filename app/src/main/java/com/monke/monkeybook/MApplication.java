@@ -1,26 +1,23 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
-import com.monke.basemvplib.AppActivityManager;
 import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.help.Constant;
+import com.monke.monkeybook.help.CrashHandler;
 import com.monke.monkeybook.help.mediacache.HttpProxyCacheServer;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
 
@@ -92,14 +89,12 @@ public class MApplication extends Application {
 
         ContextHolder.initialize(this);
 
-        CrashReport.initCrashReport(getApplicationContext(), Constant.BUGLY_APP_ID, DEBUG);
+        CrashHandler.getInstance().install();
 
         Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
 
         boolean nightTheme = AppConfigHelper.get().getPreferences().getBoolean("nightTheme", false);
         AppCompatDelegate.setDefaultNightMode(nightTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
-
-        registerActivityCallback();
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -170,42 +165,5 @@ public class MApplication extends Application {
         }
     }
 
-    private void registerActivityCallback() {
-        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                AppActivityManager.getInstance().add(activity);
-            }
 
-            @Override
-            public void onActivityStarted(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityResumed(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityPaused(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityStopped(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-            }
-
-            @Override
-            public void onActivityDestroyed(Activity activity) {
-                AppActivityManager.getInstance().remove(activity);
-            }
-        });
-    }
 }

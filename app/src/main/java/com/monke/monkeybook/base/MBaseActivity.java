@@ -1,10 +1,11 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.monke.monkeybook.base;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,18 +15,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuItemImpl;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.gyf.immersionbar.ImmersionBar;
+import com.monke.basemvplib.AppActivityManager;
 import com.monke.basemvplib.BaseActivity;
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.help.AppConfigHelper;
 import com.monke.monkeybook.utils.ToastUtils;
 import com.monke.monkeybook.widget.theme.AppCompat;
+
+import java.lang.ref.WeakReference;
 
 public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T> {
 
@@ -34,6 +39,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppActivityManager.getInstance().add(this);
         preferences = AppConfigHelper.get().getPreferences();
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -48,18 +54,17 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         initImmersionBar();
     }
 
+
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        boolean isNightMode = getDelegate().getLocalNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
-        if (hasFocus && isNightMode != isNightTheme()) {
-            applyNightTheme();
-        }
+    protected void onDestroy() {
+        AppActivityManager.getInstance().remove(this);
+        super.onDestroy();
     }
 
     /**
      * 设置MENU图标颜色
      */
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (menu != null) {
@@ -90,11 +95,13 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
 
         mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
 
+        boolean isNightTheme = isNightTheme();
+
         if (canNavigationBarLightFont()) {
-            mImmersionBar.navigationBarDarkIcon(false);
+            mImmersionBar.navigationBarDarkIcon(!isNightTheme);
         }
 
-        mImmersionBar.statusBarDarkFont(false);
+        mImmersionBar.statusBarDarkFont(!isNightTheme);
 
         mImmersionBar.init();
     }
@@ -117,6 +124,10 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         return preferences.getBoolean("nightTheme", false);
     }
 
+    public int getNightMode() {
+        return isNightTheme() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+    }
+
     public SharedPreferences getPreferences() {
         return preferences;
     }
@@ -124,33 +135,24 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     public void setNightTheme(boolean isNightTheme) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("nightTheme", isNightTheme);
-        editor.apply();
-        applyNightTheme();
-    }
-
-    public void setOrientation(int screenDirection) {
-        switch (screenDirection) {
-            case 0:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                break;
-            case 1:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                break;
-            case 2:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                break;
-            case 3:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-                break;
+        if (editor.commit()) {
+            applyDefaultNightMode();
         }
     }
 
-    public void applyNightTheme() {
-        if (isNightTheme()) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+    private void applyDefaultNightMode() {
+        final int nightMode = getNightMode();
+
+        AppCompatDelegate.setDefaultNightMode(nightMode);
+
+        for (WeakReference<Activity> actRef : AppActivityManager.getInstance().getActivities()) {
+            Activity activity = actRef.get();
+            if (activity instanceof AppCompatActivity && !activity.getClass().equals(this.getClass())) {
+                AppCompatDelegate delegate = ((AppCompatActivity) activity).getDelegate();
+                delegate.applyDayNight();
+            }
         }
+
     }
 
     public void startActivityByAnim(Intent intent, int animIn, int animExit) {

@@ -194,8 +194,10 @@ class DefaultContentDelegate implements ContentDelegate {
         item.setIntroduce(introduce);
         item.setKind(kind);
         item.setLastChapter(lastChapter);
-        item.setCoverUrl(mAnalyzer.processUrl(coverUrl));
         item.putVariableMap(variableMap);
+        if (StringUtils.isNotBlank(coverUrl)) {
+            item.setCoverUrl(mAnalyzer.processUrl(coverUrl));
+        }
         if (StringUtils.isBlank(noteUrl)) {
             item.setNoteUrl(getConfig().getBaseURL());
         } else {
@@ -483,7 +485,7 @@ class DefaultContentDelegate implements ContentDelegate {
 
                     try {
                         AnalyzeUrl analyzeUrl = new AnalyzeUrl(getConfig().getBaseURL(), webContent.nextUrl, headerMap);
-                        String response = SimpleModel.getResponse(analyzeUrl).subscribeOn(Schedulers.io()).blockingFirst().body();
+                        String response = SimpleModel.getResponse(analyzeUrl).blockingFirst().body();
                         webContent = getRawContentResult(response, webContent.nextUrl, ruleBookContent);
                         if (!isEmpty(webContent.result)) {
                             bookContentBean.appendDurChapterContent(webContent.result);

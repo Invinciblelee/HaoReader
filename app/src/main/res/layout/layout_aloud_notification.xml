@@ -47,7 +47,7 @@
             android:paddingTop="2dp"
             android:singleLine="true"
             android:text="@string/app_name"
-            android:textColor="@color/colorTextSummary"
+            android:textColor="@color/colorTextSecondary"
             android:textSize="14sp" />
 
         <TextView style="@style/Style.Line" />

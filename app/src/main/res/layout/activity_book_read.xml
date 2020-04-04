@@ -28,9 +28,8 @@
             app:appConsumeInsets="false"
             app:appInsetForeground="@color/colorPrimary">
 
-
             <View
-                android:id="@+id/view_controls_back"
+                android:id="@+id/controls_frame_bg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
@@ -38,6 +37,8 @@
                 android:id="@+id/ll_menu_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -103,7 +104,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_menu_bottom"
+                android:id="@+id/rl_menu_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -228,21 +229,29 @@
 
                 <View style="@style/Style.Shadow.Bottom" />
                 <!--底部设置栏-->
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/rlNavigationBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@color/colorPrimary">
-                    <!--章节设置-->
+                    android:background="@color/colorPrimary"
+                    android:orientation="vertical">
 
-
-                    <LinearLayout
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="12dp"
+                        android:layout_alignBottom="@id/llSetting"
+                        android:layout_alignParentTop="true"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <!--章节设置-->
+                    <LinearLayout
+                        android:id="@+id/llChapterPage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingTop="12dp">
 
                         <TextView
                             android:id="@+id/tv_pre"
@@ -260,11 +269,11 @@
                         <androidx.appcompat.widget.AppCompatSeekBar
                             android:id="@+id/hpb_read_progress"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:progressBackgroundTint="@color/colorProgressTrackLight"
-                            android:progressTint="@color/colorProgressWhite"
-                            android:thumbTint="@color/colorProgressWhite" />
+                            android:layout_weight="1"
+                            android:progressBackgroundTint="@color/colorProgressTrack"
+                            android:progressTint="@color/colorProgress"
+                            android:thumbTint="@color/colorProgress" />
 
                         <TextView
                             android:id="@+id/tv_next"
@@ -283,11 +292,12 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/llSetting"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:layout_below="@id/llChapterPage"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="4dp"
-                        android:baselineAligned="false"
                         android:orientation="horizontal">
 
                         <Space
@@ -384,7 +394,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1" />
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 

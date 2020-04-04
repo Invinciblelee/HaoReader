@@ -30,8 +30,14 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
             mImmersionBar.statusBarColor(R.color.colorStatusBar);
         }
 
+        boolean isNightTheme = isNightTheme();
+
+        if (canNavigationBarLightFont()) {
+            mImmersionBar.navigationBarDarkIcon(!isNightTheme);
+        }
+
         if (isImmersionBarEnabled()) {
-            mImmersionBar.statusBarDarkFont(!isNightTheme());
+            mImmersionBar.statusBarDarkFont(!isNightTheme);
         } else {
             mImmersionBar.statusBarDarkFont(false);
         }
@@ -88,6 +94,7 @@ public class WelcomeActivity extends MBaseActivity<WelcomeContract.Presenter> im
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
+
 
     @Override
     public void startActivity(Intent intent) {

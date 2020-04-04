@@ -24,12 +24,13 @@ import com.monke.monkeybook.bean.BookInfoBean;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
+import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.utils.KeyboardUtil;
-import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.ChangeSourceDialog;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
 import butterknife.BindView;
@@ -63,8 +64,10 @@ public class BookInfoActivity extends MBaseActivity {
     @BindView(R.id.til_book_jj)
     TextInputLayout tilBookJj;
 
+
     private BookShelfBean bookShelf;
     private BookInfoBean bookInfo;
+    private boolean inBookShelf;
 
     public static void startThis(MBaseActivity context, BookShelfBean bookShelf, View transitionView) {
         Intent intent = new Intent(context, BookInfoActivity.class);
@@ -121,14 +124,29 @@ public class BookInfoActivity extends MBaseActivity {
         String key = getIntent().getStringExtra("data_key");
         bookShelf = BitIntentDataManager.getInstance().getData(key, null);
         bookInfo = bookShelf.getBookInfoBean();
+        inBookShelf = BookshelfHelp.isInBookShelf(bookShelf.getNoteUrl());
         BitIntentDataManager.getInstance().cleanData(key);
+    }
 
+    @Override
+    protected void bindView() {
         if (bookInfo != null) {
             tieBookName.setText(bookInfo.getName());
             tieBookAuthor.setText(bookInfo.getAuthor());
             tieBookJj.setText(bookInfo.getIntroduce());
             tieCoverUrl.setText(bookInfo.getRealCoverUrl());
         }
+
+        if(!inBookShelf){
+            tieBookName.setEnabled(false);
+            tieBookAuthor.setEnabled(false);
+            tieCoverUrl.setEnabled(false);
+            tvSelectLocalCover.setEnabled(false);
+            tvChangeCover.setEnabled(false);
+            tvRefreshCover.setEnabled(false);
+            tieBookJj.setEnabled(false);
+        }
+
         initCover(getTextString(tieCoverUrl));
     }
 
@@ -179,6 +197,10 @@ public class BookInfoActivity extends MBaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_book_info, menu);
+        if(!inBookShelf){
+            MenuItem saveItem = menu.findItem(R.id.action_save);
+            saveItem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -1,5 +1,14 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="NavigationView">
+
+    <group android:id="@+id/drawer_recently_viewed">
+        <item
+            android:id="@+id/action_recently_viewed"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="@string/book_recently_viewed" />
+    </group>
 
     <group android:id="@+id/drawer_menu_book_source">
         <item

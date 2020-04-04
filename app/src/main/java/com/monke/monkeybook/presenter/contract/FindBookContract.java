@@ -11,6 +11,8 @@ public interface FindBookContract {
         void initData();
 
         void updateData(String url);
+
+        int getFindMode();
     }
 
     interface View extends IView {

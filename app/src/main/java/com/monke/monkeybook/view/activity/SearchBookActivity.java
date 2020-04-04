@@ -318,7 +318,6 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     @Override
     protected void bindEvent() {
         tvSearchHistoryClean.setOnClickListener(v -> {
-            explosionField.explode(tflSearchHistory);
             mPresenter.cleanSearchHistory();
         });
     }

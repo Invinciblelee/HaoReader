@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.monke.basemvplib.NetworkUtil;
+import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.BookInfoBean;
@@ -201,7 +202,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
                             SearchBookBeanDao.Properties.Author.eq(bookInfo.getAuthor())).list();
             e.onNext(searchBookBeans);
             e.onComplete();
-        }).subscribeOn(Schedulers.single())
+        }).subscribeOn(RxExecutors.getDefault())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<SearchBookBean>>() {
                     @Override

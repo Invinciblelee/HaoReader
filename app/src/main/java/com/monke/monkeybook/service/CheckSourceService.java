@@ -81,6 +81,8 @@ public class CheckSourceService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        compositeDisposable.dispose();
+
         if (executor != null) {
             executor.shutdown();
             executor = null;
@@ -112,7 +114,6 @@ public class CheckSourceService extends Service {
 
     private void doneService() {
         RxBus.get().post(CHECK_SOURCE_STATE, -1);
-        compositeDisposable.dispose();
         stopSelf();
     }
 

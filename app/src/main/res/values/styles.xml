@@ -63,15 +63,19 @@
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
 
     </style>
 
-    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light">
+    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
 
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
+
+    <style name="AppTheme.PopupOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
 
     </style>
 
@@ -82,7 +86,7 @@
     <style name="AppTheme.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu">
         <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
         <item name="overlapAnchor">false</item>
-        <item name="android:colorBackground">@color/colorCardBackground</item>
+        <item name="android:popupBackground">@drawable/bg_popup_background</item>
     </style>
 
     <style name="Overflow.Menu.Text" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
@@ -192,6 +196,15 @@
         <item name="android:windowContentOverlay">@color/transparent</item>
         <item name="android:windowElevation">0dp</item>
         <item name="android:windowAnimationStyle">@style/Animation.Dialog</item>
+    </style>
+
+    <style name="Style.Custom.Dialog.Translucent" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowFrame">@color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentOverlay">@color/transparent</item>
+        <item name="android:windowElevation">0dp</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Pop.Slide</item>
     </style>
 
     <style name="Style.Line" parent="android:Widget">

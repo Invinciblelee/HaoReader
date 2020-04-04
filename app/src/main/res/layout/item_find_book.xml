@@ -32,7 +32,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_book_list"
         android:layout_width="match_parent"
-        android:layout_height="164.8dp"
+        android:layout_height="149dp"
         android:clipToPadding="false"
         android:nestedScrollingEnabled="false"
         android:orientation="horizontal"

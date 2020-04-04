@@ -12,7 +12,7 @@ public class RxExecutors {
     private static final String THREAD_NAME_PREFIX = "RxNewThreadScheduler";
     private static final RxThreadFactory THREAD_FACTORY;
 
-    private static final int THREAD_NUM = 6;
+    private static final int THREAD_NUM = 8;
 
     private volatile static Scheduler DEFAULT;
 

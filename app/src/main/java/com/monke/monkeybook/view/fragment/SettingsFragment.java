@@ -35,6 +35,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         settingActivity = (SettingActivity) this.getActivity();
 
         bindPreferenceSummaryToValue(findPreference(mContext.getString(R.string.pk_bookshelf_px)));
+        bindPreferenceSummaryToValue(findPreference(mContext.getString(R.string.pk_show_find_mode)));
     }
 
     @Override
@@ -99,7 +100,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         } else if (key.equals(getResources().getString(R.string.pk_chapter_disk_cache))) {
             DbHelper.getInstance().getDaoSession().getChapterBeanDao().detachAll();
-        } else if (key.equals(getString(R.string.pk_show_all_find))) {
+        } else if (key.equals(getString(R.string.pk_show_find_mode))) {
             RxBus.get().post(RxBusTag.FIND_LIST_CHANGE, true);
         }
     }

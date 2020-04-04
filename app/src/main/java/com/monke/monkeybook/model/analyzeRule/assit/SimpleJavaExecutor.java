@@ -10,4 +10,7 @@ public interface SimpleJavaExecutor{
 
     String formatHtml(String string);
 
+    String unescapeHtml3(String string);
+
+    String unescapeHtml4(String string);
 }

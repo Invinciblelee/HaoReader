@@ -43,7 +43,7 @@ public class CacheManagerPresenter extends BasePresenterImpl<CacheManagerContrac
     @Override
     public void queryBooks() {
         Single.create((SingleOnSubscribe<List<BookShelfBean>>) emitter -> {
-            final List<BookShelfBean> allBooks = BookshelfHelp.queryAllBook();
+            final List<BookShelfBean> allBooks = BookshelfHelp.queryAllBooks();
             final List<BookShelfBean> bookShelfBeans = new ArrayList<>();
             if (allBooks != null) {
                 for (BookShelfBean bookShelfBean : allBooks) {

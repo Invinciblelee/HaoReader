@@ -35,14 +35,21 @@
             android:paddingTop="@dimen/half_card_item_margin"
             android:paddingBottom="@dimen/half_card_item_margin">
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_about_note">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
                     android:orientation="vertical"
                     android:padding="10dp">
 
@@ -63,133 +70,124 @@
                         android:textColor="@color/colorTextDefault" />
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/vw_version"
-                style="@style/AppTheme.CardView.Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <View
+                style="@style/Style.Line"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/tv_version"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:drawableStart="@drawable/ic_version_border_black_24dp"
-                    android:drawablePadding="6dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/version_name"
-                    android:textColor="@color/colorTextDefault" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:id="@+id/vw_update"
-                style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/tv_update"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_update_black_24dp"
-                    android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:text="@string/update_url"
-                    android:textColor="@color/colorTextDefault" />
+                    android:textColor="@color/colorTextDefault"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/tv_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/version_name"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="12sp" />
 
-            <androidx.cardview.widget.CardView
+            </LinearLayout>
+
+            <FrameLayout
                 android:id="@+id/vw_update_log"
-                style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground">
 
                 <TextView
                     android:id="@+id/tv_update_log"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_reorder_black_24dp"
-                    android:drawablePadding="6dp"
                     android:gravity="center_vertical"
+                    android:padding="16dp"
                     android:text="@string/update_log"
-                    android:textColor="@color/colorTextDefault" />
+                    android:textColor="@color/colorTextDefault"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/vw_mail"
-                style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground">
 
                 <TextView
                     android:id="@+id/tv_mail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_mail_outline_black_24dp"
-                    android:drawablePadding="6dp"
                     android:gravity="center_vertical"
+                    android:padding="16dp"
                     android:text="@string/send_mail"
-                    android:textColor="@color/colorTextDefault" />
+                    android:textColor="@color/colorTextDefault"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/vw_git"
-                style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground">
 
                 <TextView
                     android:id="@+id/tv_git"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_launch_black_24dp"
-                    android:drawablePadding="6dp"
                     android:gravity="center_vertical"
+                    android:padding="16dp"
                     android:text="@string/git_hub"
-                    android:textColor="@color/colorTextDefault" />
+                    android:textColor="@color/colorTextDefault"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/vw_disclaimer"
-                style="@style/AppTheme.CardView.Item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground">
 
                 <TextView
                     android:id="@+id/tv_disclaimer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawableStart="@drawable/ic_launch_black_24dp"
-                    android:drawablePadding="6dp"
                     android:gravity="center_vertical"
+                    android:padding="16dp"
                     android:text="@string/disclaimer"
-                    android:textColor="@color/colorTextDefault" />
+                    android:textColor="@color/colorTextDefault"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 </com.monke.monkeybook.widget.ScrimInsetsRelativeLayout>

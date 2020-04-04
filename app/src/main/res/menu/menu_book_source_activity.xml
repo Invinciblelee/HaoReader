@@ -4,22 +4,6 @@
     tools:context=".view.activity.BookSourceActivity">
 
     <item
-        android:id="@+id/action_group"
-        android:icon="@drawable/ic_group_black_24dp"
-        android:title="@string/menu_action_group"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction">
-
-        <menu>
-            <group android:id="@+id/source_group">
-
-            </group>
-
-        </menu>
-
-    </item>
-
-    <item
         android:id="@+id/action_select_all"
         android:icon="@drawable/ic_select_all_black_24dp"
         android:title="@string/select_all"
@@ -55,6 +39,22 @@
         android:icon="@drawable/ic_network_check_black_24dp"
         android:title="@string/check_book_source"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_group"
+        android:icon="@drawable/ic_subject_black_24dp"
+        android:title="@string/menu_action_group"
+        app:showAsAction="never"
+        tools:ignore="AlwaysShowAction">
+
+        <menu>
+            <group android:id="@+id/source_group">
+
+            </group>
+
+        </menu>
+
+    </item>
 
     <item
         android:id="@+id/action_sort"

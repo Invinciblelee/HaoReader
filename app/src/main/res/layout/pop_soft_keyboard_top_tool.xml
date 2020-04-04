@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@color/colorCardBackground">
+    android:background="@color/colorPrimary">
 
     <HorizontalScrollView
         android:layout_width="wrap_content"

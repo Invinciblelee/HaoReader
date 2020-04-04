@@ -1,10 +1,8 @@
 package com.monke.monkeybook.model.analyzeRule;
 
-import android.webkit.WebSettings;
-
-import com.monke.basemvplib.ContextHolder;
 import com.monke.monkeybook.bean.BookSourceBean;
 import com.monke.monkeybook.help.CookieHelper;
+import com.monke.monkeybook.model.analyzeRule.assit.AnalyzeGlobal;
 import com.monke.monkeybook.utils.StringUtils;
 
 import java.util.HashMap;
@@ -25,7 +23,7 @@ public class AnalyzeHeaders {
         if (StringUtils.isNotBlank(userAgent)) {
             headerMap.put("User-Agent", userAgent);
         } else {
-            headerMap.put("User-Agent", getDefaultUserAgent());
+            headerMap.put("User-Agent", AnalyzeGlobal.DEFAULT_USER_AGENT);
         }
 
         String sourceUrl = bookSource == null ? null : bookSource.getBookSourceUrl();
@@ -41,13 +39,10 @@ public class AnalyzeHeaders {
 
     public static String getUserAgent(String userAgent) {
         if (isEmpty(userAgent)) {
-            return getDefaultUserAgent();
+            return AnalyzeGlobal.DEFAULT_USER_AGENT;
         } else {
             return userAgent;
         }
     }
 
-    private static String getDefaultUserAgent() {
-        return WebSettings.getDefaultUserAgent(ContextHolder.getContext());
-    }
 }

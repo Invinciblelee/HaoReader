@@ -40,16 +40,15 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="36dp"
             android:layout_marginEnd="36dp"
-            app:tabIconTint="@color/colorBarText"
-            app:tabIndicatorColor="@color/colorBarText"
+            app:tabIconTint="@color/navigation_icon_color"
+            app:tabIndicatorColor="@color/colorAccent"
             app:tabIndicatorFullWidth="true"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorBarText"
+            app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Tab">
 
             <com.google.android.material.tabs.TabItem

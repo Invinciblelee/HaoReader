@@ -53,6 +53,7 @@
                 android:layout_alignBottom="@id/cover_blur"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="0dp"
+                android:tag="detail"
                 android:transitionName="image_cover">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -316,7 +317,7 @@
                         android:lineSpacingExtra="2dp"
                         android:paddingTop="5dp"
                         android:paddingBottom="10dp"
-                        android:textColor="@color/colorTextSummary"
+                        android:textColor="@color/colorTextSecondary"
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -333,10 +334,12 @@
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true">
 
-                <LinearLayout
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/colorBackground"
+                    app:divider="@drawable/bg_list_divider"
+                    app:showDividers="middle"
+                    app:dividerPadding="8dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -349,8 +352,8 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:text="@string/remove_shelf"
-                        android:textColor="@color/colorTextDefault"
-                        android:textSize="14sp" />
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp" />
 
 
                     <TextView
@@ -358,15 +361,15 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/selector_book_detail_read_bg"
+                        android:background="@drawable/selector_book_detail_shelf_bg"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
                         android:text="@string/start_read"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp" />
 
-                </LinearLayout>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <LinearLayout
                     android:id="@+id/ll_loading"

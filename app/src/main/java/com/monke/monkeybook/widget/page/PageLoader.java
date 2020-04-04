@@ -686,11 +686,9 @@ public abstract class PageLoader {
                 return;
             }
 
-            final float interval = mTextInterval + mTextPaint.getTextSize();
-            final float para = mTextPara + mTextPaint.getTextSize();
-            final Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-
-            float top = mMarginTop - fontMetrics.ascent;
+            float interval = mTextInterval + mTitlePaint.getTextSize();
+            float para = mTextPara + mTitlePaint.getTextSize();
+            float top = mMarginTop - mTitlePaint.getFontMetrics().ascent;
 
             //对标题进行绘制
             for (int i = 0; i < txtPage.titleLines; i++) {
@@ -703,6 +701,9 @@ public abstract class PageLoader {
                 //设置尾部间距
                 top += i == txtPage.titleLines - 1 ? para : interval;
             }
+
+            interval = mTextInterval + mTextPaint.getTextSize();
+            para = mTextPara + mTextPaint.getTextSize();
 
             //对内容进行绘制
             for (int i = txtPage.titleLines, size = txtPage.lines.size(); i < size; i++) {

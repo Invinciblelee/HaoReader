@@ -68,7 +68,7 @@ public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapte
         this.inflater = LayoutInflater.from(context);
 
         placeholder = fragment.getResources().getDrawable(R.drawable.ic_image_placeholder);
-        AppCompat.setTint(placeholder, fragment.getResources().getColor(R.color.colorTextSummary));
+        AppCompat.setTint(placeholder, fragment.getResources().getColor(R.color.colorTextSecondary));
 
         files = new ArrayList<>();
     }

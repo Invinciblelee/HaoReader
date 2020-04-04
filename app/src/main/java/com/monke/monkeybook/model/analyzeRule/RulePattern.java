@@ -63,7 +63,7 @@ final class RulePattern {
         //分离重定向规则（规则重定向）
         rawRule = ensureRedirectRule(rawRule);
         //分离正则表达式
-        rawRule = ensureRegexRule(rawRule, regexTrait || ruleMode != RuleMode.Default);
+        rawRule = ensureRegexRule(rawRule);
         //分离js
         int start = ensureJavaScripts(rawRule);
 
@@ -78,7 +78,7 @@ final class RulePattern {
             isSimpleRegex = true;
             rawRule = rawRule.substring(2);
 
-            final String[] rules = rawRule.split(AnalyzeGlobal.RULE_REGEX_SPLIT_TRAIT);
+            final String[] rules = rawRule.split(AnalyzeGlobal.RULE_REGEX);
             replaceRegex = rules[0];
             if (rules.length > 1) {
                 replacement = rules[1];
@@ -117,8 +117,8 @@ final class RulePattern {
         return rawRule;
     }
 
-    private String ensureRegexRule(String rawRule, boolean trait) {
-        final String[] rules = rawRule.split(trait ? AnalyzeGlobal.RULE_REGEX_SPLIT_TRAIT : AnalyzeGlobal.RULE_REGEX_SPLIT);
+    private String ensureRegexRule(String rawRule) {
+        final String[] rules = rawRule.split(AnalyzeGlobal.RULE_REGEX);
         rawRule = rules[0];
         if (rules.length > 1) {
             replaceRegex = rules[1];

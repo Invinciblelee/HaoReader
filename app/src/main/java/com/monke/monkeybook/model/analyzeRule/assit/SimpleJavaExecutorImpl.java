@@ -5,6 +5,8 @@ import com.monke.monkeybook.model.SimpleModel;
 import com.monke.monkeybook.model.analyzeRule.AnalyzeUrl;
 import com.monke.monkeybook.utils.StringUtils;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 public class SimpleJavaExecutorImpl implements SimpleJavaExecutor {
 
     public SimpleJavaExecutorImpl() {
@@ -34,5 +36,15 @@ public class SimpleJavaExecutorImpl implements SimpleJavaExecutor {
     @Override
     public final String formatHtml(String string) {
         return TextProcessor.formatHtml(string);
+    }
+
+    @Override
+    public String unescapeHtml3(String string) {
+        return StringEscapeUtils.unescapeHtml3(string);
+    }
+
+    @Override
+    public String unescapeHtml4(String string) {
+        return StringEscapeUtils.unescapeHtml4(string);
     }
 }

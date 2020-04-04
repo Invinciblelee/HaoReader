@@ -31,6 +31,7 @@ import com.monke.monkeybook.help.permission.PermissionsCompat;
 import com.monke.monkeybook.presenter.BookSourcePresenterImpl;
 import com.monke.monkeybook.presenter.contract.BookSourceContract;
 import com.monke.monkeybook.view.adapter.BookSourceAdapter;
+import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
@@ -245,7 +246,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         this.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.book_source_manage);
         }
     }
@@ -285,7 +286,12 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 importBookSourceOnline();
                 break;
             case R.id.action_del_select:
-                mPresenter.delData(adapter.getSelectDataList());
+                new AlertDialog.Builder(getSupportFragmentManager())
+                        .setTitle(R.string.dialog_title)
+                        .setMessage(R.string.delete_book_source_s)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.delData(adapter.getSelectDataList()))
+                        .show();
                 break;
             case R.id.action_check_book_source:
                 mPresenter.checkBookSource();

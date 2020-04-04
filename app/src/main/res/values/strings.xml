@@ -14,6 +14,7 @@
     <string name="book_local">添加本地</string>
     <string name="book_source_manage">书源管理</string>
     <string name="book_all_source">全部</string>
+    <string name="book_recently_viewed">最近阅读</string>
     <string name="book_source_group">搜索分组</string>
     <string name="setting">设置</string>
     <string name="about">关于</string>
@@ -37,7 +38,7 @@
     <string name="change_origin">换源</string>
     <string name="cache_extract">提取</string>
     <string name="about_description">这是一款开源的阅读软件，你可以fork我们的代码自己编译APK。欢迎提交代码帮助改善应用。</string>
-    <string name="version_name">Version %s</string>
+    <string name="version_name">版本 %s</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
     <string name="pt_auto_clean_book">自动移除无效书籍</string>
@@ -92,8 +93,6 @@
     <string name="background">背景</string>
     <string name="author">作者</string>
     <string name="author_unknown">未知</string>
-    <string name="book_audio">[有声]</string>
-    <string name="book_download">[下载]</string>
     <string name="analyze_error">站点暂时不支持解析，请反馈</string>
     <string name="aloud_stop">朗读停止</string>
     <string name="clear_content">清除缓存</string>
@@ -132,7 +131,6 @@
     <string name="menu">菜单</string>
     <string name="adjust">调节</string>
     <string name="scroll_bar">滚动条</string>
-    <string name="clear_all_content">清除缓存会删除所有已保存章节,是否确认删除?</string>
     <string name="book_source_share_url">书源共享</string>
     <string name="replace_rule_summary">替换规则描述</string>
     <string name="select_all">全选</string>
@@ -157,6 +155,9 @@
     <string name="bookshelf_px_0">按阅读时间排序</string>
     <string name="bookshelf_px_1">按更新时间排序</string>
     <string name="bookshelf_px_2">手动排序</string>
+    <string name="show_find_mode_0">显示所有发现</string>
+    <string name="show_find_mode_1">显示启用发现</string>
+    <string name="show_find_mode_2">显示有效发现</string>
     <string name="read_type">阅读方式</string>
     <string name="horizontal_page_turning">水平翻页</string>
     <string name="vertical_scroll">垂直滚动</string>
@@ -209,10 +210,12 @@
     <string name="delete_bookshelf_not_exist_s">此书籍文件已被删除，是否将这本书移出书架？</string>
     <string name="clean_caches">清除缓存</string>
     <string name="clean_caches_s">这将会清空所有缓存，是否继续？</string>
+    <string name="clean_caches_ss">同时清空章节缓存</string>
     <string name="clean_book_cache_s">这将会清空本书缓存，是否继续？</string>
     <string name="clear_bookshelf">清空书架</string>
     <string name="refresh_bookshelf">更新书架</string>
     <string name="clear_bookshelf_s">这将会删除所有书籍，请谨慎操作。</string>
+    <string name="delete_book_source_s">是否确认删除所选书源？</string>
     <string name="search">搜索</string>
     <string name="search_book">搜书</string>
     <string name="search_book_source">搜索书源</string>
@@ -253,8 +256,7 @@
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
     <string name="to_top">置顶</string>
-    <string name="show_all_find">显示所有发现</string>
-    <string name="show_all_find_s">关闭则只显示已启用的发现</string>
+    <string name="show_find_mode">发现显示模式</string>
     <string name="audio_cache">有声书边下边播</string>
     <string name="audio_cache_s">开启可实现离线播放</string>
     <string name="threads_num">当前线程数 %s</string>
@@ -273,7 +275,7 @@
     <string name="pt_default_read">自动跳转最近阅读</string>
     <string name="use_to">作用于，选填书名或书源地址</string>
     <string name="use_regex">替换规则使用正则表达式</string>
-    <string name="menu_action_group">分组</string>
+    <string name="menu_action_group">书源分组</string>
     <string name="aloud_volume_page">朗读时音量键翻页</string>
     <string name="update_search_page_count">搜索结果页数</string>
     <string name="search_page_count">当前结果页数 %s</string>
@@ -319,4 +321,5 @@
     <string name="look_more"><![CDATA[查看更多>]]></string>
     <string name="enable_source">启用书源</string>
     <string name="enable_find">启用发现</string>
+    <string name="tip_recently_viewed_empty">最近没有阅读过书籍~</string>
 </resources>

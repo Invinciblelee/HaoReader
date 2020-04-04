@@ -18,7 +18,6 @@ import com.monke.monkeybook.utils.URLUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,20 +41,20 @@ public class BookSourceManager extends BaseModelImpl {
                 .list();
     }
 
-    public static List<BookSourceBean> getFindEnabled() {
-        List<BookSourceBean> sourceBeanList = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+    public static List<BookSourceBean> getFindValid() {
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .whereOr(BookSourceBeanDao.Properties.ValidFind.isNull(), BookSourceBeanDao.Properties.ValidFind.eq(true))
                 .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
                 .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();
+    }
 
-        Iterator<BookSourceBean> iterator = sourceBeanList.iterator();
-        while (iterator.hasNext()) {
-            Boolean enableFind = iterator.next().getEnableFind();
-            if (enableFind != null && !enableFind) {
-                iterator.remove();
-            }
-        }
-        return sourceBeanList;
+    public static List<BookSourceBean> getFindEnabled() {
+        return DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .whereOr(BookSourceBeanDao.Properties.EnableFind.isNull(), BookSourceBeanDao.Properties.EnableFind.eq(true))
+                .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                .list();
     }
 
     public static long getEnabledCount() {
@@ -226,7 +225,8 @@ public class BookSourceManager extends BaseModelImpl {
 
     public static Observable<Boolean> importFromJson(String json) {
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            List<BookSourceBean> bookSourceBeans = Assistant.fromJson(StringUtils.wrapJsonArray(json), new TypeToken<List<BookSourceBean>>(){}.getType());
+            List<BookSourceBean> bookSourceBeans = Assistant.fromJson(StringUtils.wrapJsonArray(json), new TypeToken<List<BookSourceBean>>() {
+            }.getType());
             int index = 0;
             for (BookSourceBean bookSourceBean : bookSourceBeans) {
                 if (Objects.equals(bookSourceBean.getBookSourceGroup(), "删除")) {

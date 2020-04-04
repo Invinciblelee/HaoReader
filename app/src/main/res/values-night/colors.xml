@@ -13,17 +13,14 @@
 
     <color name="colorSearchField">#4a4a4a</color>
 
-    <color name="colorBarText">#f3f3f3</color>
-    <color name="colorMenuText">#f3f3f3</color>
+    <color name="colorBarText">@color/colorTextDefault</color>
+    <color name="colorMenuText">@color/colorTextDefault</color>
 
-    <color name="colorProgressTrackLight">#898989</color>
     <color name="colorProgressTrack">#a1a1a1</color>
     <color name="colorProgress">@color/colorAccent</color>
-    <color name="colorProgressWhite">#f3f3f3</color>
 
-    <color name="colorTextDefault">#f3f3f3</color>
-    <color name="colorTextSecondary">#c9c9c9</color>
-    <color name="colorTextSummary">#999999</color>
+    <color name="colorTextDefault">#ffffff</color>
+    <color name="colorTextSecondary">#c6c6c6</color>
 
     <color name="colorNegativeButton">@color/colorCardBackground</color>
     <color name="colorNegativeButtonPressed">#262626</color>
@@ -32,8 +29,7 @@
     <color name="colorPositiveButtonPressed">@color/colorTheme</color>
     <color name="colorButtonDisabled">#434343</color>
 
-    <color name="colorTag">#505050</color>
-    <color name="colorTagDark">#4a4a4a</color>
+    <color name="colorTag">#4a4a4a</color>
     <color name="colorTagPressed">#80454545</color>
 
     <color name="colorChapterTextHighlight">#b7b7b7</color>

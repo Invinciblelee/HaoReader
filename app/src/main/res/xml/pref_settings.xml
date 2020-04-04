@@ -59,15 +59,11 @@
             android:title="@string/audio_cache" />
 
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="@string/pk_show_all_find"
-            android:layout="@layout/view_preference"
-            android:summary="@string/show_all_find_s"
-            android:title="@string/show_all_find" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="其他">
+
 
         <ListPreference
             android:defaultValue="0"
@@ -76,6 +72,15 @@
             android:key="@string/pk_bookshelf_px"
             android:layout="@layout/view_preference"
             android:title="@string/bookshelf_px" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/show_find_mode_title"
+            android:entryValues="@array/show_find_mode_value"
+            android:key="@string/pk_show_find_mode"
+            android:layout="@layout/view_preference"
+            android:title="@string/show_find_mode" />
+
 
         <com.monke.monkeybook.widget.number.NumberPickerPreference
             android:defaultValue="1"

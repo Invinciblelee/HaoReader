@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -51,9 +52,6 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
     private FindBookAdapter mAdapter;
 
-    private boolean mSubmit = true;
-    private String mKeyword;
-
     private KeyboardHeightProvider mHeightProvider;
     private boolean mKeyboardShown;
 
@@ -93,6 +91,7 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             }
         });
 
+
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -106,12 +105,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (mSubmit) {
-                    mKeyword = s == null ? null : s.toString();
-                    mAdapter.getFilter().filter(mKeyword);
-                } else {
-                    mSubmit = true;
-                }
+                String keyword = s == null ? null : s.toString();
+                mAdapter.getFilter().filter(keyword);
             }
         });
 
@@ -132,13 +127,12 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
         if (mKeyboardShown != show) {
             mKeyboardShown = show;
 
-            if (!mKeyboardShown) {
-                mSubmit = false;
-                searchEdit.setText(null);
+            if(!mKeyboardShown){
                 searchEdit.clearFocus();
-            } else {
-                searchEdit.setText(mKeyword);
-                searchEdit.setSelection(searchEdit.length());
+            }
+
+            if (!TextUtils.isEmpty(searchEdit.getText())) {
+                return;
             }
 
             final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) searchField.getLayoutParams();
@@ -212,8 +206,8 @@ public class FindBookFragment extends BaseFragment<FindBookContract.Presenter> i
             if (data != null) {
                 final int type = data.getIntExtra("type", 0);
                 final String url = data.getStringExtra("url");
-                if (type == -1) {
-                    mAdapter.removeItem(new FindKindGroupBean(url));
+                if (type == -1 && mPresenter.getFindMode() == 1) {
+                    removeItem(new FindKindGroupBean(url));
                 } else {
                     mPresenter.updateData(url);
                 }

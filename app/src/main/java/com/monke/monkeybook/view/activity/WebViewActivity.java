@@ -11,11 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -35,7 +38,6 @@ import com.monke.monkeybook.widget.theme.AppCompat;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -52,6 +54,8 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     View appBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.btn_close)
+    ImageButton btnClose;
     @BindView(R.id.webView)
     WebView webView;
     @BindView(R.id.tv_html)
@@ -63,7 +67,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
     @BindView(R.id.web_html_code)
     ScrollView codeView;
 
-    private String mOuterHtml;
+    private String mHtmlString;
 
     private WebLoadConfig mConfig;
 
@@ -84,20 +88,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         ButterKnife.bind(this);
     }
 
-    @Override
-    public void initImmersionBar() {
-        mImmersionBar.transparentStatusBar();
-
-        mImmersionBar.navigationBarColor(R.color.colorNavigationBar);
-
-        if (canNavigationBarLightFont()) {
-            mImmersionBar.navigationBarDarkIcon(false);
-        }
-
-        mImmersionBar.statusBarDarkFont(false);
-
-        mImmersionBar.init();
-    }
 
     @Override
     protected void initData() {
@@ -119,7 +109,14 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+        settings.setJavaScriptCanOpenWindowsAutomatically(false);
+    }
 
+    @Override
+    protected void bindEvent() {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -139,8 +136,51 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
                     setTitle(title);
                 }
             }
+
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                return true;
+            }
+
+            @Override
+            public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
+                return true;
+            }
+
+            @Override
+            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
+                return true;
+            }
         });
-        webView.setWebViewClient(new MWebClient(this));
+        webView.setWebViewClient(new WebViewClient(){
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                mHtmlString = null;
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                if (mConfig != null) {
+                    CookieManager cookieManager = CookieManager.getInstance();
+                    String cookie = cookieManager.getCookie(url);
+                    if(cookie != null) {
+                        CookieHelper.getInstance().setCookie(mConfig.getTag(), cookie);
+                    }
+                }
+                super.onPageFinished(view, url);
+
+                view.evaluateJavascript("document.documentElement.outerHTML", value -> {
+                    mHtmlString = StringEscapeUtils.unescapeJson(value);
+                });
+            }
+        });
 
         getWindow().getDecorView().post(() -> {
             if (webView != null) {
@@ -148,6 +188,7 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
             }
         });
 
+        btnClose.setOnClickListener(v -> finish());
     }
 
     @Override
@@ -164,14 +205,14 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
                 openInBrowser();
                 break;
             case R.id.action_code:
-                if (mOuterHtml == null) {
+                if (mHtmlString == null) {
                     toast("网页正在加载，请稍候...");
                 } else if (!codeView.isShown()) {
-                    showText(mOuterHtml);
+                    showText(mHtmlString);
                 }
                 break;
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -248,50 +289,6 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
                     textProgressBar.setVisibility(View.INVISIBLE);
                     codeView.scrollTo(0, 0);
                 }), 400L, TimeUnit.MILLISECONDS);
-    }
-
-    private void setHtmlText(String html) {
-        mOuterHtml = html;
-    }
-
-    private static class MWebClient extends WebViewClient {
-
-        private final WeakReference<WebViewActivity> actRef;
-
-        private MWebClient(WebViewActivity activity) {
-            this.actRef = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-            if (actRef.get() != null) {
-                actRef.get().setHtmlText(null);
-            }
-        }
-
-        @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed();
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            if (actRef.get() != null) {
-                WebLoadConfig config = actRef.get().mConfig;
-                if (config != null) {
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    CookieHelper.getInstance().setCookie(config.getTag(), cookieManager.getCookie(url));
-                }
-            }
-            super.onPageFinished(view, url);
-
-            view.evaluateJavascript("document.documentElement.outerHTML", value -> {
-                if (actRef.get() != null) {
-                    actRef.get().setHtmlText(StringEscapeUtils.unescapeJson(value));
-                }
-            });
-        }
     }
 
 }

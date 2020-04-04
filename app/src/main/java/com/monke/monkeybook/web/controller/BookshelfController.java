@@ -18,7 +18,7 @@ import java.util.Map;
 public class BookshelfController {
 
     public ReturnData getBookshelf() {
-        List<BookShelfBean> shelfBeans = BookshelfHelp.queryAllBook();
+        List<BookShelfBean> shelfBeans = BookshelfHelp.queryAllBooks();
         ReturnData returnData = new ReturnData();
         if (shelfBeans.isEmpty()) {
             return returnData.setErrorMsg("还没有添加小说");

@@ -1,9 +1,12 @@
 package com.monke.monkeybook.view.fragment.dialog;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -74,6 +77,13 @@ public class ProgressDialog extends AppCompatDialog {
         if (mMessageText != null) {
             mMessageView.setText(mMessageText);
         }
+    }
+
+    @Override
+    protected void onDialogAttachWindow(@NonNull Window window) {
+        window.setGravity(Gravity.CENTER);
+        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setDimAmount(0f);
     }
 
     @Override

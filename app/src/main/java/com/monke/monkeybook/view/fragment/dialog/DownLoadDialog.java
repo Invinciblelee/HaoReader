@@ -1,16 +1,12 @@
 package com.monke.monkeybook.view.fragment.dialog;
 
-import android.os.Bundle;
+import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import com.monke.monkeybook.R;
@@ -21,47 +17,42 @@ import com.monke.monkeybook.utils.ToastUtils;
  * 离线下载
  */
 
-public class DownLoadDialog extends AppCompatDialog {
+public class DownLoadDialog {
 
-    private EditText edtStart;
-    private EditText edtEnd;
+    public static void show(FragmentManager fragmentManager, int start, int end, OnClickDownload clickDownload) {
+        new AlertDialog.Builder(fragmentManager)
+                .setTitle(R.string.download_offline)
+                .setView(R.layout.dialog_download_choice)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.download_start, (dialog, which) -> {
+                    EditText edtStart = dialog.findViewById(R.id.edt_start);
+                    EditText edtEnd = dialog.findViewById(R.id.edt_end);
 
-    private OnClickDownload clickDownload;
+                    if (edtStart.getText().length() > 0 && edtEnd.getText().length() > 0) {
+                        if (Integer.parseInt(edtStart.getText().toString()) > Integer.parseInt(edtEnd.getText().toString())) {
+                            ToastUtils.toast(dialog.getContext(), "输入错误");
+                        } else {
+                            if (clickDownload != null) {
+                                clickDownload.download(Integer.parseInt(edtStart.getText().toString()) - 1, Integer.parseInt(edtEnd.getText().toString()) - 1);
+                            }
+                        }
+                    } else {
+                        ToastUtils.toast(dialog.getContext(), "请输入要离线的章节数");
+                    }
+                })
+                .setOnViewCreatedCallback((dialog, dialogView) -> initView(dialogView, start, end))
+                .show();
 
-    public static void show(FragmentManager fragmentManager, int start, int total, OnClickDownload clickDownload) {
-        DownLoadDialog dialog = new DownLoadDialog();
-        Bundle args = new Bundle();
-        args.putInt("start", start);
-        args.putInt("total", total);
-        dialog.setArguments(args);
-        dialog.clickDownload = clickDownload;
-        dialog.show(fragmentManager, "download");
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public static void initView(@NonNull View view, int start, int end) {
+        final Context context = view.getContext();
 
-    @Override
-    public View onCreateDialogContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_download_choice, container, true);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Bundle args = getArguments();
-        assert args != null;
-        final int start = args.getInt("start");
-        final int total = args.getInt("total");
-
-        edtStart = findViewById(R.id.edt_start);
-        edtEnd = findViewById(R.id.edt_end);
-        TextView tvCancel = findViewById(R.id.btn_cancel);
-        TextView tvDownload = findViewById(R.id.tv_download);
+        EditText edtStart = view.findViewById(R.id.edt_start);
+        EditText edtEnd = view.findViewById(R.id.edt_end);
 
         edtStart.setText(String.valueOf(start + 1));
-        edtEnd.setText(String.valueOf(total));
+        edtEnd.setText(String.valueOf(end));
 
         view.post(() -> {
             edtEnd.requestFocus();
@@ -84,10 +75,10 @@ public class DownLoadDialog extends AppCompatDialog {
                 if (edtStart.getText().length() > 0) {
                     try {
                         int temp = Integer.parseInt(edtStart.getText().toString().trim());
-                        if (temp > total) {
-                            edtStart.setText(String.valueOf(total));
+                        if (temp > end) {
+                            edtStart.setText(String.valueOf(end));
                             edtStart.setSelection(edtStart.getText().length());
-                            ToastUtils.toast(getContext(), "不能超过总章节数");
+                            ToastUtils.toast(context, "不能超过总章节数");
                         } else if (temp <= 0) {
                             edtStart.setText(String.valueOf(1));
                             edtStart.setSelection(edtStart.getText().length());
@@ -114,10 +105,10 @@ public class DownLoadDialog extends AppCompatDialog {
                 if (edtEnd.getText().length() > 0) {
                     try {
                         int temp = Integer.parseInt(edtEnd.getText().toString().trim());
-                        if (temp > total) {
-                            edtEnd.setText(String.valueOf(total));
+                        if (temp > end) {
+                            edtEnd.setText(String.valueOf(end));
                             edtEnd.setSelection(edtEnd.getText().length());
-                            ToastUtils.toast(getContext(), "不能超过总章节数");
+                            ToastUtils.toast(context, "不能超过总章节数");
                         } else if (temp <= 0) {
                             edtEnd.setText(String.valueOf(1));
                             edtEnd.setSelection(edtEnd.getText().length());
@@ -128,22 +119,6 @@ public class DownLoadDialog extends AppCompatDialog {
                 }
             }
         });
-        tvDownload.setOnClickListener(v -> {
-            if (edtStart.getText().length() > 0 && edtEnd.getText().length() > 0) {
-                if (Integer.parseInt(edtStart.getText().toString()) > Integer.parseInt(edtEnd.getText().toString())) {
-                    ToastUtils.toast(getContext(), "输入错误");
-                } else {
-                    if (clickDownload != null) {
-                        clickDownload.download(Integer.parseInt(edtStart.getText().toString()) - 1, Integer.parseInt(edtEnd.getText().toString()) - 1);
-                    }
-                    dismissAllowingStateLoss();
-                }
-            } else {
-                ToastUtils.toast(getContext(), "请输入要离线的章节数");
-            }
-        });
-
-        tvCancel.setOnClickListener(v -> dismissAllowingStateLoss());
     }
 
     /**

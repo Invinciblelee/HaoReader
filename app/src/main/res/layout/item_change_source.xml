@@ -45,7 +45,7 @@
         android:layout_marginBottom="2dp"
         android:layout_toEndOf="@id/iv_checked"
         android:singleLine="true"
-        android:textColor="@color/colorTextSummary"
+        android:textColor="@color/colorTextSecondary"
         android:textSize="12sp" />
 
 </RelativeLayout>

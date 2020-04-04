@@ -30,7 +30,6 @@ public class StringUtils {
 
     public static final Comparator<String> STRING_COMPARATOR = StringUtils::naturalCompare;
 
-
     private static int atoi(String str) {
         //这里要小心，需要判断有效性
         if (str == null || str.length() == 0) {
@@ -429,7 +428,7 @@ public class StringUtils {
     }
 
     public static String trim(String string) {
-        if(string == null || string.length() == 0) return "";
+        if (string == null || string.length() == 0 || " ".equals(string)) return "";
         int start = 0, len = string.length();
         int end = len - 1;
         while ((start < end) && ((string.charAt(start) <= ' ') || (string.charAt(start) == '　'))) {

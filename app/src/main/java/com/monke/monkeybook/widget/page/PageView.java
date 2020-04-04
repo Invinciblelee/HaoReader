@@ -108,9 +108,6 @@ public class PageView extends View {
         //视图未初始化的时候，禁止调用
         if (mViewWidth == 0 || mViewHeight == 0 || mPageLoader == null) return;
         switch (pageMode) {
-            case SIMULATION:
-                mPageAnim = new SimulationPageAnim(mViewWidth, mViewHeight, this, mPageAnimListener);
-                break;
             case COVER:
                 mPageAnim = new CoverPageAnim(mViewWidth, mViewHeight, this, mPageAnimListener);
                 break;

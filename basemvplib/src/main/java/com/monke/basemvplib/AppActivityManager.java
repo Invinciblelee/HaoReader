@@ -39,7 +39,9 @@ public class AppActivityManager {
     添加Activity
      */
     public void add(Activity activity) {
-        activities.add(new WeakReference<>(activity));
+        if(indexOf(activity) == -1){
+            activities.add(new WeakReference<>(activity));
+        }
     }
 
     public int indexOf(Activity activity) {

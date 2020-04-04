@@ -40,6 +40,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
     private int weight = 0;
     private Boolean enable = true;
     private Boolean enableFind = true;
+    private Boolean validFind = true;
     private String ruleFindUrl;
     //搜索
     private String ruleSearchUrl;
@@ -73,10 +74,13 @@ public class BookSourceBean implements Parcelable, Cloneable {
     @Transient
     private String ajaxJavaScript;
 
-    @Generated(hash = 1372865890)
-    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, Boolean enable, Boolean enableFind, String ruleFindUrl, String ruleSearchUrl, String ruleSearchList,
-            String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleBookLastChapter, String ruleCoverUrl,
-            String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
+    public BookSourceBean() {
+    }
+
+    @Generated(hash = 863016521)
+    public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String bookSourceRuleType, String checkUrl, int serialNumber, int weight, Boolean enable, Boolean enableFind, Boolean validFind, String ruleFindUrl, String ruleSearchUrl,
+            String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchLastChapter, String ruleSearchIntroduce, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookName, String ruleBookAuthor, String ruleBookLastChapter,
+            String ruleCoverUrl, String ruleIntroduce, String ruleChapterUrl, String ruleChapterUrlNext, String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String rulePersistedVariables, String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -87,6 +91,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.weight = weight;
         this.enable = enable;
         this.enableFind = enableFind;
+        this.validFind = validFind;
         this.ruleFindUrl = ruleFindUrl;
         this.ruleSearchUrl = ruleSearchUrl;
         this.ruleSearchList = ruleSearchList;
@@ -113,10 +118,6 @@ public class BookSourceBean implements Parcelable, Cloneable {
         this.httpUserAgent = httpUserAgent;
     }
 
-    public BookSourceBean() {
-    }
-
-
     protected BookSourceBean(Parcel in) {
         bookSourceUrl = in.readString();
         bookSourceName = in.readString();
@@ -128,8 +129,10 @@ public class BookSourceBean implements Parcelable, Cloneable {
         weight = in.readInt();
         byte tmpEnable = in.readByte();
         enable = tmpEnable == 0 ? null : tmpEnable == 1;
-        byte tmpShowFind = in.readByte();
-        enableFind = tmpShowFind == 0 ? null : tmpShowFind == 1;
+        byte tmpEnableFind = in.readByte();
+        enableFind = tmpEnableFind == 0 ? null : tmpEnableFind == 1;
+        byte tmpValid = in.readByte();
+        validFind = tmpValid == 0 ? null : tmpValid == 1;
         ruleFindUrl = in.readString();
         ruleSearchUrl = in.readString();
         ruleSearchList = in.readString();
@@ -157,6 +160,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         ajaxJavaScript = in.readString();
     }
 
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(bookSourceUrl);
@@ -169,6 +173,7 @@ public class BookSourceBean implements Parcelable, Cloneable {
         dest.writeInt(weight);
         dest.writeByte((byte) (enable == null ? 0 : enable ? 1 : 2));
         dest.writeByte((byte) (enableFind == null ? 0 : enableFind ? 1 : 2));
+        dest.writeByte((byte) (validFind == null ? 0 : validFind ? 1 : 2));
         dest.writeString(ruleFindUrl);
         dest.writeString(ruleSearchUrl);
         dest.writeString(ruleSearchList);
@@ -329,6 +334,14 @@ public class BookSourceBean implements Parcelable, Cloneable {
 
     public void setEnableFind(Boolean enableFind) {
         this.enableFind = enableFind;
+    }
+
+    public Boolean getValidFind() {
+        return validFind;
+    }
+
+    public void setValidFind(Boolean validFind) {
+        this.validFind = validFind;
     }
 
     public String getRuleBookName() {

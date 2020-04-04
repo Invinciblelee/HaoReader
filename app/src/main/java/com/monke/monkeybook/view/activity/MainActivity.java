@@ -21,8 +21,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -45,13 +45,14 @@ import com.monke.monkeybook.service.WebService;
 import com.monke.monkeybook.utils.KeyboardUtil;
 import com.monke.monkeybook.view.adapter.base.OnBookItemClickListenerTwo;
 import com.monke.monkeybook.view.fragment.AudioBookFragment;
-import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.FindBookFragment;
 import com.monke.monkeybook.view.fragment.FragmentTrigger;
 import com.monke.monkeybook.view.fragment.MainBookListFragment;
 import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
+import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
+import com.monke.monkeybook.view.fragment.dialog.RecentlyViewedDialog;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -230,9 +231,6 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         icon.setImageDrawable(tab.getIcon());
         icon.setTag(tab.getIcon());
         tab.setCustomView(view);
-        if (tab.getPosition() == 0) {
-            text.setTextColor(ContextCompat.getColor(this, R.color.colorBarText));
-        }
 
         if (tab.getCustomView() != null) {
             View tabView = (View) tab.getCustomView().getParent();
@@ -243,8 +241,10 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     private void setTabSelected(TabLayout.Tab tab, boolean selected) {
         View custom = tab.getCustomView();
         if (custom != null) {
+            ImageView icon = custom.findViewById(R.id.icon);
             TextView text = custom.findViewById(R.id.text);
-            text.setTextColor(selected ? ContextCompat.getColor(this, R.color.colorBarText) : (Integer) text.getTag());
+            icon.setSelected(selected);
+            text.setSelected(selected);
         }
     }
 
@@ -373,9 +373,12 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             case R.id.action_clearCaches:
                 new AlertDialog.Builder(getSupportFragmentManager())
                         .setTitle(R.string.dialog_title)
-                        .setMessage(R.string.clean_caches_s)
+                        .setView(R.layout.dialog_clear_cache_tip)
                         .setNegativeButton(R.string.cancel, null)
-                        .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.cleanCaches())
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
+                            AppCompatCheckBox checkBox = dialog.findViewById(R.id.checker_clear_chapter);
+                            mPresenter.cleanCaches(checkBox.isChecked());
+                        })
                         .show();
                 break;
             case R.id.action_clearBookshelf:
@@ -449,6 +452,9 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         });
         drawerLeft.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
+                case R.id.action_recently_viewed:
+                    drawerLeft.postDelayed(() -> RecentlyViewedDialog.show(this), 220L);
+                    break;
                 case R.id.action_download:
                     drawerLeft.postDelayed(() -> DownloadActivity.startThis(this), 220L);
                     break;

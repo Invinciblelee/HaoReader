@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorBackground">#f4f4f4</color>
+    <color name="colorBackground">#ffffff</color>
     <color name="colorCardBackground">#ffffff</color>
 
-    <color name="colorPrimary">@color/colorTheme</color>
-    <color name="colorPrimaryDark">@color/colorThemeDark</color>
+    <color name="colorPrimary">@color/md_light_appbar</color>
+    <color name="colorPrimaryDark">@color/md_light_statusbar</color>
 
     <color name="colorAccent">@color/colorTheme</color>
     <color name="colorAccentDark">@color/colorThemeDark</color>
@@ -17,35 +17,31 @@
     <color name="colorThemeLight">@color/md_brown_300</color>
     <color name="colorThemeTranslucent">#668D6E63</color>
 
-    <color name="colorSearchField">@color/colorThemeLight</color>
+    <color name="colorSearchField">@color/white</color>
 
-    <color name="colorBarText">#ffffff</color>
-    <color name="colorMenuText">#4a4a4a</color>
+    <color name="colorBarText">@color/colorTextDefault</color>
+    <color name="colorMenuText">@color/colorTextDefault</color>
 
-    <color name="colorTextDefault">#4a4a4a</color>
-    <color name="colorTextSecondary">#636363</color>
-    <color name="colorTextSummary">#8a8a8a</color>
+    <color name="colorTextDefault">#333333</color>
+    <color name="colorTextSecondary">#6a6a6a</color>
 
-    <color name="colorProgressTrackLight">#ffffff</color>
     <color name="colorProgressTrack">#767676</color>
     <color name="colorProgress">@color/colorAccent</color>
-    <color name="colorProgressWhite">#f4f4f4</color>
 
     <color name="colorNegativeButton">@color/colorCardBackground</color>
-    <color name="colorNegativeButtonPressed">#cecece</color>
+    <color name="colorNegativeButtonPressed">#cfcfcf</color>
 
     <color name="colorPositiveButton">@color/colorTheme</color>
     <color name="colorPositiveButtonPressed">@color/colorThemeDark</color>
     <color name="colorButtonDisabled">#dddddd</color>
 
-    <color name="colorTag">#eeeeee</color>
-    <color name="colorTagDark">#e1e1e1</color>
+    <color name="colorTag">#efefef</color>
     <color name="colorTagPressed">#36000000</color>
 
     <color name="colorChapterTextHighlight">#5e5e5e</color>
     <color name="colorChapterText">#737373</color>
 
-    <color name="colorDividerLight">#29efefef</color>
+    <color name="colorDividerLight">#29aaaaaa</color>
     <color name="colorDivider">#29acacac</color>
 
     <!--statusBarBackground-->

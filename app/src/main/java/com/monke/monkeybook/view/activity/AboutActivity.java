@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 
 import com.monke.basemvplib.impl.IPresenter;
 import com.monke.monkeybook.MApplication;
@@ -32,30 +32,28 @@ public class AboutActivity extends MBaseActivity {
     Toolbar toolbar;
     @BindView(R.id.tv_version)
     TextView tvVersion;
-    @BindView(R.id.vw_version)
-    CardView vwVersion;
     @BindView(R.id.tv_git)
     TextView tvGit;
     @BindView(R.id.vw_git)
-    CardView vwGit;
+    View vwGit;
     @BindView(R.id.tv_disclaimer)
     TextView tvDisclaimer;
     @BindView(R.id.vw_disclaimer)
-    CardView vwDisclaimer;
+    View vwDisclaimer;
     @BindView(R.id.tv_mail)
     TextView tvMail;
     @BindView(R.id.vw_mail)
-    CardView vwMail;
+    View vwMail;
     @BindView(R.id.tv_update)
     TextView tvUpdate;
     @BindView(R.id.vw_update)
-    CardView vwUpdate;
+    View vwUpdate;
     @BindView(R.id.tv_app_summary)
     TextView tvAppSummary;
     @BindView(R.id.tv_update_log)
     TextView tvUpdateLog;
     @BindView(R.id.vw_update_log)
-    CardView vwUpdateLog;
+    View vwUpdateLog;
 
     public static void startThis(Context context) {
         Intent intent = new Intent(context, AboutActivity.class);
