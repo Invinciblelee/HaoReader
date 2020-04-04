@@ -69,8 +69,23 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private boolean isSearch;
 
+    private boolean hasSearchFocus;
+
     public static void startThis(Context context) {
         context.startActivity(new Intent(context, BookSourceActivity.class));
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if(!hasFocus){
+            hasSearchFocus = searchView.hasFocus();
+        }
+
+        super.onWindowFocusChanged(hasFocus);
+
+        if(hasFocus && !hasSearchFocus){
+            searchView.clearFocus();
+        }
     }
 
     @Override
@@ -105,7 +120,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         AppCompat.useCustomIconForSearchView(searchView, getResources().getString(R.string.search_book_source));
         mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
         searchView.onActionViewExpanded();
-        searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -119,6 +133,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
                 return false;
             }
         });
+
+        searchView.post(()->searchView.clearFocus());
     }
 
     private void initRecyclerView() {

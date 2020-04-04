@@ -2,6 +2,7 @@ package com.monke.monkeybook.utils;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -79,6 +80,19 @@ public class ScreenUtils {
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
         return outMetrics.widthPixels;
+    }
+
+    public static boolean isKeyboardShowing(Activity activity){
+        final View decorView = activity.getWindow().getDecorView();
+        //获取当屏幕内容的高度
+        int screenHeight = decorView.getHeight();
+        //获取View可见区域的bottom
+         Rect rect = new Rect();
+        // DecorView即为activity的顶级view
+        decorView.getWindowVisibleDisplayFrame(rect);
+        //考虑到虚拟导航栏的情况（虚拟导航栏情况下：screenHeight = rect.bottom + 虚拟导航栏高度）
+        // 选取screenHeight*2/3进行判断
+        return screenHeight*2/3 > rect.bottom;
     }
 
     /**
