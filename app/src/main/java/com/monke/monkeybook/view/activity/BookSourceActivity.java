@@ -3,7 +3,6 @@ package com.monke.monkeybook.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -94,18 +93,8 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     protected void onCreateActivity() {
         setContentView(R.layout.activity_book_source);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
