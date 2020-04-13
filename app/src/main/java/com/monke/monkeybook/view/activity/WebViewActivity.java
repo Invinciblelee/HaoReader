@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,6 +72,15 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
 
     private WebLoadConfig mConfig;
 
+    private final Runnable mHiddenRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(progressBar != null){
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
     public static void startThis(Context context, WebLoadConfig config) {
         Intent intent = new Intent(context, WebViewActivity.class);
         intent.putExtra("config", config);
@@ -121,12 +131,12 @@ public class WebViewActivity extends MBaseActivity implements SwipeRefreshLayout
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress < 100) {
-                    if (progressBar.getVisibility() != View.VISIBLE)
-                        progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
                     progressBar.setProgress(newProgress);
                 } else if (progressBar.getVisibility() == View.VISIBLE) {
-                    progressBar.setVisibility(View.INVISIBLE);
                     refreshLayout.stopRefreshing();
+                    progressBar.setProgress(100);
+                    progressBar.post(mHiddenRunnable);
                 }
             }
 

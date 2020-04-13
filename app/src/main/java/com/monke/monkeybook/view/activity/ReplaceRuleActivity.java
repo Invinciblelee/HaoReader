@@ -164,7 +164,7 @@ public class ReplaceRuleActivity extends MBaseActivity<ReplaceRuleContract.Prese
                 break;
             case R.id.action_import_onLine:
                 String cacheUrl = ACache.get(this).getAsString("replaceUrl");
-                InputDialog.show(getSupportFragmentManager(), "输入替换规则网址", cacheUrl, null,
+                InputDialog.show(getSupportFragmentManager(), "输入替换规则网址", cacheUrl,
                         inputText -> {
                             ACache.get(this).put("replaceUrl", inputText);
                             mPresenter.importDataS(inputText);

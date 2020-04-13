@@ -35,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CHANGE_CHARSET;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_FINISH;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_HY;
 import static com.monke.monkeybook.widget.page.PageStatus.STATUS_HY_ERROR;
@@ -374,6 +375,12 @@ public abstract class PageLoader {
         }
         mCurChapter.reset();
         skipToChapter(bookShelfBean.getDurChapter(), bookShelfBean.getDurChapterPage());
+    }
+
+    public void setBook(BookShelfBean bookShelfBean) {
+        if (bookShelfBean != null) {
+            mCollBook = bookShelfBean;
+        }
     }
 
     /**
@@ -1191,6 +1198,14 @@ public abstract class PageLoader {
 
     int getCurrentStatus() {
         return mCurChapter.getStatus();
+    }
+
+    public boolean isLoading() {
+        return mCurChapter.getStatus() == STATUS_PREPARE_CATEGORY
+                || mCurChapter.getStatus() == STATUS_LOADING
+                || mCurChapter.getStatus() == STATUS_HY
+                || mCurChapter.getStatus() == STATUS_PARING
+                || mCurChapter.getStatus() == STATUS_CHANGE_CHARSET;
     }
 
     public boolean isClosed() {

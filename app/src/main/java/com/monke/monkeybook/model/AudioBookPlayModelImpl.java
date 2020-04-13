@@ -6,15 +6,19 @@ import com.hwangjr.rxbus.RxBus;
 import com.monke.basemvplib.NetworkUtil;
 import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.base.observer.SimpleObserver;
+import com.monke.monkeybook.bean.AudioPlayInfo;
 import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.bean.SearchBookBean;
+import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.RxBusTag;
 import com.monke.monkeybook.model.impl.IAudioBookPlayModel;
+import com.monke.monkeybook.service.AudioBookPlayService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -34,6 +38,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
     private Disposable mPlayDisposable;
     private Disposable mChapterDisposable;
+    private Disposable mUpdateChaptersDisp;
 
     private PlayCallback mPlayCallback;
 
@@ -188,6 +193,71 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
     public void updateBookShelf(BookShelfBean bookShelfBean) {
         if (bookShelfBean != null && !bookShelfBean.realChapterListEmpty()) {
             this.bookShelf = bookShelfBean;
+        }
+    }
+
+    @Override
+    public void updateChapters() {
+        if (bookShelf == null) {
+            return;
+        }
+
+        if(mUpdateChaptersDisp != null && !mUpdateChaptersDisp.isDisposed()){
+            onMessage("章节正在更新中，请稍侯");
+            return;
+        }
+
+        onMessage("正在更新章节，请稍侯");
+        WebBookModel.getInstance().getChapterList(bookShelf.copy())
+                .subscribeOn(RxExecutors.getDefault())
+                .timeout(60, TimeUnit.SECONDS)
+                .doOnNext(bookShelfBean -> {
+                    if (bookShelfBean.realChapterListEmpty()) return;
+                    // 存储章节到数据库
+                    bookShelfBean.setHasUpdate(false);
+                    bookShelfBean.setNewChapters(0);
+                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
+                    bookShelfBean.setDurChapter(bookShelf.getDurChapter());
+                    bookShelfBean.setDurChapterName(bookShelf.getDurChapterName());
+                    if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<BookShelfBean>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mUpdateChaptersDisp = d;
+                    }
+
+                    @Override
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        if (bookShelfBean.realChapterListEmpty()) {
+                            onMessage("章节更新失败");
+                        } else {
+                            int newChapters = bookShelfBean.getChapterListSize() - bookShelf.getChapterListSize();
+                            bookShelf = bookShelfBean;
+                            onMessage(newChapters == 0 ? "章节更新成功，没有新增章节"
+                                    : String.format(Locale.CANADA, "章节更新成功，新增%d章", newChapters));
+                            BookShelfHolder.get().post(bookShelfBean);
+                            RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelf);
+                            AudioPlayInfo info = AudioPlayInfo.update(bookShelf.getChapterList());
+                            info.setAction(AudioBookPlayService.ACTION_UPDATE_CHAPTER);
+                            RxBus.get().post(RxBusTag.AUDIO_PLAY, info);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        onMessage("章节更新失败");
+                    }
+                });
+    }
+
+    private void onMessage(String msg){
+        if (mPlayCallback != null) {
+            mPlayCallback.onMessage(msg);
         }
     }
 

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.monke.basemvplib.NetworkUtil;
 import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
@@ -47,7 +48,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ChangeSourceDialog extends AppCompatDialog implements SearchBookModel.SearchListener {
-    private ImageButton ibtStop;
+    private FloatingActionButton ibtStop;
     private RefreshRecyclerView rvSource;
 
     private ChangeSourceAdapter adapter;
@@ -104,6 +105,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
         ibtStop = findViewById(R.id.ibt_stop);
         rvSource = findViewById(R.id.rf_rv_change_source);
         ibtStop.setVisibility(View.INVISIBLE);
+        ibtStop.post(() -> ibtStop.hide());
 
         rvSource.setOnRefreshListener(this::reSearchBook);
         ibtStop.setOnClickListener(v -> searchBookModel.stopSearch());
@@ -146,21 +148,21 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public void searchSourceEmpty() {
-        ibtStop.setVisibility(View.INVISIBLE);
+        ibtStop.hide();
         rvSource.finishRefresh(true, false);
         rvSource.setEnabled(true);
     }
 
     @Override
     public void searchBookReset() {
-        ibtStop.setVisibility(View.VISIBLE);
+        ibtStop.show();
         adapter.reSetSourceAdapter();
         rvSource.setEnabled(false);
     }
 
     @Override
     public void searchBookFinish() {
-        ibtStop.setVisibility(View.INVISIBLE);
+        ibtStop.hide();
         rvSource.finishRefresh(true, false);
         rvSource.setEnabled(true);
     }
@@ -173,7 +175,7 @@ public class ChangeSourceDialog extends AppCompatDialog implements SearchBookMod
 
     @Override
     public void searchBookError() {
-        ibtStop.setVisibility(View.INVISIBLE);
+        ibtStop.hide();
         rvSource.finishRefresh(false);
         rvSource.setEnabled(true);
     }

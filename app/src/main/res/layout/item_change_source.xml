@@ -5,9 +5,9 @@
     android:foreground="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="5dp"
+    android:paddingStart="15dp"
     android:paddingTop="10dp"
-    android:paddingEnd="10dp"
+    android:paddingEnd="20dp"
     android:paddingBottom="10dp">
 
     <RadioButton

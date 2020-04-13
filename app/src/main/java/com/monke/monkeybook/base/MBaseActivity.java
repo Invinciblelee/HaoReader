@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -144,14 +145,14 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
         final int nightMode = getNightMode();
 
         AppCompatDelegate.setDefaultNightMode(nightMode);
-
-        for (WeakReference<Activity> actRef : AppActivityManager.getInstance().getActivities()) {
-            Activity activity = actRef.get();
-            if (activity instanceof AppCompatActivity && !activity.getClass().equals(this.getClass())) {
-                AppCompatDelegate delegate = ((AppCompatActivity) activity).getDelegate();
-                delegate.applyDayNight();
-            }
-        }
+//
+//        for (WeakReference<Activity> actRef : AppActivityManager.getInstance().getActivities()) {
+//            Activity activity = actRef.get();
+//            if (activity instanceof AppCompatActivity && !activity.getClass().equals(this.getClass())) {
+//                AppCompatDelegate delegate = ((AppCompatActivity) activity).getDelegate();
+//                delegate.applyDayNight();
+//            }
+//        }
 
     }
 

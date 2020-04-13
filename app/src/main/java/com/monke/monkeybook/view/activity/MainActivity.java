@@ -4,6 +4,7 @@ package com.monke.monkeybook.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
@@ -52,7 +54,7 @@ import com.monke.monkeybook.view.fragment.dialog.AlertDialog;
 import com.monke.monkeybook.view.fragment.dialog.FileSelectorDialog;
 import com.monke.monkeybook.view.fragment.dialog.InputDialog;
 import com.monke.monkeybook.view.fragment.dialog.ProgressDialog;
-import com.monke.monkeybook.view.fragment.dialog.RecentlyViewedDialog;
+import com.monke.monkeybook.widget.RecentlyViewedView;
 import com.monke.monkeybook.widget.BookShelfSearchView;
 import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.theme.AppCompat;
@@ -90,6 +92,8 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
     @BindArray(R.array.tab_main)
     String[] titles;
+
+    private RecentlyViewedView recentlyViewedView;
 
     private Switch swNightTheme;
     private boolean viewIsList;
@@ -148,6 +152,15 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
 
         if (!drawer.isDrawerOpen(GravityCompat.END) && viewPager.getCurrentItem() == 1 && findFragment != null && findFragment.dispatchTouchEvent(ev)) {
             return true;
+        }
+
+        if(ev.getAction() == MotionEvent.ACTION_DOWN && recentlyViewedView != null && recentlyViewedView.isShown()){
+            Rect rect = new Rect();
+            recentlyViewedView.getGlobalVisibleRect(rect);
+            if(!rect.contains((int) ev.getX(), (int) ev.getY())){
+                recentlyViewedView.hide();
+                return true;
+            }
         }
 
         return super.dispatchTouchEvent(ev);
@@ -361,7 +374,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
                 requestPermissions(FILE_SELECT_RESULT);
                 break;
             case R.id.action_add_url:
-                InputDialog.show(getSupportFragmentManager(), "添加书籍网址", null, null, inputText -> mPresenter.addBookUrl(inputText));
+                InputDialog.show(getSupportFragmentManager(), "添加书籍网址", null, inputText -> mPresenter.addBookUrl(inputText));
                 break;
             case R.id.action_list_grid:
                 viewIsList = !viewIsList;
@@ -453,7 +466,7 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
         drawerLeft.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_recently_viewed:
-                    drawerLeft.postDelayed(() -> RecentlyViewedDialog.show(this), 220L);
+                    drawerLeft.postDelayed(this::showRecentlyViewed, 220L);
                     break;
                 case R.id.action_download:
                     drawerLeft.postDelayed(() -> DownloadActivity.startThis(this), 220L);
@@ -490,6 +503,15 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
             }
             return true;
         });
+    }
+
+    private void showRecentlyViewed(){
+        if(recentlyViewedView == null){
+            ViewStub viewStub = findViewById(R.id.view_stub_recently_viewed);
+            recentlyViewedView = (RecentlyViewedView) viewStub.inflate();
+        }
+
+        recentlyViewedView.show();
     }
 
     //备份

@@ -34,6 +34,16 @@
 
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_chapter_update"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/update"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/ic_update_black_24dp"
+                app:tint="@color/colorTextDefault" />
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_chapter_sort"
                 android:layout_width="24dp"
                 android:layout_height="24dp"

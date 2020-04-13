@@ -178,7 +178,6 @@ public class RefreshRecyclerView extends FrameLayout {
 
     public void finishRefresh(Boolean isAll, Boolean needNoti) {
         refreshLayout.stopRefreshing();
-
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter instanceof RefreshRecyclerViewAdapter) {
             if (isAll) {

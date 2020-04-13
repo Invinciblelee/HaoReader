@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <com.monke.monkeybook.widget.StatusMaskView
-        android:id="@+id/status_bar_mask"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 
     <RelativeLayout
+        android:id="@+id/view_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="160dp"
+        android:elevation="16dp"
+        android:background="@drawable/bg_choice_book_category">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:layout_height="180dp" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -35,7 +30,15 @@
             android:textColor="@color/colorBarText"
             android:textSize="16sp" />
 
+
     </RelativeLayout>
 
+    <View
+        android:id="@+id/view_masking"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true" />
 
 </LinearLayout>

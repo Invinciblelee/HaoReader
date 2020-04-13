@@ -49,7 +49,10 @@ public class ChapterListAdapter extends BaseChapterListAdapter<ChapterBean> {
 
     public void setBook(BookShelfBean book) {
         synchronized (lock) {
-            boolean changed = mBook == null || !TextUtils.equals(mBook.getNoteUrl(), book.getNoteUrl());
+            boolean changed = mBook == null
+                    || !TextUtils.equals(mBook.getNoteUrl(), book.getNoteUrl())
+                    || mBook.getChapterList().size() != book.getChapterList().size()
+                    || BookShelfBean.LOCAL_TAG.equals(book.getTag());
             this.mBook = book;
             if (changed) {
                 setDataList(mBook.getChapterList());

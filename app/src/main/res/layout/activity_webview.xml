@@ -104,7 +104,7 @@
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="3dp"
+        android:elevation="8dp"
         android:max="100"
         android:maxHeight="3dp"
         android:minHeight="3dp"

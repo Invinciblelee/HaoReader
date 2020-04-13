@@ -11,6 +11,7 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.monke.basemvplib.BasePresenterImpl;
+import com.monke.basemvplib.NetworkUtil;
 import com.monke.basemvplib.impl.IView;
 import com.monke.basemvplib.rxjava.RxExecutors;
 import com.monke.monkeybook.R;
@@ -24,6 +25,7 @@ import com.monke.monkeybook.bean.SearchBookBean;
 import com.monke.monkeybook.dao.BookSourceBeanDao;
 import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.BitIntentDataManager;
+import com.monke.monkeybook.help.BookShelfHolder;
 import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ReadBookControl;
 import com.monke.monkeybook.help.RxBusTag;
@@ -33,6 +35,7 @@ import com.monke.monkeybook.model.content.exception.BookSourceException;
 import com.monke.monkeybook.presenter.contract.ReadBookContract;
 import com.monke.monkeybook.service.DownloadService;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -45,13 +48,19 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_EMPTY;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_CATEGORY_ERROR;
+import static com.monke.monkeybook.widget.page.PageStatus.STATUS_NETWORK_ERROR;
 
 public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.View> implements ReadBookContract.Presenter {
 
     private BookShelfBean bookShelf;
     private BookSourceBean bookSource;
 
-    private CompositeDisposable changeSourceDisp = new CompositeDisposable();
+    private Disposable changeSourceDisp;
+    private Disposable updateChaptersDisp;
 
     public ReadBookPresenterImpl() {
     }
@@ -87,20 +96,77 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
         return bookSource;
     }
 
+
+    @Override
+    public void updateBookChapters() {
+        if (bookShelf == null) {
+            return;
+        }
+
+        if(updateChaptersDisp != null && !updateChaptersDisp.isDisposed()){
+            mView.toast("章节正在更新中，请稍侯");
+            return;
+        }
+
+        mView.toast("正在更新章节，请稍侯");
+        WebBookModel.getInstance().getChapterList(bookShelf.copy())
+                .subscribeOn(RxExecutors.getDefault())
+                .timeout(60, TimeUnit.SECONDS)
+                .doOnNext(bookShelfBean -> {
+                    if (bookShelfBean.realChapterListEmpty()) return;
+                    // 存储章节到数据库
+                    bookShelfBean.setHasUpdate(false);
+                    bookShelfBean.setNewChapters(0);
+                    bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
+                    bookShelfBean.setDurChapter(bookShelf.getDurChapter());
+                    bookShelfBean.setDurChapterPage(bookShelf.getDurChapterPage());
+                    bookShelfBean.setDurChapterName(bookShelf.getDurChapterName());
+                    if (BookshelfHelp.isInBookShelf(bookShelfBean.getNoteUrl())) {
+                        BookshelfHelp.saveBookToShelf(bookShelfBean);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<BookShelfBean>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        updateChaptersDisp = d;
+                    }
+
+                    @Override
+                    public void onNext(BookShelfBean bookShelfBean) {
+                        if (bookShelfBean.realChapterListEmpty()) {
+                            mView.toast("章节更新失败");
+                        } else {
+                            int newChapters = bookShelfBean.getChapterListSize() - bookShelf.getChapterListSize();
+                            bookShelf = bookShelfBean;
+                            mView.toast(newChapters == 0 ? "章节更新成功，没有新增章节"
+                                    : String.format(Locale.CANADA, "章节更新成功，新增%d章", newChapters));
+                            BookShelfHolder.get().post(bookShelfBean);
+                            mView.updateChaptersSuccess(bookShelfBean);
+                            RxBus.get().post(RxBusTag.UPDATE_BOOK_SHELF, bookShelf);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.toast("章节更新失败");
+                    }
+                });
+    }
+
     /**
      * 禁用当前书源
      */
     @Override
-    public void disableDurBookSource() {
+    public void gotoTargetBookSource() {
         try {
             if (!BookShelfBean.LOCAL_TAG.equals(bookShelf.getTag())) {
-                BookSourceBean bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
-                        .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookShelf.getTag())).unique();
-                bookSource.setEnable(false);
-                if (TextUtils.isEmpty(bookSource.getBookSourceGroup()))
-                    bookSource.setBookSourceGroup("禁用");
-                mView.toast("已禁用" + bookSource.getBookSourceName());
-                BookSourceManager.save(bookSource);
+                if (bookSource == null) {
+                    bookSource = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                            .where(BookSourceBeanDao.Properties.BookSourceUrl.eq(bookShelf.getTag())).unique();
+                }
+                mView.gotoBookSource(bookSource);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -200,8 +266,11 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
      */
     @Override
     public void changeBookSource(SearchBookBean searchBook) {
+        if(changeSourceDisp != null){
+            changeSourceDisp.dispose();
+        }
+
         mView.stopRefreshChapterList();
-        changeSourceDisp.clear();
         BookShelfBean target = BookshelfHelp.getBookFromSearchBook(searchBook);
         target.setSerialNumber(bookShelf.getSerialNumber());
         target.setLastChapterName(bookShelf.getLastChapterName());
@@ -240,7 +309,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        changeSourceDisp.add(d);
+                        changeSourceDisp = d;
                     }
 
                     @Override
@@ -411,7 +480,12 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
     @Override
     public void detachView() {
         super.detachView();
-        changeSourceDisp.dispose();
+        if(changeSourceDisp != null) {
+            changeSourceDisp.dispose();
+        }
+        if(updateChaptersDisp != null){
+            updateChaptersDisp.dispose();
+        }
         RxBus.get().unregister(this);
     }
 

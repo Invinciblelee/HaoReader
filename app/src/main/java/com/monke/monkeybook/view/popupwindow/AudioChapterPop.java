@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.bean.ChapterBean;
 import com.monke.monkeybook.help.AppConfigHelper;
+import com.monke.monkeybook.service.AudioBookPlayService;
 import com.monke.monkeybook.view.adapter.ChapterListAdapter;
 import com.monke.monkeybook.view.adapter.base.BaseChapterListAdapter;
 
@@ -29,6 +30,8 @@ public class AudioChapterPop extends PopupWindow {
     RecyclerView rvList;
     @BindView(R.id.btn_close)
     View btnClose;
+    @BindView(R.id.iv_chapter_update)
+    View btnUpdate;
 
     private ChapterListAdapter adapter;
     private Context context;
@@ -75,6 +78,8 @@ public class AudioChapterPop extends PopupWindow {
         });
 
         btnClose.setOnClickListener(v -> dismiss());
+
+        btnUpdate.setOnClickListener(v -> AudioBookPlayService.update(context));
 
         adapter.setOnItemClickListener(new BaseChapterListAdapter.OnItemClickListener<ChapterBean>() {
             @Override

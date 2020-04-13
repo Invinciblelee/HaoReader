@@ -352,7 +352,7 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
 
     private void importBookSourceOnline() {
         String cacheUrl = ACache.get(this).getAsString("sourceUrl");
-        InputDialog.show(getSupportFragmentManager(), "输入书源网址", cacheUrl, null,
+        InputDialog.show(getSupportFragmentManager(), "输入书源网址", cacheUrl,
                 inputText -> {
                     ACache.get(this).put("sourceUrl", inputText);
                     mPresenter.importBookSource(inputText);

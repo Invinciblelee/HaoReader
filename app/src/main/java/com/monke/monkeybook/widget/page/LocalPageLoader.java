@@ -328,17 +328,7 @@ public class LocalPageLoader extends PageLoader {
         return false;
     }
 
-    @Override
-    public void closeBook() {
-        super.closeBook();
-        if (mChapterDisp != null) {
-            mChapterDisp.dispose();
-            mChapterDisp = null;
-        }
-    }
-
-    @Override
-    public void refreshChapterList() {
+    private void initBookFile(){
         // 对于文件是否存在，或者为空的判断，不作处理。 ==> 在文件打开前处理过了。
         mBookFile = new File(getCollBook().getNoteUrl());
         //获取文件编码
@@ -350,6 +340,21 @@ public class LocalPageLoader extends PageLoader {
         } else {
             mCharset = Charset.forName(charsetName);
         }
+    }
+
+    @Override
+    public void closeBook() {
+        super.closeBook();
+        if (mChapterDisp != null) {
+            mChapterDisp.dispose();
+            mChapterDisp = null;
+        }
+    }
+
+    @Override
+    public void refreshChapterList() {
+        initBookFile();
+
         // 判断文件是否已经加载过，并具有缓存
         if (!getCollBook().getHasUpdate() && !getCollBook().realChapterListEmpty()) {
             setChapterListPrepared();
@@ -422,11 +427,12 @@ public class LocalPageLoader extends PageLoader {
     }
 
     public void updateCharset() {
+        getCurrentChapter().reset();
         setCurrentStatus(STATUS_CHANGE_CHARSET);
         refreshChapterList();
     }
 
-    private class SubChapter {
+    private static class SubChapter {
         String title;
         int start;
         int end;

@@ -340,14 +340,6 @@ public class BookShelfBean implements Parcelable, VariableStore {
         return this.group == null ? 0 : this.group;
     }
 
-    public void setDurChapter(int durChapter) {
-        this.durChapter = durChapter;
-    }
-
-    public void setDurChapterPage(int durChapterPage) {
-        this.durChapterPage = durChapterPage;
-    }
-
     public void setFinalDate(Long finalDate) {
         this.finalDate = finalDate;
     }

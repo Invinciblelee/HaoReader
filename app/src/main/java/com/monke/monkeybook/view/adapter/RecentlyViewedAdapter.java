@@ -1,6 +1,6 @@
 package com.monke.monkeybook.view.adapter;
 
-import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,18 +26,18 @@ public class RecentlyViewedAdapter extends RecyclerView.Adapter<RecentlyViewedAd
 
     private OnItemClickCallback mCallback;
 
-    public RecentlyViewedAdapter(Activity activity) {
-        mInflater = LayoutInflater.from(activity);
+    public RecentlyViewedAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
     }
 
-    public void setItems(List<BookShelfBean> bookShelfBeans){
+    public void setItems(List<BookShelfBean> bookShelfBeans) {
         mList.clear();
         mList.addAll(bookShelfBeans);
         notifyDataSetChanged();
     }
 
-    public void setOnItemClickCallback(OnItemClickCallback clickCallback){
-        mCallback =clickCallback;
+    public void setOnItemClickCallback(OnItemClickCallback clickCallback) {
+        mCallback = clickCallback;
     }
 
     @NonNull
@@ -61,13 +61,13 @@ public class RecentlyViewedAdapter extends RecyclerView.Adapter<RecentlyViewedAd
         holder.tvName.setText(item.getBookInfoBean().getName());
 
         holder.itemView.setOnClickListener(v -> {
-            if(mCallback != null){
+            if (mCallback != null) {
                 mCallback.onClick(v, item);
             }
         });
 
         holder.itemView.setOnLongClickListener(v -> {
-            if(mCallback != null){
+            if (mCallback != null) {
                 mCallback.onLongClick(v, item);
             }
             return true;
@@ -79,7 +79,7 @@ public class RecentlyViewedAdapter extends RecyclerView.Adapter<RecentlyViewedAd
         return mList.size();
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder{
+    static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivCover;
         TextView tvName;
@@ -91,7 +91,7 @@ public class RecentlyViewedAdapter extends RecyclerView.Adapter<RecentlyViewedAd
         }
     }
 
-    public static interface OnItemClickCallback{
+    public static interface OnItemClickCallback {
 
         void onClick(View itemView, BookShelfBean item);
 

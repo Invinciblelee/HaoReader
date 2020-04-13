@@ -24,6 +24,10 @@ public interface ReadBookContract {
 
         void upMenu();
 
+        void gotoBookSource(BookSourceBean sourceBean);
+
+        void updateChaptersSuccess(BookShelfBean shelfBean);
+
         /**
          * 开始加载
          */
@@ -83,7 +87,9 @@ public interface ReadBookContract {
 
         void delBookmark(BookmarkBean bookmarkBean);
 
-        void disableDurBookSource();
+        void updateBookChapters();
+
+        void gotoTargetBookSource();
 
         void cleanCache();
     }

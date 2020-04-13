@@ -314,6 +314,9 @@ public class AudioBookPlayActivity extends MBaseActivity implements View.OnClick
                 setButtonEnabled(info.isChapterNotEmpty());
                 setResume();
                 break;
+            case AudioBookPlayService.ACTION_UPDATE_CHAPTER:
+                audioChapterPop.setDataSet(info.getChapterBeans());
+                break;
             case AudioBookPlayService.ACTION_PREPARE:
                 updateIndex(info.getDurChapter().getDurChapterIndex());
                 setSubTitle(info.getDurChapter().getDisplayDurChapterName());

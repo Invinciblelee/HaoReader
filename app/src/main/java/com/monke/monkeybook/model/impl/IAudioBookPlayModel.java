@@ -14,6 +14,8 @@ public interface IAudioBookPlayModel {
 
     void updateBookShelf(BookShelfBean bookShelfBean);
 
+    void updateChapters();
+
     void addToShelf();
 
     boolean inBookShelf();
@@ -50,6 +52,8 @@ public interface IAudioBookPlayModel {
     interface PlayCallback {
 
         void onStart();
+
+        void onMessage(String msg);
 
         void onPrepare(ChapterBean chapterBean);
 

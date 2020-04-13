@@ -137,6 +137,12 @@ public class AudioPlayInfo {
         return info;
     }
 
+    public static AudioPlayInfo update(List<ChapterBean> chapterBeans) {
+        AudioPlayInfo info = new AudioPlayInfo();
+        info.setChapterBeans(chapterBeans);
+        return info;
+    }
+
     public static AudioPlayInfo loading(boolean loading) {
         AudioPlayInfo info = new AudioPlayInfo();
         info.setLoading(loading);

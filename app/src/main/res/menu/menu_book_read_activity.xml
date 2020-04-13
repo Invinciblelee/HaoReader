@@ -23,9 +23,15 @@
             app:showAsAction="ifRoom" />
 
         <item
-            android:id="@+id/disable_book_source"
-            android:icon="@drawable/ic_forbid_black_24dp"
-            android:title="@string/disable_book_source"
+            android:id="@+id/update_book_chapters"
+            android:icon="@drawable/ic_update_black_24dp"
+            android:title="@string/update_book_chapters"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/look_book_source"
+            android:icon="@drawable/ic_description_black_24dp"
+            android:title="@string/look_book_source"
             app:showAsAction="never" />
 
         <item

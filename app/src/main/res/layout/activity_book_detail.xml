@@ -63,7 +63,6 @@
                     android:contentDescription="@string/img_cover"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_cover_default" />
-
             </com.monke.monkeybook.widget.CoverCardView>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -337,9 +336,6 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:divider="@drawable/bg_list_divider"
-                    app:showDividers="middle"
-                    app:dividerPadding="8dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -352,7 +348,7 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:text="@string/remove_shelf"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorTextDefault"
                         android:textSize="16sp" />
 
 
@@ -361,12 +357,12 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/selector_book_detail_shelf_bg"
+                        android:background="@drawable/selector_book_detail_read_bg"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
                         android:text="@string/start_read"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

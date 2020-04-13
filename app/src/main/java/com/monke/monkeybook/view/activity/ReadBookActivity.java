@@ -485,6 +485,19 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
+    public void gotoBookSource(BookSourceBean sourceBean) {
+        SourceEditActivity.startThis(this, sourceBean);
+    }
+
+    @Override
+    public void updateChaptersSuccess(BookShelfBean shelfBean) {
+        if(mPageLoader != null){
+            mPageLoader.setBook(shelfBean);
+        }
+        readStatusBar.updateChapterIndex(shelfBean.getDurChapter() + 1, shelfBean.getChapterListSize());
+    }
+
+    @Override
     public void updateTitle(String title) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -1078,13 +1091,20 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     }
                 }
                 break;
-            case R.id.disable_book_source:
-                mPresenter.disableDurBookSource();
+            case R.id.update_book_chapters:
+                popMenuOut();
+                mPresenter.updateBookChapters();
+                break;
+            case R.id.look_book_source:
+                popMenuOut();
+                mPresenter.gotoTargetBookSource();
                 break;
             case R.id.edit_charset:
+                popMenuOut();
                 setCharset();
                 break;
             case R.id.action_clean_cache:
+                popMenuOut();
                 new AlertDialog.Builder(getSupportFragmentManager())
                         .setTitle(R.string.dialog_title)
                         .setMessage(R.string.clean_book_cache_s)
@@ -1093,6 +1113,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         .show();
                 break;
             case R.id.action_book_info:
+                popMenuOut();
                 BookInfoActivity.startThis(this, mPresenter.getBookShelf().copy());
                 break;
             case android.R.id.home:
@@ -1262,10 +1283,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private void setCharset() {
         popMenuOut();
 
-        if (mPageLoader instanceof LocalPageLoader && mPresenter.getBookShelf() != null) {
+        if (mPresenter.getBookShelf() != null
+                && !mPresenter.getBookShelf().realChapterListEmpty()
+                && !mPageLoader.isLoading()) {
             final String charset = mPresenter.getBookShelf().getBookInfoBean().getCharset();
-            InputDialog.show(getSupportFragmentManager(), getString(R.string.edit_charset), charset,
-                    new String[]{"UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "ASCII"}, inputText -> {
+            InputDialog.show(getSupportFragmentManager(), getString(R.string.edit_charset), charset, inputText -> {
                         if (!TextUtils.equals(charset, inputText)) {
                             mPresenter.getBookShelf().getBookInfoBean().setCharset(inputText);
                             mPresenter.saveProgress();

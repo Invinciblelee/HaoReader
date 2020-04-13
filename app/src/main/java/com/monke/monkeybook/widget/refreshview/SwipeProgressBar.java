@@ -17,10 +17,10 @@ import android.view.animation.Interpolator;
 import androidx.core.view.ViewCompat;
 
 final class SwipeProgressBar {
-    private static final int COLOR1 = Color.parseColor("#05c1e0");
-    private static final int COLOR2 = Color.parseColor("#81b002");
-    private static final int COLOR3 = Color.parseColor("#e0a020");
-    private static final int COLOR4 = Color.parseColor("#dc3232");
+    private static final int COLOR1 = Color.parseColor("#54a771");
+    private static final int COLOR2 = Color.parseColor("#64c486");
+    private static final int COLOR3 = Color.parseColor("#dc3232");
+    private static final int COLOR4 = Color.parseColor("#54a771");
     private static final int ANIMATION_DURATION_MS = 2000;
     private static final int FINISH_ANIMATION_DURATION_MS = 1000;
     private static final Interpolator INTERPOLATOR = BakedBezierInterpolator.getInstance();

@@ -1,8 +1,5 @@
 package com.monke.monkeybook.help;
 
-import android.util.Log;
-import android.view.ViewParent;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -12,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.monke.monkeybook.R;
 import com.monke.monkeybook.view.adapter.BookShelfGridAdapter;
 import com.monke.monkeybook.view.adapter.BookShelfListAdapter;
-import com.monke.monkeybook.widget.refreshview.SwipeRefreshLayout;
 
 /**
  * Created by GKF on 2018/3/16.

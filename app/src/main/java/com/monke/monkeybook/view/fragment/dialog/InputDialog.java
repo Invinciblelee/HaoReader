@@ -25,12 +25,11 @@ public class InputDialog extends AppCompatDialog {
 
     private OnInputOk onInputOk;
 
-    public static void show(FragmentManager fragmentManager, String title, String defValue, String[] adapterValues, OnInputOk onInputOk) {
+    public static void show(FragmentManager fragmentManager, String title, String defValue, OnInputOk onInputOk) {
         InputDialog dialog = new InputDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putString("defValues", defValue);
-        args.putStringArray("adapterValues", adapterValues);
+        args.putString("defValue", defValue);
         dialog.setArguments(args);
         dialog.onInputOk = onInputOk;
         dialog.show(fragmentManager, "input");
@@ -47,7 +46,6 @@ public class InputDialog extends AppCompatDialog {
         assert args != null;
         final String title = args.getString("title");
         final String defValue = args.getString("defValue");
-        final String[] adapterValues = args.getStringArray("adapterValues");
 
         tvTitle = findViewById(R.id.tv_title);
         etInput = findViewById(R.id.et_input);
@@ -57,11 +55,6 @@ public class InputDialog extends AppCompatDialog {
         if (defValue != null) {
             etInput.setText(defValue);
             etInput.setSelectAllOnFocus(true);
-        }
-
-        if (adapterValues != null) {
-            ArrayAdapter mAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, adapterValues);
-            etInput.setAdapter(mAdapter);
         }
 
         tvOk.setOnClickListener(v -> {

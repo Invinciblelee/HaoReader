@@ -80,4 +80,10 @@
         android:layout_below="@id/appBar"
         tools:visibility="gone" />
 
+    <ViewStub
+        android:id="@+id/view_stub_recently_viewed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBar"
+        android:layout="@layout/view_recently_viewed"/>
 </RelativeLayout>

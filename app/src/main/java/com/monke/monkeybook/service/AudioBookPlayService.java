@@ -63,6 +63,7 @@ public class AudioBookPlayService extends Service {
     public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
     public static final String ACTION_PLAY = "ACTION_PLAY";
     public static final String ACTION_REFRESH_CHAPTER = "ACTION_REFRESH_CHAPTER";
+    public static final String ACTION_UPDATE_CHAPTER = "ACTION_UPDATE_CHAPTER";
     public static final String ACTION_NEXT = "ACTION_NEXT";
     public static final String ACTION_PAUSE = "ACTION_PAUSE";
     public static final String ACTION_RESUME = "ACTION_RESUME";
@@ -147,6 +148,13 @@ public class AudioBookPlayService extends Service {
         if (!running) return;
         Intent intent = new Intent(context, AudioBookPlayService.class);
         intent.setAction(ACTION_REFRESH_CHAPTER);
+        context.startService(intent);
+    }
+
+    public static void update(Context context) {
+        if (!running) return;
+        Intent intent = new Intent(context, AudioBookPlayService.class);
+        intent.setAction(ACTION_UPDATE_CHAPTER);
         context.startService(intent);
     }
 
@@ -261,6 +269,15 @@ public class AudioBookPlayService extends Service {
                         if (mModel != null && mModel.isPrepared()) {
                             resetPlayer(true);
                             mModel.resetChapter();
+                        }else {
+                            toast("正在加载，请稍候");
+                        }
+                        break;
+                    case ACTION_UPDATE_CHAPTER:
+                        if (mModel != null && mModel.isPrepared()) {
+                           mModel.updateChapters();
+                        }else {
+                            toast("正在加载，请稍候");
                         }
                         break;
                     case ACTION_ADD_SHELF:
@@ -345,6 +362,12 @@ public class AudioBookPlayService extends Service {
 
         mModel = createModel(bookShelfBean);
         mModel.registerPlayCallback(new IAudioBookPlayModel.PlayCallback() {
+
+
+            @Override
+            public void onMessage(String msg) {
+                toast(msg);
+            }
 
             @Override
             public void onStart() {
@@ -543,6 +566,10 @@ public class AudioBookPlayService extends Service {
         } else {
             ToastUtils.toast(AudioBookPlayService.this, "网络连接失败");
         }
+    }
+
+    private void toast(String msg){
+        ToastUtils.toast(AudioBookPlayService.this, msg);
     }
 
     private boolean requestFocus() {
