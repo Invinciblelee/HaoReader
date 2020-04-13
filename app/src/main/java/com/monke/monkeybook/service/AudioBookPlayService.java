@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -456,6 +457,7 @@ public class AudioBookPlayService extends Service {
 
             cancelProgressTimer();
             setProgressTimer();
+            Logger.d(TAG, "audio info --> onPrepared");
         });
 
         mediaPlayer.setOnCompletionListener(mp -> {
@@ -699,7 +701,7 @@ public class AudioBookPlayService extends Service {
 
     private void startPlay(String url) {
         try {
-            Logger.d(TAG, "audio --> progress: " + url);
+            Logger.d(TAG, "audio --> url: " + url);
             mediaPlayer.reset();
             if (useCacheSource() && mModel.inBookShelf()) {
                 String proxyUrl = MApplication.getProxyCacheServer(this).getProxyUrl(url);

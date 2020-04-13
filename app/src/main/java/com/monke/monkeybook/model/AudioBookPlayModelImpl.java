@@ -213,6 +213,19 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 .timeout(60, TimeUnit.SECONDS)
                 .doOnNext(bookShelfBean -> {
                     if (bookShelfBean.realChapterListEmpty()) return;
+
+                    List<ChapterBean> oldList = bookShelf.getChapterList();
+                    List<ChapterBean> newList = bookShelfBean.getChapterList();
+                    for (int i =0, size = oldList.size(); i< size; i++){
+                        ChapterBean oldBean = oldList.get(i);
+                        ChapterBean newBean = newList.get(i);
+                        if(oldBean.equals(newBean)){
+                            newBean.setStart(oldBean.getStart());
+                            newBean.setEnd(oldBean.getEnd());
+                            newBean.setDurChapterPlayUrl(oldBean.getDurChapterPlayUrl());
+                        }
+                    }
+
                     // 存储章节到数据库
                     bookShelfBean.setHasUpdate(false);
                     bookShelfBean.setNewChapters(0);
