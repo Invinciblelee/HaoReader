@@ -40,6 +40,7 @@ import com.monke.monkeybook.bean.BookShelfBean;
 import com.monke.monkeybook.help.permission.OnPermissionsGrantedCallback;
 import com.monke.monkeybook.help.permission.Permissions;
 import com.monke.monkeybook.help.permission.PermissionsCompat;
+import com.monke.monkeybook.model.analyzeRule.assit.Assistant;
 import com.monke.monkeybook.presenter.MainPresenterImpl;
 import com.monke.monkeybook.presenter.contract.MainContract;
 import com.monke.monkeybook.service.AudioBookPlayService;
@@ -60,6 +61,8 @@ import com.monke.monkeybook.widget.ScrimInsetsRelativeLayout;
 import com.monke.monkeybook.widget.theme.AppCompat;
 
 import java.util.List;
+
+import javax.script.SimpleBindings;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -137,8 +140,20 @@ public class MainActivity extends MBaseActivity<MainContract.Presenter> implemen
     protected void initData() {
         viewIsList = getPreferences().getBoolean("bookshelfIsList", true);
         getIntent().putExtra("isRecreate", false);
-    }
 
+        Assistant.evalObjectScript("importPackage(com.monke.monkeybook.test);\n" +
+                "var callback = {\n" +
+                "    do1: function () {\n" +
+                "        print(\"jsssssssssssss running1\");\n" +
+                "    },\n" +
+                "    do2: function () {\n" +
+                "         print(\"jsssssssssssss running2\");\n" +
+                "    }\n" +
+                "}\n" +
+                "var t = new Test(callback);\n" +
+                "t.do1();\n" +
+                "t.do2();", new SimpleBindings());
+    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

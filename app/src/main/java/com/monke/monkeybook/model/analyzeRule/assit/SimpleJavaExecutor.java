@@ -13,4 +13,5 @@ public interface SimpleJavaExecutor{
     String unescapeHtml3(String string);
 
     String unescapeHtml4(String string);
+
 }

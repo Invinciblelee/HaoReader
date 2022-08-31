@@ -202,7 +202,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
             return;
         }
 
-        if(mUpdateChaptersDisp != null && !mUpdateChaptersDisp.isDisposed()){
+        if (mUpdateChaptersDisp != null && !mUpdateChaptersDisp.isDisposed()) {
             onMessage("章节正在更新中，请稍侯");
             return;
         }
@@ -216,10 +216,10 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
 
                     List<ChapterBean> oldList = bookShelf.getChapterList();
                     List<ChapterBean> newList = bookShelfBean.getChapterList();
-                    for (int i =0, size = oldList.size(); i< size; i++){
+                    for (int i = 0, size = oldList.size(); i < size; i++) {
                         ChapterBean oldBean = oldList.get(i);
                         ChapterBean newBean = newList.get(i);
-                        if(oldBean.equals(newBean)){
+                        if (oldBean.equals(newBean)) {
                             newBean.setStart(oldBean.getStart());
                             newBean.setEnd(oldBean.getEnd());
                             newBean.setDurChapterPlayUrl(oldBean.getDurChapterPlayUrl());
@@ -268,7 +268,7 @@ public class AudioBookPlayModelImpl implements IAudioBookPlayModel {
                 });
     }
 
-    private void onMessage(String msg){
+    private void onMessage(String msg) {
         if (mPlayCallback != null) {
             mPlayCallback.onMessage(msg);
         }
